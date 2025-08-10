@@ -1,6 +1,3 @@
-// ignore_for_file: deprecated_member_use
-
-
 
 import 'package:fines_plus/config/app_config.dart';
 import 'package:flutter/material.dart';
