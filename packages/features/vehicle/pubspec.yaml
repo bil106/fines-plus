@@ -1,0 +1,24 @@
+name: vehicle
+description: Vehicle module for the Fines+ app.
+version: 1.0.0
+publish_to: none
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_bloc: ^9.1.1
+  equatable: ^2.0.5
+
+
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  mocktail: ^1.0.4
+  build_runner: ^2.4.15
+  freezed: ^3.0.6
+  json_serializable: ^6.7.1
+  flutter_lints: ^3.0.1

@@ -1,0 +1,6 @@
+name: fines_plus
+packages:
+  - .
+  - packages/core_cubit
+  - packages/core_localization
+  - packages/core_utils

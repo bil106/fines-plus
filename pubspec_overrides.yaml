@@ -1,0 +1,8 @@
+# melos_managed_dependency_overrides: core_cubit,core_localization,core_utils
+dependency_overrides:
+  core_cubit:
+    path: packages\\core_cubit
+  core_localization:
+    path: packages\\core_localization
+  core_utils:
+    path: packages\\core_utils
