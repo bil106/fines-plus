@@ -1,5 +1,6 @@
 
 
+import 'package:auto_route/auto_route.dart';
 import 'package:core_cubit/cubit/support_cubit.dart';
 import 'package:core_cubit/cubit/support_state.dart';
 import 'package:core_localization/localization/generated/l10n.dart';
@@ -9,12 +10,19 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 
 
+@RoutePage()
 
-
-class SupportScreen extends StatelessWidget {
+class SupportScreen extends StatefulWidget {
   final AppConfig config;
 
   const SupportScreen({super.key, required this.config});
+
+  @override
+  State<SupportScreen> createState() => _SupportScreenState();
+}
+
+class _SupportScreenState extends State<SupportScreen> {
+ 
 
   @override
   Widget build(BuildContext context) {
@@ -34,23 +42,24 @@ class SupportScreen extends StatelessWidget {
             ListTile(
               leading: const Icon(Icons.email),
               title: Text(S.of(context).email),
-              subtitle: Text(config.supportEmail),
-              onTap: () => context.read<SupportCubit>().sendEmail(config.supportEmail),
+              subtitle: Text(widget.config.supportEmail),
+              onTap: () => context.read<SupportCubit>().sendEmail(widget.config.supportEmail),
             ),
             ListTile(
               leading: const Icon(Icons.phone),
               title: Text(S.of(context).phone),
-              subtitle: Text(config.phoneNumber),
-              onTap: () => context.read<SupportCubit>().callPhone(config.phoneNumber),
+              subtitle: Text(widget.config.phoneNumber),
+              onTap: () => context.read<SupportCubit>().callPhone(widget.config.phoneNumber),
             ),
             ListTile(
               leading: const Icon(Icons.chat_bubble),
               title: Text(S.of(context).write_viber),
-              subtitle: Text(config.viberNumber),
-              onTap: () => context.read<SupportCubit>().openViber(config.viberNumber),
+              subtitle: Text(widget.config.viberNumber),
+              onTap: () => context.read<SupportCubit>().openViber(widget.config.viberNumber),
             ),
           ],
         ),
+       
       ),
     );
   }
