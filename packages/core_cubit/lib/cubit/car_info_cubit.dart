@@ -18,16 +18,18 @@ class CarInfoCubit extends Cubit<CarInfoState> {
     emit(state.copyWith(carNumber: m.carNumber, techPassport: m.techPassport));
   }
 
-  Future<void> setCarNumber(String v) async {
-    final m = CarInfoModel(carNumber: v, techPassport: state.techPassport);
+Future<void> setCarNumber(String v) async {
+    final value = v.trim();
+    final m = CarInfoModel(carNumber: value, techPassport: state.techPassport);
     await _repo.saveCarInfo(m);
-    emit(state.copyWith(carNumber: v.trim()));
+    emit(state.copyWith(carNumber: value));
   }
 
   Future<void> setTechPassport(String v) async {
-    final m = CarInfoModel(carNumber: state.carNumber, techPassport: v);
+    final value = v.trim();
+    final m = CarInfoModel(carNumber: state.carNumber, techPassport: value);
     await _repo.saveCarInfo(m);
-    emit(state.copyWith(techPassport: v.trim()));
+    emit(state.copyWith(techPassport: value));
   }
 
   bool get isFormValid => _carReg.hasMatch(state.carNumber) && _techReg.hasMatch(state.techPassport);

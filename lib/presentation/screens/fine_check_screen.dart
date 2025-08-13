@@ -31,6 +31,7 @@ class _FineCheckScreenState extends State<FineCheckScreen> {
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.dark,
       child: Scaffold(
+        resizeToAvoidBottomInset: true,
         backgroundColor: Colors.grey.shade50,
         body: SafeArea(
           child: SingleChildScrollView(
@@ -44,10 +45,8 @@ class _FineCheckScreenState extends State<FineCheckScreen> {
                   style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 36),
                 ),
                 const SizedBox(height: 40),
-                SizedBox(
-                  height: screenHeight * 0.38,
-                  width: double.infinity,
-                  child: Card(
+              
+                   Card(
                     color: Colors.white,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22)),
                     elevation: 4,
@@ -76,13 +75,13 @@ class _FineCheckScreenState extends State<FineCheckScreen> {
                           const SizedBox(height: 12),
                           const Text(
                             'Перевищення швидкості',
-                            style: TextStyle(fontSize: 26, color: Colors.black87, fontWeight: FontWeight.w500),
+                            style: TextStyle(fontSize: 24, color: Colors.black87, fontWeight: FontWeight.w500),
                           ),
                         ],
                       ),
                     ),
                   ),
-                ),
+                
                 const SizedBox(height: 24),
                 SizedBox(
                   width: double.infinity,

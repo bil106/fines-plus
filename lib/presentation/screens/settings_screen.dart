@@ -36,10 +36,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 36),
                 ),
                 const SizedBox(height: 40),
-                SizedBox(
-                  height: screenHeight * 0.36,
-                  width: double.infinity,
-                  child: Card(
+                 Card(
                     color: Colors.white,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22)),
                     elevation: 4,
@@ -73,7 +70,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       ),
                     ),
                   ),
-                ),
+                
               ],
             ),
           ),
@@ -86,9 +83,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
-          title,
-          style: const TextStyle(fontSize: 28, color: Colors.black87, fontWeight: FontWeight.w500),
+        Expanded(
+          child: Text(
+            title,
+            style: const TextStyle(fontSize: 26, color: Colors.black87, fontWeight: FontWeight.w500),
+          ),
         ),
         Switch(value: value, onChanged: onChanged, activeColor: Colors.white, activeTrackColor: Colors.blue),
       ],
