@@ -1,13 +1,20 @@
-import 'package:core_localization/localization/generated/l10n.dart';
-import 'package:fines_plus/config/flavor_config.dart';
-import 'package:fines_plus/theme/theme_config.dart';
+
+// ignore_for_file: depend_on_referenced_packages
+
+import 'package:core_data/core_data.dart';
+import 'package:core_localization/generated/l10n.dart';
+import 'package:core_repository/car_info_repository.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 
-import 'router/app_router.dart';
+import 'package:fines_plus/config/flavor_config.dart';
+import 'package:fines_plus/theme/theme_config.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'config/app_config.dart';
+import 'router/app_router.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -15,7 +22,24 @@ Future<void> main() async {
   const flavor = String.fromEnvironment('FLAVOR', defaultValue: 'autolux');
   final config = await loadAppConfig(flavor);
 
-  runApp(MyApp(config: config));
+ 
+  final prefs = await SharedPreferences.getInstance();
+
+  
+  final sharedPrefsManager = SharedPrefsManager(prefs);
+
+  
+  final carInfoLocalDataSource = CarInfoLocalDataSource(sharedPrefsManager);
+
+ 
+  final carInfoRepository = CarInfoRepository(carInfoLocalDataSource);
+
+  runApp(
+    MultiRepositoryProvider(
+      providers: [RepositoryProvider<CarInfoRepository>.value(value: carInfoRepository)],
+      child: MyApp(config: config),
+    ),
+  );
 }
 
 class MyApp extends StatefulWidget {
@@ -28,7 +52,6 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   final _appRouter = AppRouter();
-
   Locale? _locale;
 
   @override
@@ -52,5 +75,3 @@ class _MyAppState extends State<MyApp> {
     );
   }
 }
-
-

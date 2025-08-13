@@ -1,26 +1,25 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:core_localization/generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
 @RoutePage()
 class FinesScreen extends StatefulWidget {
-  const FinesScreen({super.key});
+  final VoidCallback? onFineCheck;
+  const FinesScreen({super.key, this.onFineCheck});
 
   @override
   State<FinesScreen> createState() => _FinesScreenState();
 }
 
 class _FinesScreenState extends State<FinesScreen> {
-
-
   @override
   Widget build(BuildContext context) {
-    return  
-    AnnotatedRegion<SystemUiOverlayStyle>(
-  value: SystemUiOverlayStyle.dark,
-  child:
-    Container(
-      color: Colors.grey.shade50,
-      child: Padding(
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle.dark,
+      child: Container(
+        color: Colors.grey.shade50,
+        child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -37,8 +36,7 @@ class _FinesScreenState extends State<FinesScreen> {
                 ),
               ),
               const SizedBox(height: 50),
-      
-          
+
               SizedBox(
                 width: double.infinity,
                 height: 70,
@@ -47,13 +45,16 @@ class _FinesScreenState extends State<FinesScreen> {
                     backgroundColor: Colors.blue.shade700,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                   ),
-                  onPressed: () {},
-                  child: const Text('Перевірити штрафи', style: TextStyle(fontSize: 24, color: Colors.white)),
+                  onPressed: () {
+                    if (widget.onFineCheck != null) {
+                      widget.onFineCheck!();
+                    }
+                  },
+                  child: Text(S.of(context).check_fines, style: TextStyle(fontSize: 24, color: Colors.white)),
                 ),
               ),
               const SizedBox(height: 30),
-      
-              
+
               Container(
                 width: double.infinity,
                 height: 110,
@@ -66,7 +67,7 @@ class _FinesScreenState extends State<FinesScreen> {
                 ),
                 child: Row(
                   children: [
-                   const SizedBox(width: 20),
+                    const SizedBox(width: 20),
                     Container(
                       width: 35,
                       height: 35,
@@ -74,19 +75,16 @@ class _FinesScreenState extends State<FinesScreen> {
                       child: const Icon(Icons.check, color: Colors.white, size: 26),
                     ),
                     const SizedBox(width: 20),
-                    const Expanded(
-                      child: Text('На вас немає штрафів', style: TextStyle(fontSize: 24, fontWeight: FontWeight.w500)),
+                    Expanded(
+                      child: Text(S.of(context).no_fines, style: TextStyle(fontSize: 24, fontWeight: FontWeight.w500)),
                     ),
                   ],
                 ),
               ),
             ],
           ),
-        
-      
-        
-     
+        ),
       ),
-    ));
+    );
   }
 }

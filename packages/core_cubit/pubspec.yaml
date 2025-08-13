@@ -1,6 +1,8 @@
 name: core_cubit
 description: Core cubit package for fines_plus
 version: 0.0.1
+publish_to: "none"  
+
 environment:
   sdk: ">=3.0.0 <4.0.0"
 
@@ -8,8 +10,16 @@ dependencies:
   flutter:
     sdk: flutter
   bloc: ^9.0.0
+  flutter_bloc: ^9.1.1
+  equatable: ^2.0.7
+  shared_preferences: ^2.5.3
+
+
+  core_repository:
+    path: ../core_repository
+  core_data:
+    path: ../core_data
   url_launcher: ^6.3.2
- 
 
 flutter:
-    uses-material-design: true
+  uses-material-design: true

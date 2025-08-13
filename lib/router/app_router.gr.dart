@@ -12,18 +12,51 @@ part of 'app_router.dart';
 
 /// generated route for
 /// [AddCarScreen]
-class AddCarRoute extends PageRouteInfo<void> {
-  const AddCarRoute({List<PageRouteInfo>? children})
-    : super(AddCarRoute.name, initialChildren: children);
+class AddCarRoute extends PageRouteInfo<AddCarRouteArgs> {
+  AddCarRoute({
+    Key? key,
+    VoidCallback? onOpenCarInfo,
+    List<PageRouteInfo>? children,
+  }) : super(
+         AddCarRoute.name,
+         args: AddCarRouteArgs(key: key, onOpenCarInfo: onOpenCarInfo),
+         initialChildren: children,
+       );
 
   static const String name = 'AddCarRoute';
 
   static PageInfo page = PageInfo(
     name,
     builder: (data) {
-      return const AddCarScreen();
+      final args = data.argsAs<AddCarRouteArgs>(
+        orElse: () => const AddCarRouteArgs(),
+      );
+      return AddCarScreen(key: args.key, onOpenCarInfo: args.onOpenCarInfo);
     },
   );
+}
+
+class AddCarRouteArgs {
+  const AddCarRouteArgs({this.key, this.onOpenCarInfo});
+
+  final Key? key;
+
+  final VoidCallback? onOpenCarInfo;
+
+  @override
+  String toString() {
+    return 'AddCarRouteArgs{key: $key, onOpenCarInfo: $onOpenCarInfo}';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! AddCarRouteArgs) return false;
+    return key == other.key && onOpenCarInfo == other.onOpenCarInfo;
+  }
+
+  @override
+  int get hashCode => key.hashCode ^ onOpenCarInfo.hashCode;
 }
 
 /// generated route for
@@ -43,19 +76,116 @@ class CarInfoRoute extends PageRouteInfo<void> {
 }
 
 /// generated route for
+/// [FineCheckScreen]
+class FineCheckRoute extends PageRouteInfo<FineCheckRouteArgs> {
+  FineCheckRoute({
+    Key? key,
+    VoidCallback? onFineCheck,
+    required String carNumber,
+    List<PageRouteInfo>? children,
+  }) : super(
+         FineCheckRoute.name,
+         args: FineCheckRouteArgs(
+           key: key,
+           onFineCheck: onFineCheck,
+           carNumber: carNumber,
+         ),
+         initialChildren: children,
+       );
+
+  static const String name = 'FineCheckRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      final args = data.argsAs<FineCheckRouteArgs>();
+      return FineCheckScreen(
+        key: args.key,
+        onFineCheck: args.onFineCheck,
+        carNumber: args.carNumber,
+      );
+    },
+  );
+}
+
+class FineCheckRouteArgs {
+  const FineCheckRouteArgs({
+    this.key,
+    this.onFineCheck,
+    required this.carNumber,
+  });
+
+  final Key? key;
+
+  final VoidCallback? onFineCheck;
+
+  final String carNumber;
+
+  @override
+  String toString() {
+    return 'FineCheckRouteArgs{key: $key, onFineCheck: $onFineCheck, carNumber: $carNumber}';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! FineCheckRouteArgs) return false;
+    return key == other.key &&
+        onFineCheck == other.onFineCheck &&
+        carNumber == other.carNumber;
+  }
+
+  @override
+  int get hashCode => key.hashCode ^ onFineCheck.hashCode ^ carNumber.hashCode;
+}
+
+/// generated route for
 /// [FinesScreen]
-class FinesRoute extends PageRouteInfo<void> {
-  const FinesRoute({List<PageRouteInfo>? children})
-    : super(FinesRoute.name, initialChildren: children);
+class FinesRoute extends PageRouteInfo<FinesRouteArgs> {
+  FinesRoute({
+    Key? key,
+    VoidCallback? onFineCheck,
+    List<PageRouteInfo>? children,
+  }) : super(
+         FinesRoute.name,
+         args: FinesRouteArgs(key: key, onFineCheck: onFineCheck),
+         initialChildren: children,
+       );
 
   static const String name = 'FinesRoute';
 
   static PageInfo page = PageInfo(
     name,
     builder: (data) {
-      return const FinesScreen();
+      final args = data.argsAs<FinesRouteArgs>(
+        orElse: () => const FinesRouteArgs(),
+      );
+      return FinesScreen(key: args.key, onFineCheck: args.onFineCheck);
     },
   );
+}
+
+class FinesRouteArgs {
+  const FinesRouteArgs({this.key, this.onFineCheck});
+
+  final Key? key;
+
+  final VoidCallback? onFineCheck;
+
+  @override
+  String toString() {
+    return 'FinesRouteArgs{key: $key, onFineCheck: $onFineCheck}';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! FinesRouteArgs) return false;
+    return key == other.key && onFineCheck == other.onFineCheck;
+  }
+
+  @override
+  int get hashCode => key.hashCode ^ onFineCheck.hashCode;
 }
 
 /// generated route for
@@ -86,6 +216,22 @@ class RemindersRoute extends PageRouteInfo<void> {
     name,
     builder: (data) {
       return const RemindersScreen();
+    },
+  );
+}
+
+/// generated route for
+/// [SettingsScreen]
+class SettingsRoute extends PageRouteInfo<void> {
+  const SettingsRoute({List<PageRouteInfo>? children})
+    : super(SettingsRoute.name, initialChildren: children);
+
+  static const String name = 'SettingsRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const SettingsScreen();
     },
   );
 }

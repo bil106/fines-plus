@@ -22,10 +22,28 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
+        "add_cars": MessageLookupByLibrary.simpleMessage("Add a car"),
+        "addition_cars": MessageLookupByLibrary.simpleMessage("Adding a car"),
+        "car_number": MessageLookupByLibrary.simpleMessage("Car number"),
+        "check_fine_title":
+            MessageLookupByLibrary.simpleMessage("Checking the fine"),
+        "check_fines": MessageLookupByLibrary.simpleMessage("Check fines"),
+        "checking_fines":
+            MessageLookupByLibrary.simpleMessage("Checking fines"),
         "contact_us": MessageLookupByLibrary.simpleMessage("Contact us:"),
         "email": MessageLookupByLibrary.simpleMessage("Email"),
         "enter_vin": MessageLookupByLibrary.simpleMessage("Enter VIN"),
+        "no_fines":
+            MessageLookupByLibrary.simpleMessage("There are no fines for you"),
+        "pay": MessageLookupByLibrary.simpleMessage("Pay"),
         "phone": MessageLookupByLibrary.simpleMessage("Phone"),
+        "push_notifications":
+            MessageLookupByLibrary.simpleMessage("Push notifications"),
+        "reg_number":
+            MessageLookupByLibrary.simpleMessage("Technical passport number"),
+        "reminder": MessageLookupByLibrary.simpleMessage("Reminder"),
+        "search": MessageLookupByLibrary.simpleMessage("Search"),
+        "settings": MessageLookupByLibrary.simpleMessage("Settings"),
         "support": MessageLookupByLibrary.simpleMessage("Support"),
         "write_viber": MessageLookupByLibrary.simpleMessage("Write to Viber")
       };

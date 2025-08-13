@@ -1,0 +1,22 @@
+{
+  "@@locale": "en",
+    "enter_vin": "Enter VIN",
+    "support": "Support",
+    "contact_us": "Contact us:",
+    "phone": "Phone",
+    "write_viber": "Write to Viber",
+    "email": "Email",
+    "addition_cars": "Adding a car",
+    "add_cars": "Add a car",
+    "car_number": "Car number",
+    "reg_number": "Technical passport number",
+    "search": "Search",
+    "check_fine_title": "Checking the fine",
+    "check_fines": "Check fines",
+    "checking_fines": "Checking fines",
+    "no_fines": "There are no fines for you",
+    "reminder": "Reminder",
+    "settings": "Settings",
+    "push_notifications": "Push notifications",
+    "pay": "Pay"
+}

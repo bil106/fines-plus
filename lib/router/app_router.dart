@@ -2,8 +2,10 @@ import 'package:auto_route/auto_route.dart';
 import 'package:fines_plus/config/app_config.dart';
 import 'package:fines_plus/presentation/screens/add_car_screen.dart';
 import 'package:fines_plus/presentation/screens/car_info_screen.dart';
+import 'package:fines_plus/presentation/screens/fine_check_screen.dart';
 import 'package:fines_plus/presentation/screens/fines_screeen.dart';
 import 'package:fines_plus/presentation/screens/reminders_screen.dart';
+import 'package:fines_plus/presentation/screens/settings_screen.dart';
 import 'package:fines_plus/presentation/screens/support_screen.dart';
 import 'package:fines_plus/router/home_screen_wrapper.dart';
 import 'package:flutter/material.dart';
@@ -29,5 +31,7 @@ class AppRouter extends RootStackRouter {
    
     AutoRoute(page: CarInfoRoute.page, path: '/car-info'),
     AutoRoute(page: SupportRoute.page, path: '/support'),
+    AutoRoute(page: FineCheckRoute.page, path: '/fine_check'),
+    AutoRoute(page: SettingsRoute.page, path: '/settings'),
   ];
 }

@@ -1,17 +1,12 @@
-
-
 import 'package:auto_route/auto_route.dart';
 import 'package:core_cubit/cubit/support_cubit.dart';
 import 'package:core_cubit/cubit/support_state.dart';
-import 'package:core_localization/localization/generated/l10n.dart';
+import 'package:core_localization/generated/l10n.dart';
 import 'package:fines_plus/config/app_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-
-
 @RoutePage()
-
 class SupportScreen extends StatefulWidget {
   final AppConfig config;
 
@@ -22,8 +17,6 @@ class SupportScreen extends StatefulWidget {
 }
 
 class _SupportScreenState extends State<SupportScreen> {
- 
-
   @override
   Widget build(BuildContext context) {
     return BlocListener<SupportCubit, SupportState>(
@@ -59,7 +52,6 @@ class _SupportScreenState extends State<SupportScreen> {
             ),
           ],
         ),
-       
       ),
     );
   }

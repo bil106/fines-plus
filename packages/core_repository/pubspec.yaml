@@ -1,0 +1,13 @@
+name: core_repository
+description: Repository layer for car info and other features
+version: 1.0.0
+publish_to: "none"
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  core_data:
+    path: ../core_data

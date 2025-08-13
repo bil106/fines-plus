@@ -1,0 +1,22 @@
+{
+   "@@locale": "uk",
+   "enter_vin": "Введіть VIN",
+   "support": "Підтримка",
+   "contact_us": "Звʼяжіться з нами:",
+   "phone": "Телефон",
+   "write_viber": "Написати у Viber",
+   "email": "Email",
+   "addition_cars": "Додавання авто",
+   "add_cars": "Додати авто",
+   "car_number": "Номер авто",
+   "reg_number": "Номер техпаспорта",
+   "search": "Пошук",
+   "check_fine_title": "Перевірка штрафу",
+   "check_fines": "Перевірити штрафи",
+   "checking_fines": "Перевірка штрафів",
+   "no_fines": "На вас немає штрафів",
+   "reminder": "Нагадування",
+   "settings": "Налаштування",
+   "push_notifications": "Push-сповіщення",
+   "pay": "Сплатити"
+}

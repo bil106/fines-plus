@@ -109,6 +109,136 @@ class S {
       args: [],
     );
   }
+
+  /// `Adding a car`
+  String get addition_cars {
+    return Intl.message(
+      'Adding a car',
+      name: 'addition_cars',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add a car`
+  String get add_cars {
+    return Intl.message(
+      'Add a car',
+      name: 'add_cars',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Car number`
+  String get car_number {
+    return Intl.message(
+      'Car number',
+      name: 'car_number',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Technical passport number`
+  String get reg_number {
+    return Intl.message(
+      'Technical passport number',
+      name: 'reg_number',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Search`
+  String get search {
+    return Intl.message(
+      'Search',
+      name: 'search',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Checking the fine`
+  String get check_fine_title {
+    return Intl.message(
+      'Checking the fine',
+      name: 'check_fine_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Check fines`
+  String get check_fines {
+    return Intl.message(
+      'Check fines',
+      name: 'check_fines',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Checking fines`
+  String get checking_fines {
+    return Intl.message(
+      'Checking fines',
+      name: 'checking_fines',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `There are no fines for you`
+  String get no_fines {
+    return Intl.message(
+      'There are no fines for you',
+      name: 'no_fines',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Reminder`
+  String get reminder {
+    return Intl.message(
+      'Reminder',
+      name: 'reminder',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Settings`
+  String get settings {
+    return Intl.message(
+      'Settings',
+      name: 'settings',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Push notifications`
+  String get push_notifications {
+    return Intl.message(
+      'Push notifications',
+      name: 'push_notifications',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Pay`
+  String get pay {
+    return Intl.message(
+      'Pay',
+      name: 'pay',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {
