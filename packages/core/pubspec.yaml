@@ -3,12 +3,20 @@ description: Core package for fines_plus
 version: 0.0.1
 environment:
   sdk: ">=3.0.0 <4.0.0"
+publish_to: "none"
 
 dependencies:
   flutter:
     sdk: flutter
   envied: ^1.2.0
-
+  intl: ^0.20.2
+  flutter_bloc: ^9.1.1
+  core_data:
+    path: ../core_data
+  core_cubit:
+    path: ../core_cubit
+  design_system:
+    path: ../design_system  
 
 flutter:
   uses-material-design: true

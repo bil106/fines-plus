@@ -11,3 +11,4 @@ dependencies:
     sdk: flutter
   core_data:
     path: ../core_data
+  uuid: ^4.5.1

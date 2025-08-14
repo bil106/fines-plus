@@ -21,8 +21,11 @@ dependencies:
     path: packages/core_localization
   core_utils:
     path: packages/core_utils
+  core:
+    path: packages/core
   design_system:
     path: packages/design_system 
+
   firebase_remote_config: ^6.0.0
   flutter_bloc: ^9.1.1
   flutter_localizations:

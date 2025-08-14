@@ -1,9 +1,11 @@
 
 // ignore_for_file: depend_on_referenced_packages
 
+import 'package:core_cubit/cubit/reminder_cubit.dart';
 import 'package:core_data/core_data.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:core_repository/car_info_repository.dart';
+import 'package:core_repository/reminder_repository.dart';
 import 'package:fines_plus/env/env.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -23,23 +25,28 @@ Future<void> main() async {
   const flavor = String.fromEnvironment('FLAVOR', defaultValue: 'autolux');
   final config = await loadAppConfig(flavor);
 
- 
   final prefs = await SharedPreferences.getInstance();
-
-  
   final sharedPrefsManager = SharedPrefsManager(prefs);
 
-  
   final carInfoLocalDataSource = CarInfoLocalDataSource(sharedPrefsManager);
-
   final carInfoRemoteDataSource = CarInfoRemoteDataSource(apiKey: Env.openDataBotApiKey);
-
   final carInfoRepository = CarInfoRepository(carInfoLocalDataSource, carInfoRemoteDataSource);
+
+  
+  final reminderLocalDataSource = ReminderLocalDataSourceImpl(sharedPrefsManager);
+  final reminderRepository = ReminderRepository(reminderLocalDataSource);
+
 
   runApp(
     MultiRepositoryProvider(
-      providers: [RepositoryProvider<CarInfoRepository>.value(value: carInfoRepository)],
-      child: MyApp(config: config),
+      providers: [
+        RepositoryProvider<CarInfoRepository>.value(value: carInfoRepository),
+        RepositoryProvider<ReminderRepository>.value(value: reminderRepository),
+      ],
+      child: MultiBlocProvider(
+        providers: [BlocProvider(create: (context) => ReminderCubit(reminderRepository))],
+        child: MyApp(config: config),
+      ),
     ),
   );
 }
