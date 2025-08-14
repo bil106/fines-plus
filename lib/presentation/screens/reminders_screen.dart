@@ -68,7 +68,7 @@ class RemindersScreen extends StatelessWidget {
                           ),
                           subtitle: Text(
                             '${reminder.description}\n${DateFormat('dd.MM.yyyy HH:mm').format(reminder.dateTime)}',
-                            style: TextStyle(fontWeight: FontWeight.w500, fontSize: 24)
+                            style: TextStyle(fontWeight: FontWeight.w500, fontSize: 20)
                           ),
                           isThreeLine: true,
                           trailing: IconButton(
@@ -127,7 +127,7 @@ class _EmptyReminders extends StatelessWidget {
           ),
           AppSpacers.verticalLarge,
           const Center(
-            child: Text('Нагадування поки що немає', style: TextStyle(fontSize: 24), textAlign: TextAlign.center),
+            child: Text('Нагадувань поки немає', style: TextStyle(fontSize: 24), textAlign: TextAlign.center),
           ),
         ],
       ),
