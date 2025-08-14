@@ -4,6 +4,7 @@
 import 'package:core_data/core_data.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:core_repository/car_info_repository.dart';
+import 'package:fines_plus/env/env.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -31,8 +32,9 @@ Future<void> main() async {
   
   final carInfoLocalDataSource = CarInfoLocalDataSource(sharedPrefsManager);
 
- 
-  final carInfoRepository = CarInfoRepository(carInfoLocalDataSource);
+  final carInfoRemoteDataSource = CarInfoRemoteDataSource(apiKey: Env.openDataBotApiKey);
+
+  final carInfoRepository = CarInfoRepository(carInfoLocalDataSource, carInfoRemoteDataSource);
 
   runApp(
     MultiRepositoryProvider(

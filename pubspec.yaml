@@ -21,6 +21,8 @@ dependencies:
     path: packages/core_localization
   core_utils:
     path: packages/core_utils
+  design_system:
+    path: packages/design_system 
   firebase_remote_config: ^6.0.0
   flutter_bloc: ^9.1.1
   flutter_localizations:
@@ -30,6 +32,7 @@ dependencies:
   provider: ^6.0.5
   intl: ^0.20.2
   shared_preferences: ^2.5.3
+  envied: ^1.1.1
 
 dev_dependencies:
   flutter_test:
@@ -39,7 +42,7 @@ dev_dependencies:
   flutter_lints: ^5.0.0
   build_runner: ^2.0.0
   auto_route_generator: ^10.2.3
-
+  envied_generator: ^1.1.1
 
 flutter:
 

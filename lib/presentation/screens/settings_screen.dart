@@ -1,5 +1,8 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:core_localization/generated/l10n.dart';
+import 'package:design_system/colors/app_colors.dart';
+import 'package:design_system/constants/app_borders.dart';
+import 'package:design_system/constants/app_spacers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -18,49 +21,49 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
+    // final screenHeight = MediaQuery.of(context).size.height;
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.dark,
       child: Scaffold(
-        backgroundColor: Colors.grey.shade50,
+        backgroundColor: AppColors.grey50,
         body: SafeArea(
           child: SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(height: 26),
+                AppSpacers.verticalXLarge,
                 Text(
                   S.of(context).settings,
-                  style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 36),
+                  style: TextStyle(color: AppColors.black, fontWeight: FontWeight.bold, fontSize: 36),
                 ),
-                const SizedBox(height: 40),
+                AppSpacers.verticalHuge,
                  Card(
-                    color: Colors.white,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22)),
+                    color: AppColors.neutreBlanc,
+                    shape: RoundedRectangleBorder(borderRadius: AppBorders.radius22),
                     elevation: 4,
                     child: Padding(
                       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                       child: Column(
                         children: [
-                          const SizedBox(height: 20),
+                          AppSpacers.verticalLarge,
                           _buildSettingRow(
                             title: S.of(context).checking_fines,
                             value: finesCheck,
                             onChanged: (val) => setState(() => finesCheck = val),
                           ),
-                          const SizedBox(height: 16),
-                          Divider(thickness: 3, color: Colors.grey.shade50),
-                          const SizedBox(height: 16),
+                          AppSpacers.verticalMediumLarge,
+                          Divider(thickness: 3, color: AppColors.grey50),
+                          AppSpacers.verticalMediumLarge,
                           _buildSettingRow(
                             title: S.of(context).reminder,
                             value: reminders,
                             onChanged: (val) => setState(() => reminders = val),
                           ),
-                          const SizedBox(height: 16),
-                          Divider(thickness: 3, color: Colors.grey.shade50),
-                          const SizedBox(height: 16),
+                          AppSpacers.verticalMediumLarge,
+                          Divider(thickness: 3, color: AppColors.grey50),
+                          AppSpacers.verticalMediumLarge,
                           _buildSettingRow(
                             title: S.of(context).push_notifications,
                             value: pushNotifications,
@@ -86,10 +89,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
         Expanded(
           child: Text(
             title,
-            style: const TextStyle(fontSize: 26, color: Colors.black87, fontWeight: FontWeight.w500),
+            style: const TextStyle(fontSize: 26, color: AppColors.black87, fontWeight: FontWeight.w500),
           ),
         ),
-        Switch(value: value, onChanged: onChanged, activeColor: Colors.white, activeTrackColor: Colors.blue),
+        Switch(value: value, onChanged: onChanged, activeColor: AppColors.neutreBlanc, activeTrackColor: Colors.blue),
       ],
     );
   }

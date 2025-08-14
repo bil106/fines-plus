@@ -61,18 +61,51 @@ class AddCarRouteArgs {
 
 /// generated route for
 /// [CarInfoScreen]
-class CarInfoRoute extends PageRouteInfo<void> {
-  const CarInfoRoute({List<PageRouteInfo>? children})
-    : super(CarInfoRoute.name, initialChildren: children);
+class CarInfoRoute extends PageRouteInfo<CarInfoRouteArgs> {
+  CarInfoRoute({
+    Key? key,
+    ValueChanged<String>? onCheckFine,
+    List<PageRouteInfo>? children,
+  }) : super(
+         CarInfoRoute.name,
+         args: CarInfoRouteArgs(key: key, onCheckFine: onCheckFine),
+         initialChildren: children,
+       );
 
   static const String name = 'CarInfoRoute';
 
   static PageInfo page = PageInfo(
     name,
     builder: (data) {
-      return const CarInfoScreen();
+      final args = data.argsAs<CarInfoRouteArgs>(
+        orElse: () => const CarInfoRouteArgs(),
+      );
+      return CarInfoScreen(key: args.key, onCheckFine: args.onCheckFine);
     },
   );
+}
+
+class CarInfoRouteArgs {
+  const CarInfoRouteArgs({this.key, this.onCheckFine});
+
+  final Key? key;
+
+  final ValueChanged<String>? onCheckFine;
+
+  @override
+  String toString() {
+    return 'CarInfoRouteArgs{key: $key, onCheckFine: $onCheckFine}';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! CarInfoRouteArgs) return false;
+    return key == other.key && onCheckFine == other.onCheckFine;
+  }
+
+  @override
+  int get hashCode => key.hashCode ^ onCheckFine.hashCode;
 }
 
 /// generated route for

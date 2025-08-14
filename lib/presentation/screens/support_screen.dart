@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:core_cubit/cubit/support_cubit.dart';
 import 'package:core_cubit/cubit/support_state.dart';
 import 'package:core_localization/generated/l10n.dart';
+import 'package:design_system/constants/app_spacers.dart';
 import 'package:fines_plus/config/app_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -31,7 +32,7 @@ class _SupportScreenState extends State<SupportScreen> {
           padding: const EdgeInsets.all(16),
           children: [
             Text(S.of(context).contact_us, style: Theme.of(context).textTheme.titleMedium),
-            const SizedBox(height: 16),
+            AppSpacers.verticalMediumLarge,
             ListTile(
               leading: const Icon(Icons.email),
               title: Text(S.of(context).email),

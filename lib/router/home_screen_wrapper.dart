@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:design_system/colors/app_colors.dart';
 
 import 'package:fines_plus/presentation/screens/add_car_screen.dart';
 import 'package:fines_plus/presentation/screens/car_info_screen.dart';
@@ -36,7 +37,7 @@ static const int fineCheckPageIndex = 4;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey.shade50,
+      backgroundColor: AppColors.grey50,
       body: PageView(
         controller: _pageController,
         onPageChanged: (index) {
@@ -75,7 +76,7 @@ static const int fineCheckPageIndex = 4;
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.neutreBlanc,
         currentIndex: _currentIndex > 2 ? 0 : _currentIndex,
         onTap: _onTabTapped,
         items: const [

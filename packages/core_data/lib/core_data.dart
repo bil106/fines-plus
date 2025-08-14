@@ -8,5 +8,5 @@ export 'src/models/car_info_model.dart';
 
 export 'src/local/car_info_local_data_source.dart';
 
-
+export 'src/remote/car_info_remote_data_source.dart';
 export 'src/local/shared_prefs_manager.dart';

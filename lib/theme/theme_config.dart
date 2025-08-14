@@ -1,4 +1,5 @@
 
+import 'package:design_system/colors/app_colors.dart';
 import 'package:fines_plus/config/app_config.dart';
 import 'package:flutter/material.dart';
 
@@ -10,20 +11,20 @@ class ThemeConfig {
     return ThemeData(
       colorScheme: ColorScheme.fromSeed(seedColor: primary),
       useMaterial3: true,
-      scaffoldBackgroundColor: Colors.white,
+      scaffoldBackgroundColor: AppColors.neutreBlanc,
       appBarTheme: AppBarTheme(
         backgroundColor: primary,
-        foregroundColor: Colors.white,
+        foregroundColor: AppColors.neutreBlanc,
         titleTextStyle: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: primary,
-          foregroundColor: Colors.white,
+          foregroundColor: AppColors.neutreBlanc,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         ),
       ),
-      floatingActionButtonTheme: FloatingActionButtonThemeData(backgroundColor: primary, foregroundColor: Colors.white),
+      floatingActionButtonTheme: FloatingActionButtonThemeData(backgroundColor: primary, foregroundColor: AppColors.neutreBlanc),
       inputDecorationTheme: InputDecorationTheme(
         focusedBorder: OutlineInputBorder(
           borderSide: BorderSide(color: primary),

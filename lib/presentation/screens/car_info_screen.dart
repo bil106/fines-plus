@@ -3,6 +3,9 @@ import 'package:core_cubit/cubit/car_info_cubit.dart';
 import 'package:core_cubit/cubit/car_info_state.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:core_repository/car_info_repository.dart';
+import 'package:design_system/colors/app_colors.dart';
+import 'package:design_system/constants/app_borders.dart';
+import 'package:design_system/constants/app_spacers.dart';
 import 'package:flutter/material.dart';
 import 'package:core_utils/formatters/vehicle_formatters.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -55,25 +58,25 @@ class _CarInfoViewState extends State<_CarInfoView> {
 
   @override
   Widget build(BuildContext context) {
-    final cubit = context.read<CarInfoCubit>();
-    final screenHeight = MediaQuery.of(context).size.height;
+
+    // final screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
-      backgroundColor: Colors.grey.shade50,
+      backgroundColor: AppColors.grey50,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 26),
+              AppSpacers.verticalXLarge,
               Text(
                 S.of(context).addition_cars,
-                style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 36),
+                style: TextStyle(color: AppColors.black, fontWeight: FontWeight.bold, fontSize: 36),
               ),
-              const SizedBox(height: 40),
+              AppSpacers.verticalHuge,
               Card(
-                color: Colors.white,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22)),
+                color: AppColors.neutreBlanc,
+                shape: RoundedRectangleBorder(borderRadius: AppBorders.radius22),
                 elevation: 4,
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 25, horizontal: 20),
@@ -82,57 +85,59 @@ class _CarInfoViewState extends State<_CarInfoView> {
                     children: [
                       Text(
                         S.of(context).car_number,
-                        style: TextStyle(fontSize: 28, color: Colors.black87, fontWeight: FontWeight.w600),
+                        style: TextStyle(fontSize: 28, color: AppColors.black87, fontWeight: FontWeight.w600),
                       ),
-                      const SizedBox(height: 6),
+                      AppSpacers.verticalSmall,
                       TextField(
                         controller: _carNumberController,
                         onChanged: (v) => context.read<CarInfoCubit>().setCarNumber(v),
-                        style: const TextStyle(fontSize: 28, color: Colors.black, fontWeight: FontWeight.w400),
+                        style: const TextStyle(fontSize: 28, color: AppColors.black, fontWeight: FontWeight.w400),
                         inputFormatters: [VehicleNumberFormatter(mapLatinToCyrillic: true)],
                         textCapitalization: TextCapitalization.characters,
                         keyboardType: TextInputType.text,
                         maxLength: 8,
                         decoration: InputDecoration(
                           hintText: 'АН0000НА',
-                          hintStyle: const TextStyle(fontSize: 28, color: Colors.grey, fontWeight: FontWeight.w400),
+                          hintStyle: const TextStyle(
+                            fontSize: 28,
+                            color: AppColors.neutreGrey,
+                            fontWeight: FontWeight.w400,
+                          ),
                           counterText: '',
                           filled: true,
-                          fillColor: Colors.grey.shade50,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(18),
-                            borderSide: BorderSide.none,
-                          ),
+                          fillColor: AppColors.grey50,
+                          border: OutlineInputBorder(borderRadius: AppBorders.radius18, borderSide: BorderSide.none),
                           focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(18),
+                            borderRadius: AppBorders.radius18,
                             borderSide: BorderSide.none,
                           ),
                         ),
                       ),
-                      const SizedBox(height: 20),
+                      AppSpacers.verticalLarge,
                       Text(
                         S.of(context).reg_number,
-                        style: TextStyle(fontSize: 28, color: Colors.black87, fontWeight: FontWeight.w600),
+                        style: TextStyle(fontSize: 28, color: AppColors.black87, fontWeight: FontWeight.w600),
                       ),
-                      const SizedBox(height: 6),
+                      AppSpacers.verticalSmall,
                       TextField(
                         controller: _techPassportController,
                         onChanged: (v) => context.read<CarInfoCubit>().setTechPassport(v),
-                        style: const TextStyle(fontSize: 28, color: Colors.black, fontWeight: FontWeight.w400),
+                        style: const TextStyle(fontSize: 28, color: AppColors.black, fontWeight: FontWeight.w400),
                         inputFormatters: [TechPassportFormatter()],
                         maxLength: 9,
                         decoration: InputDecoration(
                           hintText: 'ХЕ 128436',
-                          hintStyle: const TextStyle(fontSize: 28, color: Colors.grey, fontWeight: FontWeight.w400),
+                          hintStyle: const TextStyle(
+                            fontSize: 28,
+                            color: AppColors.neutreGrey,
+                            fontWeight: FontWeight.w400,
+                          ),
                           counterText: '',
                           filled: true,
-                          fillColor: Colors.grey.shade50,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(18),
-                            borderSide: BorderSide.none,
-                          ),
+                          fillColor: AppColors.grey50,
+                          border: OutlineInputBorder(borderRadius: AppBorders.radius18, borderSide: BorderSide.none),
                           focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(18),
+                            borderRadius: AppBorders.radius18,
                             borderSide: BorderSide.none,
                           ),
                         ),
@@ -142,7 +147,7 @@ class _CarInfoViewState extends State<_CarInfoView> {
                 ),
               ),
 
-              const SizedBox(height: 24),
+              AppSpacers.verticalLargeXL,
 
               BlocBuilder<CarInfoCubit, CarInfoState>(
                 builder: (context, state) {
@@ -162,8 +167,8 @@ class _CarInfoViewState extends State<_CarInfoView> {
                             }
                           : null,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue.shade700,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                        backgroundColor: AppColors.blue700,
+                        shape: RoundedRectangleBorder(borderRadius: AppBorders.radius16),
                       ),
                       child: Text(S.of(context).search, style: TextStyle(fontSize: 24)),
                     ),
