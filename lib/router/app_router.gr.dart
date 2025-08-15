@@ -248,7 +248,7 @@ class RemindersRoute extends PageRouteInfo<void> {
   static PageInfo page = PageInfo(
     name,
     builder: (data) {
-      return const RemindersScreen();
+      return const RemindersScreen(carNumber: '',);
     },
   );
 }

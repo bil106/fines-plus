@@ -3,15 +3,15 @@ import 'package:core_data/core_data.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
 
 
 class ReminderDialog extends StatefulWidget {
   final ReminderModel? reminder;
-
-  const ReminderDialog({super.key, this.reminder});
+final VoidCallback? onSaved;
+  final ReminderCubit cubit;
+  const ReminderDialog({super.key, this.reminder, this.onSaved, required this.cubit});
 
   @override
   State<ReminderDialog> createState() => _ReminderDialogState();
@@ -118,7 +118,7 @@ class _ReminderDialogState extends State<ReminderDialog> {
           onPressed: () => Navigator.pop(context),
           child: const Text('Скасування',style: TextStyle(fontWeight: FontWeight.w500, fontSize: 18)),
         ),
-        ElevatedButton(
+    ElevatedButton(
           onPressed: () {
             final newReminder = ReminderModel(
               id: widget.reminder?.id ?? '',
@@ -127,16 +127,20 @@ class _ReminderDialogState extends State<ReminderDialog> {
               dateTime: selectedDateTime,
               isCompleted: widget.reminder?.isCompleted ?? false,
             );
-            final cubit = context.read<ReminderCubit>();
+
+            final cubit = widget.cubit; 
             if (widget.reminder == null) {
               cubit.addReminder(newReminder);
             } else {
               cubit.updateReminder(newReminder);
             }
+
+            widget.onSaved?.call();
             Navigator.pop(context);
           },
-          child: const Text('Зберегти',style: TextStyle(fontWeight: FontWeight.w500, fontSize: 18)),
-        ),
+          child: const Text('Зберегти', style: TextStyle(fontWeight: FontWeight.w500, fontSize: 18)),
+        )
+
       ],
     );
   }

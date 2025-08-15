@@ -1,7 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 
 class ReminderModel extends Equatable {
-  final String id; // UUID или timestamp
+  final String id;
   final String title;
   final String description;
   final DateTime dateTime;
@@ -31,7 +32,8 @@ class ReminderModel extends Equatable {
     );
   }
 
-  Map<String, dynamic> toJson() => {
+  /// For Firestore: convert to Map
+Map<String, dynamic> toJson() => {
         'id': id,
         'title': title,
         'description': description,
@@ -39,13 +41,28 @@ class ReminderModel extends Equatable {
         'isCompleted': isCompleted,
       };
 
-  factory ReminderModel.fromJson(Map<String, dynamic> json) => ReminderModel(
-        id: json['id'],
-        title: json['title'],
-        description: json['description'],
-        dateTime: DateTime.parse(json['dateTime']),
-        isCompleted: json['isCompleted'],
-      );
+  factory ReminderModel.fromJson(Map<String, dynamic> json) {
+    final dateTimeValue = json['dateTime'];
+    DateTime dateTime;
+
+    if (dateTimeValue is Timestamp) {
+      dateTime = dateTimeValue.toDate(); // Firestore
+    } else if (dateTimeValue is String) {
+      dateTime = DateTime.parse(dateTimeValue); // SharedPreferences / json
+    } else {
+      dateTime = DateTime.now(); // fallback
+    }
+
+    return ReminderModel(
+      id: json['id'] ?? '',
+      title: json['title'] ?? '',
+      description: json['description'] ?? '',
+      dateTime: dateTime,
+      isCompleted: json['isCompleted'] ?? false,
+    );
+  }
+
+
 
   @override
   List<Object?> get props => [id, title, description, dateTime, isCompleted];

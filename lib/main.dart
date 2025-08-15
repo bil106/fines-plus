@@ -1,12 +1,13 @@
 
 // ignore_for_file: depend_on_referenced_packages
 
-import 'package:core_cubit/cubit/reminder_cubit.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:core_data/core_data.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:core_repository/car_info_repository.dart';
 import 'package:core_repository/reminder_repository.dart';
 import 'package:fines_plus/env/env.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -22,6 +23,8 @@ import 'router/app_router.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  await Firebase.initializeApp();
+  
   const flavor = String.fromEnvironment('FLAVOR', defaultValue: 'autolux');
   final config = await loadAppConfig(flavor);
 
@@ -34,20 +37,19 @@ Future<void> main() async {
 
   
   final reminderLocalDataSource = ReminderLocalDataSourceImpl(sharedPrefsManager);
-  final reminderRepository = ReminderRepository(reminderLocalDataSource);
+  final reminderRemoteDataSource = ReminderRemoteDataSourceImpl(FirebaseFirestore.instance);
+  final reminderRepository = ReminderRepository(localDataSource:  reminderLocalDataSource, remoteDataSource: reminderRemoteDataSource, );
 
 
   runApp(
-    MultiRepositoryProvider(
+MultiRepositoryProvider(
       providers: [
         RepositoryProvider<CarInfoRepository>.value(value: carInfoRepository),
         RepositoryProvider<ReminderRepository>.value(value: reminderRepository),
       ],
-      child: MultiBlocProvider(
-        providers: [BlocProvider(create: (context) => ReminderCubit(reminderRepository))],
-        child: MyApp(config: config),
-      ),
-    ),
+      child: MyApp(config: config),
+    )
+
   );
 }
 

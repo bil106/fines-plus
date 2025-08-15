@@ -11,3 +11,4 @@ export 'src/remote/car_info_remote_data_source.dart';
 
 export 'src/models/reminder_model.dart';
 export 'src/local/reminder_local_data_source.dart';
+export 'src/local/reminder_remote_data_source.dart';

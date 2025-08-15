@@ -58,8 +58,7 @@ class _CarInfoViewState extends State<_CarInfoView> {
 
   @override
   Widget build(BuildContext context) {
-
-    // final screenHeight = MediaQuery.of(context).size.height;
+    final cubit = context.read<CarInfoCubit>();
     return Scaffold(
       backgroundColor: AppColors.grey50,
       body: SafeArea(
@@ -69,10 +68,7 @@ class _CarInfoViewState extends State<_CarInfoView> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               AppSpacers.verticalXLarge,
-              Text(
-                S.of(context).addition_cars,
-                style: TextStyle(color: AppColors.black, fontWeight: FontWeight.bold, fontSize: 36),
-              ),
+              Text(S.of(context).addition_cars, style: const TextStyle(fontSize: 36, fontWeight: FontWeight.bold)),
               AppSpacers.verticalHuge,
               Card(
                 color: AppColors.neutreBlanc,
@@ -83,75 +79,50 @@ class _CarInfoViewState extends State<_CarInfoView> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        S.of(context).car_number,
-                        style: TextStyle(fontSize: 28, color: AppColors.black87, fontWeight: FontWeight.w600),
-                      ),
+                      Text(S.of(context).car_number, style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w600)),
                       AppSpacers.verticalSmall,
                       TextField(
                         controller: _carNumberController,
-                        onChanged: (v) => context.read<CarInfoCubit>().setCarNumber(v),
-                        style: const TextStyle(fontSize: 28, color: AppColors.black, fontWeight: FontWeight.w400),
+                        onChanged: cubit.setCarNumber,
+                        style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w400),
                         inputFormatters: [VehicleNumberFormatter(mapLatinToCyrillic: true)],
                         textCapitalization: TextCapitalization.characters,
                         keyboardType: TextInputType.text,
                         maxLength: 8,
                         decoration: InputDecoration(
                           hintText: 'АН0000НА',
-                          hintStyle: const TextStyle(
-                            fontSize: 28,
-                            color: AppColors.neutreGrey,
-                            fontWeight: FontWeight.w400,
-                          ),
+                          hintStyle: const TextStyle(fontSize: 28, color: AppColors.neutreGrey),
                           counterText: '',
                           filled: true,
                           fillColor: AppColors.grey50,
                           border: OutlineInputBorder(borderRadius: AppBorders.radius18, borderSide: BorderSide.none),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: AppBorders.radius18,
-                            borderSide: BorderSide.none,
-                          ),
                         ),
                       ),
                       AppSpacers.verticalLarge,
-                      Text(
-                        S.of(context).reg_number,
-                        style: TextStyle(fontSize: 28, color: AppColors.black87, fontWeight: FontWeight.w600),
-                      ),
+                      Text(S.of(context).reg_number, style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w600)),
                       AppSpacers.verticalSmall,
                       TextField(
                         controller: _techPassportController,
-                        onChanged: (v) => context.read<CarInfoCubit>().setTechPassport(v),
-                        style: const TextStyle(fontSize: 28, color: AppColors.black, fontWeight: FontWeight.w400),
+                        onChanged: cubit.setTechPassport,
+                        style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w400),
                         inputFormatters: [TechPassportFormatter()],
                         maxLength: 9,
                         decoration: InputDecoration(
                           hintText: 'ХЕ 128436',
-                          hintStyle: const TextStyle(
-                            fontSize: 28,
-                            color: AppColors.neutreGrey,
-                            fontWeight: FontWeight.w400,
-                          ),
+                          hintStyle: const TextStyle(fontSize: 28, color: AppColors.neutreGrey),
                           counterText: '',
                           filled: true,
                           fillColor: AppColors.grey50,
                           border: OutlineInputBorder(borderRadius: AppBorders.radius18, borderSide: BorderSide.none),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: AppBorders.radius18,
-                            borderSide: BorderSide.none,
-                          ),
                         ),
                       ),
                     ],
                   ),
                 ),
               ),
-
               AppSpacers.verticalLargeXL,
-
               BlocBuilder<CarInfoCubit, CarInfoState>(
                 builder: (context, state) {
-                  final cubit = context.read<CarInfoCubit>();
                   return SizedBox(
                     width: double.infinity,
                     height: 65,
@@ -161,16 +132,22 @@ class _CarInfoViewState extends State<_CarInfoView> {
                               final error = cubit.validate();
                               if (error != null) {
                                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(error)));
-                              } else {
-                                widget.onCheckFine?.call(state.carNumber);
+                                return;
                               }
+
+                              final carNumber = state.carNumber;
+
+                             
+                            
+
+                              widget.onCheckFine?.call(carNumber);
                             }
                           : null,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.blue700,
                         shape: RoundedRectangleBorder(borderRadius: AppBorders.radius16),
                       ),
-                      child: Text(S.of(context).search, style: TextStyle(fontSize: 24)),
+                      child: Text(S.of(context).search, style: const TextStyle(fontSize: 24)),
                     ),
                   );
                 },
@@ -182,3 +159,6 @@ class _CarInfoViewState extends State<_CarInfoView> {
     );
   }
 }
+
+
+   

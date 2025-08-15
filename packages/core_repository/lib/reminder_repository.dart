@@ -1,31 +1,31 @@
 import 'package:core_data/core_data.dart';
-import 'package:uuid/uuid.dart';
+
+
 
 class ReminderRepository {
   final ReminderLocalDataSource localDataSource;
+  final ReminderRemoteDataSource remoteDataSource;
 
-  ReminderRepository(this.localDataSource);
+  ReminderRepository({
+    required this.localDataSource,
+    required this.remoteDataSource,
+  });
 
-  Future<List<ReminderModel>> getAll() => localDataSource.getReminders();
-
-  Future<void> add(ReminderModel reminder) async {
-    final reminders = await getAll();
-    reminders.add(reminder.copyWith(id: const Uuid().v4()));
+  Future<List<ReminderModel>> getAll(String carNumber) async {
+    final reminders = await remoteDataSource.getReminders(carNumber);
     await localDataSource.saveReminders(reminders);
+    return reminders;
   }
 
-  Future<void> update(ReminderModel reminder) async {
-    final reminders = await getAll();
-    final index = reminders.indexWhere((r) => r.id == reminder.id);
-    if (index != -1) {
-      reminders[index] = reminder;
-      await localDataSource.saveReminders(reminders);
-    }
+  Future<void> add(String carNumber, ReminderModel reminder) async {
+    await remoteDataSource.addReminder(carNumber, reminder);
   }
 
-  Future<void> delete(String id) async {
-    final reminders = await getAll();
-    reminders.removeWhere((r) => r.id == id);
-    await localDataSource.saveReminders(reminders);
+  Future<void> update(String carNumber, ReminderModel reminder) async {
+    await remoteDataSource.updateReminder(carNumber, reminder);
+  }
+
+  Future<void> delete(String carNumber, String id) async {
+    await remoteDataSource.deleteReminder(carNumber, id);
   }
 }
