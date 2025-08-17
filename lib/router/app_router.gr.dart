@@ -239,18 +239,49 @@ class HomeRouteWrapper extends PageRouteInfo<void> {
 
 /// generated route for
 /// [RemindersScreen]
-class RemindersRoute extends PageRouteInfo<void> {
-  const RemindersRoute({List<PageRouteInfo>? children})
-    : super(RemindersRoute.name, initialChildren: children);
+class RemindersRoute extends PageRouteInfo<RemindersRouteArgs> {
+  RemindersRoute({
+    Key? key,
+    required String carNumber,
+    List<PageRouteInfo>? children,
+  }) : super(
+         RemindersRoute.name,
+         args: RemindersRouteArgs(key: key, carNumber: carNumber),
+         initialChildren: children,
+       );
 
   static const String name = 'RemindersRoute';
 
   static PageInfo page = PageInfo(
     name,
     builder: (data) {
-      return const RemindersScreen(carNumber: '',);
+      final args = data.argsAs<RemindersRouteArgs>();
+      return RemindersScreen(key: args.key, carNumber: args.carNumber);
     },
   );
+}
+
+class RemindersRouteArgs {
+  const RemindersRouteArgs({this.key, required this.carNumber});
+
+  final Key? key;
+
+  final String carNumber;
+
+  @override
+  String toString() {
+    return 'RemindersRouteArgs{key: $key, carNumber: $carNumber}';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! RemindersRouteArgs) return false;
+    return key == other.key && carNumber == other.carNumber;
+  }
+
+  @override
+  int get hashCode => key.hashCode ^ carNumber.hashCode;
 }
 
 /// generated route for

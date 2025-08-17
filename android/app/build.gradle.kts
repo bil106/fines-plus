@@ -10,17 +10,7 @@ android {
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
-
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_11.toString()
-    }
-
     defaultConfig {
-    
         applicationId = "com.example.fines_plus"
         minSdk = 23
         targetSdk = flutter.targetSdkVersion
@@ -28,22 +18,31 @@ android {
         versionName = flutter.versionName
     }
 
+    compileOptions {
+        // Включаем десугаринг
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
+        isCoreLibraryDesugaringEnabled = true
+    }
+
+    kotlinOptions {
+        jvmTarget = "11"
+    }
+
     buildTypes {
-        release {
-        
+        getByName("release") {
             signingConfig = signingConfigs.getByName("debug")
         }
     }
 }
+
 dependencies {
-  // Import the Firebase BoM
-  implementation(platform("com.google.firebase:firebase-bom:34.1.0"))
+    implementation(platform("com.google.firebase:firebase-bom:34.1.0"))
 
-
-  // TODO: Add the dependencies for Firebase products you want to use
-  // When using the BoM, don't specify versions in Firebase dependencies
-  // https://firebase.google.com/docs/android/setup#available-libraries
+    // core library desugaring для flutter_local_notifications
+    add("coreLibraryDesugaring", "com.android.tools:desugar_jdk_libs:2.1.4")
 }
+
 flutter {
     source = "../.."
 }
