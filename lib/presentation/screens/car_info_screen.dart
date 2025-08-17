@@ -6,6 +6,7 @@ import 'package:core_repository/car_info_repository.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_borders.dart';
 import 'package:design_system/constants/app_spacers.dart';
+import 'package:design_system/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:core_utils/formatters/vehicle_formatters.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -59,6 +60,7 @@ class _CarInfoViewState extends State<_CarInfoView> {
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<CarInfoCubit>();
+    final textTheme = Theme.of(context).textTheme;
     return Scaffold(
       backgroundColor: AppColors.grey50,
       body: SafeArea(
@@ -68,7 +70,7 @@ class _CarInfoViewState extends State<_CarInfoView> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               AppSpacers.verticalXLarge,
-              Text(S.of(context).addition_cars, style: const TextStyle(fontSize: 36, fontWeight: FontWeight.bold)),
+              Text(S.of(context).addition_cars, style: textTheme.title),
               AppSpacers.verticalHuge,
               Card(
                 color: AppColors.neutreBlanc,
@@ -91,7 +93,7 @@ class _CarInfoViewState extends State<_CarInfoView> {
                         maxLength: 8,
                         decoration: InputDecoration(
                           hintText: 'АН0000НА',
-                          hintStyle: const TextStyle(fontSize: 28, color: AppColors.neutreGrey),
+                           hintStyle: textTheme.hintText,
                           counterText: '',
                           filled: true,
                           fillColor: AppColors.grey50,
@@ -109,7 +111,7 @@ class _CarInfoViewState extends State<_CarInfoView> {
                         maxLength: 9,
                         decoration: InputDecoration(
                           hintText: 'ХЕ 128436',
-                          hintStyle: const TextStyle(fontSize: 28, color: AppColors.neutreGrey),
+                          hintStyle: textTheme.hintText,
                           counterText: '',
                           filled: true,
                           fillColor: AppColors.grey50,
@@ -147,7 +149,7 @@ class _CarInfoViewState extends State<_CarInfoView> {
                         backgroundColor: AppColors.blue700,
                         shape: RoundedRectangleBorder(borderRadius: AppBorders.radius16),
                       ),
-                      child: Text(S.of(context).search, style: const TextStyle(fontSize: 24)),
+                      child: Text(S.of(context).search, style: textTheme.buttonText),
                     ),
                   );
                 },

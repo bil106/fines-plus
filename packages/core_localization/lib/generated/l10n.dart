@@ -18,8 +18,10 @@ class S {
   static S? _current;
 
   static S get current {
-    assert(_current != null,
-        'No instance of S was loaded. Try to initialize the S delegate before accessing S.current.');
+    assert(
+      _current != null,
+      'No instance of S was loaded. Try to initialize the S delegate before accessing S.current.',
+    );
     return _current!;
   }
 
@@ -41,8 +43,10 @@ class S {
 
   static S of(BuildContext context) {
     final instance = S.maybeOf(context);
-    assert(instance != null,
-        'No instance of S present in the widget tree. Did you add S.delegate in localizationsDelegates?');
+    assert(
+      instance != null,
+      'No instance of S present in the widget tree. Did you add S.delegate in localizationsDelegates?',
+    );
     return instance!;
   }
 
@@ -52,42 +56,37 @@ class S {
 
   /// `Enter VIN`
   String get enter_vin {
-    return Intl.message(
-      'Enter VIN',
-      name: 'enter_vin',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Enter VIN', name: 'enter_vin', desc: '', args: []);
+  }
+
+  /// `Auto`
+  String get auto {
+    return Intl.message('Auto', name: 'auto', desc: '', args: []);
+  }
+
+  /// `Fines`
+  String get fines {
+    return Intl.message('Fines', name: 'fines', desc: '', args: []);
+  }
+
+  /// `Reminder`
+  String get reminder {
+    return Intl.message('Reminder', name: 'reminder', desc: '', args: []);
   }
 
   /// `Support`
   String get support {
-    return Intl.message(
-      'Support',
-      name: 'support',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Support', name: 'support', desc: '', args: []);
   }
 
   /// `Contact us:`
   String get contact_us {
-    return Intl.message(
-      'Contact us:',
-      name: 'contact_us',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Contact us:', name: 'contact_us', desc: '', args: []);
   }
 
   /// `Phone`
   String get phone {
-    return Intl.message(
-      'Phone',
-      name: 'phone',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Phone', name: 'phone', desc: '', args: []);
   }
 
   /// `Write to Viber`
@@ -102,12 +101,7 @@ class S {
 
   /// `Email`
   String get email {
-    return Intl.message(
-      'Email',
-      name: 'email',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Email', name: 'email', desc: '', args: []);
   }
 
   /// `Adding a car`
@@ -122,22 +116,12 @@ class S {
 
   /// `Add a car`
   String get add_cars {
-    return Intl.message(
-      'Add a car',
-      name: 'add_cars',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Add a car', name: 'add_cars', desc: '', args: []);
   }
 
   /// `Car number`
   String get car_number {
-    return Intl.message(
-      'Car number',
-      name: 'car_number',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Car number', name: 'car_number', desc: '', args: []);
   }
 
   /// `Technical passport number`
@@ -152,12 +136,7 @@ class S {
 
   /// `Search`
   String get search {
-    return Intl.message(
-      'Search',
-      name: 'search',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Search', name: 'search', desc: '', args: []);
   }
 
   /// `Checking the fine`
@@ -172,12 +151,7 @@ class S {
 
   /// `Check fines`
   String get check_fines {
-    return Intl.message(
-      'Check fines',
-      name: 'check_fines',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Check fines', name: 'check_fines', desc: '', args: []);
   }
 
   /// `Checking fines`
@@ -200,24 +174,9 @@ class S {
     );
   }
 
-  /// `Reminder`
-  String get reminder {
-    return Intl.message(
-      'Reminder',
-      name: 'reminder',
-      desc: '',
-      args: [],
-    );
-  }
-
   /// `Settings`
   String get settings {
-    return Intl.message(
-      'Settings',
-      name: 'settings',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Settings', name: 'settings', desc: '', args: []);
   }
 
   /// `Push notifications`
@@ -232,12 +191,7 @@ class S {
 
   /// `Pay`
   String get pay {
-    return Intl.message(
-      'Pay',
-      name: 'pay',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Pay', name: 'pay', desc: '', args: []);
   }
 }
 

@@ -3,6 +3,9 @@ import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_borders.dart';
 import 'package:design_system/constants/app_spacers.dart';
+import 'package:design_system/theme/app_text_theme.dart';
+import 'package:design_system/theme/app_theme.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -18,6 +21,7 @@ class FinesScreen extends StatefulWidget {
 class _FinesScreenState extends State<FinesScreen> {
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.dark,
       child: Container(
@@ -33,10 +37,7 @@ class _FinesScreenState extends State<FinesScreen> {
                 height: 200,
                 decoration: BoxDecoration(color: AppColors.blue700, borderRadius: BorderRadius.circular(50)),
                 alignment: Alignment.center,
-                child: const Text(
-                  'LOGO',
-                  style: TextStyle(color: AppColors.neutreBlanc, fontSize: 56, fontWeight: FontWeight.bold),
-                ),
+                child: Text('LOGO', style: textTheme.whiteBigBold),
               ),
               AppSpacers.verticalMassive,
 
@@ -53,7 +54,7 @@ class _FinesScreenState extends State<FinesScreen> {
                       widget.onFineCheck!();
                     }
                   },
-                  child: Text(S.of(context).check_fines, style: TextStyle(fontSize: 24, color: AppColors.neutreBlanc)),
+                  child: Text(S.of(context).check_fines, style: textTheme.whiteNormal),
                 ),
               ),
               AppSpacers.verticalXXLarge,
@@ -78,9 +79,7 @@ class _FinesScreenState extends State<FinesScreen> {
                       child: const Icon(Icons.check, color: AppColors.neutreBlanc, size: 26),
                     ),
                     AppSpacers.horizontalLarge,
-                    Expanded(
-                      child: Text(S.of(context).no_fines, style: TextStyle(fontSize: 24, fontWeight: FontWeight.w500)),
-                    ),
+                    Expanded(child: Text(S.of(context).no_fines, style: textTheme.noFinesText)),
                   ],
                 ),
               ),

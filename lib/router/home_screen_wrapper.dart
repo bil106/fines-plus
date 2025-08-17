@@ -1,5 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:core_cubit/cubit/reminder_cubit.dart';
+import 'package:core_localization/generated/l10n.dart';
+
 import 'package:core_repository/reminder_repository.dart';
 import 'package:design_system/colors/app_colors.dart';
 
@@ -13,6 +15,10 @@ import 'package:fines_plus/presentation/screens/settings_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+
+
+
 
 @RoutePage()
 class HomeScreenWrapper extends StatefulWidget {
@@ -63,7 +69,7 @@ class _HomeScreenWrapperState extends State<HomeScreenWrapper> {
 
   @override
   Widget build(BuildContext context) {
-    // Пока загружаем номер — показываем индикатор
+ 
     if (_carNumber == null) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
@@ -97,7 +103,7 @@ class _HomeScreenWrapperState extends State<HomeScreenWrapper> {
             },
           ),
 
-          /// Передаём carNumber из памяти
+
           BlocProvider(
             create: (_) =>
                 ReminderCubit(repository: context.read<ReminderRepository>(), carNumber: _carNumber!)..load(),
@@ -106,7 +112,7 @@ class _HomeScreenWrapperState extends State<HomeScreenWrapper> {
 
           CarInfoScreen(
             onCheckFine: (number) {
-              _saveCarNumber(number); // сохраняем в память
+              _saveCarNumber(number); 
               _pageController.animateToPage(
                 fineCheckPageIndex,
                 duration: const Duration(milliseconds: 300),
@@ -122,10 +128,10 @@ class _HomeScreenWrapperState extends State<HomeScreenWrapper> {
         backgroundColor: AppColors.neutreBlanc,
         currentIndex: _currentIndex > 2 ? 0 : _currentIndex,
         onTap: _onTabTapped,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.directions_car), label: 'Авто'),
-          BottomNavigationBarItem(icon: Icon(Icons.receipt), label: 'Штрафы'),
-          BottomNavigationBarItem(icon: Icon(Icons.support), label: 'Нагадування'),
+        items:  [
+          BottomNavigationBarItem(icon: Icon(Icons.directions_car), label:S.of(context).auto ),
+          BottomNavigationBarItem(icon: Icon(Icons.receipt), label: S.of(context).fines),
+          BottomNavigationBarItem(icon: Icon(Icons.support), label: S.of(context).reminder),
         ],
       ),
     );

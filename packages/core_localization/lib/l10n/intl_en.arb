@@ -1,6 +1,9 @@
 {
   "@@locale": "en",
     "enter_vin": "Enter VIN",
+    "auto": "Auto",
+    "fines": "Fines",
+    "reminder": "Reminder",
     "support": "Support",
     "contact_us": "Contact us:",
     "phone": "Phone",
@@ -15,7 +18,6 @@
     "check_fines": "Check fines",
     "checking_fines": "Checking fines",
     "no_fines": "There are no fines for you",
-    "reminder": "Reminder",
     "settings": "Settings",
     "push_notifications": "Push notifications",
     "pay": "Pay"

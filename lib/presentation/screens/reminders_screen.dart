@@ -3,14 +3,18 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:core/features/reminders/widgets/reminder_dialog.dart';
 import 'package:core_cubit/cubit/reminder_cubit.dart';
+import 'package:core_localization/generated/l10n.dart';
 import 'package:core_repository/reminder_repository.dart';
 import 'package:design_system/colors/app_colors.dart';
 
 import 'package:design_system/constants/app_spacers.dart';
+import 'package:design_system/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+
+
 
 @RoutePage()
 class RemindersScreen extends StatelessWidget {
@@ -32,6 +36,7 @@ class _RemindersView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
     return Scaffold(
       backgroundColor: AppColors.grey50,
       body: SafeArea(
@@ -47,14 +52,13 @@ class _RemindersView extends StatelessWidget {
 
             return ListView.separated(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 40),
-              itemCount: state.reminders.length + 1, 
+              itemCount: state.reminders.length + 1,
               separatorBuilder: (_, __) => const Divider(color: Colors.grey),
               itemBuilder: (context, index) {
                 if (index == 0) {
-          
-                  return const Padding(
+                  return Padding(
                     padding: EdgeInsets.only(bottom: 10),
-                    child: Text('Нагадування', style: TextStyle(fontSize: 36, fontWeight: FontWeight.bold)),
+                    child: Text(S.of(context).reminder, style: textTheme.title),
                   );
                 }
 
@@ -77,20 +81,19 @@ class _RemindersView extends StatelessWidget {
                   ),
                   subtitle: Text(
                     '${reminder.description}\n${DateFormat('dd.MM.yyyy HH:mm').format(reminder.dateTime)}',
-                    style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 20),
+                    style: textTheme.headlineSmall,
                   ),
                   trailing: IconButton(
                     icon: const Icon(Icons.delete, color: Colors.red),
                     onPressed: () => context.read<ReminderCubit>().deleteReminder(reminder.id),
                   ),
                   onTap: () {
-                 
                     showDialog(
                       context: context,
                       barrierColor: Colors.transparent,
                       builder: (_) => ReminderDialog(
                         cubit: context.read<ReminderCubit>(),
-                        reminder: reminder, 
+                        reminder: reminder,
                         onSaved: () => context.read<ReminderCubit>().load(),
                       ),
                     );
@@ -103,7 +106,6 @@ class _RemindersView extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          
           showDialog(
             context: context,
             barrierColor: Colors.transparent,
@@ -119,19 +121,19 @@ class _RemindersView extends StatelessWidget {
   }
 }
 
-
 class _EmptyReminders extends StatelessWidget {
   const _EmptyReminders();
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           AppSpacers.verticalXLarge,
-          const Text('Нагадування', style: TextStyle(fontSize: 36, fontWeight: FontWeight.bold)),
+          Text(S.of(context).reminder, style: textTheme.title),
           const SizedBox(height: 150),
           Center(
             child: Container(
@@ -142,8 +144,8 @@ class _EmptyReminders extends StatelessWidget {
             ),
           ),
           AppSpacers.verticalLarge,
-          const Center(
-            child: Text('Нагадувань поки немає', style: TextStyle(fontSize: 24), textAlign: TextAlign.center),
+          Center(
+            child: Text(S.of(context).no_fines, style: textTheme.noFinesText, textAlign: TextAlign.center),
           ),
         ],
       ),

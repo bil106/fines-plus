@@ -22,30 +22,30 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
-        "add_cars": MessageLookupByLibrary.simpleMessage("Додати авто"),
-        "addition_cars": MessageLookupByLibrary.simpleMessage("Додавання авто"),
-        "car_number": MessageLookupByLibrary.simpleMessage("Номер авто"),
-        "check_fine_title":
-            MessageLookupByLibrary.simpleMessage("Перевірка штрафу"),
-        "check_fines":
-            MessageLookupByLibrary.simpleMessage("Перевірити штрафи"),
-        "checking_fines":
-            MessageLookupByLibrary.simpleMessage("Перевірка штрафів"),
-        "contact_us":
-            MessageLookupByLibrary.simpleMessage("Звʼяжіться з нами:"),
-        "email": MessageLookupByLibrary.simpleMessage("Email"),
-        "enter_vin": MessageLookupByLibrary.simpleMessage("Введіть VIN"),
-        "no_fines":
-            MessageLookupByLibrary.simpleMessage("На вас немає штрафів"),
-        "pay": MessageLookupByLibrary.simpleMessage("Сплатити"),
-        "phone": MessageLookupByLibrary.simpleMessage("Телефон"),
-        "push_notifications":
-            MessageLookupByLibrary.simpleMessage("Push-сповіщення"),
-        "reg_number": MessageLookupByLibrary.simpleMessage("Номер техпаспорта"),
-        "reminder": MessageLookupByLibrary.simpleMessage("Нагадування"),
-        "search": MessageLookupByLibrary.simpleMessage("Пошук"),
-        "settings": MessageLookupByLibrary.simpleMessage("Налаштування"),
-        "support": MessageLookupByLibrary.simpleMessage("Підтримка"),
-        "write_viber": MessageLookupByLibrary.simpleMessage("Написати у Viber")
-      };
+    "add_cars": MessageLookupByLibrary.simpleMessage("Додати авто"),
+    "addition_cars": MessageLookupByLibrary.simpleMessage("Додавання авто"),
+    "auto": MessageLookupByLibrary.simpleMessage("Авто"),
+    "car_number": MessageLookupByLibrary.simpleMessage("Номер авто"),
+    "check_fine_title": MessageLookupByLibrary.simpleMessage(
+      "Перевірка штрафу",
+    ),
+    "check_fines": MessageLookupByLibrary.simpleMessage("Перевірити штрафи"),
+    "checking_fines": MessageLookupByLibrary.simpleMessage("Перевірка штрафів"),
+    "contact_us": MessageLookupByLibrary.simpleMessage("Звʼяжіться з нами:"),
+    "email": MessageLookupByLibrary.simpleMessage("Email"),
+    "enter_vin": MessageLookupByLibrary.simpleMessage("Введіть VIN"),
+    "fines": MessageLookupByLibrary.simpleMessage("Штрафи"),
+    "no_fines": MessageLookupByLibrary.simpleMessage("На вас немає штрафів"),
+    "pay": MessageLookupByLibrary.simpleMessage("Сплатити"),
+    "phone": MessageLookupByLibrary.simpleMessage("Телефон"),
+    "push_notifications": MessageLookupByLibrary.simpleMessage(
+      "Push-сповіщення",
+    ),
+    "reg_number": MessageLookupByLibrary.simpleMessage("Номер техпаспорта"),
+    "reminder": MessageLookupByLibrary.simpleMessage("Нагадування"),
+    "search": MessageLookupByLibrary.simpleMessage("Пошук"),
+    "settings": MessageLookupByLibrary.simpleMessage("Налаштування"),
+    "support": MessageLookupByLibrary.simpleMessage("Підтримка"),
+    "write_viber": MessageLookupByLibrary.simpleMessage("Написати у Viber"),
+  };
 }

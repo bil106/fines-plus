@@ -1,6 +1,9 @@
 {
    "@@locale": "uk",
    "enter_vin": "Введіть VIN",
+   "auto": "Авто",
+   "fines": "Штрафи",
+   "reminder": "Нагадування",
    "support": "Підтримка",
    "contact_us": "Звʼяжіться з нами:",
    "phone": "Телефон",
@@ -15,7 +18,6 @@
    "check_fines": "Перевірити штрафи",
    "checking_fines": "Перевірка штрафів",
    "no_fines": "На вас немає штрафів",
-   "reminder": "Нагадування",
    "settings": "Налаштування",
    "push_notifications": "Push-сповіщення",
    "pay": "Сплатити"

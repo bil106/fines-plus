@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/constants/app_borders.dart';
 import 'package:design_system/constants/app_spacers.dart';
+import 'package:design_system/theme/app_theme.dart';
 import 'package:fines_plus/router/app_router.dart';
 import 'package:design_system/colors/app_colors.dart';
 
@@ -21,7 +22,7 @@ class _AddCarScreenState extends State<AddCarScreen> {
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
-
+final textTheme = Theme.of(context).textTheme;
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle(statusBarColor: AppColors.grey50, statusBarIconBrightness: Brightness.dark),
       child: Container(
@@ -36,8 +37,7 @@ class _AddCarScreenState extends State<AddCarScreen> {
                   AppSpacers.verticalXLarge,
                   Text(
                     S.of(context).add_cars,
-                    style: TextStyle(color: AppColors.black, fontWeight: FontWeight.bold, fontSize: 36),
-                  ),
+                    style: textTheme.title),
                   AppSpacers.verticalHuge,
                   SizedBox(
                     height: screenHeight * 0.6,
@@ -69,7 +69,7 @@ class _AddCarScreenState extends State<AddCarScreen> {
                                   shape: RoundedRectangleBorder(borderRadius: AppBorders.radius16),
                                   padding: const EdgeInsets.symmetric(vertical: 8),
                                 ),
-                                child: Text(S.of(context).add_cars, style: TextStyle(fontSize: 24)),
+                                child: Text(S.of(context).add_cars, style: textTheme.buttonText),
                               ),
                             ),
                           ],
