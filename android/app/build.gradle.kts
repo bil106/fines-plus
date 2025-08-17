@@ -8,7 +8,7 @@ plugins {
 android {
     namespace = "com.example.fines_plus"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+    ndkVersion = "27.0.12077973"
 
     defaultConfig {
         applicationId = "com.example.fines_plus"

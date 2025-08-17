@@ -92,7 +92,7 @@ final appLightTheme = ThemeData(
     //   color: AppColors.black,
     //   fontWeight: FontWeight.bold,
     //   fontSize: 36,
-      
+
     // ),
     titleLarge: TextStyle(
       fontSize: 28,
@@ -111,6 +111,7 @@ final appLightTheme = ThemeData(
     ),
   ),
 );
+
 extension AppTextTheme on TextTheme {
   TextStyle get totalFines => const TextStyle(
         fontSize: 58,
@@ -136,25 +137,23 @@ extension AppTextTheme on TextTheme {
         color: AppColors.black87,
       );
   TextStyle get title => const TextStyle(
-       color: AppColors.black,
+        color: AppColors.black,
         fontWeight: FontWeight.bold,
         fontSize: 36,
       );
   TextStyle get noFinesText => const TextStyle(
-      fontSize: 24,
+        fontSize: 24,
         fontWeight: FontWeight.w500,
         color: AppColors.black87,
       );
   TextStyle get buttonText => const TextStyle(
-       color: AppColors.neutreBlanc,
+        color: AppColors.neutreBlanc,
         fontWeight: FontWeight.bold,
         fontSize: 22,
       );
   TextStyle get hintText => const TextStyle(
-       color: AppColors.neutreGrey,
+        color: AppColors.neutreGrey,
         fontWeight: FontWeight.w400,
         fontSize: 28,
       );
 }
-
-
