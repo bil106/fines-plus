@@ -27,10 +27,11 @@ class RemindersScreen extends StatelessWidget {
       create: (_) => ReminderCubit(
         repository: context.read<ReminderRepository>(),
         carNumber: carNumber,
-        pushHelper: RepositoryProvider.of<PushHelper>(context),
-      ),
+        pushHelper: context.read<PushHelper>(),
+      )..load(), 
       child: _RemindersView(),
     );
+
   }
 }
 

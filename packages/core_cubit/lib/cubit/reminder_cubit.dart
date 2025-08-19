@@ -17,16 +17,21 @@ class ReminderCubit extends Cubit<ReminderState> {
     load();
   }
 
-  Future<void> load() async {
+Future<void> load() async {
+    if (isClosed) return; // safety check
     emit(state.copyWith(isLoading: true, errorMessage: null));
     try {
       final reminders = await repository.getAll(carNumber);
-      emit(state.copyWith(reminders: reminders, isLoading: false));
+      if (!isClosed) {
+        emit(state.copyWith(reminders: reminders, isLoading: false));
+      }
     } catch (e) {
-      emit(state.copyWith(
-        isLoading: false,
-        errorMessage: 'Loading error: $e',
-      ));
+      if (!isClosed) {
+        emit(state.copyWith(
+          isLoading: false,
+          errorMessage: 'Loading error: $e',
+        ));
+      }
     }
   }
 

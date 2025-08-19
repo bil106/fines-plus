@@ -27,25 +27,31 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
 
+    // listener for push notifications when the application is open
     FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
       debugPrint("📩 Notification received: ${message.notification?.title}");
 
-      await widget.flutterLocalNotificationsPlugin.show(
-        0,
-        'Test',
-        'Checking local notifications',
-        const NotificationDetails(
-          android: AndroidNotificationDetails(
-            'reminders_channel',
-            'Reminders',
-            importance: Importance.max,
-            priority: Priority.high,
-            playSound: true,
+      final notification = message.notification;
+      if (notification != null) {
+        await widget.flutterLocalNotificationsPlugin.show(
+          0,
+          notification.title ?? 'Reminder',
+          notification.body ?? '',
+          const NotificationDetails(
+            android: AndroidNotificationDetails(
+              'reminders_channel',
+              'Reminders',
+              importance: Importance.max,
+              priority: Priority.high,
+              playSound: true,
+            ),
+            iOS: DarwinNotificationDetails(presentAlert: true, presentBadge: true, presentSound: true),
           ),
-        ),
-      );
+        );
+      }
     });
 
+    // opening the application via push
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       debugPrint("➡️ Opened the app via notification");
     });
