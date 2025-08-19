@@ -2,15 +2,26 @@ import 'package:core_cubit/cubit/reminder_cubit.dart';
 import 'package:core_data/core_data.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_spacers.dart';
+import 'package:fines_plus/services/app_initializer.dart';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+
+import '../main.dart';
+
+
+
+
+
 
 
 
 class ReminderDialog extends StatefulWidget {
   final ReminderModel? reminder;
-final VoidCallback? onSaved;
+  final VoidCallback? onSaved;
   final ReminderCubit cubit;
+ 
+
   const ReminderDialog({super.key, this.reminder, this.onSaved, required this.cubit});
 
   @override
@@ -43,20 +54,14 @@ class _ReminderDialogState extends State<ReminderDialog> {
 
     return AlertDialog(
       backgroundColor: AppColors.neutreBlanc,
-      insetPadding: EdgeInsets.symmetric(
-        horizontal: screenWidth * 0.06, 
-        vertical: 24,
-      ),
+      insetPadding: EdgeInsets.symmetric(horizontal: screenWidth * 0.06, vertical: 24),
       contentPadding: const EdgeInsets.all(16),
       title: Text(
         widget.reminder == null ? 'Нове нагадування' : 'Редагувати нагадування',
         style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
       ),
       content: ConstrainedBox(
-        constraints: BoxConstraints(
-          maxWidth: 500, 
-          minWidth: screenWidth * 0.8,
-        ),
+        constraints: BoxConstraints(maxWidth: 500, minWidth: screenWidth * 0.8),
         child: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -64,19 +69,26 @@ class _ReminderDialogState extends State<ReminderDialog> {
               AppSpacers.verticalMedium,
               TextField(
                 controller: titleController,
-                decoration: const InputDecoration(labelText: 'Заголовок', labelStyle: TextStyle(fontWeight: FontWeight.w400, fontSize: 18)),
+                decoration: const InputDecoration(
+                  labelText: 'Заголовок',
+                  labelStyle: TextStyle(fontWeight: FontWeight.w400, fontSize: 18),
+                ),
               ),
               AppSpacers.verticalLarge,
               TextField(
                 controller: descriptionController,
-                decoration: const InputDecoration(labelText: 'Опис',labelStyle: TextStyle(fontWeight: FontWeight.w400, fontSize: 18)),
+                decoration: const InputDecoration(
+                  labelText: 'Опис',
+                  labelStyle: TextStyle(fontWeight: FontWeight.w400, fontSize: 18),
+                ),
               ),
               AppSpacers.verticalLarge,
               Row(
                 children: [
                   Expanded(
                     child: Text(
-                      DateFormat('dd.MM.yyyy HH:mm').format(selectedDateTime),style: TextStyle(fontWeight: FontWeight.w500, fontSize: 18),
+                      DateFormat('dd.MM.yyyy HH:mm').format(selectedDateTime),
+                      style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 18),
                     ),
                   ),
                   TextButton(
@@ -105,7 +117,10 @@ class _ReminderDialogState extends State<ReminderDialog> {
                         }
                       }
                     },
-                    child: const Text('Вибрати дату',style: TextStyle(fontWeight: FontWeight.w500, fontSize: 18),),
+                    child: const Text(
+                      'Вибрати дату',
+                      style: TextStyle(fontWeight: FontWeight.w500, fontSize: 18),
+                    ),
                   ),
                 ],
               ),
@@ -116,30 +131,51 @@ class _ReminderDialogState extends State<ReminderDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('Скасування',style: TextStyle(fontWeight: FontWeight.w500, fontSize: 18)),
+          child: const Text(
+            'Скасування',
+            style: TextStyle(fontWeight: FontWeight.w500, fontSize: 18),
+          ),
         ),
-    ElevatedButton(
-          onPressed: () {
+       ElevatedButton(
+          onPressed: () async {
+            final cubit = widget.cubit;
+            if (cubit.carNumber.isEmpty) return;
+
             final newReminder = ReminderModel(
-              id: widget.reminder?.id ?? '',
-              title: titleController.text,
-              description: descriptionController.text,
+              id: widget.reminder?.id ?? 'reminder_${DateTime.now().millisecondsSinceEpoch}',
+              title: titleController.text.trim().isEmpty ? 'Test notification' : titleController.text.trim(),
+              description: descriptionController.text.trim().isEmpty
+                  ? 'Push check'
+                  : descriptionController.text.trim(),
               dateTime: selectedDateTime,
               isCompleted: widget.reminder?.isCompleted ?? false,
             );
 
-            final cubit = widget.cubit; 
-            if (widget.reminder == null) {
-              cubit.addReminder(newReminder);
-            } else {
-              cubit.updateReminder(newReminder);
-            }
+            try {
+              if (widget.reminder == null) {
+                await cubit.addReminder(newReminder);
+              } else {
+                await cubit.updateReminder(newReminder);
+              }
 
-            widget.onSaved?.call();
-            Navigator.pop(context);
+              
+              await appInitializer.scheduleReminder(newReminder);
+
+              if (!mounted) return;
+              Navigator.pop(context);
+              debugPrint('✅ Reminder saved and scheduled: ${newReminder.id}');
+            } catch (e, stackTrace) {
+              debugPrint('Error saving reminder: $e');
+              debugPrint('$stackTrace');
+            }
           },
-          child: const Text('Зберегти', style: TextStyle(fontWeight: FontWeight.w500, fontSize: 18)),
+          child: const Text('Зберегти'),
         )
+
+
+
+
+
 
       ],
     );

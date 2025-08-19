@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:core_cubit/cubit/reminder_cubit.dart';
+import 'package:core_data/core_data.dart';
 import 'package:core_localization/generated/l10n.dart';
 
 import 'package:core_repository/reminder_repository.dart';
@@ -106,7 +107,8 @@ class _HomeScreenWrapperState extends State<HomeScreenWrapper> {
 
           BlocProvider(
             create: (_) =>
-                ReminderCubit(repository: context.read<ReminderRepository>(), carNumber: _carNumber!)..load(),
+                ReminderCubit(repository: context.read<ReminderRepository>(), carNumber: _carNumber!, pushHelper: RepositoryProvider.of<PushHelper>(context),
+            )..load(),
             child: RemindersScreen(carNumber: _carNumber!),
           ),
 

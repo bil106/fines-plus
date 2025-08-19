@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:core_data/core_data.dart';
 
 
@@ -11,19 +12,25 @@ class ReminderRepository {
     required this.remoteDataSource,
   });
 
-  Future<List<ReminderModel>> getAll(String carNumber) async {
-    final reminders = await remoteDataSource.getReminders(carNumber);
-    await localDataSource.saveReminders(reminders);
-    return reminders;
-  }
+ Future<void> add(String carNumber, ReminderModel reminder) async {
+    final collectionRef = FirebaseFirestore.instance.collection('reminders').doc(carNumber).collection('items');
 
-  Future<void> add(String carNumber, ReminderModel reminder) async {
-    await remoteDataSource.addReminder(carNumber, reminder);
+    final docRef = reminder.id.isNotEmpty ? collectionRef.doc(reminder.id) : collectionRef.doc();
+    await docRef.set(reminder.toJson());
   }
 
   Future<void> update(String carNumber, ReminderModel reminder) async {
-    await remoteDataSource.updateReminder(carNumber, reminder);
+    final docRef =
+        FirebaseFirestore.instance.collection('reminders').doc(carNumber).collection('items').doc(reminder.id);
+    await docRef.set(reminder.toJson());
   }
+
+  Future<List<ReminderModel>> getAll(String carNumber) async {
+    final snapshot = await FirebaseFirestore.instance.collection('reminders').doc(carNumber).collection('items').get();
+
+    return snapshot.docs.map((doc) => ReminderModel.fromJson(doc.data())).toList();
+  }
+
 
   Future<void> delete(String carNumber, String id) async {
     await remoteDataSource.deleteReminder(carNumber, id);

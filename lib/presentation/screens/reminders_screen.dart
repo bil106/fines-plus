@@ -1,20 +1,19 @@
 // ignore_for_file: use_build_context_synchronously, depend_on_referenced_packages
 
 import 'package:auto_route/auto_route.dart';
-import 'package:core/features/reminders/widgets/reminder_dialog.dart';
 import 'package:core_cubit/cubit/reminder_cubit.dart';
+import 'package:core_data/core_data.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:core_repository/reminder_repository.dart';
 import 'package:design_system/colors/app_colors.dart';
 
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
+import 'package:fines_plus/services/reminder_dialog.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-
-
 
 @RoutePage()
 class RemindersScreen extends StatelessWidget {
@@ -25,8 +24,12 @@ class RemindersScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => ReminderCubit(repository: context.read<ReminderRepository>(), carNumber: carNumber),
-      child: const _RemindersView(),
+      create: (_) => ReminderCubit(
+        repository: context.read<ReminderRepository>(),
+        carNumber: carNumber,
+        pushHelper: RepositoryProvider.of<PushHelper>(context),
+      ),
+      child: _RemindersView(),
     );
   }
 }
@@ -37,6 +40,8 @@ class _RemindersView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+    final cubit = context.read<ReminderCubit>();
+
     return Scaffold(
       backgroundColor: AppColors.grey50,
       body: SafeArea(
@@ -57,7 +62,7 @@ class _RemindersView extends StatelessWidget {
               itemBuilder: (context, index) {
                 if (index == 0) {
                   return Padding(
-                    padding: EdgeInsets.only(bottom: 10),
+                    padding: const EdgeInsets.only(bottom: 10),
                     child: Text(S.of(context).reminder, style: textTheme.title),
                   );
                 }
@@ -68,7 +73,7 @@ class _RemindersView extends StatelessWidget {
                   leading: Checkbox(
                     value: reminder.isCompleted,
                     onChanged: (value) {
-                      context.read<ReminderCubit>().updateReminder(reminder.copyWith(isCompleted: value ?? false));
+                      cubit.updateReminder(reminder.copyWith(isCompleted: value ?? false));
                     },
                   ),
                   title: Text(
@@ -85,17 +90,13 @@ class _RemindersView extends StatelessWidget {
                   ),
                   trailing: IconButton(
                     icon: const Icon(Icons.delete, color: Colors.red),
-                    onPressed: () => context.read<ReminderCubit>().deleteReminder(reminder.id),
+                    onPressed: () => cubit.deleteReminder(reminder.id),
                   ),
                   onTap: () {
                     showDialog(
                       context: context,
                       barrierColor: Colors.transparent,
-                      builder: (_) => ReminderDialog(
-                        cubit: context.read<ReminderCubit>(),
-                        reminder: reminder,
-                        onSaved: () => context.read<ReminderCubit>().load(),
-                      ),
+                      builder: (_) => ReminderDialog(cubit: cubit, reminder: reminder, onSaved: () => cubit.load()),
                     );
                   },
                 );
@@ -109,10 +110,7 @@ class _RemindersView extends StatelessWidget {
           showDialog(
             context: context,
             barrierColor: Colors.transparent,
-            builder: (_) => ReminderDialog(
-              cubit: context.read<ReminderCubit>(),
-              onSaved: () => context.read<ReminderCubit>().load(),
-            ),
+            builder: (_) => ReminderDialog(cubit: cubit, onSaved: () => cubit.load()),
           );
         },
         child: const Icon(Icons.add),

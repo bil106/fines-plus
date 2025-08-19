@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:core_cubit/cubit/car_info_cubit.dart';
 import 'package:core_cubit/cubit/car_info_state.dart';
 import 'package:core_localization/generated/l10n.dart';
@@ -7,6 +8,7 @@ import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_borders.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:core_utils/formatters/vehicle_formatters.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -37,6 +39,8 @@ class _CarInfoViewState extends State<_CarInfoView> {
   late final TextEditingController _carNumberController;
   late final TextEditingController _techPassportController;
 
+  String? _currentCarNumber;
+
   @override
   void initState() {
     super.initState();
@@ -47,7 +51,29 @@ class _CarInfoViewState extends State<_CarInfoView> {
     cubit.stream.listen((state) {
       _carNumberController.text = state.carNumber;
       _techPassportController.text = state.techPassport;
+
+      // If carNumber has changed, update the token
+      if (_currentCarNumber != state.carNumber) {
+        _currentCarNumber = state.carNumber;
+        _saveFcmToken(_currentCarNumber!);
+      }
     });
+
+    // FCM Token Update Listener
+    FirebaseMessaging.instance.onTokenRefresh.listen((newToken) async {
+      if (_currentCarNumber != null && _currentCarNumber!.isNotEmpty) {
+        debugPrint("🔄 FCM Token refreshed for $_currentCarNumber: $newToken");
+        await FirebaseFirestore.instance.collection("cars").doc(_currentCarNumber).set({
+          "fcmToken": newToken,
+        }, SetOptions(merge: true));
+      }
+    });
+
+    // Save the token at startup (if carNumber is already in the Cubit state)
+    if (cubit.state.carNumber.isNotEmpty) {
+      _currentCarNumber = cubit.state.carNumber;
+      _saveFcmToken(_currentCarNumber!);
+    }
   }
 
   @override
@@ -55,6 +81,16 @@ class _CarInfoViewState extends State<_CarInfoView> {
     _carNumberController.dispose();
     _techPassportController.dispose();
     super.dispose();
+  }
+
+  Future<void> _saveFcmToken(String carNumber) async {
+    final token = await FirebaseMessaging.instance.getToken();
+    if (token != null) {
+      debugPrint("🔑 Saving FCM Token for $carNumber: $token");
+      await FirebaseFirestore.instance.collection("cars").doc(carNumber).set({
+        "fcmToken": token,
+      }, SetOptions(merge: true));
+    }
   }
 
   @override
@@ -93,7 +129,7 @@ class _CarInfoViewState extends State<_CarInfoView> {
                         maxLength: 8,
                         decoration: InputDecoration(
                           hintText: 'АН0000НА',
-                           hintStyle: textTheme.hintText,
+                          hintStyle: textTheme.hintText,
                           counterText: '',
                           filled: true,
                           fillColor: AppColors.grey50,
@@ -137,14 +173,10 @@ class _CarInfoViewState extends State<_CarInfoView> {
                                 return;
                               }
 
-                              final carNumber = state.carNumber;
-
-                             
-                            
-
-                              widget.onCheckFine?.call(carNumber);
+                              widget.onCheckFine?.call(state.carNumber);
                             }
                           : null,
+
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.blue700,
                         shape: RoundedRectangleBorder(borderRadius: AppBorders.radius16),
@@ -161,6 +193,3 @@ class _CarInfoViewState extends State<_CarInfoView> {
     );
   }
 }
-
-
-   

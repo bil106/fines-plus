@@ -17,15 +17,27 @@ class ReminderRemoteDataSourceImpl implements ReminderRemoteDataSource {
   Future<List<ReminderModel>> getReminders(String carNumber) async {
     final snapshot = await firestore.collection('reminders').doc(carNumber).collection('items').get();
 
-    return snapshot.docs.map((doc) => ReminderModel.fromJson(doc.data())).toList();
+    return snapshot.docs.map((doc) {
+      final data = doc.data();
+      return ReminderModel.fromJson({...data, 'id': doc.id});
+    }).toList();
   }
 
-  @override
+@override
   Future<void> addReminder(String carNumber, ReminderModel reminder) async {
-    final docRef = firestore.collection('reminders').doc(carNumber).collection('items').doc();
+    final collectionRef = firestore.collection('reminders').doc(carNumber).collection('items');
 
-    await docRef.set(reminder.copyWith(id: docRef.id).toJson());
+    if (reminder.id.isEmpty) {
+     
+      final newDoc = collectionRef.doc();
+      final newReminder = reminder.copyWith(id: newDoc.id);
+      await newDoc.set(newReminder.toJson());
+    } else {
+     
+      await collectionRef.doc(reminder.id).set(reminder.toJson());
+    }
   }
+
 
   @override
   Future<void> updateReminder(String carNumber, ReminderModel reminder) async {

@@ -5,7 +5,6 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 
-
 import 'router/app_router.dart';
 import 'theme/theme_config.dart';
 import 'config/app_config.dart';
@@ -14,11 +13,7 @@ class MyApp extends StatefulWidget {
   final AppConfig config;
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 
-  const MyApp({
-    super.key,
-    required this.config,
-    required this.flutterLocalNotificationsPlugin,
-  });
+  const MyApp({super.key, required this.config, required this.flutterLocalNotificationsPlugin});
 
   @override
   State<MyApp> createState() => _MyAppState();
@@ -32,26 +27,25 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
 
-  
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
       debugPrint("📩 Notification received: ${message.notification?.title}");
 
-      widget.flutterLocalNotificationsPlugin.show(
-        message.hashCode,
-        message.notification?.title,
-        message.notification?.body,
+      await widget.flutterLocalNotificationsPlugin.show(
+        0,
+        'Test',
+        'Checking local notifications',
         const NotificationDetails(
           android: AndroidNotificationDetails(
             'reminders_channel',
-            'Нагадування',
+            'Reminders',
             importance: Importance.max,
             priority: Priority.high,
+            playSound: true,
           ),
         ),
       );
     });
 
-   
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       debugPrint("➡️ Opened the app via notification");
     });

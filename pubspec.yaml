@@ -23,8 +23,11 @@ dependencies:
     path: packages/core_utils
   core:
     path: packages/core
+  core_data:
+    path: packages/core_data
   design_system:
     path: packages/design_system 
+  
 
   firebase_remote_config: ^6.0.0
   flutter_bloc: ^9.1.1
@@ -41,6 +44,7 @@ dependencies:
   uuid: ^4.5.1
   firebase_messaging: ^16.0.0
   flutter_local_notifications: ^19.4.0
+  timezone: ^0.10.1
 
 dev_dependencies:
   flutter_test:

@@ -32,25 +32,28 @@ class ReminderModel extends Equatable {
     );
   }
 
-  /// For Firestore: convert to Map
-Map<String, dynamic> toJson() => {
-        'id': id,
-        'title': title,
-        'description': description,
-        'dateTime': dateTime.toIso8601String(),
-        'isCompleted': isCompleted,
-      };
 
-  factory ReminderModel.fromJson(Map<String, dynamic> json) {
+ Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'title': title,
+      'description': description,
+      'dateTime': Timestamp.fromDate(dateTime.toUtc()), 
+      'isCompleted': isCompleted,
+    };
+  }
+
+ 
+factory ReminderModel.fromJson(Map<String, dynamic> json) {
     final dateTimeValue = json['dateTime'];
     DateTime dateTime;
 
     if (dateTimeValue is Timestamp) {
-      dateTime = dateTimeValue.toDate(); // Firestore
+      dateTime = dateTimeValue.toDate().toLocal();
     } else if (dateTimeValue is String) {
-      dateTime = DateTime.parse(dateTimeValue); // SharedPreferences / json
+      dateTime = DateTime.parse(dateTimeValue).toLocal();
     } else {
-      dateTime = DateTime.now(); // fallback
+      dateTime = DateTime.now();
     }
 
     return ReminderModel(
@@ -61,9 +64,6 @@ Map<String, dynamic> toJson() => {
       isCompleted: json['isCompleted'] ?? false,
     );
   }
-
-
-
   @override
   List<Object?> get props => [id, title, description, dateTime, isCompleted];
 }

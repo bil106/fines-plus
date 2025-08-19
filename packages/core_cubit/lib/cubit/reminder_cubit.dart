@@ -6,10 +6,12 @@ part 'reminder_state.dart';
 
 class ReminderCubit extends Cubit<ReminderState> {
   final ReminderRepository repository;
+  final PushHelper pushHelper;
   final String carNumber;
 
   ReminderCubit({
     required this.repository,
+    required this.pushHelper,
     required this.carNumber,
   }) : super(ReminderState.initial()) {
     load();
@@ -23,7 +25,7 @@ class ReminderCubit extends Cubit<ReminderState> {
     } catch (e) {
       emit(state.copyWith(
         isLoading: false,
-        errorMessage: 'Ошибка загрузки: $e',
+        errorMessage: 'Loading error: $e',
       ));
     }
   }
@@ -32,11 +34,19 @@ class ReminderCubit extends Cubit<ReminderState> {
     emit(state.copyWith(isLoading: true, errorMessage: null));
     try {
       await repository.add(carNumber, reminder);
+
+      await pushHelper.scheduleNotification(
+        id: reminder.id.hashCode,
+        title: reminder.title,
+        body: reminder.description,
+        dateTime: reminder.dateTime,
+      );
+
       await load();
     } catch (e) {
       emit(state.copyWith(
         isLoading: false,
-        errorMessage: 'Ошибка добавления: $e',
+        errorMessage: 'Adding error: $e',
       ));
     }
   }
@@ -49,7 +59,7 @@ class ReminderCubit extends Cubit<ReminderState> {
     } catch (e) {
       emit(state.copyWith(
         isLoading: false,
-        errorMessage: 'Ошибка обновления: $e',
+        errorMessage: 'Update error: $e',
       ));
     }
   }
@@ -62,9 +72,8 @@ class ReminderCubit extends Cubit<ReminderState> {
     } catch (e) {
       emit(state.copyWith(
         isLoading: false,
-        errorMessage: 'Ошибка удаления: $e',
+        errorMessage: 'Delete error: $e',
       ));
     }
   }
 }
-
