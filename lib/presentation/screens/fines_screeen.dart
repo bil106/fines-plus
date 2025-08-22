@@ -5,9 +5,9 @@ import 'package:design_system/constants/app_borders.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_text_theme.dart';
 import 'package:design_system/theme/app_theme.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
 
 @RoutePage()
 class FinesScreen extends StatefulWidget {
@@ -41,7 +41,7 @@ class _FinesScreenState extends State<FinesScreen> {
               ),
               AppSpacers.verticalMassive,
 
-              SizedBox(
+             SizedBox(
                 width: double.infinity,
                 height: 70,
                 child: ElevatedButton(
@@ -57,6 +57,7 @@ class _FinesScreenState extends State<FinesScreen> {
                   child: Text(S.of(context).check_fines, style: textTheme.whiteNormal),
                 ),
               ),
+
               AppSpacers.verticalXXLarge,
 
               Container(

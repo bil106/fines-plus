@@ -74,6 +74,16 @@ class S {
     return Intl.message('Reminder', name: 'reminder', desc: '', args: []);
   }
 
+  /// `No reminders`
+  String get no_reminders {
+    return Intl.message(
+      'No reminders',
+      name: 'no_reminders',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Support`
   String get support {
     return Intl.message('Support', name: 'support', desc: '', args: []);

@@ -32,7 +32,9 @@ class HomeScreenWrapper extends StatefulWidget {
 class _HomeScreenWrapperState extends State<HomeScreenWrapper> {
   final PageController _pageController = PageController();
   int _currentIndex = 0;
-  String? _carNumber; 
+  String? _carNumber;
+  String? _docSeries;
+  String? _docNumber;
 
   static const int carInfoPageIndex = 3;
   static const int fineCheckPageIndex = 4;
@@ -47,14 +49,20 @@ class _HomeScreenWrapperState extends State<HomeScreenWrapper> {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
       _carNumber = prefs.getString('carNumber') ?? '';
+      _docSeries = prefs.getString('docSeries') ?? '';
+      _docNumber = prefs.getString('docNumber') ?? '';
     });
   }
 
-  void _saveCarNumber(String number) async {
+  void _saveCarInfo(String carNumber, String series, String number) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('carNumber', number);
+    await prefs.setString('carNumber', carNumber);
+    await prefs.setString('docSeries', series);
+    await prefs.setString('docNumber', number);
     setState(() {
-      _carNumber = number;
+      _carNumber = carNumber;
+      _docSeries = series;
+      _docNumber = number;
     });
   }
 
@@ -70,7 +78,6 @@ class _HomeScreenWrapperState extends State<HomeScreenWrapper> {
 
   @override
   Widget build(BuildContext context) {
- 
     if (_carNumber == null) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
@@ -103,26 +110,28 @@ class _HomeScreenWrapperState extends State<HomeScreenWrapper> {
               setState(() => _currentIndex = 0);
             },
           ),
-
-
           BlocProvider(
-            create: (_) =>
-                ReminderCubit(repository: context.read<ReminderRepository>(), carNumber: _carNumber!, pushHelper: RepositoryProvider.of<PushHelper>(context),
+            create: (_) => ReminderCubit(
+              repository: context.read<ReminderRepository>(),
+              carNumber: _carNumber!,
+              pushHelper: RepositoryProvider.of<PushHelper>(context),
             )..load(),
             child: RemindersScreen(carNumber: _carNumber!),
           ),
+    CarInfoScreen(
+  onCheckFine: (carNumber, series, number) {
+    _saveCarInfo(carNumber, series, number);
+    _pageController.animateToPage(
+      fineCheckPageIndex,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
+    setState(() => _currentIndex = fineCheckPageIndex);
+  },
+),
 
-          CarInfoScreen(
-            onCheckFine: (number) {
-              _saveCarNumber(number); 
-              _pageController.animateToPage(
-                fineCheckPageIndex,
-                duration: const Duration(milliseconds: 300),
-                curve: Curves.easeInOut,
-              );
-            },
-          ),
-          FineCheckScreen(carNumber: _carNumber!),
+
+          FineCheckScreen(carNumber: _carNumber!, docSeries: _docSeries ?? '', docNumber: _docNumber ?? ''),
           const SettingsScreen(),
         ],
       ),
@@ -130,8 +139,8 @@ class _HomeScreenWrapperState extends State<HomeScreenWrapper> {
         backgroundColor: AppColors.neutreBlanc,
         currentIndex: _currentIndex > 2 ? 0 : _currentIndex,
         onTap: _onTabTapped,
-        items:  [
-          BottomNavigationBarItem(icon: Icon(Icons.directions_car), label:S.of(context).auto ),
+        items: [
+          BottomNavigationBarItem(icon: Icon(Icons.directions_car), label: S.of(context).auto),
           BottomNavigationBarItem(icon: Icon(Icons.receipt), label: S.of(context).fines),
           BottomNavigationBarItem(icon: Icon(Icons.support), label: S.of(context).reminder),
         ],

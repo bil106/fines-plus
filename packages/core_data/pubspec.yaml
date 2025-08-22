@@ -15,5 +15,10 @@ dependencies:
   http: ^1.5.0
   shared_preferences: ^2.2.0
   timezone: ^0.10.1
+  dio: ^5.4.0
+
+
 core_data:
     path: ../core_data
+core_repository:
+    path: ../core_repository 

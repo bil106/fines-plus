@@ -144,7 +144,7 @@ class _EmptyReminders extends StatelessWidget {
           ),
           AppSpacers.verticalLarge,
           Center(
-            child: Text(S.of(context).no_fines, style: textTheme.noFinesText, textAlign: TextAlign.center),
+            child: Text(S.of(context).no_reminders, style: textTheme.noFinesText, textAlign: TextAlign.center),
           ),
         ],
       ),

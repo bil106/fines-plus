@@ -81,17 +81,10 @@ class VehicleNumberFormatter extends TextInputFormatter {
   }
 }
 
-/// Formatter for registration number: LL DDDDDD
+/// Formatter for registration number: LLLDDDDD (3 letters + 6 digits)
 class TechPassportFormatter extends TextInputFormatter {
-  final bool mapLatinToCyrillic;
-
-  TechPassportFormatter({this.mapLatinToCyrillic = true});
-
-  static final _letterRegExp = VehicleNumberFormatter._letterRegExp;
-  static final _digitRegExp = VehicleNumberFormatter._digitRegExp;
-  static final _latinToCyr = VehicleNumberFormatter._latinToCyr;
-
-  String _mapLetter(String ch) => mapLatinToCyrillic ? (_latinToCyr[ch] ?? ch) : ch;
+  static final _letterRegExp = RegExp(r'[A-Za-zА-Яа-яІіЇїЄєҐґ]');
+  static final _digitRegExp = RegExp(r'\d');
 
   @override
   TextEditingValue formatEditUpdate(
@@ -100,12 +93,10 @@ class TechPassportFormatter extends TextInputFormatter {
   ) {
     String text = newValue.text.toUpperCase();
 
-    // filtering
+    // filtering letters and digits
     final raw = <String>[];
     for (final ch in text.split('')) {
-      if (_letterRegExp.hasMatch(ch)) {
-        raw.add(_mapLetter(ch));
-      } else if (_digitRegExp.hasMatch(ch)) {
+      if (_letterRegExp.hasMatch(ch) || _digitRegExp.hasMatch(ch)) {
         raw.add(ch);
       }
     }
@@ -113,20 +104,17 @@ class TechPassportFormatter extends TextInputFormatter {
     final result = StringBuffer();
     int index = 0;
 
-    // 2 letters
-    for (int i = 0; i < 2 && index < raw.length; i++) {
+    // 3 letters
+    int lettersAdded = 0;
+    while (index < raw.length && lettersAdded < 3) {
       if (_letterRegExp.hasMatch(raw[index])) {
         result.write(raw[index]);
-        index++;
-      } else {
-        raw.removeAt(index);
-        i--;
+        lettersAdded++;
       }
+      index++;
     }
 
-    if (result.isNotEmpty) result.write(' ');
-
-   // 6 digits
+    // 6 digits
     int digitsAdded = 0;
     while (index < raw.length && digitsAdded < 6) {
       if (_digitRegExp.hasMatch(raw[index])) {
@@ -145,7 +133,7 @@ class TechPassportFormatter extends TextInputFormatter {
 
   /// Validator for registration certificate
   static bool isValid(String value) {
-    final reg = RegExp(r'^[A-Za-zА-ЯІЇЄҐ]{2} \d{6}$');
+    final reg = RegExp(r'^[A-Za-zА-ЯІЇЄҐ]{3}\d{6}$');
     return reg.hasMatch(value.toUpperCase());
   }
 }

@@ -64,7 +64,7 @@ class AddCarRouteArgs {
 class CarInfoRoute extends PageRouteInfo<CarInfoRouteArgs> {
   CarInfoRoute({
     Key? key,
-    ValueChanged<String>? onCheckFine,
+    void Function(String, String, String)? onCheckFine,
     List<PageRouteInfo>? children,
   }) : super(
          CarInfoRoute.name,
@@ -90,7 +90,7 @@ class CarInfoRouteArgs {
 
   final Key? key;
 
-  final ValueChanged<String>? onCheckFine;
+  final void Function(String, String, String)? onCheckFine;
 
   @override
   String toString() {
@@ -101,11 +101,11 @@ class CarInfoRouteArgs {
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
     if (other is! CarInfoRouteArgs) return false;
-    return key == other.key && onCheckFine == other.onCheckFine;
+    return key == other.key;
   }
 
   @override
-  int get hashCode => key.hashCode ^ onCheckFine.hashCode;
+  int get hashCode => key.hashCode;
 }
 
 /// generated route for
@@ -113,15 +113,17 @@ class CarInfoRouteArgs {
 class FineCheckRoute extends PageRouteInfo<FineCheckRouteArgs> {
   FineCheckRoute({
     Key? key,
-    VoidCallback? onFineCheck,
     required String carNumber,
+    required String docSeries,
+    required String docNumber,
     List<PageRouteInfo>? children,
   }) : super(
          FineCheckRoute.name,
          args: FineCheckRouteArgs(
            key: key,
-           onFineCheck: onFineCheck,
            carNumber: carNumber,
+           docSeries: docSeries,
+           docNumber: docNumber,
          ),
          initialChildren: children,
        );
@@ -134,8 +136,9 @@ class FineCheckRoute extends PageRouteInfo<FineCheckRouteArgs> {
       final args = data.argsAs<FineCheckRouteArgs>();
       return FineCheckScreen(
         key: args.key,
-        onFineCheck: args.onFineCheck,
         carNumber: args.carNumber,
+        docSeries: args.docSeries,
+        docNumber: args.docNumber,
       );
     },
   );
@@ -144,19 +147,22 @@ class FineCheckRoute extends PageRouteInfo<FineCheckRouteArgs> {
 class FineCheckRouteArgs {
   const FineCheckRouteArgs({
     this.key,
-    this.onFineCheck,
     required this.carNumber,
+    required this.docSeries,
+    required this.docNumber,
   });
 
   final Key? key;
 
-  final VoidCallback? onFineCheck;
-
   final String carNumber;
+
+  final String docSeries;
+
+  final String docNumber;
 
   @override
   String toString() {
-    return 'FineCheckRouteArgs{key: $key, onFineCheck: $onFineCheck, carNumber: $carNumber}';
+    return 'FineCheckRouteArgs{key: $key, carNumber: $carNumber, docSeries: $docSeries, docNumber: $docNumber}';
   }
 
   @override
@@ -164,12 +170,17 @@ class FineCheckRouteArgs {
     if (identical(this, other)) return true;
     if (other is! FineCheckRouteArgs) return false;
     return key == other.key &&
-        onFineCheck == other.onFineCheck &&
-        carNumber == other.carNumber;
+        carNumber == other.carNumber &&
+        docSeries == other.docSeries &&
+        docNumber == other.docNumber;
   }
 
   @override
-  int get hashCode => key.hashCode ^ onFineCheck.hashCode ^ carNumber.hashCode;
+  int get hashCode =>
+      key.hashCode ^
+      carNumber.hashCode ^
+      docSeries.hashCode ^
+      docNumber.hashCode;
 }
 
 /// generated route for

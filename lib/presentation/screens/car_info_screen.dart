@@ -1,21 +1,27 @@
+// ignore_for_file: unused_field
+
 import 'package:auto_route/auto_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:core_cubit/cubit/car_info_cubit.dart';
 import 'package:core_cubit/cubit/car_info_state.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:core_repository/car_info_repository.dart';
+
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_borders.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+
 import 'package:flutter/material.dart';
 import 'package:core_utils/formatters/vehicle_formatters.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 @RoutePage()
 class CarInfoScreen extends StatelessWidget {
-  final ValueChanged<String>? onCheckFine;
+  final void Function(String carNumber, String series, String number)? onCheckFine;
+
   const CarInfoScreen({super.key, this.onCheckFine});
 
   @override
@@ -28,7 +34,7 @@ class CarInfoScreen extends StatelessWidget {
 }
 
 class _CarInfoView extends StatefulWidget {
-  final ValueChanged<String>? onCheckFine;
+  final void Function(String carNumber, String series, String number)? onCheckFine;
   const _CarInfoView({this.onCheckFine});
 
   @override
@@ -39,7 +45,9 @@ class _CarInfoViewState extends State<_CarInfoView> {
   late final TextEditingController _carNumberController;
   late final TextEditingController _techPassportController;
 
-  String? _currentCarNumber;
+  String _carNumber = '';
+  String _docSeries = '';
+  String _docNumber = '';
 
   @override
   void initState() {
@@ -47,33 +55,18 @@ class _CarInfoViewState extends State<_CarInfoView> {
     _carNumberController = TextEditingController();
     _techPassportController = TextEditingController();
 
-    final cubit = context.read<CarInfoCubit>();
-    cubit.stream.listen((state) {
-      _carNumberController.text = state.carNumber;
-      _techPassportController.text = state.techPassport;
+    _loadSavedCarInfo();
 
-      // If carNumber has changed, update the token
-      if (_currentCarNumber != state.carNumber) {
-        _currentCarNumber = state.carNumber;
-        _saveFcmToken(_currentCarNumber!);
-      }
-    });
-
-    // FCM Token Update Listener
     FirebaseMessaging.instance.onTokenRefresh.listen((newToken) async {
-      if (_currentCarNumber != null && _currentCarNumber!.isNotEmpty) {
-        debugPrint("🔄 FCM Token refreshed for $_currentCarNumber: $newToken");
-        await FirebaseFirestore.instance.collection("cars").doc(_currentCarNumber).set({
+      final prefs = await SharedPreferences.getInstance();
+      final carNumber = prefs.getString('carNumber');
+      if (carNumber != null && carNumber.isNotEmpty) {
+        debugPrint("🔄 FCM Token refreshed for $carNumber: $newToken");
+        await FirebaseFirestore.instance.collection("cars").doc(carNumber).set({
           "fcmToken": newToken,
         }, SetOptions(merge: true));
       }
     });
-
-    // Save the token at startup (if carNumber is already in the Cubit state)
-    if (cubit.state.carNumber.isNotEmpty) {
-      _currentCarNumber = cubit.state.carNumber;
-      _saveFcmToken(_currentCarNumber!);
-    }
   }
 
   @override
@@ -81,6 +74,19 @@ class _CarInfoViewState extends State<_CarInfoView> {
     _carNumberController.dispose();
     _techPassportController.dispose();
     super.dispose();
+  }
+
+  Future<void> _loadSavedCarInfo() async {
+    final prefs = await SharedPreferences.getInstance();
+    final carNumber = prefs.getString('carNumber') ?? '';
+    final techPassport = prefs.getString('techPassport') ?? '';
+
+    _carNumberController.text = carNumber;
+    _techPassportController.text = techPassport;
+
+    if (carNumber.isNotEmpty) {
+      _saveFcmToken(carNumber);
+    }
   }
 
   Future<void> _saveFcmToken(String carNumber) async {
@@ -93,10 +99,66 @@ class _CarInfoViewState extends State<_CarInfoView> {
     }
   }
 
+  Future<void> _saveCarInfo(String carNumber, String techPassport) async {
+    final parts = techPassport.split(' ');
+    final series = parts.isNotEmpty ? parts[0] : '';
+    final number = parts.length > 1 ? parts[1] : '';
+
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('carNumber', carNumber);
+    await prefs.setString('docSeries', series);
+    await prefs.setString('docNumber', number);
+
+    debugPrint("💾 Сохранил данные: $carNumber / $series / $number");
+
+    setState(() {
+      _carNumber = carNumber;
+      _docSeries = series;
+      _docNumber = number;
+    });
+  }
+
+  Future<void> _checkFines() async {
+    final cubit = context.read<CarInfoCubit>();
+    final carNumber = _carNumberController.text.trim();
+    final techPassport = _techPassportController.text.trim();
+
+    debugPrint('🔹 Нажали "Проверить штрафы": carNumber=$carNumber, techPassport=$techPassport');
+
+    if (carNumber.isEmpty || techPassport.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Введіть номер авто та техпаспорт')));
+      return;
+    }
+
+    if (techPassport.length != 9) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Некорректний номер техпаспорта')));
+      return;
+    }
+
+    final series = techPassport.substring(0, 3).toUpperCase();
+    final number = techPassport.substring(3);
+
+    if (!RegExp(r'^[А-ЯІЇЄҐ]{3}$').hasMatch(series) || !RegExp(r'^\d{6}$').hasMatch(number)) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Некорректний номер техпаспорта')));
+      return;
+    }
+
+    cubit.setCarNumber(carNumber);
+    cubit.setTechPassport(techPassport);
+
+    debugPrint('💾 Сохранил данные локально: $carNumber / $series / $number');
+
+ if (widget.onCheckFine != null) {
+      widget.onCheckFine!(carNumber, series, number);
+    }
+
+  }
+
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<CarInfoCubit>();
     final textTheme = Theme.of(context).textTheme;
+
     return Scaffold(
       backgroundColor: AppColors.grey50,
       body: SafeArea(
@@ -146,7 +208,7 @@ class _CarInfoViewState extends State<_CarInfoView> {
                         inputFormatters: [TechPassportFormatter()],
                         maxLength: 9,
                         decoration: InputDecoration(
-                          hintText: 'ХЕ 128436',
+                          hintText: 'ХЕE128436',
                           hintStyle: textTheme.hintText,
                           counterText: '',
                           filled: true,
@@ -166,17 +228,25 @@ class _CarInfoViewState extends State<_CarInfoView> {
                     height: 65,
                     child: ElevatedButton(
                       onPressed: cubit.isFormValid
-                          ? () {
+                          ? () async {
                               final error = cubit.validate();
                               if (error != null) {
                                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(error)));
                                 return;
                               }
 
-                              widget.onCheckFine?.call(state.carNumber);
+                              await _saveCarInfo(_carNumberController.text, _techPassportController.text);
+
+                              if (widget.onCheckFine != null) {
+                                widget.onCheckFine!(
+                                  _carNumberController.text,
+                                  _techPassportController.text.substring(0, 3).toUpperCase(),
+                                  _techPassportController.text.substring(3),
+                                );
+                              }
+                              await _checkFines();
                             }
                           : null,
-
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.blue700,
                         shape: RoundedRectangleBorder(borderRadius: AppBorders.radius16),

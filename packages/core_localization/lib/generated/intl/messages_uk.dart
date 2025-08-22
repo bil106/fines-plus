@@ -36,6 +36,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "enter_vin": MessageLookupByLibrary.simpleMessage("Введіть VIN"),
     "fines": MessageLookupByLibrary.simpleMessage("Штрафи"),
     "no_fines": MessageLookupByLibrary.simpleMessage("На вас немає штрафів"),
+    "no_reminders": MessageLookupByLibrary.simpleMessage("Немає нагадувань"),
     "pay": MessageLookupByLibrary.simpleMessage("Сплатити"),
     "phone": MessageLookupByLibrary.simpleMessage("Телефон"),
     "push_notifications": MessageLookupByLibrary.simpleMessage(

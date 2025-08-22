@@ -38,6 +38,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "no_fines": MessageLookupByLibrary.simpleMessage(
       "There are no fines for you",
     ),
+    "no_reminders": MessageLookupByLibrary.simpleMessage("No reminders"),
     "pay": MessageLookupByLibrary.simpleMessage("Pay"),
     "phone": MessageLookupByLibrary.simpleMessage("Phone"),
     "push_notifications": MessageLookupByLibrary.simpleMessage(
