@@ -167,11 +167,16 @@ class AppInitializer {
 
 extension ReminderScheduling on AppInitializer {
   Future<void> scheduleReminder(ReminderModel reminder) async {
-    final scheduledDate = tz.TZDateTime.from(reminder.dateTime, tz.local);
+    final now = DateTime.now();
+    if (reminder.dateTime.isBefore(now)) {
+      debugPrint('⏱ Reminder ${reminder.id} time is in the past, skipping.');
+      return;
+    }
 
-    debugPrint('🔔 Reminder ${reminder.id} scheduled in $scheduledDate');
+    final delay = reminder.dateTime.difference(now);
+    debugPrint('🔔 Reminder ${reminder.id} scheduled in $delay');
 
-    Future.delayed(Duration(seconds: 1), () async {
+    Future.delayed(delay, () async {
       const String soundFileName = 'notify';
       await flutterLocalNotificationsPlugin.show(
         reminder.id.hashCode,
