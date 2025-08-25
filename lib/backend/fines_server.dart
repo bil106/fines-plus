@@ -85,7 +85,9 @@ Future<bool> verifyCaptcha(String captchaToken) async {
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
-      print("🔎 Captcha verify response: $data");
+      if (kDebugMode) {
+        print("🔎 Captcha verify response: $data");
+      }
       return data['success'] == true && (data['score'] ?? 0) > 0.5;
     }
     return false;

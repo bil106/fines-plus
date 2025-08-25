@@ -13,13 +13,13 @@ import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_borders.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
+import 'package:fines_plus/env/env.dart';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 
 import 'package:flutter/material.dart';
 import 'package:core_utils/formatters/vehicle_formatters.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:g_recaptcha_v3/g_recaptcha_v3.dart';
 
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -115,7 +115,7 @@ class _CarInfoViewState extends State<_CarInfoView> {
     await prefs.setString('docSeries', series);
     await prefs.setString('docNumber', number);
 
-    debugPrint("💾 Сохранил данные: $carNumber / $series / $number");
+    debugPrint("💾 Data saved: $carNumber / $series / $number");
 
     setState(() {
       _carNumber = carNumber;
@@ -125,8 +125,8 @@ class _CarInfoViewState extends State<_CarInfoView> {
   }
 Future<String> getCaptchaToken() async {
    
-    const token = '6LepNrErAAAAACkxJmNX--qVX9ImDpxwFKlxMtFf';
-    debugPrint('✅ Используем токен: $token');
+    const token = Env.recaptchaSiteKey;
+    debugPrint('✅ Use token: $token');
     return token;
   }
 
@@ -145,7 +145,7 @@ Future<void> _checkFines() async {
 
     if (techPassport.length != 9) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Некорректний номер техпаспорта')));
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Incorrect registration number')));
       }
       return;
     }
@@ -155,7 +155,7 @@ Future<void> _checkFines() async {
 
     if (!RegExp(r'^[А-ЯІЇЄҐ]{3}$').hasMatch(series) || !RegExp(r'^\d{6}$').hasMatch(number)) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Некорректний номер техпаспорта')));
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Incorrect registration number')));
       }
       return;
     }
@@ -186,13 +186,13 @@ Future<void> _checkFines() async {
 
       if (response.statusCode == 200) {
         final finesHtml = response.body;
-        debugPrint("📡 Ответ сервера: 200");
-        debugPrint("✅ HTML штрафов: $finesHtml");
+        debugPrint("📡 Server response: 200");
+        debugPrint("✅ HTML fines: $finesHtml");
       } else {
-        debugPrint("❌ Ошибка сервера: ${response.statusCode} ${response.body}");
+        debugPrint("❌ Server error: ${response.statusCode} ${response.body}");
       }
     } catch (e) {
-      debugPrint("❌ Не удалось получить токен или штрафы: $e");
+      debugPrint("❌ Failed to get token or fines: $e");
     }
   }
 
