@@ -32,14 +32,14 @@ class FinesServer {
         String captchaToken = (data['captchaToken'] ?? 'default-token').toString();
         String cookies = (data['cookies'] ?? '').toString();
 
-        // Если docSeries длиннее 3 символов и docNumber пустой — разделяем
+        // If docSeries is longer than 3 characters and docNumber is empty, split
         if (docSeries.length > 3 && docNumber.isEmpty) {
           docNumber = docSeries.substring(3);
           docSeries = docSeries.substring(0, 3);
         }
 
         if (kDebugMode) {
-          print('🔹 Запрос штрафов: carNumber=$carNumber, docSeries=$docSeries, docNumber=$docNumber');
+          print('🔹 Request for fines: carNumber=$carNumber, docSeries=$docSeries, docNumber=$docNumber');
         }
 
         final html = await fetchFines(
@@ -51,13 +51,12 @@ class FinesServer {
 
         final fines = parseFinesHtml(html);
 
-        // ✅ Важно: оборачиваем в объект с ключом "fines"
         final responseJson = jsonEncode({"fines": fines});
 
         return Response.ok(responseJson, headers: {'Content-Type': 'application/json'});
       } catch (e, stack) {
         if (kDebugMode) {
-          print("❌ Ошибка при получении штрафов: $e");
+          print("❌ Error when receiving fines: $e");
           print(stack);
         }
         return Response.internalServerError(
@@ -71,7 +70,7 @@ class FinesServer {
 
     _server = await io.serve(handler, InternetAddress.loopbackIPv4, 3000);
     if (kDebugMode) {
-      print('🚀 FinesServer запущен на http://${_server!.address.host}:${_server!.port}');
+      print('🚀 FinesServer is running on http://${_server!.address.host}:${_server!.port}');
     }
   }
 Future<bool> verifyCaptcha(String captchaToken) async {
