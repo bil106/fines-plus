@@ -11,13 +11,30 @@ class Fine {
     required this.date,
   });
 
+
 factory Fine.fromJson(Map<String, dynamic> json) {
+  
+    final totalValue = json['total'];
+    int totalInt = 0;
+    if (totalValue is int) {
+      totalInt = totalValue;
+    } else if (totalValue is String) {
+      totalInt = int.tryParse(totalValue.replaceAll(RegExp(r'\D'), '')) ?? 0;
+    }
+
+    DateTime parsedDate;
+    final dateStr = json['date']?.toString() ?? '';
+    try {
+      parsedDate = DateTime.parse(dateStr);
+    } catch (_) {
+      parsedDate = DateTime.now();
+    }
+
     return Fine(
-      id: json['id'].toString(),
+      id: json['id']?.toString() ?? '',
       violation: json['violation']?.toString() ?? '',
-      total: (json['total'] is int) ? json['total'] : int.tryParse(json['total'].toString()) ?? 0,
-      date: (json['date'] != null) ? DateTime.tryParse(json['date'].toString()) ?? DateTime.now() : DateTime.now(),
+      total: totalInt,
+      date: parsedDate,
     );
   }
-
 }

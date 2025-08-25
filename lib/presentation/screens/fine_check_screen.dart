@@ -8,6 +8,7 @@ import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_borders.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
+import 'package:flutter/foundation.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -71,7 +72,11 @@ class _FineCheckScreenState extends State<FineCheckScreen> {
                       if (state is FinesLoading) {
                         return const Center(child: CircularProgressIndicator());
                       } else if (state is FinesError) {
+                        if (kDebugMode) {
+                          print('Error:${state.message}');
+                        }
                         return Text("Error: ${state.message}", style: textTheme.bodyMedium);
+                      
                       } else if (state is FinesEmpty) {
                         return Container(
                           width: double.infinity,

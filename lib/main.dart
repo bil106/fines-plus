@@ -1,3 +1,4 @@
+import 'package:fines_plus/env/env.dart';
 import 'package:fines_plus/my_app.dart';
 import 'package:fines_plus/services/app_initializer.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -6,6 +7,7 @@ import 'package:flutter/foundation.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:g_recaptcha_v3/g_recaptcha_v3.dart';
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
@@ -20,10 +22,10 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
 
-  // background push handler
+  GRecaptchaV3.ready(Env.recaptchaSiteKey);
+
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
-  // initialize the application (enables notifications and FCM)
   appInitializer = AppInitializer();
   final result = await appInitializer.init();
 

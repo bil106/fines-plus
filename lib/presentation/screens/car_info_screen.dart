@@ -1,5 +1,7 @@
 // ignore_for_file: unused_field
 
+import 'dart:convert';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:core_cubit/cubit/car_info_cubit.dart';
@@ -11,11 +13,15 @@ import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_borders.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
+
 import 'package:firebase_messaging/firebase_messaging.dart';
 
 import 'package:flutter/material.dart';
 import 'package:core_utils/formatters/vehicle_formatters.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:g_recaptcha_v3/g_recaptcha_v3.dart';
+
+import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 @RoutePage()
@@ -117,21 +123,30 @@ class _CarInfoViewState extends State<_CarInfoView> {
       _docNumber = number;
     });
   }
+Future<String> getCaptchaToken() async {
+   
+    const token = '6LepNrErAAAAACkxJmNX--qVX9ImDpxwFKlxMtFf';
+    debugPrint('✅ Используем токен: $token');
+    return token;
+  }
 
-  Future<void> _checkFines() async {
-    final cubit = context.read<CarInfoCubit>();
+
+Future<void> _checkFines() async {
     final carNumber = _carNumberController.text.trim();
     final techPassport = _techPassportController.text.trim();
 
-    debugPrint('🔹 Нажали "Проверить штрафы": carNumber=$carNumber, techPassport=$techPassport');
-
+ 
     if (carNumber.isEmpty || techPassport.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Введіть номер авто та техпаспорт')));
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Введіть номер авто та техпаспорт')));
+      }
       return;
     }
 
     if (techPassport.length != 9) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Некорректний номер техпаспорта')));
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Некорректний номер техпаспорта')));
+      }
       return;
     }
 
@@ -139,20 +154,52 @@ class _CarInfoViewState extends State<_CarInfoView> {
     final number = techPassport.substring(3);
 
     if (!RegExp(r'^[А-ЯІЇЄҐ]{3}$').hasMatch(series) || !RegExp(r'^\d{6}$').hasMatch(number)) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Некорректний номер техпаспорта')));
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Некорректний номер техпаспорта')));
+      }
       return;
     }
 
-    cubit.setCarNumber(carNumber);
-    cubit.setTechPassport(techPassport);
+   
+    await _saveCarInfo(carNumber, techPassport);
 
-    debugPrint('💾 Сохранил данные локально: $carNumber / $series / $number');
+    try {
+   
+      final captchaToken = await getCaptchaToken();
 
- if (widget.onCheckFine != null) {
-      widget.onCheckFine!(carNumber, series, number);
+      debugPrint('📌 carNumber: $carNumber');
+      debugPrint('📌 docSeries: $series');
+      debugPrint('📌 docNumber: $number');
+      debugPrint('📌 captchaToken: $captchaToken');
+
+      final response = await http.post(
+        Uri.parse("http://localhost:3000/api/fines"),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({
+          "carNumber": carNumber,
+          "docSeries": series,
+          "docNumber": number,
+          "captchaToken": captchaToken,
+          "cookies": "cf_clearance=XXX; _gv_sessid=YYY",
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final finesHtml = response.body;
+        debugPrint("📡 Ответ сервера: 200");
+        debugPrint("✅ HTML штрафов: $finesHtml");
+      } else {
+        debugPrint("❌ Ошибка сервера: ${response.statusCode} ${response.body}");
+      }
+    } catch (e) {
+      debugPrint("❌ Не удалось получить токен или штрафы: $e");
     }
-
   }
+
+
+
+
+
 
   @override
   Widget build(BuildContext context) {

@@ -11,7 +11,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:http/http.dart' as http;
+
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
@@ -147,21 +147,6 @@ class AppInitializer {
     process.stderr.transform(SystemEncoding().decoder).listen((line) {
       debugPrint('🔴 Node error: $line');
     });
-  }
-
-  Future<void> _waitForServer({int retries = 5}) async {
-    final client = http.Client();
-    for (int i = 0; i < retries; i++) {
-      try {
-        final response = await client.get(Uri.parse('http://127.0.0.1:3000/')).timeout(const Duration(seconds: 2));
-        if (response.statusCode == 200) {
-          debugPrint('✅ Сервер доступен');
-          return;
-        }
-      } catch (_) {}
-      await Future.delayed(const Duration(seconds: 1));
-    }
-    throw Exception('Сервер недоступен после $retries попыток');
   }
 }
 

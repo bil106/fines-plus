@@ -61,7 +61,7 @@ class FinesBackendDataSource {
       if (await _isServerAvailable()) return;
       await Future.delayed(const Duration(seconds: 1));
     }
-    throw Exception('Сервер недоступен после $retries попыток');
+    throw Exception('Server unavailable after $retries attempts');
   }
 
   Future<List<Fine>> getFines({
@@ -69,7 +69,7 @@ class FinesBackendDataSource {
     required String docSeries,
     required String docNumber,
   }) async {
-    debugPrint('🔹 Запрос штрафов: carNumber=$carNumber, docSeries=$docSeries, docNumber=$docNumber');
+    debugPrint('🔹 Request for fines: carNumber=$carNumber, docSeries=$docSeries, docNumber=$docNumber');
 
     await _waitForServer();
 
@@ -86,9 +86,9 @@ class FinesBackendDataSource {
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
-      return (data['fines'] as List).map((e) => Fine.fromJson(e)).toList();
+      return (data['fines'] as List).map((e) => Fine.fromJson(e as Map<String, dynamic>)).toList();
     } else {
-      throw Exception('Failed to fetch fines');
+      throw Exception('Failed to fetch fines: ${response.statusCode}');
     }
   }
 }
