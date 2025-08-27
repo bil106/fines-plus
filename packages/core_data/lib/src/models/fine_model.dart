@@ -37,4 +37,12 @@ factory Fine.fromJson(Map<String, dynamic> json) {
       date: parsedDate,
     );
   }
+    Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'violation': violation,
+      'total': total,
+      'date': date.toIso8601String(),
+    };
+  }
 }

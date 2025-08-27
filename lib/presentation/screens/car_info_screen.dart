@@ -1,27 +1,21 @@
-// ignore_for_file: unused_field
-
-import 'dart:convert';
-
 import 'package:auto_route/auto_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:core_cubit/cubit/car_info_cubit.dart';
 import 'package:core_cubit/cubit/car_info_state.dart';
+import 'package:core_cubit/cubit/history_cubit.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:core_repository/car_info_repository.dart';
-
+import 'package:core_repository/history_repository.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_borders.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
-import 'package:fines_plus/env/env.dart';
-
+import 'package:fines_plus/router/home_screen_wrapper.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-
 import 'package:flutter/material.dart';
 import 'package:core_utils/formatters/vehicle_formatters.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 @RoutePage()
@@ -32,8 +26,13 @@ class CarInfoScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => CarInfoCubit(context.read<CarInfoRepository>()),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (context) => HistoryCubit(repository: context.read<HistoryRepository>())),
+        BlocProvider(
+          create: (context) => CarInfoCubit(context.read<CarInfoRepository>(), context.read<HistoryCubit>()),
+        ),
+      ],
       child: _CarInfoView(onCheckFine: onCheckFine),
     );
   }
@@ -50,10 +49,8 @@ class _CarInfoView extends StatefulWidget {
 class _CarInfoViewState extends State<_CarInfoView> {
   late final TextEditingController _carNumberController;
   late final TextEditingController _techPassportController;
-
-  String _carNumber = '';
-  String _docSeries = '';
-  String _docNumber = '';
+  late final HistoryCubit historyCubit;
+  late final CarInfoCubit carInfoCubit;
 
   @override
   void initState() {
@@ -61,24 +58,17 @@ class _CarInfoViewState extends State<_CarInfoView> {
     _carNumberController = TextEditingController();
     _techPassportController = TextEditingController();
 
-    _loadSavedCarInfo();
+    historyCubit = context.read<HistoryCubit>();
+    carInfoCubit = CarInfoCubit(context.read<CarInfoRepository>(), historyCubit);
 
-    FirebaseMessaging.instance.onTokenRefresh.listen((newToken) async {
-      final prefs = await SharedPreferences.getInstance();
-      final carNumber = prefs.getString('carNumber');
-      if (carNumber != null && carNumber.isNotEmpty) {
-        debugPrint("🔄 FCM Token refreshed for $carNumber: $newToken");
-        await FirebaseFirestore.instance.collection("cars").doc(carNumber).set({
-          "fcmToken": newToken,
-        }, SetOptions(merge: true));
-      }
-    });
+    _loadSavedCarInfo();
   }
 
   @override
   void dispose() {
     _carNumberController.dispose();
     _techPassportController.dispose();
+    carInfoCubit.close();
     super.dispose();
   }
 
@@ -91,219 +81,128 @@ class _CarInfoViewState extends State<_CarInfoView> {
     _techPassportController.text = techPassport;
 
     if (carNumber.isNotEmpty) {
-      _saveFcmToken(carNumber);
-    }
-  }
-
-  Future<void> _saveFcmToken(String carNumber) async {
-    final token = await FirebaseMessaging.instance.getToken();
-    if (token != null) {
-      debugPrint("🔑 Saving FCM Token for $carNumber: $token");
-      await FirebaseFirestore.instance.collection("cars").doc(carNumber).set({
-        "fcmToken": token,
-      }, SetOptions(merge: true));
-    }
-  }
-
-  Future<void> _saveCarInfo(String carNumber, String techPassport) async {
-    final parts = techPassport.split(' ');
-    final series = parts.isNotEmpty ? parts[0] : '';
-    final number = parts.length > 1 ? parts[1] : '';
-
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('carNumber', carNumber);
-    await prefs.setString('docSeries', series);
-    await prefs.setString('docNumber', number);
-
-    debugPrint("💾 Data saved: $carNumber / $series / $number");
-
-    setState(() {
-      _carNumber = carNumber;
-      _docSeries = series;
-      _docNumber = number;
-    });
-  }
-Future<String> getCaptchaToken() async {
-   
-    const token = Env.recaptchaSiteKey;
-    debugPrint('✅ Use token: $token');
-    return token;
-  }
-
-
-Future<void> _checkFines() async {
-    final carNumber = _carNumberController.text.trim();
-    final techPassport = _techPassportController.text.trim();
-
- 
-    if (carNumber.isEmpty || techPassport.isEmpty) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Введіть номер авто та техпаспорт')));
+      final token = await FirebaseMessaging.instance.getToken();
+      if (token != null) {
+        await FirebaseFirestore.instance.collection("cars").doc(carNumber).set({
+          "fcmToken": token,
+        }, SetOptions(merge: true));
       }
-      return;
-    }
-
-    if (techPassport.length != 9) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Incorrect registration number')));
-      }
-      return;
-    }
-
-    final series = techPassport.substring(0, 3).toUpperCase();
-    final number = techPassport.substring(3);
-
-    if (!RegExp(r'^[А-ЯІЇЄҐ]{3}$').hasMatch(series) || !RegExp(r'^\d{6}$').hasMatch(number)) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Incorrect registration number')));
-      }
-      return;
-    }
-
-   
-    await _saveCarInfo(carNumber, techPassport);
-
-    try {
-   
-      final captchaToken = await getCaptchaToken();
-
-      debugPrint('📌 carNumber: $carNumber');
-      debugPrint('📌 docSeries: $series');
-      debugPrint('📌 docNumber: $number');
-      debugPrint('📌 captchaToken: $captchaToken');
-
-      final response = await http.post(
-        Uri.parse("http://localhost:3000/api/fines"),
-        headers: {"Content-Type": "application/json"},
-        body: jsonEncode({
-          "carNumber": carNumber,
-          "docSeries": series,
-          "docNumber": number,
-          "captchaToken": captchaToken,
-          "cookies": "cf_clearance=XXX; _gv_sessid=YYY",
-        }),
-      );
-
-      if (response.statusCode == 200) {
-        final finesHtml = response.body;
-        debugPrint("📡 Server response: 200");
-        debugPrint("✅ HTML fines: $finesHtml");
-      } else {
-        debugPrint("❌ Server error: ${response.statusCode} ${response.body}");
-      }
-    } catch (e) {
-      debugPrint("❌ Failed to get token or fines: $e");
     }
   }
-
-
-
-
-
 
   @override
   Widget build(BuildContext context) {
-    final cubit = context.read<CarInfoCubit>();
     final textTheme = Theme.of(context).textTheme;
 
-    return Scaffold(
-      backgroundColor: AppColors.grey50,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              AppSpacers.verticalXLarge,
-              Text(S.of(context).addition_cars, style: textTheme.title),
-              AppSpacers.verticalHuge,
-              Card(
-                color: AppColors.neutreBlanc,
-                shape: RoundedRectangleBorder(borderRadius: AppBorders.radius22),
-                elevation: 4,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 25, horizontal: 20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(S.of(context).car_number, style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w600)),
-                      AppSpacers.verticalSmall,
-                      TextField(
-                        controller: _carNumberController,
-                        onChanged: cubit.setCarNumber,
-                        style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w400),
-                        inputFormatters: [VehicleNumberFormatter(mapLatinToCyrillic: true)],
-                        textCapitalization: TextCapitalization.characters,
-                        keyboardType: TextInputType.text,
-                        maxLength: 8,
-                        decoration: InputDecoration(
-                          hintText: 'АН0000НА',
-                          hintStyle: textTheme.hintText,
-                          counterText: '',
-                          filled: true,
-                          fillColor: AppColors.grey50,
-                          border: OutlineInputBorder(borderRadius: AppBorders.radius18, borderSide: BorderSide.none),
+    return BlocProvider.value(
+      value: carInfoCubit,
+      child: Scaffold(
+        backgroundColor: AppColors.grey50,
+        body: SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                AppSpacers.verticalXLarge,
+                Text(S.of(context).addition_cars, style: textTheme.title),
+                AppSpacers.verticalHuge,
+                Card(
+                  color: AppColors.neutreBlanc,
+                  shape: RoundedRectangleBorder(borderRadius: AppBorders.radius22),
+                  elevation: 4,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 25, horizontal: 20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          S.of(context).car_number,
+                          style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w600),
                         ),
-                      ),
-                      AppSpacers.verticalLarge,
-                      Text(S.of(context).reg_number, style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w600)),
-                      AppSpacers.verticalSmall,
-                      TextField(
-                        controller: _techPassportController,
-                        onChanged: cubit.setTechPassport,
-                        style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w400),
-                        inputFormatters: [TechPassportFormatter()],
-                        maxLength: 9,
-                        decoration: InputDecoration(
-                          hintText: 'ХЕE128436',
-                          hintStyle: textTheme.hintText,
-                          counterText: '',
-                          filled: true,
-                          fillColor: AppColors.grey50,
-                          border: OutlineInputBorder(borderRadius: AppBorders.radius18, borderSide: BorderSide.none),
+                        AppSpacers.verticalSmall,
+                        TextField(
+                          controller: _carNumberController,
+                          onChanged: carInfoCubit.setCarNumber,
+                          style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w400),
+                          inputFormatters: [VehicleNumberFormatter(mapLatinToCyrillic: true)],
+                          textCapitalization: TextCapitalization.characters,
+                          keyboardType: TextInputType.text,
+                          maxLength: 8,
+                          decoration: InputDecoration(
+                            hintText: 'АН0000НА',
+                            hintStyle: textTheme.hintText,
+                            counterText: '',
+                            filled: true,
+                            fillColor: AppColors.grey50,
+                            border: OutlineInputBorder(borderRadius: AppBorders.radius18, borderSide: BorderSide.none),
+                          ),
                         ),
-                      ),
-                    ],
+                        AppSpacers.verticalLarge,
+                        Text(
+                          S.of(context).reg_number,
+                          style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w600),
+                        ),
+                        AppSpacers.verticalSmall,
+                        TextField(
+                          controller: _techPassportController,
+                          onChanged: carInfoCubit.setTechPassport,
+                          style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w400),
+                          inputFormatters: [TechPassportFormatter()],
+                          maxLength: 9,
+                          decoration: InputDecoration(
+                            hintText: 'ХЕE128436',
+                            hintStyle: textTheme.hintText,
+                            counterText: '',
+                            filled: true,
+                            fillColor: AppColors.grey50,
+                            border: OutlineInputBorder(borderRadius: AppBorders.radius18, borderSide: BorderSide.none),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              AppSpacers.verticalLargeXL,
-              BlocBuilder<CarInfoCubit, CarInfoState>(
-                builder: (context, state) {
-                  return SizedBox(
-                    width: double.infinity,
-                    height: 65,
-                    child: ElevatedButton(
-                      onPressed: cubit.isFormValid
-                          ? () async {
-                              final error = cubit.validate();
-                              if (error != null) {
-                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(error)));
-                                return;
-                              }
+                AppSpacers.verticalLargeXL,
+                BlocConsumer<CarInfoCubit, CarInfoState>(
+                  listener: (context, state) {
+                    if (state.status is CarInfoErrorStatus) {
+                      final msg = (state.status as CarInfoErrorStatus).message;
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
+                    } else if (state.status is CarInfoLoadedStatus) {
+                      final carNumber = state.carNumber;
 
-                              await _saveCarInfo(_carNumberController.text, _techPassportController.text);
+                      final homeWrapperState = context.findAncestorStateOfType<HomeScreenWrapperState>();
 
-                              if (widget.onCheckFine != null) {
-                                widget.onCheckFine!(
-                                  _carNumberController.text,
-                                  _techPassportController.text.substring(0, 3).toUpperCase(),
-                                  _techPassportController.text.substring(3),
-                                );
-                              }
-                              await _checkFines();
-                            }
-                          : null,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.blue700,
-                        shape: RoundedRectangleBorder(borderRadius: AppBorders.radius16),
+                      homeWrapperState?.openHistoryPage();
+
+                      if (widget.onCheckFine != null) {
+                        final parts = carInfoCubit.getTechPassportParts();
+                        widget.onCheckFine!(carNumber, parts['series']!, parts['number']!);
+                      }
+                    }
+                  },
+                  builder: (context, state) {
+                    final isLoading = state.status is CarInfoLoadingStatus;
+
+                    return SizedBox(
+                      width: double.infinity,
+                      height: 65,
+                      child: ElevatedButton(
+                        onPressed: carInfoCubit.isFormValid && !isLoading ? () => carInfoCubit.checkFines() : null,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.blue700,
+                          shape: RoundedRectangleBorder(borderRadius: AppBorders.radius16),
+                        ),
+                        child: isLoading
+                            ? const CircularProgressIndicator(color: Colors.white)
+                            : Text(S.of(context).search, style: textTheme.buttonText),
                       ),
-                      child: Text(S.of(context).search, style: textTheme.buttonText),
-                    ),
-                  );
-                },
-              ),
-            ],
+                    );
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ),

@@ -1,12 +1,9 @@
-// ignore_for_file: use_build_context_synchronously, depend_on_referenced_packages
-
 import 'package:auto_route/auto_route.dart';
 import 'package:core_cubit/cubit/reminder_cubit.dart';
 import 'package:core_data/core_data.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:core_repository/reminder_repository.dart';
 import 'package:design_system/colors/app_colors.dart';
-
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
 import 'package:fines_plus/services/reminder_dialog.dart';
@@ -28,10 +25,9 @@ class RemindersScreen extends StatelessWidget {
         repository: context.read<ReminderRepository>(),
         carNumber: carNumber,
         pushHelper: context.read<PushHelper>(),
-      )..load(), 
+      )..load(),
       child: _RemindersView(),
     );
-
   }
 }
 

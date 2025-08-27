@@ -25,5 +25,6 @@ class FinesRepositoryImpl implements FinesRepository {
       docNumber: docNumber,
     );
   }
+  
 }
 

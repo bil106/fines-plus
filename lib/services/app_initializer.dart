@@ -4,6 +4,8 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:core_data/core_data.dart';
 import 'package:core_repository/car_info_repository.dart';
+import 'package:core_repository/history_repository.dart';
+
 import 'package:core_repository/reminder_repository.dart';
 import 'package:fines_plus/backend/fines_server.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -127,12 +129,13 @@ class AppInitializer {
 
     final pushHelper = PushHelper(flutterLocalNotificationsPlugin);
 
+    final historyRepository = HistoryRepository(FirebaseFirestore.instance);
     return AppInitResult(
       config: config,
       carInfoRepository: carInfoRepository,
       reminderRepository: reminderRepository,
       flutterLocalNotificationsPlugin: flutterLocalNotificationsPlugin,
-      pushHelper: pushHelper,
+      pushHelper: pushHelper, historyRepository: historyRepository,
     );
   }
 
@@ -190,6 +193,7 @@ class AppInitResult {
   final ReminderRepository reminderRepository;
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
   final PushHelper pushHelper;
+  final HistoryRepository historyRepository; 
 
   AppInitResult({
     required this.config,
@@ -197,5 +201,7 @@ class AppInitResult {
     required this.reminderRepository,
     required this.flutterLocalNotificationsPlugin,
     required this.pushHelper,
+    required this.historyRepository, 
   });
 }
+

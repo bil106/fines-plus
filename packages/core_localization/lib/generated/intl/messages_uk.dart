@@ -47,6 +47,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "search": MessageLookupByLibrary.simpleMessage("Пошук"),
     "settings": MessageLookupByLibrary.simpleMessage("Налаштування"),
     "support": MessageLookupByLibrary.simpleMessage("Підтримка"),
+    "verification_history": MessageLookupByLibrary.simpleMessage(
+      "Історія перевірки",
+    ),
     "write_viber": MessageLookupByLibrary.simpleMessage("Написати у Viber"),
   };
 }

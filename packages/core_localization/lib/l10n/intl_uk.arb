@@ -21,5 +21,7 @@
    "no_fines": "На вас немає штрафів",
    "settings": "Налаштування",
    "push_notifications": "Push-сповіщення",
-   "pay": "Сплатити"
+   "pay": "Сплатити",
+   "verification_history": "Історія перевірки"
+
 }

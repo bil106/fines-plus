@@ -35,6 +35,7 @@ Future<void> main() async {
         RepositoryProvider.value(value: result.carInfoRepository),
         RepositoryProvider.value(value: result.reminderRepository),
         RepositoryProvider.value(value: result.pushHelper),
+        RepositoryProvider.value(value: result.historyRepository),
       ],
       child: MyApp(config: result.config, flutterLocalNotificationsPlugin: result.flutterLocalNotificationsPlugin),
     ),

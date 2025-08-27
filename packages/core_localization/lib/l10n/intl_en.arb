@@ -21,5 +21,6 @@
     "no_fines": "There are no fines for you",
     "settings": "Settings",
     "push_notifications": "Push notifications",
-    "pay": "Pay"
+    "pay": "Pay",
+    "verification_history": "Verification history"
 }

@@ -2,14 +2,13 @@ import 'package:auto_route/auto_route.dart';
 import 'package:core_cubit/cubit/reminder_cubit.dart';
 import 'package:core_data/core_data.dart';
 import 'package:core_localization/generated/l10n.dart';
-
 import 'package:core_repository/reminder_repository.dart';
 import 'package:design_system/colors/app_colors.dart';
-
 import 'package:fines_plus/presentation/screens/add_car_screen.dart';
 import 'package:fines_plus/presentation/screens/car_info_screen.dart';
 import 'package:fines_plus/presentation/screens/fine_check_screen.dart';
 import 'package:fines_plus/presentation/screens/fines_screeen.dart';
+import 'package:fines_plus/presentation/screens/history_screen.dart';
 import 'package:fines_plus/presentation/screens/reminders_screen.dart';
 import 'package:fines_plus/presentation/screens/settings_screen.dart';
 
@@ -17,19 +16,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-
-
-
-
 @RoutePage()
 class HomeScreenWrapper extends StatefulWidget {
   const HomeScreenWrapper({super.key});
 
   @override
-  State<HomeScreenWrapper> createState() => _HomeScreenWrapperState();
+  State<HomeScreenWrapper> createState() => HomeScreenWrapperState();
 }
 
-class _HomeScreenWrapperState extends State<HomeScreenWrapper> {
+class HomeScreenWrapperState extends State<HomeScreenWrapper> {
   final PageController _pageController = PageController();
   int _currentIndex = 0;
   String? _carNumber;
@@ -38,6 +33,7 @@ class _HomeScreenWrapperState extends State<HomeScreenWrapper> {
 
   static const int carInfoPageIndex = 3;
   static const int fineCheckPageIndex = 4;
+  static const int historyPageIndex = 6;
 
   @override
   void initState() {
@@ -68,6 +64,15 @@ class _HomeScreenWrapperState extends State<HomeScreenWrapper> {
 
   void _onTabTapped(int index) {
     _pageController.animateToPage(index, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+  }
+
+  void openHistoryPage() {
+    _pageController.animateToPage(
+      historyPageIndex,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
+    setState(() => _currentIndex = historyPageIndex);
   }
 
   @override
@@ -107,7 +112,7 @@ class _HomeScreenWrapperState extends State<HomeScreenWrapper> {
                 duration: const Duration(milliseconds: 300),
                 curve: Curves.easeInOut,
               );
-              setState(() => _currentIndex = 0);
+              setState(() => _currentIndex = fineCheckPageIndex);
             },
           ),
           BlocProvider(
@@ -118,21 +123,16 @@ class _HomeScreenWrapperState extends State<HomeScreenWrapper> {
             )..load(),
             child: RemindersScreen(carNumber: _carNumber!),
           ),
-    CarInfoScreen(
-  onCheckFine: (carNumber, series, number) {
-    _saveCarInfo(carNumber, series, number);
-    _pageController.animateToPage(
-      fineCheckPageIndex,
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
-    );
-    setState(() => _currentIndex = fineCheckPageIndex);
-  },
-),
+          CarInfoScreen(
+            onCheckFine: (carNumber, series, number) {
+              _saveCarInfo(carNumber, series, number);
 
-
+              openHistoryPage();
+            },
+          ),
           FineCheckScreen(carNumber: _carNumber!, docSeries: _docSeries ?? '', docNumber: _docNumber ?? ''),
           const SettingsScreen(),
+          HistoryScreen(carNumber: _carNumber ?? ''),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(

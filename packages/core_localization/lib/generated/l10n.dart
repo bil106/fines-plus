@@ -203,6 +203,16 @@ class S {
   String get pay {
     return Intl.message('Pay', name: 'pay', desc: '', args: []);
   }
+
+  /// `Verification history`
+  String get verification_history {
+    return Intl.message(
+      'Verification history',
+      name: 'verification_history',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

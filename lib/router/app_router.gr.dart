@@ -233,6 +233,70 @@ class FinesRouteArgs {
 }
 
 /// generated route for
+/// [HistoryScreen]
+class HistoryRoute extends PageRouteInfo<HistoryRouteArgs> {
+  HistoryRoute({
+    Key? key,
+    required String carNumber,
+    required HistoryRepository repository,
+    List<PageRouteInfo>? children,
+  }) : super(
+         HistoryRoute.name,
+         args: HistoryRouteArgs(
+           key: key,
+           carNumber: carNumber,
+           repository: repository,
+         ),
+         initialChildren: children,
+       );
+
+  static const String name = 'HistoryRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      final args = data.argsAs<HistoryRouteArgs>();
+      return HistoryScreen(
+        key: args.key,
+        carNumber: args.carNumber,
+    
+      );
+    },
+  );
+}
+
+class HistoryRouteArgs {
+  const HistoryRouteArgs({
+    this.key,
+    required this.carNumber,
+    required this.repository,
+  });
+
+  final Key? key;
+
+  final String carNumber;
+
+  final HistoryRepository repository;
+
+  @override
+  String toString() {
+    return 'HistoryRouteArgs{key: $key, carNumber: $carNumber, repository: $repository}';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! HistoryRouteArgs) return false;
+    return key == other.key &&
+        carNumber == other.carNumber &&
+        repository == other.repository;
+  }
+
+  @override
+  int get hashCode => key.hashCode ^ carNumber.hashCode ^ repository.hashCode;
+}
+
+/// generated route for
 /// [HomeScreenWrapper]
 class HomeRouteWrapper extends PageRouteInfo<void> {
   const HomeRouteWrapper({List<PageRouteInfo>? children})

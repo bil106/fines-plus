@@ -30,3 +30,18 @@ class FinesError extends FinesState {
   @override
   List<Object?> get props => [message];
 }
+class FinesCaptcha extends FinesState {
+  final String captchaUrl; 
+  const FinesCaptcha(this.captchaUrl);
+
+  @override
+  List<Object?> get props => [captchaUrl];
+}
+
+class FinesLogLoaded extends FinesState {
+  final List<String> logs;
+  const FinesLogLoaded(this.logs);
+
+  @override
+  List<Object?> get props => [logs];
+}
