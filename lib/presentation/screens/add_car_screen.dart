@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:core_data/core_data.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/constants/app_borders.dart';
 import 'package:design_system/constants/app_spacers.dart';
@@ -8,6 +9,7 @@ import 'package:design_system/colors/app_colors.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 @RoutePage()
 class AddCarScreen extends StatefulWidget {
@@ -19,25 +21,49 @@ class AddCarScreen extends StatefulWidget {
 }
 
 class _AddCarScreenState extends State<AddCarScreen> {
+  BannerAd? _bannerAd;
+
+  @override
+  void initState() {
+    super.initState();
+    _bannerAd = BannerAd(
+      adUnitId: AdHelper.bannerAdUnitId,
+      size: AdSize.largeBanner,
+      request: const AdRequest(),
+      listener: BannerAdListener(
+        onAdLoaded: (ad) => setState(() {}),
+        onAdFailedToLoad: (ad, error) {
+          ad.dispose();
+          debugPrint("Ad failed: $error");
+        },
+      ),
+    )..load();
+  }
+
+  @override
+  void dispose() {
+    _bannerAd?.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
-final textTheme = Theme.of(context).textTheme;
+    final textTheme = Theme.of(context).textTheme;
+
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle(statusBarColor: AppColors.grey50, statusBarIconBrightness: Brightness.dark),
-      child: Container(
-        color: AppColors.grey50,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+      child: Scaffold(
+        backgroundColor: AppColors.grey50,
+        body: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
           child: SafeArea(
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   AppSpacers.verticalXLarge,
-                  Text(
-                    S.of(context).add_cars,
-                    style: textTheme.title),
+                  Text(S.of(context).add_cars, style: textTheme.title),
                   AppSpacers.verticalHuge,
                   SizedBox(
                     height: screenHeight * 0.6,
@@ -77,6 +103,15 @@ final textTheme = Theme.of(context).textTheme;
                       ),
                     ),
                   ),
+                  // 🔹 Реклама снизу
+                  if (_bannerAd != null)
+                    Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 25,vertical:20),
+                      alignment: Alignment.center,
+                      width: _bannerAd!.size.width.toDouble(),
+                      height: _bannerAd!.size.height.toDouble(),
+                      child: AdWidget(ad: _bannerAd!),
+                    ),
                 ],
               ),
             ),

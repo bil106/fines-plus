@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:core_cubit/cubit/car_info_cubit.dart';
 import 'package:core_cubit/cubit/car_info_state.dart';
 import 'package:core_cubit/cubit/history_cubit.dart';
+import 'package:core_data/core_data.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:core_repository/car_info_repository.dart';
 import 'package:core_repository/history_repository.dart';
@@ -15,6 +16,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:core_utils/formatters/vehicle_formatters.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -51,7 +53,7 @@ class _CarInfoViewState extends State<_CarInfoView> {
   late final TextEditingController _techPassportController;
   late final HistoryCubit historyCubit;
   late final CarInfoCubit carInfoCubit;
-
+  BannerAd? _bannerAd;
   @override
   void initState() {
     super.initState();
@@ -62,6 +64,19 @@ class _CarInfoViewState extends State<_CarInfoView> {
     carInfoCubit = CarInfoCubit(context.read<CarInfoRepository>(), historyCubit);
 
     _loadSavedCarInfo();
+
+    _bannerAd = BannerAd(
+      adUnitId: AdHelper.bannerAdUnitId,
+      size: AdSize.largeBanner,
+      request: const AdRequest(),
+      listener: BannerAdListener(
+        onAdLoaded: (ad) => setState(() {}),
+        onAdFailedToLoad: (ad, error) {
+          ad.dispose();
+          debugPrint("Ad failed: $error");
+        },
+      ),
+    )..load();
   }
 
   @override
@@ -201,6 +216,15 @@ class _CarInfoViewState extends State<_CarInfoView> {
                     );
                   },
                 ),
+                AppSpacers.verticalLargeXL,
+                if (_bannerAd != null)
+                  Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 25, vertical: 40),
+                    alignment: Alignment.center,
+                    width: _bannerAd!.size.width.toDouble(),
+                    height: _bannerAd!.size.height.toDouble(),
+                    child: AdWidget(ad: _bannerAd!),
+                  ),
               ],
             ),
           ),

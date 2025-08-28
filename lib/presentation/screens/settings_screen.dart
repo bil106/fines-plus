@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:core_data/core_data.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_borders.dart';
@@ -6,6 +7,7 @@ import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 @RoutePage()
 class SettingsScreen extends StatefulWidget {
@@ -19,7 +21,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
   bool finesCheck = true;
   bool reminders = true;
   bool pushNotifications = true;
+  BannerAd? _bannerAd;
 
+  @override
+  void initState() {
+    super.initState();
+    _bannerAd = BannerAd(
+      adUnitId: AdHelper.bannerAdUnitId,
+      size: AdSize.largeBanner,
+      request: const AdRequest(),
+      listener: BannerAdListener(
+        onAdLoaded: (ad) => setState(() {}),
+        onAdFailedToLoad: (ad, error) {
+          ad.dispose();
+          debugPrint("Ad failed: $error");
+        },
+      ),
+    )..load();
+  }
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
@@ -67,10 +86,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           value: pushNotifications,
                           onChanged: (val) => setState(() => pushNotifications = val),
                         ),
+                        
                       ],
                     ),
                   ),
                 ),
+                AppSpacers.verticalLargeXL,
+                if (_bannerAd != null)
+                  Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 25, vertical: 40),
+                    alignment: Alignment.center,
+                    width: _bannerAd!.size.width.toDouble(),
+                    height: _bannerAd!.size.height.toDouble(),
+                    child: AdWidget(ad: _bannerAd!),
+                  ),
               ],
             ),
           ),

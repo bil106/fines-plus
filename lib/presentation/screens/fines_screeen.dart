@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:core_data/core_data.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_borders.dart';
@@ -7,7 +8,7 @@ import 'package:design_system/theme/app_text_theme.dart';
 import 'package:design_system/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 @RoutePage()
 class FinesScreen extends StatefulWidget {
@@ -19,6 +20,25 @@ class FinesScreen extends StatefulWidget {
 }
 
 class _FinesScreenState extends State<FinesScreen> {
+  BannerAd? _bannerAd;
+
+  @override
+  void initState() {
+    super.initState();
+    _bannerAd = BannerAd(
+      adUnitId: AdHelper.bannerAdUnitId,
+      size: AdSize.largeBanner,
+      request: const AdRequest(),
+      listener: BannerAdListener(
+        onAdLoaded: (ad) => setState(() {}),
+        onAdFailedToLoad: (ad, error) {
+          ad.dispose();
+          debugPrint("Ad failed: $error");
+        },
+      ),
+    )..load();
+  }
+
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
@@ -41,7 +61,7 @@ class _FinesScreenState extends State<FinesScreen> {
               ),
               AppSpacers.verticalMassive,
 
-             SizedBox(
+              SizedBox(
                 width: double.infinity,
                 height: 70,
                 child: ElevatedButton(
@@ -81,9 +101,20 @@ class _FinesScreenState extends State<FinesScreen> {
                     ),
                     AppSpacers.horizontalLarge,
                     Expanded(child: Text(S.of(context).no_fines, style: textTheme.noFinesText)),
+
+                    
                   ],
                 ),
               ),
+              AppSpacers.verticalLargeXL,
+              if (_bannerAd != null)
+                Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 25, vertical: 4),
+                  alignment: Alignment.center,
+                  width: _bannerAd!.size.width.toDouble(),
+                  height: _bannerAd!.size.height.toDouble(),
+                  child: AdWidget(ad: _bannerAd!),
+                ),
             ],
           ),
         ),

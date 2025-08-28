@@ -13,6 +13,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:http/http.dart' as http;
 
 @RoutePage()
@@ -29,7 +30,7 @@ class FineCheckScreen extends StatefulWidget {
 
 class _FineCheckScreenState extends State<FineCheckScreen> {
   late final FinesCubit finesCubit;
-
+  BannerAd? _bannerAd;
   @override
   void initState() {
     super.initState();
@@ -38,6 +39,19 @@ class _FineCheckScreenState extends State<FineCheckScreen> {
     finesCubit = FinesCubit(repository);
 
     finesCubit.checkFines(carNumber: widget.carNumber, docSeries: widget.docSeries, docNumber: widget.docNumber);
+    _bannerAd = BannerAd(
+      adUnitId: AdHelper.bannerAdUnitId,
+      size: AdSize.largeBanner,
+      request: const AdRequest(),
+      listener: BannerAdListener(
+        onAdLoaded: (ad) => setState(() {}),
+        onAdFailedToLoad: (ad, error) {
+          ad.dispose();
+          debugPrint("Ad failed: $error");
+        },
+      ),
+    )..load();
+  
   }
 
   @override
@@ -158,6 +172,17 @@ class _FineCheckScreenState extends State<FineCheckScreen> {
                       child: Text(S.of(context).pay, style: textTheme.buttonText),
                     ),
                   ),
+
+
+                   AppSpacers.verticalLargeXL,
+                  if (_bannerAd != null)
+                    Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 25, vertical: 40),
+                      alignment: Alignment.center,
+                      width: _bannerAd!.size.width.toDouble(),
+                      height: _bannerAd!.size.height.toDouble(),
+                      child: AdWidget(ad: _bannerAd!),
+                    ),
                 ],
               ),
             ),

@@ -8,11 +8,13 @@ class FinesCubit extends Cubit<FinesState> {
 
   FinesCubit(this.repository) : super(FinesInitial());
 
-  Future<void> checkFines({
+Future<void> checkFines({
     required String carNumber,
     required String docSeries,
     required String docNumber,
   }) async {
+    if (isClosed) return; 
+
     emit(FinesLoading());
     try {
       final fines = await repository.fetchFines(
@@ -21,13 +23,16 @@ class FinesCubit extends Cubit<FinesState> {
         docNumber: docNumber,
       );
 
+      if (isClosed) return; 
       if (fines.isEmpty) {
         emit(FinesEmpty());
       } else {
-        emit(FinesLoaded(fines)); 
+        emit(FinesLoaded(fines));
       }
     } catch (e) {
+      if (isClosed) return;
       emit(FinesError(e.toString()));
     }
   }
+
 }
