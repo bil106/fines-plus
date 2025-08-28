@@ -1,7 +1,11 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:core_cubit/cubit/car_info_cubit.dart';
+import 'package:core_cubit/cubit/history_cubit.dart';
 import 'package:core_cubit/cubit/reminder_cubit.dart';
 import 'package:core_data/core_data.dart';
 import 'package:core_localization/generated/l10n.dart';
+import 'package:core_repository/car_info_repository.dart';
+import 'package:core_repository/history_repository.dart';
 import 'package:core_repository/reminder_repository.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:fines_plus/presentation/screens/add_car_screen.dart';
@@ -27,6 +31,7 @@ class HomeScreenWrapper extends StatefulWidget {
 class HomeScreenWrapperState extends State<HomeScreenWrapper> {
   final PageController _pageController = PageController();
   int _currentIndex = 0;
+
   String? _carNumber;
   String? _docSeries;
   String? _docNumber;
@@ -35,10 +40,17 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
   static const int fineCheckPageIndex = 4;
   static const int historyPageIndex = 6;
 
+  late final HistoryCubit historyCubit;
+  late final CarInfoCubit carInfoCubit;
+
   @override
   void initState() {
     super.initState();
     _loadCarNumber();
+
+  
+    historyCubit = HistoryCubit(repository: context.read<HistoryRepository>());
+    carInfoCubit = CarInfoCubit(context.read<CarInfoRepository>(), historyCubit);
   }
 
   Future<void> _loadCarNumber() async {
@@ -55,6 +67,7 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
     await prefs.setString('carNumber', carNumber);
     await prefs.setString('docSeries', series);
     await prefs.setString('docNumber', number);
+
     setState(() {
       _carNumber = carNumber;
       _docSeries = series;
@@ -78,6 +91,8 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
   @override
   void dispose() {
     _pageController.dispose();
+    historyCubit.close();
+    carInfoCubit.close();
     super.dispose();
   }
 
@@ -87,63 +102,75 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
-    return Scaffold(
-      backgroundColor: AppColors.grey50,
-      body: PageView(
-        controller: _pageController,
-        onPageChanged: (index) {
-          setState(() => _currentIndex = index);
-        },
-        children: [
-          AddCarScreen(
-            onOpenCarInfo: () {
-              _pageController.animateToPage(
-                carInfoPageIndex,
-                duration: const Duration(milliseconds: 300),
-                curve: Curves.easeInOut,
-              );
-              setState(() => _currentIndex = carInfoPageIndex);
-            },
-          ),
-          FinesScreen(
-            onFineCheck: () {
-              _pageController.animateToPage(
-                fineCheckPageIndex,
-                duration: const Duration(milliseconds: 300),
-                curve: Curves.easeInOut,
-              );
-              setState(() => _currentIndex = fineCheckPageIndex);
-            },
-          ),
-          BlocProvider(
-            create: (_) => ReminderCubit(
-              repository: context.read<ReminderRepository>(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider.value(value: historyCubit),
+        BlocProvider.value(value: carInfoCubit),
+      ],
+      child: Scaffold(
+        backgroundColor: AppColors.grey50,
+        body: PageView(
+          controller: _pageController,
+          onPageChanged: (index) => setState(() => _currentIndex = index),
+          children: [
+            AddCarScreen(
+              key: const ValueKey('add_car'),
+              onOpenCarInfo: () {
+                _pageController.animateToPage(
+                  carInfoPageIndex,
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeInOut,
+                );
+                setState(() => _currentIndex = carInfoPageIndex);
+              },
+            ),
+            FinesScreen(
+              key: const ValueKey('fines_screen'),
+              onFineCheck: () {
+                _pageController.animateToPage(
+                  fineCheckPageIndex,
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeInOut,
+                );
+                setState(() => _currentIndex = fineCheckPageIndex);
+              },
+            ),
+            BlocProvider(
+              key: const ValueKey('reminder_screen'),
+              create: (_) => ReminderCubit(
+                repository: context.read<ReminderRepository>(),
+                carNumber: _carNumber!,
+                pushHelper: RepositoryProvider.of<PushHelper>(context),
+              )..load(),
+              child: RemindersScreen(carNumber: _carNumber!),
+            ),
+            CarInfoScreen(
+              key: const ValueKey('car_info'),
+              onCheckFine: (carNumber, series, number) {
+                _saveCarInfo(carNumber, series, number);
+                openHistoryPage();
+              },
+            ),
+            FineCheckScreen(
+              key: const ValueKey('fine_check'),
               carNumber: _carNumber!,
-              pushHelper: RepositoryProvider.of<PushHelper>(context),
-            )..load(),
-            child: RemindersScreen(carNumber: _carNumber!),
-          ),
-          CarInfoScreen(
-            onCheckFine: (carNumber, series, number) {
-              _saveCarInfo(carNumber, series, number);
-
-              openHistoryPage();
-            },
-          ),
-          FineCheckScreen(carNumber: _carNumber!, docSeries: _docSeries ?? '', docNumber: _docNumber ?? ''),
-          const SettingsScreen(),
-          HistoryScreen(carNumber: _carNumber ?? ''),
-        ],
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: AppColors.neutreBlanc,
-        currentIndex: _currentIndex > 2 ? 0 : _currentIndex,
-        onTap: _onTabTapped,
-        items: [
-          BottomNavigationBarItem(icon: Icon(Icons.directions_car), label: S.of(context).auto),
-          BottomNavigationBarItem(icon: Icon(Icons.receipt), label: S.of(context).fines),
-          BottomNavigationBarItem(icon: Icon(Icons.support), label: S.of(context).reminder),
-        ],
+              docSeries: _docSeries ?? '',
+              docNumber: _docNumber ?? '',
+            ),
+            const SettingsScreen(key: ValueKey('settings')),
+            HistoryScreen(key: const ValueKey('history_screen'), carNumber: _carNumber!),
+          ],
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+          backgroundColor: AppColors.neutreBlanc,
+          currentIndex: _currentIndex > 2 ? 0 : _currentIndex,
+          onTap: _onTabTapped,
+          items: [
+            BottomNavigationBarItem(icon: Icon(Icons.directions_car), label: S.of(context).auto),
+            BottomNavigationBarItem(icon: Icon(Icons.receipt), label: S.of(context).fines),
+            BottomNavigationBarItem(icon: Icon(Icons.support), label: S.of(context).reminder),
+          ],
+        ),
       ),
     );
   }

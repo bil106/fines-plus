@@ -64,7 +64,7 @@ class _AddCarScreenState extends State<AddCarScreen> {
                 children: [
                   AppSpacers.verticalXLarge,
                   Text(S.of(context).add_cars, style: textTheme.title),
-                  AppSpacers.verticalHuge,
+                  AppSpacers.verticalXXLarge,
                   SizedBox(
                     height: screenHeight * 0.6,
                     width: double.infinity,
@@ -73,7 +73,7 @@ class _AddCarScreenState extends State<AddCarScreen> {
                       shape: RoundedRectangleBorder(borderRadius: AppBorders.radius22),
                       elevation: 4,
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 40),
+                        padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 40),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -103,10 +103,10 @@ class _AddCarScreenState extends State<AddCarScreen> {
                       ),
                     ),
                   ),
-                  // 🔹 Реклама снизу
+                 
                   if (_bannerAd != null)
                     Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 25,vertical:20),
+                      margin: const EdgeInsets.symmetric(horizontal: 25,vertical:10),
                       alignment: Alignment.center,
                       width: _bannerAd!.size.width.toDouble(),
                       height: _bannerAd!.size.height.toDouble(),
