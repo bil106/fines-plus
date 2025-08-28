@@ -8,6 +8,7 @@ export 'src/models/car_info_model.dart';
 export 'src/models/reminder_model.dart';
 export 'src/models/fine_model.dart';
 export 'src/models/fine_check_history.dart';
+export 'src/models/service_record.dart';
 
 export 'src/local/car_info_local_data_source.dart';
 export 'src/remote/car_info_remote_data_source.dart';
@@ -20,4 +21,5 @@ export 'src/local/firebase_fines_data_source.dart';
 export 'src/local/push_helper.dart';
 export 'src/local/ad_helper.dart';
 export 'src/local/fines_data_source.dart';
+export 'src/local/mock_service_data.dart';
 

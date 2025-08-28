@@ -22,9 +22,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 @RoutePage()
 class CarInfoScreen extends StatelessWidget {
+  final VoidCallback? onBack;
   final void Function(String carNumber, String series, String number)? onCheckFine;
 
-  const CarInfoScreen({super.key, this.onCheckFine});
+  const CarInfoScreen({super.key, this.onCheckFine, this.onBack});
 
   @override
   Widget build(BuildContext context) {
@@ -35,14 +36,15 @@ class CarInfoScreen extends StatelessWidget {
           create: (context) => CarInfoCubit(context.read<CarInfoRepository>(), context.read<HistoryCubit>()),
         ),
       ],
-      child: _CarInfoView(onCheckFine: onCheckFine),
+      child: _CarInfoView(onCheckFine: onCheckFine, onBack: onBack),
     );
   }
 }
 
 class _CarInfoView extends StatefulWidget {
   final void Function(String carNumber, String series, String number)? onCheckFine;
-  const _CarInfoView({this.onCheckFine});
+  final VoidCallback? onBack;
+  const _CarInfoView({this.onCheckFine, this.onBack});
 
   @override
   State<_CarInfoView> createState() => _CarInfoViewState();
@@ -112,6 +114,11 @@ class _CarInfoViewState extends State<_CarInfoView> {
     return BlocProvider.value(
       value: carInfoCubit,
       child: Scaffold(
+          appBar: AppBar(
+          backgroundColor: AppColors.grey50,
+          leading: BackButton(color: AppColors.blue700,  onPressed: widget.onBack ?? () {
+              Navigator.pop(context);}),
+        ),
         backgroundColor: AppColors.grey50,
         body: SafeArea(
           child: SingleChildScrollView(

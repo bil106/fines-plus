@@ -15,6 +15,7 @@ import 'package:fines_plus/presentation/screens/fines_screeen.dart';
 import 'package:fines_plus/presentation/screens/history_screen.dart';
 import 'package:fines_plus/presentation/screens/reminders_screen.dart';
 import 'package:fines_plus/presentation/screens/settings_screen.dart';
+import 'package:fines_plus/presentation/screens/maintenance_screen.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -36,9 +37,13 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
   String? _docSeries;
   String? _docNumber;
 
+  static const int addCarPageIndex = 0;
+  static const int finesPageIndex = 1;
+  static const int remindersPageIndex = 2;
   static const int carInfoPageIndex = 3;
   static const int fineCheckPageIndex = 4;
   static const int historyPageIndex = 6;
+  static const int maintenancePageIndex = 7;
 
   late final HistoryCubit historyCubit;
   late final CarInfoCubit carInfoCubit;
@@ -48,7 +53,6 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
     super.initState();
     _loadCarNumber();
 
-  
     historyCubit = HistoryCubit(repository: context.read<HistoryRepository>());
     carInfoCubit = CarInfoCubit(context.read<CarInfoRepository>(), historyCubit);
   }
@@ -88,6 +92,8 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
     setState(() => _currentIndex = historyPageIndex);
   }
 
+  int get _bottomNavIndex => _currentIndex.clamp(0, 2);
+
   @override
   void dispose() {
     _pageController.dispose();
@@ -114,7 +120,7 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
           onPageChanged: (index) => setState(() => _currentIndex = index),
           children: [
             AddCarScreen(
-              key: const ValueKey('add_car'),
+              key: const ValueKey('add_car_screen'),
               onOpenCarInfo: () {
                 _pageController.animateToPage(
                   carInfoPageIndex,
@@ -123,9 +129,6 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
                 );
                 setState(() => _currentIndex = carInfoPageIndex);
               },
-            ),
-            FinesScreen(
-              key: const ValueKey('fines_screen'),
               onFineCheck: () {
                 _pageController.animateToPage(
                   fineCheckPageIndex,
@@ -134,36 +137,67 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
                 );
                 setState(() => _currentIndex = fineCheckPageIndex);
               },
+                onMaintenance: () {
+                _pageController.animateToPage(
+                  maintenancePageIndex,
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeInOut,
+                );
+                setState(() => _currentIndex = maintenancePageIndex);
+              },
             ),
+             FinesScreen(
+              key: const ValueKey('fines_screen'),
+            ),
+
             BlocProvider(
-              key: const ValueKey('reminder_screen'),
+              key: const ValueKey('reminders_screen'),
               create: (_) => ReminderCubit(
                 repository: context.read<ReminderRepository>(),
                 carNumber: _carNumber!,
-                pushHelper: RepositoryProvider.of<PushHelper>(context),
+                pushHelper: context.read<PushHelper>(),
               )..load(),
               child: RemindersScreen(carNumber: _carNumber!),
             ),
             CarInfoScreen(
-              key: const ValueKey('car_info'),
+              key: const ValueKey('car_info_screen'),
+
+               onBack: () {
+                _pageController.animateToPage(
+                  addCarPageIndex,
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeInOut,
+                );
+                setState(() => _currentIndex = addCarPageIndex);
+              },
               onCheckFine: (carNumber, series, number) {
                 _saveCarInfo(carNumber, series, number);
                 openHistoryPage();
               },
+              
             ),
             FineCheckScreen(
-              key: const ValueKey('fine_check'),
+              key: const ValueKey('fine_check_screen'),
               carNumber: _carNumber!,
               docSeries: _docSeries ?? '',
               docNumber: _docNumber ?? '',
             ),
-            const SettingsScreen(key: ValueKey('settings')),
+            const SettingsScreen(key: ValueKey('settings_screen')),
             HistoryScreen(key: const ValueKey('history_screen'), carNumber: _carNumber!),
+            MaintenanceScreen(key: ValueKey('maintenance_screen'), onBack: () {
+                _pageController.animateToPage(
+                  addCarPageIndex, 
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeInOut,
+                );
+                setState(() => _currentIndex = addCarPageIndex);
+              },
+            ),
           ],
         ),
         bottomNavigationBar: BottomNavigationBar(
           backgroundColor: AppColors.neutreBlanc,
-          currentIndex: _currentIndex > 2 ? 0 : _currentIndex,
+          currentIndex: _bottomNavIndex,
           onTap: _onTabTapped,
           items: [
             BottomNavigationBarItem(icon: Icon(Icons.directions_car), label: S.of(context).auto),

@@ -159,4 +159,7 @@ extension AppTextTheme on TextTheme {
   TextStyle get historyText => const TextStyle(
          fontSize: 22, fontWeight: FontWeight.w500, color: AppColors.black87
       );
+  TextStyle get subtitleText => const TextStyle(
+         fontSize: 18, fontWeight: FontWeight.w400, color: AppColors.black
+      );
 }

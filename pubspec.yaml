@@ -14,7 +14,7 @@ dependencies:
   core_repository:
     path: packages/core_repository
   cupertino_icons: ^1.0.8
-
+  
   core_cubit:
     path: packages/core_cubit
   core_localization:
@@ -46,13 +46,12 @@ dependencies:
   flutter_local_notifications: ^19.4.0
   timezone: ^0.10.1
   http: ^1.5.0
-
   shelf: ^1.4.1
   shelf_router: ^1.1.4
   g_recaptcha_v3: ^1.0.0
   html: ^0.15.6
   google_mobile_ads: ^6.0.0
-
+  font_awesome_flutter: ^10.10.0
 
 dev_dependencies:
   flutter_test:

@@ -1,7 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:core_data/core_data.dart';
 import 'package:core_localization/generated/l10n.dart';
-import 'package:design_system/constants/app_borders.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
 import 'package:fines_plus/router/app_router.dart';
@@ -14,7 +13,9 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 @RoutePage()
 class AddCarScreen extends StatefulWidget {
   final VoidCallback? onOpenCarInfo;
-  const AddCarScreen({super.key, this.onOpenCarInfo});
+  final VoidCallback? onFineCheck;
+  final VoidCallback? onMaintenance;
+  const AddCarScreen({super.key, this.onOpenCarInfo, this.onFineCheck, this.onMaintenance});
 
   @override
   State<AddCarScreen> createState() => _AddCarScreenState();
@@ -52,61 +53,153 @@ class _AddCarScreenState extends State<AddCarScreen> {
     final textTheme = Theme.of(context).textTheme;
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle(statusBarColor: AppColors.grey50, statusBarIconBrightness: Brightness.dark),
+      value: SystemUiOverlayStyle(statusBarColor: AppColors.neutreBlanc, statusBarIconBrightness: Brightness.dark),
       child: Scaffold(
-        backgroundColor: AppColors.grey50,
+        backgroundColor: AppColors.neutreBlanc,
         body: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 60),
           child: SafeArea(
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   AppSpacers.verticalXLarge,
-                  Text(S.of(context).add_cars, style: textTheme.title),
-                  AppSpacers.verticalXXLarge,
+
                   SizedBox(
                     height: screenHeight * 0.6,
                     width: double.infinity,
-                    child: Card(
-                      color: AppColors.neutreBlanc,
-                      shape: RoundedRectangleBorder(borderRadius: AppBorders.radius22),
-                      elevation: 4,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 40),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                    child: Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Icon(Icons.directions_car_rounded, color: AppColors.blue700, size: 176),
-                            AppSpacers.verticalHugeXL,
-                            SizedBox(
-                              width: double.infinity,
-                              height: 50,
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  if (widget.onOpenCarInfo != null) {
-                                    widget.onOpenCarInfo!.call();
-                                  } else {
-                                    context.router.push(CarInfoRoute());
-                                  }
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppColors.blue700,
-                                  shape: RoundedRectangleBorder(borderRadius: AppBorders.radius16),
-                                  padding: const EdgeInsets.symmetric(vertical: 8),
+                            // 1-й квадрат: Авто
+                            _buildMenuSquare(
+                              iconWidget: Container(
+                                width: 170,
+                                height: 170,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.rectangle,
+                                  borderRadius: BorderRadius.circular(20),
+
+                                  color: AppColors.grey50,
                                 ),
-                                child: Text(S.of(context).add_cars, style: textTheme.buttonText),
+                                child: Center(
+                                  child: Column(
+                                    children: [
+                                      AppSpacers.verticalXLarge,
+                                      Icon(Icons.directions_car_rounded, color: AppColors.blue700, size: 82),
+                                      Text("Авто", style: textTheme.violationTitle),
+                                    ],
+                                  ),
+                                ),
                               ),
+
+                              onTap: () {
+                                if (widget.onOpenCarInfo != null) {
+                                  widget.onOpenCarInfo!.call();
+                                } else {
+                                  context.router.push(CarInfoRoute());
+                                }
+                              },
+                            ),
+                            // 2-й квадрат: Штрафы
+                            _buildMenuSquare(
+                              iconWidget: Container(
+                                width: 170,
+                                height: 170,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.rectangle,
+                                  borderRadius: BorderRadius.circular(20),
+
+                                  color: AppColors.grey50,
+                                ),
+                                child: Center(
+                                  child: Column(
+                                    children: [
+                                      AppSpacers.verticalXLarge,
+                                      Icon(Icons.warning_amber_rounded, size: 82, color: AppColors.blue700),
+
+                                      Text(S.of(context).fines, style: textTheme.violationTitle),
+                                    ],
+                                  ),
+                                ),
+                              ),
+
+                              onTap: 
+                              () {
+                              
+                                 if (widget.onFineCheck != null) widget.onFineCheck!();
+
+                                
+                              },
+                              
+                            
                             ),
                           ],
                         ),
-                      ),
+                        const SizedBox(height: 10),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            // 3-й квадрат: ТО
+                            _buildMenuSquare(
+                              iconWidget: Container(
+                                width: 170,
+                                height: 170,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.rectangle,
+                                  borderRadius: BorderRadius.circular(20),
+
+                                  color: AppColors.grey50,
+                                ),
+                                child: Center(
+                                  child: Column(
+                                    children: [
+                                      AppSpacers.verticalXLarge,
+                                      Icon(Icons.build, color: AppColors.blue700, size: 82),
+                                      Text("ТО", style: textTheme.violationTitle),
+                                    ],
+                                  ),
+                                ),
+                              ),
+
+                              onTap: () {
+                                if (widget.onMaintenance != null) widget.onMaintenance!();
+                              },
+                            ),
+                            // 4-й квадрат: Аналитика
+                            _buildMenuSquare(
+                              iconWidget: Container(
+                                width: 170,
+                                height: 170,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.rectangle,
+                                  borderRadius: BorderRadius.circular(20),
+                                  color: AppColors.grey50,
+                                ),
+                                child: Center(
+                                  child: Column(
+                                    children: [
+                                      AppSpacers.verticalXLarge,
+                                      Icon(Icons.bar_chart, color: AppColors.blue700, size: 82),
+                                      Text('Аналитика', style: textTheme.violationTitle),
+                                    ],
+                                  ),
+                                ),
+                              ),
+
+                              onTap: () {},
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
-                 
+
                   if (_bannerAd != null)
                     Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 25,vertical:10),
+                      margin: const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
                       alignment: Alignment.center,
                       width: _bannerAd!.size.width.toDouble(),
                       height: _bannerAd!.size.height.toDouble(),
@@ -120,4 +213,25 @@ class _AddCarScreenState extends State<AddCarScreen> {
       ),
     );
   }
+}
+
+Widget _buildMenuSquare({IconData? icon, Color? iconColor, Widget? iconWidget, required VoidCallback onTap}) {
+  return Expanded(
+    child: GestureDetector(
+      onTap: onTap,
+      child: Column(
+        children: [
+          if (icon != null)
+            Container(
+              width: 180,
+              height: 180,
+              decoration: BoxDecoration(borderRadius: BorderRadius.circular(20), color: AppColors.grey50),
+              child: Icon(icon, color: iconColor ?? AppColors.grey50, size: 32),
+            ),
+          if (iconWidget != null) iconWidget,
+          const SizedBox(height: 8),
+        ],
+      ),
+    ),
+  );
 }

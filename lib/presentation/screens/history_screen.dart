@@ -33,6 +33,8 @@ class _HistoryView extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: AppColors.grey50,
+      appBar: AppBar(backgroundColor: AppColors.grey50,
+       leading: BackButton(color: Colors.black, onPressed: () => context.router.pop()), ),
       body: SafeArea(
         child: BlocBuilder<HistoryCubit, HistoryState>(
           builder: (context, state) {
@@ -50,7 +52,7 @@ class _HistoryView extends StatelessWidget {
 
             if (state is HistoryLoaded) {
               return ListView.separated(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 40),
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                 itemCount: state.history.length + 1,
                 separatorBuilder: (_, __) => const Divider(color: Colors.grey),
                 itemBuilder: (context, index) {

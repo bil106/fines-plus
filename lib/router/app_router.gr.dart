@@ -238,15 +238,10 @@ class HistoryRoute extends PageRouteInfo<HistoryRouteArgs> {
   HistoryRoute({
     Key? key,
     required String carNumber,
-    required HistoryRepository repository,
     List<PageRouteInfo>? children,
   }) : super(
          HistoryRoute.name,
-         args: HistoryRouteArgs(
-           key: key,
-           carNumber: carNumber,
-           repository: repository,
-         ),
+         args: HistoryRouteArgs(key: key, carNumber: carNumber),
          initialChildren: children,
        );
 
@@ -256,44 +251,32 @@ class HistoryRoute extends PageRouteInfo<HistoryRouteArgs> {
     name,
     builder: (data) {
       final args = data.argsAs<HistoryRouteArgs>();
-      return HistoryScreen(
-        key: args.key,
-        carNumber: args.carNumber,
-    
-      );
+      return HistoryScreen(key: args.key, carNumber: args.carNumber);
     },
   );
 }
 
 class HistoryRouteArgs {
-  const HistoryRouteArgs({
-    this.key,
-    required this.carNumber,
-    required this.repository,
-  });
+  const HistoryRouteArgs({this.key, required this.carNumber});
 
   final Key? key;
 
   final String carNumber;
 
-  final HistoryRepository repository;
-
   @override
   String toString() {
-    return 'HistoryRouteArgs{key: $key, carNumber: $carNumber, repository: $repository}';
+    return 'HistoryRouteArgs{key: $key, carNumber: $carNumber}';
   }
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
     if (other is! HistoryRouteArgs) return false;
-    return key == other.key &&
-        carNumber == other.carNumber &&
-        repository == other.repository;
+    return key == other.key && carNumber == other.carNumber;
   }
 
   @override
-  int get hashCode => key.hashCode ^ carNumber.hashCode ^ repository.hashCode;
+  int get hashCode => key.hashCode ^ carNumber.hashCode;
 }
 
 /// generated route for
@@ -310,6 +293,50 @@ class HomeRouteWrapper extends PageRouteInfo<void> {
       return const HomeScreenWrapper();
     },
   );
+}
+
+/// generated route for
+/// [MaintenanceScreen]
+class MaintenanceRoute extends PageRouteInfo<MaintenanceRouteArgs> {
+  MaintenanceRoute({Key? key, List<PageRouteInfo>? children})
+    : super(
+        MaintenanceRoute.name,
+        args: MaintenanceRouteArgs(key: key),
+        initialChildren: children,
+      );
+
+  static const String name = 'MaintenanceRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      final args = data.argsAs<MaintenanceRouteArgs>(
+        orElse: () => const MaintenanceRouteArgs(),
+      );
+      return MaintenanceScreen(key: args.key);
+    },
+  );
+}
+
+class MaintenanceRouteArgs {
+  const MaintenanceRouteArgs({this.key});
+
+  final Key? key;
+
+  @override
+  String toString() {
+    return 'MaintenanceRouteArgs{key: $key}';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! MaintenanceRouteArgs) return false;
+    return key == other.key;
+  }
+
+  @override
+  int get hashCode => key.hashCode;
 }
 
 /// generated route for
