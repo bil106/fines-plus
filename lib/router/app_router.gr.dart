@@ -16,10 +16,17 @@ class AddCarRoute extends PageRouteInfo<AddCarRouteArgs> {
   AddCarRoute({
     Key? key,
     VoidCallback? onOpenCarInfo,
+    VoidCallback? onFineCheck,
+    VoidCallback? onMaintenance,
     List<PageRouteInfo>? children,
   }) : super(
          AddCarRoute.name,
-         args: AddCarRouteArgs(key: key, onOpenCarInfo: onOpenCarInfo),
+         args: AddCarRouteArgs(
+           key: key,
+           onOpenCarInfo: onOpenCarInfo,
+           onFineCheck: onFineCheck,
+           onMaintenance: onMaintenance,
+         ),
          initialChildren: children,
        );
 
@@ -31,32 +38,113 @@ class AddCarRoute extends PageRouteInfo<AddCarRouteArgs> {
       final args = data.argsAs<AddCarRouteArgs>(
         orElse: () => const AddCarRouteArgs(),
       );
-      return AddCarScreen(key: args.key, onOpenCarInfo: args.onOpenCarInfo);
+      return AddCarScreen(
+        key: args.key,
+        onOpenCarInfo: args.onOpenCarInfo,
+        onFineCheck: args.onFineCheck,
+        onMaintenance: args.onMaintenance,
+      );
     },
   );
 }
 
 class AddCarRouteArgs {
-  const AddCarRouteArgs({this.key, this.onOpenCarInfo});
+  const AddCarRouteArgs({
+    this.key,
+    this.onOpenCarInfo,
+    this.onFineCheck,
+    this.onMaintenance,
+  });
 
   final Key? key;
 
   final VoidCallback? onOpenCarInfo;
 
+  final VoidCallback? onFineCheck;
+
+  final VoidCallback? onMaintenance;
+
   @override
   String toString() {
-    return 'AddCarRouteArgs{key: $key, onOpenCarInfo: $onOpenCarInfo}';
+    return 'AddCarRouteArgs{key: $key, onOpenCarInfo: $onOpenCarInfo, onFineCheck: $onFineCheck, onMaintenance: $onMaintenance}';
   }
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
     if (other is! AddCarRouteArgs) return false;
-    return key == other.key && onOpenCarInfo == other.onOpenCarInfo;
+    return key == other.key &&
+        onOpenCarInfo == other.onOpenCarInfo &&
+        onFineCheck == other.onFineCheck &&
+        onMaintenance == other.onMaintenance;
   }
 
   @override
-  int get hashCode => key.hashCode ^ onOpenCarInfo.hashCode;
+  int get hashCode =>
+      key.hashCode ^
+      onOpenCarInfo.hashCode ^
+      onFineCheck.hashCode ^
+      onMaintenance.hashCode;
+}
+
+/// generated route for
+/// [AnalyticsScreen]
+class AnalyticsRoute extends PageRouteInfo<AnalyticsRouteArgs> {
+  AnalyticsRoute({
+    Key? key,
+    VoidCallback? onBack,
+    required String carNumber,
+    List<PageRouteInfo>? children,
+  }) : super(
+         AnalyticsRoute.name,
+         args: AnalyticsRouteArgs(
+           key: key,
+           onBack: onBack,
+           carNumber: carNumber,
+         ),
+         initialChildren: children,
+       );
+
+  static const String name = 'AnalyticsRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      final args = data.argsAs<AnalyticsRouteArgs>();
+      return AnalyticsScreen(
+        key: args.key,
+        onBack: args.onBack,
+        carNumber: args.carNumber,
+      );
+    },
+  );
+}
+
+class AnalyticsRouteArgs {
+  const AnalyticsRouteArgs({this.key, this.onBack, required this.carNumber});
+
+  final Key? key;
+
+  final VoidCallback? onBack;
+
+  final String carNumber;
+
+  @override
+  String toString() {
+    return 'AnalyticsRouteArgs{key: $key, onBack: $onBack, carNumber: $carNumber}';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! AnalyticsRouteArgs) return false;
+    return key == other.key &&
+        onBack == other.onBack &&
+        carNumber == other.carNumber;
+  }
+
+  @override
+  int get hashCode => key.hashCode ^ onBack.hashCode ^ carNumber.hashCode;
 }
 
 /// generated route for
@@ -65,10 +153,15 @@ class CarInfoRoute extends PageRouteInfo<CarInfoRouteArgs> {
   CarInfoRoute({
     Key? key,
     void Function(String, String, String)? onCheckFine,
+    VoidCallback? onBack,
     List<PageRouteInfo>? children,
   }) : super(
          CarInfoRoute.name,
-         args: CarInfoRouteArgs(key: key, onCheckFine: onCheckFine),
+         args: CarInfoRouteArgs(
+           key: key,
+           onCheckFine: onCheckFine,
+           onBack: onBack,
+         ),
          initialChildren: children,
        );
 
@@ -80,32 +173,38 @@ class CarInfoRoute extends PageRouteInfo<CarInfoRouteArgs> {
       final args = data.argsAs<CarInfoRouteArgs>(
         orElse: () => const CarInfoRouteArgs(),
       );
-      return CarInfoScreen(key: args.key, onCheckFine: args.onCheckFine);
+      return CarInfoScreen(
+        key: args.key,
+        onCheckFine: args.onCheckFine,
+        onBack: args.onBack,
+      );
     },
   );
 }
 
 class CarInfoRouteArgs {
-  const CarInfoRouteArgs({this.key, this.onCheckFine});
+  const CarInfoRouteArgs({this.key, this.onCheckFine, this.onBack});
 
   final Key? key;
 
   final void Function(String, String, String)? onCheckFine;
 
+  final VoidCallback? onBack;
+
   @override
   String toString() {
-    return 'CarInfoRouteArgs{key: $key, onCheckFine: $onCheckFine}';
+    return 'CarInfoRouteArgs{key: $key, onCheckFine: $onCheckFine, onBack: $onBack}';
   }
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
     if (other is! CarInfoRouteArgs) return false;
-    return key == other.key;
+    return key == other.key && onBack == other.onBack;
   }
 
   @override
-  int get hashCode => key.hashCode;
+  int get hashCode => key.hashCode ^ onBack.hashCode;
 }
 
 /// generated route for
@@ -116,6 +215,7 @@ class FineCheckRoute extends PageRouteInfo<FineCheckRouteArgs> {
     required String carNumber,
     required String docSeries,
     required String docNumber,
+    VoidCallback? onBack,
     List<PageRouteInfo>? children,
   }) : super(
          FineCheckRoute.name,
@@ -124,6 +224,7 @@ class FineCheckRoute extends PageRouteInfo<FineCheckRouteArgs> {
            carNumber: carNumber,
            docSeries: docSeries,
            docNumber: docNumber,
+           onBack: onBack,
          ),
          initialChildren: children,
        );
@@ -139,6 +240,7 @@ class FineCheckRoute extends PageRouteInfo<FineCheckRouteArgs> {
         carNumber: args.carNumber,
         docSeries: args.docSeries,
         docNumber: args.docNumber,
+        onBack: args.onBack,
       );
     },
   );
@@ -150,6 +252,7 @@ class FineCheckRouteArgs {
     required this.carNumber,
     required this.docSeries,
     required this.docNumber,
+    this.onBack,
   });
 
   final Key? key;
@@ -160,9 +263,11 @@ class FineCheckRouteArgs {
 
   final String docNumber;
 
+  final VoidCallback? onBack;
+
   @override
   String toString() {
-    return 'FineCheckRouteArgs{key: $key, carNumber: $carNumber, docSeries: $docSeries, docNumber: $docNumber}';
+    return 'FineCheckRouteArgs{key: $key, carNumber: $carNumber, docSeries: $docSeries, docNumber: $docNumber, onBack: $onBack}';
   }
 
   @override
@@ -172,7 +277,8 @@ class FineCheckRouteArgs {
     return key == other.key &&
         carNumber == other.carNumber &&
         docSeries == other.docSeries &&
-        docNumber == other.docNumber;
+        docNumber == other.docNumber &&
+        onBack == other.onBack;
   }
 
   @override
@@ -180,7 +286,8 @@ class FineCheckRouteArgs {
       key.hashCode ^
       carNumber.hashCode ^
       docSeries.hashCode ^
-      docNumber.hashCode;
+      docNumber.hashCode ^
+      onBack.hashCode;
 }
 
 /// generated route for
@@ -298,12 +405,15 @@ class HomeRouteWrapper extends PageRouteInfo<void> {
 /// generated route for
 /// [MaintenanceScreen]
 class MaintenanceRoute extends PageRouteInfo<MaintenanceRouteArgs> {
-  MaintenanceRoute({Key? key, List<PageRouteInfo>? children})
-    : super(
-        MaintenanceRoute.name,
-        args: MaintenanceRouteArgs(key: key),
-        initialChildren: children,
-      );
+  MaintenanceRoute({
+    Key? key,
+    VoidCallback? onBack,
+    List<PageRouteInfo>? children,
+  }) : super(
+         MaintenanceRoute.name,
+         args: MaintenanceRouteArgs(key: key, onBack: onBack),
+         initialChildren: children,
+       );
 
   static const String name = 'MaintenanceRoute';
 
@@ -313,30 +423,32 @@ class MaintenanceRoute extends PageRouteInfo<MaintenanceRouteArgs> {
       final args = data.argsAs<MaintenanceRouteArgs>(
         orElse: () => const MaintenanceRouteArgs(),
       );
-      return MaintenanceScreen(key: args.key);
+      return MaintenanceScreen(key: args.key, onBack: args.onBack);
     },
   );
 }
 
 class MaintenanceRouteArgs {
-  const MaintenanceRouteArgs({this.key});
+  const MaintenanceRouteArgs({this.key, this.onBack});
 
   final Key? key;
 
+  final VoidCallback? onBack;
+
   @override
   String toString() {
-    return 'MaintenanceRouteArgs{key: $key}';
+    return 'MaintenanceRouteArgs{key: $key, onBack: $onBack}';
   }
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
     if (other is! MaintenanceRouteArgs) return false;
-    return key == other.key;
+    return key == other.key && onBack == other.onBack;
   }
 
   @override
-  int get hashCode => key.hashCode;
+  int get hashCode => key.hashCode ^ onBack.hashCode;
 }
 
 /// generated route for
@@ -345,10 +457,15 @@ class RemindersRoute extends PageRouteInfo<RemindersRouteArgs> {
   RemindersRoute({
     Key? key,
     required String carNumber,
+    VoidCallback? onBack,
     List<PageRouteInfo>? children,
   }) : super(
          RemindersRoute.name,
-         args: RemindersRouteArgs(key: key, carNumber: carNumber),
+         args: RemindersRouteArgs(
+           key: key,
+           carNumber: carNumber,
+           onBack: onBack,
+         ),
          initialChildren: children,
        );
 
@@ -358,32 +475,40 @@ class RemindersRoute extends PageRouteInfo<RemindersRouteArgs> {
     name,
     builder: (data) {
       final args = data.argsAs<RemindersRouteArgs>();
-      return RemindersScreen(key: args.key, carNumber: args.carNumber);
+      return RemindersScreen(
+        key: args.key,
+        carNumber: args.carNumber,
+        onBack: args.onBack,
+      );
     },
   );
 }
 
 class RemindersRouteArgs {
-  const RemindersRouteArgs({this.key, required this.carNumber});
+  const RemindersRouteArgs({this.key, required this.carNumber, this.onBack});
 
   final Key? key;
 
   final String carNumber;
 
+  final VoidCallback? onBack;
+
   @override
   String toString() {
-    return 'RemindersRouteArgs{key: $key, carNumber: $carNumber}';
+    return 'RemindersRouteArgs{key: $key, carNumber: $carNumber, onBack: $onBack}';
   }
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
     if (other is! RemindersRouteArgs) return false;
-    return key == other.key && carNumber == other.carNumber;
+    return key == other.key &&
+        carNumber == other.carNumber &&
+        onBack == other.onBack;
   }
 
   @override
-  int get hashCode => key.hashCode ^ carNumber.hashCode;
+  int get hashCode => key.hashCode ^ carNumber.hashCode ^ onBack.hashCode;
 }
 
 /// generated route for

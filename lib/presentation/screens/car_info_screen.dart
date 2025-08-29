@@ -11,6 +11,7 @@ import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_borders.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
+import 'package:fines_plus/core/widgets/ad_banner_widget.dart';
 import 'package:fines_plus/router/home_screen_wrapper.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -114,10 +115,16 @@ class _CarInfoViewState extends State<_CarInfoView> {
     return BlocProvider.value(
       value: carInfoCubit,
       child: Scaffold(
-          appBar: AppBar(
+        appBar: AppBar(
           backgroundColor: AppColors.grey50,
-          leading: BackButton(color: AppColors.blue700,  onPressed: widget.onBack ?? () {
-              Navigator.pop(context);}),
+          leading: BackButton(
+            color: AppColors.blue700,
+            onPressed:
+                widget.onBack ??
+                () {
+                  Navigator.pop(context);
+                },
+          ),
         ),
         backgroundColor: AppColors.grey50,
         body: SafeArea(
@@ -196,7 +203,7 @@ class _CarInfoViewState extends State<_CarInfoView> {
 
                       final homeWrapperState = context.findAncestorStateOfType<HomeScreenWrapperState>();
 
-                      homeWrapperState?.openHistoryPage();
+                      homeWrapperState?.openPage(HomePage.history);
 
                       if (widget.onCheckFine != null) {
                         final parts = carInfoCubit.getTechPassportParts();
@@ -224,14 +231,7 @@ class _CarInfoViewState extends State<_CarInfoView> {
                   },
                 ),
                 AppSpacers.verticalLargeXL,
-                if (_bannerAd != null)
-                  Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 25, vertical: 40),
-                    alignment: Alignment.center,
-                    width: _bannerAd!.size.width.toDouble(),
-                    height: _bannerAd!.size.height.toDouble(),
-                    child: AdWidget(ad: _bannerAd!),
-                  ),
+            const AdBannerWidget(),
               ],
             ),
           ),

@@ -15,7 +15,9 @@ abstract final class AppSpacers {
   static const verticalHuge = SizedBox(height: 40);
   static const verticalHugeXL = SizedBox(height: 44);
   static const verticalMassive = SizedBox(height: 50);
+  static const verticalMaxMassive = SizedBox(height: 80);
   static const verticalGigantic = SizedBox(height: 120);
+  static const verticalMaxGigantic = SizedBox(height: 250);
 
   // Horizontal spacers
   static const horizontalXSmall = SizedBox(width: 4);

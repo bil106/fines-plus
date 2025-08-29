@@ -27,6 +27,7 @@ dependencies:
   url_launcher: ^6.3.2
   cloud_firestore: ^6.0.0
   http: ^1.5.0
+  meta: ^1.16.0
 
 flutter:
   uses-material-design: true

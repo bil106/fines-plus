@@ -3,6 +3,7 @@ import 'package:core_data/core_data.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
+import 'package:fines_plus/core/widgets/ad_banner_widget.dart';
 import 'package:fines_plus/router/app_router.dart';
 import 'package:design_system/colors/app_colors.dart';
 
@@ -15,7 +16,8 @@ class AddCarScreen extends StatefulWidget {
   final VoidCallback? onOpenCarInfo;
   final VoidCallback? onFineCheck;
   final VoidCallback? onMaintenance;
-  const AddCarScreen({super.key, this.onOpenCarInfo, this.onFineCheck, this.onMaintenance});
+  final VoidCallback? onAnalytics;
+  const AddCarScreen({super.key, this.onOpenCarInfo, this.onFineCheck, this.onMaintenance, this.onAnalytics});
 
   @override
   State<AddCarScreen> createState() => _AddCarScreenState();
@@ -73,7 +75,6 @@ class _AddCarScreenState extends State<AddCarScreen> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            // 1-й квадрат: Авто
                             _buildMenuSquare(
                               iconWidget: Container(
                                 width: 170,
@@ -103,7 +104,7 @@ class _AddCarScreenState extends State<AddCarScreen> {
                                 }
                               },
                             ),
-                            // 2-й квадрат: Штрафы
+
                             _buildMenuSquare(
                               iconWidget: Container(
                                 width: 170,
@@ -126,15 +127,9 @@ class _AddCarScreenState extends State<AddCarScreen> {
                                 ),
                               ),
 
-                              onTap: 
-                              () {
-                              
-                                 if (widget.onFineCheck != null) widget.onFineCheck!();
-
-                                
+                              onTap: () {
+                                if (widget.onFineCheck != null) widget.onFineCheck!();
                               },
-                              
-                            
                             ),
                           ],
                         ),
@@ -142,7 +137,6 @@ class _AddCarScreenState extends State<AddCarScreen> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            // 3-й квадрат: ТО
                             _buildMenuSquare(
                               iconWidget: Container(
                                 width: 170,
@@ -168,7 +162,7 @@ class _AddCarScreenState extends State<AddCarScreen> {
                                 if (widget.onMaintenance != null) widget.onMaintenance!();
                               },
                             ),
-                            // 4-й квадрат: Аналитика
+
                             _buildMenuSquare(
                               iconWidget: Container(
                                 width: 170,
@@ -189,7 +183,9 @@ class _AddCarScreenState extends State<AddCarScreen> {
                                 ),
                               ),
 
-                              onTap: () {},
+                              onTap: () {
+                                if (widget.onAnalytics != null) widget.onAnalytics!();
+                              },
                             ),
                           ],
                         ),
@@ -197,14 +193,7 @@ class _AddCarScreenState extends State<AddCarScreen> {
                     ),
                   ),
 
-                  if (_bannerAd != null)
-                    Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
-                      alignment: Alignment.center,
-                      width: _bannerAd!.size.width.toDouble(),
-                      height: _bannerAd!.size.height.toDouble(),
-                      child: AdWidget(ad: _bannerAd!),
-                    ),
+                  const AdBannerWidget(),
                 ],
               ),
             ),

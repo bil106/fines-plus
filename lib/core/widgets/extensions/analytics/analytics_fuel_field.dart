@@ -1,0 +1,62 @@
+import 'package:design_system/theme/app_theme.dart';
+import 'package:flutter/material.dart';
+
+
+class AnalyticsFuelField extends StatefulWidget {
+  final double pricePerLiter;
+  final VoidCallback? onTap;
+
+  const AnalyticsFuelField({this.pricePerLiter = 45, this.onTap, super.key});
+
+  @override
+  State<AnalyticsFuelField> createState() => _AnalyticsFuelFieldState();
+}
+
+class _AnalyticsFuelFieldState extends State<AnalyticsFuelField> {
+  final TextEditingController _litersController = TextEditingController();
+  double _amount = 0;
+
+  void _onLitersChanged(String value) {
+    final liters = double.tryParse(value) ?? 0;
+    setState(() {
+      _amount = liters * widget.pricePerLiter;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12)),
+      child: Row(
+        children: [
+          SizedBox(
+            width: 180,
+            child: TextField(
+              style: textTheme.historyText,
+              controller: _litersController,
+              keyboardType: TextInputType.number,
+              decoration:  InputDecoration(
+                hintText: "Введіть літри",
+                hintStyle:textTheme.hintAnalitText,
+                border: InputBorder.none,
+                focusedBorder: InputBorder.none,
+               
+              ),
+              onChanged: _onLitersChanged,
+            ),
+          ),
+          const Spacer(),
+          Text("${_amount.toStringAsFixed(0)} ₴", style: textTheme.historyText),
+          const SizedBox(width: 8),
+          GestureDetector(
+            onTap: widget.onTap,
+            child: const Icon(Icons.arrow_forward_ios, color: Colors.grey),
+          ),
+        ],
+      ),
+    );
+  }
+}
+

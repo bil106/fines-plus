@@ -15,8 +15,8 @@ import 'package:intl/intl.dart';
 @RoutePage()
 class RemindersScreen extends StatelessWidget {
   final String carNumber;
-
-  const RemindersScreen({super.key, required this.carNumber});
+  final VoidCallback? onBack;
+  const RemindersScreen({super.key, required this.carNumber, this.onBack});
 
   @override
   Widget build(BuildContext context) {
@@ -26,13 +26,14 @@ class RemindersScreen extends StatelessWidget {
         carNumber: carNumber,
         pushHelper: context.read<PushHelper>(),
       )..load(),
-      child: _RemindersView(),
+      child: _RemindersView(onBack),
     );
   }
 }
 
 class _RemindersView extends StatelessWidget {
-  const _RemindersView();
+  final VoidCallback? onBack;
+  const _RemindersView(this.onBack);
 
   @override
   Widget build(BuildContext context) {
@@ -41,6 +42,17 @@ class _RemindersView extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: AppColors.grey50,
+      appBar: AppBar(
+        backgroundColor: AppColors.grey50,
+        leading: BackButton(
+          color: AppColors.blue700,
+          onPressed:
+              onBack ??
+              () {
+                Navigator.pop(context);
+              },
+        ),
+      ),
       body: SafeArea(
         child: BlocBuilder<ReminderCubit, ReminderState>(
           builder: (context, state) {

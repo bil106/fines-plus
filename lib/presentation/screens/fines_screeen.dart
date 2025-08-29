@@ -8,6 +8,7 @@ import 'package:design_system/constants/app_borders.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_text_theme.dart';
 import 'package:design_system/theme/app_theme.dart';
+import 'package:fines_plus/core/widgets/ad_banner_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -113,15 +114,8 @@ class _FinesScreenState extends State<FinesScreen> {
                   ],
                 ),
               ),
-                AppSpacers.verticalLargeXL,
-              if (_bannerAd != null)
-                Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 25, ),
-                  alignment: Alignment.center,
-                  width: _bannerAd!.size.width.toDouble(),
-                  height: _bannerAd!.size.height.toDouble(),
-                  child: AdWidget(ad: _bannerAd!),
-                ),
+                AppSpacers.verticalMaxMassive,
+            const AdBannerWidget(),
             ],
           ),
         ),

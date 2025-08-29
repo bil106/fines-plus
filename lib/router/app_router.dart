@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:fines_plus/config/app_config.dart';
 import 'package:fines_plus/presentation/screens/add_car_screen.dart';
+import 'package:fines_plus/presentation/screens/analytics_screen.dart';
 import 'package:fines_plus/presentation/screens/car_info_screen.dart';
 import 'package:fines_plus/presentation/screens/fine_check_screen.dart';
 import 'package:fines_plus/presentation/screens/fines_screeen.dart';
@@ -27,7 +28,8 @@ class AppRouter extends RootStackRouter {
         AutoRoute(page: AddCarRoute.page, path: 'add-car', initial: true),
         AutoRoute(page: FinesRoute.page, path: 'fines'),
         AutoRoute(page: RemindersRoute.page, path: 'reminders'),
-        AutoRoute(page: MaintenanceRoute.page, path: 'maintenance')
+        AutoRoute(page: MaintenanceRoute.page, path: 'maintenance'),
+        AutoRoute(page: AnalyticsRoute.page, path: 'analytics'),
       ],
     ),
 
@@ -38,5 +40,6 @@ class AppRouter extends RootStackRouter {
     AutoRoute(page: SettingsRoute.page, path: '/settings'),
     AutoRoute(page: HistoryRoute.page, path: '/history'),
     AutoRoute(page: MaintenanceRoute.page, path: '/maintenance'),
+    AutoRoute(page: AnalyticsRoute.page, path: '/analytics'),
   ];
 }

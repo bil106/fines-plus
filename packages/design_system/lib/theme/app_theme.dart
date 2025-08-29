@@ -156,6 +156,11 @@ extension AppTextTheme on TextTheme {
         fontWeight: FontWeight.w400,
         fontSize: 28,
       );
+  TextStyle get hintAnalitText => const TextStyle(
+        color: AppColors.neutreGrey,
+        fontWeight: FontWeight.w400,
+        fontSize: 18,
+      );
   TextStyle get historyText => const TextStyle(
          fontSize: 22, fontWeight: FontWeight.w500, color: AppColors.black87
       );

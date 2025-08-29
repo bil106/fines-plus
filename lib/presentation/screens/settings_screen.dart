@@ -5,6 +5,7 @@ import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_borders.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
+import 'package:fines_plus/core/widgets/ad_banner_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
@@ -92,14 +93,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                 ),
                 AppSpacers.verticalLargeXL,
-                if (_bannerAd != null)
-                  Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 25, vertical: 40),
-                    alignment: Alignment.center,
-                    width: _bannerAd!.size.width.toDouble(),
-                    height: _bannerAd!.size.height.toDouble(),
-                    child: AdWidget(ad: _bannerAd!),
-                  ),
+              const AdBannerWidget(),
               ],
             ),
           ),

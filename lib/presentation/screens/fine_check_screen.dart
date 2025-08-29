@@ -8,6 +8,7 @@ import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_borders.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
+import 'package:fines_plus/core/widgets/ad_banner_widget.dart';
 import 'package:flutter/foundation.dart';
 
 import 'package:flutter/material.dart';
@@ -21,8 +22,14 @@ class FineCheckScreen extends StatefulWidget {
   final String carNumber;
   final String docSeries;
   final String docNumber;
-
-  const FineCheckScreen({super.key, required this.carNumber, required this.docSeries, required this.docNumber});
+  final VoidCallback? onBack;
+  const FineCheckScreen({
+    super.key,
+    required this.carNumber,
+    required this.docSeries,
+    required this.docNumber,
+    this.onBack,
+  });
 
   @override
   State<FineCheckScreen> createState() => _FineCheckScreenState();
@@ -51,7 +58,6 @@ class _FineCheckScreenState extends State<FineCheckScreen> {
         },
       ),
     )..load();
-  
   }
 
   @override
@@ -69,6 +75,10 @@ class _FineCheckScreenState extends State<FineCheckScreen> {
       child: AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.dark,
         child: Scaffold(
+          appBar: AppBar(
+            backgroundColor: AppColors.grey50,
+            leading: BackButton(color: AppColors.blue700, onPressed: widget.onBack ?? () {}),
+          ),
           resizeToAvoidBottomInset: true,
           backgroundColor: AppColors.grey50,
           body: SafeArea(
@@ -90,7 +100,6 @@ class _FineCheckScreenState extends State<FineCheckScreen> {
                           print('Error:${state.message}');
                         }
                         return Text("Error: ${state.message}", style: textTheme.bodyMedium);
-                      
                       } else if (state is FinesEmpty) {
                         return Container(
                           width: double.infinity,
@@ -173,16 +182,9 @@ class _FineCheckScreenState extends State<FineCheckScreen> {
                     ),
                   ),
 
-
-                   AppSpacers.verticalLargeXL,
-                  if (_bannerAd != null)
-                    Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 25, vertical: 40),
-                      alignment: Alignment.center,
-                      width: _bannerAd!.size.width.toDouble(),
-                      height: _bannerAd!.size.height.toDouble(),
-                      child: AdWidget(ad: _bannerAd!),
-                    ),
+                  AppSpacers.verticalMaxGigantic,
+                 
+                 const AdBannerWidget(),
                 ],
               ),
             ),
