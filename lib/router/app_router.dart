@@ -1,8 +1,11 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:core_data/core_data.dart';
 import 'package:fines_plus/config/app_config.dart';
 import 'package:fines_plus/presentation/screens/add_car_screen.dart';
 import 'package:fines_plus/presentation/screens/analytics_screen.dart';
 import 'package:fines_plus/presentation/screens/car_info_screen.dart';
+import 'package:fines_plus/presentation/screens/export_screen.dart';
 import 'package:fines_plus/presentation/screens/fine_check_screen.dart';
 import 'package:fines_plus/presentation/screens/fines_screeen.dart';
 import 'package:fines_plus/presentation/screens/history_screen.dart';
@@ -41,5 +44,6 @@ class AppRouter extends RootStackRouter {
     AutoRoute(page: HistoryRoute.page, path: '/history'),
     AutoRoute(page: MaintenanceRoute.page, path: '/maintenance'),
     AutoRoute(page: AnalyticsRoute.page, path: '/analytics'),
+    AutoRoute(page: ExportRoute.page, path: '/export'),
   ];
 }

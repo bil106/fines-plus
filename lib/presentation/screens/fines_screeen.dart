@@ -1,7 +1,8 @@
+// ignore_for_file: unused_field
+
 import 'package:auto_route/auto_route.dart';
 import 'package:core_cubit/cubit/car_info_cubit.dart';
 import 'package:core_cubit/cubit/car_info_state.dart';
-import 'package:core_data/core_data.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_borders.dart';
@@ -12,8 +13,6 @@ import 'package:fines_plus/core/widgets/ad_banner_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
-
 
 @RoutePage()
 class FinesScreen extends StatefulWidget {
@@ -25,27 +24,6 @@ class FinesScreen extends StatefulWidget {
 }
 
 class _FinesScreenState extends State<FinesScreen> {
-
-  BannerAd? _bannerAd;
-
-  @override
-  void initState() {
-    super.initState();
-    _bannerAd = BannerAd(
-      adUnitId: AdHelper.bannerAdUnitId,
-      size: AdSize.largeBanner,
-      request: const AdRequest(),
-      listener: BannerAdListener(
-        onAdLoaded: (ad) => setState(() {}),
-        onAdFailedToLoad: (ad, error) {
-          ad.dispose();
-          debugPrint("Ad failed: $error");
-        },
-      ),
-    )..load();
-  }
-
-
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
@@ -114,8 +92,8 @@ class _FinesScreenState extends State<FinesScreen> {
                   ],
                 ),
               ),
-                AppSpacers.verticalMaxMassive,
-            const AdBannerWidget(),
+              AppSpacers.verticalXLarge,
+              const AdBannerWidget(),
             ],
           ),
         ),

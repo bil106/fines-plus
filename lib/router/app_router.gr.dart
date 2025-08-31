@@ -18,6 +18,7 @@ class AddCarRoute extends PageRouteInfo<AddCarRouteArgs> {
     VoidCallback? onOpenCarInfo,
     VoidCallback? onFineCheck,
     VoidCallback? onMaintenance,
+    VoidCallback? onAnalytics,
     List<PageRouteInfo>? children,
   }) : super(
          AddCarRoute.name,
@@ -26,6 +27,7 @@ class AddCarRoute extends PageRouteInfo<AddCarRouteArgs> {
            onOpenCarInfo: onOpenCarInfo,
            onFineCheck: onFineCheck,
            onMaintenance: onMaintenance,
+           onAnalytics: onAnalytics,
          ),
          initialChildren: children,
        );
@@ -43,6 +45,7 @@ class AddCarRoute extends PageRouteInfo<AddCarRouteArgs> {
         onOpenCarInfo: args.onOpenCarInfo,
         onFineCheck: args.onFineCheck,
         onMaintenance: args.onMaintenance,
+        onAnalytics: args.onAnalytics,
       );
     },
   );
@@ -54,6 +57,7 @@ class AddCarRouteArgs {
     this.onOpenCarInfo,
     this.onFineCheck,
     this.onMaintenance,
+    this.onAnalytics,
   });
 
   final Key? key;
@@ -64,9 +68,11 @@ class AddCarRouteArgs {
 
   final VoidCallback? onMaintenance;
 
+  final VoidCallback? onAnalytics;
+
   @override
   String toString() {
-    return 'AddCarRouteArgs{key: $key, onOpenCarInfo: $onOpenCarInfo, onFineCheck: $onFineCheck, onMaintenance: $onMaintenance}';
+    return 'AddCarRouteArgs{key: $key, onOpenCarInfo: $onOpenCarInfo, onFineCheck: $onFineCheck, onMaintenance: $onMaintenance, onAnalytics: $onAnalytics}';
   }
 
   @override
@@ -76,7 +82,8 @@ class AddCarRouteArgs {
     return key == other.key &&
         onOpenCarInfo == other.onOpenCarInfo &&
         onFineCheck == other.onFineCheck &&
-        onMaintenance == other.onMaintenance;
+        onMaintenance == other.onMaintenance &&
+        onAnalytics == other.onAnalytics;
   }
 
   @override
@@ -84,7 +91,8 @@ class AddCarRouteArgs {
       key.hashCode ^
       onOpenCarInfo.hashCode ^
       onFineCheck.hashCode ^
-      onMaintenance.hashCode;
+      onMaintenance.hashCode ^
+      onAnalytics.hashCode;
 }
 
 /// generated route for
@@ -154,6 +162,7 @@ class CarInfoRoute extends PageRouteInfo<CarInfoRouteArgs> {
     Key? key,
     void Function(String, String, String)? onCheckFine,
     VoidCallback? onBack,
+    required String initialCarNumber,
     List<PageRouteInfo>? children,
   }) : super(
          CarInfoRoute.name,
@@ -161,6 +170,7 @@ class CarInfoRoute extends PageRouteInfo<CarInfoRouteArgs> {
            key: key,
            onCheckFine: onCheckFine,
            onBack: onBack,
+           initialCarNumber: initialCarNumber,
          ),
          initialChildren: children,
        );
@@ -170,20 +180,24 @@ class CarInfoRoute extends PageRouteInfo<CarInfoRouteArgs> {
   static PageInfo page = PageInfo(
     name,
     builder: (data) {
-      final args = data.argsAs<CarInfoRouteArgs>(
-        orElse: () => const CarInfoRouteArgs(),
-      );
+      final args = data.argsAs<CarInfoRouteArgs>();
       return CarInfoScreen(
         key: args.key,
         onCheckFine: args.onCheckFine,
         onBack: args.onBack,
+        initialCarNumber: args.initialCarNumber,
       );
     },
   );
 }
 
 class CarInfoRouteArgs {
-  const CarInfoRouteArgs({this.key, this.onCheckFine, this.onBack});
+  const CarInfoRouteArgs({
+    this.key,
+    this.onCheckFine,
+    this.onBack,
+    required this.initialCarNumber,
+  });
 
   final Key? key;
 
@@ -191,20 +205,100 @@ class CarInfoRouteArgs {
 
   final VoidCallback? onBack;
 
+  final String initialCarNumber;
+
   @override
   String toString() {
-    return 'CarInfoRouteArgs{key: $key, onCheckFine: $onCheckFine, onBack: $onBack}';
+    return 'CarInfoRouteArgs{key: $key, onCheckFine: $onCheckFine, onBack: $onBack, initialCarNumber: $initialCarNumber}';
   }
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
     if (other is! CarInfoRouteArgs) return false;
-    return key == other.key && onBack == other.onBack;
+    return key == other.key &&
+        onBack == other.onBack &&
+        initialCarNumber == other.initialCarNumber;
   }
 
   @override
-  int get hashCode => key.hashCode ^ onBack.hashCode;
+  int get hashCode =>
+      key.hashCode ^ onBack.hashCode ^ initialCarNumber.hashCode;
+}
+
+/// generated route for
+/// [ExportScreen]
+class ExportRoute extends PageRouteInfo<ExportRouteArgs> {
+  ExportRoute({
+    Key? key,
+    required List<CarHistory> history,
+    VoidCallback? onBack,
+    required String carNumber,
+    List<PageRouteInfo>? children,
+  }) : super(
+         ExportRoute.name,
+         args: ExportRouteArgs(
+           key: key,
+           history: history,
+           onBack: onBack,
+           carNumber: carNumber,
+         ),
+         initialChildren: children,
+       );
+
+  static const String name = 'ExportRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      final args = data.argsAs<ExportRouteArgs>();
+      return ExportScreen(
+        key: args.key,
+        history: args.history,
+        onBack: args.onBack,
+        carNumber: args.carNumber,
+      );
+    },
+  );
+}
+
+class ExportRouteArgs {
+  const ExportRouteArgs({
+    this.key,
+    required this.history,
+    this.onBack,
+    required this.carNumber,
+  });
+
+  final Key? key;
+
+  final List<CarHistory> history;
+
+  final VoidCallback? onBack;
+
+  final String carNumber;
+
+  @override
+  String toString() {
+    return 'ExportRouteArgs{key: $key, history: $history, onBack: $onBack, carNumber: $carNumber}';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! ExportRouteArgs) return false;
+    return key == other.key &&
+        const ListEquality().equals(history, other.history) &&
+        onBack == other.onBack &&
+        carNumber == other.carNumber;
+  }
+
+  @override
+  int get hashCode =>
+      key.hashCode ^
+      const ListEquality().hash(history) ^
+      onBack.hashCode ^
+      carNumber.hashCode;
 }
 
 /// generated route for

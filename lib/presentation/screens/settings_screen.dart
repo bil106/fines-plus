@@ -1,5 +1,6 @@
+// ignore_for_file: unused_field
+
 import 'package:auto_route/auto_route.dart';
-import 'package:core_data/core_data.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_borders.dart';
@@ -8,7 +9,6 @@ import 'package:design_system/theme/app_theme.dart';
 import 'package:fines_plus/core/widgets/ad_banner_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 @RoutePage()
 class SettingsScreen extends StatefulWidget {
@@ -22,24 +22,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   bool finesCheck = true;
   bool reminders = true;
   bool pushNotifications = true;
-  BannerAd? _bannerAd;
-
-  @override
-  void initState() {
-    super.initState();
-    _bannerAd = BannerAd(
-      adUnitId: AdHelper.bannerAdUnitId,
-      size: AdSize.largeBanner,
-      request: const AdRequest(),
-      listener: BannerAdListener(
-        onAdLoaded: (ad) => setState(() {}),
-        onAdFailedToLoad: (ad, error) {
-          ad.dispose();
-          debugPrint("Ad failed: $error");
-        },
-      ),
-    )..load();
-  }
+  
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;

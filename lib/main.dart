@@ -1,3 +1,4 @@
+import 'package:core_repository/injector.dart';
 import 'package:fines_plus/env/env.dart';
 import 'package:fines_plus/my_app.dart';
 import 'package:fines_plus/services/app_initializer.dart';
@@ -31,7 +32,7 @@ Future<void> main() async {
 
   appInitializer = AppInitializer();
   final result = await appInitializer.init();
-
+  setupLocator();
   runApp(
     MultiRepositoryProvider(
       providers: [

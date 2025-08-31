@@ -17,6 +17,7 @@ dependencies:
   timezone: ^0.10.1
   dio: ^5.4.0
   firebase_core: ^4.0.0
+  get_it: ^8.2.0
 
 core_data:
     path: ../core_data

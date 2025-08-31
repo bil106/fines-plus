@@ -2,7 +2,6 @@ import 'package:core_data/core_data.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
-
 class AdBannerWidget extends StatefulWidget {
   final AdSize size;
 
@@ -45,13 +44,13 @@ class _AdBannerWidgetState extends State<AdBannerWidget> {
       return const SizedBox.shrink();
     }
 
-     return Align(
-    alignment: Alignment.bottomCenter, 
-    child: SizedBox(
-      width: _bannerAd!.size.width.toDouble(),
-      height: _bannerAd!.size.height.toDouble(),
-      child: AdWidget(ad: _bannerAd!),
-    ),
+    return Align(
+      alignment: Alignment.bottomCenter,
+      child: SizedBox(
+        width: _bannerAd!.size.width.toDouble(),
+        height: _bannerAd!.size.height.toDouble(),
+        child: AdWidget(ad: _bannerAd!),
+      ),
     );
   }
 }

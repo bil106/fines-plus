@@ -33,8 +33,10 @@ class _HistoryView extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: AppColors.grey50,
-      appBar: AppBar(backgroundColor: AppColors.grey50,
-       leading: BackButton(color: Colors.black, onPressed: () => context.router.pop()), ),
+      appBar: AppBar(
+        backgroundColor: AppColors.grey50,
+        leading: BackButton(color: Colors.black, onPressed: () => context.router.pop()),
+      ),
       body: SafeArea(
         child: BlocBuilder<HistoryCubit, HistoryState>(
           builder: (context, state) {

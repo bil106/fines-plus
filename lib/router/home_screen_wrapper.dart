@@ -8,6 +8,7 @@ import 'package:design_system/colors/app_colors.dart';
 import 'package:fines_plus/presentation/screens/add_car_screen.dart';
 import 'package:fines_plus/presentation/screens/analytics_screen.dart';
 import 'package:fines_plus/presentation/screens/car_info_screen.dart';
+import 'package:fines_plus/presentation/screens/export_screen.dart';
 import 'package:fines_plus/presentation/screens/fine_check_screen.dart';
 import 'package:fines_plus/presentation/screens/fines_screeen.dart';
 import 'package:fines_plus/presentation/screens/history_screen.dart';
@@ -19,7 +20,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-enum HomePage { addCar, fines, reminders, analytics, carInfo, fineCheck, settings, history, maintenance }
+enum HomePage { addCar, fines, reminders, analytics, carInfo, fineCheck, settings, history, maintenance,export }
 
 @RoutePage()
 class HomeScreenWrapper extends StatefulWidget {
@@ -133,6 +134,7 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
             // 4 CarInfo
             CarInfoScreen(
               key: const ValueKey('car_info_screen'),
+              initialCarNumber: _carNumber!,
               onBack: () => openPage(HomePage.addCar),
               onCheckFine: (carNumber, series, number) {
                 _saveCarInfo(carNumber, series, number);
@@ -157,6 +159,19 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
 
             // 8 Maintenance
             MaintenanceScreen(key: const ValueKey('maintenance_screen'), onBack: () => openPage(HomePage.addCar)),
+          
+          // 9 Export
+         ExportScreen(
+              key: const ValueKey('export'),
+              history: [],
+              onBack: () {
+                final homeState = context.findAncestorStateOfType<HomeScreenWrapperState>();
+                homeState?.openPage(HomePage.analytics);
+             
+              }, carNumber: _carNumber!,
+            ),
+
+          
           ],
         ),
         bottomNavigationBar: BottomNavigationBar(

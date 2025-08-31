@@ -1,3 +1,5 @@
+// ignore_for_file: unused_field
+
 import 'package:auto_route/auto_route.dart';
 import 'package:core_data/core_data.dart';
 import 'package:design_system/colors/app_colors.dart';
@@ -6,7 +8,6 @@ import 'package:design_system/theme/app_theme.dart';
 import 'package:fines_plus/core/widgets/ad_banner_widget.dart';
 import 'package:fines_plus/core/widgets/service_record_card.dart';
 import 'package:flutter/material.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 @RoutePage()
 class MaintenanceScreen extends StatefulWidget {
@@ -18,27 +19,6 @@ class MaintenanceScreen extends StatefulWidget {
 }
 
 class _MaintenanceScreenState extends State<MaintenanceScreen> {
-BannerAd? _bannerAd;
-  @override
-  void initState() {
-    super.initState();
-
-
-    _bannerAd = BannerAd(
-      adUnitId: AdHelper.bannerAdUnitId,
-      size: AdSize.largeBanner,
-      request: const AdRequest(),
-      listener: BannerAdListener(
-        onAdLoaded: (ad) => setState(() {}),
-        onAdFailedToLoad: (ad, error) {
-          ad.dispose();
-          debugPrint("Ad failed: $error");
-        },
-      ),
-    )..load();
-  }
-
-
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
@@ -64,12 +44,11 @@ BannerAd? _bannerAd;
                 },
               ),
             ),
-              AppSpacers.verticalLargeXL,
-          const AdBannerWidget(),
+            AppSpacers.verticalLargeXL,
+            const AdBannerWidget(),
           ],
         ),
       ),
     );
   }
 }
-
