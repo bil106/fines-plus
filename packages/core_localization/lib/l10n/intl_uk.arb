@@ -22,6 +22,12 @@
    "settings": "Налаштування",
    "push_notifications": "Push-сповіщення",
    "pay": "Сплатити",
-   "verification_history": "Історія перевірки"
+   "verification_history": "Історія перевірки",
+   "registration": "Реєстрація",
+   "password": "Пароль",
+   "successfully_registration": "Реєстрація успішна",
+   "register": "Зареєструватись",
+   "successfully_subscription": "Підписка успішно оформлена",
+   "buy_subscription": "Купити передплату"
 
 }

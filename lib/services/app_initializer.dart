@@ -1,13 +1,18 @@
 // ignore_for_file: depend_on_referenced_packages, unnecessary_import
 
 import 'dart:io';
+import 'package:app_links/app_links.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:core_cubit/cubit/purchase_cubit.dart';
+import 'package:core_cubit/cubit/referral_cubit.dart';
+import 'package:core_cubit/cubit/registration_cubit.dart';
 import 'package:core_data/core_data.dart';
 import 'package:core_repository/car_info_repository.dart';
 import 'package:core_repository/history_repository.dart';
-
 import 'package:core_repository/reminder_repository.dart';
+import 'package:core_services/services/purchase_service.dart';
 import 'package:fines_plus/backend/fines_server.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
@@ -23,7 +28,9 @@ import '../config/app_config.dart';
 
 class AppInitializer {
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-
+late final ReferralCubit referralCubit;
+late final PurchaseCubit purchaseCubit;
+late final RegistrationCubit registrationCubit;
   Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
     await Firebase.initializeApp();
     debugPrint("🔔 Background message: ${message.messageId}");
@@ -116,7 +123,17 @@ class AppInitializer {
     // SharedPrefs
     final prefs = await SharedPreferences.getInstance();
     final sharedPrefsManager = SharedPrefsManager(prefs);
+    final appLinks = AppLinks();
 
+    referralCubit = ReferralCubit(appLinks, prefs);
+    purchaseCubit = PurchaseCubit(PurchaseService());
+    final registrationCubit = RegistrationCubit(
+      registerUser: RegisterUserUseCase(auth: FirebaseAuth.instance, firestore: FirebaseFirestore.instance),
+      referralCubit: referralCubit,
+      prefs: prefs,
+    );
+
+    await referralCubit.init();
     final carInfoRepository = CarInfoRepository(
       CarInfoLocalDataSource(sharedPrefsManager),
       CarInfoRemoteDataSource(apiKey: Env.openDataBotApiKey),
@@ -130,12 +147,16 @@ class AppInitializer {
     final pushHelper = PushHelper(flutterLocalNotificationsPlugin);
 
     final historyRepository = HistoryRepository(FirebaseFirestore.instance);
-    return AppInitResult(
+     return AppInitResult(
       config: config,
       carInfoRepository: carInfoRepository,
       reminderRepository: reminderRepository,
       flutterLocalNotificationsPlugin: flutterLocalNotificationsPlugin,
-      pushHelper: pushHelper, historyRepository: historyRepository,
+      pushHelper: pushHelper,
+      historyRepository: historyRepository,
+      referralCubit: referralCubit,
+      purchaseCubit: purchaseCubit,
+      registrationCubit: registrationCubit   
     );
   }
 
@@ -193,7 +214,10 @@ class AppInitResult {
   final ReminderRepository reminderRepository;
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
   final PushHelper pushHelper;
-  final HistoryRepository historyRepository; 
+  final HistoryRepository historyRepository;
+  final ReferralCubit referralCubit;
+  final PurchaseCubit purchaseCubit;
+  final RegistrationCubit registrationCubit;
 
   AppInitResult({
     required this.config,
@@ -201,7 +225,10 @@ class AppInitResult {
     required this.reminderRepository,
     required this.flutterLocalNotificationsPlugin,
     required this.pushHelper,
-    required this.historyRepository, 
+    required this.historyRepository,
+    required this.referralCubit, 
+    required this.purchaseCubit, 
+    required this.registrationCubit, 
   });
 }
 

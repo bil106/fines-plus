@@ -11,7 +11,9 @@ import 'package:fines_plus/presentation/screens/car_info_screen.dart';
 import 'package:fines_plus/presentation/screens/export_screen.dart';
 import 'package:fines_plus/presentation/screens/fine_check_screen.dart';
 import 'package:fines_plus/presentation/screens/fines_screeen.dart';
+import 'package:fines_plus/presentation/screens/fuel_up_screen.dart';
 import 'package:fines_plus/presentation/screens/history_screen.dart';
+import 'package:fines_plus/presentation/screens/registration_screen.dart';
 import 'package:fines_plus/presentation/screens/reminders_screen.dart';
 import 'package:fines_plus/presentation/screens/settings_screen.dart';
 import 'package:fines_plus/presentation/screens/maintenance_screen.dart';
@@ -20,7 +22,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-enum HomePage { addCar, fines, reminders, analytics, carInfo, fineCheck, settings, history, maintenance,export }
+enum HomePage {
+  addCar,
+  fines,
+  reminders,
+  analytics,
+  carInfo,
+  fineCheck,
+  settings,
+  history,
+  maintenance,
+  export,
+  registration,
+  fuel
+}
 
 @RoutePage()
 class HomeScreenWrapper extends StatefulWidget {
@@ -158,20 +173,23 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
             HistoryScreen(key: const ValueKey('history_screen'), carNumber: _carNumber!),
 
             // 8 Maintenance
-            MaintenanceScreen(key: const ValueKey('maintenance_screen'), onBack: () => openPage(HomePage.addCar)),
-          
-          // 9 Export
-         ExportScreen(
+            MaintenanceScreen(key: const ValueKey('maintenance_screen'),
+              onFuelUp: () => openPage(HomePage.fuel), onBack: () => openPage(HomePage.fuel)),
+
+            // 9 Export
+            ExportScreen(
               key: const ValueKey('export'),
               history: [],
               onBack: () {
                 final homeState = context.findAncestorStateOfType<HomeScreenWrapperState>();
                 homeState?.openPage(HomePage.analytics);
-             
-              }, carNumber: _carNumber!,
+              },
+              carNumber: _carNumber!,
             ),
-
-          
+            // 10 Register
+            RegistrationScreen(key: const ValueKey('registration'), onBack: () => openPage(HomePage.addCar)),
+            //11 FuelUpScreen
+            FuelUpScreen(key: const ValueKey('fuel'), onBack: () => openPage(HomePage.maintenance)),
           ],
         ),
         bottomNavigationBar: BottomNavigationBar(

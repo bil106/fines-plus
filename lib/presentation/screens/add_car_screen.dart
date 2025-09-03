@@ -1,3 +1,5 @@
+// ignore_for_file: unused_element
+
 import 'package:auto_route/auto_route.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/constants/app_spacers.dart';
@@ -5,8 +7,10 @@ import 'package:design_system/theme/app_theme.dart';
 import 'package:fines_plus/core/widgets/ad_banner_widget.dart';
 import 'package:fines_plus/router/app_router.dart';
 import 'package:design_system/colors/app_colors.dart';
+import 'package:fines_plus/router/home_screen_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
 
 @RoutePage()
 class AddCarScreen extends StatefulWidget {
@@ -31,7 +35,7 @@ class _AddCarScreenState extends State<AddCarScreen> {
       child: Scaffold(
         backgroundColor: AppColors.neutreBlanc,
         body: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 60),
+          padding: const EdgeInsets.only(left: 20, right: 20, top: 60),
           child: SafeArea(
             child: SingleChildScrollView(
               child: Column(
@@ -40,7 +44,7 @@ class _AddCarScreenState extends State<AddCarScreen> {
                   AppSpacers.verticalXLarge,
 
                   SizedBox(
-                    height: screenHeight * 0.6,
+                    height: screenHeight * 0.55,
                     width: double.infinity,
                     child: Column(
                       children: [
@@ -165,6 +169,22 @@ class _AddCarScreenState extends State<AddCarScreen> {
                     ),
                   ),
 
+                  Padding(
+                    padding: const EdgeInsets.only(left: 200.0, bottom: 40),
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.grey50,
+                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      ),
+                      onPressed: () async {
+                       final homeState = context.findAncestorStateOfType<HomeScreenWrapperState>();
+                        homeState?.openPage(HomePage.registration);
+
+                      },
+                      child: const Text("Реєстрація", style: TextStyle(fontSize: 18, color: Colors.black87)),
+                    ),
+                  ),
                   const AdBannerWidget(),
                 ],
               ),
@@ -174,6 +194,27 @@ class _AddCarScreenState extends State<AddCarScreen> {
       ),
     );
   }
+}
+
+Widget _buildSquareIcon(IconData icon, String text, TextTheme textTheme) {
+  return Container(
+    width: 170,
+    height: 170,
+    decoration: BoxDecoration(
+      shape: BoxShape.rectangle,
+      borderRadius: BorderRadius.circular(20),
+      color: AppColors.grey50,
+    ),
+    child: Center(
+      child: Column(
+        children: [
+          AppSpacers.verticalXLarge,
+          Icon(icon, color: AppColors.blue700, size: 82),
+          Text(text, style: textTheme.violationTitle),
+        ],
+      ),
+    ),
+  );
 }
 
 Widget _buildMenuSquare({IconData? icon, Color? iconColor, Widget? iconWidget, required VoidCallback onTap}) {

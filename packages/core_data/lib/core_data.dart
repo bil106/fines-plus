@@ -19,6 +19,7 @@ export 'src/local/reminder_local_data_source.dart';
 export 'src/local/reminder_remote_data_source.dart';
 export 'src/local/opendata_fines_data_source.dart';
 export 'src/local/firebase_fines_data_source.dart';
+export 'src/local/register_user_usecase.dart';
 
 export 'src/local/push_helper.dart';
 export 'src/local/ad_helper.dart';

@@ -1,0 +1,15 @@
+[
+   {
+      "relation": [
+         "delegate_permission/common.handle_all_urls"
+      ],
+      "target": {
+         "namespace": "android_app",
+         "package_name": "com.example.fines_plus",
+         "sha256_cert_fingerprints": [
+            "1B:52:43:36:51:E6:F4:F0:BA:F1:F4:28:1C:6E:48:EF:A9:9E:17:FB:F7:04:A4:46:A4:C0:94:E3:5A:82:C0:A9",
+            "60:E8:76:6C:7F:CD:0F:0E:44:D0:A8:D5:2F:AE:AC:A2:CD:65:65:0E:51:70:F5:63:26:03:D4:76:0D:B7:FD:58"
+         ]
+      }
+   }
+]

@@ -25,6 +25,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "add_cars": MessageLookupByLibrary.simpleMessage("Додати авто"),
     "addition_cars": MessageLookupByLibrary.simpleMessage("Додавання авто"),
     "auto": MessageLookupByLibrary.simpleMessage("Авто"),
+    "buy_subscription": MessageLookupByLibrary.simpleMessage(
+      "Купити передплату",
+    ),
     "car_number": MessageLookupByLibrary.simpleMessage("Номер авто"),
     "check_fine_title": MessageLookupByLibrary.simpleMessage(
       "Перевірка штрафу",
@@ -37,15 +40,24 @@ class MessageLookup extends MessageLookupByLibrary {
     "fines": MessageLookupByLibrary.simpleMessage("Штрафи"),
     "no_fines": MessageLookupByLibrary.simpleMessage("На вас немає штрафів"),
     "no_reminders": MessageLookupByLibrary.simpleMessage("Немає нагадувань"),
+    "password": MessageLookupByLibrary.simpleMessage("Пароль"),
     "pay": MessageLookupByLibrary.simpleMessage("Сплатити"),
     "phone": MessageLookupByLibrary.simpleMessage("Телефон"),
     "push_notifications": MessageLookupByLibrary.simpleMessage(
       "Push-сповіщення",
     ),
     "reg_number": MessageLookupByLibrary.simpleMessage("Номер техпаспорта"),
+    "register": MessageLookupByLibrary.simpleMessage("Зареєструватись"),
+    "registration": MessageLookupByLibrary.simpleMessage("Реєстрація"),
     "reminder": MessageLookupByLibrary.simpleMessage("Нагадування"),
     "search": MessageLookupByLibrary.simpleMessage("Пошук"),
     "settings": MessageLookupByLibrary.simpleMessage("Налаштування"),
+    "successfully_registration": MessageLookupByLibrary.simpleMessage(
+      "Реєстрація успішна",
+    ),
+    "successfully_subscription": MessageLookupByLibrary.simpleMessage(
+      "Підписка успішно оформлена",
+    ),
     "support": MessageLookupByLibrary.simpleMessage("Підтримка"),
     "verification_history": MessageLookupByLibrary.simpleMessage(
       "Історія перевірки",

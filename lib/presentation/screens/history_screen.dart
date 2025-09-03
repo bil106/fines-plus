@@ -1,9 +1,12 @@
+// ignore_for_file: unused_element_parameter
+
 import 'package:auto_route/auto_route.dart';
 import 'package:core_cubit/cubit/history_cubit.dart';
 import 'package:core_cubit/cubit/history_state.dart';
 import 'package:core_repository/history_repository.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/theme/app_theme.dart';
+import 'package:fines_plus/router/home_screen_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -12,7 +15,8 @@ import 'package:intl/intl.dart';
 @RoutePage()
 class HistoryScreen extends StatelessWidget {
   final String carNumber;
-  const HistoryScreen({super.key, required this.carNumber});
+  final VoidCallback? onBack;
+  const HistoryScreen({super.key, required this.carNumber, this.onBack});
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +29,8 @@ class HistoryScreen extends StatelessWidget {
 
 class _HistoryView extends StatelessWidget {
   final String carNumber;
-  const _HistoryView({required this.carNumber});
+  final VoidCallback? onBack;
+  const _HistoryView({required this.carNumber, this.onBack});
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +40,14 @@ class _HistoryView extends StatelessWidget {
       backgroundColor: AppColors.grey50,
       appBar: AppBar(
         backgroundColor: AppColors.grey50,
-        leading: BackButton(color: Colors.black, onPressed: () => context.router.pop()),
+        leading: BackButton(
+          color: Colors.black,
+          onPressed: () {
+            final homeState = context.findAncestorStateOfType<HomeScreenWrapperState>();
+            homeState?.openPage(HomePage.carInfo);
+          },
+        ),
+
       ),
       body: SafeArea(
         child: BlocBuilder<HistoryCubit, HistoryState>(

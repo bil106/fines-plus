@@ -25,11 +25,14 @@ dependencies:
     path: packages/core
   core_data:
     path: packages/core_data
+  core_services:
+    path: packages/core_services
   design_system:
     path: packages/design_system 
-  
+  google_maps_flutter: ^2.13.1
+  geolocator: ^14.0.2
 
-  firebase_remote_config: ^6.0.0
+
   flutter_bloc: ^9.1.1
   flutter_localizations:
     sdk: flutter
@@ -39,10 +42,8 @@ dependencies:
   intl: ^0.20.2
   shared_preferences: ^2.5.3
   envied: ^1.1.1
-  cloud_firestore: ^6.0.0
-  firebase_core: ^4.0.0
+  sojo_link: ^0.1.0
   uuid: ^4.5.1
-  firebase_messaging: ^16.0.0
   flutter_local_notifications: ^19.4.0
   timezone: ^0.10.1
   http: ^1.5.0
@@ -53,7 +54,16 @@ dependencies:
   google_mobile_ads: ^6.0.0
   font_awesome_flutter: ^10.10.0
   fl_chart: ^1.0.0
- 
+  firebase_core: ^3.15.2
+  cloud_firestore: ^5.0.0
+  firebase_dynamic_links: ^6.1.10
+  firebase_messaging: ^15.2.10
+  firebase_remote_config: ^5.5.0
+  firebase_auth: ^5.7.0
+  app_links: ^6.4.1
+
+
+
 
 dev_dependencies:
   flutter_test:
@@ -73,4 +83,5 @@ flutter:
   assets:
     - assets/config/autolux.json
     - assets/config/fastcar.json
+    - assets\icons\map.png
   

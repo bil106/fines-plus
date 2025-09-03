@@ -213,6 +213,56 @@ class S {
       args: [],
     );
   }
+
+  /// `Реєстрація`
+  String get registration {
+    return Intl.message('Реєстрація', name: 'registration', desc: '', args: []);
+  }
+
+  /// `Пароль`
+  String get password {
+    return Intl.message('Пароль', name: 'password', desc: '', args: []);
+  }
+
+  /// `Реєстрація успішна`
+  String get successfully_registration {
+    return Intl.message(
+      'Реєстрація успішна',
+      name: 'successfully_registration',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Зареєструватись`
+  String get register {
+    return Intl.message(
+      'Зареєструватись',
+      name: 'register',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Підписка успішно оформлена`
+  String get successfully_subscription {
+    return Intl.message(
+      'Підписка успішно оформлена',
+      name: 'successfully_subscription',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Купити передплату`
+  String get buy_subscription {
+    return Intl.message(
+      'Купити передплату',
+      name: 'buy_subscription',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

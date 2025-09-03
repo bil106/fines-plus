@@ -20,7 +20,7 @@ dependencies:
   fines_plus:
     path: ../../
 
-  cloud_firestore: ^6.0.0
+  cloud_firestore: ^5.0.0
 
 flutter:
   uses-material-design: true

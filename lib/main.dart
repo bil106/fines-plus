@@ -1,3 +1,6 @@
+import 'package:core_cubit/cubit/purchase_cubit.dart';
+import 'package:core_cubit/cubit/referral_cubit.dart';
+import 'package:core_cubit/cubit/registration_cubit.dart';
 import 'package:core_repository/injector.dart';
 import 'package:fines_plus/env/env.dart';
 import 'package:fines_plus/my_app.dart';
@@ -25,14 +28,13 @@ Future<void> main() async {
   await Firebase.initializeApp();
 
   await MobileAds.instance.initialize();
-  
   GRecaptchaV3.ready(Env.recaptchaSiteKey);
-
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
   appInitializer = AppInitializer();
   final result = await appInitializer.init();
   setupLocator();
+
   runApp(
     MultiRepositoryProvider(
       providers: [
@@ -41,7 +43,14 @@ Future<void> main() async {
         RepositoryProvider.value(value: result.pushHelper),
         RepositoryProvider.value(value: result.historyRepository),
       ],
-      child: MyApp(config: result.config, flutterLocalNotificationsPlugin: result.flutterLocalNotificationsPlugin),
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider<ReferralCubit>.value(value: result.referralCubit),
+          BlocProvider<PurchaseCubit>.value(value: result.purchaseCubit),
+          BlocProvider<RegistrationCubit>.value(value: result.registrationCubit),
+        ],
+        child: MyApp(config: result.config, flutterLocalNotificationsPlugin: result.flutterLocalNotificationsPlugin),
+      ),
     ),
   );
 }
