@@ -61,7 +61,8 @@ dependencies:
   firebase_remote_config: ^5.5.0
   firebase_auth: ^5.7.0
   app_links: ^6.4.1
-
+  flutter_easy_recaptcha_v2: ^0.1.0
+  flutter_inappwebview: ^6.1.5
 
 
 

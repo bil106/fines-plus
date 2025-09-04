@@ -1,8 +1,3 @@
-// ignore_for_file: unnecessary_library_name
-
-library core_repository;
-
-export 'car_info_repository.dart';
 import 'package:core_data/core_data.dart';
 
 class CarInfoRepository {
@@ -17,16 +12,18 @@ class CarInfoRepository {
   Future<void> saveCarNumber(String v) => local.saveCarNumber(v);
   Future<void> saveTechPassport(String v) => local.saveTechPassport(v);
 
-  // API requests
-  Future<Map<String, dynamic>> getFines(String carNumber, String techPassport) {
+  // API request
+  Future<List<Map<String, dynamic>>> getFines({
+    required String carNumber,
+    required String docSeries,
+    required String docNumber,
+    required String captchaToken,
+  }) {
     return remote.checkFines(
       carNumber: carNumber,
-      techPassport: techPassport,
+      docSeries: docSeries,
+      docNumber: docNumber,
+      captchaToken: captchaToken,
     );
   }
-
-  Future<Map<String, dynamic>> getInsurance(String carNumber) {
-    return remote.checkInsurance(carNumber: carNumber);
-  }
 }
-

@@ -1,7 +1,4 @@
-// ignore_for_file: unused_field
-
 import 'package:auto_route/auto_route.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:core_cubit/cubit/car_info_cubit.dart';
 import 'package:core_cubit/cubit/car_info_state.dart';
 import 'package:core_cubit/cubit/history_cubit.dart';
@@ -14,12 +11,10 @@ import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
 import 'package:fines_plus/core/widgets/ad_banner_widget.dart';
 import 'package:fines_plus/router/home_screen_wrapper.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:core_utils/formatters/vehicle_formatters.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_easy_recaptcha_v2/flutter_easy_recaptcha_v2.dart';
 
 @RoutePage()
 class CarInfoScreen extends StatelessWidget {
@@ -57,6 +52,8 @@ class _CarInfoViewState extends State<_CarInfoView> {
   late final HistoryCubit historyCubit;
   late final CarInfoCubit carInfoCubit;
 
+  bool _showRecaptcha = false;
+
   @override
   void initState() {
     super.initState();
@@ -64,35 +61,26 @@ class _CarInfoViewState extends State<_CarInfoView> {
     _techPassportController = TextEditingController();
 
     historyCubit = context.read<HistoryCubit>();
-    carInfoCubit = CarInfoCubit(context.read<CarInfoRepository>(), historyCubit);
+    carInfoCubit = context.read<CarInfoCubit>();
 
-    _loadSavedCarInfo();
+    carInfoCubit.loadSavedCarInfo().then((_) {
+      _carNumberController.text = carInfoCubit.state.carNumber;
+      _techPassportController.text = carInfoCubit.state.techPassport;
+    });
   }
 
   @override
   void dispose() {
     _carNumberController.dispose();
     _techPassportController.dispose();
-    carInfoCubit.close();
     super.dispose();
   }
 
-  Future<void> _loadSavedCarInfo() async {
-    final prefs = await SharedPreferences.getInstance();
-    final carNumber = prefs.getString('carNumber') ?? '';
-    final techPassport = prefs.getString('techPassport') ?? '';
-
-    _carNumberController.text = carNumber;
-    _techPassportController.text = techPassport;
-
-    if (carNumber.isNotEmpty) {
-      final token = await FirebaseMessaging.instance.getToken();
-      if (token != null) {
-        await FirebaseFirestore.instance.collection("cars").doc(carNumber).set({
-          "fcmToken": token,
-        }, SetOptions(merge: true));
-      }
-    }
+  void _onRecaptchaVerified(String token) {
+    setState(() {
+      _showRecaptcha = false;
+    });
+    carInfoCubit.checkFinesWithCaptcha(token);
   }
 
   @override
@@ -104,14 +92,7 @@ class _CarInfoViewState extends State<_CarInfoView> {
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: AppColors.grey50,
-          leading: BackButton(
-            color: AppColors.blue700,
-            onPressed:
-                widget.onBack ??
-                () {
-                  Navigator.pop(context);
-                },
-          ),
+          leading: BackButton(color: AppColors.blue700, onPressed: widget.onBack ?? () => Navigator.pop(context)),
         ),
         backgroundColor: AppColors.grey50,
         body: SafeArea(
@@ -180,6 +161,7 @@ class _CarInfoViewState extends State<_CarInfoView> {
                   ),
                 ),
                 AppSpacers.verticalLargeXL,
+
                 BlocConsumer<CarInfoCubit, CarInfoState>(
                   listener: (context, state) {
                     if (state.status is CarInfoErrorStatus) {
@@ -189,7 +171,6 @@ class _CarInfoViewState extends State<_CarInfoView> {
                       final carNumber = state.carNumber;
 
                       final homeWrapperState = context.findAncestorStateOfType<HomeScreenWrapperState>();
-
                       homeWrapperState?.openPage(HomePage.history);
 
                       if (widget.onCheckFine != null) {
@@ -201,19 +182,33 @@ class _CarInfoViewState extends State<_CarInfoView> {
                   builder: (context, state) {
                     final isLoading = state.status is CarInfoLoadingStatus;
 
-                    return SizedBox(
-                      width: double.infinity,
-                      height: 65,
-                      child: ElevatedButton(
-                        onPressed: carInfoCubit.isFormValid && !isLoading ? () => carInfoCubit.checkFines() : null,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.blue700,
-                          shape: RoundedRectangleBorder(borderRadius: AppBorders.radius16),
+                    return Column(
+                      children: [
+                        SizedBox(
+                          width: double.infinity,
+                          height: 65,
+                          child: ElevatedButton(
+                            onPressed: carInfoCubit.isFormValid && !isLoading
+                                ? () => setState(() => _showRecaptcha = true)
+                                : null,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.blue700,
+                              shape: RoundedRectangleBorder(borderRadius: AppBorders.radius16),
+                            ),
+                            child: isLoading
+                                ? const CircularProgressIndicator(color: Colors.white)
+                                : Text(S.of(context).search, style: textTheme.buttonText),
+                          ),
                         ),
-                        child: isLoading
-                            ? const CircularProgressIndicator(color: Colors.white)
-                            : Text(S.of(context).search, style: textTheme.buttonText),
-                      ),
+                        if (_showRecaptcha)
+                          SizedBox(
+                            height: 500,
+                            child: RecaptchaV2(
+                              apiKey: "6LdEzb0rAAAAAHF9XnOgEfzKnq6hbAPgayhU_rA6",
+                              onVerifiedSuccessfully: _onRecaptchaVerified,
+                            ),
+                          ),
+                      ],
                     );
                   },
                 ),

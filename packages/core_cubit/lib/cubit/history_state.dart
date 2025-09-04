@@ -9,6 +9,7 @@ class HistoryLoading extends HistoryState {}
 class HistoryLoaded extends HistoryState {
   final List<FineHistory> history;
   HistoryLoaded(this.history);
+  
 }
 
 class HistoryEmpty extends HistoryState {}

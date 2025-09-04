@@ -1,13 +1,12 @@
-import 'dart:convert';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:core_cubit/cubit/history_cubit.dart';
 import 'package:core_data/core_data.dart';
 import 'package:core_repository/car_info_repository.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'car_info_state.dart';
-import 'package:fines_plus/env/env.dart';
-import 'package:http/http.dart' as http;
+import 'dart:async';
 
 
 class CarInfoCubit extends Cubit<CarInfoState> {
@@ -20,6 +19,23 @@ class CarInfoCubit extends Cubit<CarInfoState> {
 
   final _carReg = RegExp(r'^[А-ЯЇІЄҐ]{2}\d{4}[А-ЯЇІЄҐ]{2}$');
   final _techReg = RegExp(r'^[А-ЯІЇЄҐ]{3}\d{6}$');
+
+  Future<void> loadSavedCarInfo() async {
+    final prefs = await SharedPreferences.getInstance();
+    final carNumber = prefs.getString('carNumber') ?? '';
+    final techPassport = prefs.getString('techPassport') ?? '';
+
+    emit(state.copyWith(carNumber: carNumber, techPassport: techPassport));
+
+    if (carNumber.isNotEmpty) {
+      final token = await FirebaseMessaging.instance.getToken();
+      if (token != null) {
+        await FirebaseFirestore.instance.collection("cars").doc(carNumber).set({
+          "fcmToken": token,
+        }, SetOptions(merge: true));
+      }
+    }
+  }
 
   Future<void> _load() async {
     final m = await _repo.getCarInfo();
@@ -39,7 +55,6 @@ class CarInfoCubit extends Cubit<CarInfoState> {
 
   Future<void> setTechPassport(String v) async {
     if (isClosed) return;
-
     final value = v.trim().toUpperCase();
     final m = CarInfoModel(carNumber: state.carNumber, techPassport: value);
 
@@ -77,7 +92,7 @@ class CarInfoCubit extends Cubit<CarInfoState> {
     return {'series': '', 'number': ''};
   }
 
-  Future<void> checkFines() async {
+  Future<void> checkFinesWithCaptcha(String captchaToken) async {
     final error = validate();
     if (error != null) {
       emit(state.copyWith(status: CarInfoErrorStatus(error)));
@@ -88,43 +103,19 @@ class CarInfoCubit extends Cubit<CarInfoState> {
 
     final carNumber = state.carNumber;
     final parts = getTechPassportParts();
-    final series = parts['series']!;
-    final number = parts['number']!;
 
     try {
-      final captchaToken = Env.recaptchaSiteKey;
-      final response = await http.post(
-        Uri.parse("http://localhost:3000/api/fines"),
-        headers: {"Content-Type": "application/json"},
-        body: jsonEncode({
-          "carNumber": carNumber,
-          "docSeries": series,
-          "docNumber": number,
-          "captchaToken": captchaToken,
-          "cookies": "cf_clearance=XXX; _gv_sessid=YYY",
-        }),
+      final finesList = await _repo.getFines(
+        carNumber: carNumber,
+        docSeries: parts['series']!,
+        docNumber: parts['number']!,
+        captchaToken: captchaToken,
       );
 
-      if (response.statusCode != 200) {
-        emit(state.copyWith(status: CarInfoErrorStatus("Server error: ${response.statusCode}")));
-        return;
-      }
-
-      final data = jsonDecode(response.body);
-      final finesRaw = data['fines'];
-
-      List<Map<String, dynamic>> finesList = [];
-      if (finesRaw is List) {
-        finesList = finesRaw.cast<Map<String, dynamic>>();
-      } else if (finesRaw is Map<String, dynamic>) {
-        finesList = [Map<String, dynamic>.from(finesRaw)];
-      }
-
-      
       await historyCubit.addHistory(
         carNumber: carNumber,
-        docSeries: series,
-        docNumber: number,
+        docSeries: parts['series']!,
+        docNumber: parts['number']!,
         fines: finesList,
       );
 

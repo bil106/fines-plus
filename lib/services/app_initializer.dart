@@ -3,6 +3,7 @@
 import 'dart:io';
 import 'package:app_links/app_links.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:core_cubit/cubit/fuel_station_cubit.dart';
 import 'package:core_cubit/cubit/purchase_cubit.dart';
 import 'package:core_cubit/cubit/referral_cubit.dart';
 import 'package:core_cubit/cubit/registration_cubit.dart';
@@ -18,12 +19,10 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:fines_plus/config/flavor_config.dart';
-import 'package:fines_plus/env/env.dart';
 import '../config/app_config.dart';
 
 class AppInitializer {
@@ -31,6 +30,7 @@ class AppInitializer {
 late final ReferralCubit referralCubit;
 late final PurchaseCubit purchaseCubit;
 late final RegistrationCubit registrationCubit;
+late final FuelStationCubit fuelStationCubit;
   Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
     await Firebase.initializeApp();
     debugPrint("🔔 Background message: ${message.messageId}");
@@ -127,6 +127,7 @@ late final RegistrationCubit registrationCubit;
 
     referralCubit = ReferralCubit(appLinks, prefs);
     purchaseCubit = PurchaseCubit(PurchaseService());
+    fuelStationCubit = FuelStationCubit();
     final registrationCubit = RegistrationCubit(
       registerUser: RegisterUserUseCase(auth: FirebaseAuth.instance, firestore: FirebaseFirestore.instance),
       referralCubit: referralCubit,
@@ -136,7 +137,7 @@ late final RegistrationCubit registrationCubit;
     await referralCubit.init();
     final carInfoRepository = CarInfoRepository(
       CarInfoLocalDataSource(sharedPrefsManager),
-      CarInfoRemoteDataSource(apiKey: Env.openDataBotApiKey),
+      CarInfoRemoteDataSource()
     );
 
     final reminderRepository = ReminderRepository(
@@ -156,22 +157,11 @@ late final RegistrationCubit registrationCubit;
       historyRepository: historyRepository,
       referralCubit: referralCubit,
       purchaseCubit: purchaseCubit,
-      registrationCubit: registrationCubit   
+      registrationCubit: registrationCubit,
+      fuelStationCubit: fuelStationCubit 
     );
   }
 
-  Future<void> startNodeServer() async {
-    debugPrint('🚀 Запуск Node.js сервера...');
-    final process = await Process.start('node', ['index.js']);
-
-    process.stdout.transform(SystemEncoding().decoder).listen((line) {
-      debugPrint('🟢 Node: $line');
-    });
-
-    process.stderr.transform(SystemEncoding().decoder).listen((line) {
-      debugPrint('🔴 Node error: $line');
-    });
-  }
 }
 
 extension ReminderScheduling on AppInitializer {
@@ -218,6 +208,7 @@ class AppInitResult {
   final ReferralCubit referralCubit;
   final PurchaseCubit purchaseCubit;
   final RegistrationCubit registrationCubit;
+  final FuelStationCubit fuelStationCubit;
 
   AppInitResult({
     required this.config,
@@ -229,6 +220,8 @@ class AppInitResult {
     required this.referralCubit, 
     required this.purchaseCubit, 
     required this.registrationCubit, 
+    required this.fuelStationCubit, 
+
   });
 }
 

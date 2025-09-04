@@ -10,6 +10,7 @@ import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_text_theme.dart';
 import 'package:design_system/theme/app_theme.dart';
 import 'package:fines_plus/core/widgets/ad_banner_widget.dart';
+import 'package:fines_plus/env/env.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -60,7 +61,7 @@ class _FinesScreenState extends State<FinesScreen> {
                         backgroundColor: AppColors.blue700,
                         shape: RoundedRectangleBorder(borderRadius: AppBorders.radius16),
                       ),
-                      onPressed: carInfoCubit.isFormValid && !isLoading ? () => carInfoCubit.checkFines() : null,
+                      onPressed: carInfoCubit.isFormValid && !isLoading ? () => carInfoCubit.checkFinesWithCaptcha(Env.recaptchaSiteKey) : null,
                       child: Text(S.of(context).check_fines, style: textTheme.whiteNormal),
                     ),
                   );

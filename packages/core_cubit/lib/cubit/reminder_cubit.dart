@@ -18,7 +18,7 @@ class ReminderCubit extends Cubit<ReminderState> {
   }
 
 Future<void> load() async {
-    if (isClosed) return; // safety check
+    if (isClosed) return; 
     emit(state.copyWith(isLoading: true, errorMessage: null));
     try {
       final reminders = await repository.getAll(carNumber);

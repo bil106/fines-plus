@@ -1,4 +1,4 @@
-// ignore_for_file: unused_element_parameter
+// ignore_for_file: unused_element_parameter, avoid_types_as_parameter_names
 
 import 'package:auto_route/auto_route.dart';
 import 'package:core_cubit/cubit/history_cubit.dart';
@@ -64,47 +64,55 @@ class _HistoryView extends StatelessWidget {
               return const Center(child: Text('History is empty'));
             }
 
-            if (state is HistoryLoaded) {
-              return ListView.separated(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                itemCount: state.history.length + 1,
-                separatorBuilder: (_, __) => const Divider(color: Colors.grey),
-                itemBuilder: (context, index) {
-                  if (index == 0) {
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 10),
-                      child: Text('Історія перевірки', style: textTheme.title),
-                    );
-                  }
+     if (state is HistoryLoaded) {
+         
+              final totalFines = state.history.fold<int>(0, (sum, record) => sum + record.fines.length);
 
-                  final item = state.history[index - 1];
-
-                  return ListTile(
-                    contentPadding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                    title: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text("Авто: ${item.carNumber}", style: textTheme.carNumber),
-                        Text("Техпаспорт: ${item.docSeries} ${item.docNumber}", style: textTheme.historyText),
-                        Text("Штрафов: ${item.fines.length}", style: textTheme.historyText),
-                        Text(
-                          "Дата проверки: ${DateFormat('dd.MM.yyyy HH:mm').format(item.checkedAt)}",
-                          style: textTheme.historyText,
-                        ),
-                      ],
+              return Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    child: Text(
+                      'Загальна кількість штрафів: $totalFines',
+                      style: textTheme.subtitleText.copyWith(fontWeight: FontWeight.bold, color: Colors.red),
                     ),
-                    trailing: IconButton(
-                      icon: const Icon(Icons.delete, color: Colors.red),
-                      onPressed: () async {
-                        final cubit = context.read<HistoryCubit>();
-                        await cubit.deleteSingle(item.id);
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Item removed')));
+                  ),
+                  Expanded(
+                    child: ListView.separated(
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                      itemCount: state.history.length,
+                      separatorBuilder: (_, __) => const Divider(color: Colors.grey),
+                      itemBuilder: (context, index) {
+                        final item = state.history[index];
+                        return ListTile(
+                          title: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text("Авто: ${item.carNumber}", style: textTheme.carNumber),
+                              Text("Техпаспорт: ${item.docSeries} ${item.docNumber}", style: textTheme.historyText),
+                              Text("Штрафов: ${item.fines.length}", style: textTheme.historyText),
+                              Text(
+                                "Дата проверки: ${DateFormat('dd.MM.yyyy HH:mm').format(item.checkedAt)}",
+                                style: textTheme.historyText,
+                              ),
+                            ],
+                          ),
+                          trailing: IconButton(
+                            icon: const Icon(Icons.delete, color: Colors.red),
+                            onPressed: () async {
+                              final cubit = context.read<HistoryCubit>();
+                              await cubit.deleteSingle(item.id);
+                              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Item removed')));
+                            },
+                          ),
+                        );
                       },
                     ),
-                  );
-                },
+                  ),
+                ],
               );
             }
+
 
             return const SizedBox.shrink();
           },

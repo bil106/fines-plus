@@ -2,51 +2,40 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class CarInfoRemoteDataSource {
-  final String apiKey;
   final String baseUrl;
 
-  CarInfoRemoteDataSource({
-    required this.apiKey,
-    this.baseUrl = 'https://opendatabot.com/api/v3',
-  });
+  CarInfoRemoteDataSource({this.baseUrl = "http://localhost:3000/api"});
 
-  Future<Map<String, dynamic>> checkFines({
+  Future<List<Map<String, dynamic>>> checkFines({
     required String carNumber,
-    required String techPassport,
+    required String docSeries,
+    required String docNumber,
+    required String captchaToken,
   }) async {
     final url = Uri.parse('$baseUrl/fines');
+
     final response = await http.post(
       url,
-      headers: {
-        'Authorization': 'Bearer $apiKey',
-        'Content-Type': 'application/json',
-      },
+      headers: {"Content-Type": "application/json"},
       body: jsonEncode({
-        'car_number': carNumber,
-        'tech_passport': techPassport,
+        "carNumber": carNumber,
+        "docSeries": docSeries,
+        "docNumber": docNumber,
+        "captchaToken": captchaToken,
       }),
     );
 
     if (response.statusCode != 200) {
-      throw Exception('Ошибка API: ${response.statusCode} ${response.body}');
+      throw Exception("Error API: ${response.statusCode} ${response.body}");
     }
 
-    return jsonDecode(response.body);
-  }
+    final data = jsonDecode(response.body);
 
-  Future<Map<String, dynamic>> checkInsurance({
-    required String carNumber,
-  }) async {
-    final url = Uri.parse('$baseUrl/insurance');
-    final response = await http.get(
-      url.replace(queryParameters: {'car_number': carNumber}),
-      headers: {'Authorization': 'Bearer $apiKey'},
-    );
-
-    if (response.statusCode != 200) {
-      throw Exception('Ошибка API: ${response.statusCode} ${response.body}');
+    if (data["fines"] is List) {
+      return List<Map<String, dynamic>>.from(data["fines"]);
+    } else if (data["fines"] is Map) {
+      return [Map<String, dynamic>.from(data["fines"])];
     }
-
-    return jsonDecode(response.body);
+    return [];
   }
 }

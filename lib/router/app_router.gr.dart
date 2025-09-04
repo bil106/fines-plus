@@ -435,18 +435,48 @@ class FinesRouteArgs {
 
 /// generated route for
 /// [FuelUpScreen]
-class FuelUpRoute extends PageRouteInfo<void> {
-  const FuelUpRoute({List<PageRouteInfo>? children})
-    : super(FuelUpRoute.name, initialChildren: children);
+class FuelUpRoute extends PageRouteInfo<FuelUpRouteArgs> {
+  FuelUpRoute({Key? key, VoidCallback? onBack, List<PageRouteInfo>? children})
+    : super(
+        FuelUpRoute.name,
+        args: FuelUpRouteArgs(key: key, onBack: onBack),
+        initialChildren: children,
+      );
 
   static const String name = 'FuelUpRoute';
 
   static PageInfo page = PageInfo(
     name,
     builder: (data) {
-      return const FuelUpScreen();
+      final args = data.argsAs<FuelUpRouteArgs>(
+        orElse: () => const FuelUpRouteArgs(),
+      );
+      return FuelUpScreen(key: args.key, onBack: args.onBack);
     },
   );
+}
+
+class FuelUpRouteArgs {
+  const FuelUpRouteArgs({this.key, this.onBack});
+
+  final Key? key;
+
+  final VoidCallback? onBack;
+
+  @override
+  String toString() {
+    return 'FuelUpRouteArgs{key: $key, onBack: $onBack}';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! FuelUpRouteArgs) return false;
+    return key == other.key && onBack == other.onBack;
+  }
+
+  @override
+  int get hashCode => key.hashCode ^ onBack.hashCode;
 }
 
 /// generated route for
@@ -527,10 +557,21 @@ class MaintenanceRoute extends PageRouteInfo<MaintenanceRouteArgs> {
   MaintenanceRoute({
     Key? key,
     VoidCallback? onBack,
+    VoidCallback? onFuelUp,
+    VoidCallback? onService,
+    VoidCallback? onCalendar,
+    VoidCallback? onSettings,
     List<PageRouteInfo>? children,
   }) : super(
          MaintenanceRoute.name,
-         args: MaintenanceRouteArgs(key: key, onBack: onBack),
+         args: MaintenanceRouteArgs(
+           key: key,
+           onBack: onBack,
+           onFuelUp: onFuelUp,
+           onService: onService,
+           onCalendar: onCalendar,
+           onSettings: onSettings,
+         ),
          initialChildren: children,
        );
 
@@ -542,32 +583,65 @@ class MaintenanceRoute extends PageRouteInfo<MaintenanceRouteArgs> {
       final args = data.argsAs<MaintenanceRouteArgs>(
         orElse: () => const MaintenanceRouteArgs(),
       );
-      return MaintenanceScreen(key: args.key, onBack: args.onBack);
+      return MaintenanceScreen(
+        key: args.key,
+        onBack: args.onBack,
+        onFuelUp: args.onFuelUp,
+        onService: args.onService,
+        onCalendar: args.onCalendar,
+        onSettings: args.onSettings,
+      );
     },
   );
 }
 
 class MaintenanceRouteArgs {
-  const MaintenanceRouteArgs({this.key, this.onBack});
+  const MaintenanceRouteArgs({
+    this.key,
+    this.onBack,
+    this.onFuelUp,
+    this.onService,
+    this.onCalendar,
+    this.onSettings,
+  });
 
   final Key? key;
 
   final VoidCallback? onBack;
 
+  final VoidCallback? onFuelUp;
+
+  final VoidCallback? onService;
+
+  final VoidCallback? onCalendar;
+
+  final VoidCallback? onSettings;
+
   @override
   String toString() {
-    return 'MaintenanceRouteArgs{key: $key, onBack: $onBack}';
+    return 'MaintenanceRouteArgs{key: $key, onBack: $onBack, onFuelUp: $onFuelUp, onService: $onService, onCalendar: $onCalendar, onSettings: $onSettings}';
   }
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
     if (other is! MaintenanceRouteArgs) return false;
-    return key == other.key && onBack == other.onBack;
+    return key == other.key &&
+        onBack == other.onBack &&
+        onFuelUp == other.onFuelUp &&
+        onService == other.onService &&
+        onCalendar == other.onCalendar &&
+        onSettings == other.onSettings;
   }
 
   @override
-  int get hashCode => key.hashCode ^ onBack.hashCode;
+  int get hashCode =>
+      key.hashCode ^
+      onBack.hashCode ^
+      onFuelUp.hashCode ^
+      onService.hashCode ^
+      onCalendar.hashCode ^
+      onSettings.hashCode;
 }
 
 /// generated route for

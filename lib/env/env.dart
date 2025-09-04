@@ -5,4 +5,5 @@ class Env {
 
   static const openDataBotApiKey = String.fromEnvironment('OPEN_DATABOT_API_KEY', defaultValue: '');
   static const recaptchaSiteKey = String.fromEnvironment('RECAPTCHA_SITE_KEY', defaultValue: '6LepNrErAAAAACkxJmNX--qVX9ImDpxwFKlxMtFf');
+  static const mapApiKey = String.fromEnvironment('MAP_API_KEY', defaultValue: 'AIzaSyD8El-2EaU3iDuHLre3_Mz218iU-l1sr48');
 }
