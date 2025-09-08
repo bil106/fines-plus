@@ -1,0 +1,322 @@
+import 'package:auto_route/auto_route.dart';
+import 'package:core_data/core_data.dart';
+import 'package:design_system/colors/app_colors.dart';
+import 'package:design_system/constants/app_spacers.dart';
+import 'package:design_system/theme/app_theme.dart';
+import 'package:fines_plus/core/widgets/ad_banner_widget.dart';
+import 'package:fines_plus/core/widgets/date_picker_card.dart';
+import 'package:fines_plus/core/widgets/extensions/service_list.dart';
+import 'package:fines_plus/core/widgets/mileage_card.dart';
+import 'package:fines_plus/presentation/screens/fuel_map_screen.dart';
+import 'package:fines_plus/presentation/screens/service_map_screen.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+
+@RoutePage()
+class ServiceScreen extends StatefulWidget {
+  final VoidCallback? onBack;
+  const ServiceScreen({super.key, this.onBack});
+
+  @override
+  State<ServiceScreen> createState() => _ServiceScreenState();
+}
+
+class _ServiceScreenState extends State<ServiceScreen> {
+  final List<TextEditingController> serviceControllers = [TextEditingController()];
+  final TextEditingController costController = TextEditingController();
+  final TextEditingController mileageController = TextEditingController();
+
+  Map<String, dynamic>? _bestStation;
+  DateTime? selectedDate;
+  double usdToUahRate = 40.0;
+  Map<int, double> selectedPricesUah = {};
+
+  @override
+  void initState() {
+    super.initState();
+    _initLocationAndService();
+  }
+
+  Future<void> _initLocationAndService() async {
+    try {
+      Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+      LatLng current = LatLng(position.latitude, position.longitude);
+
+      final bestStation = await fetchBestNearbyService(current, 'AIzaSyD8El-2EaU3iDuHLre3_Mz218iU-l1sr48');
+
+      setState(() {
+        _bestStation = bestStation;
+      });
+    } catch (e) {
+      if (kDebugMode) print("❌ Error getting position: $e");
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: const SystemUiOverlayStyle(statusBarColor: AppColors.grey50, statusBarIconBrightness: Brightness.dark),
+      child: Scaffold(
+        backgroundColor: AppColors.grey50,
+        appBar: AppBar(
+          backgroundColor: AppColors.grey50,
+          elevation: 0,
+          leading: BackButton(color: AppColors.blue700, onPressed: widget.onBack ?? () {}),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.check, color: AppColors.blue700),
+              onPressed: () {
+                if (selectedDate == null || serviceControllers.every((c) => c.text.isEmpty)) {
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(const SnackBar(content: Text("Виберіть дату і хоча б один сервіс")));
+                  return;
+                }
+
+                final mileage = int.tryParse(mileageController.text) ?? 0;
+
+                final List<ServiceRecord> records = serviceControllers.where((c) => c.text.isNotEmpty).map((c) {
+                  final selectedService = ServiceList.items.firstWhere(
+                    (item) => item.name == c.text,
+                    orElse: () => ServiceItem(name: c.text, priceUSD: 0),
+                  );
+                  return ServiceRecord(
+                    serviceName: selectedService.name,
+                    cost: selectedService.priceUSD * usdToUahRate,
+                    date: "${selectedDate!.day}.${selectedDate!.month}.${selectedDate!.year}",
+                    mileage: mileage,
+                  );
+                }).toList();
+
+                Navigator.pop(context, records);
+              },
+            ),
+          ],
+        ),
+
+        body: SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text("Service", style: textTheme.title),
+
+              Row(
+                children: [
+                  _bestStation == null
+                      ? const SizedBox(width: 40, height: 40, child: CircularProgressIndicator(strokeWidth: 2))
+                      : GestureDetector(
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => ServiceMapScreen(
+                                  focusPosition: LatLng(_bestStation!['lat'], _bestStation!['lng']),
+                                  focusName: _bestStation!['name'],
+                                ),
+                              ),
+                            );
+                          },
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(Icons.location_on, color: Colors.blue, size: 40),
+                              const SizedBox(width: 8),
+                              SizedBox(
+                                width: 180,
+                                child: Text(
+                                  _bestStation!['name'] ?? 'СТО',
+                                  style: textTheme.bodyMedium,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                  const Spacer(),
+                  IconButton(
+                    icon: Image.asset('assets/icons/map.png', width: 40, height: 40),
+                    onPressed: () {
+                      Navigator.of(context).push(MaterialPageRoute(builder: (_) => const FuelMapScreen()));
+                    },
+                  ),
+                ],
+              ),
+
+              const Divider(),
+
+              Row(
+                children: [
+                  Expanded(
+                    child: DatePickerCard(
+                      selectedDate: selectedDate,
+                      onDateSelected: (date) => setState(() => selectedDate = date),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: MileageCard(textTheme: textTheme, controller: mileageController),
+                  ),
+                ],
+              ),
+
+              AppSpacers.verticalMedium,
+
+              Text("Service Options", style: textTheme.subtitleText),
+              AppSpacers.verticalMedium,
+
+              Column(
+                children: List.generate(serviceControllers.length, (index) {
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 1),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Autocomplete<String>(
+                            optionsBuilder: (TextEditingValue value) {
+                              if (value.text.isEmpty) return ServiceList.names;
+                              return ServiceList.names.where(
+                                (option) => option.toLowerCase().startsWith(value.text.toLowerCase()),
+                              );
+                            },
+                            onSelected: (val) {
+                              serviceControllers[index].text = val;
+
+                              final selectedItem = ServiceList.items.firstWhere(
+                                (item) => item.name == val,
+                                orElse: () => ServiceItem(name: val, priceUSD: 0),
+                              );
+
+                              selectedPricesUah[index] = selectedItem.priceUSD * usdToUahRate;
+
+                              double total = selectedPricesUah.values.fold(0, (a, b) => a + b);
+                              costController.text = total.toStringAsFixed(0);
+
+                              setState(() {});
+                            },
+                            fieldViewBuilder: (context, controller, focusNode, onFieldSubmitted) {
+                              serviceControllers[index] = controller;
+
+                              return TextField(
+                                controller: controller,
+                                focusNode: focusNode,
+                                decoration: InputDecoration(
+                                  hintText: "Виберіть послугу",
+                                  border: OutlineInputBorder(),
+                                  prefixIcon: Icon(Icons.build, color: Colors.blueAccent),
+                                  suffixIcon: IconButton(
+                                    icon: Icon(Icons.delete, color: Colors.red),
+                                    onPressed: () {
+                                      setState(() {
+                                        serviceControllers.removeAt(index);
+                                        selectedPricesUah.remove(index);
+
+                                        double total = selectedPricesUah.values.fold(0, (a, b) => a + b);
+                                        costController.text = total.toStringAsFixed(0);
+                                      });
+                                    },
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }),
+              ),
+
+              Center(
+                child: IconButton(
+                  icon: const CircleAvatar(
+                    backgroundColor: Colors.blue,
+                    child: Icon(Icons.add, color: Colors.white),
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      serviceControllers.add(TextEditingController());
+                    });
+                  },
+                ),
+              ),
+
+              const SizedBox(height: 16),
+
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        const Icon(Icons.attach_money, color: Colors.blueAccent),
+                        const SizedBox(width: 8),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text("Вартість робіт:"),
+                            Text(
+                              "${selectedPricesUah.isEmpty ? '0' : selectedPricesUah.values.last.toStringAsFixed(0)} UAH",
+                              style: textTheme.titleMedium,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    const SizedBox(width: 56),
+                    Row(
+                      children: [
+                        const Icon(Icons.attach_money, color: Colors.blueAccent),
+                        const SizedBox(width: 8),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text("Загальна сума:"),
+                            Text(
+                              "${costController.text.isEmpty ? '0' : costController.text} UAH",
+                              style: textTheme.titleMedium,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 20),
+
+              AppSpacers.verticalMaxMassive,
+              const AdBannerWidget(),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<Map<String, dynamic>?> fetchBestNearbyService(LatLng current, String apiKey) async {
+    final stations = await fetchNearbyServices(current, apiKey);
+    if (stations.isEmpty) return null;
+
+    final highRated = stations.where((s) => (s['rating'] ?? 0) >= 4.0).toList();
+    if (highRated.isEmpty) return null;
+
+    highRated.sort((a, b) {
+      final distA = Geolocator.distanceBetween(current.latitude, current.longitude, a['lat'], a['lng']);
+      final distB = Geolocator.distanceBetween(current.latitude, current.longitude, b['lat'], b['lng']);
+      return distA.compareTo(distB);
+    });
+
+    return highRated.first;
+  }
+}

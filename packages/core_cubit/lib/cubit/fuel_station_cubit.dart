@@ -23,7 +23,7 @@ class FuelStationCubit extends Cubit<FuelStationState> {
   }
 
   Future<Map<String, dynamic>?> _fetchBestNearbyGasStation(LatLng current, String apiKey) async {
-    final stations = await fetchNearbyGasStations(current, apiKey);
+    final stations = await fetchNearbyGasStations(current, 'AIzaSyD8El-2EaU3iDuHLre3_Mz218iU-l1sr48');
     if (stations.isEmpty) return null;
 
     final highRated = stations.where((s) => (s['rating'] ?? 0) >= 4.5).toList();

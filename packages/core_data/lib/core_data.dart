@@ -11,6 +11,8 @@ export 'src/models/fine_check_history.dart';
 export 'src/models/service_record.dart';
 export 'src/models/analytics_model.dart';
 export 'src/models/car_history_model.dart';
+export 'src/models/event_model.dart';
+export 'src/models/fuel_record.dart';
 
 export 'src/local/car_info_local_data_source.dart';
 export 'src/remote/car_info_remote_data_source.dart';

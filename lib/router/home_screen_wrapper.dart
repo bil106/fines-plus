@@ -15,6 +15,7 @@ import 'package:fines_plus/presentation/screens/fuel_up_screen.dart';
 import 'package:fines_plus/presentation/screens/history_screen.dart';
 import 'package:fines_plus/presentation/screens/registration_screen.dart';
 import 'package:fines_plus/presentation/screens/reminders_screen.dart';
+import 'package:fines_plus/presentation/screens/service_screen.dart';
 import 'package:fines_plus/presentation/screens/settings_screen.dart';
 import 'package:fines_plus/presentation/screens/maintenance_screen.dart';
 
@@ -34,7 +35,8 @@ enum HomePage {
   maintenance,
   export,
   registration,
-  fuel
+  fuel,
+  service,
 }
 
 @RoutePage()
@@ -174,7 +176,9 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
 
             // 8 Maintenance
             MaintenanceScreen(key: const ValueKey('maintenance_screen'),
-              onFuelUp: () => openPage(HomePage.fuel), onBack: () => openPage(HomePage.fuel)),
+              onFuelUp: () => openPage(HomePage.fuel),
+              onService: () => openPage(HomePage.service),
+              onBack: () => openPage(HomePage.fuel)),
 
             // 9 Export
             ExportScreen(
@@ -190,6 +194,8 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
             RegistrationScreen(key: const ValueKey('registration'), onBack: () => openPage(HomePage.addCar)),
             //11 FuelUpScreen
             FuelUpScreen(key: const ValueKey('fuel'), onBack: () => openPage(HomePage.maintenance)),
+           //12 ServiceScreen
+           ServiceScreen(key: const ValueKey('service'), onBack: () => openPage(HomePage.maintenance)),
           ],
         ),
         bottomNavigationBar: BottomNavigationBar(

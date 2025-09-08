@@ -6,27 +6,27 @@ import 'package:core_utils/formatters/mileageInput_formatter.dart';
 
 class MileageCard extends StatefulWidget {
   final TextTheme textTheme;
-  const MileageCard({super.key, required this.textTheme});
+  final TextEditingController controller;
+
+  const MileageCard({super.key, required this.textTheme, required this.controller});
 
   @override
   State<MileageCard> createState() => _MileageCardState();
 }
 
 class _MileageCardState extends State<MileageCard> {
-  final TextEditingController mileageController = TextEditingController();
   final FocusNode _focusNode = FocusNode();
 
   @override
   void initState() {
     super.initState();
     _focusNode.addListener(() {
-      setState(() {}); 
+      setState(() {});
     });
   }
 
   @override
   void dispose() {
-    mileageController.dispose();
     _focusNode.dispose();
     super.dispose();
   }
@@ -51,10 +51,10 @@ class _MileageCardState extends State<MileageCard> {
                   children: [
                     Text("Пробіг", style: widget.textTheme.subtitleText.copyWith(fontSize: 14)),
                     TextField(
-                      controller: mileageController,
+                      controller: widget.controller, // <-- используем внешний
                       focusNode: _focusNode,
                       keyboardType: TextInputType.number,
-                      showCursor: mileageController.text.isEmpty,
+                      showCursor: widget.controller.text.isEmpty,
                       inputFormatters: [FilteringTextInputFormatter.digitsOnly, MileageInputFormatter(max: 1000000)],
                       decoration: InputDecoration(
                         hintText: "Введіть пробіг",

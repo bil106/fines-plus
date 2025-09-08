@@ -12,6 +12,7 @@ import 'package:fines_plus/presentation/screens/fuel_up_screen.dart';
 import 'package:fines_plus/presentation/screens/history_screen.dart';
 import 'package:fines_plus/presentation/screens/registration_screen.dart';
 import 'package:fines_plus/presentation/screens/reminders_screen.dart';
+import 'package:fines_plus/presentation/screens/service_screen.dart';
 import 'package:fines_plus/presentation/screens/settings_screen.dart';
 import 'package:fines_plus/presentation/screens/support_screen.dart';
 import 'package:fines_plus/presentation/screens/maintenance_screen.dart';
@@ -37,7 +38,8 @@ class AppRouter extends RootStackRouter {
         AutoRoute(page: AnalyticsRoute.page, path: 'analytics'),
         AutoRoute(page: HistoryRoute.page, path: 'history'),
         AutoRoute(page: RegistrationRoute.page, path: 'registration'),
-         AutoRoute(page: FuelUpRoute.page, path: 'fuel'),
+        AutoRoute(page: FuelUpRoute.page, path: 'fuel'),
+        AutoRoute(page: ServiceRoute.page, path: 'service'),
       ],
     ),
 
@@ -52,5 +54,6 @@ class AppRouter extends RootStackRouter {
     AutoRoute(page: ExportRoute.page, path: '/export'),
     AutoRoute(page: RegistrationRoute.page, path: '/registration'),
     AutoRoute(page: FuelUpRoute.page, path: '/fuel'),
+    AutoRoute(page: ServiceRoute.page, path: '/service'),
   ];
 }

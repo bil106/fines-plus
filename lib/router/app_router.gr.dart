@@ -754,6 +754,52 @@ class RemindersRouteArgs {
 }
 
 /// generated route for
+/// [ServiceScreen]
+class ServiceRoute extends PageRouteInfo<ServiceRouteArgs> {
+  ServiceRoute({Key? key, VoidCallback? onBack, List<PageRouteInfo>? children})
+    : super(
+        ServiceRoute.name,
+        args: ServiceRouteArgs(key: key, onBack: onBack),
+        initialChildren: children,
+      );
+
+  static const String name = 'ServiceRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      final args = data.argsAs<ServiceRouteArgs>(
+        orElse: () => const ServiceRouteArgs(),
+      );
+      return ServiceScreen(key: args.key, onBack: args.onBack);
+    },
+  );
+}
+
+class ServiceRouteArgs {
+  const ServiceRouteArgs({this.key, this.onBack});
+
+  final Key? key;
+
+  final VoidCallback? onBack;
+
+  @override
+  String toString() {
+    return 'ServiceRouteArgs{key: $key, onBack: $onBack}';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! ServiceRouteArgs) return false;
+    return key == other.key && onBack == other.onBack;
+  }
+
+  @override
+  int get hashCode => key.hashCode ^ onBack.hashCode;
+}
+
+/// generated route for
 /// [SettingsScreen]
 class SettingsRoute extends PageRouteInfo<void> {
   const SettingsRoute({List<PageRouteInfo>? children})
