@@ -3,10 +3,10 @@
 import 'dart:io';
 import 'package:app_links/app_links.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:core_cubit/cubit/fuel_station_cubit.dart';
-import 'package:core_cubit/cubit/purchase_cubit.dart';
-import 'package:core_cubit/cubit/referral_cubit.dart';
-import 'package:core_cubit/cubit/registration_cubit.dart';
+import 'package:core_cubit/cubit/fuel_station/fuel_station_cubit.dart';
+import 'package:core_cubit/cubit/purchase/purchase_cubit.dart';
+import 'package:core_cubit/cubit/referral/referral_cubit.dart';
+import 'package:core_cubit/cubit/registration/registration_cubit.dart';
 import 'package:core_data/core_data.dart';
 import 'package:core_repository/car_info_repository.dart';
 import 'package:core_repository/history_repository.dart';

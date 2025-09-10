@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:core_cubit/cubit/analytics_cubit.dart';
+import 'package:core_cubit/cubit/analytics/analytics_cubit.dart';
 import 'package:core_data/core_data.dart';
+import 'package:core_localization/generated/l10n.dart';
 import 'package:core_repository/analytics_repository.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_spacers.dart';
@@ -13,9 +16,8 @@ import 'package:fines_plus/core/widgets/time_line_item.dart';
 import 'package:fines_plus/presentation/screens/statistics_screen.dart';
 import 'package:fines_plus/router/home_screen_wrapper.dart';
 import 'package:flutter/material.dart';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 @RoutePage()
 class AnalyticsScreen extends StatelessWidget {
@@ -43,41 +45,68 @@ class _AnalyticsScreenView extends StatefulWidget {
 }
 
 class _AnalyticsScreenViewState extends State<_AnalyticsScreenView> {
-  final events = [
-    EventModel(
-      date: DateTime(2025, 8, 24),
-      title: "АИ-95 + / 35 L.",
-      subtitle: "Gas station: Нет в списке",
-      amount: "2 170 UAH",
-      mileage: "164201 km",
-      icon: Icons.local_gas_station,
-      iconColor: Colors.green,
-    ),
-    EventModel(
-      date: DateTime(2025, 8, 2),
-      title: "Services",
-      subtitle: "",
-      amount: "3 342 UAH",
-      mileage: "163275 km",
-      icon: Icons.build,
-      iconColor: Colors.red,
-    ),
-    EventModel(
-      date: DateTime(2025, 7, 28),
-      title: "АИ-95 / 35 L.",
-      subtitle: "Gas station: Нет в списке",
-      amount: "2 135 UAH",
-      mileage: "162952 km",
-      icon: Icons.local_gas_station,
-      iconColor: Colors.green,
-    ),
-  ];
+  List<EventModel> events = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadRecords();
+  }
+
+  Future<void> _loadRecords() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    final serviceJson = prefs.getString('service_records');
+    if (serviceJson != null) {
+      final List<dynamic> serviceList = jsonDecode(serviceJson);
+      events.addAll(
+        serviceList.map((e) {
+          final record = ServiceRecord.fromJson(e);
+          return EventModel(
+            date: record.date,
+            title: record.serviceName,
+
+            amount: "${record.cost} ${S.of(context).grn}",
+            mileage: "${record.mileage} ${S.of(context).km}",
+            icon: Icons.build,
+            iconColor: Colors.red,
+            category: ExpenseCategory.service,
+          );
+        }),
+      );
+    }
+
+    final fuelJson = prefs.getString('fuel_records');
+    if (fuelJson != null) {
+      final List<dynamic> fuelList = jsonDecode(fuelJson);
+      events.addAll(
+        fuelList.map((e) {
+          final record = FuelRecord.fromJson(e);
+          return EventModel(
+            date: record.date,
+            title: "${record.fuelType} / ${record.volume} л.",
+
+            amount: "${record.cost} ${S.of(context).grn}",
+            mileage: "${record.mileage} ${S.of(context).km}",
+            icon: Icons.local_gas_station,
+            iconColor: Colors.green,
+            category: ExpenseCategory.fuel,
+          );
+        }),
+      );
+    }
+
+    events.sort((a, b) => b.date.compareTo(a.date));
+
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
 
     return DefaultTabController(
-      length: 3, 
+      length: 3,
       child: Scaffold(
         backgroundColor: AppColors.grey50,
         appBar: AppBar(
@@ -89,17 +118,16 @@ class _AnalyticsScreenViewState extends State<_AnalyticsScreenView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              
               Row(
                 children: [
-                  Text("Аналітика", style: textTheme.title),
+                  Text(S.of(context).analitics, style: textTheme.title),
                   AppSpacers.horizontalXXHuge,
                   ElevatedButton.icon(
                     onPressed: () {
                       final homeState = context.findAncestorStateOfType<HomeScreenWrapperState>();
                       homeState?.openPage(HomePage.export);
                     },
-                    label: const Text("Експорт", style: TextStyle(color: Colors.white)),
+                    label: Text(S.of(context).export, style: TextStyle(color: Colors.white)),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.blue700,
                       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
@@ -117,22 +145,18 @@ class _AnalyticsScreenViewState extends State<_AnalyticsScreenView> {
                 indicatorColor: AppColors.blue700,
                 labelColor: AppColors.blue700,
                 unselectedLabelColor: Colors.grey,
-                tabs: const [
-                  Tab(text: "Statistics"),
-                  Tab(text: "History"),
-                  Tab(text: "Schedule"),
+                tabs: [
+                  Tab(text: S.of(context).statistics),
+                  Tab(text: S.of(context).history),
+                  Tab(text: S.of(context).schedule),
                 ],
               ),
 
-             
               Expanded(
                 child: TabBarView(
                   children: [
-                  
-                  const StatisticsScreen(),
-                   
+                    const StatisticsScreen(),
 
-                   
                     SingleChildScrollView(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -140,33 +164,30 @@ class _AnalyticsScreenViewState extends State<_AnalyticsScreenView> {
                           return Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                             
                               Padding(
                                 padding: const EdgeInsets.symmetric(vertical: 8),
                                 child: Center(
                                   child: Column(
                                     children: [
                                       Text(
-                                        entry.key, 
+                                        entry.key,
                                         style: Theme.of(context).textTheme.titleMedium?.copyWith(
                                           color: Colors.blueAccent,
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
-                                      const Divider(color: Colors.grey), 
+                                      const Divider(color: Colors.grey),
                                     ],
                                   ),
                                 ),
                               ),
-
-                            
                               ...entry.value.map(
                                 (event) => TimelineItem(
                                   icon: event.icon,
                                   iconColor: event.iconColor,
-                                  date: DateFormat("dd.MM.yyyy").format(event.date),
+                                  date: event.date,
                                   title: event.title,
-                                  subtitle: event.subtitle,
+                                  subtitle: '',
                                   amount: event.amount,
                                   mileage: event.mileage,
                                 ),
@@ -177,13 +198,11 @@ class _AnalyticsScreenViewState extends State<_AnalyticsScreenView> {
                       ),
                     ),
 
-
-                    /// Schedule
-                     SingleChildScrollView(
+                    SingleChildScrollView(
                       child: Column(
                         children: [
                           MaintenanceCard(
-                            title: "Замена масла двигателя",
+                            title: "Заміна оливи двигуна",
                             progress: 0.8,
                             priorKm: 5604,
                             priorDays: 116,
@@ -192,7 +211,7 @@ class _AnalyticsScreenViewState extends State<_AnalyticsScreenView> {
                           Column(
                             children: [
                               ActionCard(
-                                title: "Шины зимние",
+                                title: "Шини зимові",
                                 icon: Icons.tire_repair,
                                 progress: 0.0,
                                 priorExecution: "-",
@@ -200,19 +219,19 @@ class _AnalyticsScreenViewState extends State<_AnalyticsScreenView> {
                                 isWarning: true,
                               ),
                               ActionCard(
-                                title: "Замена масла АКПП",
+                                title: "Заміна олії АКПП",
                                 icon: Icons.settings,
                                 progress: 0.1,
-                                priorExecution: "5335 km\n111 day",
-                                periodicity: "50000 km",
+                                priorExecution: "5335 км\n111 днів",
+                                periodicity: "50000 км",
                                 isWarning: true,
                               ),
                               ActionCard(
-                                title: "Диагностика подвески",
+                                title: "Діагностика підвіски",
                                 icon: Icons.medical_services,
                                 progress: 0.14,
-                                priorExecution: "26 days",
-                                periodicity: "6 months",
+                                priorExecution: "26 днів",
+                                periodicity: "6 місяці",
                                 isWarning: true,
                               ),
                             ],
@@ -231,14 +250,14 @@ class _AnalyticsScreenViewState extends State<_AnalyticsScreenView> {
       ),
     );
   }
-Map<String, List<EventModel>> groupEventsByMonth(List<EventModel> events) {
-    events.sort((a, b) => b.date.compareTo(a.date)); 
 
-    final formatter = DateFormat("MMMM yyyy", "en_US"); 
+  Map<String, List<EventModel>> groupEventsByMonth(List<EventModel> events) {
+    events.sort((a, b) => b.date.compareTo(a.date));
+
     Map<String, List<EventModel>> grouped = {};
 
     for (var event in events) {
-      final key = formatter.format(event.date);
+      final key = event.date;
 
       if (!grouped.containsKey(key)) {
         grouped[key] = [];
@@ -248,5 +267,4 @@ Map<String, List<EventModel>> groupEventsByMonth(List<EventModel> events) {
 
     return grouped;
   }
-
 }

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:core_localization/generated/l10n.dart';
 import 'package:flutter/foundation.dart';
 import 'package:html/parser.dart';
 import 'package:shelf/shelf.dart';
@@ -181,7 +182,7 @@ Future<String> fetchFines({
     return body;
   }
 
-  throw Exception("Error: ${response.statusCode} ${response.body}");
+  throw Exception("${S.current.error} ${response.statusCode} ${response.body}");
 }
 
 List<Map<String, dynamic>> parseFinesHtml(String html) {

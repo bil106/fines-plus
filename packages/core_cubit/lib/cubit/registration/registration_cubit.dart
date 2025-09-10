@@ -1,4 +1,4 @@
-import 'package:core_cubit/cubit/referral_cubit.dart';
+import 'package:core_cubit/cubit/referral/referral_cubit.dart';
 import 'package:core_data/core_data.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';

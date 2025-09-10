@@ -1,7 +1,7 @@
-import 'package:core_cubit/cubit/fuel_station_cubit.dart';
-import 'package:core_cubit/cubit/purchase_cubit.dart';
-import 'package:core_cubit/cubit/referral_cubit.dart';
-import 'package:core_cubit/cubit/registration_cubit.dart';
+import 'package:core_cubit/cubit/fuel_station/fuel_station_cubit.dart';
+import 'package:core_cubit/cubit/purchase/purchase_cubit.dart';
+import 'package:core_cubit/cubit/referral/referral_cubit.dart';
+import 'package:core_cubit/cubit/registration/registration_cubit.dart';
 import 'package:core_repository/injector.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';

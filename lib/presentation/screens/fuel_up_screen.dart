@@ -1,14 +1,17 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:core_data/core_data.dart';
+import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
 import 'package:fines_plus/core/widgets/ad_banner_widget.dart';
 import 'package:fines_plus/core/widgets/date_picker_card.dart';
+import 'package:fines_plus/core/widgets/extensions/fuel_type.dart';
 import 'package:fines_plus/core/widgets/fuel_amount_card.dart';
 import 'package:fines_plus/core/widgets/fuel_choice_chips.dart';
 import 'package:fines_plus/core/widgets/fuel_input_card.dart';
 import 'package:fines_plus/core/widgets/mileage_card.dart';
+import 'package:fines_plus/env/env.dart';
 import 'package:fines_plus/presentation/screens/fuel_map_screen.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -26,11 +29,11 @@ class FuelUpScreen extends StatefulWidget {
 }
 
 class _FuelUpScreenState extends State<FuelUpScreen> {
-  String selectedFuel = "АИ-95+";
   final TextEditingController volumeController = TextEditingController();
   Map<String, dynamic>? _bestStation;
   TextEditingController mileageController = TextEditingController();
-  final Map<String, int> fuelPrices = {"АИ-98": 60, "АИ-95+": 62, "АИ-95": 55, "АИ-92": 47, "Газ LPG": 30};
+  FuelType selectedFuel = FuelType.ai95Plus;
+
   DateTime? selectedDate;
   @override
   void initState() {
@@ -43,7 +46,7 @@ class _FuelUpScreenState extends State<FuelUpScreen> {
       Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
       LatLng current = LatLng(position.latitude, position.longitude);
 
-      final bestStation = await fetchBestNearbyGasStation(current, 'AIzaSyD8El-2EaU3iDuHLre3_Mz218iU-l1sr48');
+      final bestStation = await fetchBestNearbyGasStation(current, Env.mapApiKey);
 
       setState(() {
         _bestStation = bestStation;
@@ -66,23 +69,22 @@ class _FuelUpScreenState extends State<FuelUpScreen> {
           elevation: 0,
           leading: BackButton(color: AppColors.blue700, onPressed: widget.onBack ?? () {}),
           actions: [
-IconButton(
+            IconButton(
               icon: const Icon(Icons.check, color: AppColors.blue700),
               onPressed: () {
                 if (selectedDate == null || volumeController.text.isEmpty || mileageController.text.isEmpty) {
-                  ScaffoldMessenger.of(
-                    context,
-                  ).showSnackBar(const SnackBar(content: Text("Заполните дату, пробег и количество топлива")));
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(S.of(context).fill_date)));
                   return;
                 }
 
                 final volume = double.tryParse(volumeController.text) ?? 0;
                 final mileage = int.tryParse(mileageController.text) ?? 0;
                 final pricePerLiter = fuelPrices[selectedFuel] ?? 0;
+
                 final totalCost = volume * pricePerLiter;
 
                 final record = FuelRecord(
-                  fuelType: selectedFuel,
+                  fuelType: selectedFuel.localized(context),
                   volume: volume,
                   cost: totalCost,
                   date: "${selectedDate!.day}.${selectedDate!.month}.${selectedDate!.year}",
@@ -91,11 +93,7 @@ IconButton(
 
                 Navigator.pop(context, record);
               },
-            )
-
-
-
-
+            ),
           ],
         ),
         body: SingleChildScrollView(
@@ -103,7 +101,7 @@ IconButton(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text("Fuel Up", style: textTheme.title),
+              Text(S.of(context).fuel_up, style: textTheme.title),
 
               Row(
                 children: [
@@ -128,7 +126,7 @@ IconButton(
                               SizedBox(
                                 width: 180,
                                 child: Text(
-                                  _bestStation!['name'] ?? 'Заправка',
+                                  _bestStation!['name'] ?? S.of(context).fuel_up,
                                   style: Theme.of(context).textTheme.bodyMedium,
                                   overflow: TextOverflow.ellipsis,
                                 ),
@@ -158,22 +156,25 @@ IconButton(
                   ),
 
                   SizedBox(width: 16),
-                  Expanded(child: MileageCard(textTheme: textTheme, controller: mileageController)),
+                  Expanded(
+                    child: MileageCard(textTheme: textTheme, controller: mileageController),
+                  ),
                 ],
               ),
 
               AppSpacers.verticalMedium,
 
-              Text("Fuel", style: textTheme.subtitleText),
+              Text(S.of(context).fuel, style: textTheme.subtitleText),
               AppSpacers.verticalMedium,
               FuelChoiceChips(
                 fuels: fuelPrices.keys.toList(),
                 selectedFuel: selectedFuel,
                 onSelected: (fuel) => setState(() => selectedFuel = fuel),
               ),
+
               AppSpacers.verticalLarge,
 
-              FuelInputCard(controller: volumeController, fuel: selectedFuel, price: fuelPrices[selectedFuel] ?? 0),
+              FuelInputCard(controller: volumeController, fuel: selectedFuel),
 
               AppSpacers.verticalLarge,
 

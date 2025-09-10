@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:core_cubit/cubit/history_cubit.dart';
+import 'package:core_cubit/cubit/history/history_cubit.dart';
 import 'package:core_data/core_data.dart';
 import 'package:core_repository/car_info_repository.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';

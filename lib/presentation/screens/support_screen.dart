@@ -1,6 +1,6 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:core_cubit/cubit/support_cubit.dart';
-import 'package:core_cubit/cubit/support_state.dart';
+import 'package:core_cubit/cubit/support/support_cubit.dart';
+import 'package:core_cubit/cubit/support/support_state.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:fines_plus/config/app_config.dart';
@@ -20,7 +20,6 @@ class SupportScreen extends StatefulWidget {
 class _SupportScreenState extends State<SupportScreen> {
   @override
   Widget build(BuildContext context) {
- 
     return BlocListener<SupportCubit, SupportState>(
       listener: (context, state) {
         if (state is SupportActionFailure) {

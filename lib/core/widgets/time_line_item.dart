@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 
 class TimelineItem extends StatelessWidget {
@@ -36,7 +37,6 @@ class TimelineItem extends StatelessWidget {
           ],
         ),
         const SizedBox(width: 12),
-
         Expanded(
           child: Card(
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -74,3 +74,4 @@ class TimelineItem extends StatelessWidget {
     );
   }
 }
+

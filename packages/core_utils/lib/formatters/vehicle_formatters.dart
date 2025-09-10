@@ -1,9 +1,20 @@
 // packages/core_utils/lib/formatters/vehicle_formatters.dart
 import 'package:flutter/services.dart';
+class VehicleFormatters {
+  static const _months = ["Січ", "Лют", "Бер", "Квіт", "Трав", "Черв", "Лип", "Серп", "Верес", "Жовт", "Лист", "Груд"];
+
+/// Formats month and year as "Veres 2025"
+  static String formatMonthYear(DateTime date) {
+    final month = _months[date.month - 1];
+    final year = date.year;
+    return "$month $year";
+  }
+}
 
 /// Formatter for car number: LLDDDDLL (L — letter, D — number)
 class VehicleNumberFormatter extends TextInputFormatter {
   final bool mapLatinToCyrillic;
+ 
 
   VehicleNumberFormatter({this.mapLatinToCyrillic = true});
 
@@ -136,4 +147,7 @@ class TechPassportFormatter extends TextInputFormatter {
     final reg = RegExp(r'^[A-Za-zА-ЯІЇЄҐ]{3}\d{6}$');
     return reg.hasMatch(value.toUpperCase());
   }
+
+
+  
 }

@@ -11,7 +11,6 @@ import 'package:fines_plus/router/home_screen_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-
 @RoutePage()
 class AddCarScreen extends StatefulWidget {
   final VoidCallback? onOpenCarInfo;
@@ -66,7 +65,7 @@ class _AddCarScreenState extends State<AddCarScreen> {
                                     children: [
                                       AppSpacers.verticalXLarge,
                                       Icon(Icons.directions_car_rounded, color: AppColors.blue700, size: 82),
-                                      Text("Авто", style: textTheme.violationTitle),
+                                      Text(S.of(context).auto, style: textTheme.violationTitle),
                                     ],
                                   ),
                                 ),
@@ -128,7 +127,7 @@ class _AddCarScreenState extends State<AddCarScreen> {
                                     children: [
                                       AppSpacers.verticalXLarge,
                                       Icon(Icons.build, color: AppColors.blue700, size: 82),
-                                      Text("ТО", style: textTheme.violationTitle),
+                                      Text(S.of(context).maintenance, style: textTheme.violationTitle),
                                     ],
                                   ),
                                 ),
@@ -153,7 +152,7 @@ class _AddCarScreenState extends State<AddCarScreen> {
                                     children: [
                                       AppSpacers.verticalXLarge,
                                       Icon(Icons.bar_chart, color: AppColors.blue700, size: 82),
-                                      Text('Аналітика', style: textTheme.violationTitle),
+                                      Text(S.of(context).analitics, style: textTheme.violationTitle),
                                     ],
                                   ),
                                 ),
@@ -178,11 +177,10 @@ class _AddCarScreenState extends State<AddCarScreen> {
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                       ),
                       onPressed: () async {
-                       final homeState = context.findAncestorStateOfType<HomeScreenWrapperState>();
+                        final homeState = context.findAncestorStateOfType<HomeScreenWrapperState>();
                         homeState?.openPage(HomePage.registration);
-
                       },
-                      child: const Text("Реєстрація", style: TextStyle(fontSize: 18, color: Colors.black87)),
+                      child: Text(S.of(context).registration, style: TextStyle(fontSize: 18, color: Colors.black87)),
                     ),
                   ),
                   const AdBannerWidget(),

@@ -1,8 +1,9 @@
+import 'package:core_localization/generated/l10n.dart';
 import 'package:flutter/material.dart';
 
 class MaintenanceCard extends StatelessWidget {
   final String title;
-  final double progress; // от 0 до 1
+  final double progress;
   final int priorKm;
   final int priorDays;
   final int periodicityKm;
@@ -48,7 +49,7 @@ class MaintenanceCard extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text("Resource:"),
+                      Text(S.of(context).resource),
                       const SizedBox(height: 4),
                       Stack(
                         alignment: Alignment.center,
@@ -78,14 +79,14 @@ class MaintenanceCard extends StatelessWidget {
               children: [
                 Column(
                   children: [
-                    Text("$priorKm km", style: const TextStyle(fontWeight: FontWeight.bold)),
-                    Text("$priorDays days", style: const TextStyle(color: Colors.grey)),
+                    Text("$priorKm ${S.of(context).km}", style: const TextStyle(fontWeight: FontWeight.bold)),
+                    Text("$priorDays ${S.of(context).days}", style: const TextStyle(color: Colors.grey)),
                   ],
                 ),
                 Column(
                   children: [
-                    Text("$periodicityKm km", style: const TextStyle(fontWeight: FontWeight.bold)),
-                    const Text("Periodicity", style: TextStyle(color: Colors.grey)),
+                    Text("$periodicityKm ${S.of(context).km}", style: const TextStyle(fontWeight: FontWeight.bold)),
+                    Text(S.of(context).periodicity, style: TextStyle(color: Colors.grey)),
                   ],
                 ),
               ],
@@ -93,7 +94,7 @@ class MaintenanceCard extends StatelessWidget {
 
             /// Configure action
             Center(
-              child: TextButton(onPressed: () {}, child: const Text("Configure an action")),
+              child: TextButton(onPressed: () {}, child: Text(S.of(context).configure_action)),
             ),
           ],
         ),

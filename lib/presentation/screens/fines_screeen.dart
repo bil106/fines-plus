@@ -1,8 +1,8 @@
 // ignore_for_file: unused_field
 
 import 'package:auto_route/auto_route.dart';
-import 'package:core_cubit/cubit/car_info_cubit.dart';
-import 'package:core_cubit/cubit/car_info_state.dart';
+import 'package:core_cubit/cubit/car_info/car_info_cubit.dart';
+import 'package:core_cubit/cubit/car_info/car_info_state.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_borders.dart';

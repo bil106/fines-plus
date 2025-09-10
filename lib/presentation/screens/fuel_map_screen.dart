@@ -26,7 +26,7 @@ class _FuelMapScreenState extends State<FuelMapScreen> {
     _checkLocationPermission().then((_) => _getCurrentLocation());
   }
 
-Future<void> _getCurrentLocation() async {
+  Future<void> _getCurrentLocation() async {
     try {
       final position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
       final current = LatLng(position.latitude, position.longitude);
@@ -75,7 +75,6 @@ Future<void> _getCurrentLocation() async {
           );
         }
 
-     
         if (widget.focusPosition != null) {
           _markers.add(
             Marker(
@@ -123,6 +122,12 @@ Future<void> _getCurrentLocation() async {
   }
 
   @override
+  void dispose() {
+    _mapController?.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text("Заправки поряд")),
@@ -165,19 +170,22 @@ Future<List<Map<String, dynamic>>> fetchNearbyGasStations(LatLng location, Strin
     }
 
     final results = data['results'] as List;
-    return results.map((place) {
+
+    final stations = results.map((place) {
       final loc = place['geometry']['location'];
       return {
         'lat': loc['lat'],
         'lng': loc['lng'],
         'name': place['name'],
         'vicinity': place['vicinity'],
-        'rating': place['rating'],
+        'rating': (place['rating'] ?? 0).toDouble(),
       };
     }).toList();
+
+    stations.sort((a, b) => b['rating'].compareTo(a['rating']));
+
+    return stations.take(10).toList();
   } else {
     throw Exception("Error loading gas stations");
   }
 }
-
-

@@ -1,6 +1,6 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:core_cubit/cubit/car_info_cubit.dart';
-import 'package:core_cubit/cubit/history_cubit.dart';
+import 'package:core_cubit/cubit/car_info/car_info_cubit.dart';
+import 'package:core_cubit/cubit/history/history_cubit.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:core_repository/car_info_repository.dart';
 import 'package:core_repository/history_repository.dart';
@@ -178,7 +178,7 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
             MaintenanceScreen(key: const ValueKey('maintenance_screen'),
               onFuelUp: () => openPage(HomePage.fuel),
               onService: () => openPage(HomePage.service),
-              onBack: () => openPage(HomePage.fuel)),
+              onBack: () => openPage(HomePage.addCar)),
 
             // 9 Export
             ExportScreen(

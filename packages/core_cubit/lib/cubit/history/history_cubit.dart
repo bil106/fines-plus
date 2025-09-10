@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:core_cubit/cubit/history_state.dart';
+import 'package:core_cubit/cubit/history/history_state.dart';
 import 'package:core_repository/history_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

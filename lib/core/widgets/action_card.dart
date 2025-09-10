@@ -1,3 +1,4 @@
+import 'package:core_localization/generated/l10n.dart';
 import 'package:flutter/material.dart';
 
 class ActionCard extends StatelessWidget {
@@ -65,7 +66,7 @@ class ActionCard extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text("Resource:"),
+                      Text(S.of(context).resource),
                       const SizedBox(height: 4),
                       Stack(
                         alignment: Alignment.center,
@@ -94,15 +95,15 @@ class ActionCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text("Prior to execution:\n$priorExecution", style: const TextStyle(fontSize: 13)),
+                Text("${S.of(context).to_be_performed} \n$priorExecution", style: const TextStyle(fontSize: 13)),
                 Container(width: 1, height: 32, color: Colors.grey.shade300),
-                Text("Periodicity:\n$periodicity", style: const TextStyle(fontSize: 13)),
+                Text("${S.of(context).periodicity}\n$periodicity", style: const TextStyle(fontSize: 13)),
               ],
             ),
 
             /// Bottom action
             Center(
-              child: TextButton(onPressed: () {}, child: const Text("Configure an action")),
+              child: TextButton(onPressed: () {}, child: Text(S.of(context).configure_action)),
             ),
           ],
         ),

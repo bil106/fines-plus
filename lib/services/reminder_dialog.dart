@@ -1,5 +1,6 @@
-import 'package:core_cubit/cubit/reminder_cubit.dart';
+import 'package:core_cubit/cubit/reminder/reminder_cubit.dart';
 import 'package:core_data/core_data.dart';
+import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:fines_plus/services/app_initializer.dart';
@@ -9,18 +10,10 @@ import 'package:intl/intl.dart';
 
 import '../main.dart';
 
-
-
-
-
-
-
-
 class ReminderDialog extends StatefulWidget {
   final ReminderModel? reminder;
   final VoidCallback? onSaved;
   final ReminderCubit cubit;
- 
 
   const ReminderDialog({super.key, this.reminder, this.onSaved, required this.cubit});
 
@@ -57,7 +50,7 @@ class _ReminderDialogState extends State<ReminderDialog> {
       insetPadding: EdgeInsets.symmetric(horizontal: screenWidth * 0.06, vertical: 24),
       contentPadding: const EdgeInsets.all(16),
       title: Text(
-        widget.reminder == null ? 'Нове нагадування' : 'Редагувати нагадування',
+        widget.reminder == null ? S.of(context).new_reminder : S.of(context).edit_reminder,
         style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
       ),
       content: ConstrainedBox(
@@ -69,16 +62,16 @@ class _ReminderDialogState extends State<ReminderDialog> {
               AppSpacers.verticalMedium,
               TextField(
                 controller: titleController,
-                decoration: const InputDecoration(
-                  labelText: 'Заголовок',
+                decoration: InputDecoration(
+                  labelText: S.of(context).title,
                   labelStyle: TextStyle(fontWeight: FontWeight.w400, fontSize: 18),
                 ),
               ),
               AppSpacers.verticalLarge,
               TextField(
                 controller: descriptionController,
-                decoration: const InputDecoration(
-                  labelText: 'Опис',
+                decoration: InputDecoration(
+                  labelText: S.of(context).description,
                   labelStyle: TextStyle(fontWeight: FontWeight.w400, fontSize: 18),
                 ),
               ),
@@ -106,21 +99,12 @@ class _ReminderDialogState extends State<ReminderDialog> {
                         );
                         if (time != null) {
                           setState(() {
-                            selectedDateTime = DateTime(
-                              date.year,
-                              date.month,
-                              date.day,
-                              time.hour,
-                              time.minute,
-                            );
+                            selectedDateTime = DateTime(date.year, date.month, date.day, time.hour, time.minute);
                           });
                         }
                       }
                     },
-                    child: const Text(
-                      'Вибрати дату',
-                      style: TextStyle(fontWeight: FontWeight.w500, fontSize: 18),
-                    ),
+                    child: Text(S.of(context).select_date, style: TextStyle(fontWeight: FontWeight.w500, fontSize: 18)),
                   ),
                 ],
               ),
@@ -131,12 +115,9 @@ class _ReminderDialogState extends State<ReminderDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text(
-            'Скасування',
-            style: TextStyle(fontWeight: FontWeight.w500, fontSize: 18),
-          ),
+          child: Text(S.of(context).cancel, style: TextStyle(fontWeight: FontWeight.w500, fontSize: 18)),
         ),
-       ElevatedButton(
+        ElevatedButton(
           onPressed: () async {
             final cubit = widget.cubit;
             if (cubit.carNumber.isEmpty) return;
@@ -144,9 +125,7 @@ class _ReminderDialogState extends State<ReminderDialog> {
             final newReminder = ReminderModel(
               id: widget.reminder?.id ?? 'reminder_${DateTime.now().millisecondsSinceEpoch}',
               title: titleController.text.trim().isEmpty ? 'Test notification' : titleController.text.trim(),
-              description: descriptionController.text.trim().isEmpty
-                  ? 'Push check'
-                  : descriptionController.text.trim(),
+              description: descriptionController.text.trim().isEmpty ? 'Push check' : descriptionController.text.trim(),
               dateTime: selectedDateTime,
               isCompleted: widget.reminder?.isCompleted ?? false,
             );
@@ -158,7 +137,6 @@ class _ReminderDialogState extends State<ReminderDialog> {
                 await cubit.updateReminder(newReminder);
               }
 
-              
               await appInitializer.scheduleReminder(newReminder);
 
               if (!mounted) return;
@@ -169,16 +147,9 @@ class _ReminderDialogState extends State<ReminderDialog> {
               debugPrint('$stackTrace');
             }
           },
-          child: const Text('Зберегти'),
-        )
-
-
-
-
-
-
+          child: Text(S.of(context).save),
+        ),
       ],
     );
   }
 }
-

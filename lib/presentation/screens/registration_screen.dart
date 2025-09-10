@@ -1,7 +1,7 @@
 // ignore_for_file: unused_local_variable
 import 'package:auto_route/auto_route.dart';
-import 'package:core_cubit/cubit/purchase_cubit.dart';
-import 'package:core_cubit/cubit/registration_cubit.dart';
+import 'package:core_cubit/cubit/purchase/purchase_cubit.dart';
+import 'package:core_cubit/cubit/registration/registration_cubit.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_spacers.dart';
@@ -57,9 +57,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.grey50,
-        leading: BackButton(color: AppColors.blue700, onPressed: widget.onBack ?? () {
-              
-              }),
+        leading: BackButton(color: AppColors.blue700, onPressed: widget.onBack ?? () {}),
       ),
 
       backgroundColor: AppColors.grey50,
@@ -77,7 +75,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
                 TextField(
                   controller: emailController,
-                  decoration: const InputDecoration(labelText: "Email"),
+                  decoration: InputDecoration(labelText: S.of(context).email),
                 ),
                 AppSpacers.verticalMediumLarge,
                 TextField(

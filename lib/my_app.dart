@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:app_links/app_links.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:core_cubit/cubit/referral_cubit.dart';
+import 'package:core_cubit/cubit/referral/referral_cubit.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:fines_plus/theme/theme_config.dart';
 import 'package:firebase_auth/firebase_auth.dart';

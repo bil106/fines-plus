@@ -1,5 +1,5 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:core_cubit/cubit/reminder_cubit.dart';
+import 'package:core_cubit/cubit/reminder/reminder_cubit.dart';
 import 'package:core_data/core_data.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:core_repository/reminder_repository.dart';

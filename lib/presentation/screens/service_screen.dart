@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:core_data/core_data.dart';
+import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
@@ -7,6 +10,7 @@ import 'package:fines_plus/core/widgets/ad_banner_widget.dart';
 import 'package:fines_plus/core/widgets/date_picker_card.dart';
 import 'package:fines_plus/core/widgets/extensions/service_list.dart';
 import 'package:fines_plus/core/widgets/mileage_card.dart';
+import 'package:fines_plus/env/env.dart';
 import 'package:fines_plus/presentation/screens/fuel_map_screen.dart';
 import 'package:fines_plus/presentation/screens/service_map_screen.dart';
 import 'package:flutter/foundation.dart';
@@ -14,6 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:http/http.dart' as http;
 
 @RoutePage()
 class ServiceScreen extends StatefulWidget {
@@ -31,6 +36,7 @@ class _ServiceScreenState extends State<ServiceScreen> {
 
   Map<String, dynamic>? _bestStation;
   DateTime? selectedDate;
+
   double usdToUahRate = 40.0;
   Map<int, double> selectedPricesUah = {};
 
@@ -38,6 +44,7 @@ class _ServiceScreenState extends State<ServiceScreen> {
   void initState() {
     super.initState();
     _initLocationAndService();
+    _fetchRate();
   }
 
   Future<void> _initLocationAndService() async {
@@ -45,13 +52,49 @@ class _ServiceScreenState extends State<ServiceScreen> {
       Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
       LatLng current = LatLng(position.latitude, position.longitude);
 
-      final bestStation = await fetchBestNearbyService(current, 'AIzaSyD8El-2EaU3iDuHLre3_Mz218iU-l1sr48');
+      final bestStation = await fetchBestNearbyService(current, Env.mapApiKey);
 
       setState(() {
         _bestStation = bestStation;
       });
     } catch (e) {
       if (kDebugMode) print("❌ Error getting position: $e");
+    }
+  }
+
+  Future<void> _fetchRate() async {
+    try {
+      final response = await http.get(
+        Uri.parse("https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?valcode=USD&json"),
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data is List && data.isNotEmpty) {
+          final newRate = (data[0]['rate'] as num).toDouble();
+
+          setState(() {
+            usdToUahRate = newRate;
+            if (kDebugMode) {
+              print("💵 Поточний курс USD → UAH: $usdToUahRate");
+            }
+
+            selectedPricesUah.updateAll((key, oldValue) {
+              final serviceName = serviceControllers[key].text;
+              final selectedItem = ServiceList.items.firstWhere(
+                (item) => item.name == serviceName,
+                orElse: () => ServiceItem(name: serviceName, priceUSD: 0),
+              );
+              return selectedItem.priceUSD * usdToUahRate;
+            });
+
+            double total = selectedPricesUah.values.fold(0, (a, b) => a + b);
+            costController.text = total.toStringAsFixed(0);
+          });
+        }
+      }
+    } catch (e) {
+      if (kDebugMode) print("⚠️ Course loading error: $e");
     }
   }
 
@@ -72,9 +115,7 @@ class _ServiceScreenState extends State<ServiceScreen> {
               icon: const Icon(Icons.check, color: AppColors.blue700),
               onPressed: () {
                 if (selectedDate == null || serviceControllers.every((c) => c.text.isEmpty)) {
-                  ScaffoldMessenger.of(
-                    context,
-                  ).showSnackBar(const SnackBar(content: Text("Виберіть дату і хоча б один сервіс")));
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(S.of(context).select_service)));
                   return;
                 }
 
@@ -104,7 +145,7 @@ class _ServiceScreenState extends State<ServiceScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text("Service", style: textTheme.title),
+              Text(S.of(context).service, style: textTheme.title),
 
               Row(
                 children: [
@@ -129,7 +170,7 @@ class _ServiceScreenState extends State<ServiceScreen> {
                               SizedBox(
                                 width: 180,
                                 child: Text(
-                                  _bestStation!['name'] ?? 'СТО',
+                                  _bestStation!['name'] ?? S.of(context).service_station,
                                   style: textTheme.bodyMedium,
                                   overflow: TextOverflow.ellipsis,
                                 ),
@@ -166,7 +207,7 @@ class _ServiceScreenState extends State<ServiceScreen> {
 
               AppSpacers.verticalMedium,
 
-              Text("Service Options", style: textTheme.subtitleText),
+              Text(S.of(context).selecting_service, style: textTheme.subtitleText),
               AppSpacers.verticalMedium,
 
               Column(
@@ -185,27 +226,22 @@ class _ServiceScreenState extends State<ServiceScreen> {
                             },
                             onSelected: (val) {
                               serviceControllers[index].text = val;
-
                               final selectedItem = ServiceList.items.firstWhere(
                                 (item) => item.name == val,
                                 orElse: () => ServiceItem(name: val, priceUSD: 0),
                               );
-
                               selectedPricesUah[index] = selectedItem.priceUSD * usdToUahRate;
-
                               double total = selectedPricesUah.values.fold(0, (a, b) => a + b);
                               costController.text = total.toStringAsFixed(0);
-
                               setState(() {});
                             },
                             fieldViewBuilder: (context, controller, focusNode, onFieldSubmitted) {
                               serviceControllers[index] = controller;
-
                               return TextField(
                                 controller: controller,
                                 focusNode: focusNode,
                                 decoration: InputDecoration(
-                                  hintText: "Виберіть послугу",
+                                  hintText: S.of(context).select_a_service,
                                   border: OutlineInputBorder(),
                                   prefixIcon: Icon(Icons.build, color: Colors.blueAccent),
                                   suffixIcon: IconButton(
@@ -214,7 +250,6 @@ class _ServiceScreenState extends State<ServiceScreen> {
                                       setState(() {
                                         serviceControllers.removeAt(index);
                                         selectedPricesUah.remove(index);
-
                                         double total = selectedPricesUah.values.fold(0, (a, b) => a + b);
                                         costController.text = total.toStringAsFixed(0);
                                       });
@@ -230,7 +265,6 @@ class _ServiceScreenState extends State<ServiceScreen> {
                   );
                 }),
               ),
-
               Center(
                 child: IconButton(
                   icon: const CircleAvatar(
@@ -263,9 +297,9 @@ class _ServiceScreenState extends State<ServiceScreen> {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text("Вартість робіт:"),
+                            Text(S.of(context).cost_of_work),
                             Text(
-                              "${selectedPricesUah.isEmpty ? '0' : selectedPricesUah.values.last.toStringAsFixed(0)} UAH",
+                              "${selectedPricesUah.isEmpty ? '0' : selectedPricesUah.values.last.toStringAsFixed(0)} ${S.of(context).grn}",
                               style: textTheme.titleMedium,
                             ),
                           ],
@@ -280,9 +314,9 @@ class _ServiceScreenState extends State<ServiceScreen> {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text("Загальна сума:"),
+                            Text(S.of(context).total_amount),
                             Text(
-                              "${costController.text.isEmpty ? '0' : costController.text} UAH",
+                              "${costController.text.isEmpty ? '0' : costController.text} ${S.of(context).grn}",
                               style: textTheme.titleMedium,
                             ),
                           ],
@@ -303,20 +337,20 @@ class _ServiceScreenState extends State<ServiceScreen> {
       ),
     );
   }
+}
 
-  Future<Map<String, dynamic>?> fetchBestNearbyService(LatLng current, String apiKey) async {
-    final stations = await fetchNearbyServices(current, apiKey);
-    if (stations.isEmpty) return null;
+Future<Map<String, dynamic>?> fetchBestNearbyService(LatLng current, String apiKey) async {
+  final stations = await fetchNearbyServices(current, apiKey);
+  if (stations.isEmpty) return null;
 
-    final highRated = stations.where((s) => (s['rating'] ?? 0) >= 4.0).toList();
-    if (highRated.isEmpty) return null;
+  final highRated = stations.where((s) => (s['rating'] ?? 0) >= 4.0).toList();
+  if (highRated.isEmpty) return null;
 
-    highRated.sort((a, b) {
-      final distA = Geolocator.distanceBetween(current.latitude, current.longitude, a['lat'], a['lng']);
-      final distB = Geolocator.distanceBetween(current.latitude, current.longitude, b['lat'], b['lng']);
-      return distA.compareTo(distB);
-    });
+  highRated.sort((a, b) {
+    final distA = Geolocator.distanceBetween(current.latitude, current.longitude, a['lat'], a['lng']);
+    final distB = Geolocator.distanceBetween(current.latitude, current.longitude, b['lat'], b['lng']);
+    return distA.compareTo(distB);
+  });
 
-    return highRated.first;
-  }
+  return highRated.first;
 }

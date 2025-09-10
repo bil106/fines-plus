@@ -1,21 +1,25 @@
+
+import 'package:core_data/src/models/expense_category.dart';
 import 'package:flutter/material.dart';
 
+
+
 class EventModel {
-  final DateTime date;
+  final String date;
   final String title;
-  final String subtitle;
   final String amount;
   final String mileage;
   final IconData icon;
   final Color iconColor;
+  final ExpenseCategory category; 
 
   EventModel({
     required this.date,
     required this.title,
-    required this.subtitle,
     required this.amount,
     required this.mileage,
     required this.icon,
     required this.iconColor,
+    required this.category, 
   });
 }

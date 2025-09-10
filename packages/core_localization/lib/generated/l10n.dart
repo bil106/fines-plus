@@ -214,54 +214,564 @@ class S {
     );
   }
 
-  /// `Реєстрація`
+  /// `Registration`
   String get registration {
-    return Intl.message('Реєстрація', name: 'registration', desc: '', args: []);
+    return Intl.message(
+      'Registration',
+      name: 'registration',
+      desc: '',
+      args: [],
+    );
   }
 
-  /// `Пароль`
+  /// `Password`
   String get password {
-    return Intl.message('Пароль', name: 'password', desc: '', args: []);
+    return Intl.message('Password', name: 'password', desc: '', args: []);
   }
 
-  /// `Реєстрація успішна`
+  /// `Registration successful`
   String get successfully_registration {
     return Intl.message(
-      'Реєстрація успішна',
+      'Registration successful',
       name: 'successfully_registration',
       desc: '',
       args: [],
     );
   }
 
-  /// `Зареєструватись`
+  /// `Register`
   String get register {
-    return Intl.message(
-      'Зареєструватись',
-      name: 'register',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Register', name: 'register', desc: '', args: []);
   }
 
-  /// `Підписка успішно оформлена`
+  /// `Subscription successfully completed`
   String get successfully_subscription {
     return Intl.message(
-      'Підписка успішно оформлена',
+      'Subscription successfully completed',
       name: 'successfully_subscription',
       desc: '',
       args: [],
     );
   }
 
-  /// `Купити передплату`
+  /// `Buy subscription`
   String get buy_subscription {
     return Intl.message(
-      'Купити передплату',
+      'Buy subscription',
       name: 'buy_subscription',
       desc: '',
       args: [],
     );
+  }
+
+  /// `Maintenance`
+  String get maintenance {
+    return Intl.message('Maintenance', name: 'maintenance', desc: '', args: []);
+  }
+
+  /// `Analytics`
+  String get analitics {
+    return Intl.message('Analytics', name: 'analitics', desc: '', args: []);
+  }
+
+  /// `Export`
+  String get export {
+    return Intl.message('Export', name: 'export', desc: '', args: []);
+  }
+
+  /// `Statistics`
+  String get statistics {
+    return Intl.message('Statistics', name: 'statistics', desc: '', args: []);
+  }
+
+  /// `History`
+  String get history {
+    return Intl.message('History', name: 'history', desc: '', args: []);
+  }
+
+  /// `Schedule`
+  String get schedule {
+    return Intl.message('Schedule', name: 'schedule', desc: '', args: []);
+  }
+
+  /// `Export history`
+  String get export_history {
+    return Intl.message(
+      'Export history',
+      name: 'export_history',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `PDF`
+  String get pdf {
+    return Intl.message('PDF', name: 'pdf', desc: '', args: []);
+  }
+
+  /// `CSV`
+  String get csv {
+    return Intl.message('CSV', name: 'csv', desc: '', args: []);
+  }
+
+  /// `LOGO`
+  String get logo {
+    return Intl.message('LOGO', name: 'logo', desc: '', args: []);
+  }
+
+  /// `You are here`
+  String get my_position {
+    return Intl.message(
+      'You are here',
+      name: 'my_position',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Gas stations nearby`
+  String get gas_station_nearby {
+    return Intl.message(
+      'Gas stations nearby',
+      name: 'gas_station_nearby',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Fill in date, mileage and fuel amount`
+  String get fill_date {
+    return Intl.message(
+      'Fill in date, mileage and fuel amount',
+      name: 'fill_date',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Filling up`
+  String get fuel_up {
+    return Intl.message('Filling up', name: 'fuel_up', desc: '', args: []);
+  }
+
+  /// `Fuel`
+  String get fuel {
+    return Intl.message('Fuel', name: 'fuel', desc: '', args: []);
+  }
+
+  /// `Total fines: `
+  String get total_fines {
+    return Intl.message(
+      'Total fines: ',
+      name: 'total_fines',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Technical data sheet:`
+  String get technical_data {
+    return Intl.message(
+      'Technical data sheet:',
+      name: 'technical_data',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Fines:`
+  String get fines_length {
+    return Intl.message('Fines:', name: 'fines_length', desc: '', args: []);
+  }
+
+  /// `Verification date:`
+  String get verif_date {
+    return Intl.message(
+      'Verification date:',
+      name: 'verif_date',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Technical maintenance`
+  String get tech_service {
+    return Intl.message(
+      'Technical maintenance',
+      name: 'tech_service',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Service`
+  String get service {
+    return Intl.message('Service', name: 'service', desc: '', args: []);
+  }
+
+  /// `Calendar`
+  String get calendar {
+    return Intl.message('Calendar', name: 'calendar', desc: '', args: []);
+  }
+
+  /// `Selected service station`
+  String get selected_service_station {
+    return Intl.message(
+      'Selected service station',
+      name: 'selected_service_station',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Service station nearby`
+  String get service_station_nearby {
+    return Intl.message(
+      'Service station nearby',
+      name: 'service_station_nearby',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Select a date and at least one service`
+  String get select_service {
+    return Intl.message(
+      'Select a date and at least one service',
+      name: 'select_service',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Service station`
+  String get service_station {
+    return Intl.message(
+      'Service station',
+      name: 'service_station',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Service options`
+  String get selecting_service {
+    return Intl.message(
+      'Service options',
+      name: 'selecting_service',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Cost of work:`
+  String get cost_of_work {
+    return Intl.message(
+      'Cost of work:',
+      name: 'cost_of_work',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Total amount:`
+  String get total_amount {
+    return Intl.message(
+      'Total amount:',
+      name: 'total_amount',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Mileage statistics`
+  String get mileage_statistics {
+    return Intl.message(
+      'Mileage statistics',
+      name: 'mileage_statistics',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `average/year`
+  String get period {
+    return Intl.message('average/year', name: 'period', desc: '', args: []);
+  }
+
+  /// `Month`
+  String get month {
+    return Intl.message('Month', name: 'month', desc: '', args: []);
+  }
+
+  /// `Average`
+  String get average {
+    return Intl.message('Average', name: 'average', desc: '', args: []);
+  }
+
+  /// `Resource:`
+  String get resource {
+    return Intl.message('Resource:', name: 'resource', desc: '', args: []);
+  }
+
+  /// `To be performed:`
+  String get to_be_performed {
+    return Intl.message(
+      'To be performed:',
+      name: 'to_be_performed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Periodicity:`
+  String get periodicity {
+    return Intl.message(
+      'Periodicity:',
+      name: 'periodicity',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Configure action`
+  String get configure_action {
+    return Intl.message(
+      'Configure action',
+      name: 'configure_action',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add mileage`
+  String get add_mileage {
+    return Intl.message('Add mileage', name: 'add_mileage', desc: '', args: []);
+  }
+
+  /// `Odometer at the beginning of the month`
+  String get odometer_beginning {
+    return Intl.message(
+      'Odometer at the beginning of the month',
+      name: 'odometer_beginning',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Odometer today`
+  String get odometer_today {
+    return Intl.message(
+      'Odometer today',
+      name: 'odometer_today',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Cancel`
+  String get cancel {
+    return Intl.message('Cancel', name: 'cancel', desc: '', args: []);
+  }
+
+  /// `Save`
+  String get save {
+    return Intl.message('Save', name: 'save', desc: '', args: []);
+  }
+
+  /// `Date`
+  String get date {
+    return Intl.message('Date', name: 'date', desc: '', args: []);
+  }
+
+  /// `Select date`
+  String get select_date {
+    return Intl.message('Select date', name: 'select_date', desc: '', args: []);
+  }
+
+  /// `Cost statistics`
+  String get cost_statistics {
+    return Intl.message(
+      'Cost statistics',
+      name: 'cost_statistics',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Open statistics`
+  String get open_statistics {
+    return Intl.message(
+      'Open statistics',
+      name: 'open_statistics',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Repair`
+  String get repair {
+    return Intl.message('Repair', name: 'repair', desc: '', args: []);
+  }
+
+  /// `Tuning`
+  String get tuning {
+    return Intl.message('Tuning', name: 'tuning', desc: '', args: []);
+  }
+
+  /// `Other`
+  String get other {
+    return Intl.message('Other', name: 'other', desc: '', args: []);
+  }
+
+  /// `Amount:`
+  String get sum {
+    return Intl.message('Amount:', name: 'sum', desc: '', args: []);
+  }
+
+  /// `Price per 1 liter:`
+  String get price_liter {
+    return Intl.message(
+      'Price per 1 liter:',
+      name: 'price_liter',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `days`
+  String get days {
+    return Intl.message('days', name: 'days', desc: '', args: []);
+  }
+
+  /// `Mileage`
+  String get mileage {
+    return Intl.message('Mileage', name: 'mileage', desc: '', args: []);
+  }
+
+  /// `Enter mileage`
+  String get enter_mileage {
+    return Intl.message(
+      'Enter mileage',
+      name: 'enter_mileage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `km`
+  String get km {
+    return Intl.message('km', name: 'km', desc: '', args: []);
+  }
+
+  /// `grn`
+  String get grn {
+    return Intl.message('grn', name: 'grn', desc: '', args: []);
+  }
+
+  /// `New reminder`
+  String get new_reminder {
+    return Intl.message(
+      'New reminder',
+      name: 'new_reminder',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Edit reminder`
+  String get edit_reminder {
+    return Intl.message(
+      'Edit reminder',
+      name: 'edit_reminder',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Title`
+  String get title {
+    return Intl.message('Title', name: 'title', desc: '', args: []);
+  }
+
+  /// `Description`
+  String get description {
+    return Intl.message('Description', name: 'description', desc: '', args: []);
+  }
+
+  /// `Select a service`
+  String get select_a_service {
+    return Intl.message(
+      'Select a service',
+      name: 'select_a_service',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Item removed`
+  String get item_removed {
+    return Intl.message(
+      'Item removed',
+      name: 'item_removed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `History is empty`
+  String get history_empty {
+    return Intl.message(
+      'History is empty',
+      name: 'history_empty',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Error:`
+  String get error {
+    return Intl.message('Error:', name: 'error', desc: '', args: []);
+  }
+
+  /// `АН0000НА`
+  String get hint_auto_num {
+    return Intl.message('АН0000НА', name: 'hint_auto_num', desc: '', args: []);
+  }
+
+  /// `ХЕE128436`
+  String get hint_tech_data_num {
+    return Intl.message(
+      'ХЕE128436',
+      name: 'hint_tech_data_num',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `AI-98`
+  String get fuel_ai98 {
+    return Intl.message('AI-98', name: 'fuel_ai98', desc: '', args: []);
+  }
+
+  /// `AI-95+`
+  String get fuel_ai95_plus {
+    return Intl.message('AI-95+', name: 'fuel_ai95_plus', desc: '', args: []);
+  }
+
+  /// `AI-95`
+  String get fuel_ai95 {
+    return Intl.message('AI-95', name: 'fuel_ai95', desc: '', args: []);
+  }
+
+  /// `AI-92`
+  String get fuel_ai92 {
+    return Intl.message('AI-92', name: 'fuel_ai92', desc: '', args: []);
+  }
+
+  /// `Gas LPG`
+  String get fuel_gas_lpg {
+    return Intl.message('Gas LPG', name: 'fuel_gas_lpg', desc: '', args: []);
   }
 }
 

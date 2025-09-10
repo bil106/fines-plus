@@ -1,4 +1,4 @@
-import 'package:core_cubit/cubit/fuel_station_state.dart';
+import 'package:core_cubit/cubit/fuel_station/fuel_station_state.dart';
 import 'package:fines_plus/presentation/screens/fuel_map_screen.dart';
 import 'package:fines_plus/env/env.dart';
 

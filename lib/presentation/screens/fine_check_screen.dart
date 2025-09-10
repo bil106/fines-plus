@@ -1,8 +1,8 @@
 // ignore_for_file: unused_field
 
 import 'package:auto_route/auto_route.dart';
-import 'package:core_cubit/cubit/fines_cubit.dart';
-import 'package:core_cubit/cubit/fines_state.dart';
+import 'package:core_cubit/cubit/fines/fines_cubit.dart';
+import 'package:core_cubit/cubit/fines/fines_state.dart';
 import 'package:core_data/core_data.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:core_repository/fines_repository.dart';
@@ -85,9 +85,9 @@ class _FineCheckScreenState extends State<FineCheckScreen> {
                         return const Center(child: CircularProgressIndicator());
                       } else if (state is FinesError) {
                         if (kDebugMode) {
-                          print('Error:${state.message}');
+                          print('${S.of(context).error}${state.message}');
                         }
-                        return Text("Error: ${state.message}", style: textTheme.bodyMedium);
+                        return Text("${S.of(context).error} ${state.message}", style: textTheme.bodyMedium);
                       } else if (state is FinesEmpty) {
                         return Container(
                           width: double.infinity,
@@ -133,7 +133,7 @@ class _FineCheckScreenState extends State<FineCheckScreen> {
                                     children: [
                                       AppSpacers.verticalMedium,
                                       Text(widget.carNumber, style: textTheme.carNumber),
-                                      Text("${fine.total} грн", style: textTheme.totalFines),
+                                      Text("${fine.total} ${S.of(context).grn}", style: textTheme.totalFines),
                                       const SizedBox(height: 8),
                                       Text(
                                         "${fine.date.day}.${fine.date.month}.${fine.date.year}",

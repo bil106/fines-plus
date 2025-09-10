@@ -26,7 +26,11 @@ class _ServiceMapScreenState extends State<ServiceMapScreen> {
     super.initState();
     _checkLocationPermission().then((_) => _getCurrentLocation());
   }
-
+  @override
+  void dispose() {
+    _mapController?.dispose(); 
+    super.dispose();
+  }
   Future<void> _getCurrentLocation() async {
     try {
       final position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
@@ -166,7 +170,7 @@ Future<List<Map<String, dynamic>>> fetchNearbyServices(LatLng location, String a
 
     services.sort((a, b) => b['rating'].compareTo(a['rating']));
 
-    return services;
+  return services.take(10).toList();
   } else {
     throw Exception("Error loading services");
   }

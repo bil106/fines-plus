@@ -1,16 +1,19 @@
+import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
+import 'package:fines_plus/core/widgets/extensions/fuel_type.dart';
 import 'package:flutter/material.dart';
 
 class FuelInputCard extends StatelessWidget {
   final TextEditingController controller;
-  final String fuel;
-  final int price;
+  final FuelType fuel;
 
-  const FuelInputCard({super.key, required this.controller, required this.fuel, required this.price});
+  const FuelInputCard({super.key, required this.controller, required this.fuel});
 
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+    final price = fuelPrices[fuel] ?? 0; 
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
@@ -20,7 +23,7 @@ class FuelInputCard extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Icon(Icons.local_gas_station, color: AppColors.blue700),
+          const Icon(Icons.local_gas_station, color: AppColors.blue700),
           const SizedBox(width: 8),
           Expanded(
             child: TextField(
@@ -35,14 +38,17 @@ class FuelInputCard extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 50),
-          Icon(Icons.monetization_on_outlined, color: AppColors.blue700),
+          const Icon(Icons.monetization_on_outlined, color: AppColors.blue700),
           const SizedBox(width: 8),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text("Ціна за 1 літр:", style: textTheme.bodySmall?.copyWith(color: Colors.black87)),
               Text(
-                "$price UAH",
+                S.of(context).price_liter,
+                style: textTheme.bodySmall?.copyWith(color: Colors.black87),
+              ),
+              Text(
+                "$price ${S.of(context).grn}",
                 style: textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold, color: AppColors.blue700),
               ),
             ],

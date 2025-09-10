@@ -1,8 +1,9 @@
 // ignore_for_file: unused_element_parameter
 
 import 'package:auto_route/auto_route.dart';
-import 'package:core_cubit/cubit/export_cubit.dart';
+import 'package:core_cubit/cubit/export/export_cubit.dart';
 import 'package:core_data/core_data.dart';
+import 'package:core_localization/generated/l10n.dart';
 import 'package:core_repository/export_repository.dart';
 import 'package:core_repository/injector.dart';
 import 'package:design_system/colors/app_colors.dart';
@@ -74,7 +75,7 @@ class _ExportScreenView extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Text("Експорт історії", style: textTheme.title),
+                Text(S.of(context).export_history, style: textTheme.title),
                 AppSpacers.verticalXXLarge,
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
@@ -96,12 +97,12 @@ class _ExportScreenView extends StatelessWidget {
                   children: [
                     _ExportCard(
                       icon: Icons.picture_as_pdf,
-                      label: "PDF",
+                      label: S.of(context).pdf,
                       onTap: () => cubit.exportAsPdf(carNumber, history),
                     ),
                     _ExportCard(
                       icon: Icons.table_chart,
-                      label: "CSV",
+                      label: S.of(context).csv,
                       onTap: () => cubit.exportAsCsv(carNumber, history),
                     ),
                   ],

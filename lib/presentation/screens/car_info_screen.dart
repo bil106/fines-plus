@@ -1,7 +1,7 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:core_cubit/cubit/car_info_cubit.dart';
-import 'package:core_cubit/cubit/car_info_state.dart';
-import 'package:core_cubit/cubit/history_cubit.dart';
+import 'package:core_cubit/cubit/car_info/car_info_cubit.dart';
+import 'package:core_cubit/cubit/car_info/car_info_state.dart';
+import 'package:core_cubit/cubit/history/history_cubit.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:core_repository/car_info_repository.dart';
 import 'package:core_repository/history_repository.dart';
@@ -10,6 +10,7 @@ import 'package:design_system/constants/app_borders.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
 import 'package:fines_plus/core/widgets/ad_banner_widget.dart';
+import 'package:fines_plus/env/env.dart';
 import 'package:fines_plus/router/home_screen_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:core_utils/formatters/vehicle_formatters.dart';
@@ -127,7 +128,7 @@ class _CarInfoViewState extends State<_CarInfoView> {
                           keyboardType: TextInputType.text,
                           maxLength: 8,
                           decoration: InputDecoration(
-                            hintText: 'АН0000НА',
+                            hintText: S.of(context).hint_auto_num,
                             hintStyle: textTheme.hintText,
                             counterText: '',
                             filled: true,
@@ -148,7 +149,7 @@ class _CarInfoViewState extends State<_CarInfoView> {
                           inputFormatters: [TechPassportFormatter()],
                           maxLength: 9,
                           decoration: InputDecoration(
-                            hintText: 'ХЕE128436',
+                            hintText: S.of(context).hint_tech_data_num,
                             hintStyle: textTheme.hintText,
                             counterText: '',
                             filled: true,
@@ -204,7 +205,7 @@ class _CarInfoViewState extends State<_CarInfoView> {
                           SizedBox(
                             height: 500,
                             child: RecaptchaV2(
-                              apiKey: "6LdEzb0rAAAAAHF9XnOgEfzKnq6hbAPgayhU_rA6",
+                              apiKey: Env.recaptchaSiteKey,
                               onVerifiedSuccessfully: _onRecaptchaVerified,
                             ),
                           ),

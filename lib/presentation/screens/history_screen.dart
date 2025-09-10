@@ -1,8 +1,9 @@
 // ignore_for_file: unused_element_parameter, avoid_types_as_parameter_names
 
 import 'package:auto_route/auto_route.dart';
-import 'package:core_cubit/cubit/history_cubit.dart';
-import 'package:core_cubit/cubit/history_state.dart';
+import 'package:core_cubit/cubit/history/history_cubit.dart';
+import 'package:core_cubit/cubit/history/history_state.dart';
+import 'package:core_localization/generated/l10n.dart';
 import 'package:core_repository/history_repository.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/theme/app_theme.dart';
@@ -47,7 +48,6 @@ class _HistoryView extends StatelessWidget {
             homeState?.openPage(HomePage.carInfo);
           },
         ),
-
       ),
       body: SafeArea(
         child: BlocBuilder<HistoryCubit, HistoryState>(
@@ -57,15 +57,14 @@ class _HistoryView extends StatelessWidget {
             }
 
             if (state is HistoryError) {
-              return Center(child: Text('Error: ${state.message}'));
+              return Center(child: Text('${S.of(context).error} ${state.message}'));
             }
 
             if (state is HistoryEmpty) {
-              return const Center(child: Text('History is empty'));
+              return Center(child: Text(S.of(context).history_empty));
             }
 
-     if (state is HistoryLoaded) {
-         
+            if (state is HistoryLoaded) {
               final totalFines = state.history.fold<int>(0, (sum, record) => sum + record.fines.length);
 
               return Column(
@@ -73,7 +72,7 @@ class _HistoryView extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 10),
                     child: Text(
-                      'Загальна кількість штрафів: $totalFines',
+                      '${S.of(context).total_fines} $totalFines',
                       style: textTheme.subtitleText.copyWith(fontWeight: FontWeight.bold, color: Colors.red),
                     ),
                   ),
@@ -88,11 +87,14 @@ class _HistoryView extends StatelessWidget {
                           title: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text("Авто: ${item.carNumber}", style: textTheme.carNumber),
-                              Text("Техпаспорт: ${item.docSeries} ${item.docNumber}", style: textTheme.historyText),
-                              Text("Штрафов: ${item.fines.length}", style: textTheme.historyText),
+                              Text("${S.of(context).auto}: ${item.carNumber}", style: textTheme.carNumber),
                               Text(
-                                "Дата проверки: ${DateFormat('dd.MM.yyyy HH:mm').format(item.checkedAt)}",
+                                "${S.of(context).technical_data} ${item.docSeries} ${item.docNumber}",
+                                style: textTheme.historyText,
+                              ),
+                              Text("${S.of(context).fines_length} ${item.fines.length}", style: textTheme.historyText),
+                              Text(
+                                "${S.of(context).verif_date} ${DateFormat('dd.MM.yyyy HH:mm').format(item.checkedAt)}",
                                 style: textTheme.historyText,
                               ),
                             ],
@@ -102,7 +104,9 @@ class _HistoryView extends StatelessWidget {
                             onPressed: () async {
                               final cubit = context.read<HistoryCubit>();
                               await cubit.deleteSingle(item.id);
-                              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Item removed')));
+                              ScaffoldMessenger.of(
+                                context,
+                              ).showSnackBar(SnackBar(content: Text(S.of(context).item_removed)));
                             },
                           ),
                         );
@@ -112,7 +116,6 @@ class _HistoryView extends StatelessWidget {
                 ],
               );
             }
-
 
             return const SizedBox.shrink();
           },
