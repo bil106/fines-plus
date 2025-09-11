@@ -99,6 +99,25 @@
 "fuel_ai95_plus": "AI-95+",
 "fuel_ai95": "AI-95",
 "fuel_ai92": "AI-92",
-"fuel_gas_lpg": "Gas LPG"
+"fuel_gas_lpg": "Gas LPG",
+"date_previous_maintenance": "Previous maintenance date",
+"mileage_time_service": "Mileage at time of service",
+"by_date": "By date",
+"by_mileage": "By mileage",
+"comment": "Comment",
+"enter_comment": "Enter comment",
+"car_history": "Car history",
+"type": "Type",
+"price": "Price",
+"add_photo": "Add photo",
+"photo_selected": "Photo selected",
+"add_new_photo": "Add new photo",
+"take_a_picture": "Take a picture",
+"choose_from_gallery": "Choose from gallery",
+"error_photo": "Error choosing photo:",
+"additional_options": "Additional options",
+"of_road_accidents": "Road accidents",
+"event_invisible": "Event will be invisible",
+"publish": "Publish"
 
 }

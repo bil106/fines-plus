@@ -8,6 +8,7 @@ import 'package:fines_plus/presentation/screens/car_info_screen.dart';
 import 'package:fines_plus/presentation/screens/export_screen.dart';
 import 'package:fines_plus/presentation/screens/fine_check_screen.dart';
 import 'package:fines_plus/presentation/screens/fines_screeen.dart';
+import 'package:fines_plus/presentation/screens/fuel_map_screen.dart';
 import 'package:fines_plus/presentation/screens/fuel_up_screen.dart';
 import 'package:fines_plus/presentation/screens/history_screen.dart';
 import 'package:fines_plus/presentation/screens/registration_screen.dart';
@@ -18,6 +19,7 @@ import 'package:fines_plus/presentation/screens/support_screen.dart';
 import 'package:fines_plus/presentation/screens/maintenance_screen.dart';
 import 'package:fines_plus/router/home_screen_wrapper.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 part 'app_router.gr.dart';
 
@@ -55,5 +57,6 @@ class AppRouter extends RootStackRouter {
     AutoRoute(page: RegistrationRoute.page, path: '/registration'),
     AutoRoute(page: FuelUpRoute.page, path: '/fuel'),
     AutoRoute(page: ServiceRoute.page, path: '/service'),
+    AutoRoute(page: FuelMapRoute.page, path: '/fuel-map'),
   ];
 }

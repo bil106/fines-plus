@@ -4,17 +4,27 @@ import 'package:flutter/material.dart';
 class MaintenanceCard extends StatelessWidget {
   final String title;
   final double progress;
-  final int priorKm;
-  final int priorDays;
-  final int periodicityKm;
+  final IconData? icon; 
+  final bool? isWarning;
+  final String? priorExecution; 
+  final String? periodicity; 
+  final int? priorKm;
+  final int? priorDays;
+  final int? periodicityKm;
+  final VoidCallback? onPressed; 
 
   const MaintenanceCard({
     super.key,
     required this.title,
     required this.progress,
-    required this.priorKm,
-    required this.priorDays,
-    required this.periodicityKm,
+    this.icon,
+    this.isWarning,
+    this.priorExecution,
+    this.periodicity,
+    this.priorKm,
+    this.priorDays,
+    this.periodicityKm,
+    this.onPressed,
   });
 
   @override
@@ -23,10 +33,11 @@ class MaintenanceCard extends StatelessWidget {
       elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
-        padding: const EdgeInsets.all(12.0),
+        padding: const EdgeInsets.all(12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+        
             Row(
               children: [
                 Expanded(
@@ -36,13 +47,31 @@ class MaintenanceCard extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 12),
-
+           
             Row(
               children: [
-                CircleAvatar(
-                  radius: 28,
-                  backgroundColor: Colors.blue.shade50,
-                  child: const Icon(Icons.oil_barrel, color: Colors.orange, size: 32),
+                Stack(
+                  children: [
+                    CircleAvatar(
+                      radius: 28,
+                      backgroundColor: Colors.blue.shade50,
+                      child: Icon(
+                        icon ?? Icons.oil_barrel,
+                        color: icon != null ? Colors.amber : Colors.orange,
+                        size: 30,
+                      ),
+                    ),
+                    if (isWarning != null)
+                      Positioned(
+                        bottom: 0,
+                        right: 0,
+                        child: CircleAvatar(
+                          radius: 10,
+                          backgroundColor: isWarning! ? Colors.red : Colors.green,
+                          child: Icon(isWarning! ? Icons.error : Icons.check, color: Colors.white, size: 14),
+                        ),
+                      ),
+                  ],
                 ),
                 const SizedBox(width: 16),
                 Expanded(
@@ -59,7 +88,9 @@ class MaintenanceCard extends StatelessWidget {
                             minHeight: 20,
                             borderRadius: BorderRadius.circular(8),
                             backgroundColor: Colors.grey.shade300,
-                            valueColor: AlwaysStoppedAnimation<Color>(Colors.lightGreen),
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              isWarning == true ? Colors.red : Colors.lightGreen,
+                            ),
                           ),
                           Text(
                             "${(progress * 100).toStringAsFixed(0)}%",
@@ -73,28 +104,33 @@ class MaintenanceCard extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 6),
-
+            // Prior / Periodicity
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Column(
-                  children: [
-                    Text("$priorKm ${S.of(context).km}", style: const TextStyle(fontWeight: FontWeight.bold)),
-                    Text("$priorDays ${S.of(context).days}", style: const TextStyle(color: Colors.grey)),
-                  ],
-                ),
-                Column(
-                  children: [
-                    Text("$periodicityKm ${S.of(context).km}", style: const TextStyle(fontWeight: FontWeight.bold)),
-                    Text(S.of(context).periodicity, style: TextStyle(color: Colors.grey)),
-                  ],
-                ),
+                if (priorExecution != null)
+                  Text("${S.of(context).to_be_performed}\n$priorExecution", style: const TextStyle(fontSize: 13))
+                else if (priorKm != null && priorDays != null)
+                  Column(
+                    children: [
+                      Text("$priorKm ${S.of(context).km}", style: const TextStyle(fontWeight: FontWeight.bold)),
+                      Text("$priorDays ${S.of(context).days}", style: const TextStyle(color: Colors.grey)),
+                    ],
+                  ),
+                if (periodicity != null)
+                  Text("${S.of(context).periodicity}\n$periodicity", style: const TextStyle(fontSize: 13))
+                else if (periodicityKm != null)
+                  Column(
+                    children: [
+                      Text("$periodicityKm ${S.of(context).km}", style: const TextStyle(fontWeight: FontWeight.bold)),
+                      Text(S.of(context).periodicity, style: const TextStyle(color: Colors.grey)),
+                    ],
+                  ),
               ],
             ),
-
-            /// Configure action
+            // Bottom button
             Center(
-              child: TextButton(onPressed: () {}, child: Text(S.of(context).configure_action)),
+              child: TextButton(onPressed: onPressed, child: Text(S.of(context).configure_action)),
             ),
           ],
         ),

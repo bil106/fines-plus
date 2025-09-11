@@ -95,14 +95,29 @@
    "error": "Помилка:",
    "hint_auto_num": "АН0000НА",
    "hint_tech_data_num": "ХЕE128436",
-   
    "fuel_ai98": "АИ-98",
    "fuel_ai95_plus": "АИ-95+",
    "fuel_ai95": "АИ-95",
    "fuel_ai92": "АИ-92",
-   "fuel_gas_lpg": "Газ LPG"
-
-
-   
+   "fuel_gas_lpg": "Газ LPG",
+   "date_previous_maintenance": "Дата попереднього технічного обслуговування",
+   "mileage_time_service": "Пробіг на момент обслуговування",
+   "by_date": "За датою",
+   "by_mileage": "За пробігом",
+   "comment": "Коментар",
+   "enter_comment": "Введіть коментар",
+   "car_history": "Історія автомобіля",
+   "type": "Тип",
+   "price": "Ціна",
+   "add_photo": "Добавить фото",
+   "photo_selected": "Фото выбрано",
+   "add_new_photo": "Добавить новое фото",
+   "take_a_picture": "Сфотографувати",
+   "choose_from_gallery": "Вибрати в галереї",
+   "error_photo": "Ошибка при выборе фото:",
+   "additional_options": "Доп. опции",
+   "of_road_accidents": "Аварії на дорогах",
+   "event_invisible": "Подія буде невидимою",
+   "publish": "Опублікувати"
 
 }

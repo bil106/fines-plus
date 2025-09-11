@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 class EventModel {
   final String date;
   final String title;
-  final String amount;
+  final double amount;
   final String mileage;
   final IconData icon;
   final Color iconColor;

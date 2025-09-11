@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:fines_plus/env/env.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -19,7 +20,7 @@ class _ServiceMapScreenState extends State<ServiceMapScreen> {
   GoogleMapController? _mapController;
   LatLng? _currentPosition;
   final Set<Marker> _markers = {};
-  final String _apiKey = 'AIzaSyD8El-2EaU3iDuHLre3_Mz218iU-l1sr48';
+  final String _apiKey = Env.mapApiKey;
 
   @override
   void initState() {

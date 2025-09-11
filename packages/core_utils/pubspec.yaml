@@ -13,6 +13,20 @@ dependencies:
 
   design_system:
     path: ../design_system
+  core_repository:
+    path: ../core_repository
+  core_data:
+    path: ../core_data
+  core_services:
+    path: ../core_services
+  core_cubit:
+    path: ../core_cubit
+  core_localization:
+    path: ../core_localization
+  fines_plus:
+    path: ../../
+  flutter_bloc: ^9.1.1
+  share_plus: ^11.1.0
 
 flutter:
     uses-material-design: true

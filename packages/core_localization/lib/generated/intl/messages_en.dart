@@ -24,21 +24,33 @@ class MessageLookup extends MessageLookupByLibrary {
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
     "add_cars": MessageLookupByLibrary.simpleMessage("Add a car"),
     "add_mileage": MessageLookupByLibrary.simpleMessage("Add mileage"),
+    "add_new_photo": MessageLookupByLibrary.simpleMessage("Add new photo"),
+    "add_photo": MessageLookupByLibrary.simpleMessage("Add photo"),
     "addition_cars": MessageLookupByLibrary.simpleMessage("Adding a car"),
+    "additional_options": MessageLookupByLibrary.simpleMessage(
+      "Additional options",
+    ),
     "analitics": MessageLookupByLibrary.simpleMessage("Analytics"),
     "auto": MessageLookupByLibrary.simpleMessage("Auto"),
     "average": MessageLookupByLibrary.simpleMessage("Average"),
     "buy_subscription": MessageLookupByLibrary.simpleMessage(
       "Buy subscription",
     ),
+    "by_date": MessageLookupByLibrary.simpleMessage("By date"),
+    "by_mileage": MessageLookupByLibrary.simpleMessage("By mileage"),
     "calendar": MessageLookupByLibrary.simpleMessage("Calendar"),
     "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
+    "car_history": MessageLookupByLibrary.simpleMessage("Car history"),
     "car_number": MessageLookupByLibrary.simpleMessage("Car number"),
     "check_fine_title": MessageLookupByLibrary.simpleMessage(
       "Checking the fine",
     ),
     "check_fines": MessageLookupByLibrary.simpleMessage("Check fines"),
     "checking_fines": MessageLookupByLibrary.simpleMessage("Checking fines"),
+    "choose_from_gallery": MessageLookupByLibrary.simpleMessage(
+      "Choose from gallery",
+    ),
+    "comment": MessageLookupByLibrary.simpleMessage("Comment"),
     "configure_action": MessageLookupByLibrary.simpleMessage(
       "Configure action",
     ),
@@ -47,13 +59,23 @@ class MessageLookup extends MessageLookupByLibrary {
     "cost_statistics": MessageLookupByLibrary.simpleMessage("Cost statistics"),
     "csv": MessageLookupByLibrary.simpleMessage("CSV"),
     "date": MessageLookupByLibrary.simpleMessage("Date"),
+    "date_previous_maintenance": MessageLookupByLibrary.simpleMessage(
+      "Previous maintenance date",
+    ),
     "days": MessageLookupByLibrary.simpleMessage("days"),
     "description": MessageLookupByLibrary.simpleMessage("Description"),
     "edit_reminder": MessageLookupByLibrary.simpleMessage("Edit reminder"),
     "email": MessageLookupByLibrary.simpleMessage("Email"),
+    "enter_comment": MessageLookupByLibrary.simpleMessage("Enter comment"),
     "enter_mileage": MessageLookupByLibrary.simpleMessage("Enter mileage"),
     "enter_vin": MessageLookupByLibrary.simpleMessage("Enter VIN"),
     "error": MessageLookupByLibrary.simpleMessage("Error:"),
+    "error_photo": MessageLookupByLibrary.simpleMessage(
+      "Error choosing photo:",
+    ),
+    "event_invisible": MessageLookupByLibrary.simpleMessage(
+      "Event will be invisible",
+    ),
     "export": MessageLookupByLibrary.simpleMessage("Export"),
     "export_history": MessageLookupByLibrary.simpleMessage("Export history"),
     "fill_date": MessageLookupByLibrary.simpleMessage(
@@ -84,6 +106,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "mileage_statistics": MessageLookupByLibrary.simpleMessage(
       "Mileage statistics",
     ),
+    "mileage_time_service": MessageLookupByLibrary.simpleMessage(
+      "Mileage at time of service",
+    ),
     "month": MessageLookupByLibrary.simpleMessage("Month"),
     "my_position": MessageLookupByLibrary.simpleMessage("You are here"),
     "new_reminder": MessageLookupByLibrary.simpleMessage("New reminder"),
@@ -95,6 +120,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Odometer at the beginning of the month",
     ),
     "odometer_today": MessageLookupByLibrary.simpleMessage("Odometer today"),
+    "of_road_accidents": MessageLookupByLibrary.simpleMessage("Road accidents"),
     "open_statistics": MessageLookupByLibrary.simpleMessage("Open statistics"),
     "other": MessageLookupByLibrary.simpleMessage("Other"),
     "password": MessageLookupByLibrary.simpleMessage("Password"),
@@ -103,7 +129,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "period": MessageLookupByLibrary.simpleMessage("average/year"),
     "periodicity": MessageLookupByLibrary.simpleMessage("Periodicity:"),
     "phone": MessageLookupByLibrary.simpleMessage("Phone"),
+    "photo_selected": MessageLookupByLibrary.simpleMessage("Photo selected"),
+    "price": MessageLookupByLibrary.simpleMessage("Price"),
     "price_liter": MessageLookupByLibrary.simpleMessage("Price per 1 liter:"),
+    "publish": MessageLookupByLibrary.simpleMessage("Publish"),
     "push_notifications": MessageLookupByLibrary.simpleMessage(
       "Push notifications",
     ),
@@ -146,6 +175,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "sum": MessageLookupByLibrary.simpleMessage("Amount:"),
     "support": MessageLookupByLibrary.simpleMessage("Support"),
+    "take_a_picture": MessageLookupByLibrary.simpleMessage("Take a picture"),
     "tech_service": MessageLookupByLibrary.simpleMessage(
       "Technical maintenance",
     ),
@@ -157,6 +187,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "total_amount": MessageLookupByLibrary.simpleMessage("Total amount:"),
     "total_fines": MessageLookupByLibrary.simpleMessage("Total fines: "),
     "tuning": MessageLookupByLibrary.simpleMessage("Tuning"),
+    "type": MessageLookupByLibrary.simpleMessage("Type"),
     "verif_date": MessageLookupByLibrary.simpleMessage("Verification date:"),
     "verification_history": MessageLookupByLibrary.simpleMessage(
       "Verification history",

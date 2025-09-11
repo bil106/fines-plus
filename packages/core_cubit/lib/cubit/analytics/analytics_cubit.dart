@@ -7,6 +7,7 @@ part 'analytics_state.dart';
 
 class AnalyticsCubit extends Cubit<AnalyticsState> {
   final AnalyticsRepository repository;
+  
 
   AnalyticsCubit({required this.repository}) : super(AnalyticsState.initial());
 

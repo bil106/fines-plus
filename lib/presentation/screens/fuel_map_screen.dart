@@ -1,10 +1,13 @@
 import 'dart:convert';
+import 'package:auto_route/auto_route.dart';
+import 'package:fines_plus/env/env.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 
+@RoutePage()
 class FuelMapScreen extends StatefulWidget {
   final LatLng? focusPosition;
   final String? focusName;
@@ -18,7 +21,7 @@ class _FuelMapScreenState extends State<FuelMapScreen> {
   GoogleMapController? _mapController;
   LatLng? _currentPosition;
   final Set<Marker> _markers = {};
-  final String _apiKey = 'AIzaSyD8El-2EaU3iDuHLre3_Mz218iU-l1sr48';
+  final String _apiKey = Env.mapApiKey;
 
   @override
   void initState() {

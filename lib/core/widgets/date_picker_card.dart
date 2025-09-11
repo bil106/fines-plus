@@ -1,3 +1,4 @@
+import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
@@ -44,7 +45,7 @@ class DatePickerCard extends StatelessWidget {
                       Text(
                         selectedDate != null
                             ? "${selectedDate!.day.toString().padLeft(2, '0')}.${selectedDate!.month.toString().padLeft(2, '0')}.${selectedDate!.year}"
-                            : "Виберіть дату",
+                            : S.of(context).select_date,
                         style: selectedDate != null
                             ? textTheme.historyText.copyWith(fontSize: 20)
                             : textTheme.hintText.copyWith(fontSize: 16),

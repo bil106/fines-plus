@@ -3,6 +3,7 @@ plugins {
     id("kotlin-android")
     id("dev.flutter.flutter-gradle-plugin")
     id("com.google.gms.google-services")
+    id("com.google.firebase.crashlytics") version "3.0.6" apply false
 }
 
 android {
@@ -40,6 +41,8 @@ android {
 dependencies {
     implementation(platform("com.google.firebase:firebase-bom:34.1.0"))
     implementation(platform("com.google.firebase:firebase-dynamic-links:21.1.0"))
+    implementation(platform("com.google.firebase:firebase-crashlytics-ndk"))
+    implementation(platform("com.google.firebase:firebase-analytics"))
     add("coreLibraryDesugaring", "com.android.tools:desugar_jdk_libs:2.1.4")
 }
 

@@ -1,4 +1,5 @@
 import 'package:core_localization/generated/l10n.dart';
+import 'package:fines_plus/core/widgets/action_detail_sheet.dart';
 import 'package:flutter/material.dart';
 
 class ActionCard extends StatelessWidget {
@@ -103,7 +104,20 @@ class ActionCard extends StatelessWidget {
 
             /// Bottom action
             Center(
-              child: TextButton(onPressed: () {}, child: Text(S.of(context).configure_action)),
+              child: TextButton(
+                onPressed: () {
+                  showModalBottomSheet(
+                    context: context,
+                    isScrollControlled: true, 
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+                    builder: (_) => Padding(
+                      padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+                      child: ActionDetailSheet(title: title, priorExecution: priorExecution, periodicity: periodicity),
+                    ),
+                  );
+                },
+                child: Text(S.of(context).configure_action),
+              ),
             ),
           ],
         ),

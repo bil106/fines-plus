@@ -773,6 +773,156 @@ class S {
   String get fuel_gas_lpg {
     return Intl.message('Gas LPG', name: 'fuel_gas_lpg', desc: '', args: []);
   }
+
+  /// `Previous maintenance date`
+  String get date_previous_maintenance {
+    return Intl.message(
+      'Previous maintenance date',
+      name: 'date_previous_maintenance',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Mileage at time of service`
+  String get mileage_time_service {
+    return Intl.message(
+      'Mileage at time of service',
+      name: 'mileage_time_service',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `By date`
+  String get by_date {
+    return Intl.message('By date', name: 'by_date', desc: '', args: []);
+  }
+
+  /// `By mileage`
+  String get by_mileage {
+    return Intl.message('By mileage', name: 'by_mileage', desc: '', args: []);
+  }
+
+  /// `Comment`
+  String get comment {
+    return Intl.message('Comment', name: 'comment', desc: '', args: []);
+  }
+
+  /// `Enter comment`
+  String get enter_comment {
+    return Intl.message(
+      'Enter comment',
+      name: 'enter_comment',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Car history`
+  String get car_history {
+    return Intl.message('Car history', name: 'car_history', desc: '', args: []);
+  }
+
+  /// `Type`
+  String get type {
+    return Intl.message('Type', name: 'type', desc: '', args: []);
+  }
+
+  /// `Price`
+  String get price {
+    return Intl.message('Price', name: 'price', desc: '', args: []);
+  }
+
+  /// `Add photo`
+  String get add_photo {
+    return Intl.message('Add photo', name: 'add_photo', desc: '', args: []);
+  }
+
+  /// `Photo selected`
+  String get photo_selected {
+    return Intl.message(
+      'Photo selected',
+      name: 'photo_selected',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add new photo`
+  String get add_new_photo {
+    return Intl.message(
+      'Add new photo',
+      name: 'add_new_photo',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Take a picture`
+  String get take_a_picture {
+    return Intl.message(
+      'Take a picture',
+      name: 'take_a_picture',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Choose from gallery`
+  String get choose_from_gallery {
+    return Intl.message(
+      'Choose from gallery',
+      name: 'choose_from_gallery',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Error choosing photo:`
+  String get error_photo {
+    return Intl.message(
+      'Error choosing photo:',
+      name: 'error_photo',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Additional options`
+  String get additional_options {
+    return Intl.message(
+      'Additional options',
+      name: 'additional_options',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Road accidents`
+  String get of_road_accidents {
+    return Intl.message(
+      'Road accidents',
+      name: 'of_road_accidents',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Event will be invisible`
+  String get event_invisible {
+    return Intl.message(
+      'Event will be invisible',
+      name: 'event_invisible',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Publish`
+  String get publish {
+    return Intl.message('Publish', name: 'publish', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

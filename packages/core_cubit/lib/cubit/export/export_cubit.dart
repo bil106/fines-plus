@@ -1,19 +1,36 @@
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
+
+
 import 'package:core_data/core_data.dart';
 import 'package:core_repository/export_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 
 class ExportCubit extends Cubit<void> {
+  final ExportRepositoryImpl exportRepository;
   final ExportHistoryPdf exportPdf;
   final ExportHistoryCsv exportCsv;
 
-  ExportCubit({required this.exportPdf, required this.exportCsv}) : super(null);
+  ExportCubit({
+    required this.exportRepository,
+    required this.exportPdf,
+    required this.exportCsv,
+  }) : super(null);
 
-  Future<void> exportAsPdf(String carNumber, List<CarHistory> history) async {
-    await exportPdf(carNumber, history);
+  Future<File> exportPdfFile(String carNumber, List<EventModel> history) async {
+    final carHistoryList = exportRepository.convertEventsToCarHistory(history);
+    final pdfBytes = await exportPdf.generateBytes(carNumber, carHistoryList);
+    final dir = await getTemporaryDirectory();
+    final file = File('${dir.path}/$carNumber-history.pdf');
+    return file.writeAsBytes(pdfBytes);
   }
 
-  Future<void> exportAsCsv(String carNumber, List<CarHistory> history) async {
-    await exportCsv(carNumber, history);
+  Future<File> exportCsvFile(String carNumber, List<EventModel> history) async {
+    final carHistoryList = exportRepository.convertEventsToCarHistory(history);
+    final csvBytes = await exportCsv.generateBytes(carNumber, carHistoryList);
+    final dir = await getTemporaryDirectory();
+    final file = File('${dir.path}/$carNumber-history.csv');
+    return file.writeAsBytes(csvBytes);
   }
 }

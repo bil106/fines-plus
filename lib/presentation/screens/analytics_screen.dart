@@ -9,10 +9,11 @@ import 'package:core_repository/analytics_repository.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
-import 'package:fines_plus/core/widgets/action_card.dart';
-import 'package:fines_plus/core/widgets/ad_banner_widget.dart';
-import 'package:fines_plus/core/widgets/maintenance_card.dart';
-import 'package:fines_plus/core/widgets/time_line_item.dart';
+
+import 'package:fines_plus/core/widgets/history_tab.dart';
+
+import 'package:fines_plus/core/widgets/schedule_tab.dart';
+
 import 'package:fines_plus/presentation/screens/statistics_screen.dart';
 import 'package:fines_plus/router/home_screen_wrapper.dart';
 import 'package:flutter/material.dart';
@@ -66,7 +67,7 @@ class _AnalyticsScreenViewState extends State<_AnalyticsScreenView> {
             date: record.date,
             title: record.serviceName,
 
-            amount: "${record.cost} ${S.of(context).grn}",
+            amount: record.cost.toDouble(),
             mileage: "${record.mileage} ${S.of(context).km}",
             icon: Icons.build,
             iconColor: Colors.red,
@@ -86,7 +87,7 @@ class _AnalyticsScreenViewState extends State<_AnalyticsScreenView> {
             date: record.date,
             title: "${record.fuelType} / ${record.volume} л.",
 
-            amount: "${record.cost} ${S.of(context).grn}",
+            amount: record.cost.toDouble(),
             mileage: "${record.mileage} ${S.of(context).km}",
             icon: Icons.local_gas_station,
             iconColor: Colors.green,
@@ -99,6 +100,9 @@ class _AnalyticsScreenViewState extends State<_AnalyticsScreenView> {
     events.sort((a, b) => b.date.compareTo(a.date));
 
     setState(() {});
+
+    final homeState = context.findAncestorStateOfType<HomeScreenWrapperState>();
+    homeState?.exportHistory = events;
   }
 
   @override
@@ -125,9 +129,11 @@ class _AnalyticsScreenViewState extends State<_AnalyticsScreenView> {
                   ElevatedButton.icon(
                     onPressed: () {
                       final homeState = context.findAncestorStateOfType<HomeScreenWrapperState>();
-                      homeState?.openPage(HomePage.export);
+                      if (homeState != null) {
+                        homeState.openPage(HomePage.export);
+                      }
                     },
-                    label: Text(S.of(context).export, style: TextStyle(color: Colors.white)),
+                    label: Text(S.of(context).export, style: const TextStyle(color: Colors.white)),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.blue700,
                       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
@@ -140,7 +146,6 @@ class _AnalyticsScreenViewState extends State<_AnalyticsScreenView> {
 
               AppSpacers.verticalMedium,
 
-              /// TabBar
               TabBar(
                 indicatorColor: AppColors.blue700,
                 labelColor: AppColors.blue700,
@@ -156,91 +161,8 @@ class _AnalyticsScreenViewState extends State<_AnalyticsScreenView> {
                 child: TabBarView(
                   children: [
                     const StatisticsScreen(),
-
-                    SingleChildScrollView(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: groupEventsByMonth(events).entries.map((entry) {
-                          return Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 8),
-                                child: Center(
-                                  child: Column(
-                                    children: [
-                                      Text(
-                                        entry.key,
-                                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                          color: Colors.blueAccent,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      const Divider(color: Colors.grey),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              ...entry.value.map(
-                                (event) => TimelineItem(
-                                  icon: event.icon,
-                                  iconColor: event.iconColor,
-                                  date: event.date,
-                                  title: event.title,
-                                  subtitle: '',
-                                  amount: event.amount,
-                                  mileage: event.mileage,
-                                ),
-                              ),
-                            ],
-                          );
-                        }).toList(),
-                      ),
-                    ),
-
-                    SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          MaintenanceCard(
-                            title: "Заміна оливи двигуна",
-                            progress: 0.8,
-                            priorKm: 5604,
-                            priorDays: 116,
-                            periodicityKm: 7000,
-                          ),
-                          Column(
-                            children: [
-                              ActionCard(
-                                title: "Шини зимові",
-                                icon: Icons.tire_repair,
-                                progress: 0.0,
-                                priorExecution: "-",
-                                periodicity: "-",
-                                isWarning: true,
-                              ),
-                              ActionCard(
-                                title: "Заміна олії АКПП",
-                                icon: Icons.settings,
-                                progress: 0.1,
-                                priorExecution: "5335 км\n111 днів",
-                                periodicity: "50000 км",
-                                isWarning: true,
-                              ),
-                              ActionCard(
-                                title: "Діагностика підвіски",
-                                icon: Icons.medical_services,
-                                progress: 0.14,
-                                priorExecution: "26 днів",
-                                periodicity: "6 місяці",
-                                isWarning: true,
-                              ),
-                            ],
-                          ),
-                          AppSpacers.verticalHuge,
-                          const AdBannerWidget(),
-                        ],
-                      ),
-                    ),
+                    HistoryTab(events: events),
+                    const ScheduleTab(),
                   ],
                 ),
               ),

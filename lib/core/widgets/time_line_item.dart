@@ -1,4 +1,4 @@
-
+import 'package:core_localization/generated/l10n.dart';
 import 'package:flutter/material.dart';
 
 class TimelineItem extends StatelessWidget {
@@ -7,7 +7,7 @@ class TimelineItem extends StatelessWidget {
   final String date;
   final String title;
   final String subtitle;
-  final String amount;
+  final double amount;
   final String mileage;
 
   const TimelineItem({
@@ -58,7 +58,7 @@ class TimelineItem extends StatelessWidget {
                     children: [
                       const Icon(Icons.attach_money, size: 16),
                       const SizedBox(width: 4),
-                      Text(amount),
+                      Text("${amount.toStringAsFixed(0)} ${S.of(context).grn}"),
                       const SizedBox(width: 16),
                       const Icon(Icons.directions_car, size: 16),
                       const SizedBox(width: 4),
@@ -74,4 +74,3 @@ class TimelineItem extends StatelessWidget {
     );
   }
 }
-

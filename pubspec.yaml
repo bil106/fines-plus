@@ -63,6 +63,12 @@ dependencies:
   app_links: ^6.4.1
   flutter_easy_recaptcha_v2: ^0.1.0
   flutter_inappwebview: ^6.1.5
+  firebase_analytics: ^11.6.0
+  firebase_crashlytics: ^4.3.9
+  share_plus: ^11.1.0
+  path_provider: ^2.1.5
+  image_picker: ^1.2.0
+  webview_flutter: ^4.13.0
 
 
 
@@ -85,4 +91,5 @@ flutter:
     - assets/config/autolux.json
     - assets/config/fastcar.json
     - assets\icons\map.png
+    - assets/fonts/Fines/Roboto-Regular.ttf
   

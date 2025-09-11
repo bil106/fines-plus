@@ -1,3 +1,5 @@
+// ignore_for_file: unused_element_parameter
+
 import 'package:auto_route/auto_route.dart';
 import 'package:core_cubit/cubit/maintenance/maintenance_state.dart';
 import 'package:core_data/core_data.dart';
@@ -7,8 +9,8 @@ import 'package:design_system/theme/app_theme.dart';
 import 'package:fines_plus/core/widgets/ad_banner_widget.dart';
 import 'package:fines_plus/core/widgets/fuel_record_card.dart';
 import 'package:fines_plus/core/widgets/service_record_card.dart';
-import 'package:fines_plus/presentation/screens/fuel_up_screen.dart';
 import 'package:fines_plus/presentation/screens/service_screen.dart';
+import 'package:fines_plus/router/app_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:core_cubit/cubit/maintenance/maintenance_cubit.dart';
@@ -45,8 +47,9 @@ class _MaintenanceScreenView extends StatelessWidget {
   final VoidCallback? onBack;
   final VoidCallback? onCalendar;
   final VoidCallback? onSettings;
-
-  const _MaintenanceScreenView({this.onBack, this.onCalendar, this.onSettings});
+  final VoidCallback? onFuelUp;
+  final VoidCallback? onServic;
+  const _MaintenanceScreenView({this.onBack, this.onCalendar, this.onSettings, this.onFuelUp, this.onServic});
 
   @override
   Widget build(BuildContext context) {
@@ -99,14 +102,14 @@ class _MaintenanceScreenView extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     _buildAction(context, Icons.local_gas_station, S.of(context).fuel_up, () async {
-                      final record = await Navigator.push<FuelRecord>(
-                        context,
-                        MaterialPageRoute(builder: (_) => const FuelUpScreen()),
-                      );
+                      final record = await context.router.push<FuelRecord>(FuelUpRoute());
+
                       if (record != null) {
                         cubit.addFuelRecord(record);
+                        onFuelUp?.call();
                       }
                     }),
+
                     _buildAction(context, Icons.build, S.of(context).service, () async {
                       final records = await Navigator.push<List<ServiceRecord>>(
                         context,

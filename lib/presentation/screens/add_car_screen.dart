@@ -8,6 +8,7 @@ import 'package:fines_plus/core/widgets/ad_banner_widget.dart';
 import 'package:fines_plus/router/app_router.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:fines_plus/router/home_screen_wrapper.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -24,6 +25,7 @@ class AddCarScreen extends StatefulWidget {
 }
 
 class _AddCarScreenState extends State<AddCarScreen> {
+  static final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
@@ -158,7 +160,12 @@ class _AddCarScreenState extends State<AddCarScreen> {
                                 ),
                               ),
 
-                              onTap: () {
+                              onTap: () async {
+                                await analytics.logEvent(
+                                  name: 'analytics_button_clicked',
+                                  parameters: {'screen': 'AddCarScreen', 'button': 'Analytics'},
+                                );
+
                                 if (widget.onAnalytics != null) widget.onAnalytics!();
                               },
                             ),
@@ -183,6 +190,7 @@ class _AddCarScreenState extends State<AddCarScreen> {
                       child: Text(S.of(context).registration, style: TextStyle(fontSize: 18, color: Colors.black87)),
                     ),
                   ),
+
                   const AdBannerWidget(),
                 ],
               ),
@@ -216,22 +224,20 @@ Widget _buildSquareIcon(IconData icon, String text, TextTheme textTheme) {
 }
 
 Widget _buildMenuSquare({IconData? icon, Color? iconColor, Widget? iconWidget, required VoidCallback onTap}) {
-  return Expanded(
-    child: GestureDetector(
-      onTap: onTap,
-      child: Column(
-        children: [
-          if (icon != null)
-            Container(
-              width: 180,
-              height: 180,
-              decoration: BoxDecoration(borderRadius: BorderRadius.circular(20), color: AppColors.grey50),
-              child: Icon(icon, color: iconColor ?? AppColors.grey50, size: 32),
-            ),
-          if (iconWidget != null) iconWidget,
-          const SizedBox(height: 8),
-        ],
-      ),
+  return GestureDetector(
+    onTap: onTap,
+    child: Column(
+      children: [
+        if (icon != null)
+          Container(
+            width: 180,
+            height: 180,
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(20), color: AppColors.grey50),
+            child: Icon(icon, color: iconColor ?? AppColors.grey50, size: 32),
+          ),
+        if (iconWidget != null) iconWidget,
+        const SizedBox(height: 8),
+      ],
     ),
   );
 }

@@ -231,17 +231,17 @@ class CarInfoRouteArgs {
 class ExportRoute extends PageRouteInfo<ExportRouteArgs> {
   ExportRoute({
     Key? key,
-    required List<CarHistory> history,
-    VoidCallback? onBack,
+    required List<EventModel> history,
     required String carNumber,
+    VoidCallback? onBack,
     List<PageRouteInfo>? children,
   }) : super(
          ExportRoute.name,
          args: ExportRouteArgs(
            key: key,
            history: history,
-           onBack: onBack,
            carNumber: carNumber,
+           onBack: onBack,
          ),
          initialChildren: children,
        );
@@ -255,8 +255,8 @@ class ExportRoute extends PageRouteInfo<ExportRouteArgs> {
       return ExportScreen(
         key: args.key,
         history: args.history,
-        onBack: args.onBack,
         carNumber: args.carNumber,
+        onBack: args.onBack,
       );
     },
   );
@@ -266,21 +266,21 @@ class ExportRouteArgs {
   const ExportRouteArgs({
     this.key,
     required this.history,
-    this.onBack,
     required this.carNumber,
+    this.onBack,
   });
 
   final Key? key;
 
-  final List<CarHistory> history;
-
-  final VoidCallback? onBack;
+  final List<EventModel> history;
 
   final String carNumber;
 
+  final VoidCallback? onBack;
+
   @override
   String toString() {
-    return 'ExportRouteArgs{key: $key, history: $history, onBack: $onBack, carNumber: $carNumber}';
+    return 'ExportRouteArgs{key: $key, history: $history, carNumber: $carNumber, onBack: $onBack}';
   }
 
   @override
@@ -289,16 +289,16 @@ class ExportRouteArgs {
     if (other is! ExportRouteArgs) return false;
     return key == other.key &&
         const ListEquality().equals(history, other.history) &&
-        onBack == other.onBack &&
-        carNumber == other.carNumber;
+        carNumber == other.carNumber &&
+        onBack == other.onBack;
   }
 
   @override
   int get hashCode =>
       key.hashCode ^
       const ListEquality().hash(history) ^
-      onBack.hashCode ^
-      carNumber.hashCode;
+      carNumber.hashCode ^
+      onBack.hashCode;
 }
 
 /// generated route for
@@ -434,6 +434,69 @@ class FinesRouteArgs {
 }
 
 /// generated route for
+/// [FuelMapScreen]
+class FuelMapRoute extends PageRouteInfo<FuelMapRouteArgs> {
+  FuelMapRoute({
+    Key? key,
+    LatLng? focusPosition,
+    String? focusName,
+    List<PageRouteInfo>? children,
+  }) : super(
+         FuelMapRoute.name,
+         args: FuelMapRouteArgs(
+           key: key,
+           focusPosition: focusPosition,
+           focusName: focusName,
+         ),
+         initialChildren: children,
+       );
+
+  static const String name = 'FuelMapRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      final args = data.argsAs<FuelMapRouteArgs>(
+        orElse: () => const FuelMapRouteArgs(),
+      );
+      return FuelMapScreen(
+        key: args.key,
+        focusPosition: args.focusPosition,
+        focusName: args.focusName,
+      );
+    },
+  );
+}
+
+class FuelMapRouteArgs {
+  const FuelMapRouteArgs({this.key, this.focusPosition, this.focusName});
+
+  final Key? key;
+
+  final LatLng? focusPosition;
+
+  final String? focusName;
+
+  @override
+  String toString() {
+    return 'FuelMapRouteArgs{key: $key, focusPosition: $focusPosition, focusName: $focusName}';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! FuelMapRouteArgs) return false;
+    return key == other.key &&
+        focusPosition == other.focusPosition &&
+        focusName == other.focusName;
+  }
+
+  @override
+  int get hashCode =>
+      key.hashCode ^ focusPosition.hashCode ^ focusName.hashCode;
+}
+
+/// generated route for
 /// [FuelUpScreen]
 class FuelUpRoute extends PageRouteInfo<FuelUpRouteArgs> {
   FuelUpRoute({Key? key, VoidCallback? onBack, List<PageRouteInfo>? children})
@@ -557,20 +620,20 @@ class MaintenanceRoute extends PageRouteInfo<MaintenanceRouteArgs> {
   MaintenanceRoute({
     Key? key,
     VoidCallback? onBack,
-    VoidCallback? onFuelUp,
-    VoidCallback? onService,
     VoidCallback? onCalendar,
     VoidCallback? onSettings,
+    VoidCallback? onFuelUp,
+    VoidCallback? onService,
     List<PageRouteInfo>? children,
   }) : super(
          MaintenanceRoute.name,
          args: MaintenanceRouteArgs(
            key: key,
            onBack: onBack,
-           onFuelUp: onFuelUp,
-           onService: onService,
            onCalendar: onCalendar,
            onSettings: onSettings,
+           onFuelUp: onFuelUp,
+           onService: onService,
          ),
          initialChildren: children,
        );
@@ -586,10 +649,10 @@ class MaintenanceRoute extends PageRouteInfo<MaintenanceRouteArgs> {
       return MaintenanceScreen(
         key: args.key,
         onBack: args.onBack,
-        onFuelUp: args.onFuelUp,
-        onService: args.onService,
         onCalendar: args.onCalendar,
         onSettings: args.onSettings,
+        onFuelUp: args.onFuelUp,
+        onService: args.onService,
       );
     },
   );
@@ -599,27 +662,27 @@ class MaintenanceRouteArgs {
   const MaintenanceRouteArgs({
     this.key,
     this.onBack,
-    this.onFuelUp,
-    this.onService,
     this.onCalendar,
     this.onSettings,
+    this.onFuelUp,
+    this.onService,
   });
 
   final Key? key;
 
   final VoidCallback? onBack;
 
-  final VoidCallback? onFuelUp;
-
-  final VoidCallback? onService;
-
   final VoidCallback? onCalendar;
 
   final VoidCallback? onSettings;
 
+  final VoidCallback? onFuelUp;
+
+  final VoidCallback? onService;
+
   @override
   String toString() {
-    return 'MaintenanceRouteArgs{key: $key, onBack: $onBack, onFuelUp: $onFuelUp, onService: $onService, onCalendar: $onCalendar, onSettings: $onSettings}';
+    return 'MaintenanceRouteArgs{key: $key, onBack: $onBack, onCalendar: $onCalendar, onSettings: $onSettings, onFuelUp: $onFuelUp, onService: $onService}';
   }
 
   @override
@@ -628,20 +691,20 @@ class MaintenanceRouteArgs {
     if (other is! MaintenanceRouteArgs) return false;
     return key == other.key &&
         onBack == other.onBack &&
-        onFuelUp == other.onFuelUp &&
-        onService == other.onService &&
         onCalendar == other.onCalendar &&
-        onSettings == other.onSettings;
+        onSettings == other.onSettings &&
+        onFuelUp == other.onFuelUp &&
+        onService == other.onService;
   }
 
   @override
   int get hashCode =>
       key.hashCode ^
       onBack.hashCode ^
-      onFuelUp.hashCode ^
-      onService.hashCode ^
       onCalendar.hashCode ^
-      onSettings.hashCode;
+      onSettings.hashCode ^
+      onFuelUp.hashCode ^
+      onService.hashCode;
 }
 
 /// generated route for

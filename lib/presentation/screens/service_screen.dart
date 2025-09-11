@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:core_data/core_data.dart';
@@ -6,13 +7,15 @@ import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
-import 'package:fines_plus/core/widgets/ad_banner_widget.dart';
+import 'package:fines_plus/core/widgets/additional_options_widget.dart';
 import 'package:fines_plus/core/widgets/date_picker_card.dart';
 import 'package:fines_plus/core/widgets/extensions/service_list.dart';
 import 'package:fines_plus/core/widgets/mileage_card.dart';
+import 'package:fines_plus/core/widgets/photo_picker_widget.dart';
 import 'package:fines_plus/env/env.dart';
 import 'package:fines_plus/presentation/screens/fuel_map_screen.dart';
 import 'package:fines_plus/presentation/screens/service_map_screen.dart';
+import 'package:fines_plus/router/home_screen_wrapper.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -33,6 +36,8 @@ class _ServiceScreenState extends State<ServiceScreen> {
   final List<TextEditingController> serviceControllers = [TextEditingController()];
   final TextEditingController costController = TextEditingController();
   final TextEditingController mileageController = TextEditingController();
+  bool showAdditionalOptions = false;
+  File? selectedPhoto;
 
   Map<String, dynamic>? _bestStation;
   DateTime? selectedDate;
@@ -109,7 +114,18 @@ class _ServiceScreenState extends State<ServiceScreen> {
         appBar: AppBar(
           backgroundColor: AppColors.grey50,
           elevation: 0,
-          leading: BackButton(color: AppColors.blue700, onPressed: widget.onBack ?? () {}),
+          leading: BackButton(
+            color: AppColors.blue700,
+            onPressed: () {
+              final homeState = context.findAncestorStateOfType<HomeScreenWrapperState>();
+              if (widget.onBack != null) {
+                widget.onBack!();
+              } else {
+                homeState?.openPage(HomePage.maintenance);
+              }
+            },
+          ),
+
           actions: [
             IconButton(
               icon: const Icon(Icons.check, color: AppColors.blue700),
@@ -327,10 +343,8 @@ class _ServiceScreenState extends State<ServiceScreen> {
                 ),
               ),
 
-              const SizedBox(height: 20),
-
-              AppSpacers.verticalMaxMassive,
-              const AdBannerWidget(),
+              const Divider(),
+              AdditionalOptionsWidget(photoPicker: const PhotoPickerWidget()),
             ],
           ),
         ),

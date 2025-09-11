@@ -13,6 +13,7 @@ import 'package:fines_plus/core/widgets/fuel_input_card.dart';
 import 'package:fines_plus/core/widgets/mileage_card.dart';
 import 'package:fines_plus/env/env.dart';
 import 'package:fines_plus/presentation/screens/fuel_map_screen.dart';
+import 'package:fines_plus/router/app_router.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -30,7 +31,10 @@ class FuelUpScreen extends StatefulWidget {
 
 class _FuelUpScreenState extends State<FuelUpScreen> {
   final TextEditingController volumeController = TextEditingController();
+  late final VoidCallback? onBack;
+
   Map<String, dynamic>? _bestStation;
+
   TextEditingController mileageController = TextEditingController();
   FuelType selectedFuel = FuelType.ai95Plus;
 
@@ -91,7 +95,7 @@ class _FuelUpScreenState extends State<FuelUpScreen> {
                   mileage: mileage,
                 );
 
-                Navigator.pop(context, record);
+                context.router.pop(record);
               },
             ),
           ],
@@ -109,12 +113,10 @@ class _FuelUpScreenState extends State<FuelUpScreen> {
                       ? const SizedBox(width: 40, height: 40, child: CircularProgressIndicator(strokeWidth: 2))
                       : GestureDetector(
                           onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (_) => FuelMapScreen(
-                                  focusPosition: LatLng(_bestStation!['lat'], _bestStation!['lng']),
-                                  focusName: _bestStation!['name'],
-                                ),
+                            context.router.push(
+                              FuelMapRoute(
+                                focusPosition: LatLng(_bestStation!['lat'], _bestStation!['lng']),
+                                focusName: _bestStation!['name'],
                               ),
                             );
                           },

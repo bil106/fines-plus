@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:core_cubit/cubit/car_info/car_info_cubit.dart';
 import 'package:core_cubit/cubit/history/history_cubit.dart';
+import 'package:core_data/core_data.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:core_repository/car_info_repository.dart';
 import 'package:core_repository/history_repository.dart';
@@ -11,6 +12,7 @@ import 'package:fines_plus/presentation/screens/car_info_screen.dart';
 import 'package:fines_plus/presentation/screens/export_screen.dart';
 import 'package:fines_plus/presentation/screens/fine_check_screen.dart';
 import 'package:fines_plus/presentation/screens/fines_screeen.dart';
+import 'package:fines_plus/presentation/screens/fuel_map_screen.dart';
 import 'package:fines_plus/presentation/screens/fuel_up_screen.dart';
 import 'package:fines_plus/presentation/screens/history_screen.dart';
 import 'package:fines_plus/presentation/screens/registration_screen.dart';
@@ -50,7 +52,7 @@ class HomeScreenWrapper extends StatefulWidget {
 class HomeScreenWrapperState extends State<HomeScreenWrapper> {
   final PageController _pageController = PageController();
   int _currentIndex = 0;
-
+  List<EventModel> exportHistory = [];
   String? _carNumber;
   String? _docSeries;
   String? _docNumber;
@@ -181,9 +183,9 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
               onBack: () => openPage(HomePage.addCar)),
 
             // 9 Export
-            ExportScreen(
+          ExportScreen(
               key: const ValueKey('export'),
-              history: [],
+              history: exportHistory, 
               onBack: () {
                 final homeState = context.findAncestorStateOfType<HomeScreenWrapperState>();
                 homeState?.openPage(HomePage.analytics);
@@ -196,6 +198,8 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
             FuelUpScreen(key: const ValueKey('fuel'), onBack: () => openPage(HomePage.maintenance)),
            //12 ServiceScreen
            ServiceScreen(key: const ValueKey('service'), onBack: () => openPage(HomePage.maintenance)),
+           //13 FuelMapScreen
+           FuelMapScreen(key: const ValueKey('fuel-map'), ),
           ],
         ),
         bottomNavigationBar: BottomNavigationBar(

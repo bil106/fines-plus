@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:core_cubit/cubit/referral/referral_cubit.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:fines_plus/theme/theme_config.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -30,6 +31,9 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   final _appRouter = AppRouter();
   final AppLinks _appLinks = AppLinks();
+
+  static FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+  
   late final ReferralCubit referralCubit;
   StreamSubscription? _appLinksSub;
   Locale? _locale;
@@ -40,6 +44,8 @@ class _MyAppState extends State<MyApp> {
     _setupPushNotifications();
     _handleDynamicLinks();
     _initAppLinks();
+
+    analytics.logAppOpen();
   }
 
   /// Push notifications
@@ -72,7 +78,7 @@ class _MyAppState extends State<MyApp> {
 
   /// Firebase Dynamic Links
   void _handleDynamicLinks() async {
-    // Уже открытое приложение
+   
     FirebaseDynamicLinks.instance.onLink
         .listen((data) {
           final link = data.link;
@@ -109,7 +115,7 @@ class _MyAppState extends State<MyApp> {
     }
   }
 
-  /// Навигация через Router после построения виджетов
+
  void _navigateToHistoryFromAppLink(Uri uri) {
     final carNumber = uri.queryParameters['car'];
     final isAddCar = uri.path.contains("addCar");
@@ -124,7 +130,7 @@ class _MyAppState extends State<MyApp> {
   }
 
 
-/// Обработка Firebase Dynamic Link
+/// Firebase Dynamic Link processing
   void _processDynamicLink(Uri deepLink) async {
     final partnerId = deepLink.queryParameters['partnerId'];
     if (partnerId != null && partnerId.isNotEmpty) {
@@ -155,12 +161,12 @@ Future<void> savePartnerIdForUser(User user) async {
 
       debugPrint("✅ User ${user.email} saved with partnerId=$partnerId");
 
-      // обновляем статистику партнёра на клиенте
+   // update partner statistics on the client
       await FirebaseFirestore.instance.collection('partnerStats').doc(partnerId).set({
         'registrations': FieldValue.increment(1),
       }, SetOptions(merge: true));
 
-      // очищаем локальный кеш
+     // clear the local cache
       await sp.remove('pending_ref');
     }
   }
