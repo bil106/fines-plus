@@ -45,7 +45,7 @@ class _FinesScreenState extends State<FinesScreen> {
                 height: 200,
                 decoration: BoxDecoration(color: AppColors.blue700, borderRadius: BorderRadius.circular(50)),
                 alignment: Alignment.center,
-                child: Text('LOGO', style: textTheme.whiteBigBold),
+                child: Text(S.of(context).logo, style: textTheme.whiteBigBold),
               ),
               AppSpacers.verticalMassive,
 

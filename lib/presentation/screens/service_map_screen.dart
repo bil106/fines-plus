@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:core_localization/generated/l10n.dart';
 import 'package:fines_plus/env/env.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -43,7 +44,7 @@ class _ServiceMapScreenState extends State<ServiceMapScreen> {
           Marker(
             markerId: const MarkerId('my_location'),
             position: current,
-            infoWindow: const InfoWindow(title: 'You are here'),
+            infoWindow:  InfoWindow(title: S.of(context).my_position),
             icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
           ),
         );
@@ -73,9 +74,9 @@ class _ServiceMapScreenState extends State<ServiceMapScreen> {
               position: LatLng(service['lat'], service['lng']),
               icon: BitmapDescriptor.defaultMarkerWithHue(hue),
               infoWindow: InfoWindow(
-                title: service['name'] ?? 'СТО',
+                title: service['name'] ?? S.of(context).service_station,
                 snippet:
-                    '${service['vicinity'] ?? 'Адрес не указан'}${service['rating'] != null ? ', рейтинг: $rating' : ''}',
+                    '${service['vicinity'] ?? S.of(context).address_not_specified}${service['rating'] != null ? ', rating: $rating' : ''}',
               ),
             ),
           );
@@ -86,7 +87,7 @@ class _ServiceMapScreenState extends State<ServiceMapScreen> {
             Marker(
               markerId: const MarkerId('focus_service'),
               position: widget.focusPosition!,
-              infoWindow: InfoWindow(title: widget.focusName ?? 'Выбранное СТО'),
+              infoWindow: InfoWindow(title: widget.focusName ?? S.of(context).selected_service_station),
               icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
             ),
           );
@@ -112,7 +113,7 @@ class _ServiceMapScreenState extends State<ServiceMapScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("СТО поруч")),
+      appBar: AppBar(title:  Text(S.of(context).service_station_nearby)),
       body: _currentPosition == null
           ? const Center(child: CircularProgressIndicator())
           : GoogleMap(

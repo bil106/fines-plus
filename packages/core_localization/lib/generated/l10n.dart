@@ -923,6 +923,1576 @@ class S {
   String get publish {
     return Intl.message('Publish', name: 'publish', desc: '', args: []);
   }
+
+  /// `Enter liters`
+  String get enter_liters {
+    return Intl.message(
+      'Enter liters',
+      name: 'enter_liters',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `New task`
+  String get new_task {
+    return Intl.message('New task', name: 'new_task', desc: '', args: []);
+  }
+
+  /// `Name`
+  String get name {
+    return Intl.message('Name', name: 'name', desc: '', args: []);
+  }
+
+  /// `Sign in with Google`
+  String get sign_in_google {
+    return Intl.message(
+      'Sign in with Google',
+      name: 'sign_in_google',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Previous`
+  String get previous {
+    return Intl.message('Previous', name: 'previous', desc: '', args: []);
+  }
+
+  /// `Fact`
+  String get fact {
+    return Intl.message('Fact', name: 'fact', desc: '', args: []);
+  }
+
+  /// `Address not specified`
+  String get address_not_specified {
+    return Intl.message(
+      'Address not specified',
+      name: 'address_not_specified',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No tasks`
+  String get no_tasks {
+    return Intl.message('No tasks', name: 'no_tasks', desc: '', args: []);
+  }
+
+  /// `No name`
+  String get no_name {
+    return Intl.message('No name', name: 'no_name', desc: '', args: []);
+  }
+
+  /// `Enter the correct car number`
+  String get enter_correct_number_auto {
+    return Intl.message(
+      'Enter the correct car number',
+      name: 'enter_correct_number_auto',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter the correct registration number`
+  String get enter_correct_registration_number {
+    return Intl.message(
+      'Enter the correct registration number',
+      name: 'enter_correct_registration_number',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Internal combustion engine - diagnostics (inspection, compression measurement)`
+  String get service_dvs_diagnostika {
+    return Intl.message(
+      'Internal combustion engine - diagnostics (inspection, compression measurement)',
+      name: 'service_dvs_diagnostika',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Internal combustion engine - removal/installation (replacement)`
+  String get service_dvs_znyattya_ustanovka {
+    return Intl.message(
+      'Internal combustion engine - removal/installation (replacement)',
+      name: 'service_dvs_znyattya_ustanovka',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Internal combustion engine - major overhaul`
+  String get service_dvs_capitalnyy_remont {
+    return Intl.message(
+      'Internal combustion engine - major overhaul',
+      name: 'service_dvs_capitalnyy_remont',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Valve cover gasket - replacement`
+  String get service_prokladka_klapannoyi_krishki {
+    return Intl.message(
+      'Valve cover gasket - replacement',
+      name: 'service_prokladka_klapannoyi_krishki',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Cylinder head gasket - replacement`
+  String get service_prokladka_gbc {
+    return Intl.message(
+      'Cylinder head gasket - replacement',
+      name: 'service_prokladka_gbc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Crankcase pan gasket - replacement`
+  String get service_prokladka_poddonu_kartera {
+    return Intl.message(
+      'Crankcase pan gasket - replacement',
+      name: 'service_prokladka_poddonu_kartera',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Drive belt - replacement`
+  String get service_remin_pryvodnyy {
+    return Intl.message(
+      'Drive belt - replacement',
+      name: 'service_remin_pryvodnyy',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Drive belt roller - replacement`
+  String get service_rolik_pryvodnoho_remenya {
+    return Intl.message(
+      'Drive belt roller - replacement',
+      name: 'service_rolik_pryvodnoho_remenya',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Timing repair kit - replacement`
+  String get service_remkomplekt_grm {
+    return Intl.message(
+      'Timing repair kit - replacement',
+      name: 'service_remkomplekt_grm',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Injector - cleaning (excluding special fluids)`
+  String get service_inzhektor_chystka {
+    return Intl.message(
+      'Injector - cleaning (excluding special fluids)',
+      name: 'service_inzhektor_chystka',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Replacement of engine oil`
+  String get service_zamina_oil_dvs {
+    return Intl.message(
+      'Replacement of engine oil',
+      name: 'service_zamina_oil_dvs',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Replacement of engine air filter`
+  String get service_zamina_povitryanogo_filtra_dvs {
+    return Intl.message(
+      'Replacement of engine air filter',
+      name: 'service_zamina_povitryanogo_filtra_dvs',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Replacement of cabin filter`
+  String get service_zamina_salonnoho_filtra {
+    return Intl.message(
+      'Replacement of cabin filter',
+      name: 'service_zamina_salonnoho_filtra',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Cleaning of throttle valve`
+  String get service_chystka_droselnoyi_zaslinky {
+    return Intl.message(
+      'Cleaning of throttle valve',
+      name: 'service_chystka_droselnoyi_zaslinky',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Computer diagnostics`
+  String get service_kompyuterna_diagnostyka {
+    return Intl.message(
+      'Computer diagnostics',
+      name: 'service_kompyuterna_diagnostyka',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Repair of electrical wiring and electrical equipment`
+  String get service_remont_elektroprovodky {
+    return Intl.message(
+      'Repair of electrical wiring and electrical equipment',
+      name: 'service_remont_elektroprovodky',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Repair of generators`
+  String get service_remont_generatoriv {
+    return Intl.message(
+      'Repair of generators',
+      name: 'service_remont_generatoriv',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Repair of starters`
+  String get service_remont_starteriv {
+    return Intl.message(
+      'Repair of starters',
+      name: 'service_remont_starteriv',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Replacement of oxygen sensor (lambda probe)`
+  String get service_zamina_kisnevogo_datchyka {
+    return Intl.message(
+      'Replacement of oxygen sensor (lambda probe)',
+      name: 'service_zamina_kisnevogo_datchyka',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Diagnostics and repair of ECU units engine`
+  String get service_diagnostyka_i_remont_ebu {
+    return Intl.message(
+      'Diagnostics and repair of ECU units engine',
+      name: 'service_diagnostyka_i_remont_ebu',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Replacement of fog lamp bulbs`
+  String get service_zamina_lamp_protifumannykh_far {
+    return Intl.message(
+      'Replacement of fog lamp bulbs',
+      name: 'service_zamina_lamp_protifumannykh_far',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Installation of xenon`
+  String get service_vstanovlennya_ksenonu {
+    return Intl.message(
+      'Installation of xenon',
+      name: 'service_vstanovlennya_ksenonu',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Comprehensive diagnostics (excluding computer diagnostics)`
+  String get service_kompleksna_diagnostyka {
+    return Intl.message(
+      'Comprehensive diagnostics (excluding computer diagnostics)',
+      name: 'service_kompleksna_diagnostyka',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Comprehensive diagnostics`
+  String get service_kompleksna_diagnostyka_full {
+    return Intl.message(
+      'Comprehensive diagnostics',
+      name: 'service_kompleksna_diagnostyka_full',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Air conditioning system - diagnostics and refueling`
+  String get service_systema_kondytsionuvannya {
+    return Intl.message(
+      'Air conditioning system - diagnostics and refueling',
+      name: 'service_systema_kondytsionuvannya',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Fuel system - diagnostics (pressure measurement)`
+  String get service_palivna_systema_diagnostyka {
+    return Intl.message(
+      'Fuel system - diagnostics (pressure measurement)',
+      name: 'service_palivna_systema_diagnostyka',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Suspension diagnostics`
+  String get service_diagnostyka_pidvisky {
+    return Intl.message(
+      'Suspension diagnostics',
+      name: 'service_diagnostyka_pidvisky',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Repair of suspension arms`
+  String get service_remont_vazheliv_pidvisky {
+    return Intl.message(
+      'Repair of suspension arms',
+      name: 'service_remont_vazheliv_pidvisky',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Replacement of shock absorbers`
+  String get service_zamina_amortyzatoriv {
+    return Intl.message(
+      'Replacement of shock absorbers',
+      name: 'service_zamina_amortyzatoriv',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Replacement of front shock absorbers`
+  String get service_zamina_perednikh_amortyzatoriv {
+    return Intl.message(
+      'Replacement of front shock absorbers',
+      name: 'service_zamina_perednikh_amortyzatoriv',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Replacement of rear shock absorbers`
+  String get service_zamina_zadnikh_amortyzatoriv {
+    return Intl.message(
+      'Replacement of rear shock absorbers',
+      name: 'service_zamina_zadnikh_amortyzatoriv',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Replacement of shock absorber bumper`
+  String get service_zamina_vidbijnyka_amortyzatora {
+    return Intl.message(
+      'Replacement of shock absorber bumper',
+      name: 'service_zamina_vidbijnyka_amortyzatora',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Replacement of shock absorber support bearing`
+  String get service_zamina_opornoho_pidshipnyka_amortyzatora {
+    return Intl.message(
+      'Replacement of shock absorber support bearing',
+      name: 'service_zamina_opornoho_pidshipnyka_amortyzatora',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Replacement of shock absorber springs`
+  String get service_zamina_pruzhin_amortyzatoriv {
+    return Intl.message(
+      'Replacement of shock absorber springs',
+      name: 'service_zamina_pruzhin_amortyzatoriv',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Replacement of rear shock absorber boot`
+  String get service_zamina_pylnyka_zadnogo_amortyzatora {
+    return Intl.message(
+      'Replacement of rear shock absorber boot',
+      name: 'service_zamina_pylnyka_zadnogo_amortyzatora',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Repair of air suspension`
+  String get service_remont_pnevmopidvisky {
+    return Intl.message(
+      'Repair of air suspension',
+      name: 'service_remont_pnevmopidvisky',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Replacement of stabilizer struts`
+  String get service_zamina_stiikiv_stabilizatora {
+    return Intl.message(
+      'Replacement of stabilizer struts',
+      name: 'service_zamina_stiikiv_stabilizatora',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Replacement of stabilizer bushings`
+  String get service_zamina_vtulok_stabilizatora {
+    return Intl.message(
+      'Replacement of stabilizer bushings',
+      name: 'service_zamina_vtulok_stabilizatora',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Replacement of ball support`
+  String get service_zamina_kulovykh_opor {
+    return Intl.message(
+      'Replacement of ball support',
+      name: 'service_zamina_kulovykh_opor',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Replacement of support bearings`
+  String get service_zamina_pidshipnykiv_matochok {
+    return Intl.message(
+      'Replacement of support bearings',
+      name: 'service_zamina_pidshipnykiv_matochok',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Replacement of suspension silent blocks`
+  String get service_zamina_silentblokiv_pidvisky {
+    return Intl.message(
+      'Replacement of suspension silent blocks',
+      name: 'service_zamina_silentblokiv_pidvisky',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Disassembly`
+  String get service_skhid_rozval {
+    return Intl.message(
+      'Disassembly',
+      name: 'service_skhid_rozval',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Chassis - diagnostics`
+  String get service_khodova_chastyna_diagnostyka {
+    return Intl.message(
+      'Chassis - diagnostics',
+      name: 'service_khodova_chastyna_diagnostyka',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Stabilizer struts - replacement`
+  String get service_stiikyi_stabilizatora_zamina {
+    return Intl.message(
+      'Stabilizer struts - replacement',
+      name: 'service_stiikyi_stabilizatora_zamina',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Stabilizer bushings - replacement`
+  String get service_vtulky_stabilizatora_zamina {
+    return Intl.message(
+      'Stabilizer bushings - replacement',
+      name: 'service_vtulky_stabilizatora_zamina',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Ball bearing - replacement`
+  String get service_sharova_opora_zamina {
+    return Intl.message(
+      'Ball bearing - replacement',
+      name: 'service_sharova_opora_zamina',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Steering tie rod end - replacement`
+  String get service_nakonechnik_rulovoyi_tyahy_zamina {
+    return Intl.message(
+      'Steering tie rod end - replacement',
+      name: 'service_nakonechnik_rulovoyi_tyahy_zamina',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Steering tie rod - replacement`
+  String get service_rulova_tyaha_zamina {
+    return Intl.message(
+      'Steering tie rod - replacement',
+      name: 'service_rulova_tyaha_zamina',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Shock absorbers suspension (front axle) - replacement`
+  String get service_amortyzatory_perednia_os_zamina {
+    return Intl.message(
+      'Shock absorbers suspension (front axle) - replacement',
+      name: 'service_amortyzatory_perednia_os_zamina',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Suspension shock absorbers (rear axle) - replacement`
+  String get service_amortyzatory_zadnia_os_zamina {
+    return Intl.message(
+      'Suspension shock absorbers (rear axle) - replacement',
+      name: 'service_amortyzatory_zadnia_os_zamina',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Wheel hub - replacement`
+  String get service_stupytsia_kolesa_zamina {
+    return Intl.message(
+      'Wheel hub - replacement',
+      name: 'service_stupytsia_kolesa_zamina',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Wheel hub bearing - replacement`
+  String get service_pidshipnyk_matochyny_kolesa_zamina {
+    return Intl.message(
+      'Wheel hub bearing - replacement',
+      name: 'service_pidshipnyk_matochyny_kolesa_zamina',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Steering rack - repair`
+  String get service_rulova_reyka_remont {
+    return Intl.message(
+      'Steering rack - repair',
+      name: 'service_rulova_reyka_remont',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Suspension lever - replacement`
+  String get service_vazhel_pidvisky_zamina {
+    return Intl.message(
+      'Suspension lever - replacement',
+      name: 'service_vazhel_pidvisky_zamina',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Suspension lever silent block - replacement (with lever removed)`
+  String get service_silentblok_vazhelya_pidvisky_zamina {
+    return Intl.message(
+      'Suspension lever silent block - replacement (with lever removed)',
+      name: 'service_silentblok_vazhelya_pidvisky_zamina',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `CV joint boot (external) - replacement`
+  String get service_pylovik_shrus_zovnishniy_zamina {
+    return Intl.message(
+      'CV joint boot (external) - replacement',
+      name: 'service_pylovik_shrus_zovnishniy_zamina',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `CV joint boot (internal) - replacement`
+  String get service_pylovik_shrus_vnutrishniy_zamina {
+    return Intl.message(
+      'CV joint boot (internal) - replacement',
+      name: 'service_pylovik_shrus_vnutrishniy_zamina',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `CV joint drive shaft - replacement`
+  String get service_shrus_pryvodnoho_valu_zamina {
+    return Intl.message(
+      'CV joint drive shaft - replacement',
+      name: 'service_shrus_pryvodnoho_valu_zamina',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Drive shaft - replacement`
+  String get service_pryvodnyy_val_zamina {
+    return Intl.message(
+      'Drive shaft - replacement',
+      name: 'service_pryvodnyy_val_zamina',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Body polishing`
+  String get service_polirovka_kuzova {
+    return Intl.message(
+      'Body polishing',
+      name: 'service_polirovka_kuzova',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Headlight polishing`
+  String get service_polirovka_far {
+    return Intl.message(
+      'Headlight polishing',
+      name: 'service_polirovka_far',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Pre-sale dry cleaning of the interior`
+  String get service_predprodazhna_khimchystka_salonu {
+    return Intl.message(
+      'Pre-sale dry cleaning of the interior',
+      name: 'service_predprodazhna_khimchystka_salonu',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Resale body polishing`
+  String get service_pereprodazhne_polirovannya_kuzova {
+    return Intl.message(
+      'Resale body polishing',
+      name: 'service_pereprodazhne_polirovannya_kuzova',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Car seat cleaning`
+  String get service_chystka_siden_avto {
+    return Intl.message(
+      'Car seat cleaning',
+      name: 'service_chystka_siden_avto',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Dry cleaning of the interior`
+  String get service_khimchystka_salonu {
+    return Intl.message(
+      'Dry cleaning of the interior',
+      name: 'service_khimchystka_salonu',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Ceramic coating`
+  String get service_pokryttya_keramikoyu {
+    return Intl.message(
+      'Ceramic coating',
+      name: 'service_pokryttya_keramikoyu',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Removal of small scratches`
+  String get service_vidalennya_dribnykh_podryapin {
+    return Intl.message(
+      'Removal of small scratches',
+      name: 'service_vidalennya_dribnykh_podryapin',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Replacement of brake pads`
+  String get service_zamina_halmyvnykh_kolodok {
+    return Intl.message(
+      'Replacement of brake pads',
+      name: 'service_zamina_halmyvnykh_kolodok',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Replacement of brake discs`
+  String get service_zamina_halmyvnykh_dyskiv {
+    return Intl.message(
+      'Replacement of brake discs',
+      name: 'service_zamina_halmyvnykh_dyskiv',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Replacement of brake fluid`
+  String get service_zamina_halmyvnoyi_ridyny {
+    return Intl.message(
+      'Replacement of brake fluid',
+      name: 'service_zamina_halmyvnoyi_ridyny',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Replacement of brake hoses`
+  String get service_zamina_halmykh_shlang {
+    return Intl.message(
+      'Replacement of brake hoses',
+      name: 'service_zamina_halmykh_shlang',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Repair of brake supors mouths`
+  String get service_remont_suporiv {
+    return Intl.message(
+      'Repair of brake supors mouths',
+      name: 'service_remont_suporiv',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Brake mechanism prevention`
+  String get service_profilaktyka_halmyvnykh_mekhanizmiv {
+    return Intl.message(
+      'Brake mechanism prevention',
+      name: 'service_profilaktyka_halmyvnykh_mekhanizmiv',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Steering rack repair`
+  String get service_remont_rulovykh_reyok {
+    return Intl.message(
+      'Steering rack repair',
+      name: 'service_remont_rulovykh_reyok',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Replacement of tie rod ends`
+  String get service_zamina_nakonechnikiv_rulovykh_tyag {
+    return Intl.message(
+      'Replacement of tie rod ends',
+      name: 'service_zamina_nakonechnikiv_rulovykh_tyag',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Replacement of tie rod ends`
+  String get service_zamina_rulovykh_tyag {
+    return Intl.message(
+      'Replacement of tie rod ends',
+      name: 'service_zamina_rulovykh_tyag',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Replacement of steering shaft cross`
+  String get service_zamina_krestovyny_rulovogo_valu {
+    return Intl.message(
+      'Replacement of steering shaft cross',
+      name: 'service_zamina_krestovyny_rulovogo_valu',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Diagnostics and repair of internal combustion engines`
+  String get service_diagnostyka_remont_dvs {
+    return Intl.message(
+      'Diagnostics and repair of internal combustion engines',
+      name: 'service_diagnostyka_remont_dvs',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Replacement of valve cover gasket`
+  String get service_zamina_prokladky_klapannoyi_krishky {
+    return Intl.message(
+      'Replacement of valve cover gasket',
+      name: 'service_zamina_prokladky_klapannoyi_krishky',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Replacement of cylinder head gasket`
+  String get service_zamina_prokladky_gbc {
+    return Intl.message(
+      'Replacement of cylinder head gasket',
+      name: 'service_zamina_prokladky_gbc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Replacement of crankcase pan gasket`
+  String get service_zamina_prokladky_poddonu_kartera {
+    return Intl.message(
+      'Replacement of crankcase pan gasket',
+      name: 'service_zamina_prokladky_poddonu_kartera',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Crankshaft oil seal replacement`
+  String get service_zamina_salnyka_kolenvala {
+    return Intl.message(
+      'Crankshaft oil seal replacement',
+      name: 'service_zamina_salnyka_kolenvala',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Professional timing repair`
+  String get service_profesijnyy_remont_grm {
+    return Intl.message(
+      'Professional timing repair',
+      name: 'service_profesijnyy_remont_grm',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Changing oil in variators`
+  String get service_zamina_oil_variator {
+    return Intl.message(
+      'Changing oil in variators',
+      name: 'service_zamina_oil_variator',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Replacing the camshaft oil seal`
+  String get service_zamina_salnyka_rozpodilnogo_valu {
+    return Intl.message(
+      'Replacing the camshaft oil seal',
+      name: 'service_zamina_salnyka_rozpodilnogo_valu',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Repair of turbocompressors`
+  String get service_remont_turbokompressoriv {
+    return Intl.message(
+      'Repair of turbocompressors',
+      name: 'service_remont_turbokompressoriv',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Replacing the timing belt`
+  String get service_zamina_remenya_grm {
+    return Intl.message(
+      'Replacing the timing belt',
+      name: 'service_zamina_remenya_grm',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Replacing drive belts`
+  String get service_zamina_pryvodnykh_remeniv {
+    return Intl.message(
+      'Replacing drive belts',
+      name: 'service_zamina_pryvodnykh_remeniv',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Replacing the drive belt tensioner roller`
+  String get service_zamina_rolika_natyaguvacha_remenya {
+    return Intl.message(
+      'Replacing the drive belt tensioner roller',
+      name: 'service_zamina_rolika_natyaguvacha_remenya',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Replacing the engine`
+  String get service_zamina_dvyhuna {
+    return Intl.message(
+      'Replacing the engine',
+      name: 'service_zamina_dvyhuna',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Overhaul of the engine`
+  String get service_capitalnyy_remont_dvyhuna {
+    return Intl.message(
+      'Overhaul of the engine',
+      name: 'service_capitalnyy_remont_dvyhuna',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Engine cylinder head repair`
+  String get service_remont_holovky_bloku_cylindriv_dvyhuna {
+    return Intl.message(
+      'Engine cylinder head repair',
+      name: 'service_remont_holovky_bloku_cylindriv_dvyhuna',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Engine valve repair`
+  String get service_remont_klapiv_dvyhuna {
+    return Intl.message(
+      'Engine valve repair',
+      name: 'service_remont_klapiv_dvyhuna',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Oil pump repair`
+  String get service_remont_maslyanogo_nasosa {
+    return Intl.message(
+      'Oil pump repair',
+      name: 'service_remont_maslyanogo_nasosa',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Engine flywheel repair (replacement)`
+  String get service_remont_zaminy_mahovyka_dvyhuna {
+    return Intl.message(
+      'Engine flywheel repair (replacement)',
+      name: 'service_remont_zaminy_mahovyka_dvyhuna',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Engine mount repair (replacement)`
+  String get service_remont_zaminy_opor_dvyhuna {
+    return Intl.message(
+      'Engine mount repair (replacement)',
+      name: 'service_remont_zaminy_opor_dvyhuna',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Engine piston repair`
+  String get service_remont_porshniv_dvyhuna {
+    return Intl.message(
+      'Engine piston repair',
+      name: 'service_remont_porshniv_dvyhuna',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Radiator repair`
+  String get service_remont_radiatoriv {
+    return Intl.message(
+      'Radiator repair',
+      name: 'service_remont_radiatoriv',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Spark plug replacement`
+  String get service_zamina_svichok_zapal {
+    return Intl.message(
+      'Spark plug replacement',
+      name: 'service_zamina_svichok_zapal',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Car ignition coil/module replacement`
+  String get service_zamina_kotushok_modulya_zapal {
+    return Intl.message(
+      'Car ignition coil/module replacement',
+      name: 'service_zamina_kotushok_modulya_zapal',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Replacement high-voltage wires`
+  String get service_zamina_vysokovolt_provodiv {
+    return Intl.message(
+      'Replacement high-voltage wires',
+      name: 'service_zamina_vysokovolt_provodiv',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Battery replacement`
+  String get service_zamina_akumulyatora {
+    return Intl.message(
+      'Battery replacement',
+      name: 'service_zamina_akumulyatora',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Antifreeze replacement`
+  String get service_zamina_antifryzu {
+    return Intl.message(
+      'Antifreeze replacement',
+      name: 'service_zamina_antifryzu',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Thermostat replacement`
+  String get service_zamina_termostata {
+    return Intl.message(
+      'Thermostat replacement',
+      name: 'service_zamina_termostata',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Pump replacement`
+  String get service_zamina_pompy {
+    return Intl.message(
+      'Pump replacement',
+      name: 'service_zamina_pompy',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Radiator replacement`
+  String get service_zamina_radiatora {
+    return Intl.message(
+      'Radiator replacement',
+      name: 'service_zamina_radiatora',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Cleaning of cooling and air conditioning radiators`
+  String get service_chystka_radiatoriv {
+    return Intl.message(
+      'Cleaning of cooling and air conditioning radiators',
+      name: 'service_chystka_radiatoriv',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Injector cleaning`
+  String get service_chystka_forsunok {
+    return Intl.message(
+      'Injector cleaning',
+      name: 'service_chystka_forsunok',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Fuel system flushing`
+  String get service_promyvka_palivnoyi_systemy {
+    return Intl.message(
+      'Fuel system flushing',
+      name: 'service_promyvka_palivnoyi_systemy',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Fuel filter replacement`
+  String get service_zamina_palivnogo_filtra {
+    return Intl.message(
+      'Fuel filter replacement',
+      name: 'service_zamina_palivnogo_filtra',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Fuel pump replacement`
+  String get service_zamina_benzonasosa {
+    return Intl.message(
+      'Fuel pump replacement',
+      name: 'service_zamina_benzonasosa',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Injector flushing`
+  String get service_promyvka_inzhektora {
+    return Intl.message(
+      'Injector flushing',
+      name: 'service_promyvka_inzhektora',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Gearbox - replacement`
+  String get service_kpp_zamina {
+    return Intl.message(
+      'Gearbox - replacement',
+      name: 'service_kpp_zamina',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Gearbox - repair`
+  String get service_kpp_remont {
+    return Intl.message(
+      'Gearbox - repair',
+      name: 'service_kpp_remont',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Automatic transmission oil - partial replacement (drain/fill), including automatic transmission filter replacement`
+  String get service_oliya_akpp_chastkova {
+    return Intl.message(
+      'Automatic transmission oil - partial replacement (drain/fill), including automatic transmission filter replacement',
+      name: 'service_oliya_akpp_chastkova',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Automatic transmission oil - complete replacement (hardware) without automatic transmission filter replacement`
+  String get service_oliya_akpp_zamna_povna_bez_filtra {
+    return Intl.message(
+      'Automatic transmission oil - complete replacement (hardware) without automatic transmission filter replacement',
+      name: 'service_oliya_akpp_zamna_povna_bez_filtra',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Automatic transmission oil - complete replacement (hardware), including automatic transmission filter replacement`
+  String get service_oliya_akpp_zamna_povna_z_filtra {
+    return Intl.message(
+      'Automatic transmission oil - complete replacement (hardware), including automatic transmission filter replacement',
+      name: 'service_oliya_akpp_zamna_povna_z_filtra',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Manual transmission oil - replacement`
+  String get service_oliya_mkpp_zamina {
+    return Intl.message(
+      'Manual transmission oil - replacement',
+      name: 'service_oliya_mkpp_zamina',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Transmission oil (axle/gearbox/transfer case) - replacement`
+  String get service_maslo_transmisiine_zamina {
+    return Intl.message(
+      'Transmission oil (axle/gearbox/transfer case) - replacement',
+      name: 'service_maslo_transmisiine_zamina',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Clutch (set) - replacement`
+  String get service_zcheplennya_zmina {
+    return Intl.message(
+      'Clutch (set) - replacement',
+      name: 'service_zcheplennya_zmina',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Clutch master cylinder - replacement`
+  String get service_golovnyy_cylyndr_zcheplennya_zamina {
+    return Intl.message(
+      'Clutch master cylinder - replacement',
+      name: 'service_golovnyy_cylyndr_zcheplennya_zamina',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Clutch slave cylinder - replacement`
+  String get service_robochyy_cylyndr_zcheplennya_zamina {
+    return Intl.message(
+      'Clutch slave cylinder - replacement',
+      name: 'service_robochyy_cylyndr_zcheplennya_zamina',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Cardan shaft cross - replacement`
+  String get service_krestovyna_kard_valu_zamina {
+    return Intl.message(
+      'Cardan shaft cross - replacement',
+      name: 'service_krestovyna_kard_valu_zamina',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Cardan shaft - replacement`
+  String get service_kardannyy_val_zamina {
+    return Intl.message(
+      'Cardan shaft - replacement',
+      name: 'service_kardannyy_val_zamina',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Clutch diagnostics and replacement`
+  String get service_diagnostyka_zamina_zcheplennya {
+    return Intl.message(
+      'Clutch diagnostics and replacement',
+      name: 'service_diagnostyka_zamina_zcheplennya',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Clutch actuator repair / replacement`
+  String get service_remont_zamina_aktuatora_zcheplennya {
+    return Intl.message(
+      'Clutch actuator repair / replacement',
+      name: 'service_remont_zamina_aktuatora_zcheplennya',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Clutch disc replacement`
+  String get service_zamina_dyska_zcheplennya {
+    return Intl.message(
+      'Clutch disc replacement',
+      name: 'service_zamina_dyska_zcheplennya',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Clutch master cylinder replacement`
+  String get service_zamina_golovnogo_cylyndra_zcheplennya {
+    return Intl.message(
+      'Clutch master cylinder replacement',
+      name: 'service_zamina_golovnogo_cylyndra_zcheplennya',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Automatic transmission clutch replacement`
+  String get service_zamina_zcheplennya_akpp {
+    return Intl.message(
+      'Automatic transmission clutch replacement',
+      name: 'service_zamina_zcheplennya_akpp',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Clutch cable replacement`
+  String get service_zamina_trosa_zcheplennya {
+    return Intl.message(
+      'Clutch cable replacement',
+      name: 'service_zamina_trosa_zcheplennya',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Clutch fork replacement`
+  String get service_zamina_vilky_zcheplennya {
+    return Intl.message(
+      'Clutch fork replacement',
+      name: 'service_zamina_vilky_zcheplennya',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Clutch fluid replacement`
+  String get service_zamina_ridyny_zcheplennya {
+    return Intl.message(
+      'Clutch fluid replacement',
+      name: 'service_zamina_ridyny_zcheplennya',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Drive shaft replacement`
+  String get service_zamina_pryvodnykh_valiv {
+    return Intl.message(
+      'Drive shaft replacement',
+      name: 'service_zamina_pryvodnykh_valiv',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `ShRUS replacement`
+  String get service_zamina_shrus {
+    return Intl.message(
+      'ShRUS replacement',
+      name: 'service_zamina_shrus',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Cardan shaft replacement`
+  String get service_zamina_kard_valu {
+    return Intl.message(
+      'Cardan shaft replacement',
+      name: 'service_zamina_kard_valu',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Cardan shaft crosspiece replacement`
+  String get service_zamina_krestovyny_kard_valu {
+    return Intl.message(
+      'Cardan shaft crosspiece replacement',
+      name: 'service_zamina_krestovyny_kard_valu',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Transmission fluid replacement (axle/gearbox/transfer case)`
+  String get service_zamina_transmisiynykh_ridin {
+    return Intl.message(
+      'Transmission fluid replacement (axle/gearbox/transfer case)',
+      name: 'service_zamina_transmisiynykh_ridin',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Exhaust system replacement (assembly)`
+  String get service_zamina_vykhlopnoyi_systemy {
+    return Intl.message(
+      'Exhaust system replacement (assembly)',
+      name: 'service_zamina_vykhlopnoyi_systemy',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Muffler replacement`
+  String get service_zamina_glushnyka {
+    return Intl.message(
+      'Muffler replacement',
+      name: 'service_zamina_glushnyka',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Replacing the intake pipe corrugation`
+  String get service_zamina_hofry_pryymalnoyi_truby {
+    return Intl.message(
+      'Replacing the intake pipe corrugation',
+      name: 'service_zamina_hofry_pryymalnoyi_truby',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Replacing the oxygen sensor (lambda probe)`
+  String get service_zamina_kisnevogo_datchyka_lambda {
+    return Intl.message(
+      'Replacing the oxygen sensor (lambda probe)',
+      name: 'service_zamina_kisnevogo_datchyka_lambda',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Replacing the catalyst`
+  String get service_zamina_katalizatora {
+    return Intl.message(
+      'Replacing the catalyst',
+      name: 'service_zamina_katalizatora',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Removing the catalyst`
+  String get service_vidalennya_katalizatora {
+    return Intl.message(
+      'Removing the catalyst',
+      name: 'service_vidalennya_katalizatora',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Replacing the muffler gasket`
+  String get service_zamina_prokladky_glushnyka {
+    return Intl.message(
+      'Replacing the muffler gasket',
+      name: 'service_zamina_prokladky_glushnyka',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Replacing the muffler pipe`
+  String get service_zamina_truby_glushnyka {
+    return Intl.message(
+      'Replacing the muffler pipe',
+      name: 'service_zamina_truby_glushnyka',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Diagnostics and repair of fuel injectors`
+  String get service_diagnostyka_remont_palivnykh_forsunok {
+    return Intl.message(
+      'Diagnostics and repair of fuel injectors',
+      name: 'service_diagnostyka_remont_palivnykh_forsunok',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Diagnostics and repair of fuel injection pumps`
+  String get service_diagnostyka_remont_tnvd {
+    return Intl.message(
+      'Diagnostics and repair of fuel injection pumps',
+      name: 'service_diagnostyka_remont_tnvd',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Replacing glow plugs`
+  String get service_zamina_svichok_rozzharjuvannya {
+    return Intl.message(
+      'Replacing glow plugs',
+      name: 'service_zamina_svichok_rozzharjuvannya',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Fuel system flushing of diesel cars`
+  String get service_promyvka_palivnoyi_systemy_dizel {
+    return Intl.message(
+      'Fuel system flushing of diesel cars',
+      name: 'service_promyvka_palivnoyi_systemy_dizel',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

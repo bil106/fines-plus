@@ -1,4 +1,5 @@
 import 'package:core_localization/generated/l10n.dart';
+import 'package:fines_plus/core/widgets/eddit_exp_auto_submit_page.dart';
 import 'package:fines_plus/core/widgets/photo_picker_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -24,14 +25,19 @@ class _AdditionalOptionsWidgetState extends State<AdditionalOptionsWidget> {
     super.dispose();
   }
 
-  void _publish() {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (_) =>
-            DriverTopWebView(comment: commentController.text, offRoad: offRoadAccidents, invisible: invisibleEvent),
-      ),
-    );
+ void _publish() {
+    final values = {
+      "comment": commentController.text.toString(),
+      "offRoadAccidents": offRoadAccidents.toString(),
+      "invisibleEvent": invisibleEvent.toString(),
+    
+    };
+
+    Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (_) => EditExpAutoSubmitPage(expId: 13, fieldValues: values)));
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -147,7 +153,7 @@ if(invisibleCheckbox) invisibleCheckbox.checked = $invisibleJS;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Публікація на driver.top')),
+      appBar: AppBar(title:  Text(S.of(context).publish)),
       body: WebViewWidget(controller: _controller),
     );
   }

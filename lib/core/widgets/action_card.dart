@@ -92,7 +92,6 @@ class ActionCard extends StatelessWidget {
             ),
             const SizedBox(height: 6),
 
-            /// Prior / Periodicity
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -102,17 +101,16 @@ class ActionCard extends StatelessWidget {
               ],
             ),
 
-            /// Bottom action
             Center(
               child: TextButton(
                 onPressed: () {
                   showModalBottomSheet(
                     context: context,
-                    isScrollControlled: true, 
+                    isScrollControlled: true,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
                     builder: (_) => Padding(
                       padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-                      child: ActionDetailSheet(title: title, priorExecution: priorExecution, periodicity: periodicity),
+                      child: ActionDetailSheet(title: title),
                     ),
                   );
                 },

@@ -1,5 +1,6 @@
 // ignore_for_file: file_names, unused_element
 
+import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/theme/app_theme.dart';
 import 'package:flutter/material.dart';
@@ -40,7 +41,7 @@ Widget _buildMileageCard(TextTheme textTheme) {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Пробіг",
+                    S.current.mileage,
                     style: textTheme.subtitleText.copyWith(fontSize: 14),
                   ),
                   TextField(
@@ -52,13 +53,13 @@ Widget _buildMileageCard(TextTheme textTheme) {
                       MileageInputFormatter(max: 1000000),
                     ],
                     decoration: InputDecoration(
-                      hintText: "Введіть пробіг",
+                      hintText: S.current.enter_mileage,
                       hintStyle: textTheme.hintText.copyWith(fontSize: 16),
                       border: InputBorder.none,
                       isDense: true,
                       contentPadding: EdgeInsets.zero,
                       focusedBorder: InputBorder.none,
-                      suffixText: "км",
+                      suffixText:S.current.km,
                       suffixStyle: textTheme.hintText.copyWith(fontSize: 16),
                     ),
                     style: textTheme.historyText,

@@ -1,3 +1,4 @@
+import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 
@@ -19,7 +20,7 @@ class AnalyticsField extends StatelessWidget {
             child: TextField(
               controller: controller,
               keyboardType: TextInputType.number,
-              decoration:  InputDecoration(hintText: "Введіть пробіг", hintStyle: textTheme.hintAnalitText, focusedBorder: InputBorder.none,
+              decoration:  InputDecoration(hintText: S.of(context).enter_mileage, hintStyle: textTheme.hintAnalitText, focusedBorder: InputBorder.none,
                 border: InputBorder.none,
               ),
               style: textTheme.historyText

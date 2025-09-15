@@ -1,137 +1,107 @@
+import 'package:core_cubit/cubit/schedule/schedule_cubit.dart';
+import 'package:core_cubit/cubit/schedule/schedule_state.dart';
+import 'package:core_data/core_data.dart';
+import 'package:core_localization/generated/l10n.dart';
+import 'package:core_repository/maintenance_repository.dart';
+import 'package:design_system/colors/app_colors.dart';
 import 'package:fines_plus/core/widgets/action_detail_sheet.dart';
 import 'package:fines_plus/core/widgets/maintenance_card.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
 
 class ScheduleTab extends StatelessWidget {
   const ScheduleTab({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          
-          MaintenanceCard(
-            title: "Заміна оливи двигуна",
-            progress: 0.8,
-            priorKm: 5604,
-            priorDays: 116,
-            periodicityKm: 7000,
-       onPressed: () {
-              showModalBottomSheet(
-                context: context,
-                isScrollControlled: true, 
-                shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
-                builder: (context) => SingleChildScrollView(
-                  child: Padding(
-                    padding: EdgeInsets.only(
-                      bottom: MediaQuery.of(context).viewInsets.bottom + 16, 
-                      left: 16,
-                      right: 16,
-                      top: 16,
-                    ),
-                    child: ActionDetailSheet(title: "Заміна оливи двигуна", priorExecution: "-", periodicity: "-"),
-                  ),
-                ),
-              );
-            },
+    return BlocProvider(
+      create: (_) => ScheduleCubit(context.read<IMaintenanceRepository>())..loadTasks(),
+      child: BlocBuilder<ScheduleCubit, ScheduleState>(
+        builder: (context, state) {
+          if (state.loading) return const Center(child: CircularProgressIndicator());
+          if (state.tasks.isEmpty) return Center(child: Text(S.of(context).no_tasks));
 
-          ),
-          const SizedBox(height: 12),
+          return Scaffold(
+            backgroundColor: AppColors.grey50,
+            body: ListView.separated(
+              padding: const EdgeInsets.all(1),
+              itemCount: state.tasks.length,
+              separatorBuilder: (_, __) => const SizedBox(height: 12),
+              itemBuilder: (context, index) {
+                final task = state.tasks[index];
+                return MaintenanceCard(
+                  title: task.title,
+                  progress: task.getProgress(),
+                  priorExecution: task.lastServiceDate,
+                  lastMileage: task.lastMileage,
+                  actualMileage: task.actualMileage,
+                  intervalKm: task.intervalKm,
+                  onPressed: () async {
+                    final result = await showModalBottomSheet<Map<String, dynamic>>(
+                      context: context,
+                      isScrollControlled: true,
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                      ),
+                      builder: (context) => ActionDetailSheet(
+                        title: task.title,
+                        lastServiceDate: task.lastServiceDate,
+                        lastMileage: task.lastMileage,
+                        actualMileage: task.actualMileage,
+                        intervalKm: task.intervalKm,
+                        comment: task.comment,
+                        byDate: task.intervalTime != null,
+                        byMileage: task.intervalKm != null,
+                      ),
+                    );
 
-        
-       MaintenanceCard(
-            title: "Шини зимові",
-            icon: Icons.tire_repair,
-            progress: 0.0,
-            priorExecution: "-",
-            periodicity: "-",
-            isWarning: true,
-            onPressed: () {
-              showModalBottomSheet(
-                context: context,
-                isScrollControlled: true,
-                shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
-                builder: (context) => SingleChildScrollView(
-                  child: Padding(
-                    padding: EdgeInsets.only(
-                      bottom: MediaQuery.of(context).viewInsets.bottom + 16,
-                      left: 16,
-                      right: 16,
-                      top: 16,
-                    ),
-                    child: ActionDetailSheet(title: "Шини зимові", priorExecution: "-", periodicity: "-"),
-                  ),
-                ),
-              );
-            },
-          ),
-          const SizedBox(height: 12),
+                    if (result != null) {
+                      final updatedTask = task.copyWith(
+                        title: result["title"],
+                        lastServiceDate: result["date"] != null
+                            ? "${result["date"].day.toString().padLeft(2, '0')}.${result["date"].month.toString().padLeft(2, '0')}.${result["date"].year}"
+                            : null,
+                        lastMileage: result["mileage"],
+                        actualMileage: result["mileage"],
+                        intervalTime: result["byDate"] ? Duration(days: result["intervalDays"]) : null,
+                        comment: result["comment"],
+                      );
+                      context.read<ScheduleCubit>().updateTask(index, updatedTask);
+                    }
+                  },
+                  onDelete: () => context.read<ScheduleCubit>().removeTask(index),
+                );
+              },
+            ),
+            floatingActionButton: FloatingActionButton(
+              onPressed: () async {
+                final result = await showModalBottomSheet<Map<String, dynamic>>(
+                  context: context,
+                  isScrollControlled: true,
+                  shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+                  builder: (context) => const ActionDetailSheet(),
+                );
 
-          MaintenanceCard(
-            title: "Заміна олії АКПП",
-            icon: Icons.settings,
-            progress: 0.1,
-            priorExecution: "5335 км\n111 днів",
-            periodicity: "50000 км",
-            isWarning: true,
-            onPressed: () {
-              showModalBottomSheet(
-                context: context,
-                isScrollControlled: true,
-                shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
-                builder: (context) => SingleChildScrollView(
-                  child: Padding(
-                    padding: EdgeInsets.only(
-                      bottom: MediaQuery.of(context).viewInsets.bottom + 16,
-                      left: 16,
-                      right: 16,
-                      top: 16,
-                    ),
-                    child: ActionDetailSheet(
-                      title: "Заміна олії АКПП",
-                      priorExecution: "5335 км\n111 днів",
-                      periodicity: "50000 км",
-                    ),
-                  ),
-                ),
-              );
-            },
-          ),
-          const SizedBox(height: 12),
-
-          MaintenanceCard(
-            title: "Діагностика підвіски",
-            icon: Icons.medical_services,
-            progress: 0.14,
-            priorExecution: "26 днів",
-            periodicity: "6 місяці",
-            isWarning: true,
-            onPressed: () {
-              showModalBottomSheet(
-                context: context,
-                isScrollControlled: true,
-                shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
-                builder: (context) => SingleChildScrollView(
-                  child: Padding(
-                    padding: EdgeInsets.only(
-                      bottom: MediaQuery.of(context).viewInsets.bottom + 16,
-                      left: 16,
-                      right: 16,
-                      top: 16,
-                    ),
-                    child: ActionDetailSheet(
-                      title: "Діагностика підвіски",
-                      priorExecution: "26 днів",
-                      periodicity: "6 місяці",
-                    ),
-                  ),
-                ),
-              );
-            },
-          ),
-
-        ],
+                if (result != null) {
+                  final newTask = MaintenanceTask(
+                    title: result["title"] ?? S.of(context).no_name,
+                    lastServiceDate: result["date"] != null
+                        ? "${result["date"].day.toString().padLeft(2, '0')}.${result["date"].month.toString().padLeft(2, '0')}.${result["date"].year}"
+                        : null,
+                    lastMileage: result["mileage"],
+                    actualMileage: result["mileage"],
+                    intervalKm: result["byMileage"] ? result["intervalKm"] ?? 0 : 0,
+                    intervalTime: result["byDate"] ? Duration(days: result["intervalDays"]) : null,
+                    comment: result["comment"],
+                  );
+                  context.read<ScheduleCubit>().addTask(newTask);
+                }
+              },
+              child: const Icon(Icons.add),
+            ),
+          );
+        },
       ),
     );
   }

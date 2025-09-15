@@ -78,8 +78,8 @@ class CarInfoCubit extends Cubit<CarInfoState> {
 
   String? validate() {
     if (!isFormValid) {
-      if (!_carReg.hasMatch(state.carNumber)) return 'Введіть коректний номер авто';
-      if (!_techReg.hasMatch(state.techPassport)) return 'Введіть коректний номер техпаспорта';
+      if (!_carReg.hasMatch(state.carNumber)) return 'Enter the correct car number';
+      if (!_techReg.hasMatch(state.techPassport)) return 'Enter the correct registration number';
     }
     return null;
   }

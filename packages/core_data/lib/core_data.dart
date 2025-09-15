@@ -16,6 +16,7 @@ export 'src/models/fuel_record.dart';
 export 'src/models/mileage_record.dart';
 export 'src/models/expense.dart';
 export 'src/models/expense_category.dart';
+export 'src/models/maintenance_task.dart';
 
 export 'src/local/car_info_local_data_source.dart';
 export 'src/remote/car_info_remote_data_source.dart';
@@ -29,5 +30,5 @@ export 'src/local/register_user_usecase.dart';
 export 'src/local/push_helper.dart';
 export 'src/local/ad_helper.dart';
 export 'src/local/fines_data_source.dart';
-export 'src/local/mock_service_data.dart';
+
 

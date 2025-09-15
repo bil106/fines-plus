@@ -9,11 +9,8 @@ import 'package:core_repository/analytics_repository.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
-
 import 'package:fines_plus/core/widgets/history_tab.dart';
-
 import 'package:fines_plus/core/widgets/schedule_tab.dart';
-
 import 'package:fines_plus/presentation/screens/statistics_screen.dart';
 import 'package:fines_plus/router/home_screen_wrapper.dart';
 import 'package:flutter/material.dart';

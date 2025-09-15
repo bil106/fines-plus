@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:core_cubit/cubit/history/history_state.dart';
 import 'package:core_repository/history_repository.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:bloc/bloc.dart';
@@ -26,7 +27,15 @@ class HistoryCubit extends Cubit<HistoryState> {
       },
       onError: (e, st) {
         debugPrint('HistoryCubit stream error: $e\n$st');
-        emit(HistoryError(e.toString()));
+
+      
+        if (e is FirebaseException && e.code == 'failed-precondition') {
+          emit(HistoryError(
+            'Історія тимчасово недоступна: індекс будується. Спробуйте за кілька хвилин.',
+          ));
+        } else {
+          emit(HistoryError(e.toString()));
+        }
       },
     );
   }
@@ -37,32 +46,54 @@ class HistoryCubit extends Cubit<HistoryState> {
     required String docNumber,
     required List<Map<String, dynamic>> fines,
   }) async {
-    await repository.addToHistory(
-      carNumber: carNumber,
-      docSeries: docSeries,
-      docNumber: docNumber,
-      fines: fines,
-    );
-    loadHistory(carNumber);
+    try {
+      await repository.addToHistory(
+        carNumber: carNumber,
+        docSeries: docSeries,
+        docNumber: docNumber,
+        fines: fines,
+      );
+      loadHistory(carNumber);
+    } catch (e, st) {
+      debugPrint('HistoryCubit addHistory error: $e\n$st');
+
+      if (e is FirebaseException && e.code == 'failed-precondition') {
+        emit(HistoryError(
+          'Історія тимчасово недоступна: індекс будується. Спробуйте за кілька хвилин.',
+        ));
+      } else {
+        emit(HistoryError(e.toString()));
+      }
+    }
   }
 
   Future<void> deleteAll(String carNumber) async {
-    await repository.deleteAll(carNumber);
-    emit(HistoryEmpty());
+    try {
+      await repository.deleteAll(carNumber);
+      emit(HistoryEmpty());
+    } catch (e, st) {
+      debugPrint('HistoryCubit deleteAll error: $e\n$st');
+      emit(HistoryError(e.toString()));
+    }
   }
 
   Future<void> deleteSingle(String id) async {
-    await repository.deleteSingle(id);
+    try {
+      await repository.deleteSingle(id);
 
-    if (state is HistoryLoaded) {
-      final current = (state as HistoryLoaded).history;
-      final updated = current.where((item) => item.id != id).toList();
+      if (state is HistoryLoaded) {
+        final current = (state as HistoryLoaded).history;
+        final updated = current.where((item) => item.id != id).toList();
 
-      if (updated.isEmpty) {
-        emit(HistoryEmpty());
-      } else {
-        emit(HistoryLoaded(updated));
+        if (updated.isEmpty) {
+          emit(HistoryEmpty());
+        } else {
+          emit(HistoryLoaded(updated));
+        }
       }
+    } catch (e, st) {
+      debugPrint('HistoryCubit deleteSingle error: $e\n$st');
+      emit(HistoryError(e.toString()));
     }
   }
 

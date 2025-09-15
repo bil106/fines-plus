@@ -1,6 +1,6 @@
+import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/theme/app_theme.dart';
 import 'package:flutter/material.dart';
-
 
 class AnalyticsFuelField extends StatefulWidget {
   final double pricePerLiter;
@@ -37,12 +37,11 @@ class _AnalyticsFuelFieldState extends State<AnalyticsFuelField> {
               style: textTheme.historyText,
               controller: _litersController,
               keyboardType: TextInputType.number,
-              decoration:  InputDecoration(
-                hintText: "Введіть літри",
-                hintStyle:textTheme.hintAnalitText,
+              decoration: InputDecoration(
+                hintText: S.of(context).enter_liters,
+                hintStyle: textTheme.hintAnalitText,
                 border: InputBorder.none,
                 focusedBorder: InputBorder.none,
-               
               ),
               onChanged: _onLitersChanged,
             ),
@@ -59,4 +58,3 @@ class _AnalyticsFuelFieldState extends State<AnalyticsFuelField> {
     );
   }
 }
-

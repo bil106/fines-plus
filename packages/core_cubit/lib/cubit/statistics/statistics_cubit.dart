@@ -35,7 +35,7 @@ class StatisticsCubit extends Cubit<StatisticsState> {
     ));
   }
 
-  /// Добавление пробега
+  /// Adding mileage
   Future<void> addMileage(MileageRecord record) async {
     final updatedRecords = List<MileageRecord>.from(state.mileageRecords);
     updatedRecords.removeWhere((r) => r.month.year == record.month.year && r.month.month == record.month.month);

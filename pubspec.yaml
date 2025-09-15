@@ -27,6 +27,8 @@ dependencies:
     path: packages/core_data
   core_services:
     path: packages/core_services
+  webview_feature:
+    path: packages/features/webview
   design_system:
     path: packages/design_system 
   google_maps_flutter: ^2.13.1
@@ -69,6 +71,9 @@ dependencies:
   path_provider: ^2.1.5
   image_picker: ^1.2.0
   webview_flutter: ^4.13.0
+  google_sign_in: 6.1.5
+  url_launcher: ^6.3.2
+  
 
 
 

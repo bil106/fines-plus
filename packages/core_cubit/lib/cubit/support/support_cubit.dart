@@ -8,8 +8,8 @@ class SupportCubit extends Cubit<SupportState> {
   SupportCubit() : super(SupportInitial());
 
 Future<void> sendEmail(String email) async {
-    final subject = Uri.encodeComponent('Підтримка');
-    final body = Uri.encodeComponent('Доброго дня, маю питання щодо...');
+    final subject = Uri.encodeComponent('Support');
+    final body = Uri.encodeComponent('Good afternoon, I have a question regarding...');
     final uri = Uri.parse('mailto:$email?subject=$subject&body=$body');
 
     try {

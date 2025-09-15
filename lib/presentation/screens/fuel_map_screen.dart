@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:auto_route/auto_route.dart';
+import 'package:core_localization/generated/l10n.dart';
 import 'package:fines_plus/env/env.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -72,7 +73,7 @@ class _FuelMapScreenState extends State<FuelMapScreen> {
               infoWindow: InfoWindow(
                 title: station['name'] ?? 'Refueling',
                 snippet:
-                    '${station['vicinity'] ?? 'Address not specified'}${station['rating'] != null ? ', рейтинг: $rating' : ''}',
+                    '${station['vicinity'] ?? 'Address not specified'}${station['rating'] != null ? ', rating: $rating' : ''}',
               ),
             ),
           );
@@ -133,7 +134,7 @@ class _FuelMapScreenState extends State<FuelMapScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Заправки поряд")),
+      appBar: AppBar(title:  Text(S.of(context).gas_station_nearby)),
       body: _currentPosition == null
           ? const Center(child: CircularProgressIndicator())
           : GoogleMap(

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:auto_route/auto_route.dart';
+import 'package:core/config/app_urls.dart';
 import 'package:core_data/core_data.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
@@ -15,7 +16,6 @@ import 'package:fines_plus/core/widgets/photo_picker_widget.dart';
 import 'package:fines_plus/env/env.dart';
 import 'package:fines_plus/presentation/screens/fuel_map_screen.dart';
 import 'package:fines_plus/presentation/screens/service_map_screen.dart';
-import 'package:fines_plus/router/home_screen_wrapper.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -69,9 +69,7 @@ class _ServiceScreenState extends State<ServiceScreen> {
 
   Future<void> _fetchRate() async {
     try {
-      final response = await http.get(
-        Uri.parse("https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?valcode=USD&json"),
-      );
+      final response = await http.get(Uri.parse(AppUrls.nbuRateUSD));
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
@@ -116,14 +114,7 @@ class _ServiceScreenState extends State<ServiceScreen> {
           elevation: 0,
           leading: BackButton(
             color: AppColors.blue700,
-            onPressed: () {
-              final homeState = context.findAncestorStateOfType<HomeScreenWrapperState>();
-              if (widget.onBack != null) {
-                widget.onBack!();
-              } else {
-                homeState?.openPage(HomePage.maintenance);
-              }
-            },
+            onPressed: widget.onBack 
           ),
 
           actions: [

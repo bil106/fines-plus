@@ -28,7 +28,7 @@ class _AnalyticsPeriodFieldState extends State<AnalyticsPeriodField> {
       readOnly: true,
       controller: TextEditingController(
         text: selectedDate != null
-            ? toBeginningOfSentenceCase(DateFormat("MMM yyyy", "ru_RU").format(selectedDate!))
+            ? toBeginningOfSentenceCase(DateFormat("MMM yyyy", "uk_UK").format(selectedDate!))
             : "",
       ),
       decoration: InputDecoration(

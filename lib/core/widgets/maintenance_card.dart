@@ -4,31 +4,35 @@ import 'package:flutter/material.dart';
 class MaintenanceCard extends StatelessWidget {
   final String title;
   final double progress;
-  final IconData? icon; 
+  final String? priorExecution;
+  final int? lastMileage;
+  final int? actualMileage;
+  final int? intervalKm;
+  final VoidCallback? onPressed;
+  final VoidCallback? onDelete;
   final bool? isWarning;
-  final String? priorExecution; 
-  final String? periodicity; 
-  final int? priorKm;
-  final int? priorDays;
-  final int? periodicityKm;
-  final VoidCallback? onPressed; 
+
+  final IconData? icon;
+  final Widget? iconWidget;
 
   const MaintenanceCard({
     super.key,
     required this.title,
     required this.progress,
-    this.icon,
-    this.isWarning,
     this.priorExecution,
-    this.periodicity,
-    this.priorKm,
-    this.priorDays,
-    this.periodicityKm,
+    this.lastMileage,
+    this.actualMileage,
+    this.intervalKm,
     this.onPressed,
+    this.onDelete,
+    this.isWarning,
+    this.icon,
+    this.iconWidget,
   });
 
   @override
   Widget build(BuildContext context) {
+    
     return Card(
       elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -37,7 +41,6 @@ class MaintenanceCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-        
             Row(
               children: [
                 Expanded(
@@ -47,19 +50,18 @@ class MaintenanceCard extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 12),
-           
+
             Row(
               children: [
                 Stack(
+                  alignment: Alignment.center,
                   children: [
                     CircleAvatar(
                       radius: 28,
                       backgroundColor: Colors.blue.shade50,
-                      child: Icon(
-                        icon ?? Icons.oil_barrel,
-                        color: icon != null ? Colors.amber : Colors.orange,
-                        size: 30,
-                      ),
+                      child:
+                          iconWidget ??
+                          Icon(icon ?? Icons.build, color: icon != null ? Colors.amber : Colors.orange, size: 30),
                     ),
                     if (isWarning != null)
                       Positioned(
@@ -73,64 +75,65 @@ class MaintenanceCard extends StatelessWidget {
                       ),
                   ],
                 ),
-                const SizedBox(width: 16),
+                const SizedBox(width: 12),
                 Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  child: Stack(
+                    alignment: Alignment.center,
                     children: [
-                      Text(S.of(context).resource),
-                      const SizedBox(height: 4),
-                      Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          LinearProgressIndicator(
-                            value: progress,
-                            minHeight: 20,
-                            borderRadius: BorderRadius.circular(8),
-                            backgroundColor: Colors.grey.shade300,
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                              isWarning == true ? Colors.red : Colors.lightGreen,
-                            ),
-                          ),
-                          Text(
-                            "${(progress * 100).toStringAsFixed(0)}%",
-                            style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
-                          ),
-                        ],
+                      LinearProgressIndicator(
+                        value: progress,
+                        minHeight: 22,
+                        borderRadius: BorderRadius.circular(8),
+                        backgroundColor: Colors.grey.shade300,
+                        valueColor: AlwaysStoppedAnimation<Color>(progress > 0.8 ? Colors.red : Colors.lightGreen),
+                      ),
+                      Text(
+                        "${(progress * 100).toStringAsFixed(0)}%",
+                        style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
                       ),
                     ],
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 6),
-            // Prior / Periodicity
+
+            const SizedBox(height: 8),
+
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                if (priorExecution != null)
-                  Text("${S.of(context).to_be_performed}\n$priorExecution", style: const TextStyle(fontSize: 13))
-                else if (priorKm != null && priorDays != null)
-                  Column(
-                    children: [
-                      Text("$priorKm ${S.of(context).km}", style: const TextStyle(fontWeight: FontWeight.bold)),
-                      Text("$priorDays ${S.of(context).days}", style: const TextStyle(color: Colors.grey)),
-                    ],
-                  ),
-                if (periodicity != null)
-                  Text("${S.of(context).periodicity}\n$periodicity", style: const TextStyle(fontSize: 13))
-                else if (periodicityKm != null)
-                  Column(
-                    children: [
-                      Text("$periodicityKm ${S.of(context).km}", style: const TextStyle(fontWeight: FontWeight.bold)),
-                      Text(S.of(context).periodicity, style: const TextStyle(color: Colors.grey)),
-                    ],
-                  ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("${S.of(context).previous}: ${priorExecution ?? "-"}", style: const TextStyle(fontSize: 13)),
+                    Text(
+                      "${S.of(context).mileage}: ${lastMileage?.toString() ?? "-"}",
+                      style: const TextStyle(fontSize: 13),
+                    ),
+                    Text(
+                      "${S.of(context).fact}: ${actualMileage?.toString() ?? "-"}",
+                      style: const TextStyle(fontSize: 13),
+                    ),
+                  ],
+                ),
+                Text(
+                  "${S.of(context).periodicity}: ${intervalKm?.toString() ?? "-"} ${S.of(context).km}",
+                  style: const TextStyle(fontSize: 13),
+                ),
               ],
             ),
-            // Bottom button
-            Center(
-              child: TextButton(onPressed: onPressed, child: Text(S.of(context).configure_action)),
+
+            Row(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(left: 98.0, right: 50),
+                  child: TextButton(onPressed: onPressed, child: Text(S.of(context).configure_action)),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.delete, color: Colors.red),
+                  onPressed: onDelete,
+                ),
+              ],
             ),
           ],
         ),

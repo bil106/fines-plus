@@ -1,13 +1,13 @@
 // services/places_service.dart
 import 'dart:convert';
+import 'package:core/config/app_urls.dart';
 import 'package:http/http.dart' as http;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 Future<List<LatLng>> fetchNearbyGasStations(LatLng location, String apiKey) async {
-  final url =
-      'https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${location.latitude},${location.longitude}&radius=3000&type=gas_station&key=$apiKey';
-
+final url = AppUrls.nearbyGasStations(location, apiKey);
   final response = await http.get(Uri.parse(url));
+
 
   if (response.statusCode == 200) {
     final data = json.decode(response.body);

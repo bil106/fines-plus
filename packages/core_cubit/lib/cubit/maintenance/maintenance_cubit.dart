@@ -63,4 +63,6 @@ class MaintenanceCubit extends Cubit<MaintenanceState> {
   void closeMenu() {
     emit(state.copyWith(isMenuOpen: false));
   }
+
+  
 }

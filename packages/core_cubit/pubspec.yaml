@@ -28,6 +28,8 @@ dependencies:
     path: ../core_repository
   core_data:
     path: ../core_data
+  core:
+    path: ../core
   core_services:
     path: ../core_services
   fines_plus:

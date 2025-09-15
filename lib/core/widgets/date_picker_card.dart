@@ -40,7 +40,7 @@ class DatePickerCard extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text("Дата", style: textTheme.subtitleText.copyWith(fontSize: 14)),
+                      Text(S.of(context).date, style: textTheme.subtitleText.copyWith(fontSize: 14)),
                       AppSpacers.verticalXSmall,
                       Text(
                         selectedDate != null

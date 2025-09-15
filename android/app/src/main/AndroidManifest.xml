@@ -49,6 +49,9 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyD8El-2EaU3iDuHLre3_Mz218iU-l1sr48"/>
+        <meta-data
+            android:name="com.google.android.gms.games.APP_ID"
+            android:value="\ 1234567890" />
     </application>
     <queries>
         <intent>

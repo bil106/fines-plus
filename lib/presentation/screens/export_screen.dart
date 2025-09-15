@@ -32,7 +32,7 @@ class ExportScreen extends StatelessWidget {
         exportPdf: getIt<ExportHistoryPdf>(),
         exportCsv: getIt<ExportHistoryCsv>(),
       ),
-      child: _ExportScreenView(history: history, carNumber: carNumber, onBack: onBack),
+      child: _ExportScreenView(history: history, carNumber: carNumber, onBack: onBack ?? () {}),
     );
   }
 }

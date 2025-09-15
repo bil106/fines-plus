@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:core_cubit/cubit/fuel_station/fuel_station_cubit.dart';
+import 'package:core_cubit/cubit/maintenance/maintenance_cubit.dart';
 import 'package:core_cubit/cubit/purchase/purchase_cubit.dart';
 import 'package:core_cubit/cubit/referral/referral_cubit.dart';
 import 'package:core_cubit/cubit/registration/registration_cubit.dart';
@@ -54,6 +55,7 @@ void main() {
               BlocProvider<PurchaseCubit>.value(value: result.purchaseCubit),
               BlocProvider<RegistrationCubit>.value(value: result.registrationCubit),
               BlocProvider<FuelStationCubit>.value(value: result.fuelStationCubit),
+              BlocProvider<MaintenanceCubit>.value(value: result.maintenanceCubit),
             ],
             child: MyApp(
               config: result.config,

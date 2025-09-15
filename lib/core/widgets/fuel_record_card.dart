@@ -1,4 +1,5 @@
 import 'package:core_data/core_data.dart';
+import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 
@@ -34,7 +35,7 @@ class FuelRecordCard extends StatelessWidget {
                   children: [
                     Icon(Icons.attach_money, color: Colors.green),
                     const SizedBox(width: 8),
-                    Text("${record.cost} UAH", style: textTheme.subtitleText),
+                    Text("${record.cost} ${S.of(context).grn}", style: textTheme.subtitleText),
                   ],
                 ),
                 const SizedBox(height: 4),
@@ -46,7 +47,7 @@ class FuelRecordCard extends StatelessWidget {
                     const SizedBox(width: 28),
                     Icon(Icons.speed, color: Colors.grey),
                     const SizedBox(width: 8),
-                    Text("${record.mileage} km", style: textTheme.subtitleText),
+                    Text("${record.mileage} ${S.of(context).km}", style: textTheme.subtitleText),
                   ],
                 ),
               ],

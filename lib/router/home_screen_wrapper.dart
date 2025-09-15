@@ -183,14 +183,11 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
               onBack: () => openPage(HomePage.addCar)),
 
             // 9 Export
-          ExportScreen(
+         ExportScreen(
               key: const ValueKey('export'),
-              history: exportHistory, 
-              onBack: () {
-                final homeState = context.findAncestorStateOfType<HomeScreenWrapperState>();
-                homeState?.openPage(HomePage.analytics);
-              },
+              history: exportHistory,
               carNumber: _carNumber!,
+              onBack: () => openPage(HomePage.analytics),
             ),
             // 10 Register
             RegistrationScreen(key: const ValueKey('registration'), onBack: () => openPage(HomePage.addCar)),
@@ -202,16 +199,27 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
            FuelMapScreen(key: const ValueKey('fuel-map'), ),
           ],
         ),
-        bottomNavigationBar: BottomNavigationBar(
+       bottomNavigationBar: BottomNavigationBar(
           backgroundColor: AppColors.neutreBlanc,
           currentIndex: _bottomNavIndex,
-          onTap: (i) => openPage(HomePage.values[i]),
+         onTap: (i) {
+            final page = HomePage.values[i];
+
+          
+            if (page == HomePage.fines) {
+              openPage(HomePage.fineCheck);
+            } else {
+              openPage(page);
+            }
+          },
+
           items: [
             BottomNavigationBarItem(icon: Icon(Icons.directions_car), label: S.of(context).auto),
             BottomNavigationBarItem(icon: Icon(Icons.receipt), label: S.of(context).fines),
             BottomNavigationBarItem(icon: Icon(Icons.support), label: S.of(context).reminder),
           ],
         ),
+
       ),
     );
   }

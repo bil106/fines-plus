@@ -101,16 +101,15 @@ class _MaintenanceScreenView extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    _buildAction(context, Icons.local_gas_station, S.of(context).fuel_up, () async {
+                    _buildAnimatedAction(context, Icons.local_gas_station, S.of(context).fuel_up, () async {
                       final record = await context.router.push<FuelRecord>(FuelUpRoute());
-
                       if (record != null) {
                         cubit.addFuelRecord(record);
                         onFuelUp?.call();
                       }
-                    }),
+                    }, state.isMenuOpen),
 
-                    _buildAction(context, Icons.build, S.of(context).service, () async {
+                    _buildAnimatedAction(context, Icons.build, S.of(context).service, () async {
                       final records = await Navigator.push<List<ServiceRecord>>(
                         context,
                         MaterialPageRoute(builder: (_) => const ServiceScreen()),
@@ -118,10 +117,20 @@ class _MaintenanceScreenView extends StatelessWidget {
                       if (records != null && records.isNotEmpty) {
                         cubit.addServiceRecords(records);
                       }
-                    }),
-                    _buildAction(context, Icons.calendar_today, S.of(context).calendar, onCalendar),
-                    _buildAction(context, Icons.settings, S.of(context).settings, onSettings),
+                    }, state.isMenuOpen),
+
+                    _buildAnimatedAction(
+                      context,
+                      Icons.calendar_today,
+                      S.of(context).calendar,
+                      onCalendar,
+                      state.isMenuOpen,
+                    ),
+
+                    _buildAnimatedAction(context, Icons.settings, S.of(context).settings, onSettings, state.isMenuOpen),
+
                     const SizedBox(height: 20),
+
                     GestureDetector(
                       onTap: cubit.toggleMenu,
                       child: AnimatedContainer(
@@ -159,6 +168,25 @@ class _MaintenanceScreenView extends StatelessWidget {
           boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 6, offset: Offset(0, 2))],
         ),
         child: Icon(icon, color: Colors.blue),
+      ),
+    );
+  }
+
+  Widget _buildAnimatedAction(
+    BuildContext context,
+    IconData icon,
+    String tooltip,
+    VoidCallback? onTap,
+    bool isVisible,
+  ) {
+    return AnimatedSlide(
+      duration: const Duration(milliseconds: 350),
+      offset: isVisible ? Offset.zero : const Offset(0, 1),
+      curve: Curves.easeOut,
+      child: AnimatedOpacity(
+        duration: const Duration(milliseconds: 350),
+        opacity: isVisible ? 1 : 0,
+        child: _buildAction(context, icon, tooltip, onTap),
       ),
     );
   }

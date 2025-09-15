@@ -21,6 +21,8 @@ dependencies:
     path: ../../
 
   cloud_firestore: ^5.0.0
+  geolocator: ^14.0.2
+  google_maps_flutter: ^2.13.1
 
 flutter:
   uses-material-design: true

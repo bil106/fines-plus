@@ -1,3 +1,4 @@
+import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:flutter/material.dart';
 
@@ -35,9 +36,9 @@ class FuelAmountCard extends StatelessWidget {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("Сума:", style: textTheme.bodySmall?.copyWith(color: Colors.black87)),
+                    Text(S.of(context).sum, style: textTheme.bodySmall?.copyWith(color: Colors.black87)),
                     Text(
-                      "$total UAH",
+                      "$total ${S.of(context).grn}",
                       style: textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold, color: AppColors.blue700),
                     ),
                   ],

@@ -56,7 +56,7 @@ class _FuelUpScreenState extends State<FuelUpScreen> {
         _bestStation = bestStation;
       });
     } catch (e) {
-      if (kDebugMode) print("❌ Помилка отримання позиції: $e");
+      if (kDebugMode) print("❌ Error getting position: $e");
     }
   }
 
@@ -71,7 +71,7 @@ class _FuelUpScreenState extends State<FuelUpScreen> {
         appBar: AppBar(
           backgroundColor: AppColors.grey50,
           elevation: 0,
-          leading: BackButton(color: AppColors.blue700, onPressed: widget.onBack ?? () {}),
+          leading: BackButton(color: AppColors.blue700, onPressed: widget.onBack ),
           actions: [
             IconButton(
               icon: const Icon(Icons.check, color: AppColors.blue700),

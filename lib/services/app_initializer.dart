@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:app_links/app_links.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:core_cubit/cubit/fuel_station/fuel_station_cubit.dart';
+import 'package:core_cubit/cubit/maintenance/maintenance_cubit.dart';
 import 'package:core_cubit/cubit/purchase/purchase_cubit.dart';
 import 'package:core_cubit/cubit/referral/referral_cubit.dart';
 import 'package:core_cubit/cubit/registration/registration_cubit.dart';
@@ -27,10 +28,11 @@ import '../config/app_config.dart';
 
 class AppInitializer {
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-late final ReferralCubit referralCubit;
-late final PurchaseCubit purchaseCubit;
-late final RegistrationCubit registrationCubit;
-late final FuelStationCubit fuelStationCubit;
+  late final ReferralCubit referralCubit;
+  late final PurchaseCubit purchaseCubit;
+  late final RegistrationCubit registrationCubit;
+  late final FuelStationCubit fuelStationCubit;
+  late final MaintenanceCubit maintenanceCubit;
   Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
     await Firebase.initializeApp();
     debugPrint("🔔 Background message: ${message.messageId}");
@@ -39,7 +41,6 @@ late final FuelStationCubit fuelStationCubit;
   Future<AppInitResult> init() async {
     WidgetsFlutterBinding.ensureInitialized();
 
- 
     final finesServer = FinesServer();
     await finesServer.start();
 
@@ -127,6 +128,7 @@ late final FuelStationCubit fuelStationCubit;
 
     referralCubit = ReferralCubit(appLinks, prefs);
     purchaseCubit = PurchaseCubit(PurchaseService());
+    maintenanceCubit = MaintenanceCubit();
     fuelStationCubit = FuelStationCubit();
     final registrationCubit = RegistrationCubit(
       registerUser: RegisterUserUseCase(auth: FirebaseAuth.instance, firestore: FirebaseFirestore.instance),
@@ -135,10 +137,7 @@ late final FuelStationCubit fuelStationCubit;
     );
 
     await referralCubit.init();
-    final carInfoRepository = CarInfoRepository(
-      CarInfoLocalDataSource(sharedPrefsManager),
-      CarInfoRemoteDataSource()
-    );
+    final carInfoRepository = CarInfoRepository(CarInfoLocalDataSource(sharedPrefsManager), CarInfoRemoteDataSource());
 
     final reminderRepository = ReminderRepository(
       localDataSource: ReminderLocalDataSourceImpl(sharedPrefsManager),
@@ -148,7 +147,7 @@ late final FuelStationCubit fuelStationCubit;
     final pushHelper = PushHelper(flutterLocalNotificationsPlugin);
 
     final historyRepository = HistoryRepository(FirebaseFirestore.instance);
-     return AppInitResult(
+    return AppInitResult(
       config: config,
       carInfoRepository: carInfoRepository,
       reminderRepository: reminderRepository,
@@ -158,10 +157,10 @@ late final FuelStationCubit fuelStationCubit;
       referralCubit: referralCubit,
       purchaseCubit: purchaseCubit,
       registrationCubit: registrationCubit,
-      fuelStationCubit: fuelStationCubit 
+      fuelStationCubit: fuelStationCubit,
+      maintenanceCubit: maintenanceCubit,
     );
   }
-
 }
 
 extension ReminderScheduling on AppInitializer {
@@ -209,6 +208,7 @@ class AppInitResult {
   final PurchaseCubit purchaseCubit;
   final RegistrationCubit registrationCubit;
   final FuelStationCubit fuelStationCubit;
+  final MaintenanceCubit maintenanceCubit;
 
   AppInitResult({
     required this.config,
@@ -217,11 +217,10 @@ class AppInitResult {
     required this.flutterLocalNotificationsPlugin,
     required this.pushHelper,
     required this.historyRepository,
-    required this.referralCubit, 
-    required this.purchaseCubit, 
-    required this.registrationCubit, 
-    required this.fuelStationCubit, 
-
+    required this.referralCubit,
+    required this.purchaseCubit,
+    required this.registrationCubit,
+    required this.fuelStationCubit,
+    required this.maintenanceCubit,
   });
 }
-
