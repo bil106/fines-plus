@@ -8,9 +8,11 @@ import 'package:core_cubit/cubit/maintenance/maintenance_cubit.dart';
 import 'package:core_cubit/cubit/purchase/purchase_cubit.dart';
 import 'package:core_cubit/cubit/referral/referral_cubit.dart';
 import 'package:core_cubit/cubit/registration/registration_cubit.dart';
+import 'package:core_cubit/cubit/schedule/schedule_cubit.dart';
 import 'package:core_data/core_data.dart';
 import 'package:core_repository/car_info_repository.dart';
 import 'package:core_repository/history_repository.dart';
+import 'package:core_repository/maintenance_repository.dart';
 import 'package:core_repository/reminder_repository.dart';
 import 'package:core_services/services/purchase_service.dart';
 import 'package:fines_plus/backend/fines_server.dart';
@@ -20,6 +22,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:http/http.dart' as context;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
@@ -33,6 +36,7 @@ class AppInitializer {
   late final RegistrationCubit registrationCubit;
   late final FuelStationCubit fuelStationCubit;
   late final MaintenanceCubit maintenanceCubit;
+  late final ScheduleCubit scheduleCubit;
   Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
     await Firebase.initializeApp();
     debugPrint("🔔 Background message: ${message.messageId}");
@@ -130,6 +134,10 @@ class AppInitializer {
     purchaseCubit = PurchaseCubit(PurchaseService());
     maintenanceCubit = MaintenanceCubit();
     fuelStationCubit = FuelStationCubit();
+    final maintenanceRepository = SharedPrefsMaintenanceRepository(prefs);
+
+    scheduleCubit = ScheduleCubit(maintenanceRepository);
+
     final registrationCubit = RegistrationCubit(
       registerUser: RegisterUserUseCase(auth: FirebaseAuth.instance, firestore: FirebaseFirestore.instance),
       referralCubit: referralCubit,
@@ -159,6 +167,7 @@ class AppInitializer {
       registrationCubit: registrationCubit,
       fuelStationCubit: fuelStationCubit,
       maintenanceCubit: maintenanceCubit,
+      scheduleCubit: scheduleCubit,
     );
   }
 }
@@ -209,6 +218,7 @@ class AppInitResult {
   final RegistrationCubit registrationCubit;
   final FuelStationCubit fuelStationCubit;
   final MaintenanceCubit maintenanceCubit;
+  final ScheduleCubit scheduleCubit;
 
   AppInitResult({
     required this.config,
@@ -222,5 +232,6 @@ class AppInitResult {
     required this.registrationCubit,
     required this.fuelStationCubit,
     required this.maintenanceCubit,
+    required this.scheduleCubit,
   });
 }

@@ -6,6 +6,7 @@ import 'package:core_cubit/cubit/analytics/analytics_cubit.dart';
 import 'package:core_data/core_data.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:core_repository/analytics_repository.dart';
+import 'package:core_repository/maintenance_repository.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
@@ -159,7 +160,7 @@ class _AnalyticsScreenViewState extends State<_AnalyticsScreenView> {
                   children: [
                     const StatisticsScreen(),
                     HistoryTab(events: events),
-                    const ScheduleTab(),
+                    ScheduleTab(repository: context.read<IMaintenanceRepository>()),
                   ],
                 ),
               ),

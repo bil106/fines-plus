@@ -10,8 +10,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 
-class ScheduleTab extends StatelessWidget {
-  const ScheduleTab({super.key});
+class ScheduleTab extends StatefulWidget {
+  final IMaintenanceRepository repository;
+
+  const ScheduleTab({super.key, required this.repository});
+
+  @override
+  State<ScheduleTab> createState() => _ScheduleTabState();
+}
+
+class _ScheduleTabState extends State<ScheduleTab> {
+  late final ScheduleCubit scheduleCubit;
+
+  @override
+  void initState() {
+    super.initState();
+    scheduleCubit = ScheduleCubit(widget.repository)..loadTasks();
+  }
 
   @override
   Widget build(BuildContext context) {

@@ -5,7 +5,9 @@ import 'package:core_cubit/cubit/maintenance/maintenance_cubit.dart';
 import 'package:core_cubit/cubit/purchase/purchase_cubit.dart';
 import 'package:core_cubit/cubit/referral/referral_cubit.dart';
 import 'package:core_cubit/cubit/registration/registration_cubit.dart';
+import 'package:core_cubit/cubit/schedule/schedule_cubit.dart';
 import 'package:core_repository/injector.dart';
+import 'package:core_repository/maintenance_repository.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -16,6 +18,7 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 import 'package:fines_plus/my_app.dart';
 import 'package:fines_plus/services/app_initializer.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
@@ -39,6 +42,7 @@ void main() {
 
       appInitializer = AppInitializer();
       final result = await appInitializer.init();
+      final repository = SharedPrefsMaintenanceRepository(await SharedPreferences.getInstance());
       setupLocator();
 
       runApp(
@@ -48,6 +52,7 @@ void main() {
             RepositoryProvider.value(value: result.reminderRepository),
             RepositoryProvider.value(value: result.pushHelper),
             RepositoryProvider.value(value: result.historyRepository),
+           RepositoryProvider<IMaintenanceRepository>.value(value: repository),
           ],
           child: MultiBlocProvider(
             providers: [
@@ -56,6 +61,7 @@ void main() {
               BlocProvider<RegistrationCubit>.value(value: result.registrationCubit),
               BlocProvider<FuelStationCubit>.value(value: result.fuelStationCubit),
               BlocProvider<MaintenanceCubit>.value(value: result.maintenanceCubit),
+              BlocProvider<ScheduleCubit>.value(value: result.scheduleCubit),
             ],
             child: MyApp(
               config: result.config,
