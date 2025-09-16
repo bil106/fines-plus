@@ -73,6 +73,7 @@ dependencies:
   webview_flutter: ^4.13.0
   google_sign_in: 6.1.5
   url_launcher: ^6.3.2
+
   
 
 
@@ -95,6 +96,7 @@ flutter:
   assets:
     - assets/config/autolux.json
     - assets/config/fastcar.json
-    - assets\icons\map.png
+    - assets/icons/map.png
+    - assets/icons/google_logo.png
     - assets/fonts/Fines/Roboto-Regular.ttf
   

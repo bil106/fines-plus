@@ -45,10 +45,16 @@ class MessageLookup extends MessageLookupByLibrary {
     "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
     "car_history": MessageLookupByLibrary.simpleMessage("Car history"),
     "car_number": MessageLookupByLibrary.simpleMessage("Car number"),
+    "check_filter": MessageLookupByLibrary.simpleMessage(
+      "The filter needs to be replaced",
+    ),
     "check_fine_title": MessageLookupByLibrary.simpleMessage(
       "Checking the fine",
     ),
     "check_fines": MessageLookupByLibrary.simpleMessage("Check fines"),
+    "check_tires": MessageLookupByLibrary.simpleMessage(
+      "Time to check the tires",
+    ),
     "checking_fines": MessageLookupByLibrary.simpleMessage("Checking fines"),
     "choose_from_gallery": MessageLookupByLibrary.simpleMessage(
       "Choose from gallery",
@@ -92,6 +98,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "fill_date": MessageLookupByLibrary.simpleMessage(
       "Fill in date, mileage and fuel amount",
     ),
+    "filter": MessageLookupByLibrary.simpleMessage("filter"),
     "fines": MessageLookupByLibrary.simpleMessage("Fines"),
     "fines_length": MessageLookupByLibrary.simpleMessage("Fines:"),
     "fuel": MessageLookupByLibrary.simpleMessage("Fuel"),
@@ -104,11 +111,17 @@ class MessageLookup extends MessageLookupByLibrary {
     "gas_station_nearby": MessageLookupByLibrary.simpleMessage(
       "Gas stations nearby",
     ),
+    "google_login_error": MessageLookupByLibrary.simpleMessage(
+      "Google login error",
+    ),
     "grn": MessageLookupByLibrary.simpleMessage("grn"),
     "hint_auto_num": MessageLookupByLibrary.simpleMessage("АН0000НА"),
     "hint_tech_data_num": MessageLookupByLibrary.simpleMessage("ХЕE128436"),
     "history": MessageLookupByLibrary.simpleMessage("History"),
     "history_empty": MessageLookupByLibrary.simpleMessage("History is empty"),
+    "history_unavailable": MessageLookupByLibrary.simpleMessage(
+      "History is temporarily unavailable: index is being built. Please try again in a few minutes.",
+    ),
     "item_removed": MessageLookupByLibrary.simpleMessage("Item removed"),
     "km": MessageLookupByLibrary.simpleMessage("km"),
     "logo": MessageLookupByLibrary.simpleMessage("LOGO"),
@@ -131,11 +144,21 @@ class MessageLookup extends MessageLookupByLibrary {
     "no_name": MessageLookupByLibrary.simpleMessage("No name"),
     "no_reminders": MessageLookupByLibrary.simpleMessage("No reminders"),
     "no_tasks": MessageLookupByLibrary.simpleMessage("No tasks"),
+    "not_forget": MessageLookupByLibrary.simpleMessage(
+      "Don\'t forget to change the oil",
+    ),
+    "not_forget_task": MessageLookupByLibrary.simpleMessage(
+      "Don\'t forget to complete the task",
+    ),
+    "notifications_resource": MessageLookupByLibrary.simpleMessage(
+      "Notifications about reaching 90% resource",
+    ),
     "odometer_beginning": MessageLookupByLibrary.simpleMessage(
       "Odometer at the beginning of the month",
     ),
     "odometer_today": MessageLookupByLibrary.simpleMessage("Odometer today"),
     "of_road_accidents": MessageLookupByLibrary.simpleMessage("Road accidents"),
+    "oil": MessageLookupByLibrary.simpleMessage("oil"),
     "open_statistics": MessageLookupByLibrary.simpleMessage("Open statistics"),
     "other": MessageLookupByLibrary.simpleMessage("Other"),
     "password": MessageLookupByLibrary.simpleMessage("Password"),
@@ -152,6 +175,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "push_notifications": MessageLookupByLibrary.simpleMessage(
       "Push notifications",
     ),
+    "reached_usage": MessageLookupByLibrary.simpleMessage("reached 90% usage"),
     "reg_number": MessageLookupByLibrary.simpleMessage(
       "Technical passport number",
     ),
@@ -160,6 +184,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "reminder": MessageLookupByLibrary.simpleMessage("Reminder"),
     "repair": MessageLookupByLibrary.simpleMessage("Repair"),
     "resource": MessageLookupByLibrary.simpleMessage("Resource:"),
+    "resource_out": MessageLookupByLibrary.simpleMessage("Resource out"),
     "save": MessageLookupByLibrary.simpleMessage("Save"),
     "schedule": MessageLookupByLibrary.simpleMessage("Schedule"),
     "search": MessageLookupByLibrary.simpleMessage("Search"),
@@ -653,6 +678,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Sign in with Google",
     ),
     "statistics": MessageLookupByLibrary.simpleMessage("Statistics"),
+    "successful_registration": MessageLookupByLibrary.simpleMessage(
+      "Successful registration",
+    ),
     "successfully_registration": MessageLookupByLibrary.simpleMessage(
       "Registration successful",
     ),
@@ -668,6 +696,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "technical_data": MessageLookupByLibrary.simpleMessage(
       "Technical data sheet:",
     ),
+    "tires": MessageLookupByLibrary.simpleMessage("tire"),
     "title": MessageLookupByLibrary.simpleMessage("Title"),
     "to_be_performed": MessageLookupByLibrary.simpleMessage("To be performed:"),
     "total_amount": MessageLookupByLibrary.simpleMessage("Total amount:"),

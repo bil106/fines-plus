@@ -278,5 +278,18 @@
    "service_diagnostyka_remont_palivnykh_forsunok": "Діагностика та ремонт паливних форсунок",
    "service_diagnostyka_remont_tnvd": "Діагностика та ремонт ТНВД",
    "service_zamina_svichok_rozzharjuvannya": "Заміна свічок розжарювання",
-   "service_promyvka_palivnoyi_systemy_dizel": "Промивка паливної системи дизельних авто"
+   "service_promyvka_palivnoyi_systemy_dizel": "Промивка паливної системи дизельних авто",
+   "resource_out": "Ресурс на исходе",
+   "reached_usage": "достиг 90% использования",
+   "not_forget": "Не забудь заменить масло",
+   "check_tires": "Пора проверить шины",
+   "check_filter": "Нужно заменить фильтр",
+   "not_forget_task": "Не забудь выполнить задачу",
+   "oil": "масло",
+   "tires": "шина",
+   "filter": "фильтр",
+   "notifications_resource": "Уведомления о достижении 90% ресурса",
+   "successful_registration": "Успешная регистрация",
+   "google_login_error": "Ошибка входа через Google",
+   "history_unavailable": "Історія тимчасово недоступна: індекс будується. Спробуйте за кілька хвилин."
 }

@@ -6,14 +6,17 @@ import 'package:core_cubit/cubit/purchase/purchase_cubit.dart';
 import 'package:core_cubit/cubit/referral/referral_cubit.dart';
 import 'package:core_cubit/cubit/registration/registration_cubit.dart';
 import 'package:core_cubit/cubit/schedule/schedule_cubit.dart';
+import 'package:core_data/core_data.dart';
 import 'package:core_repository/injector.dart';
 import 'package:core_repository/maintenance_repository.dart';
+import 'package:core_repository/schedule_repository.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 import 'package:fines_plus/my_app.dart';
@@ -46,29 +49,37 @@ void main() {
       setupLocator();
 
       runApp(
-        MultiRepositoryProvider(
-          providers: [
-            RepositoryProvider.value(value: result.carInfoRepository),
-            RepositoryProvider.value(value: result.reminderRepository),
-            RepositoryProvider.value(value: result.pushHelper),
-            RepositoryProvider.value(value: result.historyRepository),
-           RepositoryProvider<IMaintenanceRepository>.value(value: repository),
-          ],
-          child: MultiBlocProvider(
-            providers: [
-              BlocProvider<ReferralCubit>.value(value: result.referralCubit),
-              BlocProvider<PurchaseCubit>.value(value: result.purchaseCubit),
-              BlocProvider<RegistrationCubit>.value(value: result.registrationCubit),
-              BlocProvider<FuelStationCubit>.value(value: result.fuelStationCubit),
-              BlocProvider<MaintenanceCubit>.value(value: result.maintenanceCubit),
-              BlocProvider<ScheduleCubit>.value(value: result.scheduleCubit),
-            ],
-            child: MyApp(
-              config: result.config,
-              flutterLocalNotificationsPlugin: result.flutterLocalNotificationsPlugin,
-            ),
-          ),
-        ),
+       MultiRepositoryProvider(
+  providers: [
+    RepositoryProvider.value(value: result.carInfoRepository),
+    RepositoryProvider.value(value: result.reminderRepository),
+    RepositoryProvider.value(value: result.pushHelper),
+    RepositoryProvider.value(value: result.historyRepository),
+    RepositoryProvider<IMaintenanceRepository>.value(value: repository),
+    RepositoryProvider<ScheduleRepository>(
+      create: (_) => ScheduleRepository(),
+    ),
+  ],
+  child: MultiBlocProvider(
+    providers: [
+      BlocProvider<ReferralCubit>.value(value: result.referralCubit),
+      BlocProvider<PurchaseCubit>.value(value: result.purchaseCubit),
+      BlocProvider<RegistrationCubit>.value(value: result.registrationCubit),
+      BlocProvider<FuelStationCubit>.value(value: result.fuelStationCubit),
+      BlocProvider<MaintenanceCubit>.value(value: result.maintenanceCubit),
+      BlocProvider<ScheduleCubit>(
+        create: (context) => ScheduleCubit(
+          repository: context.read<ScheduleRepository>(), maintenanceCubit: result.maintenanceCubit, pushHelper: PushHelper(FlutterLocalNotificationsPlugin()),
+        )..loadTasks(),
+      ),
+    ],
+    child: MyApp(
+      config: result.config,
+      flutterLocalNotificationsPlugin: result.flutterLocalNotificationsPlugin,
+    ),
+  ),
+)
+,
       );
     },
     (error, stack) {

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:core_cubit/cubit/history/history_state.dart';
+import 'package:core_localization/generated/l10n.dart';
 import 'package:core_repository/history_repository.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -31,7 +32,7 @@ class HistoryCubit extends Cubit<HistoryState> {
       
         if (e is FirebaseException && e.code == 'failed-precondition') {
           emit(HistoryError(
-            'Історія тимчасово недоступна: індекс будується. Спробуйте за кілька хвилин.',
+             S.current.history_unavailable,
           ));
         } else {
           emit(HistoryError(e.toString()));
@@ -59,7 +60,7 @@ class HistoryCubit extends Cubit<HistoryState> {
 
       if (e is FirebaseException && e.code == 'failed-precondition') {
         emit(HistoryError(
-          'Історія тимчасово недоступна: індекс будується. Спробуйте за кілька хвилин.',
+          S.current.history_unavailable,
         ));
       } else {
         emit(HistoryError(e.toString()));

@@ -278,5 +278,19 @@
 "service_diagnostyka_remont_palivnykh_forsunok": "Diagnostics and repair of fuel injectors",
 "service_diagnostyka_remont_tnvd": "Diagnostics and repair of fuel injection pumps",
 "service_zamina_svichok_rozzharjuvannya": "Replacing glow plugs",
-"service_promyvka_palivnoyi_systemy_dizel": "Fuel system flushing of diesel cars"
+"service_promyvka_palivnoyi_systemy_dizel": "Fuel system flushing of diesel cars",
+"resource_out": "Resource out",
+"reached_usage": "reached 90% usage",
+"not_forget": "Don't forget to change the oil",
+"check_tires": "Time to check the tires",
+"check_filter": "The filter needs to be replaced",
+"not_forget_task": "Don't forget to complete the task",
+"oil": "oil",
+"tires": "tire",
+"filter": "filter",
+"notifications_resource": "Notifications about reaching 90% resource",
+"successful_registration": "Successful registration",
+"google_login_error": "Google login error",
+"history_unavailable": "History is temporarily unavailable: index is being built. Please try again in a few minutes."
+
 }

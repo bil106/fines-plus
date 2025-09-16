@@ -4,7 +4,6 @@ import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:fines_plus/services/app_initializer.dart';
-
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -31,7 +30,7 @@ class _ReminderDialogState extends State<ReminderDialog> {
     super.initState();
     titleController = TextEditingController(text: widget.reminder?.title ?? '');
     descriptionController = TextEditingController(text: widget.reminder?.description ?? '');
-    selectedDateTime = widget.reminder?.dateTime ?? DateTime.now();
+    selectedDateTime = DateTime.now();
   }
 
   @override

@@ -10,6 +10,7 @@ import 'package:fines_plus/router/home_screen_wrapper.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 @RoutePage()
 class RegistrationScreen extends StatefulWidget {
@@ -40,6 +41,31 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     passwordController.addListener(() {
       cubit.saveCredentials(emailController.text, passwordController.text);
     });
+  }
+Future<void> _signInWithGoogle(BuildContext context) async {
+    try {
+      final googleUser = await GoogleSignIn().signIn();
+      if (googleUser == null) return; 
+
+      final googleAuth = await googleUser.authentication;
+
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      final userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
+
+      final user = userCredential.user;
+      if (user != null) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('${S.current.successful_registration}: ${user.email}')));
+
+        final homeState = context.findAncestorStateOfType<HomeScreenWrapperState>();
+        homeState?.openPage(HomePage.addCar);
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${S.current.google_login_error}: $e")));
+    }
   }
 
   @override
@@ -113,6 +139,24 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         ),
                       ),
                 AppSpacers.verticalMediumLarge,
+                Padding(
+                  padding: const EdgeInsets.only(left: 100),
+                  child: ElevatedButton.icon(
+                    icon: Image.asset(
+                      'assets/icons/google_logo.png', 
+                      height: 20,
+                    ),
+                    label: Text(S.of(context).sign_in_google),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: Colors.black87,
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                    onPressed: () => _signInWithGoogle(context),
+                  ),
+                ),
+
                 Padding(
                   padding: const EdgeInsets.only(left: 100),
                   child: ElevatedButton(

@@ -2493,6 +2493,121 @@ class S {
       args: [],
     );
   }
+
+  /// `Resource out`
+  String get resource_out {
+    return Intl.message(
+      'Resource out',
+      name: 'resource_out',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `reached 90% usage`
+  String get reached_usage {
+    return Intl.message(
+      'reached 90% usage',
+      name: 'reached_usage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Don't forget to change the oil`
+  String get not_forget {
+    return Intl.message(
+      'Don\'t forget to change the oil',
+      name: 'not_forget',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Time to check the tires`
+  String get check_tires {
+    return Intl.message(
+      'Time to check the tires',
+      name: 'check_tires',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The filter needs to be replaced`
+  String get check_filter {
+    return Intl.message(
+      'The filter needs to be replaced',
+      name: 'check_filter',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Don't forget to complete the task`
+  String get not_forget_task {
+    return Intl.message(
+      'Don\'t forget to complete the task',
+      name: 'not_forget_task',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `oil`
+  String get oil {
+    return Intl.message('oil', name: 'oil', desc: '', args: []);
+  }
+
+  /// `tire`
+  String get tires {
+    return Intl.message('tire', name: 'tires', desc: '', args: []);
+  }
+
+  /// `filter`
+  String get filter {
+    return Intl.message('filter', name: 'filter', desc: '', args: []);
+  }
+
+  /// `Notifications about reaching 90% resource`
+  String get notifications_resource {
+    return Intl.message(
+      'Notifications about reaching 90% resource',
+      name: 'notifications_resource',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Successful registration`
+  String get successful_registration {
+    return Intl.message(
+      'Successful registration',
+      name: 'successful_registration',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Google login error`
+  String get google_login_error {
+    return Intl.message(
+      'Google login error',
+      name: 'google_login_error',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `History is temporarily unavailable: index is being built. Please try again in a few minutes.`
+  String get history_unavailable {
+    return Intl.message(
+      'History is temporarily unavailable: index is being built. Please try again in a few minutes.',
+      name: 'history_unavailable',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

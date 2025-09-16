@@ -26,3 +26,5 @@ dependencies:
     path: ../core_repository
   core_services:
     path: ../core_services
+  core_localization:
+    path: ../core_localization

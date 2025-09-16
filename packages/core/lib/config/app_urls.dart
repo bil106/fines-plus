@@ -5,6 +5,8 @@ class AppUrls {
   static const String auth = '$base/auth/';
   static String editExp(int expId) => '$base/editexp/$expId';
   static const String exps = '$base/exps/';
+  static String addExp(int expId) => '$base/addexp/$expId';
+
 
   // Google Places API
   static const String googlePlacesBase = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json';

@@ -12,8 +12,8 @@ import 'package:core_cubit/cubit/schedule/schedule_cubit.dart';
 import 'package:core_data/core_data.dart';
 import 'package:core_repository/car_info_repository.dart';
 import 'package:core_repository/history_repository.dart';
-import 'package:core_repository/maintenance_repository.dart';
 import 'package:core_repository/reminder_repository.dart';
+import 'package:core_repository/schedule_repository.dart';
 import 'package:core_services/services/purchase_service.dart';
 import 'package:fines_plus/backend/fines_server.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -22,7 +22,6 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:http/http.dart' as context;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
@@ -134,9 +133,10 @@ class AppInitializer {
     purchaseCubit = PurchaseCubit(PurchaseService());
     maintenanceCubit = MaintenanceCubit();
     fuelStationCubit = FuelStationCubit();
-    final maintenanceRepository = SharedPrefsMaintenanceRepository(prefs);
+    
 
-    scheduleCubit = ScheduleCubit(maintenanceRepository);
+    scheduleCubit = ScheduleCubit(repository: ScheduleRepository(), maintenanceCubit: maintenanceCubit, pushHelper: PushHelper(FlutterLocalNotificationsPlugin()),
+    );
 
     final registrationCubit = RegistrationCubit(
       registerUser: RegisterUserUseCase(auth: FirebaseAuth.instance, firestore: FirebaseFirestore.instance),

@@ -17,8 +17,8 @@ class ReminderCubit extends Cubit<ReminderState> {
     load();
   }
 
-Future<void> load() async {
-    if (isClosed) return; 
+  Future<void> load() async {
+    if (isClosed) return;
     emit(state.copyWith(isLoading: true, errorMessage: null));
     try {
       final reminders = await repository.getAll(carNumber);
@@ -80,5 +80,18 @@ Future<void> load() async {
         errorMessage: 'Delete error: $e',
       ));
     }
+  }
+    Future<void> addReminderFromTask(MaintenanceTask task) async {
+    if (task.intervalTime == null) return;
+
+    final reminder = ReminderModel(
+      title: task.title,
+      dateTime: task.lastServiceDate != null
+          ? DateTime.parse(task.lastServiceDate!) 
+          : DateTime.now(), id: '', description: '',
+     
+    );
+
+    await addReminder(reminder); 
   }
 }

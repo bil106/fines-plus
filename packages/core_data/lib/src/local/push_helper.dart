@@ -1,6 +1,7 @@
+import 'package:core_localization/generated/l10n.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:timezone/timezone.dart' as tz;
+
 
 class PushHelper {
   final FlutterLocalNotificationsPlugin _notificationsPlugin;
@@ -15,14 +16,15 @@ class PushHelper {
     String? payload,
   }) async {
     final now = DateTime.now();
-    if (dateTime.isBefore(now)) {
+    final delay = dateTime.difference(now);
+
+    if (delay.isNegative) {
       debugPrint('⏱ Notification time is in the past, skipping.');
       return;
     }
 
-    
-    final scheduledDate = tz.TZDateTime.from(dateTime, tz.local);
-const String soundFileName = 'notify';
+    const String soundFileName = 'notify';
+
     final androidDetails = AndroidNotificationDetails(
       'reminders_channel',
       'Reminder',
@@ -31,7 +33,6 @@ const String soundFileName = 'notify';
       priority: Priority.high,
       playSound: true,
       sound: RawResourceAndroidNotificationSound(soundFileName),
-     
     );
 
     final iosDetails = DarwinNotificationDetails(
@@ -45,18 +46,56 @@ const String soundFileName = 'notify';
       iOS: iosDetails,
     );
 
-    await _notificationsPlugin.zonedSchedule(
-      id,
-      title,
-      body,
-      scheduledDate,
-      notificationDetails,
-      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-      payload: payload,
-    );
+  
+    Future.delayed(delay, () async {
+      await _notificationsPlugin.show(
+        id,
+        title,
+        body,
+        notificationDetails,
+        payload: payload,
+      );
+      debugPrint('🔔 Notification "$title" shown at ${DateTime.now()}');
+    });
 
-    debugPrint('🔔 Notification "$title" scheduled at $scheduledDate');
+    debugPrint('🔔 Notification "$title" scheduled in ${delay.inSeconds} seconds');
   }
 }
 
+extension PushHelperResource on PushHelper {
+  Future<void> showResourceNotification({
+    required int id,
+    required String title,
+    required String body,
+  }) async {
+    final androidDetails = AndroidNotificationDetails(
+      'resource_channel',
+      'Resource usage',
+      channelDescription: S.current.notifications_resource,
+      importance: Importance.max,
+      priority: Priority.high,
+      playSound: true,
+      sound: const RawResourceAndroidNotificationSound('notify'),
+    );
 
+    final iosDetails = DarwinNotificationDetails(
+      presentAlert: true,
+      presentBadge: true,
+      presentSound: true,
+    );
+
+    final notificationDetails = NotificationDetails(
+      android: androidDetails,
+      iOS: iosDetails,
+    );
+
+    await _notificationsPlugin.show(
+      id,
+      title,
+      body,
+      notificationDetails,
+    );
+
+    debugPrint('⚠️ Resource notification "$title" sent immediately');
+  }
+}

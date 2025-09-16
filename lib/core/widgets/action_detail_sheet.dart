@@ -107,7 +107,7 @@ class _ActionDetailSheetState extends State<ActionDetailSheet> {
                 titleController.text = val;
               },
               fieldViewBuilder: (context, controller, focusNode, onFieldSubmitted) {
-                titleController = controller;
+                titleController = titleController;
                 return TextField(
                   controller: controller,
                   focusNode: focusNode,
@@ -183,7 +183,7 @@ class _ActionDetailSheetState extends State<ActionDetailSheet> {
                     "comment": commentController.text,
                   });
                 },
-                child:  Text(S.of(context).save),
+                child: Text(S.of(context).save),
               ),
             ),
           ],

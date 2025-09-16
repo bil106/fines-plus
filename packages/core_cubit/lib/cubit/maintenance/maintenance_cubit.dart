@@ -1,10 +1,8 @@
-
 import 'package:core_data/core_data.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'maintenance_state.dart';
-
 
 class MaintenanceCubit extends Cubit<MaintenanceState> {
   MaintenanceCubit() : super(const MaintenanceState()) {
@@ -63,6 +61,4 @@ class MaintenanceCubit extends Cubit<MaintenanceState> {
   void closeMenu() {
     emit(state.copyWith(isMenuOpen: false));
   }
-
-  
 }
