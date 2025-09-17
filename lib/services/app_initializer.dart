@@ -22,6 +22,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
@@ -97,26 +98,26 @@ class AppInitializer {
       debugPrint("🔑 FCM Registration Token: $token");
     }
 
-    final firestore = FirebaseFirestore.instance;
-    final remindersSnapshot = await firestore.collection('reminders').get();
+    // final firestore = FirebaseFirestore.instance;
+    // final remindersSnapshot = await firestore.collection('reminders').get();
 
-    for (var carDoc in remindersSnapshot.docs) {
-      final itemsSnapshot = await carDoc.reference.collection('items').get();
-      for (var itemDoc in itemsSnapshot.docs) {
-        final data = itemDoc.data();
-        final dateValue = data['dateTime'];
-        if (dateValue is Timestamp) {
-          final reminder = ReminderModel(
-            id: itemDoc.id,
-            title: data['title'] ?? '',
-            description: data['description'] ?? '',
-            dateTime: dateValue.toDate(),
-            isCompleted: data['isCompleted'] ?? false,
-          );
-          await scheduleReminder(reminder);
-        }
-      }
-    }
+    // for (var carDoc in remindersSnapshot.docs) {
+    //   final itemsSnapshot = await carDoc.reference.collection('items').get();
+    //   for (var itemDoc in itemsSnapshot.docs) {
+    //     final data = itemDoc.data();
+    //     final dateValue = data['dateTime'];
+    //     if (dateValue is Timestamp) {
+    //       final reminder = ReminderModel(
+    //         id: itemDoc.id,
+    //         title: data['title'] ?? '',
+    //         description: data['description'] ?? '',
+    //         dateTime: dateValue.toDate(),
+    //         isCompleted: data['isCompleted'] ?? false,
+    //       );
+    //       await scheduleReminder(reminder);
+    //     }
+    //   }
+    // }
 
     debugPrint('✅ All reminders scheduled');
 
@@ -126,6 +127,7 @@ class AppInitializer {
 
     // SharedPrefs
     final prefs = await SharedPreferences.getInstance();
+    final storage =  FlutterSecureStorage();
     final sharedPrefsManager = SharedPrefsManager(prefs);
     final appLinks = AppLinks();
 
@@ -141,7 +143,7 @@ class AppInitializer {
     final registrationCubit = RegistrationCubit(
       registerUser: RegisterUserUseCase(auth: FirebaseAuth.instance, firestore: FirebaseFirestore.instance),
       referralCubit: referralCubit,
-      prefs: prefs,
+      storage: storage,
     );
 
     await referralCubit.init();

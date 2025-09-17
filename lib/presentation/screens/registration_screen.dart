@@ -2,6 +2,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:core_cubit/cubit/purchase/purchase_cubit.dart';
 import 'package:core_cubit/cubit/registration/registration_cubit.dart';
+import 'package:core_cubit/cubit/registration/registration_state.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_spacers.dart';
@@ -22,30 +23,23 @@ class RegistrationScreen extends StatefulWidget {
 }
 
 class _RegistrationScreenState extends State<RegistrationScreen> {
-  late final TextEditingController emailController;
-  late final TextEditingController passwordController;
+  late TextEditingController emailController;
+  late TextEditingController passwordController;
+  bool isLoadingCredentials = true; 
 
-  @override
+ @override
   void initState() {
     super.initState();
-
-    final cubit = context.read<RegistrationCubit>();
-    final saved = cubit.loadCredentials();
-
-    emailController = TextEditingController(text: saved['email']);
-    passwordController = TextEditingController(text: saved['password']);
-
-    emailController.addListener(() {
-      cubit.saveCredentials(emailController.text, passwordController.text);
-    });
-    passwordController.addListener(() {
-      cubit.saveCredentials(emailController.text, passwordController.text);
-    });
+    emailController = TextEditingController();
+    passwordController = TextEditingController();
+    isLoadingCredentials = false; 
   }
-Future<void> _signInWithGoogle(BuildContext context) async {
+
+
+  Future<void> _signInWithGoogle(BuildContext context) async {
     try {
       final googleUser = await GoogleSignIn().signIn();
-      if (googleUser == null) return; 
+      if (googleUser == null) return;
 
       final googleAuth = await googleUser.authentication;
 
@@ -55,10 +49,12 @@ Future<void> _signInWithGoogle(BuildContext context) async {
       );
 
       final userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
-
       final user = userCredential.user;
+
       if (user != null) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('${S.current.successful_registration}: ${user.email}')));
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('${S.current.successful_registration}: ${user.email}')));
 
         final homeState = context.findAncestorStateOfType<HomeScreenWrapperState>();
         homeState?.openPage(HomePage.addCar);
@@ -80,16 +76,19 @@ Future<void> _signInWithGoogle(BuildContext context) async {
     final purchaseCubit = context.read<PurchaseCubit>();
     final cubit = context.read<RegistrationCubit>();
     final textTheme = Theme.of(context).textTheme;
+
+    if (isLoadingCredentials) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.grey50,
         leading: BackButton(color: AppColors.blue700, onPressed: widget.onBack ?? () {}),
       ),
-
       backgroundColor: AppColors.grey50,
-
-      body: BlocBuilder<RegistrationCubit, bool>(
-        builder: (context, isLoading) {
+      body: BlocBuilder<RegistrationCubit, RegistrationState>(
+        builder: (context, state) {
           return Padding(
             padding: const EdgeInsets.all(20),
             child: Column(
@@ -110,7 +109,8 @@ Future<void> _signInWithGoogle(BuildContext context) async {
                   obscureText: true,
                 ),
                 AppSpacers.verticalXXXLarge,
-                isLoading
+
+                 state.isLoading
                     ? const CircularProgressIndicator()
                     : Padding(
                         padding: const EdgeInsets.only(left: 100),
@@ -129,23 +129,25 @@ Future<void> _signInWithGoogle(BuildContext context) async {
                               ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Error: $e")));
                             }
                           },
-
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.blue700,
                             padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                           ),
-                          child: Text(S.of(context).registration, style: TextStyle(fontSize: 18, color: Colors.white)),
+                          child: Text(
+                            S.of(context).registration,
+                            style: const TextStyle(fontSize: 18, color: Colors.white),
+                          ),
                         ),
                       ),
+
                 AppSpacers.verticalMediumLarge,
+
+                // Google Sign-In button
                 Padding(
                   padding: const EdgeInsets.only(left: 100),
                   child: ElevatedButton.icon(
-                    icon: Image.asset(
-                      'assets/icons/google_logo.png', 
-                      height: 20,
-                    ),
+                    icon: Image.asset('assets/icons/google_logo.png', height: 20),
                     label: Text(S.of(context).sign_in_google),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,
@@ -157,6 +159,7 @@ Future<void> _signInWithGoogle(BuildContext context) async {
                   ),
                 ),
 
+                // Subscription button
                 Padding(
                   padding: const EdgeInsets.only(left: 100),
                   child: ElevatedButton(

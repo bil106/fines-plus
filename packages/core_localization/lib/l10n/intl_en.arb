@@ -291,6 +291,9 @@
 "notifications_resource": "Notifications about reaching 90% resource",
 "successful_registration": "Successful registration",
 "google_login_error": "Google login error",
-"history_unavailable": "History is temporarily unavailable: index is being built. Please try again in a few minutes."
-
+"history_unavailable": "History is temporarily unavailable: index is being built. Please try again in a few minutes.",
+"not_auth": "Not authorized",
+"please_log_in": "Please leave or register to continue.",
+"close": "Close",
+"login": "Login"
 }

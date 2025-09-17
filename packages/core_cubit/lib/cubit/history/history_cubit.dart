@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:core_cubit/cubit/history/history_state.dart';
+import 'package:core_cubit/cubit/history/history_unauthorized.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:core_repository/history_repository.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -17,28 +18,35 @@ class HistoryCubit extends Cubit<HistoryState> {
 
   void loadHistory(String carNumber) {
     _subscription?.cancel();
-    _subscription = repository.getHistory(carNumber).listen(
-      (items) {
-        debugPrint('HistoryCubit: received ${items.length} items');
-        if (items.isEmpty) {
-          emit(HistoryEmpty());
-        } else {
-          emit(HistoryLoaded(items));
-        }
-      },
-      onError: (e, st) {
-        debugPrint('HistoryCubit stream error: $e\n$st');
 
-      
-        if (e is FirebaseException && e.code == 'failed-precondition') {
-          emit(HistoryError(
-             S.current.history_unavailable,
-          ));
-        } else {
-          emit(HistoryError(e.toString()));
-        }
-      },
-    );
+    try {
+      _subscription = repository.getHistory(carNumber).listen(
+        (items) {
+          if (items.isEmpty) {
+            emit(HistoryEmpty());
+          } else {
+            emit(HistoryLoaded(items));
+          }
+        },
+        onError: (e, st) {
+          debugPrint('HistoryCubit stream error: $e\n$st');
+
+          if (e.toString().contains("User is not signed in")) {
+            emit(HistoryUnauthorized());
+          } else if (e is FirebaseException && e.code == 'failed-precondition') {
+            emit(HistoryError(S.current.history_unavailable));
+          } else {
+            emit(HistoryError(e.toString()));
+          }
+        },
+      );
+    } catch (e) {
+      if (e.toString().contains("User is not signed in")) {
+        emit(HistoryUnauthorized());
+      } else {
+        emit(HistoryError(e.toString()));
+      }
+    }
   }
 
   Future<void> addHistory({
@@ -57,11 +65,10 @@ class HistoryCubit extends Cubit<HistoryState> {
       loadHistory(carNumber);
     } catch (e, st) {
       debugPrint('HistoryCubit addHistory error: $e\n$st');
-
-      if (e is FirebaseException && e.code == 'failed-precondition') {
-        emit(HistoryError(
-          S.current.history_unavailable,
-        ));
+      if (e.toString().contains("User is not signed in")) {
+        emit(HistoryUnauthorized());
+      } else if (e is FirebaseException && e.code == 'failed-precondition') {
+        emit(HistoryError(S.current.history_unavailable));
       } else {
         emit(HistoryError(e.toString()));
       }
@@ -74,7 +81,11 @@ class HistoryCubit extends Cubit<HistoryState> {
       emit(HistoryEmpty());
     } catch (e, st) {
       debugPrint('HistoryCubit deleteAll error: $e\n$st');
-      emit(HistoryError(e.toString()));
+      if (e.toString().contains("User is not signed in")) {
+        emit(HistoryUnauthorized());
+      } else {
+        emit(HistoryError(e.toString()));
+      }
     }
   }
 
@@ -94,7 +105,11 @@ class HistoryCubit extends Cubit<HistoryState> {
       }
     } catch (e, st) {
       debugPrint('HistoryCubit deleteSingle error: $e\n$st');
-      emit(HistoryError(e.toString()));
+      if (e.toString().contains("User is not signed in")) {
+        emit(HistoryUnauthorized());
+      } else {
+        emit(HistoryError(e.toString()));
+      }
     }
   }
 

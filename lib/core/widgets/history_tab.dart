@@ -1,6 +1,7 @@
 import 'package:core_data/core_data.dart';
 import 'package:fines_plus/core/widgets/time_line_item.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class HistoryTab extends StatelessWidget {
   final List<EventModel> events;
@@ -50,14 +51,38 @@ class HistoryTab extends StatelessWidget {
     );
   }
 
-  Map<String, List<EventModel>> groupEventsByMonth(List<EventModel> events) {
-    events.sort((a, b) => b.date.compareTo(a.date));
+Map<String, List<EventModel>> groupEventsByMonth(List<EventModel> events) {
+    final inputFormat = DateFormat('dd.MM.yyyy'); 
+    final outputFormat = DateFormat('MMMM yyyy', 'uk'); 
+    final groupedEvents = <String, List<EventModel>>{};
 
-    final Map<String, List<EventModel>> grouped = {};
-    for (var event in events) {
-      final key = event.date; 
-      grouped.putIfAbsent(key, () => []).add(event);
+    for (final event in events) {
+      DateTime? parsedDate;
+
+      try {
+        parsedDate = inputFormat.parse(event.date);
+      } catch (_) {
+        continue; 
+      }
+
+      final key = outputFormat.format(parsedDate);
+
+      groupedEvents.putIfAbsent(key, () => []);
+      groupedEvents[key]!.add(event);
     }
-    return grouped;
+
+   
+    for (final group in groupedEvents.values) {
+      group.sort((a, b) {
+        final dateA = inputFormat.parse(a.date);
+        final dateB = inputFormat.parse(b.date);
+        return dateB.compareTo(dateA);
+      });
+    }
+
+    return groupedEvents;
   }
+
+
+
 }

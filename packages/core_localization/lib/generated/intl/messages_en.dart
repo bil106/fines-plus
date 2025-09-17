@@ -59,6 +59,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "choose_from_gallery": MessageLookupByLibrary.simpleMessage(
       "Choose from gallery",
     ),
+    "close": MessageLookupByLibrary.simpleMessage("Close"),
     "comment": MessageLookupByLibrary.simpleMessage("Comment"),
     "configure_action": MessageLookupByLibrary.simpleMessage(
       "Configure action",
@@ -124,6 +125,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "item_removed": MessageLookupByLibrary.simpleMessage("Item removed"),
     "km": MessageLookupByLibrary.simpleMessage("km"),
+    "login": MessageLookupByLibrary.simpleMessage("Login"),
     "logo": MessageLookupByLibrary.simpleMessage("LOGO"),
     "maintenance": MessageLookupByLibrary.simpleMessage("Maintenance"),
     "mileage": MessageLookupByLibrary.simpleMessage("Mileage"),
@@ -144,6 +146,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "no_name": MessageLookupByLibrary.simpleMessage("No name"),
     "no_reminders": MessageLookupByLibrary.simpleMessage("No reminders"),
     "no_tasks": MessageLookupByLibrary.simpleMessage("No tasks"),
+    "not_auth": MessageLookupByLibrary.simpleMessage("Not authorized"),
     "not_forget": MessageLookupByLibrary.simpleMessage(
       "Don\'t forget to change the oil",
     ),
@@ -168,6 +171,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "periodicity": MessageLookupByLibrary.simpleMessage("Periodicity:"),
     "phone": MessageLookupByLibrary.simpleMessage("Phone"),
     "photo_selected": MessageLookupByLibrary.simpleMessage("Photo selected"),
+    "please_log_in": MessageLookupByLibrary.simpleMessage(
+      "Please leave or register to continue.",
+    ),
     "previous": MessageLookupByLibrary.simpleMessage("Previous"),
     "price": MessageLookupByLibrary.simpleMessage("Price"),
     "price_liter": MessageLookupByLibrary.simpleMessage("Price per 1 liter:"),

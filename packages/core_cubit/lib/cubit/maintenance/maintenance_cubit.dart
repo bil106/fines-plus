@@ -1,5 +1,6 @@
 import 'package:core_data/core_data.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'maintenance_state.dart';
@@ -60,5 +61,50 @@ class MaintenanceCubit extends Cubit<MaintenanceState> {
 
   void closeMenu() {
     emit(state.copyWith(isMenuOpen: false));
+  }
+}
+extension MileageCalculations on MaintenanceCubit {
+  int getCurrentMonthMileage(DateTime now) {
+    final allRecords = [
+      ...state.serviceRecords.map((r) => {'date': DateFormat('dd.MM.yyyy').parse(r.date), 'mileage': r.mileage}),
+      ...state.fuelRecords.map((r) => {'date': DateFormat('dd.MM.yyyy').parse(r.date), 'mileage': r.mileage}),
+    ];
+
+    final monthRecords = allRecords.where((r) {
+      final d = r['date'] as DateTime;
+      return d.year == now.year && d.month == now.month;
+    }).toList();
+
+    if (monthRecords.isEmpty) return 0;
+
+    monthRecords.sort((a, b) => (a['date'] as DateTime).compareTo(b['date'] as DateTime));
+    final start = monthRecords.first['mileage'] as int;
+    final end = monthRecords.map((r) => r['mileage'] as int).reduce((a, b) => a > b ? a : b);
+    return end - start;
+  }
+
+  int getAverageMileage() {
+    final allRecords = [
+      ...state.serviceRecords.map((r) => {'date': DateFormat('dd.MM.yyyy').parse(r.date), 'mileage': r.mileage}),
+      ...state.fuelRecords.map((r) => {'date': DateFormat('dd.MM.yyyy').parse(r.date), 'mileage': r.mileage}),
+    ];
+
+    if (allRecords.isEmpty) return 0;
+
+    final Map<String, List<int>> months = {};
+    for (final r in allRecords) {
+      final d = r['date'] as DateTime;
+      final key = "${d.year}-${d.month}";
+      months.putIfAbsent(key, () => []);
+      months[key]!.add(r['mileage'] as int);
+    }
+
+    final monthMileages = months.values.map((mileages) {
+      mileages.sort();
+      return mileages.last - mileages.first;
+    }).toList();
+
+    final total = monthMileages.fold(0, (sum, m) => sum + m);
+    return monthMileages.isNotEmpty ? total ~/ monthMileages.length : 0;
   }
 }

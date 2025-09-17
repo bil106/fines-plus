@@ -165,7 +165,7 @@ class _AnalyticsScreenViewState extends State<_AnalyticsScreenView> {
                       repository: context.read<ScheduleRepository>(),
                       reminderRepository: context.read<ReminderRepository>(),
                       pushHelper: context.read<PushHelper>(),
-                      carNumber: 'ABC123',
+                      carNumber: S.of(context).car_number,
                     ),
 
                   ],

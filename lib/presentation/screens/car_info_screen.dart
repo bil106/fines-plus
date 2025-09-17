@@ -10,8 +10,10 @@ import 'package:design_system/constants/app_borders.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
 import 'package:fines_plus/core/widgets/ad_banner_widget.dart';
+import 'package:fines_plus/core/widgets/unauthorized_dialog.dart';
 import 'package:fines_plus/env/env.dart';
 import 'package:fines_plus/router/home_screen_wrapper.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:core_utils/formatters/vehicle_formatters.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -22,6 +24,7 @@ class CarInfoScreen extends StatelessWidget {
   final VoidCallback? onBack;
   final void Function(String carNumber, String series, String number)? onCheckFine;
   final String initialCarNumber;
+
   const CarInfoScreen({super.key, this.onCheckFine, this.onBack, required this.initialCarNumber});
 
   @override
@@ -64,6 +67,7 @@ class _CarInfoViewState extends State<_CarInfoView> {
     historyCubit = context.read<HistoryCubit>();
     carInfoCubit = context.read<CarInfoCubit>();
 
+    // Загружаем сохраненные данные
     carInfoCubit.loadSavedCarInfo().then((_) {
       _carNumberController.text = carInfoCubit.state.carNumber;
       _techPassportController.text = carInfoCubit.state.techPassport;
@@ -78,10 +82,20 @@ class _CarInfoViewState extends State<_CarInfoView> {
   }
 
   void _onRecaptchaVerified(String token) {
-    setState(() {
-      _showRecaptcha = false;
-    });
+    setState(() => _showRecaptcha = false);
     carInfoCubit.checkFinesWithCaptcha(token);
+  }
+
+  void _navigateToRegistration() {
+    final homeState = context.findAncestorStateOfType<HomeScreenWrapperState>();
+    homeState?.openPage(HomePage.registration);
+  }
+
+  void _handleUnauthorized() {
+    showDialog(
+      context: context,
+      builder: (_) => UnauthorizedDialog(onLogin: _navigateToRegistration),
+    );
   }
 
   @override
@@ -105,6 +119,8 @@ class _CarInfoViewState extends State<_CarInfoView> {
                 AppSpacers.verticalXLarge,
                 Text(S.of(context).addition_cars, style: textTheme.title),
                 AppSpacers.verticalHuge,
+
+                // Поля ввода
                 Card(
                   color: AppColors.neutreBlanc,
                   shape: RoundedRectangleBorder(borderRadius: AppBorders.radius22),
@@ -163,14 +179,25 @@ class _CarInfoViewState extends State<_CarInfoView> {
                 ),
                 AppSpacers.verticalLargeXL,
 
-                BlocConsumer<CarInfoCubit, CarInfoState>(
+                // Кнопка поиска и recaptcha
+                BlocListener<CarInfoCubit, CarInfoState>(
+                  listenWhen: (prev, curr) => prev.status != curr.status,
                   listener: (context, state) {
                     if (state.status is CarInfoErrorStatus) {
                       final msg = (state.status as CarInfoErrorStatus).message;
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        if (!mounted) return;
+                        showDialog(
+                          context: context,
+                          builder: (_) => AlertDialog(
+                            title: const Text('Ошибка'),
+                            content: Text(msg),
+                            actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('ОК'))],
+                          ),
+                        );
+                      });
                     } else if (state.status is CarInfoLoadedStatus) {
                       final carNumber = state.carNumber;
-
                       final homeWrapperState = context.findAncestorStateOfType<HomeScreenWrapperState>();
                       homeWrapperState?.openPage(HomePage.history);
 
@@ -178,41 +205,56 @@ class _CarInfoViewState extends State<_CarInfoView> {
                         final parts = carInfoCubit.getTechPassportParts();
                         widget.onCheckFine!(carNumber, parts['series']!, parts['number']!);
                       }
+                    } else if (state.status is CarInfoUnauthorizedStatus) {
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        if (!mounted) return;
+                        _handleUnauthorized();
+                      });
                     }
                   },
-                  builder: (context, state) {
-                    final isLoading = state.status is CarInfoLoadingStatus;
+                  child: BlocBuilder<CarInfoCubit, CarInfoState>(
+                    builder: (context, state) {
+                      final isLoading = state.status is CarInfoLoadingStatus;
 
-                    return Column(
-                      children: [
-                        SizedBox(
-                          width: double.infinity,
-                          height: 65,
-                          child: ElevatedButton(
-                            onPressed: carInfoCubit.isFormValid && !isLoading
-                                ? () => setState(() => _showRecaptcha = true)
-                                : null,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.blue700,
-                              shape: RoundedRectangleBorder(borderRadius: AppBorders.radius16),
-                            ),
-                            child: isLoading
-                                ? const CircularProgressIndicator(color: Colors.white)
-                                : Text(S.of(context).search, style: textTheme.buttonText),
-                          ),
-                        ),
-                        if (_showRecaptcha)
+                      return Column(
+                        children: [
                           SizedBox(
-                            height: 500,
-                            child: RecaptchaV2(
-                              apiKey: Env.recaptchaSiteKey,
-                              onVerifiedSuccessfully: _onRecaptchaVerified,
+                            width: double.infinity,
+                            height: 65,
+                            child: ElevatedButton(
+                              onPressed: !isLoading
+                                  ? () {
+                                      final user = FirebaseAuth.instance.currentUser;
+                                      if (user == null) {
+                                        _handleUnauthorized();
+                                      } else if (carInfoCubit.isFormValid) {
+                                        setState(() => _showRecaptcha = true);
+                                      }
+                                    }
+                                  : null,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppColors.blue700,
+                                shape: RoundedRectangleBorder(borderRadius: AppBorders.radius16),
+                              ),
+                              child: isLoading
+                                  ? const CircularProgressIndicator(color: Colors.white)
+                                  : Text(S.of(context).search, style: textTheme.buttonText),
                             ),
                           ),
-                      ],
-                    );
-                  },
+                          if (_showRecaptcha)
+                            SizedBox(
+                              height: 500,
+                              child: RecaptchaV2(
+                                apiKey: Env.recaptchaSiteKey,
+                                onVerifiedSuccessfully: _onRecaptchaVerified,
+                              ),
+                            ),
+                        ],
+                      );
+                    },
+                  ),
                 ),
+
                 AppSpacers.verticalLargeXL,
                 const AdBannerWidget(),
               ],
@@ -223,3 +265,4 @@ class _CarInfoViewState extends State<_CarInfoView> {
     );
   }
 }
+

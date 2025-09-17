@@ -57,6 +57,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "choose_from_gallery": MessageLookupByLibrary.simpleMessage(
       "Вибрати в галереї",
     ),
+    "close": MessageLookupByLibrary.simpleMessage("Закрити"),
     "comment": MessageLookupByLibrary.simpleMessage("Коментар"),
     "configure_action": MessageLookupByLibrary.simpleMessage("Налаштувати дію"),
     "contact_us": MessageLookupByLibrary.simpleMessage("Звʼяжіться з нами:"),
@@ -124,6 +125,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "item_removed": MessageLookupByLibrary.simpleMessage("Елемент видалено"),
     "km": MessageLookupByLibrary.simpleMessage("км"),
+    "login": MessageLookupByLibrary.simpleMessage("Увійти"),
     "logo": MessageLookupByLibrary.simpleMessage("LOGO"),
     "maintenance": MessageLookupByLibrary.simpleMessage("TO"),
     "mileage": MessageLookupByLibrary.simpleMessage("Пробіг"),
@@ -142,6 +144,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "no_name": MessageLookupByLibrary.simpleMessage("Без назви"),
     "no_reminders": MessageLookupByLibrary.simpleMessage("Немає нагадувань"),
     "no_tasks": MessageLookupByLibrary.simpleMessage("Немає завдань"),
+    "not_auth": MessageLookupByLibrary.simpleMessage("Не авторизовані"),
     "not_forget": MessageLookupByLibrary.simpleMessage(
       "Не забудь заменить масло",
     ),
@@ -172,6 +175,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "periodicity": MessageLookupByLibrary.simpleMessage("Періодичність:"),
     "phone": MessageLookupByLibrary.simpleMessage("Телефон"),
     "photo_selected": MessageLookupByLibrary.simpleMessage("Фото выбрано"),
+    "please_log_in": MessageLookupByLibrary.simpleMessage(
+      "Будь ласка, увійдіть або зареєструйтесь, щоб продовжити.",
+    ),
     "previous": MessageLookupByLibrary.simpleMessage("Попереднє"),
     "price": MessageLookupByLibrary.simpleMessage("Ціна"),
     "price_liter": MessageLookupByLibrary.simpleMessage("Ціна за 1 літр:"),

@@ -19,6 +19,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:location/location.dart';
 
 @RoutePage()
 class FuelUpScreen extends StatefulWidget {
@@ -46,9 +47,29 @@ class _FuelUpScreenState extends State<FuelUpScreen> {
   }
 
   Future<void> _initLocationAndStation() async {
+    Location location = Location();
+
+    bool serviceEnabled = await location.serviceEnabled();
+    if (!serviceEnabled) {
+      serviceEnabled = await location.requestService();
+      if (!serviceEnabled) {
+        if (kDebugMode) print("❌ Location service not enabled");
+        return;
+      }
+    }
+
+    PermissionStatus permissionGranted = await location.hasPermission();
+    if (permissionGranted == PermissionStatus.denied) {
+      permissionGranted = await location.requestPermission();
+      if (permissionGranted != PermissionStatus.granted) {
+        if (kDebugMode) print("❌ Location permission not granted");
+        return;
+      }
+    }
+
     try {
-      Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-      LatLng current = LatLng(position.latitude, position.longitude);
+      LocationData locationData = await location.getLocation();
+      LatLng current = LatLng(locationData.latitude!, locationData.longitude!);
 
       final bestStation = await fetchBestNearbyGasStation(current, Env.mapApiKey);
 
@@ -71,7 +92,7 @@ class _FuelUpScreenState extends State<FuelUpScreen> {
         appBar: AppBar(
           backgroundColor: AppColors.grey50,
           elevation: 0,
-          leading: BackButton(color: AppColors.blue700, onPressed: widget.onBack ),
+          leading: BackButton(color: AppColors.blue700, onPressed: widget.onBack),
           actions: [
             IconButton(
               icon: const Icon(Icons.check, color: AppColors.blue700),

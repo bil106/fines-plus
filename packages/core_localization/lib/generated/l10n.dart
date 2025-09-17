@@ -2608,6 +2608,31 @@ class S {
       args: [],
     );
   }
+
+  /// `Not authorized`
+  String get not_auth {
+    return Intl.message('Not authorized', name: 'not_auth', desc: '', args: []);
+  }
+
+  /// `Please leave or register to continue.`
+  String get please_log_in {
+    return Intl.message(
+      'Please leave or register to continue.',
+      name: 'please_log_in',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Close`
+  String get close {
+    return Intl.message('Close', name: 'close', desc: '', args: []);
+  }
+
+  /// `Login`
+  String get login {
+    return Intl.message('Login', name: 'login', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

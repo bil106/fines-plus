@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:core_cubit/cubit/history/history_cubit.dart';
 import 'package:core_data/core_data.dart';
 import 'package:core_repository/car_info_repository.dart';
+import 'package:core_repository/user_not_signed_in_exception.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -120,8 +121,11 @@ class CarInfoCubit extends Cubit<CarInfoState> {
       );
 
       emit(state.copyWith(status: CarInfoLoadedStatus(finesList)));
+    } on UserNotSignedInException catch (_) {
+      emit(state.copyWith(status: CarInfoUnauthorizedStatus()));
     } catch (e) {
       emit(state.copyWith(status: CarInfoErrorStatus(e.toString())));
     }
   }
+
 }

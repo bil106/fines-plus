@@ -1,36 +1,41 @@
 import 'package:core_cubit/cubit/referral/referral_cubit.dart';
+import 'package:core_cubit/cubit/registration/registration_state.dart';
 import 'package:core_data/core_data.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 
-class RegistrationCubit extends Cubit<bool> {
+
+class RegistrationCubit extends Cubit<RegistrationState> {
   final RegisterUserUseCase registerUser;
   final ReferralCubit referralCubit;
-  final SharedPreferences prefs;
+  final FlutterSecureStorage storage;
 
   RegistrationCubit({
     required this.registerUser,
     required this.referralCubit,
-    required this.prefs,
-  }) : super(false);
+    required this.storage,
+  }) : super(RegistrationState());
 
-/// Save the entered data
+
   Future<void> saveCredentials(String email, String password) async {
-    await prefs.setString('savedEmail', email);
-    await prefs.setString('savedPassword', password);
+    await storage.write(key: 'savedEmail', value: email);
+    await storage.write(key: 'savedPassword', value: password);
   }
 
-  /// Loading saved data
-  Map<String, String> loadCredentials() {
+  
+  Future<Map<String, String>> loadCredentials() async {
+    final email = await storage.read(key: 'savedEmail') ?? '';
+    final password = await storage.read(key: 'savedPassword') ?? '';
     return {
-      'email': prefs.getString('savedEmail') ?? '',
-      'password': prefs.getString('savedPassword') ?? '',
+      'email': email,
+      'password': password,
     };
   }
 
+  
   Future<void> register(String email, String password) async {
-    emit(true); // loading
+    emit(state.copyWith(isLoading: true, error: null));
     try {
       final partnerId = referralCubit.currentRef;
       await registerUser.execute(RegisterUserParams(
@@ -39,17 +44,15 @@ class RegistrationCubit extends Cubit<bool> {
         partnerId: partnerId,
       ));
 
-     // Save locally
-      await saveCredentials(email, password);
-
       // Clear ref
       if (partnerId != null) {
         await referralCubit.clear();
       }
+
+      // ✅ регистрация успешна
+      emit(state.copyWith(isLoading: false, isRegistered: true));
     } catch (e) {
-      rethrow;
-    } finally {
-      emit(false); // finished loading
+      emit(state.copyWith(isLoading: false, error: e.toString()));
     }
   }
 }

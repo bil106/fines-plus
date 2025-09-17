@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:core_data/core_data.dart';
+import 'package:core_repository/user_not_signed_in_exception.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 
@@ -8,19 +9,18 @@ class HistoryRepository {
 
   HistoryRepository(this.firestore);
 
-  Future<void> addToHistory({
+Future<void> addToHistory({
     required String carNumber,
     required String docSeries,
     required String docNumber,
     required List<Map<String, dynamic>> fines,
   }) async {
     final user = FirebaseAuth.instance.currentUser;
-    if (user == null) throw Exception("User is not signed in");
+    if (user == null) throw UserNotSignedInException();
 
     final docRef = firestore.collection('fines_history').doc();
-
     final data = {
-      'userId': user.uid, // важно!
+      'userId': user.uid,
       'carNumber': carNumber.trim().toUpperCase(),
       'docSeries': docSeries,
       'docNumber': docNumber,
@@ -29,11 +29,9 @@ class HistoryRepository {
     };
 
     await docRef.set(data);
-
-    if (kDebugMode) {
-      print('✅ History added: ${docRef.id}');
-    }
+    if (kDebugMode) print('✅ History added: ${docRef.id}');
   }
+
 
   Stream<List<FineHistory>> getHistory(String carNumber) {
     final user = FirebaseAuth.instance.currentUser;
