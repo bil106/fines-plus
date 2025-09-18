@@ -817,6 +817,89 @@ class RemindersRouteArgs {
 }
 
 /// generated route for
+/// [ScheduleScreen]
+class ScheduleRoute extends PageRouteInfo<ScheduleRouteArgs> {
+  ScheduleRoute({
+    Key? key,
+    required ScheduleRepository repository,
+    required ReminderRepository reminderRepository,
+    required PushHelper pushHelper,
+    required String carNumber,
+    List<PageRouteInfo>? children,
+  }) : super(
+         ScheduleRoute.name,
+         args: ScheduleRouteArgs(
+           key: key,
+           repository: repository,
+           reminderRepository: reminderRepository,
+           pushHelper: pushHelper,
+           carNumber: carNumber,
+         ),
+         initialChildren: children,
+       );
+
+  static const String name = 'ScheduleRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      final args = data.argsAs<ScheduleRouteArgs>();
+      return ScheduleScreen(
+        key: args.key,
+        repository: args.repository,
+        reminderRepository: args.reminderRepository,
+        pushHelper: args.pushHelper,
+        carNumber: args.carNumber,
+      );
+    },
+  );
+}
+
+class ScheduleRouteArgs {
+  const ScheduleRouteArgs({
+    this.key,
+    required this.repository,
+    required this.reminderRepository,
+    required this.pushHelper,
+    required this.carNumber,
+  });
+
+  final Key? key;
+
+  final ScheduleRepository repository;
+
+  final ReminderRepository reminderRepository;
+
+  final PushHelper pushHelper;
+
+  final String carNumber;
+
+  @override
+  String toString() {
+    return 'ScheduleRouteArgs{key: $key, repository: $repository, reminderRepository: $reminderRepository, pushHelper: $pushHelper, carNumber: $carNumber}';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! ScheduleRouteArgs) return false;
+    return key == other.key &&
+        repository == other.repository &&
+        reminderRepository == other.reminderRepository &&
+        pushHelper == other.pushHelper &&
+        carNumber == other.carNumber;
+  }
+
+  @override
+  int get hashCode =>
+      key.hashCode ^
+      repository.hashCode ^
+      reminderRepository.hashCode ^
+      pushHelper.hashCode ^
+      carNumber.hashCode;
+}
+
+/// generated route for
 /// [ServiceScreen]
 class ServiceRoute extends PageRouteInfo<ServiceRouteArgs> {
   ServiceRoute({Key? key, VoidCallback? onBack, List<PageRouteInfo>? children})
@@ -876,51 +959,4 @@ class SettingsRoute extends PageRouteInfo<void> {
       return const SettingsScreen();
     },
   );
-}
-
-/// generated route for
-/// [SupportScreen]
-class SupportRoute extends PageRouteInfo<SupportRouteArgs> {
-  SupportRoute({
-    Key? key,
-    required AppConfig config,
-    List<PageRouteInfo>? children,
-  }) : super(
-         SupportRoute.name,
-         args: SupportRouteArgs(key: key, config: config),
-         initialChildren: children,
-       );
-
-  static const String name = 'SupportRoute';
-
-  static PageInfo page = PageInfo(
-    name,
-    builder: (data) {
-      final args = data.argsAs<SupportRouteArgs>();
-      return SupportScreen(key: args.key, config: args.config);
-    },
-  );
-}
-
-class SupportRouteArgs {
-  const SupportRouteArgs({this.key, required this.config});
-
-  final Key? key;
-
-  final AppConfig config;
-
-  @override
-  String toString() {
-    return 'SupportRouteArgs{key: $key, config: $config}';
-  }
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-    if (other is! SupportRouteArgs) return false;
-    return key == other.key && config == other.config;
-  }
-
-  @override
-  int get hashCode => key.hashCode ^ config.hashCode;
 }

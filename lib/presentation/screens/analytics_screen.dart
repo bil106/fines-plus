@@ -12,7 +12,7 @@ import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
 import 'package:fines_plus/core/widgets/history_tab.dart';
-import 'package:fines_plus/core/widgets/schedule_tab.dart';
+import 'package:fines_plus/presentation/screens/schedule_screen.dart';
 import 'package:fines_plus/presentation/screens/statistics_screen.dart';
 import 'package:fines_plus/router/home_screen_wrapper.dart';
 import 'package:flutter/material.dart';
@@ -161,13 +161,12 @@ class _AnalyticsScreenViewState extends State<_AnalyticsScreenView> {
                   children: [
                     const StatisticsScreen(),
                     HistoryTab(events: events),
-                   ScheduleTab(
+                    ScheduleScreen(
                       repository: context.read<ScheduleRepository>(),
                       reminderRepository: context.read<ReminderRepository>(),
                       pushHelper: context.read<PushHelper>(),
                       carNumber: S.of(context).car_number,
                     ),
-
                   ],
                 ),
               ),

@@ -1,9 +1,12 @@
 // ignore_for_file: unused_element_parameter
 
 import 'package:auto_route/auto_route.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:core_cubit/cubit/maintenance/maintenance_state.dart';
 import 'package:core_data/core_data.dart';
 import 'package:core_localization/generated/l10n.dart';
+import 'package:core_repository/reminder_repository.dart';
+import 'package:core_repository/schedule_repository.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/theme/app_theme.dart';
 import 'package:fines_plus/core/widgets/ad_banner_widget.dart';
@@ -14,6 +17,8 @@ import 'package:fines_plus/router/app_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:core_cubit/cubit/maintenance/maintenance_cubit.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 @RoutePage()
 class MaintenanceScreen extends StatefulWidget {
@@ -49,6 +54,7 @@ class _MaintenanceScreenView extends StatelessWidget {
   final VoidCallback? onSettings;
   final VoidCallback? onFuelUp;
   final VoidCallback? onServic;
+
   const _MaintenanceScreenView({this.onBack, this.onCalendar, this.onSettings, this.onFuelUp, this.onServic});
 
   @override
@@ -101,6 +107,7 @@ class _MaintenanceScreenView extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
+                    // Кнопка "Заправка"
                     _buildAnimatedAction(context, Icons.local_gas_station, S.of(context).fuel_up, () async {
                       final record = await context.router.push<FuelRecord>(FuelUpRoute());
                       if (record != null) {
@@ -109,6 +116,7 @@ class _MaintenanceScreenView extends StatelessWidget {
                       }
                     }, state.isMenuOpen),
 
+                    // Кнопка "Сервис"
                     _buildAnimatedAction(context, Icons.build, S.of(context).service, () async {
                       final records = await Navigator.push<List<ServiceRecord>>(
                         context,
@@ -119,14 +127,34 @@ class _MaintenanceScreenView extends StatelessWidget {
                       }
                     }, state.isMenuOpen),
 
-                    _buildAnimatedAction(
-                      context,
-                      Icons.calendar_today,
-                      S.of(context).calendar,
-                      onCalendar,
-                      state.isMenuOpen,
-                    ),
+                _buildAnimatedAction(context, Icons.calendar_today, S.of(context).calendar, () async {
+                    final prefs = await SharedPreferences.getInstance();
 
+                      // Инициализируем источники данных
+                      final localDataSource = ReminderLocalDataSourceImpl(SharedPrefsManager(prefs));
+                      final remoteDataSource = ReminderRemoteDataSourceImpl(FirebaseFirestore.instance);
+
+                      final reminderRepository = ReminderRepository(
+                        localDataSource: localDataSource,
+                        remoteDataSource: remoteDataSource,
+                      );
+
+                      final scheduleRepository = ScheduleRepository(
+                     
+                      );
+
+                      // Переходим на ScheduleTab через AutoRoute
+                      context.router.push(
+                        ScheduleRoute(
+                          repository: scheduleRepository,
+                          reminderRepository: reminderRepository,
+                          pushHelper: PushHelper(FlutterLocalNotificationsPlugin()),
+                          carNumber: '',
+                        ),
+                      );
+                    }, state.isMenuOpen),
+
+                    // Кнопка "Настройки"
                     _buildAnimatedAction(context, Icons.settings, S.of(context).settings, onSettings, state.isMenuOpen),
 
                     const SizedBox(height: 20),

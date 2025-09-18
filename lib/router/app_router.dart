@@ -1,7 +1,8 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:core_data/core_data.dart';
-import 'package:fines_plus/config/app_config.dart';
+import 'package:core_repository/reminder_repository.dart';
+import 'package:core_repository/schedule_repository.dart';
 import 'package:fines_plus/presentation/screens/add_car_screen.dart';
 import 'package:fines_plus/presentation/screens/analytics_screen.dart';
 import 'package:fines_plus/presentation/screens/car_info_screen.dart';
@@ -13,9 +14,10 @@ import 'package:fines_plus/presentation/screens/fuel_up_screen.dart';
 import 'package:fines_plus/presentation/screens/history_screen.dart';
 import 'package:fines_plus/presentation/screens/registration_screen.dart';
 import 'package:fines_plus/presentation/screens/reminders_screen.dart';
+import 'package:fines_plus/presentation/screens/schedule_screen.dart';
 import 'package:fines_plus/presentation/screens/service_screen.dart';
 import 'package:fines_plus/presentation/screens/settings_screen.dart';
-import 'package:fines_plus/presentation/screens/support_screen.dart';
+// import 'package:fines_plus/presentation/screens/support_screen.dart.txt';
 import 'package:fines_plus/presentation/screens/maintenance_screen.dart';
 import 'package:fines_plus/router/home_screen_wrapper.dart';
 import 'package:flutter/material.dart';
@@ -42,12 +44,13 @@ class AppRouter extends RootStackRouter {
         AutoRoute(page: RegistrationRoute.page, path: 'registration'),
         AutoRoute(page: FuelUpRoute.page, path: 'fuel'),
         AutoRoute(page: ServiceRoute.page, path: 'service'),
+        AutoRoute(page: ScheduleRoute.page, path: 'schedule'),
       ],
     ),
 
    
     AutoRoute(page: CarInfoRoute.page, path: '/car-info'),
-    AutoRoute(page: SupportRoute.page, path: '/support'),
+    // AutoRoute(page: SupportRoute.page, path: '/support'),
     AutoRoute(page: FineCheckRoute.page, path: '/fine_check'),
     AutoRoute(page: SettingsRoute.page, path: '/settings'),
     AutoRoute(page: HistoryRoute.page, path: '/history'),
@@ -58,5 +61,7 @@ class AppRouter extends RootStackRouter {
     AutoRoute(page: FuelUpRoute.page, path: '/fuel'),
     AutoRoute(page: ServiceRoute.page, path: '/service'),
     AutoRoute(page: FuelMapRoute.page, path: '/fuel-map'),
+    AutoRoute(page: ScheduleRoute.page, path: '/schedule'),
+    
   ];
 }

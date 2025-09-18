@@ -1,10 +1,13 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:core_cubit/cubit/car_info/car_info_cubit.dart';
 import 'package:core_cubit/cubit/history/history_cubit.dart';
 import 'package:core_data/core_data.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:core_repository/car_info_repository.dart';
 import 'package:core_repository/history_repository.dart';
+import 'package:core_repository/reminder_repository.dart';
+import 'package:core_repository/schedule_repository.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:fines_plus/presentation/screens/add_car_screen.dart';
 import 'package:fines_plus/presentation/screens/analytics_screen.dart';
@@ -17,12 +20,14 @@ import 'package:fines_plus/presentation/screens/fuel_up_screen.dart';
 import 'package:fines_plus/presentation/screens/history_screen.dart';
 import 'package:fines_plus/presentation/screens/registration_screen.dart';
 import 'package:fines_plus/presentation/screens/reminders_screen.dart';
+import 'package:fines_plus/presentation/screens/schedule_screen.dart';
 import 'package:fines_plus/presentation/screens/service_screen.dart';
 import 'package:fines_plus/presentation/screens/settings_screen.dart';
 import 'package:fines_plus/presentation/screens/maintenance_screen.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 enum HomePage {
@@ -39,6 +44,7 @@ enum HomePage {
   registration,
   fuel,
   service,
+   schedule,
 }
 
 @RoutePage()
@@ -197,7 +203,40 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
            ServiceScreen(key: const ValueKey('service'), onBack: () => openPage(HomePage.maintenance)),
            //13 FuelMapScreen
            FuelMapScreen(key: const ValueKey('fuel-map'), ),
-          ],
+           
+           Builder(
+      key: const ValueKey('schedule_screen'),
+    
+      builder: (context) {
+       
+        return FutureBuilder<SharedPreferences>(
+          future: SharedPreferences.getInstance(),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            final prefs = snapshot.data!;
+            final localDataSource = ReminderLocalDataSourceImpl(SharedPrefsManager(prefs));
+            final remoteDataSource = ReminderRemoteDataSourceImpl(FirebaseFirestore.instance);
+
+            final reminderRepository = ReminderRepository(
+              localDataSource: localDataSource,
+              remoteDataSource: remoteDataSource,
+            );
+
+            final scheduleRepository = ScheduleRepository(
+           
+            );
+
+            return ScheduleScreen(
+              repository: scheduleRepository,
+              reminderRepository: reminderRepository,
+              pushHelper: PushHelper(FlutterLocalNotificationsPlugin()),
+              carNumber: _carNumber ?? '',
+            );
+          },
+        );
+   }) ],
         ),
        bottomNavigationBar: BottomNavigationBar(
           backgroundColor: AppColors.neutreBlanc,

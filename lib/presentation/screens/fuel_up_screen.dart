@@ -98,6 +98,7 @@ class _FuelUpScreenState extends State<FuelUpScreen> {
               icon: const Icon(Icons.check, color: AppColors.blue700),
               onPressed: () {
                 if (selectedDate == null || volumeController.text.isEmpty || mileageController.text.isEmpty) {
+                  if (!mounted) return; 
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(S.of(context).fill_date)));
                   return;
                 }

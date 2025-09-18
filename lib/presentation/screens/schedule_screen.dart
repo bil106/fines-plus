@@ -1,3 +1,4 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:core_cubit/cubit/maintenance/maintenance_cubit.dart';
 import 'package:core_cubit/cubit/reminder/reminder_cubit.dart';
 import 'package:core_cubit/cubit/schedule/schedule_cubit.dart';
@@ -13,13 +14,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
-class ScheduleTab extends StatefulWidget {
+
+
+@RoutePage()
+class ScheduleScreen extends StatefulWidget {
   final ScheduleRepository repository;
   final ReminderRepository reminderRepository;
   final PushHelper pushHelper;
   final String carNumber;
 
-  const ScheduleTab({
+  const ScheduleScreen({
     super.key,
     required this.repository,
     required this.reminderRepository,
@@ -28,10 +32,10 @@ class ScheduleTab extends StatefulWidget {
   });
 
   @override
-  State<ScheduleTab> createState() => _ScheduleTabState();
+  State<ScheduleScreen> createState() => _ScheduleScreenState();
 }
 
-class _ScheduleTabState extends State<ScheduleTab> {
+class _ScheduleScreenState extends State<ScheduleScreen> {
   int getMaxMileage({int? newMileage}) {
     final cubit = context.read<MaintenanceCubit>();
     final serviceRecords = cubit.state.serviceRecords;
@@ -74,6 +78,10 @@ class _ScheduleTabState extends State<ScheduleTab> {
 
           return Scaffold(
             backgroundColor: AppColors.grey50,
+            appBar: AppBar(
+              backgroundColor: AppColors.grey50,
+              // leading: BackButton(color: AppColors.blue700, onPressed: onBack ?? () {}),
+            ),
             body: state.loading
                 ? const Center(child: CircularProgressIndicator())
                 : state.tasks.isEmpty

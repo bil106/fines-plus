@@ -353,7 +353,7 @@ class _ServiceScreenState extends State<ServiceScreen> {
               ),
 
               const Divider(),
-              AdditionalOptionsWidget(photoPicker: const PhotoPickerWidget()),
+               AdditionalOptionsWidget(photoPicker: const PhotoPickerWidget()),
             ],
           ),
         ),

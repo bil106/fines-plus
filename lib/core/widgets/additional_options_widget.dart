@@ -25,19 +25,17 @@ class _AdditionalOptionsWidgetState extends State<AdditionalOptionsWidget> {
     super.dispose();
   }
 
- void _publish() {
+  void _publish() {
     final values = {
       "comment": commentController.text.toString(),
       "offRoadAccidents": offRoadAccidents.toString(),
       "invisibleEvent": invisibleEvent.toString(),
-    
     };
 
     Navigator.of(
       context,
     ).push(MaterialPageRoute(builder: (_) => EditExpAutoSubmitPage(expId: 13, fieldValues: values)));
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -153,7 +151,7 @@ if(invisibleCheckbox) invisibleCheckbox.checked = $invisibleJS;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title:  Text(S.of(context).publish)),
+      appBar: AppBar(title: Text(S.of(context).publish)),
       body: WebViewWidget(controller: _controller),
     );
   }

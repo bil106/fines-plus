@@ -36,7 +36,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   }
 
 
-  Future<void> _signInWithGoogle(BuildContext context) async {
+Future<void> _signInWithGoogle() async {
     try {
       final googleUser = await GoogleSignIn().signIn();
       if (googleUser == null) return;
@@ -51,7 +51,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       final userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
       final user = userCredential.user;
 
+      if (!mounted) return; 
+
       if (user != null) {
+       
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text('${S.current.successful_registration}: ${user.email}')));
@@ -60,9 +63,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         homeState?.openPage(HomePage.addCar);
       }
     } catch (e) {
+      if (!mounted) return; 
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${S.current.google_login_error}: $e")));
     }
   }
+
 
   @override
   void dispose() {
@@ -155,7 +160,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     ),
-                    onPressed: () => _signInWithGoogle(context),
+                    onPressed: () => _signInWithGoogle(),
                   ),
                 ),
 
