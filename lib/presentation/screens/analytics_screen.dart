@@ -9,6 +9,7 @@ import 'package:core_repository/analytics_repository.dart';
 import 'package:core_repository/reminder_repository.dart';
 import 'package:core_repository/schedule_repository.dart';
 import 'package:design_system/colors/app_colors.dart';
+import 'package:design_system/constants/app_borders.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
 import 'package:fines_plus/core/widgets/history_tab.dart';
@@ -69,7 +70,7 @@ class _AnalyticsScreenViewState extends State<_AnalyticsScreenView> {
             amount: record.cost.toDouble(),
             mileage: "${record.mileage} ${S.of(context).km}",
             icon: Icons.build,
-            iconColor: Colors.red,
+            iconColor: AppColors.red,
             category: ExpenseCategory.service,
           );
         }),
@@ -89,7 +90,7 @@ class _AnalyticsScreenViewState extends State<_AnalyticsScreenView> {
             amount: record.cost.toDouble(),
             mileage: "${record.mileage} ${S.of(context).km}",
             icon: Icons.local_gas_station,
-            iconColor: Colors.green,
+            iconColor: AppColors.green,
             category: ExpenseCategory.fuel,
           );
         }),
@@ -132,12 +133,12 @@ class _AnalyticsScreenViewState extends State<_AnalyticsScreenView> {
                         homeState.openPage(HomePage.export);
                       }
                     },
-                    label: Text(S.of(context).export, style: const TextStyle(color: Colors.white)),
+                    label: Text(S.of(context).export, style: textTheme.white14W400),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.blue700,
                       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                      textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                      shape: RoundedRectangleBorder(borderRadius: AppBorders.radiusLarge),
+                      textStyle: textTheme.black16bold,
                     ),
                   ),
                 ],
@@ -148,7 +149,7 @@ class _AnalyticsScreenViewState extends State<_AnalyticsScreenView> {
               TabBar(
                 indicatorColor: AppColors.blue700,
                 labelColor: AppColors.blue700,
-                unselectedLabelColor: Colors.grey,
+                unselectedLabelColor: AppColors.neutreGrey,
                 tabs: [
                   Tab(text: S.of(context).statistics),
                   Tab(text: S.of(context).history),

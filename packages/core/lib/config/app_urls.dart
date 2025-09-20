@@ -3,6 +3,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 class AppUrls {
   static const String base = 'https://driver.top';
   static const String auth = '$base/auth/';
+  static const String google = '$auth/google';
   static String editExp(int expId) => '$base/editexp/$expId';
   static const String exps = '$base/exps/';
   static String addExp(int expId) => '$base/addexp/$expId';

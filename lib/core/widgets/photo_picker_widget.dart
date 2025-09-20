@@ -1,6 +1,8 @@
 import 'dart:io';
 
 import 'package:core_localization/generated/l10n.dart';
+import 'package:design_system/colors/app_colors.dart';
+import 'package:design_system/constants/app_spacers.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -28,13 +30,13 @@ class _PhotoPickerWidgetState extends State<PhotoPickerWidget> {
             margin: const EdgeInsets.only(top: 8),
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey),
+              border: Border.all(color: AppColors.neutreGrey),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Row(
               children: [
-                const Icon(Icons.camera_alt, color: Colors.blueAccent),
-                const SizedBox(width: 8),
+                const Icon(Icons.camera_alt, color: AppColors.blueAccent),
+                AppSpacers.horizontalSmallMedium,
                 Text(
                   selectedPhotos.isEmpty ? S.of(context).add_photo : S.of(context).photo_selected,
                   style: textTheme.bodyMedium,
@@ -49,7 +51,7 @@ class _PhotoPickerWidgetState extends State<PhotoPickerWidget> {
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
               itemCount: selectedPhotos.length,
-              separatorBuilder: (_, __) => const SizedBox(width: 8),
+              separatorBuilder: (_, __) => AppSpacers.horizontalSmallMedium,
               itemBuilder: (context, index) {
                 return Image.file(selectedPhotos[index], width: 50, height: 50, fit: BoxFit.cover);
               },

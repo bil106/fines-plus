@@ -26,13 +26,12 @@ extension AppTextTheme on TextTheme {
         fontWeight: FontWeight.w500,
         color: AppColors.black87,
       );
-      TextStyle get whiteBigBold => const TextStyle(
+  TextStyle get whiteBigBold => const TextStyle(
         fontSize: 56,
         fontWeight: FontWeight.bold,
         color: AppColors.neutreBlanc,
       );
 
- 
   TextStyle get whiteNormal => const TextStyle(
         fontSize: 24,
         color: AppColors.neutreBlanc,

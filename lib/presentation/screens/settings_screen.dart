@@ -22,7 +22,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   bool finesCheck = true;
   bool reminders = true;
   bool pushNotifications = true;
-  
+
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
@@ -70,13 +70,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           value: pushNotifications,
                           onChanged: (val) => setState(() => pushNotifications = val),
                         ),
-                        
                       ],
                     ),
                   ),
                 ),
                 AppSpacers.verticalLargeXL,
-              const AdBannerWidget(),
+                const AdBannerWidget(),
               ],
             ),
           ),
@@ -91,7 +90,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Expanded(child: Text(title, style: textTheme.titleLarge)),
-        Switch(value: value, onChanged: onChanged, activeColor: AppColors.neutreBlanc, activeTrackColor: Colors.blue),
+        Switch(
+          value: value,
+          onChanged: onChanged,
+          activeColor: AppColors.neutreBlanc,
+          activeTrackColor: AppColors.energyBlue,
+        ),
       ],
     );
   }

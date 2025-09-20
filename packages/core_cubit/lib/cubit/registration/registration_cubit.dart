@@ -49,7 +49,7 @@ class RegistrationCubit extends Cubit<RegistrationState> {
         await referralCubit.clear();
       }
 
-      // ✅ регистрация успешна
+      
       emit(state.copyWith(isLoading: false, isRegistered: true));
     } catch (e) {
       emit(state.copyWith(isLoading: false, error: e.toString()));

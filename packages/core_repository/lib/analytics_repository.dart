@@ -1,22 +1,20 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:core_data/core_data.dart';
-import 'package:flutter/material.dart';
+import 'package:design_system/colors/app_colors.dart';
 
 import 'package:fl_chart/fl_chart.dart';
-abstract class IAnalyticsRepository {
 
+abstract class IAnalyticsRepository {
   Future<FuelData> getFuelData(String carNumber);
 
-
   Future<int> getMileage(String carNumber);
-
 
   Future<List<PieChartSectionData>> getChartData(String carNumber);
 }
 
 class FuelData {
   final double liters;
-  final double amount; 
+  final double amount;
 
   FuelData({required this.liters, required this.amount});
 }
@@ -58,20 +56,20 @@ class AnalyticsRepository implements IAnalyticsRepository {
     return [
       PieChartSectionData(
         value: greenPercent,
-        color: Colors.green,
+        color: AppColors.green,
         title: "${greenPercent.toInt()}%",
         radius: 80,
       ),
       PieChartSectionData(
         value: bluePercent,
-        color: Colors.blue,
+        color: AppColors.energyBlue,
         title: "${bluePercent.toInt()}%",
         radius: 80,
       ),
     ];
   }
-   Future<AnalyticsData> getAnalytics(DateTime date) async {
-    
+
+  Future<AnalyticsData> getAnalytics(DateTime date) async {
     final doc =
         await firestore.collection('analytics').doc("${date.year}-${date.month.toString().padLeft(2, '0')}").get();
 

@@ -42,7 +42,7 @@ class _HistoryView extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: AppColors.grey50,
         leading: BackButton(
-          color: Colors.black,
+          color: AppColors.black,
           onPressed: () {
             final homeState = context.findAncestorStateOfType<HomeScreenWrapperState>();
             homeState?.openPage(HomePage.carInfo);
@@ -73,14 +73,14 @@ class _HistoryView extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(vertical: 10),
                     child: Text(
                       '${S.of(context).total_fines} $totalFines',
-                      style: textTheme.subtitleText.copyWith(fontWeight: FontWeight.bold, color: Colors.red),
+                      style: textTheme.subtitleText.copyWith(fontWeight: FontWeight.bold, color: AppColors.red),
                     ),
                   ),
                   Expanded(
                     child: ListView.separated(
                       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                       itemCount: state.history.length,
-                      separatorBuilder: (_, __) => const Divider(color: Colors.grey),
+                      separatorBuilder: (_, __) => const Divider(color: AppColors.neutreGrey),
                       itemBuilder: (context, index) {
                         final item = state.history[index];
                         return ListTile(
@@ -100,7 +100,7 @@ class _HistoryView extends StatelessWidget {
                             ],
                           ),
                           trailing: IconButton(
-                            icon: const Icon(Icons.delete, color: Colors.red),
+                            icon: const Icon(Icons.delete, color: AppColors.red),
                             onPressed: () async {
                               final cubit = context.read<HistoryCubit>();
                               await cubit.deleteSingle(item.id);

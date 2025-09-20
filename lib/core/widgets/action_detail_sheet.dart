@@ -1,4 +1,7 @@
 import 'package:core_localization/generated/l10n.dart';
+import 'package:design_system/colors/app_colors.dart';
+import 'package:design_system/constants/app_spacers.dart';
+import 'package:design_system/theme/app_theme.dart';
 import 'package:fines_plus/core/widgets/extensions/service_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -79,6 +82,7 @@ class _ActionDetailSheetState extends State<ActionDetailSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
     return Padding(
       padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: MediaQuery.of(context).viewInsets.bottom + 16),
       child: SingleChildScrollView(
@@ -87,16 +91,11 @@ class _ActionDetailSheetState extends State<ActionDetailSheet> {
           children: [
             Row(
               children: [
-                Expanded(
-                  child: Text(
-                    widget.title ?? S.of(context).new_task,
-                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                ),
+                Expanded(child: Text(widget.title ?? S.of(context).new_task, style: textTheme.white14W400)),
                 IconButton(icon: const Icon(Icons.close), onPressed: () => Navigator.pop(context)),
               ],
             ),
-            const SizedBox(height: 12),
+            AppSpacers.verticalMedium,
 
             Autocomplete<String>(
               optionsBuilder: (TextEditingValue value) {
@@ -114,12 +113,12 @@ class _ActionDetailSheetState extends State<ActionDetailSheet> {
                   decoration: InputDecoration(
                     labelText: S.of(context).name,
                     border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.build, color: Colors.blueAccent),
+                    prefixIcon: Icon(Icons.build, color: AppColors.blueAccent),
                   ),
                 );
               },
             ),
-            const SizedBox(height: 12),
+            AppSpacers.verticalMedium,
             TextField(
               controller: dateController,
               readOnly: true,
@@ -130,7 +129,7 @@ class _ActionDetailSheetState extends State<ActionDetailSheet> {
                 border: OutlineInputBorder(),
               ),
             ),
-            const SizedBox(height: 12),
+            AppSpacers.verticalMedium,
             TextField(
               controller: mileageController,
               keyboardType: TextInputType.number,
@@ -140,7 +139,7 @@ class _ActionDetailSheetState extends State<ActionDetailSheet> {
                 border: OutlineInputBorder(),
               ),
             ),
-            const SizedBox(height: 12),
+            AppSpacers.verticalMedium,
             TextField(
               controller: intervalController,
               keyboardType: TextInputType.number,
@@ -150,23 +149,23 @@ class _ActionDetailSheetState extends State<ActionDetailSheet> {
                 border: OutlineInputBorder(),
               ),
             ),
-            const SizedBox(height: 12),
+            AppSpacers.verticalMedium,
             Row(
               children: [
                 Checkbox(value: byDate, onChanged: (v) => setState(() => byDate = v ?? true)),
                 Text(S.of(context).by_date),
-                const SizedBox(width: 16),
+                AppSpacers.horizontalMediumLarge,
                 Checkbox(value: byMileage, onChanged: (v) => setState(() => byMileage = v ?? false)),
                 Text(S.of(context).by_mileage),
               ],
             ),
-            const SizedBox(height: 12),
+            AppSpacers.verticalMedium,
             TextField(
               controller: commentController,
               maxLines: 3,
               decoration: InputDecoration(labelText: S.of(context).comment, border: OutlineInputBorder()),
             ),
-            const SizedBox(height: 16),
+            AppSpacers.verticalMediumLarge,
 
             SizedBox(
               width: double.infinity,

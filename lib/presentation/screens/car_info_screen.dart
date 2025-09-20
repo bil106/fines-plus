@@ -67,7 +67,7 @@ class _CarInfoViewState extends State<_CarInfoView> {
     historyCubit = context.read<HistoryCubit>();
     carInfoCubit = context.read<CarInfoCubit>();
 
-    // Загружаем сохраненные данные
+   
     carInfoCubit.loadSavedCarInfo().then((_) {
       _carNumberController.text = carInfoCubit.state.carNumber;
       _techPassportController.text = carInfoCubit.state.techPassport;
@@ -120,7 +120,6 @@ class _CarInfoViewState extends State<_CarInfoView> {
                 Text(S.of(context).addition_cars, style: textTheme.title),
                 AppSpacers.verticalHuge,
 
-                // Поля ввода
                 Card(
                   color: AppColors.neutreBlanc,
                   shape: RoundedRectangleBorder(borderRadius: AppBorders.radius22),
@@ -130,15 +129,12 @@ class _CarInfoViewState extends State<_CarInfoView> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          S.of(context).car_number,
-                          style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w600),
-                        ),
+                        Text(S.of(context).car_number, style: textTheme.carNumber),
                         AppSpacers.verticalSmall,
                         TextField(
                           controller: _carNumberController,
                           onChanged: carInfoCubit.setCarNumber,
-                          style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w400),
+                          style: textTheme.black28W400,
                           inputFormatters: [VehicleNumberFormatter(mapLatinToCyrillic: true)],
                           textCapitalization: TextCapitalization.characters,
                           keyboardType: TextInputType.text,
@@ -153,15 +149,12 @@ class _CarInfoViewState extends State<_CarInfoView> {
                           ),
                         ),
                         AppSpacers.verticalLarge,
-                        Text(
-                          S.of(context).reg_number,
-                          style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w600),
-                        ),
+                        Text(S.of(context).reg_number, style: textTheme.black28W600),
                         AppSpacers.verticalSmall,
                         TextField(
                           controller: _techPassportController,
                           onChanged: carInfoCubit.setTechPassport,
-                          style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w400),
+                          style: textTheme.black28W400,
                           inputFormatters: [TechPassportFormatter()],
                           maxLength: 9,
                           decoration: InputDecoration(
@@ -179,7 +172,7 @@ class _CarInfoViewState extends State<_CarInfoView> {
                 ),
                 AppSpacers.verticalLargeXL,
 
-                // Кнопка поиска и recaptcha
+              
                 BlocListener<CarInfoCubit, CarInfoState>(
                   listenWhen: (prev, curr) => prev.status != curr.status,
                   listener: (context, state) {
@@ -190,7 +183,7 @@ class _CarInfoViewState extends State<_CarInfoView> {
                         showDialog(
                           context: context,
                           builder: (_) => AlertDialog(
-                            title: const Text('Ошибка'),
+                            title:  Text(S.of(context).error),
                             content: Text(msg),
                             actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('ОК'))],
                           ),
@@ -237,7 +230,7 @@ class _CarInfoViewState extends State<_CarInfoView> {
                                 shape: RoundedRectangleBorder(borderRadius: AppBorders.radius16),
                               ),
                               child: isLoading
-                                  ? const CircularProgressIndicator(color: Colors.white)
+                                  ? const CircularProgressIndicator(color: AppColors.neutreBlanc)
                                   : Text(S.of(context).search, style: textTheme.buttonText),
                             ),
                           ),
@@ -265,4 +258,3 @@ class _CarInfoViewState extends State<_CarInfoView> {
     );
   }
 }
-

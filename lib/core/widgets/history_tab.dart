@@ -1,4 +1,5 @@
 import 'package:core_data/core_data.dart';
+import 'package:design_system/colors/app_colors.dart';
 import 'package:fines_plus/core/widgets/time_line_item.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -26,9 +27,9 @@ class HistoryTab extends StatelessWidget {
                         entry.key,
                         style: Theme.of(
                           context,
-                        ).textTheme.titleMedium?.copyWith(color: Colors.blueAccent, fontWeight: FontWeight.bold),
+                        ).textTheme.titleMedium?.copyWith(color: AppColors.blueAccent, fontWeight: FontWeight.bold),
                       ),
-                      const Divider(color: Colors.grey),
+                      const Divider(color: AppColors.neutreGrey),
                     ],
                   ),
                 ),
@@ -51,9 +52,9 @@ class HistoryTab extends StatelessWidget {
     );
   }
 
-Map<String, List<EventModel>> groupEventsByMonth(List<EventModel> events) {
-    final inputFormat = DateFormat('dd.MM.yyyy'); 
-    final outputFormat = DateFormat('MMMM yyyy', 'uk'); 
+  Map<String, List<EventModel>> groupEventsByMonth(List<EventModel> events) {
+    final inputFormat = DateFormat('dd.MM.yyyy');
+    final outputFormat = DateFormat('MMMM yyyy', 'uk');
     final groupedEvents = <String, List<EventModel>>{};
 
     for (final event in events) {
@@ -62,7 +63,7 @@ Map<String, List<EventModel>> groupEventsByMonth(List<EventModel> events) {
       try {
         parsedDate = inputFormat.parse(event.date);
       } catch (_) {
-        continue; 
+        continue;
       }
 
       final key = outputFormat.format(parsedDate);
@@ -71,7 +72,6 @@ Map<String, List<EventModel>> groupEventsByMonth(List<EventModel> events) {
       groupedEvents[key]!.add(event);
     }
 
-   
     for (final group in groupedEvents.values) {
       group.sort((a, b) {
         final dateA = inputFormat.parse(a.date);
@@ -82,7 +82,4 @@ Map<String, List<EventModel>> groupEventsByMonth(List<EventModel> events) {
 
     return groupedEvents;
   }
-
-
-
 }

@@ -1,4 +1,6 @@
 import 'package:core_localization/generated/l10n.dart';
+import 'package:design_system/colors/app_colors.dart';
+import 'package:design_system/constants/app_borders.dart';
 import 'package:design_system/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 
@@ -13,21 +15,24 @@ class AnalyticsField extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12)),
+      decoration: BoxDecoration(color: AppColors.neutreBlanc, borderRadius: AppBorders.radiusLarge),
       child: Row(
         children: [
           Expanded(
             child: TextField(
               controller: controller,
               keyboardType: TextInputType.number,
-              decoration:  InputDecoration(hintText: S.of(context).enter_mileage, hintStyle: textTheme.hintAnalitText, focusedBorder: InputBorder.none,
+              decoration: InputDecoration(
+                hintText: S.of(context).enter_mileage,
+                hintStyle: textTheme.hintAnalitText,
+                focusedBorder: InputBorder.none,
                 border: InputBorder.none,
               ),
-              style: textTheme.historyText
+              style: textTheme.historyText,
             ),
           ),
           if (trailing != null) trailing!,
-          Icon(Icons.info_outline, color: Colors.grey,size: 35,),
+          Icon(Icons.info_outline, color: AppColors.neutreGrey, size: 35),
         ],
       ),
     );

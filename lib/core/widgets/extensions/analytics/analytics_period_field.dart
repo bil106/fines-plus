@@ -1,3 +1,5 @@
+import 'package:design_system/colors/app_colors.dart';
+import 'package:design_system/constants/app_borders.dart';
 import 'package:design_system/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -33,10 +35,10 @@ class _AnalyticsPeriodFieldState extends State<AnalyticsPeriodField> {
       ),
       decoration: InputDecoration(
         filled: true,
-        fillColor: Colors.white,
-        prefixIcon: const Icon(Icons.calendar_today, color: Colors.blue),
+        fillColor: AppColors.neutreBlanc,
+        prefixIcon: const Icon(Icons.calendar_today, color: AppColors.energyBlue),
         suffixIcon: IconButton(
-          icon: const Icon(Icons.arrow_forward_ios, color: Colors.grey),
+          icon: const Icon(Icons.arrow_forward_ios, color: AppColors.neutreGrey),
           onPressed: () async {
             final now = DateTime.now();
             final picked = await showDatePicker(
@@ -54,8 +56,8 @@ class _AnalyticsPeriodFieldState extends State<AnalyticsPeriodField> {
             }
           },
         ),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
-        focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+        border: OutlineInputBorder(borderRadius: AppBorders.radiusLarge, borderSide: BorderSide.none),
+        focusedBorder: OutlineInputBorder(borderRadius: AppBorders.radiusLarge, borderSide: BorderSide.none),
         contentPadding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
       ),
       style: textTheme.historyText,

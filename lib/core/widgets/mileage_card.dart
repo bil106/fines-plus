@@ -1,5 +1,6 @@
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
+import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -44,7 +45,7 @@ class _MileageCardState extends State<MileageCard> {
           child: Row(
             children: [
               const Icon(Icons.speed, size: 24),
-              const SizedBox(width: 12),
+              AppSpacers.horizontalMedium,
               Expanded(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,

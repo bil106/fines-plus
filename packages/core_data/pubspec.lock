@@ -190,6 +190,13 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.7.11"
+  design_system:
+    dependency: transitive
+    description:
+      path: "../design_system"
+      relative: true
+    source: path
+    version: "0.0.1"
   dio:
     dependency: "direct main"
     description:

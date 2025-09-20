@@ -3,6 +3,10 @@ import 'package:core_cubit/cubit/maintenance/maintenance_state.dart';
 import 'package:core_cubit/cubit/statistics/statistics_cubit.dart';
 import 'package:core_cubit/cubit/statistics/statistics_state.dart';
 import 'package:core_localization/generated/l10n.dart';
+import 'package:design_system/colors/app_colors.dart';
+import 'package:design_system/constants/app_borders.dart';
+import 'package:design_system/constants/app_spacers.dart';
+import 'package:design_system/theme/app_theme.dart';
 import 'package:fines_plus/core/widgets/expense_stats_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -24,7 +28,7 @@ class _StatisticsScreenView extends StatelessWidget {
   Widget build(BuildContext context) {
     final now = DateTime.now();
     final maintenanceCubit = context.read<MaintenanceCubit>();
-
+final textTheme = Theme.of(context).textTheme;
     return BlocBuilder<StatisticsCubit, StatisticsState>(
       builder: (context, state) {
         if (state.loading) return const Center(child: CircularProgressIndicator());
@@ -39,35 +43,32 @@ class _StatisticsScreenView extends StatelessWidget {
               child: Column(
                 children: [
                   Card(
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    shape: RoundedRectangleBorder(borderRadius: AppBorders.radiusLarge),
                     child: Padding(
                       padding: const EdgeInsets.all(16),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            S.of(context).mileage_statistics,
-                            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                          ),
-                          const Divider(color: Colors.grey),
-                          const SizedBox(height: 12),
+                          Text(S.of(context).mileage_statistics, style: textTheme.black16bold),
+                          const Divider(color: AppColors.neutreGrey),
+                          AppSpacers.verticalMedium,
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Row(
                                 children: [
-                                  const Icon(Icons.directions_car, size: 28, color: Colors.grey),
-                                  const SizedBox(width: 8),
+                                  const Icon(Icons.directions_car, size: 28, color: AppColors.neutreGrey),
+                                  AppSpacers.horizontalSmallMedium,
                                   Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         DateFormat('MMMM yyyy', 'uk').format(now),
-                                        style: const TextStyle(fontWeight: FontWeight.bold),
+                                        style: textTheme.black16bold,
                                       ),
                                       Text(
                                         "$currentMonthMileage ${S.of(context).km}",
-                                        style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                                        style: textTheme.black20bold,
                                       ),
                                     ],
                                   ),
@@ -77,35 +78,35 @@ class _StatisticsScreenView extends StatelessWidget {
                                 children: [
                                   Text(
                                     "$averageMileage ${S.of(context).km}",
-                                    style: const TextStyle(color: Colors.green, fontSize: 20),
+                                    style: textTheme.green20W400,
                                   ),
                                   Transform.translate(
                                     offset: const Offset(5, -5),
                                     child: Text(
                                       S.of(context).period,
-                                      style: const TextStyle(color: Colors.black87, fontSize: 12),
+                                      style: textTheme.black13W400,
                                     ),
                                   ),
                                 ],
                               ),
                             ],
                           ),
-                          const SizedBox(height: 12),
+                          AppSpacers.verticalMedium,
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Text(S.of(context).month, style: const TextStyle(color: Colors.grey)),
-                              const SizedBox(width: 50),
-                              Container(height: 20, width: 2, color: Colors.grey),
-                              const SizedBox(width: 50),
-                              Text(S.of(context).average, style: const TextStyle(color: Colors.grey)),
+                              Text(S.of(context).month, style: textTheme.grey12W400),
+                              AppSpacers.horizontalMassive,
+                              Container(height: 20, width: 2, color: AppColors.neutreGrey),
+                              AppSpacers.horizontalMassive,
+                              Text(S.of(context).average, style: textTheme.grey12W400),
                             ],
                           ),
                         ],
                       ),
                     ),
                   ),
-                  const SizedBox(height: 12),
+                  AppSpacers.verticalMedium,
                   if (state.expenseStats != null) ExpenseStatsCard(stats: state.expenseStats!),
                 ],
               ),

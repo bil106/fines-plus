@@ -1,4 +1,4 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 
 abstract final class AppSpacers {
   // Vertical spacers
@@ -17,6 +17,7 @@ abstract final class AppSpacers {
   static const verticalMassive = SizedBox(height: 50);
   static const verticalMaxMassive = SizedBox(height: 80);
   static const verticalGigantic = SizedBox(height: 120);
+  static const verticalXGigantic = SizedBox(height: 150);
   static const verticalMaxGigantic = SizedBox(height: 250);
 
   // Horizontal spacers
@@ -31,7 +32,21 @@ abstract final class AppSpacers {
   static const horizontalXXLarge = SizedBox(width: 30);
   static const horizontalXXXLarge = SizedBox(width: 32);
   static const horizontalHuge = SizedBox(width: 40);
+  static const horizontalMassive = SizedBox(width: 50);
+  static const horizontalXMassive = SizedBox(width: 56);
   static const horizontalXXHuge = SizedBox(width: 100);
-
 }
 
+abstract final class AppLoaders {
+  static const small = SizedBox(
+    width: 24,
+    height: 24,
+    child: CircularProgressIndicator(strokeWidth: 2),
+  );
+
+  static const medium = SizedBox(
+    width: 40,
+    height: 40,
+    child: CircularProgressIndicator(strokeWidth: 2),
+  );
+}

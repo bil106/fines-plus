@@ -2,6 +2,7 @@
 
 import 'package:auto_route/auto_route.dart';
 import 'package:core_localization/generated/l10n.dart';
+import 'package:design_system/constants/app_borders.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
 import 'package:fines_plus/core/widgets/ad_banner_widget.dart';
@@ -110,7 +111,7 @@ class _AddCarScreenState extends State<AddCarScreen> {
                             ),
                           ],
                         ),
-                        const SizedBox(height: 10),
+                        AppSpacers.verticalMedium,
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -181,13 +182,13 @@ class _AddCarScreenState extends State<AddCarScreen> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.grey50,
                         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        shape: RoundedRectangleBorder(borderRadius: AppBorders.radiusLarge),
                       ),
                       onPressed: () async {
                         final homeState = context.findAncestorStateOfType<HomeScreenWrapperState>();
                         homeState?.openPage(HomePage.registration);
                       },
-                      child: Text(S.of(context).registration, style: TextStyle(fontSize: 18, color: Colors.black87)),
+                      child: Text(S.of(context).registration, style: textTheme.black8718W400),
                     ),
                   ),
 
@@ -236,7 +237,7 @@ Widget _buildMenuSquare({IconData? icon, Color? iconColor, Widget? iconWidget, r
             child: Icon(icon, color: iconColor ?? AppColors.grey50, size: 32),
           ),
         if (iconWidget != null) iconWidget,
-        const SizedBox(height: 8),
+        AppSpacers.verticalSmallMedium,
       ],
     ),
   );

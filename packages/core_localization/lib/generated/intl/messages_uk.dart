@@ -59,6 +59,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "close": MessageLookupByLibrary.simpleMessage("Закрити"),
     "comment": MessageLookupByLibrary.simpleMessage("Коментар"),
+    "comment_published": MessageLookupByLibrary.simpleMessage(
+      "Коментар опубліковано!",
+    ),
     "configure_action": MessageLookupByLibrary.simpleMessage("Налаштувати дію"),
     "contact_us": MessageLookupByLibrary.simpleMessage("Звʼяжіться з нами:"),
     "cost_of_work": MessageLookupByLibrary.simpleMessage("Вартість робіт:"),

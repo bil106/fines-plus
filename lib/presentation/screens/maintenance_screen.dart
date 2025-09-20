@@ -8,6 +8,7 @@ import 'package:core_localization/generated/l10n.dart';
 import 'package:core_repository/reminder_repository.dart';
 import 'package:core_repository/schedule_repository.dart';
 import 'package:design_system/colors/app_colors.dart';
+import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
 import 'package:fines_plus/core/widgets/ad_banner_widget.dart';
 import 'package:fines_plus/core/widgets/fuel_record_card.dart';
@@ -79,7 +80,7 @@ class _MaintenanceScreenView extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(S.of(context).tech_service, style: textTheme.title),
-                    const SizedBox(height: 12),
+                    AppSpacers.verticalMedium,
                     Expanded(
                       child: ListView(
                         children: [
@@ -88,7 +89,7 @@ class _MaintenanceScreenView extends StatelessWidget {
                         ],
                       ),
                     ),
-                    const SizedBox(height: 24),
+                    AppSpacers.verticalLargeXL,
                     const AdBannerWidget(),
                   ],
                 ),
@@ -97,7 +98,7 @@ class _MaintenanceScreenView extends StatelessWidget {
               if (state.isMenuOpen)
                 GestureDetector(
                   onTap: cubit.closeMenu,
-                  child: Container(color: Colors.black.withOpacity(0.4)),
+                  child: Container(color: AppColors.black.withOpacity(0.4)),
                 ),
 
               Positioned(
@@ -107,7 +108,6 @@ class _MaintenanceScreenView extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    // Кнопка "Заправка"
                     _buildAnimatedAction(context, Icons.local_gas_station, S.of(context).fuel_up, () async {
                       final record = await context.router.push<FuelRecord>(FuelUpRoute());
                       if (record != null) {
@@ -116,7 +116,6 @@ class _MaintenanceScreenView extends StatelessWidget {
                       }
                     }, state.isMenuOpen),
 
-                    // Кнопка "Сервис"
                     _buildAnimatedAction(context, Icons.build, S.of(context).service, () async {
                       final records = await Navigator.push<List<ServiceRecord>>(
                         context,
@@ -127,10 +126,9 @@ class _MaintenanceScreenView extends StatelessWidget {
                       }
                     }, state.isMenuOpen),
 
-                _buildAnimatedAction(context, Icons.calendar_today, S.of(context).calendar, () async {
-                    final prefs = await SharedPreferences.getInstance();
+                    _buildAnimatedAction(context, Icons.calendar_today, S.of(context).calendar, () async {
+                      final prefs = await SharedPreferences.getInstance();
 
-                      // Инициализируем источники данных
                       final localDataSource = ReminderLocalDataSourceImpl(SharedPrefsManager(prefs));
                       final remoteDataSource = ReminderRemoteDataSourceImpl(FirebaseFirestore.instance);
 
@@ -139,11 +137,8 @@ class _MaintenanceScreenView extends StatelessWidget {
                         remoteDataSource: remoteDataSource,
                       );
 
-                      final scheduleRepository = ScheduleRepository(
-                     
-                      );
+                      final scheduleRepository = ScheduleRepository();
 
-                      // Переходим на ScheduleTab через AutoRoute
                       context.router.push(
                         ScheduleRoute(
                           repository: scheduleRepository,
@@ -154,10 +149,9 @@ class _MaintenanceScreenView extends StatelessWidget {
                       );
                     }, state.isMenuOpen),
 
-                    // Кнопка "Настройки"
                     _buildAnimatedAction(context, Icons.settings, S.of(context).settings, onSettings, state.isMenuOpen),
 
-                    const SizedBox(height: 20),
+                    AppSpacers.verticalLarge,
 
                     GestureDetector(
                       onTap: cubit.toggleMenu,
@@ -165,11 +159,11 @@ class _MaintenanceScreenView extends StatelessWidget {
                         duration: const Duration(milliseconds: 200),
                         height: 50,
                         width: 50,
-                        decoration: const BoxDecoration(color: Colors.blue, shape: BoxShape.circle),
+                        decoration: const BoxDecoration(color: AppColors.energyBlue, shape: BoxShape.circle),
                         child: AnimatedRotation(
                           turns: state.isMenuOpen ? 0.125 : 0,
                           duration: const Duration(milliseconds: 200),
-                          child: Icon(state.isMenuOpen ? Icons.close : Icons.add, color: Colors.white),
+                          child: Icon(state.isMenuOpen ? Icons.close : Icons.add, color: AppColors.neutreBlanc),
                         ),
                       ),
                     ),
@@ -191,11 +185,11 @@ class _MaintenanceScreenView extends StatelessWidget {
         height: 50,
         width: 50,
         decoration: const BoxDecoration(
-          color: Colors.white,
+          color: AppColors.neutreBlanc,
           shape: BoxShape.circle,
-          boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 6, offset: Offset(0, 2))],
+          boxShadow: [BoxShadow(color: AppColors.black26, blurRadius: 6, offset: Offset(0, 2))],
         ),
-        child: Icon(icon, color: Colors.blue),
+        child: Icon(icon, color: AppColors.energyBlue),
       ),
     );
   }

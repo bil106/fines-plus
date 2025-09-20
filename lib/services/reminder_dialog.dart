@@ -3,6 +3,7 @@ import 'package:core_data/core_data.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_spacers.dart';
+import 'package:design_system/theme/app_theme.dart';
 import 'package:fines_plus/services/app_initializer.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -43,14 +44,14 @@ class _ReminderDialogState extends State<ReminderDialog> {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-
+final textTheme = Theme.of(context).textTheme;
     return AlertDialog(
       backgroundColor: AppColors.neutreBlanc,
       insetPadding: EdgeInsets.symmetric(horizontal: screenWidth * 0.06, vertical: 24),
       contentPadding: const EdgeInsets.all(16),
       title: Text(
         widget.reminder == null ? S.of(context).new_reminder : S.of(context).edit_reminder,
-        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
+        style: textTheme.black30bold,
       ),
       content: ConstrainedBox(
         constraints: BoxConstraints(maxWidth: 500, minWidth: screenWidth * 0.8),
@@ -63,7 +64,7 @@ class _ReminderDialogState extends State<ReminderDialog> {
                 controller: titleController,
                 decoration: InputDecoration(
                   labelText: S.of(context).title,
-                  labelStyle: TextStyle(fontWeight: FontWeight.w400, fontSize: 18),
+                  labelStyle: textTheme.black18W400,
                 ),
               ),
               AppSpacers.verticalLarge,
@@ -71,7 +72,7 @@ class _ReminderDialogState extends State<ReminderDialog> {
                 controller: descriptionController,
                 decoration: InputDecoration(
                   labelText: S.of(context).description,
-                  labelStyle: TextStyle(fontWeight: FontWeight.w400, fontSize: 18),
+                  labelStyle: textTheme.black18W400,
                 ),
               ),
               AppSpacers.verticalLarge,
@@ -80,7 +81,7 @@ class _ReminderDialogState extends State<ReminderDialog> {
                   Expanded(
                     child: Text(
                       DateFormat('dd.MM.yyyy HH:mm').format(selectedDateTime),
-                      style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 18),
+                      style:  textTheme.black18W500,
                     ),
                   ),
                   TextButton(
@@ -103,7 +104,7 @@ class _ReminderDialogState extends State<ReminderDialog> {
                         }
                       }
                     },
-                    child: Text(S.of(context).select_date, style: TextStyle(fontWeight: FontWeight.w500, fontSize: 18)),
+                    child: Text(S.of(context).select_date, style: textTheme.black18W500),
                   ),
                 ],
               ),
@@ -114,7 +115,7 @@ class _ReminderDialogState extends State<ReminderDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: Text(S.of(context).cancel, style: TextStyle(fontWeight: FontWeight.w500, fontSize: 18)),
+          child: Text(S.of(context).cancel, style: textTheme.black18W500),
         ),
         ElevatedButton(
           onPressed: () async {

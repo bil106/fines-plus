@@ -8,6 +8,7 @@ import 'package:core_localization/generated/l10n.dart';
 import 'package:core_repository/reminder_repository.dart';
 import 'package:core_repository/schedule_repository.dart';
 import 'package:design_system/colors/app_colors.dart';
+import 'package:design_system/constants/app_spacers.dart';
 import 'package:fines_plus/core/widgets/action_detail_sheet.dart';
 import 'package:fines_plus/core/widgets/maintenance_card.dart';
 import 'package:flutter/material.dart';
@@ -89,7 +90,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                     : ListView.separated(
                         padding: const EdgeInsets.all(1),
                         itemCount: state.tasks.length,
-                        separatorBuilder: (_, __) => const SizedBox(height: 12),
+                        separatorBuilder: (_, __) => AppSpacers.verticalMedium,
                         itemBuilder: (context, index) {
                           final task = state.tasks[index];
 

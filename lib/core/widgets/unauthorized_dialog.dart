@@ -11,7 +11,7 @@ class UnauthorizedDialog extends StatelessWidget {
       title:  Text(S.of(context).not_auth),
       content:  Text(S.of(context).please_log_in),
       actions: [
-        TextButton(onPressed: () => Navigator.pop(context), child: const Text('Закрыть')),
+        TextButton(onPressed: () => Navigator.pop(context), child:Text(S.current.close)),
         TextButton(
           onPressed: () {
             Navigator.pop(context);

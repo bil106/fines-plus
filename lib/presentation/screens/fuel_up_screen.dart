@@ -98,7 +98,7 @@ class _FuelUpScreenState extends State<FuelUpScreen> {
               icon: const Icon(Icons.check, color: AppColors.blue700),
               onPressed: () {
                 if (selectedDate == null || volumeController.text.isEmpty || mileageController.text.isEmpty) {
-                  if (!mounted) return; 
+                  if (!mounted) return;
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(S.of(context).fill_date)));
                   return;
                 }
@@ -132,7 +132,7 @@ class _FuelUpScreenState extends State<FuelUpScreen> {
               Row(
                 children: [
                   _bestStation == null
-                      ? const SizedBox(width: 40, height: 40, child: CircularProgressIndicator(strokeWidth: 2))
+                      ? AppLoaders.medium
                       : GestureDetector(
                           onTap: () {
                             context.router.push(
@@ -145,8 +145,8 @@ class _FuelUpScreenState extends State<FuelUpScreen> {
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              const Icon(Icons.location_on, color: Colors.blue, size: 40),
-                              const SizedBox(width: 8),
+                              const Icon(Icons.location_on, color: AppColors.energyBlue, size: 40),
+                              AppSpacers.horizontalSmallMedium,
                               SizedBox(
                                 width: 180,
                                 child: Text(

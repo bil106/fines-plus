@@ -34,7 +34,7 @@ class DatePickerCard extends StatelessWidget {
             child: Row(
               children: [
                 const Icon(Icons.calendar_today, size: 24),
-                const SizedBox(width: 12),
+                AppSpacers.horizontalMedium,
                 Expanded(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,

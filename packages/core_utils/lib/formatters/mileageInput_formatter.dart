@@ -2,6 +2,7 @@
 
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
+import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -16,7 +17,7 @@ class MileageInputFormatter extends TextInputFormatter {
 
     final value = int.tryParse(newValue.text) ?? 0;
     if (value > max) {
-      return oldValue; 
+      return oldValue;
     }
     return newValue;
   }
@@ -34,7 +35,7 @@ Widget _buildMileageCard(TextTheme textTheme) {
         child: Row(
           children: [
             const Icon(Icons.speed, size: 24),
-            const SizedBox(width: 12),
+            AppSpacers.horizontalMedium,
             Expanded(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -59,7 +60,7 @@ Widget _buildMileageCard(TextTheme textTheme) {
                       isDense: true,
                       contentPadding: EdgeInsets.zero,
                       focusedBorder: InputBorder.none,
-                      suffixText:S.current.km,
+                      suffixText: S.current.km,
                       suffixStyle: textTheme.hintText.copyWith(fontSize: 16),
                     ),
                     style: textTheme.historyText,

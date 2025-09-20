@@ -1,4 +1,8 @@
 import 'package:core_localization/generated/l10n.dart';
+import 'package:design_system/colors/app_colors.dart';
+import 'package:design_system/constants/app_borders.dart';
+import 'package:design_system/constants/app_spacers.dart';
+import 'package:design_system/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 
 class MaintenanceCard extends StatelessWidget {
@@ -32,10 +36,10 @@ class MaintenanceCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    
+    final textTheme = Theme.of(context).textTheme;
     return Card(
       elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      shape: RoundedRectangleBorder(borderRadius: AppBorders.radiusLarge),
       child: Padding(
         padding: const EdgeInsets.all(12),
         child: Column(
@@ -43,13 +47,11 @@ class MaintenanceCard extends StatelessWidget {
           children: [
             Row(
               children: [
-                Expanded(
-                  child: Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                ),
-                const Icon(Icons.settings, size: 20, color: Colors.grey),
+                Expanded(child: Text(title, style: textTheme.black16bold)),
+                const Icon(Icons.settings, size: 20, color: AppColors.neutreGrey),
               ],
             ),
-            const SizedBox(height: 12),
+            AppSpacers.verticalMedium,
 
             Row(
               children: [
@@ -58,10 +60,10 @@ class MaintenanceCard extends StatelessWidget {
                   children: [
                     CircleAvatar(
                       radius: 28,
-                      backgroundColor: Colors.blue.shade50,
+                      backgroundColor: AppColors.energyBlue50,
                       child:
                           iconWidget ??
-                          Icon(icon ?? Icons.build, color: icon != null ? Colors.amber : Colors.orange, size: 30),
+                          Icon(icon ?? Icons.build, color: icon != null ? AppColors.amber : AppColors.orange, size: 30),
                     ),
                     if (isWarning != null)
                       Positioned(
@@ -69,13 +71,13 @@ class MaintenanceCard extends StatelessWidget {
                         right: 0,
                         child: CircleAvatar(
                           radius: 10,
-                          backgroundColor: isWarning! ? Colors.red : Colors.green,
-                          child: Icon(isWarning! ? Icons.error : Icons.check, color: Colors.white, size: 14),
+                          backgroundColor: isWarning! ? AppColors.red : AppColors.green,
+                          child: Icon(isWarning! ? Icons.error : Icons.check, color: AppColors.neutreBlanc, size: 14),
                         ),
                       ),
                   ],
                 ),
-                const SizedBox(width: 12),
+                AppSpacers.horizontalMedium,
                 Expanded(
                   child: Stack(
                     alignment: Alignment.center,
@@ -84,20 +86,19 @@ class MaintenanceCard extends StatelessWidget {
                         value: progress,
                         minHeight: 22,
                         borderRadius: BorderRadius.circular(8),
-                        backgroundColor: Colors.grey.shade300,
-                        valueColor: AlwaysStoppedAnimation<Color>(progress > 0.8 ? Colors.red : Colors.lightGreen),
+                        backgroundColor: AppColors.grey300,
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          progress > 0.8 ? AppColors.red : AppColors.lightGreen,
+                        ),
                       ),
-                      Text(
-                        "${(progress * 100).toStringAsFixed(0)}%",
-                        style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
-                      ),
+                      Text("${(progress * 100).toStringAsFixed(0)}%", style: textTheme.white14W400),
                     ],
                   ),
                 ),
               ],
             ),
 
-            const SizedBox(height: 8),
+            AppSpacers.verticalSmallMedium,
 
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -105,20 +106,14 @@ class MaintenanceCard extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("${S.of(context).previous}: ${priorExecution ?? "-"}", style: const TextStyle(fontSize: 13)),
-                    Text(
-                      "${S.of(context).mileage}: ${lastMileage?.toString() ?? "-"}",
-                      style: const TextStyle(fontSize: 13),
-                    ),
-                    Text(
-                      "${S.of(context).fact}: ${actualMileage?.toString() ?? "-"}",
-                      style: const TextStyle(fontSize: 13),
-                    ),
+                    Text("${S.of(context).previous}: ${priorExecution ?? "-"}", style: textTheme.black13W400),
+                    Text("${S.of(context).mileage}: ${lastMileage?.toString() ?? "-"}", style: textTheme.black13W400),
+                    Text("${S.of(context).fact}: ${actualMileage?.toString() ?? "-"}", style: textTheme.black13W400),
                   ],
                 ),
                 Text(
                   "${S.of(context).periodicity}: ${intervalKm?.toString() ?? "-"} ${S.of(context).km}",
-                  style: const TextStyle(fontSize: 13),
+                  style: textTheme.black13W400,
                 ),
               ],
             ),
@@ -130,7 +125,7 @@ class MaintenanceCard extends StatelessWidget {
                   child: TextButton(onPressed: onPressed, child: Text(S.of(context).configure_action)),
                 ),
                 IconButton(
-                  icon: const Icon(Icons.delete, color: Colors.red),
+                  icon: const Icon(Icons.delete, color: AppColors.red),
                   onPressed: onDelete,
                 ),
               ],

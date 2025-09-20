@@ -1,4 +1,7 @@
 import 'package:core_localization/generated/l10n.dart';
+import 'package:design_system/colors/app_colors.dart';
+import 'package:design_system/constants/app_borders.dart';
+import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 
@@ -28,7 +31,7 @@ class _AnalyticsFuelFieldState extends State<AnalyticsFuelField> {
     final textTheme = Theme.of(context).textTheme;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12)),
+      decoration: BoxDecoration(color: AppColors.neutreBlanc, borderRadius: AppBorders.radiusLarge),
       child: Row(
         children: [
           SizedBox(
@@ -48,10 +51,10 @@ class _AnalyticsFuelFieldState extends State<AnalyticsFuelField> {
           ),
           const Spacer(),
           Text("${_amount.toStringAsFixed(0)} ₴", style: textTheme.historyText),
-          const SizedBox(width: 8),
+          AppSpacers.horizontalSmallMedium,
           GestureDetector(
             onTap: widget.onTap,
-            child: const Icon(Icons.arrow_forward_ios, color: Colors.grey),
+            child: const Icon(Icons.arrow_forward_ios, color: AppColors.neutreGrey),
           ),
         ],
       ),

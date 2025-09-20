@@ -61,6 +61,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "close": MessageLookupByLibrary.simpleMessage("Close"),
     "comment": MessageLookupByLibrary.simpleMessage("Comment"),
+    "comment_published": MessageLookupByLibrary.simpleMessage(
+      "Comment published!",
+    ),
     "configure_action": MessageLookupByLibrary.simpleMessage(
       "Configure action",
     ),

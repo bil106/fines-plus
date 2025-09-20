@@ -24,12 +24,12 @@ class TechPassportInput extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(S.of(context).reg_number, style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w600)),
+            Text(S.of(context).reg_number, style: textTheme.black28W600),
             AppSpacers.verticalSmall,
             TextField(
               controller: controller,
               onChanged: cubit.setTechPassport,
-              style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w400),
+              style: textTheme.black28W400,
               inputFormatters: [TechPassportFormatter()],
               maxLength: 9,
               decoration: InputDecoration(

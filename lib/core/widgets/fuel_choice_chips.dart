@@ -20,7 +20,7 @@ class FuelChoiceChips extends StatelessWidget {
           selected: isSelected,
           selectedColor: AppColors.blue700,
           backgroundColor: AppColors.neutreBlanc,
-          labelStyle: TextStyle(color: isSelected ? Colors.white : Colors.black),
+          labelStyle: TextStyle(color: isSelected ? AppColors.neutreBlanc : AppColors.black),
           onSelected: (_) => onSelected(fuel),
           showCheckmark: false,
           labelPadding: const EdgeInsets.symmetric(horizontal: 2, vertical: 0),

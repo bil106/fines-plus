@@ -1,4 +1,7 @@
 import 'package:core_localization/generated/l10n.dart';
+import 'package:design_system/colors/app_colors.dart';
+import 'package:design_system/constants/app_borders.dart';
+import 'package:design_system/constants/app_spacers.dart';
 import 'package:flutter/material.dart';
 
 class TimelineItem extends StatelessWidget {
@@ -33,13 +36,13 @@ class TimelineItem extends StatelessWidget {
               padding: const EdgeInsets.all(8),
               child: Icon(icon, color: iconColor, size: 24),
             ),
-            Container(width: 2, height: 80, color: Colors.grey.shade700),
+            Container(width: 2, height: 80, color: AppColors.grey700),
           ],
         ),
-        const SizedBox(width: 12),
+        AppSpacers.horizontalMedium,
         Expanded(
           child: Card(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            shape: RoundedRectangleBorder(borderRadius: AppBorders.radiusLarge),
             margin: const EdgeInsets.only(bottom: 16),
             child: Padding(
               padding: const EdgeInsets.all(12),
@@ -48,20 +51,23 @@ class TimelineItem extends StatelessWidget {
                 children: [
                   Align(
                     alignment: Alignment.topRight,
-                    child: Text(date, style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.grey)),
+                    child: Text(
+                      date,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(color: AppColors.neutreGrey),
+                    ),
                   ),
                   if (subtitle.isNotEmpty) Text(subtitle, style: Theme.of(context).textTheme.bodySmall),
-                  const SizedBox(height: 4),
+                  AppSpacers.verticalXSmall,
                   Text(title, style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 8),
+                  AppSpacers.verticalSmallMedium,
                   Row(
                     children: [
                       const Icon(Icons.attach_money, size: 16),
-                      const SizedBox(width: 4),
+                      AppSpacers.horizontalXSmall,
                       Text("${amount.toStringAsFixed(0)} ${S.of(context).grn}"),
-                      const SizedBox(width: 16),
+                      AppSpacers.horizontalMediumLarge,
                       const Icon(Icons.directions_car, size: 16),
-                      const SizedBox(width: 4),
+                      AppSpacers.horizontalXSmall,
                       Text(mileage),
                     ],
                   ),

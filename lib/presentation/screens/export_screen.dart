@@ -8,13 +8,13 @@ import 'package:core_repository/export_repository.dart';
 import 'package:core_repository/injector.dart';
 import 'package:core_utils/share_helpers.dart';
 import 'package:design_system/colors/app_colors.dart';
+import 'package:design_system/constants/app_borders.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
 import 'package:fines_plus/core/widgets/ad_banner_widget.dart';
 import 'package:fines_plus/core/widgets/export_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 
 @RoutePage()
 class ExportScreen extends StatelessWidget {
@@ -64,8 +64,8 @@ class _ExportScreenView extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
               decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey.shade300),
-                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: AppColors.grey300),
+                borderRadius: AppBorders.radiusLarge,
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -75,7 +75,7 @@ class _ExportScreenView extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(height: 24),
+            AppSpacers.verticalLargeXL,
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [

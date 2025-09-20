@@ -13,6 +13,8 @@ dependencies:
     path: ../core_data
   core_localization:
     path: ../core_localization
+  design_system:
+    path: ../design_system
   uuid: ^4.5.1
   cloud_firestore: ^5.0.0
   firebase_core: ^3.15.2

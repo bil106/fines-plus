@@ -5,6 +5,7 @@ import 'package:core_cubit/cubit/registration/registration_cubit.dart';
 import 'package:core_cubit/cubit/registration/registration_state.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
+import 'package:design_system/constants/app_borders.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
 import 'package:fines_plus/router/home_screen_wrapper.dart';
@@ -25,18 +26,17 @@ class RegistrationScreen extends StatefulWidget {
 class _RegistrationScreenState extends State<RegistrationScreen> {
   late TextEditingController emailController;
   late TextEditingController passwordController;
-  bool isLoadingCredentials = true; 
+  bool isLoadingCredentials = true;
 
- @override
+  @override
   void initState() {
     super.initState();
     emailController = TextEditingController();
     passwordController = TextEditingController();
-    isLoadingCredentials = false; 
+    isLoadingCredentials = false;
   }
 
-
-Future<void> _signInWithGoogle() async {
+  Future<void> _signInWithGoogle() async {
     try {
       final googleUser = await GoogleSignIn().signIn();
       if (googleUser == null) return;
@@ -51,10 +51,9 @@ Future<void> _signInWithGoogle() async {
       final userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
       final user = userCredential.user;
 
-      if (!mounted) return; 
+      if (!mounted) return;
 
       if (user != null) {
-       
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text('${S.current.successful_registration}: ${user.email}')));
@@ -63,11 +62,10 @@ Future<void> _signInWithGoogle() async {
         homeState?.openPage(HomePage.addCar);
       }
     } catch (e) {
-      if (!mounted) return; 
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${S.current.google_login_error}: $e")));
     }
   }
-
 
   @override
   void dispose() {
@@ -115,7 +113,7 @@ Future<void> _signInWithGoogle() async {
                 ),
                 AppSpacers.verticalXXXLarge,
 
-                 state.isLoading
+                state.isLoading
                     ? const CircularProgressIndicator()
                     : Padding(
                         padding: const EdgeInsets.only(left: 100),
@@ -137,11 +135,11 @@ Future<void> _signInWithGoogle() async {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.blue700,
                             padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                            shape: RoundedRectangleBorder(borderRadius: AppBorders.radiusLarge),
                           ),
                           child: Text(
                             S.of(context).registration,
-                            style: const TextStyle(fontSize: 18, color: Colors.white),
+                            style: textTheme.white18W400,
                           ),
                         ),
                       ),
@@ -155,10 +153,10 @@ Future<void> _signInWithGoogle() async {
                     icon: Image.asset('assets/icons/google_logo.png', height: 20),
                     label: Text(S.of(context).sign_in_google),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: Colors.black87,
+                      backgroundColor: AppColors.neutreBlanc,
+                      foregroundColor: AppColors.black87,
                       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      shape: RoundedRectangleBorder(borderRadius: AppBorders.radiusLarge),
                     ),
                     onPressed: () => _signInWithGoogle(),
                   ),

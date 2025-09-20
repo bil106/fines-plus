@@ -124,7 +124,7 @@ class _FineCheckScreenState extends State<FineCheckScreen> {
                               width: double.infinity,
                               child: Card(
                                 color: AppColors.neutreBlanc,
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                shape: RoundedRectangleBorder(borderRadius: AppBorders.radiusLarge),
                                 elevation: 4,
                                 child: Padding(
                                   padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
@@ -134,7 +134,7 @@ class _FineCheckScreenState extends State<FineCheckScreen> {
                                       AppSpacers.verticalMedium,
                                       Text(widget.carNumber, style: textTheme.carNumber),
                                       Text("${fine.total} ${S.of(context).grn}", style: textTheme.totalFines),
-                                      const SizedBox(height: 8),
+                                      AppSpacers.verticalSmallMedium,
                                       Text(
                                         "${fine.date.day}.${fine.date.month}.${fine.date.year}",
                                         style: textTheme.fineDate,

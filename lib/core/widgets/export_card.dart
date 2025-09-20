@@ -1,7 +1,7 @@
 import 'package:design_system/colors/app_colors.dart';
+import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
 import 'package:flutter/material.dart';
-
 
 class ExportCard extends StatelessWidget {
   final IconData icon;
@@ -29,8 +29,8 @@ class ExportCard extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(icon, size: 70, color: Colors.blue.shade700),
-                const SizedBox(height: 8),
+                Icon(icon, size: 70, color: AppColors.blue700),
+                AppSpacers.verticalSmallMedium,
                 Text(label, style: textTheme.historyText),
               ],
             ),

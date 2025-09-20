@@ -12,7 +12,6 @@ import 'package:fines_plus/core/widgets/additional_options_widget.dart';
 import 'package:fines_plus/core/widgets/date_picker_card.dart';
 import 'package:fines_plus/core/widgets/extensions/service_list.dart';
 import 'package:fines_plus/core/widgets/mileage_card.dart';
-import 'package:fines_plus/core/widgets/photo_picker_widget.dart';
 import 'package:fines_plus/env/env.dart';
 import 'package:fines_plus/presentation/screens/fuel_map_screen.dart';
 import 'package:fines_plus/presentation/screens/service_map_screen.dart';
@@ -175,7 +174,7 @@ class _ServiceScreenState extends State<ServiceScreen> {
               Row(
                 children: [
                   _bestStation == null
-                      ? const SizedBox(width: 40, height: 40, child: CircularProgressIndicator(strokeWidth: 2))
+                      ? AppLoaders.medium
                       : GestureDetector(
                           onTap: () {
                             Navigator.of(context).push(
@@ -190,8 +189,8 @@ class _ServiceScreenState extends State<ServiceScreen> {
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              const Icon(Icons.location_on, color: Colors.blue, size: 40),
-                              const SizedBox(width: 8),
+                              const Icon(Icons.location_on, color: AppColors.energyBlue, size: 40),
+                              AppSpacers.horizontalSmallMedium,
                               SizedBox(
                                 width: 180,
                                 child: Text(
@@ -223,7 +222,7 @@ class _ServiceScreenState extends State<ServiceScreen> {
                       onDateSelected: (date) => setState(() => selectedDate = date),
                     ),
                   ),
-                  const SizedBox(width: 16),
+                  AppSpacers.horizontalMediumLarge,
                   Expanded(
                     child: MileageCard(textTheme: textTheme, controller: mileageController),
                   ),
@@ -268,9 +267,9 @@ class _ServiceScreenState extends State<ServiceScreen> {
                                 decoration: InputDecoration(
                                   hintText: S.of(context).select_a_service,
                                   border: OutlineInputBorder(),
-                                  prefixIcon: Icon(Icons.build, color: Colors.blueAccent),
+                                  prefixIcon: Icon(Icons.build, color: AppColors.blueAccent),
                                   suffixIcon: IconButton(
-                                    icon: Icon(Icons.delete, color: Colors.red),
+                                    icon: Icon(Icons.delete, color: AppColors.red),
                                     onPressed: () {
                                       setState(() {
                                         serviceControllers.removeAt(index);
@@ -293,8 +292,8 @@ class _ServiceScreenState extends State<ServiceScreen> {
               Center(
                 child: IconButton(
                   icon: const CircleAvatar(
-                    backgroundColor: Colors.blue,
-                    child: Icon(Icons.add, color: Colors.white),
+                    backgroundColor: AppColors.energyBlue,
+                    child: Icon(Icons.add, color: AppColors.neutreBlanc),
                   ),
                   onPressed: () {
                     setState(() {
@@ -304,12 +303,12 @@ class _ServiceScreenState extends State<ServiceScreen> {
                 ),
               ),
 
-              const SizedBox(height: 16),
+              AppSpacers.verticalMediumLarge,
 
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey),
+                  border: Border.all(color: AppColors.neutreGrey),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Row(
@@ -317,8 +316,8 @@ class _ServiceScreenState extends State<ServiceScreen> {
                   children: [
                     Row(
                       children: [
-                        const Icon(Icons.attach_money, color: Colors.blueAccent),
-                        const SizedBox(width: 8),
+                        const Icon(Icons.attach_money, color: AppColors.blueAccent),
+                        AppSpacers.horizontalSmallMedium,
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -331,11 +330,11 @@ class _ServiceScreenState extends State<ServiceScreen> {
                         ),
                       ],
                     ),
-                    const SizedBox(width: 56),
+                    AppSpacers.horizontalXMassive,
                     Row(
                       children: [
-                        const Icon(Icons.attach_money, color: Colors.blueAccent),
-                        const SizedBox(width: 8),
+                        const Icon(Icons.attach_money, color: AppColors.blueAccent),
+                        AppSpacers.horizontalSmallMedium,
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -353,7 +352,7 @@ class _ServiceScreenState extends State<ServiceScreen> {
               ),
 
               const Divider(),
-               AdditionalOptionsWidget(photoPicker: const PhotoPickerWidget()),
+              AdditionalOptionsWidget(),
             ],
           ),
         ),

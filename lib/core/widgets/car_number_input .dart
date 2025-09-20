@@ -26,12 +26,12 @@ class CarNumberInput extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(S.of(context).car_number, style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w600)),
+            Text(S.of(context).car_number, style: textTheme.black28W600),
             AppSpacers.verticalSmall,
             TextField(
               controller: controller,
               onChanged: cubit.setCarNumber,
-              style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w400),
+              style: textTheme.black28W400,
               inputFormatters: [VehicleNumberFormatter(mapLatinToCyrillic: true)],
               textCapitalization: TextCapitalization.characters,
               keyboardType: TextInputType.text,

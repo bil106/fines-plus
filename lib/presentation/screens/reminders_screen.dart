@@ -66,7 +66,7 @@ class _RemindersView extends StatelessWidget {
             return ListView.separated(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 40),
               itemCount: state.reminders.length + 1,
-              separatorBuilder: (_, __) => const Divider(color: Colors.grey),
+              separatorBuilder: (_, __) => const Divider(color: AppColors.neutreGrey),
               itemBuilder: (context, index) {
                 if (index == 0) {
                   return Padding(
@@ -97,13 +97,13 @@ class _RemindersView extends StatelessWidget {
                     style: textTheme.headlineSmall,
                   ),
                   trailing: IconButton(
-                    icon: const Icon(Icons.delete, color: Colors.red),
+                    icon: const Icon(Icons.delete, color: AppColors.red),
                     onPressed: () => cubit.deleteReminder(reminder.id),
                   ),
                   onTap: () {
                     showDialog(
                       context: context,
-                      barrierColor: Colors.transparent,
+                      barrierColor: AppColors.transparent,
                       builder: (_) => ReminderDialog(cubit: cubit, reminder: reminder, onSaved: () => cubit.load()),
                     );
                   },
@@ -117,7 +117,7 @@ class _RemindersView extends StatelessWidget {
         onPressed: () {
           showDialog(
             context: context,
-            barrierColor: Colors.transparent,
+            barrierColor: AppColors.transparent,
             builder: (_) => ReminderDialog(cubit: cubit, onSaved: () => cubit.load()),
           );
         },
@@ -140,13 +140,13 @@ class _EmptyReminders extends StatelessWidget {
         children: [
           AppSpacers.verticalXLarge,
           Text(S.of(context).reminder, style: textTheme.title),
-          const SizedBox(height: 150),
+          AppSpacers.verticalXGigantic,
           Center(
             child: Container(
               width: 150,
               height: 150,
-              decoration: const BoxDecoration(shape: BoxShape.circle, color: Colors.blue),
-              child: const Icon(Icons.check, color: Colors.white, size: 120),
+              decoration: const BoxDecoration(shape: BoxShape.circle, color: AppColors.energyBlue),
+              child: const Icon(Icons.check, color: AppColors.neutreBlanc, size: 120),
             ),
           ),
           AppSpacers.verticalLarge,

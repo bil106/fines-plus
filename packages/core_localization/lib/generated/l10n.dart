@@ -2633,6 +2633,16 @@ class S {
   String get login {
     return Intl.message('Login', name: 'login', desc: '', args: []);
   }
+
+  /// `Comment published!`
+  String get comment_published {
+    return Intl.message(
+      'Comment published!',
+      name: 'comment_published',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {
