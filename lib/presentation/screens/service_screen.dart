@@ -12,6 +12,7 @@ import 'package:fines_plus/core/widgets/additional_options_widget.dart';
 import 'package:fines_plus/core/widgets/date_picker_card.dart';
 import 'package:fines_plus/core/widgets/extensions/service_list.dart';
 import 'package:fines_plus/core/widgets/mileage_card.dart';
+import 'package:fines_plus/core/widgets/photo_picker_widget.dart';
 import 'package:fines_plus/env/env.dart';
 import 'package:fines_plus/presentation/screens/fuel_map_screen.dart';
 import 'package:fines_plus/presentation/screens/service_map_screen.dart';
@@ -136,7 +137,7 @@ class _ServiceScreenState extends State<ServiceScreen> {
 
           actions: [
             IconButton(
-              icon: const Icon(Icons.check, color: AppColors.blue700),
+              icon: const Icon(Icons.check, color: AppColors.blue700,size: 50,),
               onPressed: () {
                 if (selectedDate == null || serviceControllers.every((c) => c.text.isEmpty)) {
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(S.of(context).select_service)));
@@ -352,7 +353,7 @@ class _ServiceScreenState extends State<ServiceScreen> {
               ),
 
               const Divider(),
-              AdditionalOptionsWidget(),
+              AdditionalOptionsWidget(photoPicker: PhotoPickerWidget(),),
             ],
           ),
         ),

@@ -84,14 +84,14 @@ class _ActionDetailSheetState extends State<ActionDetailSheet> {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     return Padding(
-      padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: MediaQuery.of(context).viewInsets.bottom + 16),
+      padding: EdgeInsets.only(left: 16, right: 16, top: 1, bottom: MediaQuery.of(context).viewInsets.bottom + 16),
       child: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
-                Expanded(child: Text(widget.title ?? S.of(context).new_task, style: textTheme.white14W400)),
+                Expanded(child: Text(widget.title ?? S.of(context).new_task, style: textTheme.black18W500)),
                 IconButton(icon: const Icon(Icons.close), onPressed: () => Navigator.pop(context)),
               ],
             ),

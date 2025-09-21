@@ -41,7 +41,7 @@ class MaintenanceCard extends StatelessWidget {
       elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: AppBorders.radiusLarge),
       child: Padding(
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -112,7 +112,7 @@ class MaintenanceCard extends StatelessWidget {
                   ],
                 ),
                 Text(
-                  "${S.of(context).periodicity}: ${intervalKm?.toString() ?? "-"} ${S.of(context).km}",
+                  "${S.of(context).periodicity} ${intervalKm?.toString() ?? "-"} ${S.of(context).km}",
                   style: textTheme.black13W400,
                 ),
               ],
@@ -121,7 +121,7 @@ class MaintenanceCard extends StatelessWidget {
             Row(
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(left: 98.0, right: 50),
+                  padding: const EdgeInsets.only(left: 98.0, right: 30),
                   child: TextButton(onPressed: onPressed, child: Text(S.of(context).configure_action)),
                 ),
                 IconButton(

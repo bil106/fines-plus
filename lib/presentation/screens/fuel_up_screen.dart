@@ -95,7 +95,7 @@ class _FuelUpScreenState extends State<FuelUpScreen> {
           leading: BackButton(color: AppColors.blue700, onPressed: widget.onBack),
           actions: [
             IconButton(
-              icon: const Icon(Icons.check, color: AppColors.blue700),
+              icon: const Icon(Icons.check, color: AppColors.blue700,size: 50,),
               onPressed: () {
                 if (selectedDate == null || volumeController.text.isEmpty || mileageController.text.isEmpty) {
                   if (!mounted) return;

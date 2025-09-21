@@ -64,10 +64,17 @@ class MaintenanceCubit extends Cubit<MaintenanceState> {
   }
 }
 extension MileageCalculations on MaintenanceCubit {
+
   int getCurrentMonthMileage(DateTime now) {
     final allRecords = [
-      ...state.serviceRecords.map((r) => {'date': DateFormat('dd.MM.yyyy').parse(r.date), 'mileage': r.mileage}),
-      ...state.fuelRecords.map((r) => {'date': DateFormat('dd.MM.yyyy').parse(r.date), 'mileage': r.mileage}),
+      ...state.serviceRecords.map((r) => {
+        'date': DateFormat('dd.MM.yyyy').parse(r.date),
+        'mileage': r.mileage
+      }),
+      ...state.fuelRecords.map((r) => {
+        'date': DateFormat('dd.MM.yyyy').parse(r.date),
+        'mileage': r.mileage
+      }),
     ];
 
     final monthRecords = allRecords.where((r) {
@@ -78,10 +85,10 @@ extension MileageCalculations on MaintenanceCubit {
     if (monthRecords.isEmpty) return 0;
 
     monthRecords.sort((a, b) => (a['date'] as DateTime).compareTo(b['date'] as DateTime));
-    final start = monthRecords.first['mileage'] as int;
-    final end = monthRecords.map((r) => r['mileage'] as int).reduce((a, b) => a > b ? a : b);
-    return end - start;
+    return monthRecords.last['mileage'] as int;
   }
+
+
 
   int getAverageMileage() {
     final allRecords = [
