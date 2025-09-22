@@ -207,7 +207,8 @@ class _CarInfoViewState extends State<_CarInfoView> {
                   },
                   child: BlocBuilder<CarInfoCubit, CarInfoState>(
                     builder: (context, state) {
-                      final isLoading = state.status is CarInfoLoadingStatus;
+                       final isLoading = state.status is CarInfoLoadingStatus;
+                      final isFormValid = context.read<CarInfoCubit>().isFormValid;
 
                       return Column(
                         children: [
@@ -215,7 +216,7 @@ class _CarInfoViewState extends State<_CarInfoView> {
                             width: double.infinity,
                             height: 65,
                             child: ElevatedButton(
-                              onPressed: !isLoading
+                              onPressed: (!isLoading && isFormValid)
                                   ? () {
                                       final user = FirebaseAuth.instance.currentUser;
                                       if (user == null) {

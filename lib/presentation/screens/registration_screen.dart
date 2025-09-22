@@ -54,16 +54,21 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       if (!mounted) return;
 
       if (user != null) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('${S.current.successful_registration}: ${user.email}')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: AppColors.blue700,
+            content: Text('${S.current.successful_registration}: ${user.email}'),
+          ),
+        );
 
         final homeState = context.findAncestorStateOfType<HomeScreenWrapperState>();
         homeState?.openPage(HomePage.addCar);
       }
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${S.current.google_login_error}: $e")));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(backgroundColor: AppColors.blue700, content: Text("${S.current.google_login_error}: $e")),
+      );
     }
   }
 
@@ -122,14 +127,19 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                             try {
                               await cubit.register(emailController.text, passwordController.text);
 
-                              ScaffoldMessenger.of(
-                                context,
-                              ).showSnackBar(SnackBar(content: Text(S.of(context).successfully_registration)));
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  backgroundColor: AppColors.blue700,
+                                  content: Text(S.of(context).successfully_registration),
+                                ),
+                              );
 
                               final homeState = context.findAncestorStateOfType<HomeScreenWrapperState>();
                               homeState?.openPage(HomePage.addCar);
                             } catch (e) {
-                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Error: $e")));
+                              ScaffoldMessenger.of(
+                                context,
+                              ).showSnackBar(SnackBar(backgroundColor: AppColors.blue700, content: Text("Error: $e")));
                             }
                           },
                           style: ElevatedButton.styleFrom(
@@ -137,10 +147,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                             padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
                             shape: RoundedRectangleBorder(borderRadius: AppBorders.radiusLarge),
                           ),
-                          child: Text(
-                            S.of(context).registration,
-                            style: textTheme.white18W400,
-                          ),
+                          child: Text(S.of(context).registration, style: textTheme.white18W400),
                         ),
                       ),
 
@@ -170,9 +177,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       final user = FirebaseAuth.instance.currentUser;
                       if (user == null) return;
                       await purchaseCubit.buySubscription(user.uid, 9.99);
-                      ScaffoldMessenger.of(
-                        context,
-                      ).showSnackBar(SnackBar(content: Text(S.of(context).successfully_subscription)));
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          backgroundColor: AppColors.blue700,
+                          content: Text(S.of(context).successfully_subscription),
+                        ),
+                      );
                     },
                     child: Text(S.of(context).buy_subscription),
                   ),

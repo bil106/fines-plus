@@ -34,6 +34,7 @@ abstract final class AppSpacers {
   static const horizontalHuge = SizedBox(width: 40);
   static const horizontalMassive = SizedBox(width: 50);
   static const horizontalXMassive = SizedBox(width: 56);
+  static const horizontalXXMassive = SizedBox(width: 80);
   static const horizontalXXHuge = SizedBox(width: 100);
 }
 

@@ -12,7 +12,8 @@ import 'package:flutter/services.dart';
 
 @RoutePage()
 class SettingsScreen extends StatefulWidget {
-  const SettingsScreen({super.key});
+  final VoidCallback? onBack;
+  const SettingsScreen({super.key, this.onBack});
 
   @override
   State<SettingsScreen> createState() => _SettingsScreenState();
@@ -31,6 +32,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
       value: SystemUiOverlayStyle.dark,
       child: Scaffold(
         backgroundColor: AppColors.grey50,
+          appBar: AppBar(
+          backgroundColor: AppColors.grey50,
+          elevation: 0,
+          leading: BackButton(color: AppColors.blue700, onPressed: widget.onBack),
+          
+        ),
         body: SafeArea(
           child: SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),

@@ -125,7 +125,7 @@ class _AnalyticsScreenViewState extends State<_AnalyticsScreenView> {
               Row(
                 children: [
                   Text(S.of(context).analitics, style: textTheme.title),
-                  AppSpacers.horizontalXXHuge,
+                  AppSpacers.horizontalXXMassive,
                   ElevatedButton.icon(
                     onPressed: () {
                       final homeState = context.findAncestorStateOfType<HomeScreenWrapperState>();
@@ -133,10 +133,10 @@ class _AnalyticsScreenViewState extends State<_AnalyticsScreenView> {
                         homeState.openPage(HomePage.export);
                       }
                     },
-                    label: Text(S.of(context).export, style: textTheme.white14W400),
+                    label: Text(S.of(context).export, style: textTheme.white18W400),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.blue700,
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                       shape: RoundedRectangleBorder(borderRadius: AppBorders.radiusLarge),
                       textStyle: textTheme.black16bold,
                     ),

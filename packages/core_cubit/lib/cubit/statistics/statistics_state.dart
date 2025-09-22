@@ -1,41 +1,36 @@
-import 'package:core_data/core_data.dart';
+
 import 'package:fines_plus/core/widgets/extensions/monthly_expense_stats.dart';
 
 class StatisticsState {
   final bool loading;
-  final List<MileageRecord> mileageRecords;
-  final List<ServiceRecord> serviceRecords;
-  final List<FuelRecord> fuelRecords;
+  final int currentMonthMileage;
+  final int averageMileage;
   final MonthlyExpenseStats? expenseStats;
 
-  StatisticsState({
+  const StatisticsState({
     required this.loading,
-    required this.mileageRecords,
-    required this.serviceRecords,
-    required this.fuelRecords,
+    required this.currentMonthMileage,
+    required this.averageMileage,
     required this.expenseStats,
   });
 
-  factory StatisticsState.initial() => StatisticsState(
-        loading: true,
-        mileageRecords: [],
-        serviceRecords: [],
-        fuelRecords: [],
+  factory StatisticsState.initial() => const StatisticsState(
+        loading: false,
+        currentMonthMileage: 0,
+        averageMileage: 0,
         expenseStats: null,
       );
 
   StatisticsState copyWith({
     bool? loading,
-    List<MileageRecord>? mileageRecords,
-    List<ServiceRecord>? serviceRecords,
-    List<FuelRecord>? fuelRecords,
+    int? currentMonthMileage,
+    int? averageMileage,
     MonthlyExpenseStats? expenseStats,
   }) {
     return StatisticsState(
       loading: loading ?? this.loading,
-      mileageRecords: mileageRecords ?? this.mileageRecords,
-      serviceRecords: serviceRecords ?? this.serviceRecords,
-      fuelRecords: fuelRecords ?? this.fuelRecords,
+      currentMonthMileage: currentMonthMileage ?? this.currentMonthMileage,
+      averageMileage: averageMileage ?? this.averageMileage,
       expenseStats: expenseStats ?? this.expenseStats,
     );
   }

@@ -24,12 +24,12 @@ class MessageLookup extends MessageLookupByLibrary {
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
     "add_cars": MessageLookupByLibrary.simpleMessage("Додати авто"),
     "add_mileage": MessageLookupByLibrary.simpleMessage("Додати пробіг"),
-    "add_new_photo": MessageLookupByLibrary.simpleMessage(
-      "Добавить новое фото",
+    "add_new_photo": MessageLookupByLibrary.simpleMessage("Додати нове фото"),
+    "add_photo": MessageLookupByLibrary.simpleMessage("Додати фото"),
+    "addition_cars": MessageLookupByLibrary.simpleMessage("Додування авто"),
+    "additional_options": MessageLookupByLibrary.simpleMessage(
+      "Додаткові опції",
     ),
-    "add_photo": MessageLookupByLibrary.simpleMessage("Добавить фото"),
-    "addition_cars": MessageLookupByLibrary.simpleMessage("Додавання авто"),
-    "additional_options": MessageLookupByLibrary.simpleMessage("Доп. опции"),
     "address_not_specified": MessageLookupByLibrary.simpleMessage(
       "Адреса не вказана",
     ),
@@ -41,21 +41,20 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "by_date": MessageLookupByLibrary.simpleMessage("За датою"),
     "by_mileage": MessageLookupByLibrary.simpleMessage("За пробігом"),
-    "calendar": MessageLookupByLibrary.simpleMessage("Календар"),
     "cancel": MessageLookupByLibrary.simpleMessage("Скасувати"),
     "car_history": MessageLookupByLibrary.simpleMessage("Історія автомобіля"),
     "car_number": MessageLookupByLibrary.simpleMessage("Номер авто"),
     "check_filter": MessageLookupByLibrary.simpleMessage(
-      "Нужно заменить фильтр",
+      "Потрібно замінити фільтр",
     ),
     "check_fine_title": MessageLookupByLibrary.simpleMessage(
       "Перевірка штрафу",
     ),
     "check_fines": MessageLookupByLibrary.simpleMessage("Перевірити штрафи"),
-    "check_tires": MessageLookupByLibrary.simpleMessage("Пора проверить шины"),
+    "check_tires": MessageLookupByLibrary.simpleMessage("Пора перевірити шини"),
     "checking_fines": MessageLookupByLibrary.simpleMessage("Перевірка штрафів"),
     "choose_from_gallery": MessageLookupByLibrary.simpleMessage(
-      "Вибрати в галереї",
+      "Вибрати у галереї",
     ),
     "close": MessageLookupByLibrary.simpleMessage("Закрити"),
     "comment": MessageLookupByLibrary.simpleMessage("Коментар"),
@@ -63,7 +62,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Коментар опубліковано!",
     ),
     "configure_action": MessageLookupByLibrary.simpleMessage("Налаштувати дію"),
-    "contact_us": MessageLookupByLibrary.simpleMessage("Звʼяжіться з нами:"),
+    "contact_us": MessageLookupByLibrary.simpleMessage("Зв\'яжіться з нами:"),
     "cost_of_work": MessageLookupByLibrary.simpleMessage("Вартість робіт:"),
     "cost_statistics": MessageLookupByLibrary.simpleMessage(
       "Статистика витрат",
@@ -81,17 +80,17 @@ class MessageLookup extends MessageLookupByLibrary {
     "email": MessageLookupByLibrary.simpleMessage("Email"),
     "enter_comment": MessageLookupByLibrary.simpleMessage("Введіть коментар"),
     "enter_correct_number_auto": MessageLookupByLibrary.simpleMessage(
-      "Введіть коректний номер авто",
+      "Введіть корректний номер авто",
     ),
     "enter_correct_registration_number": MessageLookupByLibrary.simpleMessage(
-      "Введіть коректний номер техпаспорта",
+      "Введіть правильний номер техпаспорта",
     ),
     "enter_liters": MessageLookupByLibrary.simpleMessage("Введіть літри"),
     "enter_mileage": MessageLookupByLibrary.simpleMessage("Введіть пробіг"),
     "enter_vin": MessageLookupByLibrary.simpleMessage("Введіть VIN"),
-    "error": MessageLookupByLibrary.simpleMessage("Помилка:"),
+    "error": MessageLookupByLibrary.simpleMessage("Ошибка:"),
     "error_photo": MessageLookupByLibrary.simpleMessage(
-      "Ошибка при выборе фото:",
+      "Помилка при виборі фото:",
     ),
     "event_invisible": MessageLookupByLibrary.simpleMessage(
       "Подія буде невидимою",
@@ -102,32 +101,30 @@ class MessageLookup extends MessageLookupByLibrary {
     "fill_date": MessageLookupByLibrary.simpleMessage(
       "Заповніть дату, пробіг та кількість палива",
     ),
-    "filter": MessageLookupByLibrary.simpleMessage("фильтр"),
+    "filter": MessageLookupByLibrary.simpleMessage("фільтр"),
     "fines": MessageLookupByLibrary.simpleMessage("Штрафи"),
-    "fines_length": MessageLookupByLibrary.simpleMessage("Штрафов:"),
-    "fuel": MessageLookupByLibrary.simpleMessage("Паливо"),
-    "fuel_ai92": MessageLookupByLibrary.simpleMessage("АИ-92"),
-    "fuel_ai95": MessageLookupByLibrary.simpleMessage("АИ-95"),
-    "fuel_ai95_plus": MessageLookupByLibrary.simpleMessage("АИ-95+"),
-    "fuel_ai98": MessageLookupByLibrary.simpleMessage("АИ-98"),
+    "fines_length": MessageLookupByLibrary.simpleMessage("Штрафів:"),
+    "fuel_ai92": MessageLookupByLibrary.simpleMessage("АІ-92"),
+    "fuel_ai95": MessageLookupByLibrary.simpleMessage("АІ-95"),
+    "fuel_ai95_plus": MessageLookupByLibrary.simpleMessage("АІ-95+"),
+    "fuel_ai98": MessageLookupByLibrary.simpleMessage("АІ-98"),
     "fuel_gas_lpg": MessageLookupByLibrary.simpleMessage("Газ LPG"),
     "fuel_up": MessageLookupByLibrary.simpleMessage("Заправка"),
     "gas_station_nearby": MessageLookupByLibrary.simpleMessage(
-      "Заправки поряд",
+      "Заправки поруч",
     ),
     "google_login_error": MessageLookupByLibrary.simpleMessage(
-      "Ошибка входа через Google",
+      "Помилка входу через Google",
     ),
     "grn": MessageLookupByLibrary.simpleMessage("грн"),
     "hint_auto_num": MessageLookupByLibrary.simpleMessage("АН0000НА"),
     "hint_tech_data_num": MessageLookupByLibrary.simpleMessage("ХЕE128436"),
     "history": MessageLookupByLibrary.simpleMessage("Історія"),
-    "history_empty": MessageLookupByLibrary.simpleMessage("Історія пуста"),
+    "history_empty": MessageLookupByLibrary.simpleMessage("Історія порожня"),
     "history_unavailable": MessageLookupByLibrary.simpleMessage(
       "Історія тимчасово недоступна: індекс будується. Спробуйте за кілька хвилин.",
     ),
     "item_removed": MessageLookupByLibrary.simpleMessage("Елемент видалено"),
-    "km": MessageLookupByLibrary.simpleMessage("км"),
     "login": MessageLookupByLibrary.simpleMessage("Увійти"),
     "logo": MessageLookupByLibrary.simpleMessage("LOGO"),
     "maintenance": MessageLookupByLibrary.simpleMessage("TO"),
@@ -149,13 +146,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "no_tasks": MessageLookupByLibrary.simpleMessage("Немає завдань"),
     "not_auth": MessageLookupByLibrary.simpleMessage("Не авторизовані"),
     "not_forget": MessageLookupByLibrary.simpleMessage(
-      "Не забудь заменить масло",
+      "Не забудь замінити масло",
     ),
     "not_forget_task": MessageLookupByLibrary.simpleMessage(
-      "Не забудь выполнить задачу",
+      "Не забудь виконати завдання",
     ),
     "notifications_resource": MessageLookupByLibrary.simpleMessage(
-      "Уведомления о достижении 90% ресурса",
+      "Повідомлення про досягнення 90% ресурсу",
     ),
     "odometer_beginning": MessageLookupByLibrary.simpleMessage(
       "Одометр на початок місяця",
@@ -177,7 +174,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "period": MessageLookupByLibrary.simpleMessage("середнє/рік"),
     "periodicity": MessageLookupByLibrary.simpleMessage("Періодичність:"),
     "phone": MessageLookupByLibrary.simpleMessage("Телефон"),
-    "photo_selected": MessageLookupByLibrary.simpleMessage("Фото выбрано"),
+    "photo_selected": MessageLookupByLibrary.simpleMessage("Фото вибрано"),
     "please_log_in": MessageLookupByLibrary.simpleMessage(
       "Будь ласка, увійдіть або зареєструйтесь, щоб продовжити.",
     ),
@@ -189,15 +186,15 @@ class MessageLookup extends MessageLookupByLibrary {
       "Push-сповіщення",
     ),
     "reached_usage": MessageLookupByLibrary.simpleMessage(
-      "достиг 90% использования",
+      "досяг 90% використання",
     ),
     "reg_number": MessageLookupByLibrary.simpleMessage("Номер техпаспорта"),
-    "register": MessageLookupByLibrary.simpleMessage("Зареєструватись"),
+    "register": MessageLookupByLibrary.simpleMessage("Зареєструватися"),
     "registration": MessageLookupByLibrary.simpleMessage("Реєстрація"),
     "reminder": MessageLookupByLibrary.simpleMessage("Нагадування"),
     "repair": MessageLookupByLibrary.simpleMessage("Ремонт"),
     "resource": MessageLookupByLibrary.simpleMessage("Ресурс:"),
-    "resource_out": MessageLookupByLibrary.simpleMessage("Ресурс на исходе"),
+    "resource_out": MessageLookupByLibrary.simpleMessage("Ресурс закінчується"),
     "save": MessageLookupByLibrary.simpleMessage("Зберегти"),
     "schedule": MessageLookupByLibrary.simpleMessage("Розклад"),
     "search": MessageLookupByLibrary.simpleMessage("Пошук"),
@@ -209,12 +206,11 @@ class MessageLookup extends MessageLookupByLibrary {
       "Виберіть дату і хоча б один сервіс",
     ),
     "selected_service_station": MessageLookupByLibrary.simpleMessage(
-      "Вибране СТО",
+      "Вибрані СТО",
     ),
     "selecting_service": MessageLookupByLibrary.simpleMessage(
       "Варіанти обслуговування",
     ),
-    "service": MessageLookupByLibrary.simpleMessage("Сервіс"),
     "service_amortyzatory_perednia_os_zamina":
         MessageLookupByLibrary.simpleMessage(
           "Амортизатори підвіски (передня вісь) - заміна",
@@ -245,7 +241,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Діагностика підвіски",
     ),
     "service_diagnostyka_remont_dvs": MessageLookupByLibrary.simpleMessage(
-      "Діагностика та ремонт ДВС",
+      "Діагностика та ремонт ДВЗ",
     ),
     "service_diagnostyka_remont_palivnykh_forsunok":
         MessageLookupByLibrary.simpleMessage(
@@ -257,13 +253,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "service_diagnostyka_zamina_zcheplennya":
         MessageLookupByLibrary.simpleMessage("Діагностика та заміна зчеплення"),
     "service_dvs_capitalnyy_remont": MessageLookupByLibrary.simpleMessage(
-      "ДВС - капітальний ремонт",
+      "ДВЗ - капітальний ремонт",
     ),
     "service_dvs_diagnostika": MessageLookupByLibrary.simpleMessage(
-      "ДВС - діагностика (огляд, вимір компресії)",
+      "ДВС - діагностика (огляд, вимір компрессії)",
     ),
     "service_dvs_znyattya_ustanovka": MessageLookupByLibrary.simpleMessage(
-      "ДВС - зняття/установка (заміна)",
+      "ДВЗ - зняття/установка (заміна)",
     ),
     "service_golovnyy_cylyndr_zcheplennya_zamina":
         MessageLookupByLibrary.simpleMessage(
@@ -295,7 +291,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Хрестовина карданного валу - заміна",
     ),
     "service_maslo_transmisiine_zamina": MessageLookupByLibrary.simpleMessage(
-      "Масло трансмісійне (міст/редуктор/роздавальна коробка) — заміна",
+      "Масло трансмісійне (міст/редуктор/роздавальна коробка) - заміна",
     ),
     "service_nakonechnik_rulovoyi_tyahy_zamina":
         MessageLookupByLibrary.simpleMessage(
@@ -331,7 +327,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Поліровка фар",
     ),
     "service_polirovka_kuzova": MessageLookupByLibrary.simpleMessage(
-      "Поліровка кузова",
+      "Полірування кузова",
     ),
     "service_predprodazhna_khimchystka_salonu":
         MessageLookupByLibrary.simpleMessage("Предпродажна хімчистка салону"),
@@ -353,14 +349,14 @@ class MessageLookup extends MessageLookupByLibrary {
       "Прокладка піддону картера - заміна",
     ),
     "service_promyvka_inzhektora": MessageLookupByLibrary.simpleMessage(
-      "Промивка інжектора",
+      "Промивання інжектора",
     ),
     "service_promyvka_palivnoyi_systemy": MessageLookupByLibrary.simpleMessage(
-      "Промивка паливної системи",
+      "Промивання паливної системи",
     ),
     "service_promyvka_palivnoyi_systemy_dizel":
         MessageLookupByLibrary.simpleMessage(
-          "Промивка паливної системи дизельних авто",
+          "Промивання паливної системи дизельних авто",
         ),
     "service_pryvodnyy_val_zamina": MessageLookupByLibrary.simpleMessage(
       "Привідний вал - заміна",
@@ -435,7 +431,7 @@ class MessageLookup extends MessageLookupByLibrary {
           "Робочий циліндр зчеплення - заміна",
         ),
     "service_rolik_pryvodnoho_remenya": MessageLookupByLibrary.simpleMessage(
-      "Ролик приводного ременя - заміна",
+      "Ролик приводного ремня - заміна",
     ),
     "service_rulova_reyka_remont": MessageLookupByLibrary.simpleMessage(
       "Рульова рейка - ремонт",
@@ -467,7 +463,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Важіль підвіски - заміна",
     ),
     "service_vidalennya_dribnykh_podryapin":
-        MessageLookupByLibrary.simpleMessage("Видалення дрібних подряпин"),
+        MessageLookupByLibrary.simpleMessage("Видалення дрібних царапин"),
     "service_vidalennya_katalizatora": MessageLookupByLibrary.simpleMessage(
       "Видалення каталізатора",
     ),
@@ -478,7 +474,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Втулки стабілізатора - заміна",
     ),
     "service_zamina_akumulyatora": MessageLookupByLibrary.simpleMessage(
-      "Заміна акумулятора",
+      "Заміна аккумулятора",
     ),
     "service_zamina_amortyzatoriv": MessageLookupByLibrary.simpleMessage(
       "Заміна амортизаторів",
@@ -512,7 +508,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Заміна гальмівних колодок",
     ),
     "service_zamina_hofry_pryymalnoyi_truby":
-        MessageLookupByLibrary.simpleMessage("Заміна гофри приймальної труби"),
+        MessageLookupByLibrary.simpleMessage("Заміна гофрі приймальної труби"),
     "service_zamina_kard_valu": MessageLookupByLibrary.simpleMessage(
       "Заміна карданного валу",
     ),
@@ -566,10 +562,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "service_zamina_pidshipnykiv_matochok":
         MessageLookupByLibrary.simpleMessage("Заміна підшипників маточок"),
     "service_zamina_pompy": MessageLookupByLibrary.simpleMessage(
-      "Заміна помпи",
+      "Заміна помпі",
     ),
     "service_zamina_povitryanogo_filtra_dvs":
-        MessageLookupByLibrary.simpleMessage("Заміна повітряного фільтра ДВС"),
+        MessageLookupByLibrary.simpleMessage("Заміна повітряного фільтра ДВЗ"),
     "service_zamina_prokladky_gbc": MessageLookupByLibrary.simpleMessage(
       "Заміна прокладки ГБЦ",
     ),
@@ -600,14 +596,14 @@ class MessageLookup extends MessageLookupByLibrary {
       "Заміна радіатора",
     ),
     "service_zamina_remenya_grm": MessageLookupByLibrary.simpleMessage(
-      "Заміна ременя ГРМ",
+      "Заміна ремня ГРМ",
     ),
     "service_zamina_ridyny_zcheplennya": MessageLookupByLibrary.simpleMessage(
       "Заміна рідини зчеплення",
     ),
     "service_zamina_rolika_natyaguvacha_remenya":
         MessageLookupByLibrary.simpleMessage(
-          "Заміна ролика натягувача приводного ременя",
+          "Заміна ролика натягувача приводного ремня",
         ),
     "service_zamina_rulovykh_tyag": MessageLookupByLibrary.simpleMessage(
       "Заміна рульових тяг",
@@ -627,8 +623,6 @@ class MessageLookup extends MessageLookupByLibrary {
         MessageLookupByLibrary.simpleMessage("Заміна сайлентблоків підвіски"),
     "service_zamina_stiikiv_stabilizatora":
         MessageLookupByLibrary.simpleMessage("Заміна стійок стабілізатора"),
-    "service_zamina_svichok_rozzharjuvannya":
-        MessageLookupByLibrary.simpleMessage("Заміна свічок розжарювання"),
     "service_zamina_svichok_zapal": MessageLookupByLibrary.simpleMessage(
       "Заміна свічок запалювання",
     ),
@@ -668,11 +662,11 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "settings": MessageLookupByLibrary.simpleMessage("Налаштування"),
     "sign_in_google": MessageLookupByLibrary.simpleMessage(
-      "Войти через Google",
+      "Увійти через Google",
     ),
     "statistics": MessageLookupByLibrary.simpleMessage("Статистика"),
     "successful_registration": MessageLookupByLibrary.simpleMessage(
-      "Успешная регистрация",
+      "Успішна реєстрація",
     ),
     "successfully_registration": MessageLookupByLibrary.simpleMessage(
       "Реєстрація успішна",
@@ -694,7 +688,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "tuning": MessageLookupByLibrary.simpleMessage("Тюнінг"),
     "type": MessageLookupByLibrary.simpleMessage("Тип"),
-    "verif_date": MessageLookupByLibrary.simpleMessage("Дата проверки:"),
+    "verif_date": MessageLookupByLibrary.simpleMessage("Дата перевірки:"),
     "verification_history": MessageLookupByLibrary.simpleMessage(
       "Історія перевірки",
     ),

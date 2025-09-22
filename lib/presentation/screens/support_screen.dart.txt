@@ -23,7 +23,7 @@ class _SupportScreenState extends State<SupportScreen> {
     return BlocListener<SupportCubit, SupportState>(
       listener: (context, state) {
         if (state is SupportActionFailure) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message)));
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(backgroundColor:AppColors.blue700,content: Text(state.message)));
         }
       },
       child: Scaffold(

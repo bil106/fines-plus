@@ -95,11 +95,13 @@ class _FuelUpScreenState extends State<FuelUpScreen> {
           leading: BackButton(color: AppColors.blue700, onPressed: widget.onBack),
           actions: [
             IconButton(
-              icon: const Icon(Icons.check, color: AppColors.blue700,size: 50,),
+              icon: const Icon(Icons.check, color: AppColors.blue700, size: 50),
               onPressed: () {
                 if (selectedDate == null || volumeController.text.isEmpty || mileageController.text.isEmpty) {
                   if (!mounted) return;
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(S.of(context).fill_date)));
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(SnackBar(backgroundColor: AppColors.blue700, content: Text(S.of(context).fill_date)));
                   return;
                 }
 

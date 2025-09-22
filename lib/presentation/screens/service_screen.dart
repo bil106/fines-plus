@@ -137,10 +137,12 @@ class _ServiceScreenState extends State<ServiceScreen> {
 
           actions: [
             IconButton(
-              icon: const Icon(Icons.check, color: AppColors.blue700,size: 50,),
+              icon: const Icon(Icons.check, color: AppColors.blue700, size: 50),
               onPressed: () {
                 if (selectedDate == null || serviceControllers.every((c) => c.text.isEmpty)) {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(S.of(context).select_service)));
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(backgroundColor: AppColors.blue700, content: Text(S.of(context).select_service)),
+                  );
                   return;
                 }
 
@@ -353,7 +355,7 @@ class _ServiceScreenState extends State<ServiceScreen> {
               ),
 
               const Divider(),
-              AdditionalOptionsWidget(photoPicker: PhotoPickerWidget(),),
+              AdditionalOptionsWidget(photoPicker: PhotoPickerWidget()),
             ],
           ),
         ),

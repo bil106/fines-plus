@@ -2,8 +2,7 @@ import 'dart:async';
 
 import 'package:core/config/app_urls.dart';
 import 'package:core_localization/generated/l10n.dart';
-import 'package:design_system/constants/app_spacers.dart';
-import 'package:design_system/theme/app_theme.dart';
+import 'package:design_system/colors/app_colors.dart';
 import 'package:fines_plus/core/widgets/photo_picker_widget.dart';
 import 'package:fines_plus/env/env.dart';
 import 'package:flutter/material.dart';
@@ -166,7 +165,9 @@ class _AdditionalOptionsWidgetState extends State<AdditionalOptionsWidget> {
                   child: Text(_status!, style: textTheme.bodyMedium?.copyWith(color: Colors.green)),
                 ),
               const SizedBox(height: 16),
-              SizedBox(height: 2300, child: WebViewWidget(controller: _webController)),
+              SizedBox(height: 2300, child: Container(
+                  color: AppColors.grey50,
+                  child: WebViewWidget(controller: _webController))),
             ],
           ),
           crossFadeState: showOptions ? CrossFadeState.showSecond : CrossFadeState.showFirst,

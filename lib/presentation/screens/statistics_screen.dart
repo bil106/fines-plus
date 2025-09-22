@@ -17,7 +17,13 @@ class StatisticsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(create: (_) => StatisticsCubit()..loadAll(), child: const _StatisticsScreenView());
+    return BlocProvider(
+      create: (_) {
+        final maintenanceCubit = context.read<MaintenanceCubit>();
+        return StatisticsCubit(maintenanceCubit);
+      },
+      child: const _StatisticsScreenView(),
+    );
   }
 }
 
@@ -28,10 +34,13 @@ class _StatisticsScreenView extends StatelessWidget {
   Widget build(BuildContext context) {
     final now = DateTime.now();
     final maintenanceCubit = context.read<MaintenanceCubit>();
-final textTheme = Theme.of(context).textTheme;
+    final textTheme = Theme.of(context).textTheme;
+
     return BlocBuilder<StatisticsCubit, StatisticsState>(
       builder: (context, state) {
-        if (state.loading) return const Center(child: CircularProgressIndicator());
+        if (state.loading) {
+          return const Center(child: CircularProgressIndicator());
+        }
 
         return BlocBuilder<MaintenanceCubit, MaintenanceState>(
           builder: (context, maintenanceState) {
@@ -62,30 +71,18 @@ final textTheme = Theme.of(context).textTheme;
                                   Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      Text(
-                                        DateFormat('MMMM yyyy', 'uk').format(now),
-                                        style: textTheme.black16bold,
-                                      ),
-                                      Text(
-                                        "$currentMonthMileage ${S.of(context).km}",
-                                        style: textTheme.black20bold,
-                                      ),
+                                      Text(DateFormat('MMMM yyyy', 'uk').format(now), style: textTheme.black16bold),
+                                      Text("$currentMonthMileage ${S.of(context).km}", style: textTheme.black20bold),
                                     ],
                                   ),
                                 ],
                               ),
                               Column(
                                 children: [
-                                  Text(
-                                    "$averageMileage ${S.of(context).km}",
-                                    style: textTheme.green20W400,
-                                  ),
+                                  Text("$averageMileage ${S.of(context).km}", style: textTheme.green20W400),
                                   Transform.translate(
                                     offset: const Offset(5, -5),
-                                    child: Text(
-                                      S.of(context).period,
-                                      style: textTheme.black13W400,
-                                    ),
+                                    child: Text(S.of(context).period, style: textTheme.black13W400),
                                   ),
                                 ],
                               ),
@@ -117,3 +114,4 @@ final textTheme = Theme.of(context).textTheme;
     );
   }
 }
+

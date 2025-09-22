@@ -1,81 +1,56 @@
-import 'dart:convert';
+import 'dart:async';
+
 
 import 'package:bloc/bloc.dart';
+import 'package:core_cubit/cubit/maintenance/maintenance_cubit.dart';
+import 'package:core_cubit/cubit/maintenance/maintenance_state.dart';
 import 'package:core_cubit/cubit/statistics/statistics_state.dart';
 import 'package:core_data/core_data.dart';
 import 'package:fines_plus/core/widgets/extensions/monthly_expense_stats.dart';
 import 'package:intl/intl.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+
 
 class StatisticsCubit extends Cubit<StatisticsState> {
-  StatisticsCubit() : super(StatisticsState.initial());
+  final MaintenanceCubit maintenanceCubit;
+  late final StreamSubscription maintenanceSub;
 
+  StatisticsCubit(this.maintenanceCubit) : super(StatisticsState.initial()) {
+    // первый расчёт на старте
+    _recalculate(maintenanceCubit.state);
 
-  Future<void> loadAll() async {
-    emit(state.copyWith(loading: true));
+    // слушаем изменения в MaintenanceCubit
+    maintenanceSub = maintenanceCubit.stream.listen((maintenanceState) {
+      _recalculate(maintenanceState);
+    });
+  }
 
-    final mileageRecords = await _loadMileageRecords();
-    final serviceRecords = await _loadServiceRecords();
-    final fuelRecords = await _loadFuelRecords();
-
+  void _recalculate(MaintenanceState maintenanceState) {
     final now = DateTime.now();
+
+    final currentMonthMileage = maintenanceCubit.getCurrentMonthMileage(now);
+    final averageMileage = maintenanceCubit.getAverageMileage();
+
     final expenseStats = _calculateMonthlyStats(
-      serviceRecords: serviceRecords,
-      fuelRecords: fuelRecords,
+      serviceRecords: maintenanceState.serviceRecords,
+      fuelRecords: maintenanceState.fuelRecords,
       year: now.year,
       month: now.month,
     );
 
-    emit(state.copyWith(
-      loading: false,
-      mileageRecords: mileageRecords,
-      serviceRecords: serviceRecords,
-      fuelRecords: fuelRecords,
-      expenseStats: expenseStats,
-    ));
+    emit(
+      state.copyWith(
+        loading: false,
+        currentMonthMileage: currentMonthMileage,
+        averageMileage: averageMileage,
+        expenseStats: expenseStats,
+      ),
+    );
   }
 
-  /// Adding mileage
-  Future<void> addMileage(MileageRecord record) async {
-    final updatedRecords = List<MileageRecord>.from(state.mileageRecords);
-    updatedRecords.removeWhere((r) => r.month.year == record.month.year && r.month.month == record.month.month);
-    updatedRecords.add(record);
-
-    await _saveMileageRecords(updatedRecords);
-
-    emit(state.copyWith(mileageRecords: updatedRecords));
-  }
-
-  /// --- PRIVATE METHODS ---
-
-  Future<List<MileageRecord>> _loadMileageRecords() async {
-    final prefs = await SharedPreferences.getInstance();
-    final data = prefs.getString('mileage_records');
-    if (data == null) return [];
-    final list = jsonDecode(data) as List;
-    return list.map((e) => MileageRecord.fromJson(e)).toList();
-  }
-
-  Future<void> _saveMileageRecords(List<MileageRecord> records) async {
-    final prefs = await SharedPreferences.getInstance();
-    final jsonList = records.map((e) => e.toJson()).toList();
-    await prefs.setString('mileage_records', jsonEncode(jsonList));
-  }
-
-  Future<List<ServiceRecord>> _loadServiceRecords() async {
-    final prefs = await SharedPreferences.getInstance();
-    final jsonString = prefs.getString('service_records');
-    if (jsonString == null) return [];
-    final List<dynamic> jsonList = jsonDecode(jsonString);
-    return jsonList.map((e) => ServiceRecord.fromJson(e)).toList();
-  }
-
-  Future<List<FuelRecord>> _loadFuelRecords() async {
-    final prefs = await SharedPreferences.getInstance();
-    final jsonString = prefs.getString('fuel_records');
-    if (jsonString == null) return [];
-    final List<dynamic> jsonList = jsonDecode(jsonString);
-    return jsonList.map((e) => FuelRecord.fromJson(e)).toList();
+  @override
+  Future<void> close() {
+    maintenanceSub.cancel();
+    return super.close();
   }
 
   MonthlyExpenseStats _calculateMonthlyStats({
@@ -94,7 +69,7 @@ class StatisticsCubit extends Cubit<StatisticsState> {
 
     DateTime parseDate(String dateStr) {
       try {
-        return DateFormat('d.M.yyyy').parse(dateStr);
+        return DateFormat('dd.MM.yyyy').parse(dateStr);
       } catch (_) {
         return DateTime.now();
       }

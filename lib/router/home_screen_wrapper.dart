@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:core_cubit/cubit/car_info/car_info_cubit.dart';
 import 'package:core_cubit/cubit/history/history_cubit.dart';
+import 'package:core_cubit/cubit/maintenance/maintenance_cubit.dart';
 import 'package:core_data/core_data.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:core_repository/car_info_repository.dart';
@@ -44,7 +45,7 @@ enum HomePage {
   registration,
   fuel,
   service,
-   schedule,
+  schedule,
 }
 
 @RoutePage()
@@ -101,6 +102,9 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
     final index = HomePage.values.indexOf(page);
     _pageController.animateToPage(index, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
     setState(() => _currentIndex = index);
+    if (page == HomePage.maintenance) {
+      context.read<MaintenanceCubit>().closeMenu();
+    }
   }
 
   int get _bottomNavIndex => _currentIndex.clamp(0, 2);
@@ -177,19 +181,25 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
             ),
 
             // 6 Settings
-            const SettingsScreen(key: ValueKey('settings_screen')),
+            SettingsScreen(key: const ValueKey('settings_screen'), onBack: () => openPage(HomePage.maintenance)),
 
             // 7 History
             HistoryScreen(key: const ValueKey('history_screen'), carNumber: _carNumber!),
 
             // 8 Maintenance
-            MaintenanceScreen(key: const ValueKey('maintenance_screen'),
-              onFuelUp: () => openPage(HomePage.fuel),
-              onService: () => openPage(HomePage.service),
-              onBack: () => openPage(HomePage.addCar)),
+            Builder(
+              key: const ValueKey('maintenance_screen'),
+              builder: (_) {
+                return MaintenanceScreen(
+                  onFuelUp: () => openPage(HomePage.fuel),
+                  onService: () => openPage(HomePage.service),
+                  onBack: () => openPage(HomePage.addCar),
+                );
+              },
+            ),
 
             // 9 Export
-         ExportScreen(
+            ExportScreen(
               key: const ValueKey('export'),
               history: exportHistory,
               carNumber: _carNumber!,
@@ -199,66 +209,64 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
             RegistrationScreen(key: const ValueKey('registration'), onBack: () => openPage(HomePage.addCar)),
             //11 FuelUpScreen
             FuelUpScreen(key: const ValueKey('fuel'), onBack: () => openPage(HomePage.maintenance)),
-           //12 ServiceScreen
-           ServiceScreen(key: const ValueKey('service'), onBack: () => openPage(HomePage.maintenance)),
-           //13 FuelMapScreen
-           FuelMapScreen(key: const ValueKey('fuel-map'), ),
-           
-           Builder(
-      key: const ValueKey('schedule_screen'),
-    
-      builder: (context) {
-       
-        return FutureBuilder<SharedPreferences>(
-          future: SharedPreferences.getInstance(),
-          builder: (context, snapshot) {
-            if (!snapshot.hasData) {
-              return const Center(child: CircularProgressIndicator());
-            }
-            final prefs = snapshot.data!;
-            final localDataSource = ReminderLocalDataSourceImpl(SharedPrefsManager(prefs));
-            final remoteDataSource = ReminderRemoteDataSourceImpl(FirebaseFirestore.instance);
+            //12 ServiceScreen
+            ServiceScreen(key: const ValueKey('service'), onBack: () => openPage(HomePage.maintenance)),
+            //13 FuelMapScreen
+            FuelMapScreen(key: const ValueKey('fuel-map')),
 
-            final reminderRepository = ReminderRepository(
-              localDataSource: localDataSource,
-              remoteDataSource: remoteDataSource,
-            );
+            Builder(
+              key: const ValueKey('schedule_screen'),
 
-            final scheduleRepository = ScheduleRepository(
-           
-            );
+              builder: (context) {
+                return FutureBuilder<SharedPreferences>(
+                  future: SharedPreferences.getInstance(),
+                  builder: (context, snapshot) {
+                    if (!snapshot.hasData) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    final prefs = snapshot.data!;
+                    final localDataSource = ReminderLocalDataSourceImpl(SharedPrefsManager(prefs));
+                    final remoteDataSource = ReminderRemoteDataSourceImpl(FirebaseFirestore.instance);
 
-            return ScheduleScreen(
-              repository: scheduleRepository,
-              reminderRepository: reminderRepository,
-              pushHelper: PushHelper(FlutterLocalNotificationsPlugin()),
-              carNumber: _carNumber ?? '',
-            );
-          },
-        );
-   }) ],
+                    final reminderRepository = ReminderRepository(
+                      localDataSource: localDataSource,
+                      remoteDataSource: remoteDataSource,
+                    );
+
+                    final scheduleRepository = ScheduleRepository();
+
+                    return ScheduleScreen(
+                      repository: scheduleRepository,
+                      reminderRepository: reminderRepository,
+                      pushHelper: PushHelper(FlutterLocalNotificationsPlugin()),
+                      carNumber: _carNumber ?? '',
+                    );
+                  },
+                );
+              },
+            ),
+          ],
         ),
-       bottomNavigationBar: BottomNavigationBar(
+        bottomNavigationBar: BottomNavigationBar(
           backgroundColor: AppColors.neutreBlanc,
           currentIndex: _bottomNavIndex,
-         onTap: (i) {
+          onTap: (i) {
             final page = HomePage.values[i];
 
-          
-            if (page == HomePage.fines) {
+            if (page == HomePage.fineCheck) {
               openPage(HomePage.fineCheck);
             } else {
               openPage(page);
             }
           },
-
+selectedIconTheme: IconThemeData(color:AppColors.blue700),
+unselectedItemColor: AppColors.grey700,
           items: [
             BottomNavigationBarItem(icon: Icon(Icons.directions_car), label: S.of(context).auto),
             BottomNavigationBarItem(icon: Icon(Icons.receipt), label: S.of(context).fines),
             BottomNavigationBarItem(icon: Icon(Icons.support), label: S.of(context).reminder),
           ],
         ),
-
       ),
     );
   }

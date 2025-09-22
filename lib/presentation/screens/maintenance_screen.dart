@@ -15,6 +15,7 @@ import 'package:fines_plus/core/widgets/fuel_record_card.dart';
 import 'package:fines_plus/core/widgets/service_record_card.dart';
 import 'package:fines_plus/presentation/screens/service_screen.dart';
 import 'package:fines_plus/router/app_router.dart';
+import 'package:fines_plus/router/home_screen_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:core_cubit/cubit/maintenance/maintenance_cubit.dart';
@@ -36,15 +37,21 @@ class MaintenanceScreen extends StatefulWidget {
 }
 
 class _MaintenanceScreenState extends State<MaintenanceScreen> {
+    @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<MaintenanceCubit>().closeMenu();
+    });
+  }
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => MaintenanceCubit(),
-      child: _MaintenanceScreenView(
+    return  _MaintenanceScreenView(
         onBack: widget.onBack,
         onCalendar: widget.onCalendar,
         onSettings: widget.onSettings,
-      ),
+      
     );
   }
 }
@@ -108,7 +115,9 @@ class _MaintenanceScreenView extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
+                 // Fuel
                     _buildAnimatedAction(context, Icons.local_gas_station, S.of(context).fuel_up, () async {
+                      cubit.closeMenu(); 
                       final record = await context.router.push<FuelRecord>(FuelUpRoute());
                       if (record != null) {
                         cubit.addFuelRecord(record);
@@ -116,7 +125,9 @@ class _MaintenanceScreenView extends StatelessWidget {
                       }
                     }, state.isMenuOpen),
 
+                    // Service
                     _buildAnimatedAction(context, Icons.build, S.of(context).service, () async {
+                      cubit.closeMenu(); 
                       final records = await Navigator.push<List<ServiceRecord>>(
                         context,
                         MaterialPageRoute(builder: (_) => const ServiceScreen()),
@@ -126,9 +137,11 @@ class _MaintenanceScreenView extends StatelessWidget {
                       }
                     }, state.isMenuOpen),
 
+                    // Calendar
                     _buildAnimatedAction(context, Icons.calendar_today, S.of(context).calendar, () async {
-                      final prefs = await SharedPreferences.getInstance();
+                      cubit.closeMenu();
 
+                      final prefs = await SharedPreferences.getInstance();
                       final localDataSource = ReminderLocalDataSourceImpl(SharedPrefsManager(prefs));
                       final remoteDataSource = ReminderRemoteDataSourceImpl(FirebaseFirestore.instance);
 
@@ -139,7 +152,7 @@ class _MaintenanceScreenView extends StatelessWidget {
 
                       final scheduleRepository = ScheduleRepository();
 
-                      context.router.push(
+                      await context.router.push(
                         ScheduleRoute(
                           repository: scheduleRepository,
                           reminderRepository: reminderRepository,
@@ -149,7 +162,13 @@ class _MaintenanceScreenView extends StatelessWidget {
                       );
                     }, state.isMenuOpen),
 
-                    _buildAnimatedAction(context, Icons.settings, S.of(context).settings, onSettings, state.isMenuOpen),
+                    // Settings
+                    _buildAnimatedAction(context, Icons.settings, S.of(context).settings, () {
+                      cubit.closeMenu();
+                      context.findAncestorStateOfType<HomeScreenWrapperState>()?.openPage(HomePage.settings);
+                    }, state.isMenuOpen),
+
+
 
                     AppSpacers.verticalLarge,
 
