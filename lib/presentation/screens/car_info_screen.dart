@@ -149,7 +149,7 @@ class _CarInfoViewState extends State<_CarInfoView> {
                           ),
                         ),
                         AppSpacers.verticalLarge,
-                        Text(S.of(context).reg_number, style: textTheme.black28W600),
+                        Text(S.of(context).reg_number, style: textTheme.carNumber),
                         AppSpacers.verticalSmall,
                         TextField(
                           controller: _techPassportController,
