@@ -299,7 +299,8 @@
    "comment_published": "Коментар опубліковано!",
    "not_authorized": "Ви не авторизовані",
    "amount_month": "Сума за місяць",
-   "total": "Разом"
+   "total": "Разом",
+   "ok": "ОК"
    
    
 }

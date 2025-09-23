@@ -166,6 +166,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "odometer_today": MessageLookupByLibrary.simpleMessage("Odometer today"),
     "of_road_accidents": MessageLookupByLibrary.simpleMessage("Road accidents"),
     "oil": MessageLookupByLibrary.simpleMessage("oil"),
+    "ok": MessageLookupByLibrary.simpleMessage("OK"),
     "open_statistics": MessageLookupByLibrary.simpleMessage("Open statistics"),
     "other": MessageLookupByLibrary.simpleMessage("Other"),
     "password": MessageLookupByLibrary.simpleMessage("Password"),

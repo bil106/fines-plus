@@ -298,5 +298,6 @@
 "login": "Login",
 "comment_published": "Comment published!",
 "amount_month": "Amount per month",
-"total": "Total"
+"total": "Total",
+"ok": "OK"
 }

@@ -63,7 +63,7 @@ MonthlyExpenseStats _calculateMonthlyStats({
     final categoryTotals = <ExpenseCategory, double>{
       ExpenseCategory.fuel: 0,
       ExpenseCategory.service: 0,
-      ExpenseCategory.tuning: 0, // добавляем категорию тюнинга
+      ExpenseCategory.tuning: 0, 
       ExpenseCategory.other: 0,
     };
 

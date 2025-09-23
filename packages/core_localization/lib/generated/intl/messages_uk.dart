@@ -167,6 +167,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Аварії на дорогах",
     ),
     "oil": MessageLookupByLibrary.simpleMessage("масло"),
+    "ok": MessageLookupByLibrary.simpleMessage("ОК"),
     "open_statistics": MessageLookupByLibrary.simpleMessage(
       "Відкрити статистику",
     ),

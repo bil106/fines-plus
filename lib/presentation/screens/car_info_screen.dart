@@ -185,7 +185,7 @@ class _CarInfoViewState extends State<_CarInfoView> {
                           builder: (_) => AlertDialog(
                             title:  Text(S.of(context).error),
                             content: Text(msg),
-                            actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('ОК'))],
+                            actions: [TextButton(onPressed: () => Navigator.pop(context), child:Text(S.of(context).ok))],
                           ),
                         );
                       });

@@ -26,7 +26,7 @@ class ServiceRecordCard extends StatelessWidget {
             Icon(Icons.build, size: 50, color: AppColors.blue700),
             const SizedBox(width: 12),
 
-            // Ограничиваем ширину текста
+            
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

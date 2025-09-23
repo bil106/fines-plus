@@ -88,14 +88,14 @@ class _MyAppState extends State<MyApp> {
           debugPrint("❌ Dynamic Link error: $error");
         });
 
-    // Cold start
+  
     final PendingDynamicLinkData? initialLink = await FirebaseDynamicLinks.instance.getInitialLink();
     if (initialLink != null) {
       _processDynamicLink(initialLink.link);
     }
   }
 
-  /// App Links через app_links
+
   void _initAppLinks() async {
     _appLinksSub = _appLinks.uriLinkStream.listen(
       (uri) {

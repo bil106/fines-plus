@@ -2658,6 +2658,11 @@ class S {
   String get total {
     return Intl.message('Total', name: 'total', desc: '', args: []);
   }
+
+  /// `OK`
+  String get ok {
+    return Intl.message('OK', name: 'ok', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {
