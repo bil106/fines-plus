@@ -26,7 +26,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "add_mileage": MessageLookupByLibrary.simpleMessage("Додати пробіг"),
     "add_new_photo": MessageLookupByLibrary.simpleMessage("Додати нове фото"),
     "add_photo": MessageLookupByLibrary.simpleMessage("Додати фото"),
-    "addition_cars": MessageLookupByLibrary.simpleMessage("Додування авто"),
+    "addition_cars": MessageLookupByLibrary.simpleMessage("Додавання авто"),
     "additional_options": MessageLookupByLibrary.simpleMessage(
       "Додаткові опції",
     ),
