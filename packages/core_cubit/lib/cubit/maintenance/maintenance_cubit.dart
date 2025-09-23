@@ -9,6 +9,7 @@ class MaintenanceCubit extends Cubit<MaintenanceState> {
   MaintenanceCubit() : super(const MaintenanceState()) {
     loadRecords();
     loadFuelRecords();
+    loadTuningRecords();
   }
 
   Future<void> loadRecords() async {
@@ -32,7 +33,34 @@ class MaintenanceCubit extends Cubit<MaintenanceState> {
     emit(state.copyWith(serviceRecords: updated));
     await saveRecords();
   }
+Future<void> saveTuningRecords() async {
+    final prefs = await SharedPreferences.getInstance();
+    final jsonList = state.tuningRecords.map((r) => r.toJson()).toList();
+    await prefs.setString('tuning_records', jsonEncode(jsonList));
+  }
 
+  Future<void> addTuningRecords(List<TuningRecord> records) async {
+    final updated = List<TuningRecord>.from(state.tuningRecords)..addAll(records);
+    emit(state.copyWith(tuningRecords: updated));
+    await saveTuningRecords(); 
+  }
+
+  Future<void> loadTuningRecords() async {
+    final prefs = await SharedPreferences.getInstance();
+    final jsonString = prefs.getString('tuning_records');
+    if (jsonString != null) {
+      final List<dynamic> jsonList = jsonDecode(jsonString);
+      final records = jsonList.map((e) => TuningRecord.fromJson(e)).toList();
+      emit(state.copyWith(tuningRecords: records));
+    }
+  }
+
+
+  Future<void> addFuelRecord(FuelRecord record) async {
+    final updated = List<FuelRecord>.from(state.fuelRecords)..add(record);
+    emit(state.copyWith(fuelRecords: updated));
+    await saveFuelRecords();
+  }
   Future<void> loadFuelRecords() async {
     final prefs = await SharedPreferences.getInstance();
     final jsonString = prefs.getString('fuel_records');
@@ -49,11 +77,6 @@ class MaintenanceCubit extends Cubit<MaintenanceState> {
     await prefs.setString('fuel_records', jsonEncode(jsonList));
   }
 
-  Future<void> addFuelRecord(FuelRecord record) async {
-    final updated = List<FuelRecord>.from(state.fuelRecords)..add(record);
-    emit(state.copyWith(fuelRecords: updated));
-    await saveFuelRecords();
-  }
 
   void toggleMenu() {
     emit(state.copyWith(isMenuOpen: !state.isMenuOpen));
@@ -65,16 +88,20 @@ class MaintenanceCubit extends Cubit<MaintenanceState> {
 }
 extension MileageCalculations on MaintenanceCubit {
 
-  int getCurrentMonthMileage(DateTime now) {
+int getCurrentMonthMileage(DateTime now) {
     final allRecords = [
       ...state.serviceRecords.map((r) => {
-        'date': DateFormat('dd.MM.yyyy').parse(r.date),
-        'mileage': r.mileage
-      }),
+            'date': DateFormat('dd.MM.yyyy').parse(r.date),
+            'mileage': r.mileage,
+          }),
       ...state.fuelRecords.map((r) => {
-        'date': DateFormat('dd.MM.yyyy').parse(r.date),
-        'mileage': r.mileage
-      }),
+            'date': DateFormat('dd.MM.yyyy').parse(r.date),
+            'mileage': r.mileage,
+          }),
+      ...state.tuningRecords.map((r) => {
+            'date': DateFormat('dd.MM.yyyy').parse(r.date),
+            'mileage': r.mileage,
+          }),
     ];
 
     final monthRecords = allRecords.where((r) {
@@ -84,9 +111,13 @@ extension MileageCalculations on MaintenanceCubit {
 
     if (monthRecords.isEmpty) return 0;
 
-    monthRecords.sort((a, b) => (a['date'] as DateTime).compareTo(b['date'] as DateTime));
+    monthRecords.sort(
+      (a, b) => (a['date'] as DateTime).compareTo(b['date'] as DateTime),
+    );
+
     return monthRecords.last['mileage'] as int;
   }
+
 
 
 

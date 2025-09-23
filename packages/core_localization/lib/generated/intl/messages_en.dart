@@ -33,6 +33,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "address_not_specified": MessageLookupByLibrary.simpleMessage(
       "Address not specified",
     ),
+    "amount_month": MessageLookupByLibrary.simpleMessage("Amount per month"),
     "analitics": MessageLookupByLibrary.simpleMessage("Analytics"),
     "auto": MessageLookupByLibrary.simpleMessage("Auto"),
     "average": MessageLookupByLibrary.simpleMessage("Average"),
@@ -708,6 +709,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "tires": MessageLookupByLibrary.simpleMessage("tire"),
     "title": MessageLookupByLibrary.simpleMessage("Title"),
     "to_be_performed": MessageLookupByLibrary.simpleMessage("To be performed:"),
+    "total": MessageLookupByLibrary.simpleMessage("Total"),
     "total_amount": MessageLookupByLibrary.simpleMessage("Total amount:"),
     "total_fines": MessageLookupByLibrary.simpleMessage("Total fines: "),
     "tuning": MessageLookupByLibrary.simpleMessage("Tuning"),

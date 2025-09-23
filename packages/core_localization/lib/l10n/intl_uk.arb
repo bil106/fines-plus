@@ -32,7 +32,7 @@
    "maintenance": "TO",
    "analitics": "Аналітика",
    "export": "Експорт",
-   "statistics": "Статистика",
+   "statistics": "Статистика", 
    "history": "Історія",
    "schedule": "Розклад",
    "export_history": "Експорт історії",
@@ -43,14 +43,14 @@
    "gas_station_nearby": "Заправки поруч",
    "fill_date": "Заповніть дату, пробіг та кількість палива",
    "fuel_up": "Заправка",
-   "Fuel": "Паливо",
+   "fuel": "Паливо",
    "total_fines": "Загальна кількість штрафів: ",
    "technical_data": "Техпаспорт:",
    "fines_length": "Штрафів:",
    "verif_date": "Дата перевірки:",
    "tech_service": "Тех. Обслуговування",
-   "сервіс": "Сервіс",
-   "Календар": "Календар",
+   "service": "Сервіс",
+   "calendar": "Календар",
    "selected_service_station": "Вибрані СТО",
    "service_station_nearby": "СТО поруч",
    "select_service": "Виберіть дату і хоча б один сервіс",
@@ -297,7 +297,9 @@
    "close": "Закрити",
    "login": "Увійти",
    "comment_published": "Коментар опубліковано!",
-   "not_authorized": "Ви не авторизовані"
+   "not_authorized": "Ви не авторизовані",
+   "amount_month": "Сума за місяць",
+   "total": "Разом"
    
    
 }

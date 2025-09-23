@@ -15,10 +15,10 @@ class StatisticsCubit extends Cubit<StatisticsState> {
   late final StreamSubscription maintenanceSub;
 
   StatisticsCubit(this.maintenanceCubit) : super(StatisticsState.initial()) {
-    // первый расчёт на старте
+  
     _recalculate(maintenanceCubit.state);
 
-    // слушаем изменения в MaintenanceCubit
+   
     maintenanceSub = maintenanceCubit.stream.listen((maintenanceState) {
       _recalculate(maintenanceState);
     });
@@ -53,7 +53,7 @@ class StatisticsCubit extends Cubit<StatisticsState> {
     return super.close();
   }
 
-  MonthlyExpenseStats _calculateMonthlyStats({
+MonthlyExpenseStats _calculateMonthlyStats({
     required List<ServiceRecord> serviceRecords,
     required List<FuelRecord> fuelRecords,
     required int year,
@@ -63,7 +63,7 @@ class StatisticsCubit extends Cubit<StatisticsState> {
     final categoryTotals = <ExpenseCategory, double>{
       ExpenseCategory.fuel: 0,
       ExpenseCategory.service: 0,
-      ExpenseCategory.tuning: 0,
+      ExpenseCategory.tuning: 0, // добавляем категорию тюнинга
       ExpenseCategory.other: 0,
     };
 
@@ -89,6 +89,14 @@ class StatisticsCubit extends Cubit<StatisticsState> {
       categoryTotals[ExpenseCategory.fuel] = (categoryTotals[ExpenseCategory.fuel] ?? 0) + f.cost;
     }
 
+  
+    for (final t in maintenanceCubit.state.tuningRecords) {
+      final date = parseDate(t.date);
+      if (date.year != year || date.month != month) continue;
+      total += t.cost;
+      categoryTotals[ExpenseCategory.tuning] = (categoryTotals[ExpenseCategory.tuning] ?? 0) + t.cost;
+    }
+
     final monthLabel = _monthName(month);
 
     return MonthlyExpenseStats(
@@ -97,6 +105,7 @@ class StatisticsCubit extends Cubit<StatisticsState> {
       categoryTotals: categoryTotals,
     );
   }
+
 
   String _monthName(int month) {
     const months = ["Січ", "Лют", "Бер", "Квіт", "Трав", "Черв", "Лип", "Серп", "Верес", "Жовт", "Лист", "Груд"];

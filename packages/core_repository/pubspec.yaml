@@ -26,3 +26,4 @@ dependencies:
   geolocator: ^14.0.2
   firebase_auth: ^5.7.0
   shared_preferences: ^2.5.3
+  intl: ^0.20.2

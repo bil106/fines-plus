@@ -296,5 +296,7 @@
 "please_log_in": "Please leave or register to continue.",
 "close": "Close",
 "login": "Login",
-"comment_published": "Comment published!"
+"comment_published": "Comment published!",
+"amount_month": "Amount per month",
+"total": "Total"
 }

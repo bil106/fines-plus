@@ -101,7 +101,7 @@ class ExpenseStatsCard extends StatelessWidget {
       case ExpenseCategory.fuel:
         return S.current.fuel;
       case ExpenseCategory.service:
-        return S.current.repair;
+        return S.current.service;
       case ExpenseCategory.tuning:
         return S.current.tuning;
       case ExpenseCategory.other:

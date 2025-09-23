@@ -1,8 +1,5 @@
-
 import 'package:core_data/src/models/expense_category.dart';
 import 'package:flutter/material.dart';
-
-
 
 class EventModel {
   final String date;
@@ -11,7 +8,8 @@ class EventModel {
   final String mileage;
   final IconData icon;
   final Color iconColor;
-  final ExpenseCategory category; 
+  final ExpenseCategory category;
+  final Widget? customIcon;
 
   EventModel({
     required this.date,
@@ -20,6 +18,7 @@ class EventModel {
     required this.mileage,
     required this.icon,
     required this.iconColor,
-    required this.category, 
+    required this.category,
+    this.customIcon,
   });
 }

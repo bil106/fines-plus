@@ -18,6 +18,7 @@ import 'package:fines_plus/presentation/screens/statistics_screen.dart';
 import 'package:fines_plus/router/home_screen_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 @RoutePage()
@@ -54,9 +55,10 @@ class _AnalyticsScreenViewState extends State<_AnalyticsScreenView> {
     _loadRecords();
   }
 
-  Future<void> _loadRecords() async {
+Future<void> _loadRecords() async {
     final prefs = await SharedPreferences.getInstance();
 
+   
     final serviceJson = prefs.getString('service_records');
     if (serviceJson != null) {
       final List<dynamic> serviceList = jsonDecode(serviceJson);
@@ -66,7 +68,6 @@ class _AnalyticsScreenViewState extends State<_AnalyticsScreenView> {
           return EventModel(
             date: record.date,
             title: record.serviceName,
-
             amount: record.cost.toDouble(),
             mileage: "${record.mileage} ${S.of(context).km}",
             icon: Icons.build,
@@ -77,6 +78,7 @@ class _AnalyticsScreenViewState extends State<_AnalyticsScreenView> {
       );
     }
 
+  
     final fuelJson = prefs.getString('fuel_records');
     if (fuelJson != null) {
       final List<dynamic> fuelList = jsonDecode(fuelJson);
@@ -86,7 +88,6 @@ class _AnalyticsScreenViewState extends State<_AnalyticsScreenView> {
           return EventModel(
             date: record.date,
             title: "${record.fuelType} / ${record.volume} л.",
-
             amount: record.cost.toDouble(),
             mileage: "${record.mileage} ${S.of(context).km}",
             icon: Icons.local_gas_station,
@@ -97,13 +98,37 @@ class _AnalyticsScreenViewState extends State<_AnalyticsScreenView> {
       );
     }
 
-    events.sort((a, b) => b.date.compareTo(a.date));
+ 
+    final tuningJson = prefs.getString('tuning_records');
+    if (tuningJson != null) {
+      final List<dynamic> tuningList = jsonDecode(tuningJson);
+      events.addAll(
+        tuningList.map((e) {
+          final record = TuningRecord.fromJson(e);
+          return EventModel(
+            date: record.date,
+            title: record.tuningName,
+            amount: record.cost.toDouble(),
+            mileage: "${record.mileage} ${S.of(context).km}",
+            icon: Icons.build_circle, 
+            iconColor: AppColors.blue700,
+            category: ExpenseCategory.tuning,
+            customIcon: Image.asset('assets/icons/tuning.jpg', height: 24, width: 24),
+          );
+        }),
+      );
+    }
+
+    
+    events.sort((a, b) => DateFormat('dd.MM.yyyy').parse(b.date).compareTo(DateFormat('dd.MM.yyyy').parse(a.date)));
 
     setState(() {});
 
+   
     final homeState = context.findAncestorStateOfType<HomeScreenWrapperState>();
     homeState?.exportHistory = events;
   }
+
 
   @override
   Widget build(BuildContext context) {

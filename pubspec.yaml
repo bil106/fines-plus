@@ -100,5 +100,6 @@ flutter:
     - assets/config/fastcar.json
     - assets/icons/map.png
     - assets/icons/google_logo.png
+    - assets/icons/tuning.jpg
     - assets/fonts/Fines/Roboto-Regular.ttf
   

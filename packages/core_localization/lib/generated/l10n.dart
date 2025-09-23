@@ -2643,6 +2643,21 @@ class S {
       args: [],
     );
   }
+
+  /// `Amount per month`
+  String get amount_month {
+    return Intl.message(
+      'Amount per month',
+      name: 'amount_month',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Total`
+  String get total {
+    return Intl.message('Total', name: 'total', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

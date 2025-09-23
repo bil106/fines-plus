@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 class TimelineItem extends StatelessWidget {
   final IconData icon;
   final Color iconColor;
+  final Widget? customIcon;
   final String date;
   final String title;
   final String subtitle;
@@ -17,6 +18,7 @@ class TimelineItem extends StatelessWidget {
     super.key,
     required this.icon,
     required this.iconColor,
+    this.customIcon,
     required this.date,
     required this.title,
     required this.subtitle,
@@ -34,7 +36,7 @@ class TimelineItem extends StatelessWidget {
             Container(
               decoration: BoxDecoration(color: iconColor.withOpacity(0.1), shape: BoxShape.circle),
               padding: const EdgeInsets.all(8),
-              child: Icon(icon, color: iconColor, size: 24),
+              child: customIcon ?? Icon(icon, color: iconColor, size: 24),
             ),
             Container(width: 2, height: 80, color: AppColors.grey700),
           ],

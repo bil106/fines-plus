@@ -6,9 +6,9 @@ import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 
-class FuelRecordCard extends StatelessWidget {
-  final FuelRecord record;
-  const FuelRecordCard({super.key, required this.record});
+class TuningRecordCard extends StatelessWidget {
+  final TuningRecord record;
+  const TuningRecordCard({super.key, required this.record});
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +22,7 @@ class FuelRecordCard extends StatelessWidget {
         padding: const EdgeInsets.all(12),
         child: Row(
           children: [
-            Icon(Icons.local_gas_station, color: AppColors.redAccent, size: 50),
+            Image.asset('assets/icons/tuning.jpg', height: 50, width: 50), 
 
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -30,7 +30,7 @@ class FuelRecordCard extends StatelessWidget {
                 Row(
                   children: [
                     AppSpacers.horizontalSmallMedium,
-                    Text("${record.fuelType} / ${record.volume}L", style: textTheme.historyText),
+                    Text(record.tuningName, style: textTheme.historyText),
                   ],
                 ),
                 AppSpacers.verticalXSmall,
@@ -38,7 +38,7 @@ class FuelRecordCard extends StatelessWidget {
                   children: [
                     Icon(Icons.attach_money, color: AppColors.green),
                     AppSpacers.horizontalSmallMedium,
-                    Text("${record.cost} ${S.of(context).grn}", style: textTheme.subtitleText),
+                    Text("${record.cost.toStringAsFixed(0)} ${S.of(context).grn}", style: textTheme.subtitleText),
                   ],
                 ),
                 AppSpacers.verticalXSmall,
@@ -61,3 +61,4 @@ class FuelRecordCard extends StatelessWidget {
     );
   }
 }
+

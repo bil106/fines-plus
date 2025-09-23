@@ -9,6 +9,7 @@ export 'src/models/reminder_model.dart';
 export 'src/models/fine_model.dart';
 export 'src/models/fine_check_history.dart';
 export 'src/models/service_record.dart';
+export 'src/models/tuning_record.dart';
 export 'src/models/analytics_model.dart';
 export 'src/models/car_history_model.dart';
 export 'src/models/event_model.dart';
@@ -17,6 +18,7 @@ export 'src/models/mileage_record.dart';
 export 'src/models/expense.dart';
 export 'src/models/expense_category.dart';
 export 'src/models/maintenance_task.dart';
+
 
 export 'src/local/car_info_local_data_source.dart';
 export 'src/remote/car_info_remote_data_source.dart';

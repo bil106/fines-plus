@@ -38,6 +38,7 @@ class HistoryTab extends StatelessWidget {
                 (event) => TimelineItem(
                   icon: event.icon,
                   iconColor: event.iconColor,
+                  customIcon: event.customIcon,
                   date: event.date,
                   title: event.title,
                   subtitle: '',

@@ -947,16 +947,92 @@ class ServiceRouteArgs {
 
 /// generated route for
 /// [SettingsScreen]
-class SettingsRoute extends PageRouteInfo<void> {
-  const SettingsRoute({List<PageRouteInfo>? children})
-    : super(SettingsRoute.name, initialChildren: children);
+class SettingsRoute extends PageRouteInfo<SettingsRouteArgs> {
+  SettingsRoute({Key? key, VoidCallback? onBack, List<PageRouteInfo>? children})
+    : super(
+        SettingsRoute.name,
+        args: SettingsRouteArgs(key: key, onBack: onBack),
+        initialChildren: children,
+      );
 
   static const String name = 'SettingsRoute';
 
   static PageInfo page = PageInfo(
     name,
     builder: (data) {
-      return const SettingsScreen();
+      final args = data.argsAs<SettingsRouteArgs>(
+        orElse: () => const SettingsRouteArgs(),
+      );
+      return SettingsScreen(key: args.key, onBack: args.onBack);
     },
   );
+}
+
+class SettingsRouteArgs {
+  const SettingsRouteArgs({this.key, this.onBack});
+
+  final Key? key;
+
+  final VoidCallback? onBack;
+
+  @override
+  String toString() {
+    return 'SettingsRouteArgs{key: $key, onBack: $onBack}';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! SettingsRouteArgs) return false;
+    return key == other.key && onBack == other.onBack;
+  }
+
+  @override
+  int get hashCode => key.hashCode ^ onBack.hashCode;
+}
+
+/// generated route for
+/// [TuningScreen]
+class TuningRoute extends PageRouteInfo<TuningRouteArgs> {
+  TuningRoute({Key? key, VoidCallback? onBack, List<PageRouteInfo>? children})
+    : super(
+        TuningRoute.name,
+        args: TuningRouteArgs(key: key, onBack: onBack),
+        initialChildren: children,
+      );
+
+  static const String name = 'TuningRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      final args = data.argsAs<TuningRouteArgs>(
+        orElse: () => const TuningRouteArgs(),
+      );
+      return TuningScreen(key: args.key, onBack: args.onBack);
+    },
+  );
+}
+
+class TuningRouteArgs {
+  const TuningRouteArgs({this.key, this.onBack});
+
+  final Key? key;
+
+  final VoidCallback? onBack;
+
+  @override
+  String toString() {
+    return 'TuningRouteArgs{key: $key, onBack: $onBack}';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! TuningRouteArgs) return false;
+    return key == other.key && onBack == other.onBack;
+  }
+
+  @override
+  int get hashCode => key.hashCode ^ onBack.hashCode;
 }

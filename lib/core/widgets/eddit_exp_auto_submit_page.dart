@@ -1,6 +1,6 @@
 // ignore_for_file: unnecessary_brace_in_string_interps
 
-import 'package:auto_route/auto_route.dart';
+
 import 'package:core/config/app_urls.dart';
 
 import 'package:flutter/material.dart';
@@ -8,7 +8,7 @@ import 'package:http/http.dart' as http;
 
 import 'package:flutter_web_auth_2/flutter_web_auth_2.dart';
 
-@RoutePage()
+
 class EditExpAutoSubmitPage extends StatefulWidget {
   final int expId;
   final Map<String, String> fieldValues;

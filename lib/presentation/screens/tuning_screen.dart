@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:core/config/app_urls.dart';
@@ -8,41 +7,34 @@ import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
-import 'package:fines_plus/core/widgets/additional_options_widget.dart';
 import 'package:fines_plus/core/widgets/date_picker_card.dart';
 import 'package:fines_plus/core/widgets/extensions/service_list.dart';
 import 'package:fines_plus/core/widgets/mileage_card.dart';
-import 'package:fines_plus/core/widgets/photo_picker_widget.dart';
 import 'package:fines_plus/env/env.dart';
-
 import 'package:fines_plus/presentation/screens/service_map_screen.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:location/location.dart';
 import 'package:http/http.dart' as http;
+import 'package:location/location.dart';
 
 @RoutePage()
-class ServiceScreen extends StatefulWidget {
+class TuningScreen extends StatefulWidget {
   final VoidCallback? onBack;
-  const ServiceScreen({super.key, this.onBack});
+  const TuningScreen({super.key, this.onBack});
 
   @override
-  State<ServiceScreen> createState() => _ServiceScreenState();
+  State<TuningScreen> createState() => _TuningScreenState();
 }
 
-class _ServiceScreenState extends State<ServiceScreen> {
-  final List<TextEditingController> serviceControllers = [TextEditingController()];
+class _TuningScreenState extends State<TuningScreen> {
+  final List<TextEditingController> tuningControllers = [TextEditingController()];
   final TextEditingController costController = TextEditingController();
   final TextEditingController mileageController = TextEditingController();
-  bool showAdditionalOptions = false;
-  File? selectedPhoto;
-
   Map<String, dynamic>? _bestStation;
   DateTime? selectedDate;
-
   double usdToUahRate = 40.0;
   Map<int, double> selectedPricesUah = {};
 
@@ -52,7 +44,6 @@ class _ServiceScreenState extends State<ServiceScreen> {
     _initLocationAndService();
     _fetchRate();
   }
-
   Future<void> _initLocationAndService() async {
     Location location = Location();
 
@@ -87,11 +78,9 @@ class _ServiceScreenState extends State<ServiceScreen> {
       if (kDebugMode) print("❌ Error getting position: $e");
     }
   }
-
   Future<void> _fetchRate() async {
     try {
       final response = await http.get(Uri.parse(AppUrls.nbuRateUSD));
-
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         if (data is List && data.isNotEmpty) {
@@ -99,13 +88,10 @@ class _ServiceScreenState extends State<ServiceScreen> {
 
           setState(() {
             usdToUahRate = newRate;
-            if (kDebugMode) {
-              print("💵 Поточний курс USD → UAH: $usdToUahRate");
-            }
 
             selectedPricesUah.updateAll((key, oldValue) {
-              final serviceName = serviceControllers[key].text;
-              final selectedItem = ServiceList.serviceItems.firstWhere(
+              final serviceName = tuningControllers[key].text;
+              final selectedItem = ServiceList.tuningItems.firstWhere(
                 (item) => item.name == serviceName,
                 orElse: () => ServiceItem(name: serviceName, priceUSD: 0),
               );
@@ -118,7 +104,7 @@ class _ServiceScreenState extends State<ServiceScreen> {
         }
       }
     } catch (e) {
-      if (kDebugMode) print("⚠️ Course loading error: $e");
+      if (kDebugMode) print("⚠️ Error fetching rate: $e");
     }
   }
 
@@ -134,12 +120,11 @@ class _ServiceScreenState extends State<ServiceScreen> {
           backgroundColor: AppColors.grey50,
           elevation: 0,
           leading: BackButton(color: AppColors.blue700, onPressed: widget.onBack),
-
           actions: [
             IconButton(
               icon: const Icon(Icons.check, color: AppColors.blue700, size: 50),
               onPressed: () {
-                if (selectedDate == null || serviceControllers.every((c) => c.text.isEmpty)) {
+                if (selectedDate == null || tuningControllers.every((c) => c.text.isEmpty)) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(backgroundColor: AppColors.blue700, content: Text(S.of(context).select_service)),
                   );
@@ -148,14 +133,14 @@ class _ServiceScreenState extends State<ServiceScreen> {
 
                 final mileage = int.tryParse(mileageController.text) ?? 0;
 
-                final List<ServiceRecord> records = serviceControllers.where((c) => c.text.isNotEmpty).map((c) {
-                  final selectedService = ServiceList.serviceItems.firstWhere(
+                final List<TuningRecord> records = tuningControllers.where((c) => c.text.isNotEmpty).map((c) {
+                  final selectedTuning = ServiceList.tuningItems.firstWhere(
                     (item) => item.name == c.text,
                     orElse: () => ServiceItem(name: c.text, priceUSD: 0),
                   );
-                  return ServiceRecord(
-                    serviceName: selectedService.name,
-                    cost: selectedService.priceUSD * usdToUahRate,
+                  return TuningRecord(
+                    tuningName: selectedTuning.name,
+                    cost: selectedTuning.priceUSD * usdToUahRate,
                     date: "${selectedDate!.day}.${selectedDate!.month}.${selectedDate!.year}",
                     mileage: mileage,
                   );
@@ -172,8 +157,7 @@ class _ServiceScreenState extends State<ServiceScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(S.of(context).service, style: textTheme.title),
-
+              Text(S.of(context).tuning, style: textTheme.title), 
               Row(
                 children: [
                   _bestStation == null
@@ -216,7 +200,6 @@ class _ServiceScreenState extends State<ServiceScreen> {
               ),
 
               const Divider(),
-
               Row(
                 children: [
                   Expanded(
@@ -238,7 +221,7 @@ class _ServiceScreenState extends State<ServiceScreen> {
               AppSpacers.verticalMedium,
 
               Column(
-                children: List.generate(serviceControllers.length, (index) {
+                children: List.generate(tuningControllers.length, (index) {
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 1),
                     child: Row(
@@ -246,14 +229,14 @@ class _ServiceScreenState extends State<ServiceScreen> {
                         Expanded(
                           child: Autocomplete<String>(
                             optionsBuilder: (TextEditingValue value) {
-                              if (value.text.isEmpty) return ServiceList.names;
-                              return ServiceList.names.where(
-                                (option) => option.toLowerCase().startsWith(value.text.toLowerCase()),
-                              );
+                              if (value.text.isEmpty) return ServiceList.tuningItems.map((e) => e.name);
+                              return ServiceList.tuningItems
+                                  .map((e) => e.name)
+                                  .where((option) => option.toLowerCase().startsWith(value.text.toLowerCase()));
                             },
                             onSelected: (val) {
-                              serviceControllers[index].text = val;
-                              final selectedItem = ServiceList.serviceItems.firstWhere(
+                              tuningControllers[index].text = val;
+                              final selectedItem = ServiceList.tuningItems.firstWhere(
                                 (item) => item.name == val,
                                 orElse: () => ServiceItem(name: val, priceUSD: 0),
                               );
@@ -263,19 +246,19 @@ class _ServiceScreenState extends State<ServiceScreen> {
                               setState(() {});
                             },
                             fieldViewBuilder: (context, controller, focusNode, onFieldSubmitted) {
-                              serviceControllers[index] = controller;
+                              tuningControllers[index] = controller;
                               return TextField(
                                 controller: controller,
                                 focusNode: focusNode,
                                 decoration: InputDecoration(
-                                  hintText: S.of(context).select_a_service,
-                                  border: OutlineInputBorder(),
-                                  prefixIcon: Icon(Icons.build, color: AppColors.blueAccent),
+                                  hintText: S.of(context).select_service,
+                                  border: const OutlineInputBorder(),
+                                  prefixIcon: const Icon(Icons.build, color: AppColors.blueAccent),
                                   suffixIcon: IconButton(
-                                    icon: Icon(Icons.delete, color: AppColors.red),
+                                    icon: const Icon(Icons.delete, color: AppColors.red),
                                     onPressed: () {
                                       setState(() {
-                                        serviceControllers.removeAt(index);
+                                        tuningControllers.removeAt(index);
                                         selectedPricesUah.remove(index);
                                         double total = selectedPricesUah.values.fold(0, (a, b) => a + b);
                                         costController.text = total.toStringAsFixed(0);
@@ -292,6 +275,7 @@ class _ServiceScreenState extends State<ServiceScreen> {
                   );
                 }),
               ),
+
               Center(
                 child: IconButton(
                   icon: const CircleAvatar(
@@ -300,7 +284,7 @@ class _ServiceScreenState extends State<ServiceScreen> {
                   ),
                   onPressed: () {
                     setState(() {
-                      serviceControllers.add(TextEditingController());
+                      tuningControllers.add(TextEditingController());
                     });
                   },
                 ),
@@ -315,7 +299,7 @@ class _ServiceScreenState extends State<ServiceScreen> {
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Row(
                       children: [
@@ -324,7 +308,7 @@ class _ServiceScreenState extends State<ServiceScreen> {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(S.of(context).cost_of_work),
+                            Text(S.of(context).sum),
                             Text(
                               "${selectedPricesUah.isEmpty ? '0' : selectedPricesUah.values.last.toStringAsFixed(0)} ${S.of(context).grn}",
                               style: textTheme.titleMedium,
@@ -333,7 +317,6 @@ class _ServiceScreenState extends State<ServiceScreen> {
                         ),
                       ],
                     ),
-                    AppSpacers.horizontalXMassive,
                     Row(
                       children: [
                         const Icon(Icons.attach_money, color: AppColors.blueAccent),
@@ -353,9 +336,6 @@ class _ServiceScreenState extends State<ServiceScreen> {
                   ],
                 ),
               ),
-
-              const Divider(),
-              AdditionalOptionsWidget(photoPicker: PhotoPickerWidget()),
             ],
           ),
         ),
@@ -363,7 +343,6 @@ class _ServiceScreenState extends State<ServiceScreen> {
     );
   }
 }
-
 Future<Map<String, dynamic>?> fetchBestNearbyService(LatLng current, String apiKey) async {
   final stations = await fetchNearbyServices(current, apiKey);
   if (stations.isEmpty) return null;

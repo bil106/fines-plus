@@ -33,6 +33,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "address_not_specified": MessageLookupByLibrary.simpleMessage(
       "Адреса не вказана",
     ),
+    "amount_month": MessageLookupByLibrary.simpleMessage("Сума за місяць"),
     "analitics": MessageLookupByLibrary.simpleMessage("Аналітика"),
     "auto": MessageLookupByLibrary.simpleMessage("Авто"),
     "average": MessageLookupByLibrary.simpleMessage("Середній"),
@@ -41,6 +42,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "by_date": MessageLookupByLibrary.simpleMessage("За датою"),
     "by_mileage": MessageLookupByLibrary.simpleMessage("За пробігом"),
+    "calendar": MessageLookupByLibrary.simpleMessage("Календар"),
     "cancel": MessageLookupByLibrary.simpleMessage("Скасувати"),
     "car_history": MessageLookupByLibrary.simpleMessage("Історія автомобіля"),
     "car_number": MessageLookupByLibrary.simpleMessage("Номер авто"),
@@ -104,6 +106,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "filter": MessageLookupByLibrary.simpleMessage("фільтр"),
     "fines": MessageLookupByLibrary.simpleMessage("Штрафи"),
     "fines_length": MessageLookupByLibrary.simpleMessage("Штрафів:"),
+    "fuel": MessageLookupByLibrary.simpleMessage("Паливо"),
     "fuel_ai92": MessageLookupByLibrary.simpleMessage("АІ-92"),
     "fuel_ai95": MessageLookupByLibrary.simpleMessage("АІ-95"),
     "fuel_ai95_plus": MessageLookupByLibrary.simpleMessage("АІ-95+"),
@@ -211,6 +214,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "selecting_service": MessageLookupByLibrary.simpleMessage(
       "Варіанти обслуговування",
     ),
+    "service": MessageLookupByLibrary.simpleMessage("Сервіс"),
     "service_amortyzatory_perednia_os_zamina":
         MessageLookupByLibrary.simpleMessage(
           "Амортизатори підвіски (передня вісь) - заміна",
@@ -682,6 +686,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "tires": MessageLookupByLibrary.simpleMessage("шина"),
     "title": MessageLookupByLibrary.simpleMessage("Заголовок"),
     "to_be_performed": MessageLookupByLibrary.simpleMessage("До виконання:"),
+    "total": MessageLookupByLibrary.simpleMessage("Разом"),
     "total_amount": MessageLookupByLibrary.simpleMessage("Загальна сума:"),
     "total_fines": MessageLookupByLibrary.simpleMessage(
       "Загальна кількість штрафів: ",

@@ -17,8 +17,8 @@ import 'package:fines_plus/presentation/screens/reminders_screen.dart';
 import 'package:fines_plus/presentation/screens/schedule_screen.dart';
 import 'package:fines_plus/presentation/screens/service_screen.dart';
 import 'package:fines_plus/presentation/screens/settings_screen.dart';
-// import 'package:fines_plus/presentation/screens/support_screen.dart.txt';
 import 'package:fines_plus/presentation/screens/maintenance_screen.dart';
+import 'package:fines_plus/presentation/screens/tuning_screen.dart';
 import 'package:fines_plus/router/home_screen_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -50,7 +50,6 @@ class AppRouter extends RootStackRouter {
 
    
     AutoRoute(page: CarInfoRoute.page, path: '/car-info'),
-    // AutoRoute(page: SupportRoute.page, path: '/support'),
     AutoRoute(page: FineCheckRoute.page, path: '/fine_check'),
     AutoRoute(page: SettingsRoute.page, path: '/settings'),
     AutoRoute(page: HistoryRoute.page, path: '/history'),
@@ -62,6 +61,7 @@ class AppRouter extends RootStackRouter {
     AutoRoute(page: ServiceRoute.page, path: '/service'),
     AutoRoute(page: FuelMapRoute.page, path: '/fuel-map'),
     AutoRoute(page: ScheduleRoute.page, path: '/schedule'),
+    AutoRoute(page: TuningRoute.page, path: '/tuning'),
     
   ];
 }

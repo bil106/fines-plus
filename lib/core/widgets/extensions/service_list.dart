@@ -7,7 +7,8 @@ class ServiceItem {
 }
 
 class ServiceList {
-  static final items = <ServiceItem>[
+  static final serviceItems = <ServiceItem>[
+    // 🔧 ДВС
     ServiceItem(name: S.current.service_dvs_diagnostika, priceUSD: 25),
     ServiceItem(name: S.current.service_dvs_znyattya_ustanovka, priceUSD: 275),
     ServiceItem(name: S.current.service_dvs_capitalnyy_remont, priceUSD: 450),
@@ -29,11 +30,12 @@ class ServiceList {
     ServiceItem(name: S.current.service_zamina_kisnevogo_datchyka, priceUSD: 18),
     ServiceItem(name: S.current.service_diagnostyka_i_remont_ebu, priceUSD: 15),
     ServiceItem(name: S.current.service_zamina_lamp_protifumannykh_far, priceUSD: 2),
-    ServiceItem(name: S.current.service_vstanovlennya_ksenonu, priceUSD: 22),
     ServiceItem(name: S.current.service_kompleksna_diagnostyka, priceUSD: 30),
     ServiceItem(name: S.current.service_kompleksna_diagnostyka_full, priceUSD: 60),
     ServiceItem(name: S.current.service_systema_kondytsionuvannya, priceUSD: 26),
     ServiceItem(name: S.current.service_palivna_systema_diagnostyka, priceUSD: 15),
+
+    // 🔧 Ходовая
     ServiceItem(name: S.current.service_diagnostyka_pidvisky, priceUSD: 9),
     ServiceItem(name: S.current.service_remont_vazheliv_pidvisky, priceUSD: 30),
     ServiceItem(name: S.current.service_zamina_amortyzatoriv, priceUSD: 43),
@@ -67,14 +69,8 @@ class ServiceList {
     ServiceItem(name: S.current.service_pylovik_shrus_vnutrishniy_zamina, priceUSD: 48),
     ServiceItem(name: S.current.service_shrus_pryvodnoho_valu_zamina, priceUSD: 48),
     ServiceItem(name: S.current.service_pryvodnyy_val_zamina, priceUSD: 48),
-    ServiceItem(name: S.current.service_polirovka_kuzova, priceUSD: 96),
-    ServiceItem(name: S.current.service_polirovka_far, priceUSD: 18),
-    ServiceItem(name: S.current.service_predprodazhna_khimchystka_salonu, priceUSD: 60),
-    ServiceItem(name: S.current.service_pereprodazhne_polirovannya_kuzova, priceUSD: 120),
-    ServiceItem(name: S.current.service_chystka_siden_avto, priceUSD: 18),
-    ServiceItem(name: S.current.service_khimchystka_salonu, priceUSD: 120),
-    ServiceItem(name: S.current.service_pokryttya_keramikoyu, priceUSD: 8),
-    ServiceItem(name: S.current.service_vidalennya_dribnykh_podryapin, priceUSD: 6),
+
+    // 🔧 Гальмівна система
     ServiceItem(name: S.current.service_zamina_halmyvnykh_kolodok, priceUSD: 15),
     ServiceItem(name: S.current.service_zamina_halmyvnykh_dyskiv, priceUSD: 60),
     ServiceItem(name: S.current.service_zamina_halmyvnoyi_ridyny, priceUSD: 24),
@@ -85,6 +81,8 @@ class ServiceList {
     ServiceItem(name: S.current.service_zamina_nakonechnikiv_rulovykh_tyag, priceUSD: 12),
     ServiceItem(name: S.current.service_zamina_rulovykh_tyag, priceUSD: 15),
     ServiceItem(name: S.current.service_zamina_krestovyny_rulovogo_valu, priceUSD: 22),
+
+    // 🔧 ДВС, доп
     ServiceItem(name: S.current.service_diagnostyka_remont_dvs, priceUSD: 24),
     ServiceItem(name: S.current.service_zamina_prokladky_klapannoyi_krishky, priceUSD: 21),
     ServiceItem(name: S.current.service_zamina_prokladky_gbc, priceUSD: 240),
@@ -114,12 +112,13 @@ class ServiceList {
     ServiceItem(name: S.current.service_zamina_termostata, priceUSD: 30),
     ServiceItem(name: S.current.service_zamina_pompy, priceUSD: 45),
     ServiceItem(name: S.current.service_zamina_radiatora, priceUSD: 39),
-    ServiceItem(name: S.current.service_chystka_radiatoriv, priceUSD: 120),
     ServiceItem(name: S.current.service_chystka_forsunok, priceUSD: 11),
     ServiceItem(name: S.current.service_promyvka_palivnoyi_systemy, priceUSD: 26),
     ServiceItem(name: S.current.service_zamina_palivnogo_filtra, priceUSD: 30),
     ServiceItem(name: S.current.service_zamina_benzonasosa, priceUSD: 30),
     ServiceItem(name: S.current.service_promyvka_inzhektora, priceUSD: 36),
+
+    // 🔧 КПП / Зчеплення
     ServiceItem(name: S.current.service_kpp_zamina, priceUSD: 105),
     ServiceItem(name: S.current.service_kpp_remont, priceUSD: 180),
     ServiceItem(name: S.current.service_oliya_akpp_chastkova, priceUSD: 75),
@@ -145,12 +144,13 @@ class ServiceList {
     ServiceItem(name: S.current.service_zamina_kard_valu, priceUSD: 24),
     ServiceItem(name: S.current.service_zamina_krestovyny_kard_valu, priceUSD: 39),
     ServiceItem(name: S.current.service_zamina_transmisiynykh_ridin, priceUSD: 12),
+
+    // 🔧 Выхлоп
     ServiceItem(name: S.current.service_zamina_vykhlopnoyi_systemy, priceUSD: 45),
     ServiceItem(name: S.current.service_zamina_glushnyka, priceUSD: 30),
     ServiceItem(name: S.current.service_zamina_hofry_pryymalnoyi_truby, priceUSD: 39),
     ServiceItem(name: S.current.service_zamina_kisnevogo_datchyka_lambda, priceUSD: 18),
     ServiceItem(name: S.current.service_zamina_katalizatora, priceUSD: 15),
-    ServiceItem(name: S.current.service_vidalennya_katalizatora, priceUSD: 43),
     ServiceItem(name: S.current.service_zamina_prokladky_glushnyka, priceUSD: 11),
     ServiceItem(name: S.current.service_zamina_truby_glushnyka, priceUSD: 22),
     ServiceItem(name: S.current.service_diagnostyka_remont_palivnykh_forsunok, priceUSD: 11),
@@ -159,5 +159,21 @@ class ServiceList {
     ServiceItem(name: S.current.service_promyvka_palivnoyi_systemy_dizel, priceUSD: 48),
   ];
 
-  static List<String> get names => items.map((e) => e.name).toList();
+  static final tuningItems = <ServiceItem>[
+    // ✨ Тюнинг / косметика
+    ServiceItem(name: S.current.service_vstanovlennya_ksenonu, priceUSD: 22),
+    ServiceItem(name: S.current.service_polirovka_kuzova, priceUSD: 96),
+    ServiceItem(name: S.current.service_polirovka_far, priceUSD: 18),
+    ServiceItem(name: S.current.service_predprodazhna_khimchystka_salonu, priceUSD: 60),
+    ServiceItem(name: S.current.service_pereprodazhne_polirovannya_kuzova, priceUSD: 120),
+    ServiceItem(name: S.current.service_chystka_siden_avto, priceUSD: 18),
+    ServiceItem(name: S.current.service_khimchystka_salonu, priceUSD: 120),
+    ServiceItem(name: S.current.service_pokryttya_keramikoyu, priceUSD: 8),
+    ServiceItem(name: S.current.service_vidalennya_dribnykh_podryapin, priceUSD: 6),
+    ServiceItem(name: S.current.service_vidalennya_katalizatora, priceUSD: 43), // спорно, но чаще относят к тюнингу
+    ServiceItem(name: S.current.service_chystka_radiatoriv, priceUSD: 120),
+  ];
+
+    static List<String> get names => [...serviceItems.map((e) => e.name), ...tuningItems.map((e) => e.name)];
 }
+

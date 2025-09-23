@@ -25,6 +25,7 @@ import 'package:fines_plus/presentation/screens/schedule_screen.dart';
 import 'package:fines_plus/presentation/screens/service_screen.dart';
 import 'package:fines_plus/presentation/screens/settings_screen.dart';
 import 'package:fines_plus/presentation/screens/maintenance_screen.dart';
+import 'package:fines_plus/presentation/screens/tuning_screen.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -45,6 +46,7 @@ enum HomePage {
   registration,
   fuel,
   service,
+  tuning,
   schedule,
 }
 
@@ -193,6 +195,7 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
                 return MaintenanceScreen(
                   onFuelUp: () => openPage(HomePage.fuel),
                   onService: () => openPage(HomePage.service),
+                  onTuning: () => openPage(HomePage.tuning),
                   onBack: () => openPage(HomePage.addCar),
                 );
               },
@@ -211,6 +214,7 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
             FuelUpScreen(key: const ValueKey('fuel'), onBack: () => openPage(HomePage.maintenance)),
             //12 ServiceScreen
             ServiceScreen(key: const ValueKey('service'), onBack: () => openPage(HomePage.maintenance)),
+            TuningScreen(key: const ValueKey('tuning'), onBack: () => openPage(HomePage.maintenance)),
             //13 FuelMapScreen
             FuelMapScreen(key: const ValueKey('fuel-map')),
 
