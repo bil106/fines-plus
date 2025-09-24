@@ -118,6 +118,26 @@ Future<void> _loadRecords() async {
         }),
       );
     }
+// Car Wash
+    final carWashJson = prefs.getString('car_wash_records');
+    if (carWashJson != null) {
+      final List<dynamic> carWashList = jsonDecode(carWashJson);
+      events.addAll(
+        carWashList.map((e) {
+          final record = CarWashRecord.fromJson(e);
+          return EventModel(
+            date: record.date,
+            title: S.of(context).car_wash,
+            amount: record.cost.toDouble(),
+            mileage: "${record.mileage} ${S.of(context).km}",
+            icon: Icons.local_car_wash,
+            iconColor: AppColors.energyBlue,
+            category: ExpenseCategory.other,
+          );
+        }),
+      );
+    }
+
 
     
     events.sort((a, b) => DateFormat('dd.MM.yyyy').parse(b.date).compareTo(DateFormat('dd.MM.yyyy').parse(a.date)));
@@ -169,7 +189,7 @@ Future<void> _loadRecords() async {
                 ],
               ),
 
-              AppSpacers.verticalMedium,
+            
 
               TabBar(
                 indicatorColor: AppColors.blue700,

@@ -41,10 +41,14 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     final cubit = context.read<MaintenanceCubit>();
     final serviceRecords = cubit.state.serviceRecords;
     final fuelRecords = cubit.state.fuelRecords;
+    final tuningRecords = cubit.state.tuningRecords;
+    final carWashRecords = cubit.state.carWashRecords;
 
     final allMileages = [
       ...serviceRecords.map((r) => r.mileage),
       ...fuelRecords.map((r) => r.mileage),
+      ...tuningRecords.map((r) => r.mileage),
+      ...carWashRecords.map((r) => r.mileage),
       if (newMileage != null) newMileage,
     ];
 

@@ -4,6 +4,8 @@ import 'package:auto_route/auto_route.dart';
 import 'package:core_cubit/cubit/export/export_cubit.dart';
 import 'package:core_data/core_data.dart';
 import 'package:core_localization/generated/l10n.dart';
+import 'package:core_repository/export/export_history_csv.dart';
+import 'package:core_repository/export/export_history_pdf.dart';
 import 'package:core_repository/export_repository.dart';
 import 'package:core_repository/injector.dart';
 import 'package:core_utils/share_helpers.dart';

@@ -299,5 +299,8 @@
 "comment_published": "Comment published!",
 "amount_month": "Amount per month",
 "total": "Total",
-"ok": "OK"
+"ok": "OK",
+"car_wash": "Car wash",
+"car_wash_nearby": "Car wash nearby",
+"enter_amount": "Enter amount"
 }

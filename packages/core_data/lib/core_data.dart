@@ -18,6 +18,7 @@ export 'src/models/mileage_record.dart';
 export 'src/models/expense.dart';
 export 'src/models/expense_category.dart';
 export 'src/models/maintenance_task.dart';
+export 'src/models/car_wash_record.dart';
 
 
 export 'src/local/car_info_local_data_source.dart';

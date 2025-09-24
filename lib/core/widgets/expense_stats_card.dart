@@ -19,19 +19,19 @@ class ExpenseStatsCard extends StatelessWidget {
     return Card(
       shape: RoundedRectangleBorder(borderRadius: AppBorders.radiusLarge),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(S.current.cost_statistics, style: textTheme.black16bold),
             const Divider(color: AppColors.neutreGrey),
-            AppSpacers.verticalMedium,
+           
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Row(
                   children: [
-                    const Icon(Icons.attach_money, size: 28, color: AppColors.neutreGrey),
+                    const Icon(Icons.attach_money, size: 28, color: AppColors.energyBlue),
                     AppSpacers.horizontalSmallMedium,
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -48,7 +48,7 @@ class ExpenseStatsCard extends StatelessWidget {
 
             // Pie chart
             SizedBox(
-              height: 200,
+              height: 180,
               child: PieChart(
                 PieChartData(
                   sectionsSpace: 2,

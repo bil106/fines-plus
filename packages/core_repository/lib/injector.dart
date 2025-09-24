@@ -1,3 +1,5 @@
+import 'package:core_repository/export/export_history_csv.dart';
+import 'package:core_repository/export/export_history_pdf.dart';
 import 'package:core_repository/export_repository.dart';
 import 'package:get_it/get_it.dart';
 

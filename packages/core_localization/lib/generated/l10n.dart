@@ -2663,6 +2663,31 @@ class S {
   String get ok {
     return Intl.message('OK', name: 'ok', desc: '', args: []);
   }
+
+  /// `Car wash`
+  String get car_wash {
+    return Intl.message('Car wash', name: 'car_wash', desc: '', args: []);
+  }
+
+  /// `Car wash nearby`
+  String get car_wash_nearby {
+    return Intl.message(
+      'Car wash nearby',
+      name: 'car_wash_nearby',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter amount`
+  String get enter_amount {
+    return Intl.message(
+      'Enter amount',
+      name: 'enter_amount',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

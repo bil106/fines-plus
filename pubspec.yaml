@@ -76,6 +76,9 @@ dependencies:
   flutter_secure_storage: ^9.2.4
   location: ^8.0.1
   flutter_web_auth_2: ^4.1.0
+  flutter_svg: ^2.2.1
+  flutter_launcher_icons: ^0.14.4
+  flutter_native_splash: ^2.4.6
   
 
 
@@ -100,6 +103,13 @@ flutter:
     - assets/config/fastcar.json
     - assets/icons/map.png
     - assets/icons/google_logo.png
+    - assets/icons/car-wash.svg
     - assets/icons/tuning.jpg
     - assets/fonts/Fines/Roboto-Regular.ttf
-  
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/icons/logo_512x512.png"
+flutter_native_splash:
+  color: "#ffffff"
+  image: assets/icons/logo_512x512.png

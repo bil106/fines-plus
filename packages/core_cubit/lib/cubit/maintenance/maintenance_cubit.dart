@@ -10,6 +10,7 @@ class MaintenanceCubit extends Cubit<MaintenanceState> {
     loadRecords();
     loadFuelRecords();
     loadTuningRecords();
+    loadCarWashRecords();
   }
 
   Future<void> loadRecords() async {
@@ -76,6 +77,27 @@ Future<void> saveTuningRecords() async {
     final jsonList = state.fuelRecords.map((r) => r.toJson()).toList();
     await prefs.setString('fuel_records', jsonEncode(jsonList));
   }
+Future<void> addCarWashRecord(CarWashRecord record) async {
+    final updated = List<CarWashRecord>.from(state.carWashRecords)..add(record);
+    emit(state.copyWith(carWashRecords: updated));
+    await saveCarWashRecords();
+  }
+
+  Future<void> loadCarWashRecords() async {
+    final prefs = await SharedPreferences.getInstance();
+    final jsonString = prefs.getString('car_wash_records');
+    if (jsonString != null) {
+      final List<dynamic> jsonList = jsonDecode(jsonString);
+      final records = jsonList.map((e) => CarWashRecord.fromJson(e)).toList();
+      emit(state.copyWith(carWashRecords: records));
+    }
+  }
+
+  Future<void> saveCarWashRecords() async {
+    final prefs = await SharedPreferences.getInstance();
+    final jsonList = state.carWashRecords.map((r) => r.toJson()).toList();
+    await prefs.setString('car_wash_records', jsonEncode(jsonList));
+  }
 
 
   void toggleMenu() {
@@ -90,33 +112,33 @@ extension MileageCalculations on MaintenanceCubit {
 
 int getCurrentMonthMileage(DateTime now) {
     final allRecords = [
-      ...state.serviceRecords.map((r) => {
-            'date': DateFormat('dd.MM.yyyy').parse(r.date),
-            'mileage': r.mileage,
-          }),
-      ...state.fuelRecords.map((r) => {
-            'date': DateFormat('dd.MM.yyyy').parse(r.date),
-            'mileage': r.mileage,
-          }),
-      ...state.tuningRecords.map((r) => {
-            'date': DateFormat('dd.MM.yyyy').parse(r.date),
-            'mileage': r.mileage,
-          }),
+      ...state.fuelRecords.map((r) => {"date": r.date, "mileage": r.mileage}),
+      ...state.serviceRecords.map((r) => {"date": r.date, "mileage": r.mileage}),
+      ...state.tuningRecords.map((r) => {"date": r.date, "mileage": r.mileage}),
+      ...state.carWashRecords.map((r) => {"date": r.date, "mileage": r.mileage}),
     ];
 
+    DateTime parseDate(String dateStr) {
+      try {
+        return DateFormat('dd.MM.yyyy').parse(dateStr);
+      } catch (_) {
+        return DateTime(1970);
+      }
+    }
+
+   
     final monthRecords = allRecords.where((r) {
-      final d = r['date'] as DateTime;
+      final d = parseDate(r["date"] as String);
       return d.year == now.year && d.month == now.month;
     }).toList();
 
     if (monthRecords.isEmpty) return 0;
 
-    monthRecords.sort(
-      (a, b) => (a['date'] as DateTime).compareTo(b['date'] as DateTime),
-    );
 
-    return monthRecords.last['mileage'] as int;
+    monthRecords.sort((a, b) => (a["mileage"] as int).compareTo(b["mileage"] as int));
+    return monthRecords.last["mileage"] as int;
   }
+
 
 
 
@@ -125,6 +147,8 @@ int getCurrentMonthMileage(DateTime now) {
     final allRecords = [
       ...state.serviceRecords.map((r) => {'date': DateFormat('dd.MM.yyyy').parse(r.date), 'mileage': r.mileage}),
       ...state.fuelRecords.map((r) => {'date': DateFormat('dd.MM.yyyy').parse(r.date), 'mileage': r.mileage}),
+      ...state.carWashRecords.map((r) => {'date': DateFormat('dd.MM.yyyy').parse(r.date), 'mileage': r.mileage}),
+      ...state.tuningRecords.map((r) => {'date': DateFormat('dd.MM.yyyy').parse(r.date), 'mileage': r.mileage}),
     ];
 
     if (allRecords.isEmpty) return 0;

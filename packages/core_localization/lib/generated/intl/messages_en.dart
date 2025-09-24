@@ -46,6 +46,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
     "car_history": MessageLookupByLibrary.simpleMessage("Car history"),
     "car_number": MessageLookupByLibrary.simpleMessage("Car number"),
+    "car_wash": MessageLookupByLibrary.simpleMessage("Car wash"),
+    "car_wash_nearby": MessageLookupByLibrary.simpleMessage("Car wash nearby"),
     "check_filter": MessageLookupByLibrary.simpleMessage(
       "The filter needs to be replaced",
     ),
@@ -80,6 +82,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "description": MessageLookupByLibrary.simpleMessage("Description"),
     "edit_reminder": MessageLookupByLibrary.simpleMessage("Edit reminder"),
     "email": MessageLookupByLibrary.simpleMessage("Email"),
+    "enter_amount": MessageLookupByLibrary.simpleMessage("Enter amount"),
     "enter_comment": MessageLookupByLibrary.simpleMessage("Enter comment"),
     "enter_correct_number_auto": MessageLookupByLibrary.simpleMessage(
       "Enter the correct car number",

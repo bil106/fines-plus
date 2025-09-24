@@ -227,6 +227,115 @@ class CarInfoRouteArgs {
 }
 
 /// generated route for
+/// [CarWashMapScreen]
+class CarWashMapRoute extends PageRouteInfo<CarWashMapRouteArgs> {
+  CarWashMapRoute({
+    Key? key,
+    LatLng? focusPosition,
+    String? focusName,
+    List<PageRouteInfo>? children,
+  }) : super(
+         CarWashMapRoute.name,
+         args: CarWashMapRouteArgs(
+           key: key,
+           focusPosition: focusPosition,
+           focusName: focusName,
+         ),
+         initialChildren: children,
+       );
+
+  static const String name = 'CarWashMapRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      final args = data.argsAs<CarWashMapRouteArgs>(
+        orElse: () => const CarWashMapRouteArgs(),
+      );
+      return CarWashMapScreen(
+        key: args.key,
+        focusPosition: args.focusPosition,
+        focusName: args.focusName,
+      );
+    },
+  );
+}
+
+class CarWashMapRouteArgs {
+  const CarWashMapRouteArgs({this.key, this.focusPosition, this.focusName});
+
+  final Key? key;
+
+  final LatLng? focusPosition;
+
+  final String? focusName;
+
+  @override
+  String toString() {
+    return 'CarWashMapRouteArgs{key: $key, focusPosition: $focusPosition, focusName: $focusName}';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! CarWashMapRouteArgs) return false;
+    return key == other.key &&
+        focusPosition == other.focusPosition &&
+        focusName == other.focusName;
+  }
+
+  @override
+  int get hashCode =>
+      key.hashCode ^ focusPosition.hashCode ^ focusName.hashCode;
+}
+
+/// generated route for
+/// [CarWashScreen]
+class CarWashRoute extends PageRouteInfo<CarWashRouteArgs> {
+  CarWashRoute({Key? key, VoidCallback? onBack, List<PageRouteInfo>? children})
+    : super(
+        CarWashRoute.name,
+        args: CarWashRouteArgs(key: key, onBack: onBack),
+        initialChildren: children,
+      );
+
+  static const String name = 'CarWashRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      final args = data.argsAs<CarWashRouteArgs>(
+        orElse: () => const CarWashRouteArgs(),
+      );
+      return CarWashScreen(key: args.key, onBack: args.onBack);
+    },
+  );
+}
+
+class CarWashRouteArgs {
+  const CarWashRouteArgs({this.key, this.onBack});
+
+  final Key? key;
+
+  final VoidCallback? onBack;
+
+  @override
+  String toString() {
+    return 'CarWashRouteArgs{key: $key, onBack: $onBack}';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! CarWashRouteArgs) return false;
+    return key == other.key && onBack == other.onBack;
+  }
+
+  @override
+  int get hashCode => key.hashCode ^ onBack.hashCode;
+}
+
+/// generated route for
 /// [ExportScreen]
 class ExportRoute extends PageRouteInfo<ExportRouteArgs> {
   ExportRoute({
@@ -624,6 +733,7 @@ class MaintenanceRoute extends PageRouteInfo<MaintenanceRouteArgs> {
     VoidCallback? onSettings,
     VoidCallback? onFuelUp,
     VoidCallback? onService,
+    VoidCallback? onTuning,
     List<PageRouteInfo>? children,
   }) : super(
          MaintenanceRoute.name,
@@ -634,6 +744,7 @@ class MaintenanceRoute extends PageRouteInfo<MaintenanceRouteArgs> {
            onSettings: onSettings,
            onFuelUp: onFuelUp,
            onService: onService,
+           onTuning: onTuning,
          ),
          initialChildren: children,
        );
@@ -653,6 +764,7 @@ class MaintenanceRoute extends PageRouteInfo<MaintenanceRouteArgs> {
         onSettings: args.onSettings,
         onFuelUp: args.onFuelUp,
         onService: args.onService,
+        onTuning: args.onTuning,
       );
     },
   );
@@ -666,6 +778,7 @@ class MaintenanceRouteArgs {
     this.onSettings,
     this.onFuelUp,
     this.onService,
+    this.onTuning,
   });
 
   final Key? key;
@@ -680,9 +793,11 @@ class MaintenanceRouteArgs {
 
   final VoidCallback? onService;
 
+  final VoidCallback? onTuning;
+
   @override
   String toString() {
-    return 'MaintenanceRouteArgs{key: $key, onBack: $onBack, onCalendar: $onCalendar, onSettings: $onSettings, onFuelUp: $onFuelUp, onService: $onService}';
+    return 'MaintenanceRouteArgs{key: $key, onBack: $onBack, onCalendar: $onCalendar, onSettings: $onSettings, onFuelUp: $onFuelUp, onService: $onService, onTuning: $onTuning}';
   }
 
   @override
@@ -694,7 +809,8 @@ class MaintenanceRouteArgs {
         onCalendar == other.onCalendar &&
         onSettings == other.onSettings &&
         onFuelUp == other.onFuelUp &&
-        onService == other.onService;
+        onService == other.onService &&
+        onTuning == other.onTuning;
   }
 
   @override
@@ -704,7 +820,8 @@ class MaintenanceRouteArgs {
       onCalendar.hashCode ^
       onSettings.hashCode ^
       onFuelUp.hashCode ^
-      onService.hashCode;
+      onService.hashCode ^
+      onTuning.hashCode;
 }
 
 /// generated route for

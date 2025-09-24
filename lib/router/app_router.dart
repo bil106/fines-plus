@@ -6,6 +6,8 @@ import 'package:core_repository/schedule_repository.dart';
 import 'package:fines_plus/presentation/screens/add_car_screen.dart';
 import 'package:fines_plus/presentation/screens/analytics_screen.dart';
 import 'package:fines_plus/presentation/screens/car_info_screen.dart';
+import 'package:fines_plus/presentation/screens/car_wash_map_screen.dart';
+import 'package:fines_plus/presentation/screens/car_wash_screen.dart';
 import 'package:fines_plus/presentation/screens/export_screen.dart';
 import 'package:fines_plus/presentation/screens/fine_check_screen.dart';
 import 'package:fines_plus/presentation/screens/fines_screeen.dart';
@@ -62,6 +64,8 @@ class AppRouter extends RootStackRouter {
     AutoRoute(page: FuelMapRoute.page, path: '/fuel-map'),
     AutoRoute(page: ScheduleRoute.page, path: '/schedule'),
     AutoRoute(page: TuningRoute.page, path: '/tuning'),
+    AutoRoute(page: CarWashRoute.page, path: '/car_wash'),
+    AutoRoute(page: CarWashMapRoute.page, path: '/car_wash_map'),
     
   ];
 }

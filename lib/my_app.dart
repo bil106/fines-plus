@@ -64,6 +64,7 @@ class _MyAppState extends State<MyApp> {
               importance: Importance.max,
               priority: Priority.high,
               playSound: true,
+              icon: 'ic_stat_logo',
             ),
             iOS: DarwinNotificationDetails(presentAlert: true, presentBadge: true, presentSound: true),
           ),

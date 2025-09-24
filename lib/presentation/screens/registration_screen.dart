@@ -102,7 +102,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                AppSpacers.verticalXLarge,
+                AppSpacers.verticalMediumLarge,
                 Text(S.of(context).registration, style: textTheme.title),
                 AppSpacers.verticalHuge,
 

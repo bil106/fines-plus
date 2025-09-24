@@ -46,6 +46,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "cancel": MessageLookupByLibrary.simpleMessage("Скасувати"),
     "car_history": MessageLookupByLibrary.simpleMessage("Історія автомобіля"),
     "car_number": MessageLookupByLibrary.simpleMessage("Номер авто"),
+    "car_wash": MessageLookupByLibrary.simpleMessage("Автомийка"),
+    "car_wash_nearby": MessageLookupByLibrary.simpleMessage("Автомийка поруч"),
     "check_filter": MessageLookupByLibrary.simpleMessage(
       "Потрібно замінити фільтр",
     ),
@@ -80,6 +82,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Редагувати нагадування",
     ),
     "email": MessageLookupByLibrary.simpleMessage("Email"),
+    "enter_amount": MessageLookupByLibrary.simpleMessage("Введіть суму"),
     "enter_comment": MessageLookupByLibrary.simpleMessage("Введіть коментар"),
     "enter_correct_number_auto": MessageLookupByLibrary.simpleMessage(
       "Введіть корректний номер авто",

@@ -13,6 +13,8 @@ import 'package:design_system/colors/app_colors.dart';
 import 'package:fines_plus/presentation/screens/add_car_screen.dart';
 import 'package:fines_plus/presentation/screens/analytics_screen.dart';
 import 'package:fines_plus/presentation/screens/car_info_screen.dart';
+import 'package:fines_plus/presentation/screens/car_wash_map_screen.dart';
+import 'package:fines_plus/presentation/screens/car_wash_screen.dart';
 import 'package:fines_plus/presentation/screens/export_screen.dart';
 import 'package:fines_plus/presentation/screens/fine_check_screen.dart';
 import 'package:fines_plus/presentation/screens/fines_screeen.dart';
@@ -47,6 +49,7 @@ enum HomePage {
   fuel,
   service,
   tuning,
+  carWash,
   schedule,
 }
 
@@ -145,24 +148,20 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
               onAnalytics: () => openPage(HomePage.analytics),
             ),
 
-            // 1 Fines
             FinesScreen(key: const ValueKey('fines_screen')),
 
-            // 2 Reminders
             RemindersScreen(
               key: const ValueKey('reminders'),
               carNumber: _carNumber!,
               onBack: () => openPage(HomePage.addCar),
             ),
 
-            // 3 Analytics
             AnalyticsScreen(
               key: const ValueKey('analytics'),
               carNumber: _carNumber!,
               onBack: () => openPage(HomePage.addCar),
             ),
 
-            // 4 CarInfo
             CarInfoScreen(
               key: const ValueKey('car_info_screen'),
               initialCarNumber: _carNumber!,
@@ -173,7 +172,6 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
               },
             ),
 
-            // 5 FineCheck
             FineCheckScreen(
               key: const ValueKey('fine_check_screen'),
               carNumber: _carNumber!,
@@ -182,13 +180,10 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
               onBack: () => openPage(HomePage.addCar),
             ),
 
-            // 6 Settings
             SettingsScreen(key: const ValueKey('settings_screen'), onBack: () => openPage(HomePage.maintenance)),
 
-            // 7 History
             HistoryScreen(key: const ValueKey('history_screen'), carNumber: _carNumber!),
 
-            // 8 Maintenance
             Builder(
               key: const ValueKey('maintenance_screen'),
               builder: (_) {
@@ -201,22 +196,20 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
               },
             ),
 
-            // 9 Export
             ExportScreen(
               key: const ValueKey('export'),
               history: exportHistory,
               carNumber: _carNumber!,
               onBack: () => openPage(HomePage.analytics),
             ),
-            // 10 Register
+
             RegistrationScreen(key: const ValueKey('registration'), onBack: () => openPage(HomePage.addCar)),
-            //11 FuelUpScreen
             FuelUpScreen(key: const ValueKey('fuel'), onBack: () => openPage(HomePage.maintenance)),
-            //12 ServiceScreen
+            CarWashScreen(key: const ValueKey('car-wash'), onBack: () => openPage(HomePage.maintenance)),
             ServiceScreen(key: const ValueKey('service'), onBack: () => openPage(HomePage.maintenance)),
             TuningScreen(key: const ValueKey('tuning'), onBack: () => openPage(HomePage.maintenance)),
-            //13 FuelMapScreen
             FuelMapScreen(key: const ValueKey('fuel-map')),
+            CarWashMapScreen(key: const ValueKey('car-wash-map')),
 
             Builder(
               key: const ValueKey('schedule_screen'),
@@ -263,8 +256,8 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
               openPage(page);
             }
           },
-selectedIconTheme: IconThemeData(color:AppColors.blue700),
-unselectedItemColor: AppColors.grey700,
+          selectedIconTheme: IconThemeData(color: AppColors.blue700),
+          unselectedItemColor: AppColors.grey700,
           items: [
             BottomNavigationBarItem(icon: Icon(Icons.directions_car), label: S.of(context).auto),
             BottomNavigationBarItem(icon: Icon(Icons.receipt), label: S.of(context).fines),

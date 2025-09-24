@@ -32,6 +32,7 @@ class PushHelper {
       importance: Importance.max,
       priority: Priority.high,
       playSound: true,
+      icon: 'ic_stat_logo',
       sound: RawResourceAndroidNotificationSound(soundFileName),
     );
 
@@ -75,6 +76,7 @@ extension PushHelperResource on PushHelper {
       importance: Importance.max,
       priority: Priority.high,
       playSound: true,
+      icon: 'ic_stat_logo',
       sound: const RawResourceAndroidNotificationSound('notify'),
     );
 

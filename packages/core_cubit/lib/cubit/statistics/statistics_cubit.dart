@@ -33,6 +33,8 @@ class StatisticsCubit extends Cubit<StatisticsState> {
     final expenseStats = _calculateMonthlyStats(
       serviceRecords: maintenanceState.serviceRecords,
       fuelRecords: maintenanceState.fuelRecords,
+      carWashRecords: maintenanceState.carWashRecords,
+      tuningRecords: maintenanceState.tuningRecords,
       year: now.year,
       month: now.month,
     );
@@ -56,6 +58,8 @@ class StatisticsCubit extends Cubit<StatisticsState> {
 MonthlyExpenseStats _calculateMonthlyStats({
     required List<ServiceRecord> serviceRecords,
     required List<FuelRecord> fuelRecords,
+    required List<CarWashRecord> carWashRecords,
+    required List<TuningRecord> tuningRecords,
     required int year,
     required int month,
   }) {
@@ -88,14 +92,26 @@ MonthlyExpenseStats _calculateMonthlyStats({
       total += f.cost;
       categoryTotals[ExpenseCategory.fuel] = (categoryTotals[ExpenseCategory.fuel] ?? 0) + f.cost;
     }
-
-  
-    for (final t in maintenanceCubit.state.tuningRecords) {
-      final date = parseDate(t.date);
+    for (final c in carWashRecords) {
+      final date = parseDate(c.date);
       if (date.year != year || date.month != month) continue;
-      total += t.cost;
-      categoryTotals[ExpenseCategory.tuning] = (categoryTotals[ExpenseCategory.tuning] ?? 0) + t.cost;
+      total += c.cost;
+      categoryTotals[ExpenseCategory.other] = (categoryTotals[ExpenseCategory.other] ?? 0) + c.cost;
     }
+  
+    for (final c in tuningRecords) {
+      final date = parseDate(c.date);
+      if (date.year != year || date.month != month) continue;
+      total += c.cost;
+      categoryTotals[ExpenseCategory.tuning] = (categoryTotals[ExpenseCategory.tuning] ?? 0) + c.cost;
+    }
+  
+    // for (final t in maintenanceCubit.state.tuningRecords) {
+    //   final date = parseDate(t.date);
+    //   if (date.year != year || date.month != month) continue;
+    //   total += t.cost;
+    //   categoryTotals[ExpenseCategory.tuning] = (categoryTotals[ExpenseCategory.tuning] ?? 0) + t.cost;
+    // }
 
     final monthLabel = _monthName(month);
 

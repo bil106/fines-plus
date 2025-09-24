@@ -11,6 +11,7 @@ import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
 import 'package:fines_plus/core/widgets/ad_banner_widget.dart';
+import 'package:fines_plus/core/widgets/car_wash_record_card.dart';
 import 'package:fines_plus/core/widgets/fuel_record_card.dart';
 import 'package:fines_plus/core/widgets/service_record_card.dart';
 import 'package:fines_plus/core/widgets/tuning_record_card.dart';
@@ -21,6 +22,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:core_cubit/cubit/maintenance/maintenance_cubit.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 @RoutePage()
@@ -67,6 +69,7 @@ class _MaintenanceScreenView extends StatelessWidget {
   final VoidCallback? onCalendar;
   final VoidCallback? onSettings;
   final VoidCallback? onFuelUp;
+  final VoidCallback? onCarWash;
   final VoidCallback? onService;
   final VoidCallback? onTuning;
 
@@ -76,7 +79,8 @@ class _MaintenanceScreenView extends StatelessWidget {
     this.onSettings,
     this.onFuelUp,
     this.onService,
-    this.onTuning,
+    this.onTuning, 
+    this.onCarWash,
   });
 
   @override
@@ -108,6 +112,7 @@ class _MaintenanceScreenView extends StatelessWidget {
                           ...state.serviceRecords.map((r) => ServiceRecordCard(record: r)),
                           ...state.tuningRecords.map((r) => TuningRecordCard(record: r)),
                           ...state.fuelRecords.map((r) => FuelRecordCard(record: r)),
+                          ...state.carWashRecords.map((r) => CarWashRecordCard(record: r)),
                         ],
                       ),
                     ),
@@ -222,6 +227,23 @@ class _MaintenanceScreenView extends StatelessWidget {
                         final record = await context.router.push<FuelRecord>(FuelUpRoute());
                         if (record != null) {
                           cubit.addFuelRecord(record);
+                          onFuelUp?.call();
+                        }
+                      },
+                      state.isMenuOpen,
+                    ),
+                    // CarWash
+                    _buildAnimatedAction(
+                      context,
+                      S.of(context).car_wash,
+                      SvgPicture.asset('assets/icons/car-wash.svg', color: AppColors.energyBlue,
+                        colorBlendMode: BlendMode.srcIn, height: 24),
+                      S.of(context).car_wash,
+                      () async {
+                        cubit.closeMenu();
+                        final record = await context.router.push<CarWashRecord>(CarWashRoute());
+                        if (record != null) {
+                          cubit.addCarWashRecord(record);
                           onFuelUp?.call();
                         }
                       },

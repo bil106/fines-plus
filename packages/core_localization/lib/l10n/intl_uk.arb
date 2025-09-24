@@ -300,7 +300,10 @@
    "not_authorized": "Ви не авторизовані",
    "amount_month": "Сума за місяць",
    "total": "Разом",
-   "ok": "ОК"
+   "ok": "ОК",
+   "car_wash": "Автомийка",
+   "car_wash_nearby": "Автомийка поруч",
+   "enter_amount": "Введіть суму"
    
    
 }

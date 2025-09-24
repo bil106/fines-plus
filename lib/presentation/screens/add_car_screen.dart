@@ -2,13 +2,11 @@
 
 import 'package:auto_route/auto_route.dart';
 import 'package:core_localization/generated/l10n.dart';
-import 'package:design_system/constants/app_borders.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
 import 'package:fines_plus/core/widgets/ad_banner_widget.dart';
 import 'package:fines_plus/router/app_router.dart';
 import 'package:design_system/colors/app_colors.dart';
-import 'package:fines_plus/router/home_screen_wrapper.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -55,8 +53,8 @@ class _AddCarScreenState extends State<AddCarScreen> {
                           children: [
                             _buildMenuSquare(
                               iconWidget: Container(
-                                width: 170,
-                                height: 170,
+                                width: 165,
+                                height: 165,
                                 decoration: BoxDecoration(
                                   shape: BoxShape.rectangle,
                                   borderRadius: BorderRadius.circular(20),
@@ -85,8 +83,8 @@ class _AddCarScreenState extends State<AddCarScreen> {
 
                             _buildMenuSquare(
                               iconWidget: Container(
-                                width: 170,
-                                height: 170,
+                                width: 165,
+                                height: 165,
                                 decoration: BoxDecoration(
                                   shape: BoxShape.rectangle,
                                   borderRadius: BorderRadius.circular(20),
@@ -117,8 +115,8 @@ class _AddCarScreenState extends State<AddCarScreen> {
                           children: [
                             _buildMenuSquare(
                               iconWidget: Container(
-                                width: 170,
-                                height: 170,
+                                width: 165,
+                                height: 165,
                                 decoration: BoxDecoration(
                                   shape: BoxShape.rectangle,
                                   borderRadius: BorderRadius.circular(20),
@@ -143,8 +141,8 @@ class _AddCarScreenState extends State<AddCarScreen> {
 
                             _buildMenuSquare(
                               iconWidget: Container(
-                                width: 170,
-                                height: 170,
+                                width: 165,
+                                height: 165,
                                 decoration: BoxDecoration(
                                   shape: BoxShape.rectangle,
                                   borderRadius: BorderRadius.circular(20),
@@ -175,23 +173,7 @@ class _AddCarScreenState extends State<AddCarScreen> {
                       ],
                     ),
                   ),
-
-                  Padding(
-                    padding: const EdgeInsets.only(left: 200.0, bottom: 40),
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.grey50,
-                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                        shape: RoundedRectangleBorder(borderRadius: AppBorders.radiusLarge),
-                      ),
-                      onPressed: () async {
-                        final homeState = context.findAncestorStateOfType<HomeScreenWrapperState>();
-                        homeState?.openPage(HomePage.registration);
-                      },
-                      child: Text(S.of(context).registration, style: textTheme.black8718W400),
-                    ),
-                  ),
-
+                  AppSpacers.verticalMaxMassive,
                   const AdBannerWidget(),
                 ],
               ),
@@ -205,8 +187,8 @@ class _AddCarScreenState extends State<AddCarScreen> {
 
 Widget _buildSquareIcon(IconData icon, String text, TextTheme textTheme) {
   return Container(
-    width: 170,
-    height: 170,
+    width: 165,
+    height: 165,
     decoration: BoxDecoration(
       shape: BoxShape.rectangle,
       borderRadius: BorderRadius.circular(20),
@@ -231,8 +213,8 @@ Widget _buildMenuSquare({IconData? icon, Color? iconColor, Widget? iconWidget, r
       children: [
         if (icon != null)
           Container(
-            width: 180,
-            height: 180,
+            width: 165,
+            height: 165,
             decoration: BoxDecoration(borderRadius: BorderRadius.circular(20), color: AppColors.grey50),
             child: Icon(icon, color: iconColor ?? AppColors.grey50, size: 32),
           ),
