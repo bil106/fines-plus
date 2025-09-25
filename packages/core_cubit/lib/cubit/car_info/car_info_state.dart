@@ -34,25 +34,30 @@ class CarInfoState extends Equatable {
   final String carNumber;
   final String techPassport;
   final CarInfoStatus status;
+  final bool hasCheckedFines; 
 
   const CarInfoState({
     this.carNumber = '',
     this.techPassport = '',
     this.status = const CarInfoInitialStatus(),
+    this.hasCheckedFines = false, 
   });
 
   CarInfoState copyWith({
     String? carNumber,
     String? techPassport,
     CarInfoStatus? status,
+    bool? hasCheckedFines, 
   }) {
     return CarInfoState(
       carNumber: carNumber ?? this.carNumber,
       techPassport: techPassport ?? this.techPassport,
       status: status ?? this.status,
+      hasCheckedFines: hasCheckedFines ?? this.hasCheckedFines,
     );
   }
 
   @override
-  List<Object?> get props => [carNumber, techPassport, status];
+  List<Object?> get props => [carNumber, techPassport, status, hasCheckedFines];
 }
+

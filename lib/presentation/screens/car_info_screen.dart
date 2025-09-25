@@ -3,8 +3,7 @@ import 'package:core_cubit/cubit/car_info/car_info_cubit.dart';
 import 'package:core_cubit/cubit/car_info/car_info_state.dart';
 import 'package:core_cubit/cubit/history/history_cubit.dart';
 import 'package:core_localization/generated/l10n.dart';
-import 'package:core_repository/car_info_repository.dart';
-import 'package:core_repository/history_repository.dart';
+
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_borders.dart';
 import 'package:design_system/constants/app_spacers.dart';
@@ -29,15 +28,8 @@ class CarInfoScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(create: (context) => HistoryCubit(repository: context.read<HistoryRepository>())),
-        BlocProvider(
-          create: (context) => CarInfoCubit(context.read<CarInfoRepository>(), context.read<HistoryCubit>()),
-        ),
-      ],
-      child: _CarInfoView(onCheckFine: onCheckFine, onBack: onBack),
-    );
+   
+    return _CarInfoView(onCheckFine: onCheckFine, onBack: onBack);
   }
 }
 
@@ -53,25 +45,40 @@ class _CarInfoView extends StatefulWidget {
 class _CarInfoViewState extends State<_CarInfoView> {
   late final TextEditingController _carNumberController;
   late final TextEditingController _techPassportController;
+
   late final HistoryCubit historyCubit;
   late final CarInfoCubit carInfoCubit;
 
   bool _showRecaptcha = false;
 
+
+  final _carReg = RegExp(r'^[А-ЯЇІЄҐ]{2}\d{4}[А-ЯЇІЄҐ]{2}$');
+  final _techReg = RegExp(r'^[А-ЯІЇЄҐ]{3}\d{6}$');
+
+  
+  bool get isFormValid =>
+      _carReg.hasMatch(_carNumberController.text) && _techReg.hasMatch(_techPassportController.text);
+
   @override
   void initState() {
     super.initState();
+
     _carNumberController = TextEditingController();
     _techPassportController = TextEditingController();
 
     historyCubit = context.read<HistoryCubit>();
     carInfoCubit = context.read<CarInfoCubit>();
 
-   
+  
     carInfoCubit.loadSavedCarInfo().then((_) {
       _carNumberController.text = carInfoCubit.state.carNumber;
       _techPassportController.text = carInfoCubit.state.techPassport;
+      setState(() {});
     });
+
+ 
+    _carNumberController.addListener(() => setState(() {}));
+    _techPassportController.addListener(() => setState(() {}));
   }
 
   @override
@@ -102,157 +109,140 @@ class _CarInfoViewState extends State<_CarInfoView> {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
 
-    return BlocProvider.value(
-      value: carInfoCubit,
-      child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: AppColors.grey50,
-          leading: BackButton(color: AppColors.blue700, onPressed: widget.onBack ?? () => Navigator.pop(context)),
-        ),
+    return Scaffold(
+      appBar: AppBar(
         backgroundColor: AppColors.grey50,
-        body: SafeArea(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                AppSpacers.verticalXLarge,
-                Text(S.of(context).addition_cars, style: textTheme.title),
-                AppSpacers.verticalHuge,
-
-                Card(
-                  color: AppColors.neutreBlanc,
-                  shape: RoundedRectangleBorder(borderRadius: AppBorders.radius22),
-                  elevation: 4,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 25, horizontal: 20),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(S.of(context).car_number, style: textTheme.carNumber),
-                        AppSpacers.verticalSmall,
-                        TextField(
-                          controller: _carNumberController,
-                          onChanged: carInfoCubit.setCarNumber,
-                          style: textTheme.black28W400,
-                          inputFormatters: [VehicleNumberFormatter(mapLatinToCyrillic: true)],
-                          textCapitalization: TextCapitalization.characters,
-                          keyboardType: TextInputType.text,
-                          maxLength: 8,
-                          decoration: InputDecoration(
-                            hintText: S.of(context).hint_auto_num,
-                            hintStyle: textTheme.hintText,
-                            counterText: '',
-                            filled: true,
-                            fillColor: AppColors.grey50,
-                            border: OutlineInputBorder(borderRadius: AppBorders.radius18, borderSide: BorderSide.none),
-                          ),
+        leading: BackButton(color: AppColors.blue700, onPressed: widget.onBack ?? () => Navigator.pop(context)),
+      ),
+      backgroundColor: AppColors.grey50,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              AppSpacers.verticalXLarge,
+              Text(S.of(context).addition_cars, style: textTheme.title),
+              AppSpacers.verticalHuge,
+              Card(
+                color: AppColors.neutreBlanc,
+                shape: RoundedRectangleBorder(borderRadius: AppBorders.radius22),
+                elevation: 4,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 25, horizontal: 20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(S.of(context).car_number, style: textTheme.carNumber),
+                      AppSpacers.verticalSmall,
+                      TextField(
+                        controller: _carNumberController,
+                        onChanged: carInfoCubit.setCarNumber,
+                        style: textTheme.black28W400,
+                        inputFormatters: [VehicleNumberFormatter(mapLatinToCyrillic: true)],
+                        textCapitalization: TextCapitalization.characters,
+                        keyboardType: TextInputType.text,
+                        maxLength: 8,
+                        decoration: InputDecoration(
+                          hintText: S.of(context).hint_auto_num,
+                          hintStyle: textTheme.hintText,
+                          counterText: '',
+                          filled: true,
+                          fillColor: AppColors.grey50,
+                          border: OutlineInputBorder(borderRadius: AppBorders.radius18, borderSide: BorderSide.none),
                         ),
-                        AppSpacers.verticalLarge,
-                        Text(S.of(context).reg_number, style: textTheme.carNumber),
-                        AppSpacers.verticalSmall,
-                        TextField(
-                          controller: _techPassportController,
-                          onChanged: carInfoCubit.setTechPassport,
-                          style: textTheme.black28W400,
-                          inputFormatters: [TechPassportFormatter()],
-                          maxLength: 9,
-                          decoration: InputDecoration(
-                            hintText: S.of(context).hint_tech_data_num,
-                            hintStyle: textTheme.hintText,
-                            counterText: '',
-                            filled: true,
-                            fillColor: AppColors.grey50,
-                            border: OutlineInputBorder(borderRadius: AppBorders.radius18, borderSide: BorderSide.none),
-                          ),
+                      ),
+                      AppSpacers.verticalLarge,
+                      Text(S.of(context).reg_number, style: textTheme.carNumber),
+                      AppSpacers.verticalSmall,
+                      TextField(
+                        controller: _techPassportController,
+                        onChanged: carInfoCubit.setTechPassport,
+                        style: textTheme.black28W400,
+                        inputFormatters: [TechPassportFormatter()],
+                        maxLength: 9,
+                        decoration: InputDecoration(
+                          hintText: S.of(context).hint_tech_data_num,
+                          hintStyle: textTheme.hintText,
+                          counterText: '',
+                          filled: true,
+                          fillColor: AppColors.grey50,
+                          border: OutlineInputBorder(borderRadius: AppBorders.radius18, borderSide: BorderSide.none),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
-                AppSpacers.verticalLargeXL,
-
-              
-                BlocListener<CarInfoCubit, CarInfoState>(
-                  listenWhen: (prev, curr) => prev.status != curr.status,
-                  listener: (context, state) {
-                    if (state.status is CarInfoErrorStatus) {
-                      final msg = (state.status as CarInfoErrorStatus).message;
-                      WidgetsBinding.instance.addPostFrameCallback((_) {
-                        if (!mounted) return;
-                        showDialog(
-                          context: context,
-                          builder: (_) => AlertDialog(
-                            title:  Text(S.of(context).error),
-                            content: Text(msg),
-                            actions: [TextButton(onPressed: () => Navigator.pop(context), child:Text(S.of(context).ok))],
-                          ),
-                        );
-                      });
-                    } else if (state.status is CarInfoLoadedStatus) {
-                      final carNumber = state.carNumber;
-                      final homeWrapperState = context.findAncestorStateOfType<HomeScreenWrapperState>();
-                      homeWrapperState?.openPage(HomePage.history);
-
-                      if (widget.onCheckFine != null) {
-                        final parts = carInfoCubit.getTechPassportParts();
-                        widget.onCheckFine!(carNumber, parts['series']!, parts['number']!);
-                      }
-                    } else if (state.status is CarInfoUnauthorizedStatus) {
-                      WidgetsBinding.instance.addPostFrameCallback((_) {
-                        if (!mounted) return;
-                        _handleUnauthorized();
-                      });
-                    }
-                  },
-                  child: BlocBuilder<CarInfoCubit, CarInfoState>(
-                    builder: (context, state) {
-                       final isLoading = state.status is CarInfoLoadingStatus;
-                      final isFormValid = context.read<CarInfoCubit>().isFormValid;
-
-                      return Column(
-                        children: [
-                          SizedBox(
-                            width: double.infinity,
-                            height: 65,
-                            child: ElevatedButton(
-                              onPressed: (!isLoading && isFormValid)
-                                  ? () {
-                                      final user = FirebaseAuth.instance.currentUser;
-                                      if (user == null) {
-                                        _handleUnauthorized();
-                                      } else if (carInfoCubit.isFormValid) {
-                                        setState(() => _showRecaptcha = true);
-                                      }
-                                    }
-                                  : null,
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: AppColors.blue700,
-                                shape: RoundedRectangleBorder(borderRadius: AppBorders.radius16),
-                              ),
-                              child: isLoading
-                                  ? const CircularProgressIndicator(color: AppColors.neutreBlanc)
-                                  : Text(S.of(context).search, style: textTheme.buttonText),
-                            ),
-                          ),
-                          if (_showRecaptcha)
-                            SizedBox(
-                              height: 500,
-                              child: RecaptchaV2(
-                                apiKey: Env.recaptchaSiteKey,
-                                onVerifiedSuccessfully: _onRecaptchaVerified,
-                              ),
-                            ),
-                        ],
+              ),
+              AppSpacers.verticalLargeXL,
+              BlocListener<CarInfoCubit, CarInfoState>(
+                listenWhen: (prev, curr) => prev.status != curr.status,
+                listener: (context, state) {
+                  if (state.status is CarInfoErrorStatus) {
+                    final msg = (state.status as CarInfoErrorStatus).message;
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      if (!mounted) return;
+                      showDialog(
+                        context: context,
+                        builder: (_) => AlertDialog(
+                          title: Text(S.of(context).error),
+                          content: Text(msg),
+                          actions: [TextButton(onPressed: () => Navigator.pop(context), child: Text(S.of(context).ok))],
+                        ),
                       );
-                    },
-                  ),
-                ),
+                    });
+                  } else if (state.status is CarInfoLoadedStatus) {
+                    final carNumber = state.carNumber;
+                    final homeWrapperState = context.findAncestorStateOfType<HomeScreenWrapperState>();
+                    homeWrapperState?.openPage(HomePage.history);
 
-                AppSpacers.verticalLargeXL,
-                const AdBannerWidget(),
-              ],
-            ),
+                    if (widget.onCheckFine != null) {
+                      final parts = carInfoCubit.getTechPassportParts();
+                      widget.onCheckFine!(carNumber, parts['series']!, parts['number']!);
+                    }
+                  } else if (state.status is CarInfoUnauthorizedStatus) {
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      if (!mounted) return;
+                      _handleUnauthorized();
+                    });
+                  }
+                },
+                child: Column(
+                  children: [
+                    SizedBox(
+                      width: double.infinity,
+                      height: 65,
+                      child: ElevatedButton(
+                        onPressed: isFormValid
+                            ? () {
+                                final user = FirebaseAuth.instance.currentUser;
+                                if (user == null) {
+                                  _handleUnauthorized();
+                                } else {
+                                  setState(() => _showRecaptcha = true);
+                                }
+                              }
+                            : null,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.blue700,
+                          shape: RoundedRectangleBorder(borderRadius: AppBorders.radius16),
+                        ),
+                        child: carInfoCubit.state.status is CarInfoLoadingStatus
+                            ? const CircularProgressIndicator(color: AppColors.neutreBlanc)
+                            : Text(S.of(context).search, style: textTheme.buttonText),
+                      ),
+                    ),
+                    if (_showRecaptcha)
+                      SizedBox(
+                        height: 500,
+                        child: RecaptchaV2(apiKey: Env.recaptchaSiteKey, onVerifiedSuccessfully: _onRecaptchaVerified),
+                      ),
+                  ],
+                ),
+              ),
+              AppSpacers.verticalLargeXL,
+              const AdBannerWidget(),
+            ],
           ),
         ),
       ),

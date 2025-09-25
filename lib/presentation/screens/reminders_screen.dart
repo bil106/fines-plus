@@ -140,7 +140,7 @@ class _EmptyReminders extends StatelessWidget {
         children: [
           AppSpacers.verticalXLarge,
           Text(S.of(context).reminder, style: textTheme.title),
-          AppSpacers.verticalXGigantic,
+          AppSpacers.verticalGigantic,
           Center(
             child: Container(
               width: 150,

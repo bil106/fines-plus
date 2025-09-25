@@ -46,7 +46,7 @@ class _ReminderDialogState extends State<ReminderDialog> {
     final screenWidth = MediaQuery.of(context).size.width;
 final textTheme = Theme.of(context).textTheme;
     return AlertDialog(
-      backgroundColor: AppColors.neutreBlanc,
+      backgroundColor: AppColors.energyBlue50,
       insetPadding: EdgeInsets.symmetric(horizontal: screenWidth * 0.06, vertical: 24),
       contentPadding: const EdgeInsets.all(16),
       title: Text(

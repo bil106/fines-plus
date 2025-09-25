@@ -498,11 +498,16 @@ class FineCheckRouteArgs {
 class FinesRoute extends PageRouteInfo<FinesRouteArgs> {
   FinesRoute({
     Key? key,
-    VoidCallback? onFineCheck,
+    VoidCallback? onBack,
+    void Function(String, String, String)? onFineCheck,
     List<PageRouteInfo>? children,
   }) : super(
          FinesRoute.name,
-         args: FinesRouteArgs(key: key, onFineCheck: onFineCheck),
+         args: FinesRouteArgs(
+           key: key,
+           onBack: onBack,
+           onFineCheck: onFineCheck,
+         ),
          initialChildren: children,
        );
 
@@ -514,32 +519,38 @@ class FinesRoute extends PageRouteInfo<FinesRouteArgs> {
       final args = data.argsAs<FinesRouteArgs>(
         orElse: () => const FinesRouteArgs(),
       );
-      return FinesScreen(key: args.key, onFineCheck: args.onFineCheck);
+      return FinesScreen(
+        key: args.key,
+        onBack: args.onBack,
+        onFineCheck: args.onFineCheck,
+      );
     },
   );
 }
 
 class FinesRouteArgs {
-  const FinesRouteArgs({this.key, this.onFineCheck});
+  const FinesRouteArgs({this.key, this.onBack, this.onFineCheck});
 
   final Key? key;
 
-  final VoidCallback? onFineCheck;
+  final VoidCallback? onBack;
+
+  final void Function(String, String, String)? onFineCheck;
 
   @override
   String toString() {
-    return 'FinesRouteArgs{key: $key, onFineCheck: $onFineCheck}';
+    return 'FinesRouteArgs{key: $key, onBack: $onBack, onFineCheck: $onFineCheck}';
   }
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
     if (other is! FinesRouteArgs) return false;
-    return key == other.key && onFineCheck == other.onFineCheck;
+    return key == other.key && onBack == other.onBack;
   }
 
   @override
-  int get hashCode => key.hashCode ^ onFineCheck.hashCode;
+  int get hashCode => key.hashCode ^ onBack.hashCode;
 }
 
 /// generated route for

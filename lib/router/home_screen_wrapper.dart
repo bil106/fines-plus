@@ -139,7 +139,7 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
           controller: _pageController,
           onPageChanged: (index) => setState(() => _currentIndex = index),
           children: [
-            // 0 AddCar
+        
             AddCarScreen(
               key: const ValueKey('add_car_screen'),
               onOpenCarInfo: () => openPage(HomePage.carInfo),
@@ -148,7 +148,8 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
               onAnalytics: () => openPage(HomePage.analytics),
             ),
 
-            FinesScreen(key: const ValueKey('fines_screen')),
+           FinesScreen(key: const ValueKey('fines_screen'), onBack: () => openPage(HomePage.addCar)),
+
 
             RemindersScreen(
               key: const ValueKey('reminders'),
@@ -195,7 +196,7 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
                 );
               },
             ),
-
+           
             ExportScreen(
               key: const ValueKey('export'),
               history: exportHistory,

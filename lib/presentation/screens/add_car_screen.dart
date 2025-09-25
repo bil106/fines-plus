@@ -27,7 +27,6 @@ class _AddCarScreenState extends State<AddCarScreen> {
   static final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   @override
   Widget build(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
     final textTheme = Theme.of(context).textTheme;
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
@@ -44,135 +43,49 @@ class _AddCarScreenState extends State<AddCarScreen> {
                   AppSpacers.verticalXLarge,
 
                   SizedBox(
-                    height: screenHeight * 0.55,
                     width: double.infinity,
-                    child: Column(
+                    child: Wrap(
+                      spacing: 24,
+                      runSpacing: 16, 
+                      alignment: WrapAlignment.center,
                       children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            _buildMenuSquare(
-                              iconWidget: Container(
-                                width: 165,
-                                height: 165,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.rectangle,
-                                  borderRadius: BorderRadius.circular(20),
-
-                                  color: AppColors.grey50,
-                                ),
-                                child: Center(
-                                  child: Column(
-                                    children: [
-                                      AppSpacers.verticalXLarge,
-                                      Icon(Icons.directions_car_rounded, color: AppColors.blue700, size: 82),
-                                      Text(S.of(context).auto, style: textTheme.violationTitle),
-                                    ],
-                                  ),
-                                ),
-                              ),
-
-                              onTap: () {
-                                if (widget.onOpenCarInfo != null) {
-                                  widget.onOpenCarInfo!.call();
-                                } else {
-                                  context.router.push(CarInfoRoute(initialCarNumber: ''));
-                                }
-                              },
-                            ),
-
-                            _buildMenuSquare(
-                              iconWidget: Container(
-                                width: 165,
-                                height: 165,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.rectangle,
-                                  borderRadius: BorderRadius.circular(20),
-
-                                  color: AppColors.grey50,
-                                ),
-                                child: Center(
-                                  child: Column(
-                                    children: [
-                                      AppSpacers.verticalXLarge,
-                                      Icon(Icons.warning_amber_rounded, size: 82, color: AppColors.blue700),
-
-                                      Text(S.of(context).fines, style: textTheme.violationTitle),
-                                    ],
-                                  ),
-                                ),
-                              ),
-
-                              onTap: () {
-                                if (widget.onFineCheck != null) widget.onFineCheck!();
-                              },
-                            ),
-                          ],
+                        _buildMenuSquare(
+                          iconWidget: _buildSquareIcon(Icons.directions_car_rounded, S.of(context).auto, textTheme),
+                          onTap: () {
+                            if (widget.onOpenCarInfo != null) {
+                              widget.onOpenCarInfo!.call();
+                            } else {
+                              context.router.push(CarInfoRoute(initialCarNumber: ''));
+                            }
+                          },
                         ),
-                        AppSpacers.verticalMedium,
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            _buildMenuSquare(
-                              iconWidget: Container(
-                                width: 165,
-                                height: 165,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.rectangle,
-                                  borderRadius: BorderRadius.circular(20),
+                        _buildMenuSquare(
+                          iconWidget: _buildSquareIcon(Icons.warning_amber_rounded, S.of(context).fines, textTheme),
+                          onTap: () {
+                            if (widget.onFineCheck != null) widget.onFineCheck!();
+                          },
+                        ),
+                        _buildMenuSquare(
+                          iconWidget: _buildSquareIcon(Icons.build, S.of(context).maintenance, textTheme),
+                          onTap: () {
+                            if (widget.onMaintenance != null) widget.onMaintenance!();
+                          },
+                        ),
+                        _buildMenuSquare(
+                          iconWidget: _buildSquareIcon(Icons.bar_chart, S.of(context).analitics, textTheme),
+                          onTap: () async {
+                            await analytics.logEvent(
+                              name: 'analytics_button_clicked',
+                              parameters: {'screen': 'AddCarScreen', 'button': 'Analytics'},
+                            );
 
-                                  color: AppColors.grey50,
-                                ),
-                                child: Center(
-                                  child: Column(
-                                    children: [
-                                      AppSpacers.verticalXLarge,
-                                      Icon(Icons.build, color: AppColors.blue700, size: 82),
-                                      Text(S.of(context).maintenance, style: textTheme.violationTitle),
-                                    ],
-                                  ),
-                                ),
-                              ),
-
-                              onTap: () {
-                                if (widget.onMaintenance != null) widget.onMaintenance!();
-                              },
-                            ),
-
-                            _buildMenuSquare(
-                              iconWidget: Container(
-                                width: 165,
-                                height: 165,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.rectangle,
-                                  borderRadius: BorderRadius.circular(20),
-                                  color: AppColors.grey50,
-                                ),
-                                child: Center(
-                                  child: Column(
-                                    children: [
-                                      AppSpacers.verticalXLarge,
-                                      Icon(Icons.bar_chart, color: AppColors.blue700, size: 82),
-                                      Text(S.of(context).analitics, style: textTheme.violationTitle),
-                                    ],
-                                  ),
-                                ),
-                              ),
-
-                              onTap: () async {
-                                await analytics.logEvent(
-                                  name: 'analytics_button_clicked',
-                                  parameters: {'screen': 'AddCarScreen', 'button': 'Analytics'},
-                                );
-
-                                if (widget.onAnalytics != null) widget.onAnalytics!();
-                              },
-                            ),
-                          ],
+                            if (widget.onAnalytics != null) widget.onAnalytics!();
+                          },
                         ),
                       ],
                     ),
                   ),
+
                   AppSpacers.verticalMaxMassive,
                   const AdBannerWidget(),
                 ],

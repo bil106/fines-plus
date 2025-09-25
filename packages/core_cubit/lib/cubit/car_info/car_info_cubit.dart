@@ -18,8 +18,8 @@ class CarInfoCubit extends Cubit<CarInfoState> {
     _load();
   }
 
-  final _carReg = RegExp(r'^[А-ЯЇІЄҐ]{2}\d{4}[А-ЯЇІЄҐ]{2}$');
-  final _techReg = RegExp(r'^[А-ЯІЇЄҐ]{3}\d{6}$');
+static final carReg = RegExp(r'^[А-ЯЇІЄҐ]{2}\d{4}[А-ЯЇІЄҐ]{2}$');
+  static final techReg = RegExp(r'^[А-ЯІЇЄҐ]{3}\d{6}$');
 
   Future<void> loadSavedCarInfo() async {
     final prefs = await SharedPreferences.getInstance();
@@ -75,12 +75,12 @@ class CarInfoCubit extends Cubit<CarInfoState> {
     emit(state.copyWith(techPassport: value));
   }
 
-  bool get isFormValid => _carReg.hasMatch(state.carNumber) && _techReg.hasMatch(state.techPassport);
+  bool get isFormValid => carReg.hasMatch(state.carNumber) && techReg.hasMatch(state.techPassport);
 
   String? validate() {
     if (!isFormValid) {
-      if (!_carReg.hasMatch(state.carNumber)) return 'Enter the correct car number';
-      if (!_techReg.hasMatch(state.techPassport)) return 'Enter the correct registration number';
+      if (!carReg.hasMatch(state.carNumber)) return 'Enter the correct car number';
+      if (!techReg.hasMatch(state.techPassport)) return 'Enter the correct registration number';
     }
     return null;
   }
