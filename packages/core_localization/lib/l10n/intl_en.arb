@@ -302,5 +302,13 @@
 "ok": "OK",
 "car_wash": "Car wash",
 "car_wash_nearby": "Car wash nearby",
-"enter_amount": "Enter amount"
+"enter_amount": "Enter amount",
+"failed_extract_tokens": "Failed to extract tokens",
+"tokens_extracted": "Tokens extracted",
+"no_tokens_yet": "No tokens yet",
+"tokens_already_present": "Tokens already present",
+"loaded": "Loaded",
+"open_site": "Open e-Drive",
+"extracting": "Extracting...",
+"extract_tokens": "Extract tokens"
 }

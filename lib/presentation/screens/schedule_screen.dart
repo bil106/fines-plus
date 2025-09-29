@@ -65,7 +65,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
           create: (_) => ScheduleCubit(
             repository: widget.repository,
             maintenanceCubit: cubit,
-            pushHelper: PushHelper(FlutterLocalNotificationsPlugin()),
+            pushHelper: PushHelper(FlutterLocalNotificationsPlugin()), enabled: true,
           )..loadTasks(),
         ),
         BlocProvider(

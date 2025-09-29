@@ -2688,6 +2688,76 @@ class S {
       args: [],
     );
   }
+
+  /// `Failed to extract tokens`
+  String get failed_extract_tokens {
+    return Intl.message(
+      'Failed to extract tokens',
+      name: 'failed_extract_tokens',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tokens extracted`
+  String get tokens_extracted {
+    return Intl.message(
+      'Tokens extracted',
+      name: 'tokens_extracted',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No tokens yet`
+  String get no_tokens_yet {
+    return Intl.message(
+      'No tokens yet',
+      name: 'no_tokens_yet',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tokens already present`
+  String get tokens_already_present {
+    return Intl.message(
+      'Tokens already present',
+      name: 'tokens_already_present',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Loaded`
+  String get loaded {
+    return Intl.message('Loaded', name: 'loaded', desc: '', args: []);
+  }
+
+  /// `Open e-Drive`
+  String get open_site {
+    return Intl.message('Open e-Drive', name: 'open_site', desc: '', args: []);
+  }
+
+  /// `Extracting...`
+  String get extracting {
+    return Intl.message(
+      'Extracting...',
+      name: 'extracting',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Extract tokens`
+  String get extract_tokens {
+    return Intl.message(
+      'Extract tokens',
+      name: 'extract_tokens',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

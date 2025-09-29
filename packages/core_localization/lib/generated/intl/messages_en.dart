@@ -102,7 +102,12 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "export": MessageLookupByLibrary.simpleMessage("Export"),
     "export_history": MessageLookupByLibrary.simpleMessage("Export history"),
+    "extract_tokens": MessageLookupByLibrary.simpleMessage("Extract tokens"),
+    "extracting": MessageLookupByLibrary.simpleMessage("Extracting..."),
     "fact": MessageLookupByLibrary.simpleMessage("Fact"),
+    "failed_extract_tokens": MessageLookupByLibrary.simpleMessage(
+      "Failed to extract tokens",
+    ),
     "fill_date": MessageLookupByLibrary.simpleMessage(
       "Fill in date, mileage and fuel amount",
     ),
@@ -132,6 +137,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "item_removed": MessageLookupByLibrary.simpleMessage("Item removed"),
     "km": MessageLookupByLibrary.simpleMessage("km"),
+    "loaded": MessageLookupByLibrary.simpleMessage("Loaded"),
     "login": MessageLookupByLibrary.simpleMessage("Login"),
     "logo": MessageLookupByLibrary.simpleMessage("LOGO"),
     "maintenance": MessageLookupByLibrary.simpleMessage("Maintenance"),
@@ -153,6 +159,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "no_name": MessageLookupByLibrary.simpleMessage("No name"),
     "no_reminders": MessageLookupByLibrary.simpleMessage("No reminders"),
     "no_tasks": MessageLookupByLibrary.simpleMessage("No tasks"),
+    "no_tokens_yet": MessageLookupByLibrary.simpleMessage("No tokens yet"),
     "not_auth": MessageLookupByLibrary.simpleMessage("Not authorized"),
     "not_forget": MessageLookupByLibrary.simpleMessage(
       "Don\'t forget to change the oil",
@@ -170,6 +177,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "of_road_accidents": MessageLookupByLibrary.simpleMessage("Road accidents"),
     "oil": MessageLookupByLibrary.simpleMessage("oil"),
     "ok": MessageLookupByLibrary.simpleMessage("OK"),
+    "open_site": MessageLookupByLibrary.simpleMessage("Open e-Drive"),
     "open_statistics": MessageLookupByLibrary.simpleMessage("Open statistics"),
     "other": MessageLookupByLibrary.simpleMessage("Other"),
     "password": MessageLookupByLibrary.simpleMessage("Password"),
@@ -713,6 +721,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "tires": MessageLookupByLibrary.simpleMessage("tire"),
     "title": MessageLookupByLibrary.simpleMessage("Title"),
     "to_be_performed": MessageLookupByLibrary.simpleMessage("To be performed:"),
+    "tokens_already_present": MessageLookupByLibrary.simpleMessage(
+      "Tokens already present",
+    ),
+    "tokens_extracted": MessageLookupByLibrary.simpleMessage(
+      "Tokens extracted",
+    ),
     "total": MessageLookupByLibrary.simpleMessage("Total"),
     "total_amount": MessageLookupByLibrary.simpleMessage("Total amount:"),
     "total_fines": MessageLookupByLibrary.simpleMessage("Total fines: "),

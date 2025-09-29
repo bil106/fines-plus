@@ -3,6 +3,8 @@ import 'dart:io';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:core/config/app_urls.dart';
+import 'package:core/config/src/usecases/extract_tokens_usecase.dart';
+import 'package:core_cubit/cubit/additional_options/additional_options_cubit.dart';
 import 'package:core_data/core_data.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
@@ -12,13 +14,13 @@ import 'package:fines_plus/core/widgets/additional_options_widget.dart';
 import 'package:fines_plus/core/widgets/date_picker_card.dart';
 import 'package:fines_plus/core/widgets/extensions/service_list.dart';
 import 'package:fines_plus/core/widgets/mileage_card.dart';
-import 'package:fines_plus/core/widgets/photo_picker_widget.dart';
 import 'package:fines_plus/env/env.dart';
 
 import 'package:fines_plus/presentation/screens/service_map_screen.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
@@ -37,18 +39,24 @@ class _ServiceScreenState extends State<ServiceScreen> {
   final List<TextEditingController> serviceControllers = [TextEditingController()];
   final TextEditingController costController = TextEditingController();
   final TextEditingController mileageController = TextEditingController();
+
   bool showAdditionalOptions = false;
   File? selectedPhoto;
-
   Map<String, dynamic>? _bestStation;
   DateTime? selectedDate;
 
   double usdToUahRate = 40.0;
   Map<int, double> selectedPricesUah = {};
 
+  late final TokensRepositoryImpl _tokensRepository;
+  late final ExtractTokensUseCase _extractTokensUseCase;
+
   @override
   void initState() {
     super.initState();
+    _tokensRepository = TokensRepositoryImpl(const FlutterSecureStorage());
+    _extractTokensUseCase = ExtractTokensUseCase(_tokensRepository);
+
     _initLocationAndService();
     _fetchRate();
   }
@@ -59,30 +67,22 @@ class _ServiceScreenState extends State<ServiceScreen> {
     bool serviceEnabled = await location.serviceEnabled();
     if (!serviceEnabled) {
       serviceEnabled = await location.requestService();
-      if (!serviceEnabled) {
-        if (kDebugMode) print("❌ Location service not enabled");
-        return;
-      }
+      if (!serviceEnabled) return;
     }
 
     PermissionStatus permissionGranted = await location.hasPermission();
     if (permissionGranted == PermissionStatus.denied) {
       permissionGranted = await location.requestPermission();
-      if (permissionGranted != PermissionStatus.granted) {
-        if (kDebugMode) print("❌ Location permission not granted");
-        return;
-      }
+      if (permissionGranted != PermissionStatus.granted) return;
     }
 
     try {
-      LocationData locationData = await location.getLocation();
-      LatLng current = LatLng(locationData.latitude!, locationData.longitude!);
+      final locationData = await location.getLocation();
+      final current = LatLng(locationData.latitude!, locationData.longitude!);
 
       final bestStation = await fetchBestNearbyService(current, Env.mapApiKey);
 
-      setState(() {
-        _bestStation = bestStation;
-      });
+      setState(() => _bestStation = bestStation);
     } catch (e) {
       if (kDebugMode) print("❌ Error getting position: $e");
     }
@@ -96,12 +96,8 @@ class _ServiceScreenState extends State<ServiceScreen> {
         final data = json.decode(response.body);
         if (data is List && data.isNotEmpty) {
           final newRate = (data[0]['rate'] as num).toDouble();
-
           setState(() {
             usdToUahRate = newRate;
-            if (kDebugMode) {
-              print("💵 Поточний курс USD → UAH: $usdToUahRate");
-            }
 
             selectedPricesUah.updateAll((key, oldValue) {
               final serviceName = serviceControllers[key].text;
@@ -112,7 +108,7 @@ class _ServiceScreenState extends State<ServiceScreen> {
               return selectedItem.priceUSD * usdToUahRate;
             });
 
-            double total = selectedPricesUah.values.fold(0, (a, b) => a + b);
+            final total = selectedPricesUah.values.fold(0.0, (a, b) => a + b);
             costController.text = total.toStringAsFixed(0);
           });
         }
@@ -134,164 +130,26 @@ class _ServiceScreenState extends State<ServiceScreen> {
           backgroundColor: AppColors.grey50,
           elevation: 0,
           leading: BackButton(color: AppColors.blue700, onPressed: widget.onBack),
-
           actions: [
             IconButton(
               icon: const Icon(Icons.check, color: AppColors.blue700, size: 50),
-              onPressed: () {
-                if (selectedDate == null || serviceControllers.every((c) => c.text.isEmpty)) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(backgroundColor: AppColors.blue700, content: Text(S.of(context).select_service)),
-                  );
-                  return;
-                }
-
-                final mileage = int.tryParse(mileageController.text) ?? 0;
-
-                final List<ServiceRecord> records = serviceControllers.where((c) => c.text.isNotEmpty).map((c) {
-                  final selectedService = ServiceList.serviceItems.firstWhere(
-                    (item) => item.name == c.text,
-                    orElse: () => ServiceItem(name: c.text, priceUSD: 0),
-                  );
-                  return ServiceRecord(
-                    serviceName: selectedService.name,
-                    cost: selectedService.priceUSD * usdToUahRate,
-                    date: "${selectedDate!.day}.${selectedDate!.month}.${selectedDate!.year}",
-                    mileage: mileage,
-                  );
-                }).toList();
-
-                Navigator.pop(context, records);
-              },
+              onPressed: _saveServiceRecords,
             ),
           ],
         ),
-
         body: SingleChildScrollView(
           padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(S.of(context).service, style: textTheme.title),
-
-              Row(
-                children: [
-                  _bestStation == null
-                      ? AppLoaders.medium
-                      : GestureDetector(
-                          onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (_) => ServiceMapScreen(
-                                  focusPosition: LatLng(_bestStation!['lat'], _bestStation!['lng']),
-                                  focusName: _bestStation!['name'],
-                                ),
-                              ),
-                            );
-                          },
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              const Icon(Icons.location_on, color: AppColors.energyBlue, size: 40),
-                              AppSpacers.horizontalSmallMedium,
-                              SizedBox(
-                                width: 180,
-                                child: Text(
-                                  _bestStation!['name'] ?? S.of(context).service_station,
-                                  style: textTheme.bodyMedium,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                  const Spacer(),
-                  IconButton(
-                    icon: Image.asset('assets/icons/map.png', width: 40, height: 40),
-                    onPressed: () {
-                      Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ServiceMapScreen()));
-                    },
-                  ),
-                ],
-              ),
-
+              _buildBestStationRow(textTheme),
               const Divider(),
-
-              Row(
-                children: [
-                  Expanded(
-                    child: DatePickerCard(
-                      selectedDate: selectedDate,
-                      onDateSelected: (date) => setState(() => selectedDate = date),
-                    ),
-                  ),
-                  AppSpacers.horizontalMediumLarge,
-                  Expanded(
-                    child: MileageCard(textTheme: textTheme, controller: mileageController),
-                  ),
-                ],
-              ),
-
+              _buildDateAndMileageRow(textTheme),
               AppSpacers.verticalMedium,
-
               Text(S.of(context).selecting_service, style: textTheme.subtitleText),
               AppSpacers.verticalMedium,
-
-              Column(
-                children: List.generate(serviceControllers.length, (index) {
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 1),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Autocomplete<String>(
-                            optionsBuilder: (TextEditingValue value) {
-                              if (value.text.isEmpty) return ServiceList.names;
-                              return ServiceList.names.where(
-                                (option) => option.toLowerCase().startsWith(value.text.toLowerCase()),
-                              );
-                            },
-                            onSelected: (val) {
-                              serviceControllers[index].text = val;
-                              final selectedItem = ServiceList.serviceItems.firstWhere(
-                                (item) => item.name == val,
-                                orElse: () => ServiceItem(name: val, priceUSD: 0),
-                              );
-                              selectedPricesUah[index] = selectedItem.priceUSD * usdToUahRate;
-                              double total = selectedPricesUah.values.fold(0, (a, b) => a + b);
-                              costController.text = total.toStringAsFixed(0);
-                              setState(() {});
-                            },
-                            fieldViewBuilder: (context, controller, focusNode, onFieldSubmitted) {
-                              serviceControllers[index] = controller;
-                              return TextField(
-                                controller: controller,
-                                focusNode: focusNode,
-                                decoration: InputDecoration(
-                                  hintText: S.of(context).select_a_service,
-                                  border: OutlineInputBorder(),
-                                  prefixIcon: Icon(Icons.build, color: AppColors.blueAccent),
-                                  suffixIcon: IconButton(
-                                    icon: Icon(Icons.delete, color: AppColors.red),
-                                    onPressed: () {
-                                      setState(() {
-                                        serviceControllers.removeAt(index);
-                                        selectedPricesUah.remove(index);
-                                        double total = selectedPricesUah.values.fold(0, (a, b) => a + b);
-                                        costController.text = total.toStringAsFixed(0);
-                                      });
-                                    },
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                }),
-              ),
+              _buildServiceFields(textTheme),
               Center(
                 child: IconButton(
                   icon: const CircleAvatar(
@@ -299,70 +157,218 @@ class _ServiceScreenState extends State<ServiceScreen> {
                     child: Icon(Icons.add, color: AppColors.neutreBlanc),
                   ),
                   onPressed: () {
-                    setState(() {
-                      serviceControllers.add(TextEditingController());
-                    });
+                    setState(() => serviceControllers.add(TextEditingController()));
                   },
                 ),
               ),
-
               AppSpacers.verticalMediumLarge,
-
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  border: Border.all(color: AppColors.neutreGrey),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        const Icon(Icons.attach_money, color: AppColors.blueAccent),
-                        AppSpacers.horizontalSmallMedium,
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(S.of(context).cost_of_work),
-                            Text(
-                              "${selectedPricesUah.isEmpty ? '0' : selectedPricesUah.values.last.toStringAsFixed(0)} ${S.of(context).grn}",
-                              style: textTheme.titleMedium,
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    AppSpacers.horizontalXMassive,
-                    Row(
-                      children: [
-                        const Icon(Icons.attach_money, color: AppColors.blueAccent),
-                        AppSpacers.horizontalSmallMedium,
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(S.of(context).total_amount),
-                            Text(
-                              "${costController.text.isEmpty ? '0' : costController.text} ${S.of(context).grn}",
-                              style: textTheme.titleMedium,
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-
+              _buildCostSummary(textTheme),
               const Divider(),
-              AdditionalOptionsWidget(photoPicker: PhotoPickerWidget()),
+
+           
+              AdditionalOptionsWidget(cubit: AdditionalOptionsCubit(
+                  tokensRepository: _tokensRepository,
+                  extractTokensUseCase: _extractTokensUseCase,
+                ),),
             ],
           ),
         ),
       ),
     );
   }
+
+  void _saveServiceRecords() {
+    if (selectedDate == null || serviceControllers.every((c) => c.text.isEmpty)) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(backgroundColor: AppColors.blue700, content: Text(S.of(context).select_service)));
+      return;
+    }
+
+    final mileage = int.tryParse(mileageController.text) ?? 0;
+
+    final records = serviceControllers.where((c) => c.text.isNotEmpty).map((c) {
+      final selectedService = ServiceList.serviceItems.firstWhere(
+        (item) => item.name == c.text,
+        orElse: () => ServiceItem(name: c.text, priceUSD: 0),
+      );
+      return ServiceRecord(
+        serviceName: selectedService.name,
+        cost: selectedService.priceUSD * usdToUahRate,
+        date: "${selectedDate!.day}.${selectedDate!.month}.${selectedDate!.year}",
+        mileage: mileage,
+      );
+    }).toList();
+
+    Navigator.pop(context, records);
+  }
+
+  
+  Widget _buildBestStationRow(TextTheme textTheme) {
+    return Row(
+      children: [
+        _bestStation == null
+            ? AppLoaders.medium
+            : GestureDetector(
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => ServiceMapScreen(
+                        focusPosition: LatLng(_bestStation!['lat'], _bestStation!['lng']),
+                        focusName: _bestStation!['name'],
+                      ),
+                    ),
+                  );
+                },
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.location_on, color: AppColors.energyBlue, size: 40),
+                    AppSpacers.horizontalSmallMedium,
+                    SizedBox(
+                      width: 180,
+                      child: Text(
+                        _bestStation!['name'] ?? S.of(context).service_station,
+                        style: textTheme.bodyMedium,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+        const Spacer(),
+        IconButton(
+          icon: Image.asset('assets/icons/map.png', width: 40, height: 40),
+          onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ServiceMapScreen())),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDateAndMileageRow(TextTheme textTheme) {
+    return Row(
+      children: [
+        Expanded(
+          child: DatePickerCard(
+            selectedDate: selectedDate,
+            onDateSelected: (date) => setState(() => selectedDate = date),
+          ),
+        ),
+        AppSpacers.horizontalMediumLarge,
+        Expanded(
+          child: MileageCard(textTheme: textTheme, controller: mileageController),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildServiceFields(TextTheme textTheme) {
+    return Column(
+      children: List.generate(serviceControllers.length, (index) {
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 1),
+          child: Row(
+            children: [
+              Expanded(
+                child: Autocomplete<String>(
+                  optionsBuilder: (value) {
+                    if (value.text.isEmpty) return ServiceList.names;
+                    return ServiceList.names.where(
+                      (option) => option.toLowerCase().startsWith(value.text.toLowerCase()),
+                    );
+                  },
+                  onSelected: (val) {
+                    serviceControllers[index].text = val;
+                    final selectedItem = ServiceList.serviceItems.firstWhere(
+                      (item) => item.name == val,
+                      orElse: () => ServiceItem(name: val, priceUSD: 0),
+                    );
+                    selectedPricesUah[index] = selectedItem.priceUSD * usdToUahRate;
+                    final total = selectedPricesUah.values.fold(0.0, (a, b) => a + b);
+                    costController.text = total.toStringAsFixed(0);
+                    setState(() {});
+                  },
+                  fieldViewBuilder: (context, controller, focusNode, onFieldSubmitted) {
+                    serviceControllers[index] = controller;
+                    return TextField(
+                      controller: controller,
+                      focusNode: focusNode,
+                      decoration: InputDecoration(
+                        hintText: S.of(context).select_a_service,
+                        border: OutlineInputBorder(),
+                        prefixIcon: Icon(Icons.build, color: AppColors.blueAccent),
+                        suffixIcon: IconButton(
+                          icon: Icon(Icons.delete, color: AppColors.red),
+                          onPressed: () {
+                            setState(() {
+                              serviceControllers.removeAt(index);
+                              selectedPricesUah.remove(index);
+                              final total = selectedPricesUah.values.fold(0.0, (a, b) => a + b);
+                              costController.text = total.toStringAsFixed(0);
+                            });
+                          },
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      }),
+    );
+  }
+
+  Widget _buildCostSummary(TextTheme textTheme) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        border: Border.all(color: AppColors.neutreGrey),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.attach_money, color: AppColors.blueAccent),
+              AppSpacers.horizontalSmallMedium,
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(S.of(context).cost_of_work),
+                  Text(
+                    "${selectedPricesUah.isEmpty ? '0' : selectedPricesUah.values.last.toStringAsFixed(0)} ${S.of(context).grn}",
+                    style: textTheme.titleMedium,
+                  ),
+                ],
+              ),
+            ],
+          ),
+          AppSpacers.horizontalXMassive,
+          Row(
+            children: [
+              const Icon(Icons.attach_money, color: AppColors.blueAccent),
+              AppSpacers.horizontalSmallMedium,
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(S.of(context).total_amount),
+                  Text(
+                    "${costController.text.isEmpty ? '0' : costController.text} ${S.of(context).grn}",
+                    style: textTheme.titleMedium,
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
 }
+
 
 Future<Map<String, dynamic>?> fetchBestNearbyService(LatLng current, String apiKey) async {
   final stations = await fetchNearbyServices(current, apiKey);

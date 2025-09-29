@@ -32,7 +32,7 @@
    "maintenance": "TO",
    "analitics": "Аналітика",
    "export": "Експорт",
-   "statistics": "Статистика", 
+   "statistics": "Статистика",
    "history": "Історія",
    "schedule": "Розклад",
    "export_history": "Експорт історії",
@@ -303,7 +303,13 @@
    "ok": "ОК",
    "car_wash": "Автомийка",
    "car_wash_nearby": "Автомийка поруч",
-   "enter_amount": "Введіть суму"
-   
-   
+   "enter_amount": "Введіть суму",
+   "failed_extract_tokens": "Не удалось извлечь токены",
+   "tokens_extracted": "Токены извлечены",
+   "no_tokens_yet": "Токены пока отсутствуют",
+   "tokens_already_present": "Токены уже присутствуют",
+   "loaded": "Завантажено",
+   "open_site": "Увійти у e-Drive",
+   "extracting": "Видобування...",
+   "extract_tokens": "Видобути токени"
 }

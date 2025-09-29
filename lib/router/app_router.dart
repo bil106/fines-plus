@@ -1,5 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:core_cubit/cubit/purchase/purchase_cubit.dart';
+import 'package:core_cubit/cubit/schedule/schedule_cubit.dart';
 import 'package:core_data/core_data.dart';
 import 'package:core_repository/reminder_repository.dart';
 import 'package:core_repository/schedule_repository.dart';

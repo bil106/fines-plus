@@ -3,6 +3,8 @@
 import 'dart:io';
 import 'package:app_links/app_links.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:core/config/src/usecases/extract_tokens_usecase.dart';
+import 'package:core_cubit/cubit/additional_options/additional_options_cubit.dart';
 import 'package:core_cubit/cubit/fuel_station/fuel_station_cubit.dart';
 import 'package:core_cubit/cubit/maintenance/maintenance_cubit.dart';
 import 'package:core_cubit/cubit/purchase/purchase_cubit.dart';
@@ -37,6 +39,9 @@ class AppInitializer {
   late final FuelStationCubit fuelStationCubit;
   late final MaintenanceCubit maintenanceCubit;
   late final ScheduleCubit scheduleCubit;
+  late final AdditionalOptionsCubit additionalOptionsCubit;
+  late final RemoteConfigService remoteConfigService;
+  final Map<String, int> _scheduledReminderIds = {};
   Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
     await Firebase.initializeApp();
     debugPrint("🔔 Background message: ${message.messageId}");
@@ -47,7 +52,10 @@ class AppInitializer {
 
     final finesServer = FinesServer();
     await finesServer.start();
-
+    remoteConfigService = await RemoteConfigService.init();
+    debugPrint(
+      'Remote Config - remindersEnabled: ${remoteConfigService.isRemindersEnabled}, purchaseEnabled: ${remoteConfigService.isPurchaseEnabled}',
+    );
     tz.initializeTimeZones();
     tz.setLocalLocation(tz.getLocation('Europe/Kiev'));
 
@@ -127,17 +135,27 @@ class AppInitializer {
 
     // SharedPrefs
     final prefs = await SharedPreferences.getInstance();
-    final storage =  FlutterSecureStorage();
+    final storage = FlutterSecureStorage();
     final sharedPrefsManager = SharedPrefsManager(prefs);
     final appLinks = AppLinks();
+    final tokensRepository = TokensRepositoryImpl(storage);
+    final extractTokensUseCase = ExtractTokensUseCase(tokensRepository);
 
     referralCubit = ReferralCubit(appLinks, prefs);
-    purchaseCubit = PurchaseCubit(PurchaseService());
+    purchaseCubit = PurchaseCubit(PurchaseService(), enabled: remoteConfigService.isPurchaseEnabled);
     maintenanceCubit = MaintenanceCubit();
     fuelStationCubit = FuelStationCubit();
-    
 
-    scheduleCubit = ScheduleCubit(repository: ScheduleRepository(), maintenanceCubit: maintenanceCubit, pushHelper: PushHelper(FlutterLocalNotificationsPlugin()),
+    additionalOptionsCubit = AdditionalOptionsCubit(
+      extractTokensUseCase: extractTokensUseCase,
+      tokensRepository: tokensRepository,
+    );
+
+    scheduleCubit = ScheduleCubit(
+      repository: ScheduleRepository(),
+      maintenanceCubit: maintenanceCubit,
+      pushHelper: PushHelper(FlutterLocalNotificationsPlugin()),
+      enabled: remoteConfigService.isRemindersEnabled,
     );
 
     final registrationCubit = RegistrationCubit(
@@ -170,6 +188,8 @@ class AppInitializer {
       fuelStationCubit: fuelStationCubit,
       maintenanceCubit: maintenanceCubit,
       scheduleCubit: scheduleCubit,
+      additionalOptionsCubit: additionalOptionsCubit,
+      remoteConfigService: remoteConfigService,
     );
   }
 }
@@ -181,6 +201,8 @@ extension ReminderScheduling on AppInitializer {
       debugPrint('⏱ Reminder ${reminder.id} time is in the past, skipping.');
       return;
     }
+    final notificationId = reminder.id.hashCode;
+    _scheduledReminderIds[reminder.id] = notificationId;
 
     final delay = reminder.dateTime.difference(now);
     debugPrint('🔔 Reminder ${reminder.id} scheduled in $delay');
@@ -207,6 +229,14 @@ extension ReminderScheduling on AppInitializer {
       debugPrint('🔔 Reminder ${reminder.id} triggered at ${DateTime.now()}');
     });
   }
+
+  Future<void> cancelReminder(String reminderId) async {
+    final id = _scheduledReminderIds[reminderId];
+    if (id != null) {
+      await flutterLocalNotificationsPlugin.cancel(id);
+      _scheduledReminderIds.remove(reminderId);
+    }
+  }
 }
 
 class AppInitResult {
@@ -222,6 +252,8 @@ class AppInitResult {
   final FuelStationCubit fuelStationCubit;
   final MaintenanceCubit maintenanceCubit;
   final ScheduleCubit scheduleCubit;
+  final AdditionalOptionsCubit additionalOptionsCubit;
+  final RemoteConfigService remoteConfigService;
 
   AppInitResult({
     required this.config,
@@ -236,5 +268,7 @@ class AppInitResult {
     required this.fuelStationCubit,
     required this.maintenanceCubit,
     required this.scheduleCubit,
+    required this.additionalOptionsCubit,
+    required this.remoteConfigService,
   });
 }

@@ -1076,47 +1076,84 @@ class ServiceRouteArgs {
 /// generated route for
 /// [SettingsScreen]
 class SettingsRoute extends PageRouteInfo<SettingsRouteArgs> {
-  SettingsRoute({Key? key, VoidCallback? onBack, List<PageRouteInfo>? children})
-    : super(
-        SettingsRoute.name,
-        args: SettingsRouteArgs(key: key, onBack: onBack),
-        initialChildren: children,
-      );
+  SettingsRoute({
+    Key? key,
+    VoidCallback? onBack,
+    required RemoteConfigService remoteConfigService,
+    required ScheduleCubit scheduleCubit,
+    required PurchaseCubit purchaseCubit,
+    List<PageRouteInfo>? children,
+  }) : super(
+         SettingsRoute.name,
+         args: SettingsRouteArgs(
+           key: key,
+           onBack: onBack,
+           remoteConfigService: remoteConfigService,
+           scheduleCubit: scheduleCubit,
+           purchaseCubit: purchaseCubit,
+         ),
+         initialChildren: children,
+       );
 
   static const String name = 'SettingsRoute';
 
   static PageInfo page = PageInfo(
     name,
     builder: (data) {
-      final args = data.argsAs<SettingsRouteArgs>(
-        orElse: () => const SettingsRouteArgs(),
+      final args = data.argsAs<SettingsRouteArgs>();
+      return SettingsScreen(
+        key: args.key,
+        onBack: args.onBack,
+        remoteConfigService: args.remoteConfigService,
+        scheduleCubit: args.scheduleCubit,
+        purchaseCubit: args.purchaseCubit,
       );
-      return SettingsScreen(key: args.key, onBack: args.onBack);
     },
   );
 }
 
 class SettingsRouteArgs {
-  const SettingsRouteArgs({this.key, this.onBack});
+  const SettingsRouteArgs({
+    this.key,
+    this.onBack,
+    required this.remoteConfigService,
+    required this.scheduleCubit,
+    required this.purchaseCubit,
+  });
 
   final Key? key;
 
   final VoidCallback? onBack;
 
+  final RemoteConfigService remoteConfigService;
+
+  final ScheduleCubit scheduleCubit;
+
+  final PurchaseCubit purchaseCubit;
+
   @override
   String toString() {
-    return 'SettingsRouteArgs{key: $key, onBack: $onBack}';
+    return 'SettingsRouteArgs{key: $key, onBack: $onBack, remoteConfigService: $remoteConfigService, scheduleCubit: $scheduleCubit, purchaseCubit: $purchaseCubit}';
   }
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
     if (other is! SettingsRouteArgs) return false;
-    return key == other.key && onBack == other.onBack;
+    return key == other.key &&
+        onBack == other.onBack &&
+        remoteConfigService == other.remoteConfigService &&
+        scheduleCubit == other.scheduleCubit &&
+        purchaseCubit == other.purchaseCubit;
   }
 
   @override
-  int get hashCode => key.hashCode ^ onBack.hashCode;
+  int get hashCode =>
+      key.hashCode ^
+      onBack.hashCode ^
+      remoteConfigService.hashCode ^
+      scheduleCubit.hashCode ^
+      purchaseCubit.hashCode;
 }
 
 /// generated route for

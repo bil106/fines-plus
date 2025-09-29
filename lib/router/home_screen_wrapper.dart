@@ -3,6 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:core_cubit/cubit/car_info/car_info_cubit.dart';
 import 'package:core_cubit/cubit/history/history_cubit.dart';
 import 'package:core_cubit/cubit/maintenance/maintenance_cubit.dart';
+import 'package:core_cubit/cubit/purchase/purchase_cubit.dart';
+import 'package:core_cubit/cubit/schedule/schedule_cubit.dart';
 import 'package:core_data/core_data.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:core_repository/car_info_repository.dart';
@@ -181,8 +183,13 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
               onBack: () => openPage(HomePage.addCar),
             ),
 
-            SettingsScreen(key: const ValueKey('settings_screen'), onBack: () => openPage(HomePage.maintenance)),
-
+         SettingsScreen(
+              key: const ValueKey('settings_screen'),
+              onBack: () => openPage(HomePage.maintenance),
+              remoteConfigService: context.read<RemoteConfigService>(), 
+              scheduleCubit: context.read<ScheduleCubit>(), 
+              purchaseCubit: context.read<PurchaseCubit>(), 
+            ),
             HistoryScreen(key: const ValueKey('history_screen'), carNumber: _carNumber!),
 
             Builder(

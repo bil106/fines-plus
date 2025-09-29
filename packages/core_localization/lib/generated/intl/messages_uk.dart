@@ -102,7 +102,12 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "export": MessageLookupByLibrary.simpleMessage("Експорт"),
     "export_history": MessageLookupByLibrary.simpleMessage("Експорт історії"),
+    "extract_tokens": MessageLookupByLibrary.simpleMessage("Видобути токени"),
+    "extracting": MessageLookupByLibrary.simpleMessage("Видобування..."),
     "fact": MessageLookupByLibrary.simpleMessage("Фактичний"),
+    "failed_extract_tokens": MessageLookupByLibrary.simpleMessage(
+      "Не удалось извлечь токены",
+    ),
     "fill_date": MessageLookupByLibrary.simpleMessage(
       "Заповніть дату, пробіг та кількість палива",
     ),
@@ -131,6 +136,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Історія тимчасово недоступна: індекс будується. Спробуйте за кілька хвилин.",
     ),
     "item_removed": MessageLookupByLibrary.simpleMessage("Елемент видалено"),
+    "loaded": MessageLookupByLibrary.simpleMessage("Завантажено"),
     "login": MessageLookupByLibrary.simpleMessage("Увійти"),
     "logo": MessageLookupByLibrary.simpleMessage("LOGO"),
     "maintenance": MessageLookupByLibrary.simpleMessage("TO"),
@@ -150,6 +156,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "no_name": MessageLookupByLibrary.simpleMessage("Без назви"),
     "no_reminders": MessageLookupByLibrary.simpleMessage("Немає нагадувань"),
     "no_tasks": MessageLookupByLibrary.simpleMessage("Немає завдань"),
+    "no_tokens_yet": MessageLookupByLibrary.simpleMessage(
+      "Токены пока отсутствуют",
+    ),
     "not_auth": MessageLookupByLibrary.simpleMessage("Не авторизовані"),
     "not_forget": MessageLookupByLibrary.simpleMessage(
       "Не забудь замінити масло",
@@ -171,6 +180,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "oil": MessageLookupByLibrary.simpleMessage("масло"),
     "ok": MessageLookupByLibrary.simpleMessage("ОК"),
+    "open_site": MessageLookupByLibrary.simpleMessage("Увійти у e-Drive"),
     "open_statistics": MessageLookupByLibrary.simpleMessage(
       "Відкрити статистику",
     ),
@@ -690,6 +700,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "tires": MessageLookupByLibrary.simpleMessage("шина"),
     "title": MessageLookupByLibrary.simpleMessage("Заголовок"),
     "to_be_performed": MessageLookupByLibrary.simpleMessage("До виконання:"),
+    "tokens_already_present": MessageLookupByLibrary.simpleMessage(
+      "Токены уже присутствуют",
+    ),
+    "tokens_extracted": MessageLookupByLibrary.simpleMessage(
+      "Токены извлечены",
+    ),
     "total": MessageLookupByLibrary.simpleMessage("Разом"),
     "total_amount": MessageLookupByLibrary.simpleMessage("Загальна сума:"),
     "total_fines": MessageLookupByLibrary.simpleMessage(

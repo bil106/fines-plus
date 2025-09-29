@@ -48,6 +48,7 @@ dependencies:
   app_links: ^6.4.1
   path_provider: ^2.1.5
   share_plus: ^11.1.0
+  flutter_inappwebview: ^6.1.5
 
 flutter:
   uses-material-design: true

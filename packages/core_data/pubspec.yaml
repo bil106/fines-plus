@@ -28,3 +28,5 @@ dependencies:
     path: ../core_services
   core_localization:
     path: ../core_localization
+  flutter_secure_storage: ^9.2.4
+  firebase_remote_config: ^5.5.0
