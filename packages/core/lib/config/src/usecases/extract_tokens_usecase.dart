@@ -1,4 +1,3 @@
-
 import 'dart:convert';
 import 'package:core_data/core_data.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
@@ -22,7 +21,6 @@ class ExtractTokensUseCase implements IExtractTokensUseCase {
     final edUserStr = edUserRaw?.toString() ?? '';
     final cookieString = cookieRaw?.toString() ?? '';
 
-  
     String edriveToken = '';
     if (fbUserStr.isNotEmpty) {
       try {

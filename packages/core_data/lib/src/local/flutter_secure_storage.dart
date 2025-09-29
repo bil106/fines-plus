@@ -1,5 +1,6 @@
 import 'package:core_data/core_data.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
 class TokensRepositoryImpl implements TokensRepository {
   final FlutterSecureStorage storage;
   TokensRepositoryImpl(this.storage);

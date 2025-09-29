@@ -47,4 +47,3 @@ class RemoteConfigService {
     debugPrint("♻️ Remote config refreshed");
   }
 }
-

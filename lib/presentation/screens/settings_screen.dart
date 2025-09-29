@@ -14,7 +14,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-
 @RoutePage()
 class SettingsScreen extends StatefulWidget {
   final VoidCallback? onBack;
@@ -46,7 +45,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
     reminders = widget.remoteConfigService.isRemindersEnabled;
     pushNotifications = true;
   }
-void _logSwitchChange(String name, bool value) {
+
+  void _logSwitchChange(String name, bool value) {
     debugPrint("👉 $name switched to $value");
   }
 
@@ -81,7 +81,7 @@ void _logSwitchChange(String name, bool value) {
                     child: Column(
                       children: [
                         AppSpacers.verticalLarge,
-                      _buildSettingRow(
+                        _buildSettingRow(
                           title: S.of(context).checking_fines,
                           value: finesCheck,
                           onChanged: (val) {
@@ -120,8 +120,6 @@ void _logSwitchChange(String name, bool value) {
                             _logSwitchChange("push_notifications", val);
                           },
                         ),
-
-
                       ],
                     ),
                   ),

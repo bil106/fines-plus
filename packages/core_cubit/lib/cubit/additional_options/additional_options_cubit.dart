@@ -17,7 +17,7 @@ class AdditionalOptionsCubit extends Cubit<AdditionalOptionsState> {
     final tokens = await tokensRepository.getSavedTokens();
     if (tokens != null) {
       emit(AdditionalOptionsTokensPresent());
-         debugPrint('✅ ${S.current.tokens_already_present}');
+      debugPrint('✅ ${S.current.tokens_already_present}');
     } else {
       debugPrint('⚠️ ${S.current.no_tokens_yet}');
     }
