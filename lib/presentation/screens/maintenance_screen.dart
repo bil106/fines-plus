@@ -79,7 +79,7 @@ class _MaintenanceScreenView extends StatelessWidget {
     this.onSettings,
     this.onFuelUp,
     this.onService,
-    this.onTuning, 
+    this.onTuning,
     this.onCarWash,
   });
 
@@ -196,7 +196,7 @@ class _MaintenanceScreenView extends StatelessWidget {
                       },
                       state.isMenuOpen,
                     ),
-                 
+
                     // Service
                     _buildAnimatedAction(
                       context,
@@ -215,7 +215,7 @@ class _MaintenanceScreenView extends StatelessWidget {
                       },
                       state.isMenuOpen,
                     ),
-            
+
                     // Fuel
                     _buildAnimatedAction(
                       context,
@@ -236,8 +236,12 @@ class _MaintenanceScreenView extends StatelessWidget {
                     _buildAnimatedAction(
                       context,
                       S.of(context).car_wash,
-                      SvgPicture.asset('assets/icons/car-wash.svg', color: AppColors.energyBlue,
-                        colorBlendMode: BlendMode.srcIn, height: 24),
+                      SvgPicture.asset(
+                        'assets/icons/car-wash.svg',
+                        color: AppColors.energyBlue,
+                        colorBlendMode: BlendMode.srcIn,
+                        height: 24,
+                      ),
                       S.of(context).car_wash,
                       () async {
                         cubit.closeMenu();
@@ -276,7 +280,7 @@ class _MaintenanceScreenView extends StatelessWidget {
     );
   }
 
-Widget _buildAction(BuildContext context, String title, Widget icon, String tooltip, VoidCallback? onTap) {
+  Widget _buildAction(BuildContext context, String title, Widget icon, String tooltip, VoidCallback? onTap) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -287,10 +291,16 @@ Widget _buildAction(BuildContext context, String title, Widget icon, String tool
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-             
-                Text(title, style: Theme.of(context).textTheme.bodySmall?.copyWith(fontSize: 18,fontWeight: FontWeight.bold, color: AppColors.neutreBlanc)),
+                Text(
+                  title,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.neutreBlanc,
+                  ),
+                ),
                 const SizedBox(width: 8),
-               
+
                 Container(
                   height: 50,
                   width: 50,
@@ -306,7 +316,7 @@ Widget _buildAction(BuildContext context, String title, Widget icon, String tool
             ),
           ),
         ),
-        AppSpacers.verticalSmall, 
+        AppSpacers.verticalSmall,
       ],
     );
   }
@@ -330,5 +340,4 @@ Widget _buildAction(BuildContext context, String title, Widget icon, String tool
       ),
     );
   }
-
 }

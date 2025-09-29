@@ -2,6 +2,7 @@ import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_borders.dart';
 import 'package:design_system/constants/app_spacers.dart';
+import 'package:design_system/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 
 class TimelineItem extends StatelessWidget {
@@ -55,7 +56,7 @@ class TimelineItem extends StatelessWidget {
                     alignment: Alignment.topRight,
                     child: Text(
                       date,
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(color: AppColors.neutreGrey),
+                      style: Theme.of(context).textTheme.black16bold.copyWith(color: AppColors.neutreGrey),
                     ),
                   ),
                   if (subtitle.isNotEmpty) Text(subtitle, style: Theme.of(context).textTheme.bodySmall),
@@ -64,11 +65,11 @@ class TimelineItem extends StatelessWidget {
                   AppSpacers.verticalSmallMedium,
                   Row(
                     children: [
-                      const Icon(Icons.attach_money, size: 16),
+                      const Icon(Icons.attach_money, size: 16,color: AppColors.energyBlue,),
                       AppSpacers.horizontalXSmall,
                       Text("${amount.toStringAsFixed(0)} ${S.of(context).grn}"),
                       AppSpacers.horizontalMediumLarge,
-                      const Icon(Icons.directions_car, size: 16),
+                      const Icon(Icons.directions_car, size: 16, color: AppColors.energyBlue),
                       AppSpacers.horizontalXSmall,
                       Text(mileage),
                     ],

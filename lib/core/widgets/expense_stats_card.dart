@@ -10,8 +10,9 @@ import 'package:flutter/material.dart';
 
 class ExpenseStatsCard extends StatelessWidget {
   final MonthlyExpenseStats stats;
+  final VoidCallback? onMaintenance;
 
-  const ExpenseStatsCard({super.key, required this.stats});
+  const ExpenseStatsCard({super.key, required this.stats, this.onMaintenance});
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +26,7 @@ class ExpenseStatsCard extends StatelessWidget {
           children: [
             Text(S.current.cost_statistics, style: textTheme.black16bold),
             const Divider(color: AppColors.neutreGrey),
-           
+
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -46,19 +47,22 @@ class ExpenseStatsCard extends StatelessWidget {
             ),
             AppSpacers.verticalMediumLarge,
 
-            // Pie chart
             SizedBox(
               height: 180,
               child: PieChart(
                 PieChartData(
-                  sectionsSpace: 2,
+                  sectionsSpace: 0.5,
                   centerSpaceRadius: 40,
                   sections: stats.categoryTotals.entries.map((e) {
                     return PieChartSectionData(
                       value: e.value,
-                      color: _colorForCategory(e.key),
-                      title: e.value.toStringAsFixed(0),
                       radius: 50,
+
+                      gradient: _gradientForCategory(e.key),
+
+                      title: e.value.toStringAsFixed(0),
+                      titleStyle: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white),
+                      borderSide: const BorderSide(color: AppColors.neutreBlanc, width: 1),
                     );
                   }).toList(),
                 ),
@@ -69,13 +73,22 @@ class ExpenseStatsCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: ExpenseCategory.values.map((cat) {
-                return _LegendItem(color: _colorForCategory(cat), text: _categoryName(cat));
+                return _LegendItem(gradient: _gradientForCategory(cat), text: _categoryName(cat));
               }).toList(),
             ),
 
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: [TextButton(onPressed: () {}, child: Text(S.current.open_statistics))],
+              children: [
+              TextButton(
+                  onPressed: () {
+                    if (onMaintenance != null) onMaintenance!();
+                  },
+                  child: Text(S.current.open_statistics),
+                ),
+
+
+              ],
             ),
           ],
         ),
@@ -83,16 +96,32 @@ class ExpenseStatsCard extends StatelessWidget {
     );
   }
 
-  Color _colorForCategory(ExpenseCategory cat) {
+  Gradient _gradientForCategory(ExpenseCategory cat) {
     switch (cat) {
       case ExpenseCategory.fuel:
-        return AppColors.greenAccent;
+        return const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [AppColors.greenAccent, AppColors.green],
+        );
       case ExpenseCategory.service:
-        return AppColors.redAccent;
+        return const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [AppColors.lightRed, AppColors.darkRed],
+        );
       case ExpenseCategory.tuning:
-        return AppColors.blueAccent;
+        return const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [AppColors.energyBlue25, AppColors.darkBlue],
+        );
       case ExpenseCategory.other:
-        return AppColors.neutreGrey;
+        return const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [AppColors.grey50,AppColors.grey700],
+        );
     }
   }
 
@@ -111,17 +140,21 @@ class ExpenseStatsCard extends StatelessWidget {
 }
 
 class _LegendItem extends StatelessWidget {
-  final Color color;
+  final Gradient gradient;
   final String text;
 
-  const _LegendItem({required this.color, required this.text});
+  const _LegendItem({required this.gradient, required this.text});
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Container(width: 14, height: 14, color: color),
-        AppSpacers.horizontalXSmall,
+        Container(
+          width: 16,
+          height: 16,
+          decoration: BoxDecoration(shape: BoxShape.circle, gradient: gradient),
+        ),
+        const SizedBox(width: 6),
         Text(text),
       ],
     );

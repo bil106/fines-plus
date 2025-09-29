@@ -28,7 +28,6 @@ class CarInfoScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-   
     return _CarInfoView(onCheckFine: onCheckFine, onBack: onBack);
   }
 }
@@ -51,11 +50,9 @@ class _CarInfoViewState extends State<_CarInfoView> {
 
   bool _showRecaptcha = false;
 
-
   final _carReg = RegExp(r'^[А-ЯЇІЄҐ]{2}\d{4}[А-ЯЇІЄҐ]{2}$');
   final _techReg = RegExp(r'^[А-ЯІЇЄҐ]{3}\d{6}$');
 
-  
   bool get isFormValid =>
       _carReg.hasMatch(_carNumberController.text) && _techReg.hasMatch(_techPassportController.text);
 
@@ -69,14 +66,12 @@ class _CarInfoViewState extends State<_CarInfoView> {
     historyCubit = context.read<HistoryCubit>();
     carInfoCubit = context.read<CarInfoCubit>();
 
-  
     carInfoCubit.loadSavedCarInfo().then((_) {
       _carNumberController.text = carInfoCubit.state.carNumber;
       _techPassportController.text = carInfoCubit.state.techPassport;
       setState(() {});
     });
 
- 
     _carNumberController.addListener(() => setState(() {}));
     _techPassportController.addListener(() => setState(() {}));
   }

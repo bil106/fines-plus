@@ -8,6 +8,7 @@ import 'package:design_system/constants/app_borders.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
 import 'package:fines_plus/core/widgets/expense_stats_card.dart';
+import 'package:fines_plus/router/home_screen_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -48,7 +49,7 @@ class _StatisticsScreenView extends StatelessWidget {
               Card(
                 shape: RoundedRectangleBorder(borderRadius: AppBorders.radiusLarge),
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 10),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -58,7 +59,6 @@ class _StatisticsScreenView extends StatelessWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                        
                           Row(
                             children: [
                               const Icon(Icons.directions_car, size: 28, color: AppColors.energyBlue),
@@ -81,7 +81,6 @@ class _StatisticsScreenView extends StatelessWidget {
                             ],
                           ),
 
-                         
                           Column(
                             children: [
                               BlocSelector<MaintenanceCubit, MaintenanceState, int>(
@@ -115,7 +114,12 @@ class _StatisticsScreenView extends StatelessWidget {
               ),
               AppSpacers.verticalMedium,
 
-              if (state.expenseStats != null) ExpenseStatsCard(stats: state.expenseStats!),
+              if (state.expenseStats != null)
+                ExpenseStatsCard(
+                  stats: state.expenseStats!,
+                  onMaintenance: () =>
+                      context.findAncestorStateOfType<HomeScreenWrapperState>()?.openPage(HomePage.maintenance),
+                ),
             ],
           ),
         );

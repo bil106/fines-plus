@@ -41,7 +41,7 @@ class MaintenanceCard extends StatelessWidget {
       elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: AppBorders.radiusLarge),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.symmetric(horizontal:16,vertical: 8 ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -98,7 +98,7 @@ class MaintenanceCard extends StatelessWidget {
               ],
             ),
 
-            AppSpacers.verticalSmallMedium,
+            
 
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
