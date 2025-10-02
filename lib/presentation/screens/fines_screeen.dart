@@ -18,6 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easy_recaptcha_v2/flutter_easy_recaptcha_v2.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 @RoutePage()
 class FinesScreen extends StatefulWidget {
@@ -120,7 +121,17 @@ class _FinesScreenState extends State<FinesScreen> {
                                 shape: RoundedRectangleBorder(borderRadius: AppBorders.radius16),
                               ),
                               onPressed: isFormValid && !isLoading
-                                  ? () {
+                                  ? () async {
+                                      final prefs = await SharedPreferences.getInstance();
+                                      final finesEnabled = prefs.getBool("finesCheck") ?? true;
+
+                                      if (!finesEnabled) {
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(SnackBar(content: Text(S.of(context).fine_checking_disabled)));
+                                        return;
+                                      }
+
                                       if (user == null) {
                                         showDialog(
                                           context: context,

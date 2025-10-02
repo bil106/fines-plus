@@ -112,6 +112,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Заповніть дату, пробіг та кількість палива",
     ),
     "filter": MessageLookupByLibrary.simpleMessage("фільтр"),
+    "fine_checking_disabled": MessageLookupByLibrary.simpleMessage(
+      "Перевірка штрафів вимкнена у налаштуваннях",
+    ),
     "fines": MessageLookupByLibrary.simpleMessage("Штрафи"),
     "fines_length": MessageLookupByLibrary.simpleMessage("Штрафів:"),
     "fuel": MessageLookupByLibrary.simpleMessage("Паливо"),
@@ -154,6 +157,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "new_task": MessageLookupByLibrary.simpleMessage("Нове завдання"),
     "no_fines": MessageLookupByLibrary.simpleMessage("На вас немає штрафів"),
     "no_name": MessageLookupByLibrary.simpleMessage("Без назви"),
+    "no_records": MessageLookupByLibrary.simpleMessage("Немає записів"),
     "no_reminders": MessageLookupByLibrary.simpleMessage("Немає нагадувань"),
     "no_tasks": MessageLookupByLibrary.simpleMessage("Немає завдань"),
     "no_tokens_yet": MessageLookupByLibrary.simpleMessage(

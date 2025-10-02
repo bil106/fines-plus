@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:core_cubit/cubit/history/history_cubit.dart';
 import 'package:core_data/core_data.dart';
+import 'package:core_localization/generated/l10n.dart';
 import 'package:core_repository/car_info_repository.dart';
 import 'package:core_repository/user_not_signed_in_exception.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -8,7 +9,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'car_info_state.dart';
 import 'dart:async';
-
 
 class CarInfoCubit extends Cubit<CarInfoState> {
   final CarInfoRepository _repo;
@@ -18,7 +18,7 @@ class CarInfoCubit extends Cubit<CarInfoState> {
     _load();
   }
 
-static final carReg = RegExp(r'^[А-ЯЇІЄҐ]{2}\d{4}[А-ЯЇІЄҐ]{2}$');
+  static final carReg = RegExp(r'^[А-ЯЇІЄҐ]{2}\d{4}[А-ЯЇІЄҐ]{2}$');
   static final techReg = RegExp(r'^[А-ЯІЇЄҐ]{3}\d{6}$');
 
   Future<void> loadSavedCarInfo() async {
@@ -94,6 +94,14 @@ static final carReg = RegExp(r'^[А-ЯЇІЄҐ]{2}\d{4}[А-ЯЇІЄҐ]{2}$');
   }
 
   Future<void> checkFinesWithCaptcha(String captchaToken) async {
+    final prefs = await SharedPreferences.getInstance();
+    final finesEnabled = prefs.getBool("finesCheck") ?? true;
+
+    if (!finesEnabled) {
+      emit(state.copyWith(status: CarInfoErrorStatus(S.current.fine_checking_disabled)));
+      return;
+    }
+
     final error = validate();
     if (error != null) {
       emit(state.copyWith(status: CarInfoErrorStatus(error)));
@@ -127,5 +135,4 @@ static final carReg = RegExp(r'^[А-ЯЇІЄҐ]{2}\d{4}[А-ЯЇІЄҐ]{2}$');
       emit(state.copyWith(status: CarInfoErrorStatus(e.toString())));
     }
   }
-
 }

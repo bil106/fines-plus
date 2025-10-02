@@ -145,7 +145,7 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
             AddCarScreen(
               key: const ValueKey('add_car_screen'),
               onOpenCarInfo: () => openPage(HomePage.carInfo),
-              onFineCheck: () => openPage(HomePage.fineCheck),
+              onFineCheck: () => openPage(HomePage.fines),
               onMaintenance: () => openPage(HomePage.maintenance),
               onAnalytics: () => openPage(HomePage.analytics),
             ),

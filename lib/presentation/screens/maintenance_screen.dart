@@ -107,13 +107,32 @@ class _MaintenanceScreenView extends StatelessWidget {
                     Text(S.of(context).tech_service, style: textTheme.title),
                     AppSpacers.verticalMedium,
                     Expanded(
-                      child: ListView(
-                        children: [
-                          ...state.serviceRecords.map((r) => ServiceRecordCard(record: r)),
-                          ...state.tuningRecords.map((r) => TuningRecordCard(record: r)),
-                          ...state.fuelRecords.map((r) => FuelRecordCard(record: r)),
-                          ...state.carWashRecords.map((r) => CarWashRecordCard(record: r)),
-                        ],
+                      child: Builder(
+                        builder: (_) {
+                          final hasRecords =
+                              state.serviceRecords.isNotEmpty ||
+                              state.tuningRecords.isNotEmpty ||
+                              state.fuelRecords.isNotEmpty ||
+                              state.carWashRecords.isNotEmpty;
+
+                          if (!hasRecords) {
+                            return Center(
+                              child: Text(
+                                S.current.no_records,
+                                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500, color: AppColors.grey700),
+                              ),
+                            );
+                          }
+
+                          return ListView(
+                            children: [
+                              ...state.serviceRecords.map((r) => ServiceRecordCard(record: r)),
+                              ...state.tuningRecords.map((r) => TuningRecordCard(record: r)),
+                              ...state.fuelRecords.map((r) => FuelRecordCard(record: r)),
+                              ...state.carWashRecords.map((r) => CarWashRecordCard(record: r)),
+                            ],
+                          );
+                        },
                       ),
                     ),
                     AppSpacers.verticalLargeXL,
@@ -135,11 +154,11 @@ class _MaintenanceScreenView extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    // Calendar
+                    // Other
                     _buildAnimatedAction(
                       context,
-                      S.of(context).calendar,
-                      const Icon(Icons.calendar_today, color: AppColors.energyBlue),
+                      S.of(context).other,
+                      const Icon(Icons.more_horiz, color: AppColors.energyBlue),
 
                       S.of(context).calendar,
                       () async {
@@ -216,22 +235,6 @@ class _MaintenanceScreenView extends StatelessWidget {
                       state.isMenuOpen,
                     ),
 
-                    // Fuel
-                    _buildAnimatedAction(
-                      context,
-                      S.of(context).fuel_up,
-                      const Icon(Icons.local_gas_station, color: AppColors.energyBlue),
-                      S.of(context).fuel_up,
-                      () async {
-                        cubit.closeMenu();
-                        final record = await context.router.push<FuelRecord>(FuelUpRoute());
-                        if (record != null) {
-                          cubit.addFuelRecord(record);
-                          onFuelUp?.call();
-                        }
-                      },
-                      state.isMenuOpen,
-                    ),
                     // CarWash
                     _buildAnimatedAction(
                       context,
@@ -253,7 +256,22 @@ class _MaintenanceScreenView extends StatelessWidget {
                       },
                       state.isMenuOpen,
                     ),
-
+                    // Fuel
+                    _buildAnimatedAction(
+                      context,
+                      S.of(context).fuel_up,
+                      const Icon(Icons.local_gas_station, color: AppColors.energyBlue),
+                      S.of(context).fuel_up,
+                      () async {
+                        cubit.closeMenu();
+                        final record = await context.router.push<FuelRecord>(FuelUpRoute());
+                        if (record != null) {
+                          cubit.addFuelRecord(record);
+                          onFuelUp?.call();
+                        }
+                      },
+                      state.isMenuOpen,
+                    ),
                     AppSpacers.verticalLarge,
 
                     GestureDetector(

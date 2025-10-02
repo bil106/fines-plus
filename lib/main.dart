@@ -7,7 +7,6 @@ import 'package:core_cubit/cubit/purchase/purchase_cubit.dart';
 import 'package:core_cubit/cubit/referral/referral_cubit.dart';
 import 'package:core_cubit/cubit/registration/registration_cubit.dart';
 import 'package:core_cubit/cubit/schedule/schedule_cubit.dart';
-import 'package:core_data/core_data.dart';
 import 'package:core_repository/injector.dart';
 import 'package:core_repository/maintenance_repository.dart';
 import 'package:core_repository/schedule_repository.dart';
@@ -17,7 +16,6 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:fines_plus/my_app.dart';
 import 'package:fines_plus/services/app_initializer.dart';
@@ -71,7 +69,7 @@ void main() {
                 create: (context) => ScheduleCubit(
                   repository: context.read<ScheduleRepository>(),
                   maintenanceCubit: result.maintenanceCubit,
-                  pushHelper: PushHelper(FlutterLocalNotificationsPlugin()),
+                  pushHelper: result.pushHelper,
                   enabled: true,
                 )..loadTasks(),
               ),

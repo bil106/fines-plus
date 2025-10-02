@@ -17,6 +17,7 @@ import 'package:flutter/material.dart';
 import 'package:core_utils/formatters/vehicle_formatters.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easy_recaptcha_v2/flutter_easy_recaptcha_v2.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 @RoutePage()
 class CarInfoScreen extends StatelessWidget {
@@ -66,13 +67,12 @@ class _CarInfoViewState extends State<_CarInfoView> {
     historyCubit = context.read<HistoryCubit>();
     carInfoCubit = context.read<CarInfoCubit>();
 
-carInfoCubit.loadSavedCarInfo().then((_) {
-      if (!mounted) return; 
+    carInfoCubit.loadSavedCarInfo().then((_) {
+      if (!mounted) return;
       _carNumberController.text = carInfoCubit.state.carNumber;
       _techPassportController.text = carInfoCubit.state.techPassport;
       setState(() {});
     });
-
 
     _carNumberController.addListener(() => setState(() {}));
     _techPassportController.addListener(() => setState(() {}));
@@ -211,7 +211,17 @@ carInfoCubit.loadSavedCarInfo().then((_) {
                       height: 65,
                       child: ElevatedButton(
                         onPressed: isFormValid
-                            ? () {
+                            ? () async {
+                                final prefs = await SharedPreferences.getInstance();
+                                final finesEnabled = prefs.getBool("finesCheck") ?? true;
+
+                                if (!finesEnabled) {
+                                  ScaffoldMessenger.of(
+                                    context,
+                                  ).showSnackBar(SnackBar(content: Text(S.of(context).fine_checking_disabled)));
+                                  return;
+                                }
+
                                 final user = FirebaseAuth.instance.currentUser;
                                 if (user == null) {
                                   _handleUnauthorized();
@@ -220,6 +230,7 @@ carInfoCubit.loadSavedCarInfo().then((_) {
                                 }
                               }
                             : null,
+
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.blue700,
                           shape: RoundedRectangleBorder(borderRadius: AppBorders.radius16),

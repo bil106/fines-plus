@@ -112,6 +112,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Fill in date, mileage and fuel amount",
     ),
     "filter": MessageLookupByLibrary.simpleMessage("filter"),
+    "fine_checking_disabled": MessageLookupByLibrary.simpleMessage(
+      "Fine checking is disabled in settings",
+    ),
     "fines": MessageLookupByLibrary.simpleMessage("Fines"),
     "fines_length": MessageLookupByLibrary.simpleMessage("Fines:"),
     "fuel": MessageLookupByLibrary.simpleMessage("Fuel"),
@@ -157,6 +160,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "There are no fines for you",
     ),
     "no_name": MessageLookupByLibrary.simpleMessage("No name"),
+    "no_records": MessageLookupByLibrary.simpleMessage("No records"),
     "no_reminders": MessageLookupByLibrary.simpleMessage("No reminders"),
     "no_tasks": MessageLookupByLibrary.simpleMessage("No tasks"),
     "no_tokens_yet": MessageLookupByLibrary.simpleMessage("No tokens yet"),

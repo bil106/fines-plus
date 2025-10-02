@@ -2758,6 +2758,21 @@ class S {
       args: [],
     );
   }
+
+  /// `No records`
+  String get no_records {
+    return Intl.message('No records', name: 'no_records', desc: '', args: []);
+  }
+
+  /// `Fine checking is disabled in settings`
+  String get fine_checking_disabled {
+    return Intl.message(
+      'Fine checking is disabled in settings',
+      name: 'fine_checking_disabled',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

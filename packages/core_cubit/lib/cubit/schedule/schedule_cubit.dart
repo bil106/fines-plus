@@ -14,11 +14,9 @@ class ScheduleCubit extends Cubit<ScheduleState> {
   final PushHelper pushHelper;
   bool enabled;
 
-  ScheduleCubit({
-    required this.repository,
-    required this.maintenanceCubit,
-    required this.pushHelper, required this.enabled
-  }) : super(ScheduleState(tasks: []));
+  ScheduleCubit(
+      {required this.repository, required this.maintenanceCubit, required this.pushHelper, required this.enabled})
+      : super(ScheduleState(tasks: []));
 
   Future<void> loadTasks() async {
     final tasks = await repository.loadTasks();

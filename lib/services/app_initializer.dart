@@ -196,11 +196,21 @@ class AppInitializer {
 
 extension ReminderScheduling on AppInitializer {
   Future<void> scheduleReminder(ReminderModel reminder) async {
+    final prefs = await SharedPreferences.getInstance();
+    final remindersEnabled = prefs.getBool("reminders") ?? true;
+    final pushEnabled = prefs.getBool("pushNotifications") ?? true;
+
+    if (!(remindersEnabled && pushEnabled)) {
+      debugPrint("⚠️ Notifications disabled in settings, skip scheduling");
+      return;
+    }
+
     final now = DateTime.now();
     if (reminder.dateTime.isBefore(now)) {
       debugPrint('⏱ Reminder ${reminder.id} time is in the past, skipping.');
       return;
     }
+
     final notificationId = reminder.id.hashCode;
     _scheduledReminderIds[reminder.id] = notificationId;
 
@@ -210,7 +220,7 @@ extension ReminderScheduling on AppInitializer {
     Future.delayed(delay, () async {
       const String soundFileName = 'notify';
       await flutterLocalNotificationsPlugin.show(
-        reminder.id.hashCode,
+        notificationId,
         reminder.title,
         reminder.description,
         const NotificationDetails(

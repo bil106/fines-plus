@@ -2,7 +2,6 @@ import 'package:core_localization/generated/l10n.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
-
 class PushHelper {
   final FlutterLocalNotificationsPlugin _notificationsPlugin;
 
@@ -47,7 +46,6 @@ class PushHelper {
       iOS: iosDetails,
     );
 
-  
     Future.delayed(delay, () async {
       await _notificationsPlugin.show(
         id,

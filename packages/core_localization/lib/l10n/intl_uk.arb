@@ -311,5 +311,8 @@
    "loaded": "Завантажено",
    "open_site": "Увійти у e-Drive",
    "extracting": "Видобування...",
-   "extract_tokens": "Видобути токени"
+   "extract_tokens": "Видобути токени",
+   "no_records": "Немає записів",
+   "fine_checking_disabled": "Перевірка штрафів вимкнена у налаштуваннях"
+   
 }

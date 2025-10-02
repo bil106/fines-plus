@@ -310,5 +310,7 @@
 "loaded": "Loaded",
 "open_site": "Open e-Drive",
 "extracting": "Extracting...",
-"extract_tokens": "Extract tokens"
+"extract_tokens": "Extract tokens",
+"no_records": "No records",
+"fine_checking_disabled": "Fine checking is disabled in settings"
 }

@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:core_data/core_data.dart';
 import 'package:core_repository/reminder_repository.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 part 'reminder_state.dart';
 
@@ -22,16 +23,9 @@ class ReminderCubit extends Cubit<ReminderState> {
     emit(state.copyWith(isLoading: true, errorMessage: null));
     try {
       final reminders = await repository.getAll(carNumber);
-      if (!isClosed) {
-        emit(state.copyWith(reminders: reminders, isLoading: false));
-      }
+      if (!isClosed) emit(state.copyWith(reminders: reminders, isLoading: false));
     } catch (e) {
-      if (!isClosed) {
-        emit(state.copyWith(
-          isLoading: false,
-          errorMessage: 'Loading error: $e',
-        ));
-      }
+      if (!isClosed) emit(state.copyWith(isLoading: false, errorMessage: 'Loading error: $e'));
     }
   }
 
@@ -40,19 +34,22 @@ class ReminderCubit extends Cubit<ReminderState> {
     try {
       await repository.add(carNumber, reminder);
 
-      await pushHelper.scheduleNotification(
-        id: reminder.id.hashCode,
-        title: reminder.title,
-        body: reminder.description,
-        dateTime: reminder.dateTime,
-      );
+      final prefs = await SharedPreferences.getInstance();
+      final remindersEnabled = prefs.getBool("reminders") ?? true;
+      final pushEnabled = prefs.getBool("pushNotifications") ?? true;
+
+      if (remindersEnabled && pushEnabled) {
+        await pushHelper.scheduleNotification(
+          id: reminder.id.hashCode,
+          title: reminder.title,
+          body: reminder.description,
+          dateTime: reminder.dateTime,
+        );
+      }
 
       await load();
     } catch (e) {
-      emit(state.copyWith(
-        isLoading: false,
-        errorMessage: 'Adding error: $e',
-      ));
+      emit(state.copyWith(isLoading: false, errorMessage: 'Adding error: $e'));
     }
   }
 
@@ -62,10 +59,7 @@ class ReminderCubit extends Cubit<ReminderState> {
       await repository.update(carNumber, reminder);
       await load();
     } catch (e) {
-      emit(state.copyWith(
-        isLoading: false,
-        errorMessage: 'Update error: $e',
-      ));
+      emit(state.copyWith(isLoading: false, errorMessage: 'Update error: $e'));
     }
   }
 
@@ -75,23 +69,20 @@ class ReminderCubit extends Cubit<ReminderState> {
       await repository.delete(carNumber, id);
       await load();
     } catch (e) {
-      emit(state.copyWith(
-        isLoading: false,
-        errorMessage: 'Delete error: $e',
-      ));
+      emit(state.copyWith(isLoading: false, errorMessage: 'Delete error: $e'));
     }
   }
-    Future<void> addReminderFromTask(MaintenanceTask task) async {
+
+  Future<void> addReminderFromTask(MaintenanceTask task) async {
     if (task.intervalTime == null) return;
 
     final reminder = ReminderModel(
       title: task.title,
-      dateTime: task.lastServiceDate != null
-          ? DateTime.parse(task.lastServiceDate!) 
-          : DateTime.now(), id: '', description: '',
-     
+      dateTime: task.lastServiceDate != null ? DateTime.parse(task.lastServiceDate!) : DateTime.now(),
+      id: '',
+      description: '',
     );
 
-    await addReminder(reminder); 
+    await addReminder(reminder);
   }
 }

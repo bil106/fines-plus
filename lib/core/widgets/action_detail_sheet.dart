@@ -24,8 +24,8 @@ class ActionDetailSheet extends StatefulWidget {
     this.actualMileage,
     this.intervalKm,
     this.comment,
-    this.byDate = true,
-    this.byMileage = false,
+    this.byDate = false,
+    this.byMileage = true,
   });
 
   @override
@@ -39,8 +39,8 @@ class _ActionDetailSheetState extends State<ActionDetailSheet> {
   late TextEditingController intervalController;
   late TextEditingController commentController;
 
-  bool byDate = true;
-  bool byMileage = false;
+  bool byDate = false;
+  bool byMileage = true;
   DateTime? selectedDate;
 
   @override
@@ -152,10 +152,10 @@ class _ActionDetailSheetState extends State<ActionDetailSheet> {
             AppSpacers.verticalMedium,
             Row(
               children: [
-                Checkbox(value: byDate, onChanged: (v) => setState(() => byDate = v ?? true)),
+                Checkbox(value: byDate, onChanged: (v) => setState(() => byDate = v ?? false)),
                 Text(S.of(context).by_date),
                 AppSpacers.horizontalMediumLarge,
-                Checkbox(value: byMileage, onChanged: (v) => setState(() => byMileage = v ?? false)),
+                Checkbox(value: byMileage, onChanged: (v) => setState(() => byMileage = v ?? true)),
                 Text(S.of(context).by_mileage),
               ],
             ),
