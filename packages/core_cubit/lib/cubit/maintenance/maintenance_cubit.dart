@@ -109,64 +109,65 @@ Future<void> addCarWashRecord(CarWashRecord record) async {
   }
 }
 extension MileageCalculations on MaintenanceCubit {
-
-int getCurrentMonthMileage(DateTime now) {
+ 
+  Map<String, int> getMonthlyMileage() {
     final allRecords = [
-      ...state.fuelRecords.map((r) => {"date": r.date, "mileage": r.mileage}),
-      ...state.serviceRecords.map((r) => {"date": r.date, "mileage": r.mileage}),
-      ...state.tuningRecords.map((r) => {"date": r.date, "mileage": r.mileage}),
-      ...state.carWashRecords.map((r) => {"date": r.date, "mileage": r.mileage}),
+      ...state.serviceRecords.map((r) => {
+            'date': DateFormat('dd.MM.yyyy').parse(r.date),
+            'mileage': r.mileage,
+          }),
+      ...state.fuelRecords.map((r) => {
+            'date': DateFormat('dd.MM.yyyy').parse(r.date),
+            'mileage': r.mileage,
+          }),
+      ...state.carWashRecords.map((r) => {
+            'date': DateFormat('dd.MM.yyyy').parse(r.date),
+            'mileage': r.mileage,
+          }),
+      ...state.tuningRecords.map((r) => {
+            'date': DateFormat('dd.MM.yyyy').parse(r.date),
+            'mileage': r.mileage,
+          }),
     ];
 
-    DateTime parseDate(String dateStr) {
-      try {
-        return DateFormat('dd.MM.yyyy').parse(dateStr);
-      } catch (_) {
-        return DateTime(1970);
-      }
-    }
-
-   
-    final monthRecords = allRecords.where((r) {
-      final d = parseDate(r["date"] as String);
-      return d.year == now.year && d.month == now.month;
-    }).toList();
-
-    if (monthRecords.isEmpty) return 0;
-
-
-    monthRecords.sort((a, b) => (a["mileage"] as int).compareTo(b["mileage"] as int));
-    return monthRecords.last["mileage"] as int;
-  }
-
-
-
-
-
-  int getAverageMileage() {
-    final allRecords = [
-      ...state.serviceRecords.map((r) => {'date': DateFormat('dd.MM.yyyy').parse(r.date), 'mileage': r.mileage}),
-      ...state.fuelRecords.map((r) => {'date': DateFormat('dd.MM.yyyy').parse(r.date), 'mileage': r.mileage}),
-      ...state.carWashRecords.map((r) => {'date': DateFormat('dd.MM.yyyy').parse(r.date), 'mileage': r.mileage}),
-      ...state.tuningRecords.map((r) => {'date': DateFormat('dd.MM.yyyy').parse(r.date), 'mileage': r.mileage}),
-    ];
-
-    if (allRecords.isEmpty) return 0;
+    if (allRecords.isEmpty) return {};
 
     final Map<String, List<int>> months = {};
     for (final r in allRecords) {
       final d = r['date'] as DateTime;
-      final key = "${d.year}-${d.month}";
+      final key = "${d.year}-${d.month.toString().padLeft(2, '0')}";
       months.putIfAbsent(key, () => []);
       months[key]!.add(r['mileage'] as int);
     }
 
-    final monthMileages = months.values.map((mileages) {
+    final Map<String, int> result = {};
+    months.forEach((key, mileages) {
       mileages.sort();
-      return mileages.last - mileages.first;
-    }).toList();
+      result[key] = mileages.last - mileages.first;
+    });
 
-    final total = monthMileages.fold(0, (sum, m) => sum + m);
-    return monthMileages.isNotEmpty ? total ~/ monthMileages.length : 0;
+    return result;
+  }
+
+ int getCurrentMonthMileage(DateTime now) {
+    final monthly = getMonthlyMileage();
+    final key = "${now.year}-${now.month.toString().padLeft(2, '0')}";
+
+    final current = monthly[key] ?? 0;
+
+   
+    final past = monthly.entries.where((e) => e.key.compareTo(key) < 0).fold(0, (sum, e) => sum + e.value);
+
+    return past + current;
+  }
+
+
+  int getAverageMileage() {
+    final monthly = getMonthlyMileage();
+
+    if (monthly.isEmpty) return 0;
+
+    final total = monthly.values.fold(0, (sum, m) => sum + m);
+    return total ~/ monthly.length;
   }
 }

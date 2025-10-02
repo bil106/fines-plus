@@ -5,33 +5,33 @@ class StatisticsState {
   final bool loading;
   final int currentMonthMileage;
   final int averageMileage;
-  final MonthlyExpenseStats? expenseStats;
+  final List<MonthlyExpenseStats> expenses; 
 
   const StatisticsState({
     required this.loading,
     required this.currentMonthMileage,
     required this.averageMileage,
-    required this.expenseStats,
+    required this.expenses,
   });
 
   factory StatisticsState.initial() => const StatisticsState(
-        loading: false,
+        loading: true,
         currentMonthMileage: 0,
         averageMileage: 0,
-        expenseStats: null,
+        expenses: [],
       );
 
   StatisticsState copyWith({
     bool? loading,
     int? currentMonthMileage,
     int? averageMileage,
-    MonthlyExpenseStats? expenseStats,
+    List<MonthlyExpenseStats>? expenses,
   }) {
     return StatisticsState(
       loading: loading ?? this.loading,
       currentMonthMileage: currentMonthMileage ?? this.currentMonthMileage,
       averageMileage: averageMileage ?? this.averageMileage,
-      expenseStats: expenseStats ?? this.expenseStats,
+      expenses: expenses ?? this.expenses,
     );
   }
 }
