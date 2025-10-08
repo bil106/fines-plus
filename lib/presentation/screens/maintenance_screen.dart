@@ -12,6 +12,8 @@ import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
 import 'package:fines_plus/core/widgets/ad_banner_widget.dart';
 import 'package:fines_plus/core/widgets/car_wash_record_card.dart';
+import 'package:fines_plus/core/widgets/delete_expenses_button.dart';
+import 'package:fines_plus/core/widgets/fab_menu.dart';
 import 'package:fines_plus/core/widgets/fuel_record_card.dart';
 import 'package:fines_plus/core/widgets/service_record_card.dart';
 import 'package:fines_plus/core/widgets/tuning_record_card.dart';
@@ -50,12 +52,10 @@ class MaintenanceScreen extends StatefulWidget {
 
 class _MaintenanceScreenState extends State<MaintenanceScreen> {
   @override
+  @override
   void initState() {
     super.initState();
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<MaintenanceCubit>().closeMenu();
-    });
+    context.read<MaintenanceCubit>().init();
   }
 
   @override
@@ -92,7 +92,9 @@ class _MaintenanceScreenView extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: AppColors.grey50,
         leading: BackButton(color: AppColors.blue700, onPressed: onBack ?? () {}),
+        actions: const [DeleteExpensesButton()],
       ),
+
       body: BlocBuilder<MaintenanceCubit, MaintenanceState>(
         builder: (context, state) {
           final cubit = context.read<MaintenanceCubit>();
@@ -140,221 +142,109 @@ class _MaintenanceScreenView extends StatelessWidget {
                   ],
                 ),
               ),
-
+              if (state.isLoading)
+                Container(
+                  color: Colors.black.withOpacity(0.3),
+                  child: const Center(child: CircularProgressIndicator()),
+                ),
               if (state.isMenuOpen)
                 GestureDetector(
                   onTap: cubit.closeMenu,
                   child: Container(color: AppColors.black.withOpacity(0.4)),
                 ),
 
-              Positioned(
-                bottom: 20,
-                right: 20,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    // Other
-                    _buildAnimatedAction(
-                      context,
-                      S.of(context).other,
-                      const Icon(Icons.more_horiz, color: AppColors.energyBlue),
+              FABMenu(
+                isMenuOpen: state.isMenuOpen,
+                cubit: cubit,
+                actions: [
+                  FABAction(
+                    icon: const Icon(Icons.more_horiz, color: AppColors.energyBlue),
+                    onTap: () async {
+                      cubit.closeMenu();
+                      final prefs = await SharedPreferences.getInstance();
+                      final localDataSource = ReminderLocalDataSourceImpl(SharedPrefsManager(prefs));
+                      final remoteDataSource = ReminderRemoteDataSourceImpl(FirebaseFirestore.instance);
 
-                      S.of(context).calendar,
-                      () async {
-                        cubit.closeMenu();
+                      final reminderRepository = ReminderRepository(
+                        localDataSource: localDataSource,
+                        remoteDataSource: remoteDataSource,
+                      );
 
-                        final prefs = await SharedPreferences.getInstance();
-                        final localDataSource = ReminderLocalDataSourceImpl(SharedPrefsManager(prefs));
-                        final remoteDataSource = ReminderRemoteDataSourceImpl(FirebaseFirestore.instance);
+                      final scheduleRepository = ScheduleRepository();
 
-                        final reminderRepository = ReminderRepository(
-                          localDataSource: localDataSource,
-                          remoteDataSource: remoteDataSource,
-                        );
-
-                        final scheduleRepository = ScheduleRepository();
-
-                        await context.router.push(
-                          ScheduleRoute(
-                            repository: scheduleRepository,
-                            reminderRepository: reminderRepository,
-                            pushHelper: PushHelper(FlutterLocalNotificationsPlugin()),
-                            carNumber: '',
-                          ),
-                        );
-                      },
-                      state.isMenuOpen,
-                    ),
-
-                    // Settings
-                    _buildAnimatedAction(
-                      context,
-                      S.of(context).settings,
-                      const Icon(Icons.settings, color: AppColors.energyBlue),
-                      S.of(context).settings,
-                      () {
-                        cubit.closeMenu();
-                        context.findAncestorStateOfType<HomeScreenWrapperState>()?.openPage(HomePage.settings);
-                      },
-                      state.isMenuOpen,
-                    ),
-                    // Tuning
-                    _buildAnimatedAction(
-                      context,
-                      S.of(context).tuning,
-                      Image.asset('assets/icons/tuning.jpg', color: AppColors.energyBlue, height: 24),
-                      S.of(context).fuel_up,
-                      () async {
-                        cubit.closeMenu();
-                        final records = await context.router.push<List<TuningRecord>>(TuningRoute());
-                        if (records != null && records.isNotEmpty) {
-                          cubit.addTuningRecords(records);
-                          onTuning?.call();
-                        }
-                      },
-                      state.isMenuOpen,
-                    ),
-
-                    // Service
-                    _buildAnimatedAction(
-                      context,
-                      S.of(context).service,
-                      const Icon(Icons.build, color: AppColors.energyBlue),
-                      S.of(context).service,
-                      () async {
-                        cubit.closeMenu();
-                        final records = await Navigator.push<List<ServiceRecord>>(
-                          context,
-                          MaterialPageRoute(builder: (_) => const ServiceScreen()),
-                        );
-                        if (records != null && records.isNotEmpty) {
-                          cubit.addServiceRecords(records);
-                        }
-                      },
-                      state.isMenuOpen,
-                    ),
-
-                    // CarWash
-                    _buildAnimatedAction(
-                      context,
-                      S.of(context).car_wash,
-                      SvgPicture.asset(
-                        'assets/icons/car-wash.svg',
-                        color: AppColors.energyBlue,
-                        colorBlendMode: BlendMode.srcIn,
-                        height: 24,
-                      ),
-                      S.of(context).car_wash,
-                      () async {
-                        cubit.closeMenu();
-                        final record = await context.router.push<CarWashRecord>(CarWashRoute());
-                        if (record != null) {
-                          cubit.addCarWashRecord(record);
-                          onFuelUp?.call();
-                        }
-                      },
-                      state.isMenuOpen,
-                    ),
-                    // Fuel
-                    _buildAnimatedAction(
-                      context,
-                      S.of(context).fuel_up,
-                      const Icon(Icons.local_gas_station, color: AppColors.energyBlue),
-                      S.of(context).fuel_up,
-                      () async {
-                        cubit.closeMenu();
-                        final record = await context.router.push<FuelRecord>(FuelUpRoute());
-                        if (record != null) {
-                          cubit.addFuelRecord(record);
-                          onFuelUp?.call();
-                        }
-                      },
-                      state.isMenuOpen,
-                    ),
-                    AppSpacers.verticalLarge,
-
-                    GestureDetector(
-                      onTap: cubit.toggleMenu,
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 200),
-                        height: 50,
-                        width: 50,
-                        decoration: const BoxDecoration(color: AppColors.energyBlue, shape: BoxShape.circle),
-                        child: AnimatedRotation(
-                          turns: state.isMenuOpen ? 0.125 : 0,
-                          duration: const Duration(milliseconds: 200),
-                          child: Icon(state.isMenuOpen ? Icons.close : Icons.add, color: AppColors.neutreBlanc),
+                      await context.router.push(
+                        ScheduleRoute(
+                          repository: scheduleRepository,
+                          reminderRepository: reminderRepository,
+                          pushHelper: PushHelper(FlutterLocalNotificationsPlugin()),
+                          carNumber: '',
                         ),
-                      ),
+                      );
+                    },
+                  ),
+                  FABAction(
+                    icon: const Icon(Icons.settings, color: AppColors.energyBlue),
+                    onTap: () {
+                      cubit.closeMenu();
+                      context.findAncestorStateOfType<HomeScreenWrapperState>()?.openPage(HomePage.settings);
+                    },
+                  ),
+                  FABAction(
+                    icon: Image.asset('assets/icons/tuning.jpg', color: AppColors.energyBlue, height: 24),
+                    onTap: () async {
+                      cubit.closeMenu();
+                      final records = await context.router.push<List<TuningRecord>>(TuningRoute());
+                      if (records != null && records.isNotEmpty) {
+                        cubit.addTuningRecordsList(records);
+                        onTuning?.call();
+                      }
+                    },
+                  ),
+                  FABAction(
+                    icon: const Icon(Icons.build, color: AppColors.energyBlue),
+                    onTap: () async {
+                      cubit.closeMenu();
+                      final records = await Navigator.push<List<ServiceRecord>>(
+                        context,
+                        MaterialPageRoute(builder: (_) => const ServiceScreen()),
+                      );
+                      if (records != null && records.isNotEmpty) {
+                        cubit.addServiceRecords(records);
+                        onService?.call();
+                      }
+                    },
+                  ),
+                  FABAction(
+                    icon: SvgPicture.asset(
+                      'assets/icons/car-wash.svg',
+                      color: AppColors.energyBlue,
+                      colorBlendMode: BlendMode.srcIn,
+                      height: 24,
                     ),
-                  ],
-                ),
+                    onTap: () async {
+                      cubit.closeMenu();
+                      final record = await context.router.push<CarWashRecord>(CarWashRoute());
+                      if (record != null) {
+                        cubit.addCarWashRecord(record);
+                      }
+                    },
+                  ),
+                  FABAction(
+                    icon: const Icon(Icons.local_gas_station, color: AppColors.energyBlue),
+                    onTap: () async {
+                      cubit.closeMenu();
+                      final record = await context.router.push<FuelRecord>(FuelUpRoute());
+                      if (record != null) {
+                        cubit.addFuelRecord(record);
+                        onFuelUp?.call();
+                      }
+                    },
+                  ),
+                ],
               ),
             ],
           );
         },
-      ),
-    );
-  }
-
-  Widget _buildAction(BuildContext context, String title, Widget icon, String tooltip, VoidCallback? onTap) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        GestureDetector(
-          onTap: onTap,
-          child: Tooltip(
-            message: tooltip,
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  title,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.neutreBlanc,
-                  ),
-                ),
-                const SizedBox(width: 8),
-
-                Container(
-                  height: 50,
-                  width: 50,
-                  decoration: const BoxDecoration(
-                    color: AppColors.neutreBlanc,
-                    shape: BoxShape.circle,
-                    boxShadow: [BoxShadow(color: AppColors.black26, blurRadius: 6, offset: Offset(0, 2))],
-                  ),
-                  alignment: Alignment.center,
-                  child: icon,
-                ),
-              ],
-            ),
-          ),
-        ),
-        AppSpacers.verticalSmall,
-      ],
-    );
-  }
-
-  Widget _buildAnimatedAction(
-    BuildContext context,
-    String title,
-    Widget icon,
-    String tooltip,
-    VoidCallback? onTap,
-    bool isVisible,
-  ) {
-    return AnimatedSlide(
-      duration: const Duration(milliseconds: 350),
-      offset: isVisible ? Offset.zero : const Offset(0, 1),
-      curve: Curves.easeOut,
-      child: AnimatedOpacity(
-        duration: const Duration(milliseconds: 350),
-        opacity: isVisible ? 1 : 0,
-        child: _buildAction(context, title, icon, tooltip, onTap),
       ),
     );
   }

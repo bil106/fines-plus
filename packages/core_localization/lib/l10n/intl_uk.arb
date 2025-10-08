@@ -313,6 +313,13 @@
    "extracting": "Видобування...",
    "extract_tokens": "Видобути токени",
    "no_records": "Немає записів",
-   "fine_checking_disabled": "Перевірка штрафів вимкнена у налаштуваннях"
+   "fine_checking_disabled": "Перевірка штрафів вимкнена у налаштуваннях",
+   "delete_expense_history": "Видалити історію витрат",
+   "delete_all_expenses": "Видалити всі витрати?",
+   "cannot_be_undone": "Цю дію не можна буде скасувати.",
+   "remove": "Видалити",
+   "category_removed": "Вилучено категорію",
+   "del_all_expenses": "Видалити ВСІ витрати",
+   "all_exp_hist_deleted": "Вилучено всю історію витрат"
    
 }

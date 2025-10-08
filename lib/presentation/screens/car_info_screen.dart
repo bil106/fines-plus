@@ -1,7 +1,9 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:core_cubit/cubit/car_info/car_info_cubit.dart';
 import 'package:core_cubit/cubit/car_info/car_info_state.dart';
+import 'package:core_cubit/cubit/expenses/expenses_cubit.dart';
 import 'package:core_cubit/cubit/history/history_cubit.dart';
+import 'package:core_cubit/cubit/maintenance/maintenance_cubit.dart';
 import 'package:core_localization/generated/l10n.dart';
 
 import 'package:design_system/colors/app_colors.dart';
@@ -71,6 +73,9 @@ class _CarInfoViewState extends State<_CarInfoView> {
       if (!mounted) return;
       _carNumberController.text = carInfoCubit.state.carNumber;
       _techPassportController.text = carInfoCubit.state.techPassport;
+
+      historyCubit.loadHistory(carInfoCubit.state.carNumber);
+
       setState(() {});
     });
 
@@ -174,7 +179,7 @@ class _CarInfoViewState extends State<_CarInfoView> {
               AppSpacers.verticalLargeXL,
               BlocListener<CarInfoCubit, CarInfoState>(
                 listenWhen: (prev, curr) => prev.status != curr.status,
-                listener: (context, state) {
+                listener: (context, state) async {
                   if (state.status is CarInfoErrorStatus) {
                     final msg = (state.status as CarInfoErrorStatus).message;
                     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -189,9 +194,18 @@ class _CarInfoViewState extends State<_CarInfoView> {
                       );
                     });
                   } else if (state.status is CarInfoLoadedStatus) {
-                    final carNumber = state.carNumber;
+                    final carInfoCubit = context.read<CarInfoCubit>();
+                    final carNumber = carInfoCubit.state.carNumber;
+                    final techPassport = carInfoCubit.state.techPassport;
+
+                    context.read<ExpensesCubit>().watch(carNumber, techPassport);
+
+                    historyCubit.loadHistory(carNumber);
+
+                    await context.read<MaintenanceCubit>().syncExpensesFromFirestore();
+
                     final homeWrapperState = context.findAncestorStateOfType<HomeScreenWrapperState>();
-                    homeWrapperState?.openPage(HomePage.history);
+                    homeWrapperState?.openPage(HomePage.maintenance);
 
                     if (widget.onCheckFine != null) {
                       final parts = carInfoCubit.getTechPassportParts();

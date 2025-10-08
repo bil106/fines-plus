@@ -1,12 +1,15 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:core_cubit/cubit/additional_options/additional_options_cubit.dart';
+import 'package:core_cubit/cubit/expenses/expenses_cubit.dart';
 import 'package:core_cubit/cubit/fuel_station/fuel_station_cubit.dart';
 import 'package:core_cubit/cubit/maintenance/maintenance_cubit.dart';
 import 'package:core_cubit/cubit/purchase/purchase_cubit.dart';
 import 'package:core_cubit/cubit/referral/referral_cubit.dart';
 import 'package:core_cubit/cubit/registration/registration_cubit.dart';
 import 'package:core_cubit/cubit/schedule/schedule_cubit.dart';
+import 'package:core_repository/expense_repository.dart';
 import 'package:core_repository/injector.dart';
 import 'package:core_repository/maintenance_repository.dart';
 import 'package:core_repository/schedule_repository.dart';
@@ -43,6 +46,7 @@ void main() {
 
       appInitializer = AppInitializer();
       final result = await appInitializer.init();
+      final firestore = FirebaseFirestore.instance;
       final repository = SharedPrefsMaintenanceRepository(await SharedPreferences.getInstance());
       setupLocator();
 
@@ -73,6 +77,7 @@ void main() {
                   enabled: true,
                 )..loadTasks(),
               ),
+              BlocProvider(create: (_) => ExpensesCubit(repository: ExpenseRepository(firestore))),
             ],
             child: MyApp(
               config: result.config,

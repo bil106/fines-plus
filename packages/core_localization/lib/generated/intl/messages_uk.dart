@@ -33,6 +33,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "address_not_specified": MessageLookupByLibrary.simpleMessage(
       "Адреса не вказана",
     ),
+    "all_exp_hist_deleted": MessageLookupByLibrary.simpleMessage(
+      "Вилучено всю історію витрат",
+    ),
     "amount_month": MessageLookupByLibrary.simpleMessage("Сума за місяць"),
     "analitics": MessageLookupByLibrary.simpleMessage("Аналітика"),
     "auto": MessageLookupByLibrary.simpleMessage("Авто"),
@@ -44,10 +47,16 @@ class MessageLookup extends MessageLookupByLibrary {
     "by_mileage": MessageLookupByLibrary.simpleMessage("За пробігом"),
     "calendar": MessageLookupByLibrary.simpleMessage("Календар"),
     "cancel": MessageLookupByLibrary.simpleMessage("Скасувати"),
+    "cannot_be_undone": MessageLookupByLibrary.simpleMessage(
+      "Цю дію не можна буде скасувати.",
+    ),
     "car_history": MessageLookupByLibrary.simpleMessage("Історія автомобіля"),
     "car_number": MessageLookupByLibrary.simpleMessage("Номер авто"),
     "car_wash": MessageLookupByLibrary.simpleMessage("Автомийка"),
     "car_wash_nearby": MessageLookupByLibrary.simpleMessage("Автомийка поруч"),
+    "category_removed": MessageLookupByLibrary.simpleMessage(
+      "Вилучено категорію",
+    ),
     "check_filter": MessageLookupByLibrary.simpleMessage(
       "Потрібно замінити фільтр",
     ),
@@ -77,6 +86,15 @@ class MessageLookup extends MessageLookupByLibrary {
       "Дата попереднього ТО",
     ),
     "days": MessageLookupByLibrary.simpleMessage("днів"),
+    "del_all_expenses": MessageLookupByLibrary.simpleMessage(
+      "Видалити ВСІ витрати",
+    ),
+    "delete_all_expenses": MessageLookupByLibrary.simpleMessage(
+      "Видалити всі витрати?",
+    ),
+    "delete_expense_history": MessageLookupByLibrary.simpleMessage(
+      "Видалити історію витрат",
+    ),
     "description": MessageLookupByLibrary.simpleMessage("Опис"),
     "edit_reminder": MessageLookupByLibrary.simpleMessage(
       "Редагувати нагадування",
@@ -213,6 +231,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "register": MessageLookupByLibrary.simpleMessage("Зареєструватися"),
     "registration": MessageLookupByLibrary.simpleMessage("Реєстрація"),
     "reminder": MessageLookupByLibrary.simpleMessage("Нагадування"),
+    "remove": MessageLookupByLibrary.simpleMessage("Видалити"),
     "repair": MessageLookupByLibrary.simpleMessage("Ремонт"),
     "resource": MessageLookupByLibrary.simpleMessage("Ресурс:"),
     "resource_out": MessageLookupByLibrary.simpleMessage("Ресурс закінчується"),

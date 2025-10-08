@@ -312,5 +312,12 @@
 "extracting": "Extracting...",
 "extract_tokens": "Extract tokens",
 "no_records": "No records",
-"fine_checking_disabled": "Fine checking is disabled in settings"
+"fine_checking_disabled": "Fine checking is disabled in settings",
+"delete_expense_history": "Delete expense history",
+"delete_all_expenses": "Delete all expenses?",
+"cannot_be_undone": "This action cannot be undone.",
+"remove": "Remove",
+"category_removed": "Category removed",
+"del_all_expenses": "Delete ALL expenses",
+"all_exp_hist_deleted": "All expense history deleted"
 }

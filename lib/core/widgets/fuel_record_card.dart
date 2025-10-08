@@ -30,7 +30,7 @@ class FuelRecordCard extends StatelessWidget {
                 Row(
                   children: [
                     AppSpacers.horizontalSmallMedium,
-                    Text("${record.fuelType} / ${record.volume}L", style: textTheme.historyText),
+                    Text("${record.fuelType} / ${record.volume.toInt()}L", style: textTheme.historyText),
                   ],
                 ),
                 AppSpacers.verticalXSmall,
@@ -38,7 +38,7 @@ class FuelRecordCard extends StatelessWidget {
                   children: [
                     Icon(Icons.attach_money, color: AppColors.green),
                     AppSpacers.horizontalSmallMedium,
-                    Text("${record.cost} ${S.of(context).grn}", style: textTheme.subtitleText),
+                    Text("${record.cost.toInt()} ${S.of(context).grn}", style: textTheme.subtitleText),
                   ],
                 ),
                 AppSpacers.verticalXSmall,

@@ -1,14 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:core_localization/generated/l10n.dart';
-import 'package:flutter/foundation.dart';
 import 'package:html/parser.dart';
+import 'package:http/http.dart' as http;
 import 'package:shelf/shelf.dart';
 import 'package:shelf/shelf_io.dart' as io;
 import 'package:shelf_router/shelf_router.dart';
-
-import 'package:http/http.dart' as http;
+import 'package:flutter/foundation.dart';
 
 class FinesServer {
   HttpServer? _server;
@@ -18,9 +16,7 @@ class FinesServer {
 
     final router = Router();
 
-    router.get('/', (Request req) {
-      return Response.ok('✅ Server is running');
-    });
+    router.get('/', (Request req) => Response.ok('✅ Server is running'));
 
     router.post('/api/fines', (Request req) async {
       try {
@@ -33,14 +29,13 @@ class FinesServer {
         String captchaToken = (data['captchaToken'] ?? 'default-token').toString();
         String cookies = (data['cookies'] ?? '').toString();
 
-        // If docSeries is longer than 3 characters and docNumber is empty, split
         if (docSeries.length > 3 && docNumber.isEmpty) {
           docNumber = docSeries.substring(3);
           docSeries = docSeries.substring(0, 3);
         }
 
         if (kDebugMode) {
-          print('🔹 Request for fines: carNumber=$carNumber, docSeries=$docSeries, docNumber=$docNumber');
+          print('🔹 Request: carNumber=$carNumber, docSeries=$docSeries, docNumber=$docNumber');
         }
 
         final html = await fetchFines(
@@ -52,12 +47,10 @@ class FinesServer {
 
         final fines = parseFinesHtml(html);
 
-        final responseJson = jsonEncode({"fines": fines});
-
-        return Response.ok(responseJson, headers: {'Content-Type': 'application/json'});
+        return Response.ok(jsonEncode({"fines": fines}), headers: {'Content-Type': 'application/json'});
       } catch (e, stack) {
         if (kDebugMode) {
-          print("❌ Error when receiving fines: $e");
+          print("❌ Error: $e");
           print(stack);
         }
         return Response.internalServerError(
@@ -71,26 +64,8 @@ class FinesServer {
 
     _server = await io.serve(handler, InternetAddress.loopbackIPv4, 3000);
     if (kDebugMode) {
-      print('🚀 FinesServer is running on http://${_server!.address.host}:${_server!.port}');
+      print('🚀 FinesServer running on http://${_server!.address.host}:${_server!.port}');
     }
-  }
-Future<bool> verifyCaptcha(String captchaToken) async {
-    const secretKey = String.fromEnvironment('RECAPTCHA_SECRET_KEY');
-
-    final response = await http.post(
-      Uri.parse("https://www.google.com/recaptcha/api/siteverify"),
-      headers: {"Content-Type": "application/x-www-form-urlencoded"},
-      body: {"secret": secretKey, "response": captchaToken},
-    );
-
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      if (kDebugMode) {
-        print("🔎 Captcha verify response: $data");
-      }
-      return data['success'] == true && (data['score'] ?? 0) > 0.5;
-    }
-    return false;
   }
 
   Future<void> stop() async {
@@ -105,107 +80,62 @@ Future<String> fetchFines({
   required String captchaToken,
   required String cookies,
 }) async {
-  final url = Uri.parse("https://bdr.mvs.gov.ua/main/search/");
+  final searchUrl = Uri.parse("https://bdr.mvs.gov.ua/main/search/");
 
-  if (kDebugMode) {
-    print("🔹 Sending POST request to $url");
-  }
-  if (kDebugMode) {
-    print("🔹 Body: plate=$plate, document=$document, captcha=$captchaToken");
-  }
-  if (kDebugMode) {
-    print("🔹 Cookies: $cookies");
-  }
-
-  final response = await http.post(
-    url,
+  final postResponse = await http.post(
+    searchUrl,
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
       "Origin": "https://bdr.mvs.gov.ua",
       "Referer": "https://bdr.mvs.gov.ua/",
       "User-Agent": "Mozilla/5.0",
       "Cookie": cookies,
+      "Accept": "*/*",
     },
     body: {"plate": plate, "document": document, "g-recaptcha-response": captchaToken},
   );
 
-  if (kDebugMode) {
-    print("🔹 Status code: ${response.statusCode}");
-  }
-  if (kDebugMode) {
-    print("🔹 Response headers: ${response.headers}");
-  }
-  if (kDebugMode) {
-    print(
-      "🔹 Response body (first 500 chars): ${response.body.substring(0, response.body.length > 500 ? 500 : response.body.length)}",
-    );
+  if (kDebugMode) print("🔹 POST Status: ${postResponse.statusCode}");
+
+  String subUrl = postResponse.headers['location'] ?? '';
+  if (!subUrl.startsWith('http') && subUrl.isNotEmpty) {
+    subUrl = "https://bdr.mvs.gov.ua$subUrl";
   }
 
-  // If the site redirects (302), we try GET by Location
-  if (response.statusCode == 302) {
-    final redirectUrl = response.headers['location'];
-    if (redirectUrl != null) {
-      final redirectUri = redirectUrl.startsWith('http')
-          ? Uri.parse(redirectUrl)
-          : Uri.parse("https://bdr.mvs.gov.ua$redirectUrl");
+  if (kDebugMode) print("🔹 Redirecting to: $subUrl");
 
-      if (kDebugMode) {
-        print("🔹 Following redirect to $redirectUri");
-      }
+  final getResponse = await http.get(
+    Uri.parse(subUrl),
+    headers: {"User-Agent": "Mozilla/5.0", "Cookie": cookies, "Referer": searchUrl.toString()},
+  );
 
-      final res = await http.get(redirectUri, headers: {"Cookie": cookies, "User-Agent": "Mozilla/5.0"});
-
-      if (kDebugMode) {
-        print("🔹 Redirect GET status: ${res.statusCode}");
-      }
-      if (kDebugMode) {
-        print(
-          "🔹 Redirect body (first 500 chars): ${res.body.substring(0, res.body.length > 500 ? 500 : res.body.length)}",
-        );
-      }
-      return res.body;
-    }
+  if (getResponse.statusCode != 200) {
+    throw Exception("Error retrieving results page: ${getResponse.statusCode}");
   }
 
-  // If 200, check for captcha
-  if (response.statusCode == 200) {
-    final body = response.body;
-    if (body.contains("g-recaptcha")) {
-      if (kDebugMode) {
-        print("⚠️ Warning: captcha required or invalid");
-      }
-    } else {
-      if (kDebugMode) {
-        print("✅ Captcha seems passed (no g-recaptcha found)");
-      }
-    }
-    return body;
-  }
-
-  throw Exception("${S.current.error} ${response.statusCode} ${response.body}");
+  return getResponse.body;
 }
 
 List<Map<String, dynamic>> parseFinesHtml(String html) {
   if (html.isEmpty) return [];
 
   final document = parse(html);
-  final items = document.querySelectorAll('div.item-list .item');
+
+
+  final rows = document.querySelectorAll('table.fines-table tbody tr');
+
   List<Map<String, dynamic>> fines = [];
 
-  for (var item in items) {
-    final description = item.querySelector('.description')?.text.trim() ?? '';
-    final amountText = item.querySelector('.amount')?.text.trim() ?? '0';
-    final total = int.tryParse(amountText.replaceAll(RegExp(r'\D'), '')) ?? 0;
-    final dateText = item.querySelector('.date')?.text.trim() ?? '';
-
-    DateTime date;
-    try {
-      date = DateTime.parse(dateText);
-    } catch (_) {
-      date = DateTime.now();
+  for (final row in rows) {
+    final cells = row.querySelectorAll('td');
+    if (cells.length >= 3) {
+      fines.add({
+        "id": '',
+        "violation": cells[1].text.trim(),
+        "total": int.tryParse(cells[2].text.replaceAll(RegExp(r'\D'), '')) ?? 0,
+        "date": cells[0].text.trim(),
+      });
     }
-
-    fines.add({"id": '', "violation": description, "total": total, "date": date.toIso8601String()});
   }
 
   return fines;

@@ -9,6 +9,7 @@ class MaintenanceState extends Equatable {
   final List<FuelRecord> fuelRecords;
   final List<CarWashRecord> carWashRecords;
   final bool isMenuOpen;
+  final bool isLoading;
 
   const MaintenanceState({
     this.serviceRecords = const [],
@@ -16,6 +17,7 @@ class MaintenanceState extends Equatable {
     this.fuelRecords = const [],
     this.carWashRecords = const [],
     this.isMenuOpen = false,
+    this.isLoading = false,
   });
 
   MaintenanceState copyWith({
@@ -24,6 +26,7 @@ class MaintenanceState extends Equatable {
     List<FuelRecord>? fuelRecords,
     List<CarWashRecord>? carWashRecords,
     bool? isMenuOpen,
+    bool? isLoading, 
   }) {
     return MaintenanceState(
       serviceRecords: serviceRecords ?? this.serviceRecords,
@@ -31,9 +34,12 @@ class MaintenanceState extends Equatable {
       fuelRecords: fuelRecords ?? this.fuelRecords,
       carWashRecords: carWashRecords ?? this.carWashRecords,
       isMenuOpen: isMenuOpen ?? this.isMenuOpen,
+      isLoading: isLoading ?? this.isLoading,
     );
   }
 
   @override
-  List<Object?> get props => [serviceRecords,tuningRecords,fuelRecords,carWashRecords,isMenuOpen];
+  List<Object?> get props => [serviceRecords,tuningRecords,fuelRecords,carWashRecords,isMenuOpen,
+        isLoading,
+      ];
 }

@@ -8,7 +8,6 @@ import 'package:design_system/constants/app_borders.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
 import 'package:fines_plus/core/widgets/expense_stats_card.dart';
-import 'package:fines_plus/core/widgets/extensions/monthly_expense_stats.dart';
 import 'package:fines_plus/router/home_screen_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -42,9 +41,6 @@ class _StatisticsScreenView extends StatelessWidget {
         if (state.loading) {
           return const Center(child: CircularProgressIndicator());
         }
-
-        final totalCategoryExpenses = state.getTotalCategoryExpenses();
-        final totalExpenses = state.getTotalExpenses();
 
         return SingleChildScrollView(
           padding: const EdgeInsets.all(12),
@@ -84,6 +80,7 @@ class _StatisticsScreenView extends StatelessWidget {
                               ),
                             ],
                           ),
+
                           Column(
                             children: [
                               BlocSelector<MaintenanceCubit, MaintenanceState, int>(
@@ -117,16 +114,12 @@ class _StatisticsScreenView extends StatelessWidget {
               ),
               AppSpacers.verticalMedium,
 
-              // Суммарная диаграмма расходов
-              ExpenseStatsCard(
-                stats: MonthlyExpenseStats(
-                  monthLabel: "Всього", // Можно заменить на "Итого" или "Все месяцы"
-                  total: totalExpenses,
-                  categoryTotals: totalCategoryExpenses,
+              if (state.expenseStats != null)
+                ExpenseStatsCard(
+                  stats: state.expenseStats!,
+                  onMaintenance: () =>
+                      context.findAncestorStateOfType<HomeScreenWrapperState>()?.openPage(HomePage.maintenance),
                 ),
-                onMaintenance: () =>
-                    context.findAncestorStateOfType<HomeScreenWrapperState>()?.openPage(HomePage.maintenance),
-              ),
             ],
           ),
         );

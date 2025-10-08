@@ -33,6 +33,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "address_not_specified": MessageLookupByLibrary.simpleMessage(
       "Address not specified",
     ),
+    "all_exp_hist_deleted": MessageLookupByLibrary.simpleMessage(
+      "All expense history deleted",
+    ),
     "amount_month": MessageLookupByLibrary.simpleMessage("Amount per month"),
     "analitics": MessageLookupByLibrary.simpleMessage("Analytics"),
     "auto": MessageLookupByLibrary.simpleMessage("Auto"),
@@ -44,10 +47,16 @@ class MessageLookup extends MessageLookupByLibrary {
     "by_mileage": MessageLookupByLibrary.simpleMessage("By mileage"),
     "calendar": MessageLookupByLibrary.simpleMessage("Calendar"),
     "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
+    "cannot_be_undone": MessageLookupByLibrary.simpleMessage(
+      "This action cannot be undone.",
+    ),
     "car_history": MessageLookupByLibrary.simpleMessage("Car history"),
     "car_number": MessageLookupByLibrary.simpleMessage("Car number"),
     "car_wash": MessageLookupByLibrary.simpleMessage("Car wash"),
     "car_wash_nearby": MessageLookupByLibrary.simpleMessage("Car wash nearby"),
+    "category_removed": MessageLookupByLibrary.simpleMessage(
+      "Category removed",
+    ),
     "check_filter": MessageLookupByLibrary.simpleMessage(
       "The filter needs to be replaced",
     ),
@@ -79,6 +88,15 @@ class MessageLookup extends MessageLookupByLibrary {
       "Previous maintenance date",
     ),
     "days": MessageLookupByLibrary.simpleMessage("days"),
+    "del_all_expenses": MessageLookupByLibrary.simpleMessage(
+      "Delete ALL expenses",
+    ),
+    "delete_all_expenses": MessageLookupByLibrary.simpleMessage(
+      "Delete all expenses?",
+    ),
+    "delete_expense_history": MessageLookupByLibrary.simpleMessage(
+      "Delete expense history",
+    ),
     "description": MessageLookupByLibrary.simpleMessage("Description"),
     "edit_reminder": MessageLookupByLibrary.simpleMessage("Edit reminder"),
     "email": MessageLookupByLibrary.simpleMessage("Email"),
@@ -208,6 +226,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "register": MessageLookupByLibrary.simpleMessage("Register"),
     "registration": MessageLookupByLibrary.simpleMessage("Registration"),
     "reminder": MessageLookupByLibrary.simpleMessage("Reminder"),
+    "remove": MessageLookupByLibrary.simpleMessage("Remove"),
     "repair": MessageLookupByLibrary.simpleMessage("Repair"),
     "resource": MessageLookupByLibrary.simpleMessage("Resource:"),
     "resource_out": MessageLookupByLibrary.simpleMessage("Resource out"),

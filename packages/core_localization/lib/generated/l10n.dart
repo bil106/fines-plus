@@ -2773,6 +2773,71 @@ class S {
       args: [],
     );
   }
+
+  /// `Delete expense history`
+  String get delete_expense_history {
+    return Intl.message(
+      'Delete expense history',
+      name: 'delete_expense_history',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Delete all expenses?`
+  String get delete_all_expenses {
+    return Intl.message(
+      'Delete all expenses?',
+      name: 'delete_all_expenses',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `This action cannot be undone.`
+  String get cannot_be_undone {
+    return Intl.message(
+      'This action cannot be undone.',
+      name: 'cannot_be_undone',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Remove`
+  String get remove {
+    return Intl.message('Remove', name: 'remove', desc: '', args: []);
+  }
+
+  /// `Category removed`
+  String get category_removed {
+    return Intl.message(
+      'Category removed',
+      name: 'category_removed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Delete ALL expenses`
+  String get del_all_expenses {
+    return Intl.message(
+      'Delete ALL expenses',
+      name: 'del_all_expenses',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `All expense history deleted`
+  String get all_exp_hist_deleted {
+    return Intl.message(
+      'All expense history deleted',
+      name: 'all_exp_hist_deleted',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

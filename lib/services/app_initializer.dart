@@ -13,6 +13,7 @@ import 'package:core_cubit/cubit/registration/registration_cubit.dart';
 import 'package:core_cubit/cubit/schedule/schedule_cubit.dart';
 import 'package:core_data/core_data.dart';
 import 'package:core_repository/car_info_repository.dart';
+import 'package:core_repository/expense_repository.dart';
 import 'package:core_repository/history_repository.dart';
 import 'package:core_repository/reminder_repository.dart';
 import 'package:core_repository/schedule_repository.dart';
@@ -140,10 +141,13 @@ class AppInitializer {
     final appLinks = AppLinks();
     final tokensRepository = TokensRepositoryImpl(storage);
     final extractTokensUseCase = ExtractTokensUseCase(tokensRepository);
+    final expenseRepository = ExpenseRepository(FirebaseFirestore.instance);
+
+   final carInfoLocalDataSource = CarInfoLocalDataSource(sharedPrefsManager);
 
     referralCubit = ReferralCubit(appLinks, prefs);
     purchaseCubit = PurchaseCubit(PurchaseService(), enabled: remoteConfigService.isPurchaseEnabled);
-    maintenanceCubit = MaintenanceCubit();
+    maintenanceCubit = MaintenanceCubit(expenseRepository: expenseRepository, localDataSource: carInfoLocalDataSource);
     fuelStationCubit = FuelStationCubit();
 
     additionalOptionsCubit = AdditionalOptionsCubit(
@@ -190,6 +194,7 @@ class AppInitializer {
       scheduleCubit: scheduleCubit,
       additionalOptionsCubit: additionalOptionsCubit,
       remoteConfigService: remoteConfigService,
+      expenseRepository: expenseRepository,
     );
   }
 }
@@ -264,6 +269,7 @@ class AppInitResult {
   final ScheduleCubit scheduleCubit;
   final AdditionalOptionsCubit additionalOptionsCubit;
   final RemoteConfigService remoteConfigService;
+  final ExpenseRepository expenseRepository;
 
   AppInitResult({
     required this.config,
@@ -280,5 +286,6 @@ class AppInitResult {
     required this.scheduleCubit,
     required this.additionalOptionsCubit,
     required this.remoteConfigService,
+    required this.expenseRepository,
   });
 }

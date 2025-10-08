@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:core_cubit/cubit/car_info/car_info_cubit.dart';
+import 'package:core_cubit/cubit/expenses/expenses_cubit.dart';
 import 'package:core_cubit/cubit/history/history_cubit.dart';
 import 'package:core_cubit/cubit/maintenance/maintenance_cubit.dart';
 import 'package:core_cubit/cubit/purchase/purchase_cubit.dart';
@@ -8,6 +9,7 @@ import 'package:core_cubit/cubit/schedule/schedule_cubit.dart';
 import 'package:core_data/core_data.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:core_repository/car_info_repository.dart';
+import 'package:core_repository/expense_repository.dart';
 import 'package:core_repository/history_repository.dart';
 import 'package:core_repository/reminder_repository.dart';
 import 'package:core_repository/schedule_repository.dart';
@@ -165,14 +167,17 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
               onBack: () => openPage(HomePage.addCar),
             ),
 
-            CarInfoScreen(
-              key: const ValueKey('car_info_screen'),
-              initialCarNumber: _carNumber!,
-              onBack: () => openPage(HomePage.addCar),
-              onCheckFine: (carNumber, series, number) {
-                _saveCarInfo(carNumber, series, number);
-                openPage(HomePage.history);
-              },
+       BlocProvider(
+              create: (_) => ExpensesCubit(repository: ExpenseRepository(FirebaseFirestore.instance)),
+              child: CarInfoScreen(
+                key: const ValueKey('car_info_screen'),
+                initialCarNumber: _carNumber!,
+                onBack: () => openPage(HomePage.addCar),
+                onCheckFine: (carNumber, series, number) {
+                  _saveCarInfo(carNumber, series, number);
+                  openPage(HomePage.history);
+                },
+              ),
             ),
 
             FineCheckScreen(

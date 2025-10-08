@@ -1,10 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:core_cubit/cubit/history/history_cubit.dart';
+import 'package:core_cubit/cubit/maintenance/maintenance_cubit.dart';
 import 'package:core_data/core_data.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:core_repository/car_info_repository.dart';
+import 'package:core_repository/injector.dart';
 import 'package:core_repository/user_not_signed_in_exception.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'car_info_state.dart';
@@ -20,60 +24,98 @@ class CarInfoCubit extends Cubit<CarInfoState> {
 
   static final carReg = RegExp(r'^[А-ЯЇІЄҐ]{2}\d{4}[А-ЯЇІЄҐ]{2}$');
   static final techReg = RegExp(r'^[А-ЯІЇЄҐ]{3}\d{6}$');
-
   Future<void> loadSavedCarInfo() async {
-    final prefs = await SharedPreferences.getInstance();
-    final carNumber = prefs.getString('carNumber') ?? '';
-    final techPassport = prefs.getString('techPassport') ?? '';
-
-    emit(state.copyWith(carNumber: carNumber, techPassport: techPassport));
-
-    if (carNumber.isNotEmpty) {
-      final token = await FirebaseMessaging.instance.getToken();
-      if (token != null) {
-        await FirebaseFirestore.instance.collection("cars").doc(carNumber).set({
-          "fcmToken": token,
-        }, SetOptions(merge: true));
-      }
-    }
+    await _load();
   }
 
   Future<void> _load() async {
     final m = await _repo.getCarInfo();
     emit(state.copyWith(carNumber: m.carNumber, techPassport: m.techPassport));
+
+    if (m.carNumber.isNotEmpty) {
+      await _saveCarToFirestore(m);
+    }
   }
 
-  Future<void> setCarNumber(String v) async {
-    final value = v.trim().replaceAll(RegExp(r'[^А-ЯЇІЄҐ0-9]'), '');
-    final m = CarInfoModel(carNumber: value, techPassport: state.techPassport);
+  Future<void> _saveCarToFirestore(CarInfoModel m) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      debugPrint("❌ Unable to save the machine - user is not authorized");
+      return;
+    }
 
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('carNumber', value);
+    final token = await FirebaseMessaging.instance.getToken();
+
+    final data = {
+      "ownerId": user.uid,
+      "techPassport": m.techPassport,
+      "updatedAt": FieldValue.serverTimestamp(),
+    };
+
+    if (token != null) {
+      data["fcmToken"] = token;
+    }
+
+    await FirebaseFirestore.instance.collection("cars").doc(m.carNumber).set(data, SetOptions(merge: true));
+
+    debugPrint("✅ The car is saved in Firestore: $data");
+  }
+
+Future<void> setCarNumber(String v) async {
+    final value = v.trim().replaceAll(RegExp(r'[^А-ЯЇІЄҐ0-9]'), '');
+    final user = FirebaseAuth.instance.currentUser;
+    final ownerId = user?.uid ?? '';
+
+    final m = CarInfoModel(
+      carNumber: value,
+      techPassport: state.techPassport,
+      ownerId: ownerId,
+    );
 
     await _repo.saveCarInfo(m);
     emit(state.copyWith(carNumber: value));
+
+    await _saveCarToFirestore(m);
+
+    debugPrint("✅ Saved car number: $value");
+
+ 
+    try {
+      await getIt<MaintenanceCubit>().syncExpensesFromFirestore();
+    } catch (e) {
+      debugPrint("⚠️ Failed to update expenses after changing the car: $e");
+    }
   }
 
-  Future<void> setTechPassport(String v) async {
+
+Future<void> setTechPassport(String v) async {
     if (isClosed) return;
     final value = v.trim().toUpperCase();
-    final m = CarInfoModel(carNumber: state.carNumber, techPassport: value);
+    final user = FirebaseAuth.instance.currentUser;
+    final ownerId = user?.uid ?? '';
 
-    String series = '';
-    String number = '';
-    if (value.length == 9) {
-      series = value.substring(0, 3);
-      number = value.substring(3);
-    }
-
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('techPassport', value);
-    await prefs.setString('docSeries', series);
-    await prefs.setString('docNumber', number);
+    final m = CarInfoModel(
+      carNumber: state.carNumber,
+      techPassport: value,
+      ownerId: ownerId,
+    );
 
     await _repo.saveCarInfo(m);
     emit(state.copyWith(techPassport: value));
+
+    await _saveCarToFirestore(m);
+
+    final parts = getTechPassportParts();
+    debugPrint("✅ Saved techPassport: $value (series=${parts['series']}, number=${parts['number']})");
+
+
+    try {
+      await getIt<MaintenanceCubit>().syncExpensesFromFirestore();
+    } catch (e) {
+      debugPrint("⚠️ Failed to update expenses after changing the registration certificate: $e");
+    }
   }
+
 
   bool get isFormValid => carReg.hasMatch(state.carNumber) && techReg.hasMatch(state.techPassport);
 

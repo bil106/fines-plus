@@ -68,14 +68,20 @@ class ExpenseStatsCard extends StatelessWidget {
                 ),
               ),
             ),
-            AppSpacers.verticalMedium,
+           AppSpacers.verticalMedium,
 
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          GridView.count(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              crossAxisCount: 3, 
+              childAspectRatio: 4, 
+              mainAxisSpacing: 6,
+              crossAxisSpacing: 8,
               children: ExpenseCategory.values.map((cat) {
                 return _LegendItem(gradient: _gradientForCategory(cat), text: _categoryName(cat));
               }).toList(),
             ),
+
 
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -116,6 +122,13 @@ class ExpenseStatsCard extends StatelessWidget {
           end: Alignment.bottomRight,
           colors: [AppColors.energyBlue25, AppColors.darkBlue],
         );
+          case ExpenseCategory.carWash:
+        
+        return const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [AppColors.energyBlue25, AppColors.greenAccent],
+        );
       case ExpenseCategory.other:
         return const LinearGradient(
           begin: Alignment.topLeft,
@@ -133,6 +146,9 @@ class ExpenseStatsCard extends StatelessWidget {
         return S.current.service;
       case ExpenseCategory.tuning:
         return S.current.tuning;
+         case ExpenseCategory.carWash:
+      
+        return S.current.car_wash;
       case ExpenseCategory.other:
         return S.current.other;
     }

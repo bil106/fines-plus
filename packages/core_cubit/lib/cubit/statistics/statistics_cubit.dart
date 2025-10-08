@@ -15,8 +15,10 @@ class StatisticsCubit extends Cubit<StatisticsState> {
   late final StreamSubscription maintenanceSub;
 
   StatisticsCubit(this.maintenanceCubit) : super(StatisticsState.initial()) {
+  
     _recalculate(maintenanceCubit.state);
 
+   
     maintenanceSub = maintenanceCubit.stream.listen((maintenanceState) {
       _recalculate(maintenanceState);
     });
@@ -28,11 +30,13 @@ class StatisticsCubit extends Cubit<StatisticsState> {
     final currentMonthMileage = maintenanceCubit.getCurrentMonthMileage(now);
     final averageMileage = maintenanceCubit.getAverageMileage();
 
-    final expenses = _calculateAllMonthlyStats(
+    final expenseStats = _calculateMonthlyStats(
       serviceRecords: maintenanceState.serviceRecords,
       fuelRecords: maintenanceState.fuelRecords,
       carWashRecords: maintenanceState.carWashRecords,
       tuningRecords: maintenanceState.tuningRecords,
+      year: now.year,
+      month: now.month,
     );
 
     emit(
@@ -40,11 +44,10 @@ class StatisticsCubit extends Cubit<StatisticsState> {
         loading: false,
         currentMonthMileage: currentMonthMileage,
         averageMileage: averageMileage,
-        expenses: expenses,
+        expenseStats: expenseStats,
       ),
     );
   }
-
 
   @override
   Future<void> close() {
@@ -52,69 +55,7 @@ class StatisticsCubit extends Cubit<StatisticsState> {
     return super.close();
   }
 
-  List<MonthlyExpenseStats> _calculateAllMonthlyStats({
-    required List<ServiceRecord> serviceRecords,
-    required List<FuelRecord> fuelRecords,
-    required List<CarWashRecord> carWashRecords,
-    required List<TuningRecord> tuningRecords,
-  }) {
-  
-    final allDates = [
-      ...serviceRecords.map((r) => DateFormat('dd.MM.yyyy').parse(r.date)),
-      ...fuelRecords.map((r) => DateFormat('dd.MM.yyyy').parse(r.date)),
-      ...carWashRecords.map((r) => DateFormat('dd.MM.yyyy').parse(r.date)),
-      ...tuningRecords.map((r) => DateFormat('dd.MM.yyyy').parse(r.date)),
-    ];
-
-    if (allDates.isEmpty) return [];
-
-
-    final grouped = <String, List<dynamic>>{};
-    void addRecord(DateTime d, dynamic r) {
-      final key = "${d.year}-${d.month}";
-      grouped.putIfAbsent(key, () => []);
-      grouped[key]!.add(r);
-    }
-
-    for (final s in serviceRecords) {
-      final d = DateFormat('dd.MM.yyyy').parse(s.date);
-      addRecord(d, s);
-    }
-    for (final f in fuelRecords) {
-      final d = DateFormat('dd.MM.yyyy').parse(f.date);
-      addRecord(d, f);
-    }
-    for (final c in carWashRecords) {
-      final d = DateFormat('dd.MM.yyyy').parse(c.date);
-      addRecord(d, c);
-    }
-    for (final t in tuningRecords) {
-      final d = DateFormat('dd.MM.yyyy').parse(t.date);
-      addRecord(d, t);
-    }
-
-    final stats = <MonthlyExpenseStats>[];
-    grouped.forEach((key, records) {
-      final parts = key.split('-');
-      final year = int.parse(parts[0]);
-      final month = int.parse(parts[1]);
-
-      stats.add(_calculateMonthlyStats(
-        serviceRecords: serviceRecords,
-        fuelRecords: fuelRecords,
-        carWashRecords: carWashRecords,
-        tuningRecords: tuningRecords,
-        year: year,
-        month: month,
-      ));
-    });
-
-
-    stats.sort((a, b) => a.monthLabel.compareTo(b.monthLabel));
-    return stats;
-  }
-
-  MonthlyExpenseStats _calculateMonthlyStats({
+MonthlyExpenseStats _calculateMonthlyStats({
     required List<ServiceRecord> serviceRecords,
     required List<FuelRecord> fuelRecords,
     required List<CarWashRecord> carWashRecords,
@@ -126,7 +67,7 @@ class StatisticsCubit extends Cubit<StatisticsState> {
     final categoryTotals = <ExpenseCategory, double>{
       ExpenseCategory.fuel: 0,
       ExpenseCategory.service: 0,
-      ExpenseCategory.tuning: 0,
+      ExpenseCategory.tuning: 0, 
       ExpenseCategory.other: 0,
     };
 
@@ -151,20 +92,20 @@ class StatisticsCubit extends Cubit<StatisticsState> {
       total += f.cost;
       categoryTotals[ExpenseCategory.fuel] = (categoryTotals[ExpenseCategory.fuel] ?? 0) + f.cost;
     }
-
     for (final c in carWashRecords) {
       final date = parseDate(c.date);
       if (date.year != year || date.month != month) continue;
       total += c.cost;
       categoryTotals[ExpenseCategory.other] = (categoryTotals[ExpenseCategory.other] ?? 0) + c.cost;
     }
-
-    for (final t in tuningRecords) {
-      final date = parseDate(t.date);
+  
+    for (final c in tuningRecords) {
+      final date = parseDate(c.date);
       if (date.year != year || date.month != month) continue;
-      total += t.cost;
-      categoryTotals[ExpenseCategory.tuning] = (categoryTotals[ExpenseCategory.tuning] ?? 0) + t.cost;
+      total += c.cost;
+      categoryTotals[ExpenseCategory.tuning] = (categoryTotals[ExpenseCategory.tuning] ?? 0) + c.cost;
     }
+  
 
     final monthLabel = _monthName(month);
 
@@ -175,47 +116,9 @@ class StatisticsCubit extends Cubit<StatisticsState> {
     );
   }
 
+
   String _monthName(int month) {
     const months = ["Січ", "Лют", "Бер", "Квіт", "Трав", "Черв", "Лип", "Серп", "Верес", "Жовт", "Лист", "Груд"];
     return months[month - 1];
-  }
-  Map<ExpenseCategory, double> getTotalCategoryExpenses() {
-    final totals = <ExpenseCategory, double>{
-      ExpenseCategory.fuel: 0,
-      ExpenseCategory.service: 0,
-      ExpenseCategory.tuning: 0,
-      ExpenseCategory.other: 0,
-    };
-
-    for (final stat in state.expenses) {
-      stat.categoryTotals.forEach((key, value) {
-        totals[key] = (totals[key] ?? 0) + value;
-      });
-    }
-
-    return totals;
-  }
-
-}
-extension TotalCategoryExpenses on StatisticsState {
-  Map<ExpenseCategory, double> getTotalCategoryExpenses() {
-    final totals = <ExpenseCategory, double>{
-      ExpenseCategory.fuel: 0,
-      ExpenseCategory.service: 0,
-      ExpenseCategory.tuning: 0,
-      ExpenseCategory.other: 0,
-    };
-
-    for (final stat in expenses) {
-      stat.categoryTotals.forEach((key, value) {
-        totals[key] = (totals[key] ?? 0) + value;
-      });
-    }
-
-    return totals;
-  }
-
-  double getTotalExpenses() {
-    return getTotalCategoryExpenses().values.fold(0, (sum, v) => sum + v);
   }
 }
