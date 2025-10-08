@@ -51,12 +51,12 @@ class MaintenanceScreen extends StatefulWidget {
 }
 
 class _MaintenanceScreenState extends State<MaintenanceScreen> {
-  @override
+ 
   @override
   void initState() {
     super.initState();
-    context.read<MaintenanceCubit>().init();
-  }
+  WidgetsBinding.instance.addPostFrameCallback((_) async { final maintenanceCubit = context.read<MaintenanceCubit>(); maintenanceCubit.clearAllRecords(); await maintenanceCubit.syncExpensesFromFirestore();
+  });}
 
   @override
   Widget build(BuildContext context) {
