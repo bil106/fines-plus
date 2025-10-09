@@ -1,5 +1,5 @@
-import 'package:core_data/core_data.dart';
 import 'package:core_utils/formatters/vehicle_formatters.dart';
+import 'package:fines_plus/features/expenses/data/models/expense_category.dart';
 
 class MonthlyExpenseStats {
   final String monthLabel;

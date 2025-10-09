@@ -2,16 +2,16 @@
 
 import 'package:auto_route/auto_route.dart';
 import 'package:core_localization/generated/l10n.dart';
-import 'package:core_repository/export/export_history_csv.dart';
-import 'package:core_repository/export/export_history_pdf.dart';
 import 'package:core_utils/share_helpers.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_borders.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
-import 'package:fines_plus/core/widgets/ad_banner_widget.dart';
-import 'package:fines_plus/core/widgets/export_card.dart';
+import 'package:fines_plus/core/extensions/ad_banner_widget.dart';
+import 'package:fines_plus/features/export/presentation/widgets/export_card.dart';
 import 'package:fines_plus/features/analytics/data/models/event_model.dart';
+import 'package:fines_plus/features/export/data/datasources/export/export_history_csv.dart';
+import 'package:fines_plus/features/export/data/datasources/export/export_history_pdf.dart';
 import 'package:fines_plus/features/export/data/repository/export_repository.dart';
 import 'package:fines_plus/features/export/data/repository/injector.dart';
 import 'package:fines_plus/features/export/presentation/cubit/export_cubit.dart';

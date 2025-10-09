@@ -2,9 +2,9 @@
 
 import 'dart:io';
 
-import 'package:core_data/core_data.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:csv/csv.dart';
+import 'package:fines_plus/features/analytics/data/models/car_history_model.dart';
 import 'package:fines_plus/features/analytics/data/models/event_model.dart';
 import 'package:pdf/widgets.dart' as pw;
 

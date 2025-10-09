@@ -1,6 +1,7 @@
 // ignore_for_file: implementation_imports
 
-import 'package:core_data/src/models/expense_category.dart';
+
+import 'package:fines_plus/features/expenses/data/models/expense_category.dart';
 import 'package:flutter/material.dart';
 
 class EventModel {

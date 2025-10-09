@@ -1,18 +1,18 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:core_cubit/cubit/additional_options/additional_options_cubit.dart';
-import 'package:core_cubit/cubit/expenses/expenses_cubit.dart';
-import 'package:core_cubit/cubit/fuel_station/fuel_station_cubit.dart';
-import 'package:core_cubit/cubit/maintenance/maintenance_cubit.dart';
 import 'package:core_cubit/cubit/purchase/purchase_cubit.dart';
 import 'package:core_cubit/cubit/referral/referral_cubit.dart';
 import 'package:core_cubit/cubit/registration/registration_cubit.dart';
-import 'package:core_cubit/cubit/schedule/schedule_cubit.dart';
-import 'package:core_repository/expense_repository.dart';
-import 'package:core_repository/maintenance_repository.dart';
-import 'package:core_repository/schedule_repository.dart';
+import 'package:fines_plus/features/expenses/data/repository/expense_repository.dart';
+import 'package:fines_plus/features/expenses/presentation/cubit/expenses_cubit.dart';
 import 'package:fines_plus/features/export/data/repository/injector.dart';
+import 'package:fines_plus/features/maintenance/data/repository/maintenance_repository.dart';
+import 'package:fines_plus/features/maintenance/presentation/cubit/additional_options_cubit.dart';
+import 'package:fines_plus/features/maintenance/presentation/cubit/fuel_station_cubit.dart';
+import 'package:fines_plus/features/maintenance/presentation/cubit/maintenance_cubit.dart';
+import 'package:fines_plus/features/schedule/data/repository/schedule_repository.dart';
+import 'package:fines_plus/features/schedule/presentation/cubit/schedule_cubit.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -27,7 +27,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
   if (kDebugMode) {
-    print("📩 BG Message: ${message.messageId}");
+    print("BG Message: ${message.messageId}");
   }
 }
 

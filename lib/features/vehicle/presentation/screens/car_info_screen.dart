@@ -1,16 +1,15 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:core_cubit/cubit/expenses/expenses_cubit.dart';
-import 'package:core_cubit/cubit/maintenance/maintenance_cubit.dart';
 import 'package:core_localization/generated/l10n.dart';
-
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_borders.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
-import 'package:fines_plus/core/widgets/ad_banner_widget.dart';
-import 'package:fines_plus/core/widgets/unauthorized_dialog.dart';
+import 'package:fines_plus/core/extensions/ad_banner_widget.dart';
+import 'package:fines_plus/core/extensions/unauthorized_dialog.dart';
 import 'package:fines_plus/env/env.dart';
+import 'package:fines_plus/features/expenses/presentation/cubit/expenses_cubit.dart';
 import 'package:fines_plus/features/history/presentation/cubit/history_cubit.dart';
+import 'package:fines_plus/features/maintenance/presentation/cubit/maintenance_cubit.dart';
 import 'package:fines_plus/features/vehicle/presentation/cubit/car_info_cubit.dart';
 import 'package:fines_plus/features/vehicle/presentation/cubit/car_info_state.dart';
 import 'package:fines_plus/router/home_screen_wrapper.dart';

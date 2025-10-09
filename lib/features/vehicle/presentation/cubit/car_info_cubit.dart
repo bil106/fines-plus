@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:core_cubit/cubit/maintenance/maintenance_cubit.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:core_repository/user_not_signed_in_exception.dart';
 import 'package:fines_plus/features/export/data/repository/injector.dart';
 import 'package:fines_plus/features/history/presentation/cubit/history_cubit.dart';
+import 'package:fines_plus/features/maintenance/presentation/cubit/maintenance_cubit.dart';
 import 'package:fines_plus/features/vehicle/data/models/car_info_model.dart';
 import 'package:fines_plus/features/vehicle/data/repository/car_info_repository.dart';
 import 'package:firebase_auth/firebase_auth.dart';

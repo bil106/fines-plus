@@ -1,5 +1,5 @@
-import 'package:core_data/core_data.dart';
 import 'package:fines_plus/features/vehicle/data/datasources/car_info_local_data_source.dart';
+import 'package:fines_plus/features/vehicle/data/datasources/car_info_remote_data_source.dart';
 import 'package:fines_plus/features/vehicle/data/models/car_info_model.dart';
 
 

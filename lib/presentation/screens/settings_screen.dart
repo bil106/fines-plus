@@ -2,14 +2,14 @@
 
 import 'package:auto_route/auto_route.dart';
 import 'package:core_cubit/cubit/purchase/purchase_cubit.dart';
-import 'package:core_cubit/cubit/schedule/schedule_cubit.dart';
 import 'package:core_data/core_data.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_borders.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
-import 'package:fines_plus/core/widgets/ad_banner_widget.dart';
+import 'package:fines_plus/core/extensions/ad_banner_widget.dart';
+import 'package:fines_plus/features/schedule/presentation/cubit/schedule_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

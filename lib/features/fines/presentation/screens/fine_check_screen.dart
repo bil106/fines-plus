@@ -8,7 +8,7 @@ import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_borders.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
-import 'package:fines_plus/core/widgets/ad_banner_widget.dart';
+import 'package:fines_plus/core/extensions/ad_banner_widget.dart';
 import 'package:fines_plus/features/fines/domain/fines_repository_impl.dart';
 import 'package:fines_plus/features/fines/presentation/cubit/fines_cubit.dart';
 import 'package:fines_plus/features/fines/presentation/cubit/fines_state.dart';

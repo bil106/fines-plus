@@ -1,7 +1,8 @@
 import 'dart:io';
-import 'package:core_repository/export/export_history_csv.dart';
-import 'package:core_repository/export/export_history_pdf.dart';
+
 import 'package:fines_plus/features/analytics/data/models/event_model.dart';
+import 'package:fines_plus/features/export/data/datasources/export/export_history_csv.dart';
+import 'package:fines_plus/features/export/data/datasources/export/export_history_pdf.dart';
 import 'package:fines_plus/features/export/data/repository/export_repository.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

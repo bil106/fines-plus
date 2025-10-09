@@ -27,8 +27,6 @@ dependencies:
     path: packages/core_data
   core_services:
     path: packages/core_services
-  webview_feature:
-    path: packages/features/webview
   design_system:
     path: packages/design_system 
   google_maps_flutter: ^2.13.1
@@ -82,6 +80,7 @@ dependencies:
   file_picker: ^10.3.3
   equatable: ^2.0.7
   get_it: ^8.2.0
+  bloc: ^9.0.1
      
 
 

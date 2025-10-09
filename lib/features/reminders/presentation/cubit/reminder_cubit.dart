@@ -1,3 +1,4 @@
+import 'package:fines_plus/features/maintenance/data/models/maintenance_task.dart';
 import 'package:fines_plus/features/reminders/data/models/reminder_model.dart';
 import 'package:fines_plus/features/reminders/data/repository/reminder_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
