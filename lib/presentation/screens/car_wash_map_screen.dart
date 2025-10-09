@@ -97,14 +97,14 @@ class _CarWashMapScreenState extends State<CarWashMapScreen> {
         }
       });
     } catch (e) {
-      if (kDebugMode) print("❌ Error getting geolocation: $e");
+      if (kDebugMode) print("Error getting geolocation: $e");
     }
   }
 
   Future<void> _checkLocationPermission() async {
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
-      if (kDebugMode) print("⚠️ Geolocation is disabled on the device");
+      if (kDebugMode) print(" Geolocation is disabled on the device");
       return;
     }
 
@@ -112,13 +112,13 @@ class _CarWashMapScreenState extends State<CarWashMapScreen> {
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
-        if (kDebugMode) print("⚠️ Geolocation permission denied");
+        if (kDebugMode) print("Geolocation permission denied");
         return;
       }
     }
 
     if (permission == LocationPermission.deniedForever) {
-      if (kDebugMode) print("⚠️ Geolocation permission permanently denied");
+      if (kDebugMode) print("Geolocation permission permanently denied");
       return;
     }
   }
@@ -162,7 +162,7 @@ Future<List<Map<String, dynamic>>> fetchNearbyCarWashes(LatLng location, String 
   if (response.statusCode == 200) {
     final data = json.decode(response.body);
     if (data['status'] != 'OK') {
-      if (kDebugMode) print("⚠️ Error from Google API: ${data['status']} — ${data['error_message']}");
+      if (kDebugMode) print(" Error from Google API: ${data['status']} — ${data['error_message']}");
       return [];
     }
 

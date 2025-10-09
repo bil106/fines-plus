@@ -16,7 +16,7 @@ class FinesServer {
 
     final router = Router();
 
-    router.get('/', (Request req) => Response.ok('✅ Server is running'));
+    router.get('/', (Request req) => Response.ok('Server is running'));
 
     router.post('/api/fines', (Request req) async {
       try {
@@ -50,7 +50,7 @@ class FinesServer {
         return Response.ok(jsonEncode({"fines": fines}), headers: {'Content-Type': 'application/json'});
       } catch (e, stack) {
         if (kDebugMode) {
-          print("❌ Error: $e");
+          print("Error: $e");
           print(stack);
         }
         return Response.internalServerError(

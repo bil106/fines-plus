@@ -19,11 +19,11 @@ class RemoteConfigService {
 
     try {
       await remoteConfig.fetchAndActivate();
-      debugPrint("✅ RemoteConfig fetched successfully");
+      debugPrint("RemoteConfig fetched successfully");
       debugPrint("feature_reminders_enabled = ${remoteConfig.getBool('feature_reminders_enabled')}");
       debugPrint("feature_purchase_enabled = ${remoteConfig.getBool('feature_purchase_enabled')}");
     } catch (e) {
-      debugPrint('❌ Remote config fetch failed: $e');
+      debugPrint('Remote config fetch failed: $e');
     }
 
     _instance = RemoteConfigService._(remoteConfig);
@@ -44,6 +44,6 @@ class RemoteConfigService {
 
   Future<void> refresh() async {
     await _remoteConfig.fetchAndActivate();
-    debugPrint("♻️ Remote config refreshed");
+    debugPrint("Remote config refreshed");
   }
 }

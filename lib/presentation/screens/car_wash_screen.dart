@@ -64,7 +64,7 @@ class _CarWashScreenState extends State<CarWashScreen> {
 
       setState(() => _bestCarWash = bestCarWash);
     } catch (e) {
-      if (kDebugMode) print("❌ Error getting car wash: $e");
+      if (kDebugMode) print("Error getting car wash: $e");
     }
   }
 

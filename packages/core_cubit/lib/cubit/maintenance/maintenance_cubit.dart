@@ -2,6 +2,7 @@
 
 import 'package:core_data/core_data.dart';
 import 'package:core_repository/expense_repository.dart';
+import 'package:fines_plus/features/vehicle/data/datasources/car_info_local_data_source.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -49,12 +50,12 @@ class MaintenanceCubit extends Cubit<MaintenanceState> {
           carNumber: car.carNumber,
           expense: mapper(userId),
         );
-        debugPrint("✅ ${category.name} record saved to Firestore");
+        debugPrint("${category.name} record saved to Firestore");
       } catch (e) {
-        debugPrint("❌ Failed to save ${category.name} record: $e");
+        debugPrint("Failed to save ${category.name} record: $e");
       }
     } else {
-      debugPrint("ℹ️ ${category.name} record already exists, skipping");
+      debugPrint("ℹ${category.name} record already exists, skipping");
     }
   }
 
@@ -132,7 +133,7 @@ class MaintenanceCubit extends Cubit<MaintenanceState> {
       await _saveRecordsToPrefs('tuning_records', state.tuningRecords);
       await _saveRecordsToPrefs('car_wash_records', state.carWashRecords);
     } catch (e) {
-      debugPrint("❌ [SYNC] Error: $e");
+      debugPrint("[SYNC] Error: $e");
       emit(state.copyWith(isLoading: false));
     } finally {
       emit(state.copyWith(isLoading: false));
@@ -225,9 +226,9 @@ class MaintenanceCubit extends Cubit<MaintenanceState> {
         carNumber: car.carNumber,
         expense: mapper(userId),
       );
-      debugPrint("✅ ${category.name} record saved to Firestore");
+      debugPrint("${category.name} record saved to Firestore");
     } catch (e) {
-      debugPrint("❌ Failed to save ${category.name} record: $e");
+      debugPrint("Failed to save ${category.name} record: $e");
     }
   }
 
@@ -252,9 +253,9 @@ class MaintenanceCubit extends Cubit<MaintenanceState> {
           carNumber: car.carNumber,
           expense: expense,
         );
-        debugPrint("✅ Service record saved to Firestore");
+        debugPrint("Service record saved to Firestore");
       } catch (e) {
-        debugPrint("❌ Failed to save ServiceRecord: $e");
+        debugPrint("Failed to save ServiceRecord: $e");
       }
     }
   }
@@ -274,9 +275,9 @@ class MaintenanceCubit extends Cubit<MaintenanceState> {
         carNumber: car.carNumber,
         expense: expense,
       );
-      debugPrint("✅ Fuel record saved to Firestore");
+      debugPrint("Fuel record saved to Firestore");
     } catch (e) {
-      debugPrint("❌ Failed to save fuel record: $e");
+      debugPrint("Failed to save fuel record: $e");
     }
   }
 
@@ -295,9 +296,9 @@ class MaintenanceCubit extends Cubit<MaintenanceState> {
         carNumber: car.carNumber,
         expense: expense,
       );
-      debugPrint("✅ CarWashRecord saved to Firestore");
+      debugPrint("CarWashRecord saved to Firestore");
     } catch (e) {
-      debugPrint("❌ Failed to save CarWashRecord: $e");
+      debugPrint("Failed to save CarWashRecord: $e");
     }
   }
 
@@ -316,9 +317,9 @@ class MaintenanceCubit extends Cubit<MaintenanceState> {
         carNumber: car.carNumber,
         expense: expense,
       );
-      debugPrint("✅ Service record saved to Firestore");
+      debugPrint("Service record saved to Firestore");
     } catch (e) {
-      debugPrint("❌ Service to save fuel record: $e");
+      debugPrint("Service to save fuel record: $e");
     }
   }
 
@@ -338,7 +339,7 @@ class MaintenanceCubit extends Cubit<MaintenanceState> {
           expense: expense,
         );
       } catch (e) {
-        debugPrint("❌ Failed to save TuningRecord: $e");
+        debugPrint("Failed to save TuningRecord: $e");
       }
     }
   }
@@ -410,9 +411,9 @@ class MaintenanceCubit extends Cubit<MaintenanceState> {
         category: category.name,
       );
 
-      debugPrint("🧹 All expenses in this category have been removed ${category.name}");
+      debugPrint(" All expenses in this category have been removed ${category.name}");
     } catch (e) {
-      debugPrint("❌ Error deleting category: $e");
+      debugPrint("Error deleting category: $e");
     } finally {
       emit(state.copyWith(isLoading: false));
     }
@@ -437,7 +438,7 @@ class MaintenanceCubit extends Cubit<MaintenanceState> {
           tuningRecords: [],
           carWashRecords: [],
         ));
-        debugPrint('🧹 All expenses have been removed for ${car.carNumber}');
+        debugPrint(' All expenses have been removed for ${car.carNumber}');
       } else {
         await expenseRepository.deleteExpensesByCategory(
           carNumber: car.carNumber,
@@ -465,10 +466,10 @@ class MaintenanceCubit extends Cubit<MaintenanceState> {
             throw UnimplementedError();
         }
 
-        debugPrint('🧹 All expenses in this category have been removed ${category.name}');
+        debugPrint(' All expenses in this category have been removed ${category.name}');
       }
     } catch (e) {
-      debugPrint('❌Error deleting expenses: $e');
+      debugPrint('Error deleting expenses: $e');
     } finally {
       emit(state.copyWith(isLoading: false));
     }
@@ -515,9 +516,9 @@ class MaintenanceCubit extends Cubit<MaintenanceState> {
           break;
       }
 
-      debugPrint('✅ The expense has been successfully removed $expenseId (${category.name})');
+      debugPrint('The expense has been successfully removed $expenseId (${category.name})');
     } catch (e) {
-      debugPrint('❌ Error while deleting: $e');
+      debugPrint('Error while deleting: $e');
     } finally {
       emit(state.copyWith(isLoading: false));
     }
@@ -547,7 +548,7 @@ class MaintenanceCubit extends Cubit<MaintenanceState> {
 
       debugPrint("🧹All expenses removed for ${car.carNumber}");
     } catch (e, st) {
-      debugPrint("❌ deleteAllExpenses error: $e\n$st");
+      debugPrint("deleteAllExpenses error: $e\n$st");
       emit(state.copyWith(isLoading: false));
     }
   }
@@ -677,7 +678,7 @@ extension MileageCalculations on MaintenanceCubit {
           expense: mapper(r, userId),
         );
       } catch (e) {
-        debugPrint("❌ Failed to save ${category.name} record: $e");
+        debugPrint("Failed to save ${category.name} record: $e");
       }
     }
   }

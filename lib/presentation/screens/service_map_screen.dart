@@ -96,7 +96,7 @@ class _ServiceMapScreenState extends State<ServiceMapScreen> {
         }
       });
     } catch (e) {
-      if (kDebugMode) print("❌ Error getting geolocation: $e");
+      if (kDebugMode) print("Error getting geolocation: $e");
     }
   }
 
@@ -151,7 +151,7 @@ Future<List<Map<String, dynamic>>> fetchNearbyServices(LatLng location, String a
     final data = json.decode(response.body);
     if (data['status'] != 'OK') {
       if (kDebugMode) {
-        print("⚠️ Error from Google API: ${data['status']} — ${data['error_message']}");
+        print("Error from Google API: ${data['status']} — ${data['error_message']}");
       }
       return [];
     }

@@ -51,7 +51,7 @@ class _TuningScreenState extends State<TuningScreen> {
     if (!serviceEnabled) {
       serviceEnabled = await location.requestService();
       if (!serviceEnabled) {
-        if (kDebugMode) print("❌ Location service not enabled");
+        if (kDebugMode) print("Location service not enabled");
         return;
       }
     }
@@ -60,7 +60,7 @@ class _TuningScreenState extends State<TuningScreen> {
     if (permissionGranted == PermissionStatus.denied) {
       permissionGranted = await location.requestPermission();
       if (permissionGranted != PermissionStatus.granted) {
-        if (kDebugMode) print("❌ Location permission not granted");
+        if (kDebugMode) print("Location permission not granted");
         return;
       }
     }
@@ -75,7 +75,7 @@ class _TuningScreenState extends State<TuningScreen> {
         _bestStation = bestStation;
       });
     } catch (e) {
-      if (kDebugMode) print("❌ Error getting position: $e");
+      if (kDebugMode) print("Error getting position: $e");
     }
   }
   Future<void> _fetchRate() async {
@@ -104,7 +104,7 @@ class _TuningScreenState extends State<TuningScreen> {
         }
       }
     } catch (e) {
-      if (kDebugMode) print("⚠️ Error fetching rate: $e");
+      if (kDebugMode) print(" Error fetching rate: $e");
     }
   }
 

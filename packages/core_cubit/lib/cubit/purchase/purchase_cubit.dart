@@ -10,7 +10,7 @@ class PurchaseCubit extends Cubit<void> {
 
   Future<void> buySubscription(String uid, num amount) async {
     if (!enabled) {
-      debugPrint('❌ Purchase feature disabled by Remote Config');
+      debugPrint('Purchase feature disabled by Remote Config');
       return; 
     }
 
@@ -21,7 +21,7 @@ class PurchaseCubit extends Cubit<void> {
       amount: amount,
     );
 
-    debugPrint('✅ Purchase completed: $purchaseId');
+    debugPrint('Purchase completed: $purchaseId');
   }
 }
 

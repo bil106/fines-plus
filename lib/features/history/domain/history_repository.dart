@@ -29,7 +29,7 @@ Future<void> addToHistory({
     };
 
     await docRef.set(data);
-    if (kDebugMode) print('✅ History added: ${docRef.id}');
+    if (kDebugMode) print('History added: ${docRef.id}');
   }
 
 
@@ -61,7 +61,7 @@ Future<void> addToHistory({
     }
 
     if (kDebugMode) {
-      print('✅ All history removed for $carNumber');
+      print('All history removed for $carNumber');
     }
   }
 
@@ -70,7 +70,7 @@ Future<void> addToHistory({
     await docRef.delete();
 
     if (kDebugMode) {
-      print('✅ Record $docId removed');
+      print('Record $docId removed');
     }
   }
 }

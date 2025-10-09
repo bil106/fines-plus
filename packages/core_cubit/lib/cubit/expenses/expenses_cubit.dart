@@ -30,7 +30,7 @@ Future<void> add(String carNumber, String techPassport, Expense expense) async {
       expense: expense,
     );
 
-    debugPrint('✅ Expense added in Cubit: ${expense.toFirestore()} with ID: ${docRef.id}');
+    debugPrint('Expense added in Cubit: ${expense.toFirestore()} with ID: ${docRef.id}');
   }
 
 

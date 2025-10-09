@@ -27,7 +27,7 @@ class DeleteExpensesButton extends StatelessWidget {
           );
           if (confirmAll == true) {
             await cubit.deleteAllExpenses();
-            ScaffoldMessenger.of(context).showSnackBar( SnackBar(content: Text('✅${S.of(context).all_exp_hist_deleted}')));
+            ScaffoldMessenger.of(context).showSnackBar( SnackBar(content: Text(S.of(context).all_exp_hist_deleted)));
           }
         } else {
           final confirm = await DeleteExpenseDialog.confirmDelete(
@@ -37,9 +37,9 @@ class DeleteExpensesButton extends StatelessWidget {
           );
           if (confirm == true) {
             await cubit.deleteExpensesByCategory(selectedCategory);
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(SnackBar(content: Text('✅ ${S.of(context).category_removed}${selectedCategory.name}')));
+            // ScaffoldMessenger.of(
+            //   context,
+            // ).showSnackBar(SnackBar(content: Text('${S.of(context).category_removed}${selectedCategory.name}')));
           }
         }
       },

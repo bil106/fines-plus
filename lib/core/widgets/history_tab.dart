@@ -1,6 +1,7 @@
-import 'package:core_data/core_data.dart';
+
 import 'package:design_system/colors/app_colors.dart';
 import 'package:fines_plus/core/widgets/time_line_item.dart';
+import 'package:fines_plus/features/analytics/data/models/event_model.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 

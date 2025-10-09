@@ -53,7 +53,7 @@ class _FuelUpScreenState extends State<FuelUpScreen> {
     if (!serviceEnabled) {
       serviceEnabled = await location.requestService();
       if (!serviceEnabled) {
-        if (kDebugMode) print("❌ Location service not enabled");
+        if (kDebugMode) print(" Location service not enabled");
         return;
       }
     }
@@ -62,7 +62,7 @@ class _FuelUpScreenState extends State<FuelUpScreen> {
     if (permissionGranted == PermissionStatus.denied) {
       permissionGranted = await location.requestPermission();
       if (permissionGranted != PermissionStatus.granted) {
-        if (kDebugMode) print("❌ Location permission not granted");
+        if (kDebugMode) print(" Location permission not granted");
         return;
       }
     }
@@ -77,7 +77,7 @@ class _FuelUpScreenState extends State<FuelUpScreen> {
         _bestStation = bestStation;
       });
     } catch (e) {
-      if (kDebugMode) print("❌ Error getting position: $e");
+      if (kDebugMode) print(" Error getting position: $e");
     }
   }
 

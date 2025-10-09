@@ -84,7 +84,11 @@ class Expense {
       createdAt: created,
       updatedAt: updated,
       userId: (json['userId'] is String) ? json['userId'] as String : '',
+      carNumber: json['carNumber'] as String?,
+      fuelVolume: (json['fuelVolume'] is num)
+          ? (json['fuelVolume'] as num).toDouble()
+          : double.tryParse(json['fuelVolume']?.toString() ?? '0.0'),
     );
   }
-  
+
 }

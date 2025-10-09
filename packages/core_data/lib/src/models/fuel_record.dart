@@ -39,19 +39,20 @@ class FuelRecord {
       };
 
 
-  factory FuelRecord.fromExpense(Expense expense) {
+factory FuelRecord.fromExpense(Expense expense) {
     final formattedDate =
         (expense.date is DateTime) ? DateFormat('dd.MM.yyyy').format(expense.date) : (expense.date.toString());
 
     return FuelRecord(
       id: expense.id,
       fuelType: expense.comment ?? 'fuel',
-      volume: expense.fuelVolume ?? 0.0,
+      volume: expense.fuelVolume ?? 0.0, 
       cost: expense.amount.toDouble(),
       date: formattedDate,
       mileage: expense.mileage ?? 0,
     );
   }
+
 
 
   Expense toExpense(String userId) {
@@ -69,6 +70,7 @@ class FuelRecord {
       mileage: mileage,
       comment: fuelType,
       userId: userId,
+      fuelVolume: volume
     );
   }
 }

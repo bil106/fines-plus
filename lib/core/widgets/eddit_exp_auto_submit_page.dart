@@ -36,7 +36,7 @@ class _EditExpAutoSubmitPageState extends State<EditExpAutoSubmitPage> {
 
       final uri = Uri.parse(result);
       final cookies = uri.queryParameters; // get tokens/session
-      debugPrint('✅ Cookies: $cookies');
+      debugPrint('Cookies: $cookies');
 
       // 2️⃣ We are publishing the post
       final response = await http.post(
@@ -55,12 +55,12 @@ class _EditExpAutoSubmitPageState extends State<EditExpAutoSubmitPage> {
       if (response.statusCode == 200) {
         setState(() {
           _loading = false;
-          _status = '✅ Comment published';
+          _status = 'Comment published';
         });
       } else {
         setState(() {
           _loading = false;
-          _status = '❌ Error: ${response.statusCode}\n${response.body}';
+          _status = 'Error: ${response.statusCode}\n${response.body}';
         });
       }
     } catch (e, st) {

@@ -1,32 +1,36 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:core_cubit/cubit/car_info/car_info_cubit.dart';
 import 'package:core_cubit/cubit/expenses/expenses_cubit.dart';
-import 'package:core_cubit/cubit/history/history_cubit.dart';
+
 import 'package:core_cubit/cubit/maintenance/maintenance_cubit.dart';
 import 'package:core_cubit/cubit/purchase/purchase_cubit.dart';
 import 'package:core_cubit/cubit/schedule/schedule_cubit.dart';
 import 'package:core_data/core_data.dart';
 import 'package:core_localization/generated/l10n.dart';
-import 'package:core_repository/car_info_repository.dart';
 import 'package:core_repository/expense_repository.dart';
-import 'package:core_repository/history_repository.dart';
-import 'package:core_repository/reminder_repository.dart';
 import 'package:core_repository/schedule_repository.dart';
 import 'package:design_system/colors/app_colors.dart';
+import 'package:fines_plus/features/analytics/data/models/event_model.dart';
+import 'package:fines_plus/features/analytics/presentation/screens/analytics_screen.dart';
+import 'package:fines_plus/features/export/presentation/screens/export_screen.dart';
+import 'package:fines_plus/features/fines/presentation/screens/fine_check_screen.dart';
+import 'package:fines_plus/features/fines/presentation/screens/fines_screeen.dart';
+import 'package:fines_plus/features/history/domain/history_repository.dart';
+import 'package:fines_plus/features/history/presentation/cubit/history_cubit.dart';
+import 'package:fines_plus/features/history/presentation/screens/history_screen.dart';
+import 'package:fines_plus/features/reminders/data/datasources/reminder_local_data_source.dart';
+import 'package:fines_plus/features/reminders/data/datasources/reminder_remote_data_source.dart';
+import 'package:fines_plus/features/reminders/data/repository/reminder_repository.dart';
+import 'package:fines_plus/features/reminders/presentation/screens/reminders_screen.dart';
+import 'package:fines_plus/features/vehicle/data/repository/car_info_repository.dart';
+import 'package:fines_plus/features/vehicle/presentation/cubit/car_info_cubit.dart';
+import 'package:fines_plus/features/vehicle/presentation/screens/car_info_screen.dart';
 import 'package:fines_plus/presentation/screens/add_car_screen.dart';
-import 'package:fines_plus/presentation/screens/analytics_screen.dart';
-import 'package:fines_plus/presentation/screens/car_info_screen.dart';
 import 'package:fines_plus/presentation/screens/car_wash_map_screen.dart';
 import 'package:fines_plus/presentation/screens/car_wash_screen.dart';
-import 'package:fines_plus/presentation/screens/export_screen.dart';
-import 'package:fines_plus/presentation/screens/fine_check_screen.dart.txt';
-import 'package:fines_plus/presentation/screens/fines_screeen.dart.txt';
 import 'package:fines_plus/presentation/screens/fuel_map_screen.dart';
 import 'package:fines_plus/presentation/screens/fuel_up_screen.dart';
-import 'package:fines_plus/presentation/screens/history_screen.dart';
 import 'package:fines_plus/presentation/screens/registration_screen.dart';
-import 'package:fines_plus/presentation/screens/reminders_screen.dart';
 import 'package:fines_plus/presentation/screens/schedule_screen.dart';
 import 'package:fines_plus/presentation/screens/service_screen.dart';
 import 'package:fines_plus/presentation/screens/settings_screen.dart';
@@ -143,7 +147,6 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
           controller: _pageController,
           onPageChanged: (index) => setState(() => _currentIndex = index),
           children: [
-        
             AddCarScreen(
               key: const ValueKey('add_car_screen'),
               onOpenCarInfo: () => openPage(HomePage.carInfo),
@@ -152,8 +155,7 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
               onAnalytics: () => openPage(HomePage.analytics),
             ),
 
-           FinesScreen(key: const ValueKey('fines_screen'), onBack: () => openPage(HomePage.addCar)),
-
+            FinesScreen(key: const ValueKey('fines_screen'), onBack: () => openPage(HomePage.addCar)),
 
             RemindersScreen(
               key: const ValueKey('reminders'),
@@ -167,7 +169,7 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
               onBack: () => openPage(HomePage.addCar),
             ),
 
-       BlocProvider(
+            BlocProvider(
               create: (_) => ExpensesCubit(repository: ExpenseRepository(FirebaseFirestore.instance)),
               child: CarInfoScreen(
                 key: const ValueKey('car_info_screen'),
@@ -188,12 +190,12 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
               onBack: () => openPage(HomePage.addCar),
             ),
 
-         SettingsScreen(
+            SettingsScreen(
               key: const ValueKey('settings_screen'),
               onBack: () => openPage(HomePage.maintenance),
-              remoteConfigService: context.read<RemoteConfigService>(), 
-              scheduleCubit: context.read<ScheduleCubit>(), 
-              purchaseCubit: context.read<PurchaseCubit>(), 
+              remoteConfigService: context.read<RemoteConfigService>(),
+              scheduleCubit: context.read<ScheduleCubit>(),
+              purchaseCubit: context.read<PurchaseCubit>(),
             ),
             HistoryScreen(key: const ValueKey('history_screen'), carNumber: _carNumber!),
 
@@ -208,7 +210,7 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
                 );
               },
             ),
-           
+
             ExportScreen(
               key: const ValueKey('export'),
               history: exportHistory,

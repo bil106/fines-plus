@@ -5,7 +5,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:core_cubit/cubit/maintenance/maintenance_state.dart';
 import 'package:core_data/core_data.dart';
 import 'package:core_localization/generated/l10n.dart';
-import 'package:core_repository/reminder_repository.dart';
 import 'package:core_repository/schedule_repository.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_spacers.dart';
@@ -17,6 +16,9 @@ import 'package:fines_plus/core/widgets/fab_menu.dart';
 import 'package:fines_plus/core/widgets/fuel_record_card.dart';
 import 'package:fines_plus/core/widgets/service_record_card.dart';
 import 'package:fines_plus/core/widgets/tuning_record_card.dart';
+import 'package:fines_plus/features/reminders/data/datasources/reminder_local_data_source.dart';
+import 'package:fines_plus/features/reminders/data/datasources/reminder_remote_data_source.dart';
+import 'package:fines_plus/features/reminders/data/repository/reminder_repository.dart';
 import 'package:fines_plus/presentation/screens/service_screen.dart';
 import 'package:fines_plus/router/app_router.dart';
 import 'package:fines_plus/router/home_screen_wrapper.dart';
@@ -52,11 +54,15 @@ class MaintenanceScreen extends StatefulWidget {
 
 class _MaintenanceScreenState extends State<MaintenanceScreen> {
  
-  @override
+@override
   void initState() {
     super.initState();
-  WidgetsBinding.instance.addPostFrameCallback((_) async { final maintenanceCubit = context.read<MaintenanceCubit>(); maintenanceCubit.clearAllRecords(); await maintenanceCubit.syncExpensesFromFirestore();
-  });}
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final maintenanceCubit = context.read<MaintenanceCubit>();
+      maintenanceCubit.clearAllRecords();
+      await maintenanceCubit.syncExpensesFromFirestore();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {

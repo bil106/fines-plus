@@ -1,10 +1,11 @@
 import 'package:bloc/bloc.dart';
 import 'package:core_cubit/cubit/maintenance/maintenance_cubit.dart';
-import 'package:core_cubit/cubit/reminder/reminder_cubit.dart';
 import 'package:core_cubit/cubit/schedule/schedule_state.dart';
 import 'package:core_data/core_data.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:core_repository/schedule_repository.dart';
+import 'package:fines_plus/features/reminders/data/models/reminder_model.dart';
+import 'package:fines_plus/features/reminders/presentation/cubit/reminder_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
@@ -58,7 +59,7 @@ class ScheduleCubit extends Cubit<ScheduleState> {
         isCompleted: false,
       );
       reminderCubit.addReminder(reminder);
-      debugPrint("✅ Reminder created for ${task.title}");
+      debugPrint("Reminder created for ${task.title}");
     }
 
     if (progress >= 0.9) {
@@ -68,7 +69,7 @@ class ScheduleCubit extends Cubit<ScheduleState> {
         body: '${task.title} ${S.current.reached_usage}',
         dateTime: DateTime.now().add(const Duration(seconds: 5)),
       );
-      debugPrint("🔔 Notification scheduled for ${task.title}");
+      debugPrint("Notification scheduled for ${task.title}");
     }
   }
 

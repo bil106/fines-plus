@@ -84,7 +84,7 @@ class _ServiceScreenState extends State<ServiceScreen> {
 
       setState(() => _bestStation = bestStation);
     } catch (e) {
-      if (kDebugMode) print("❌ Error getting position: $e");
+      if (kDebugMode) print("Error getting position: $e");
     }
   }
 
@@ -114,7 +114,7 @@ class _ServiceScreenState extends State<ServiceScreen> {
         }
       }
     } catch (e) {
-      if (kDebugMode) print("⚠️ Course loading error: $e");
+      if (kDebugMode) print(" Course loading error: $e");
     }
   }
 

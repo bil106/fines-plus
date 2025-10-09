@@ -54,10 +54,10 @@ class PushHelper {
         notificationDetails,
         payload: payload,
       );
-      debugPrint('🔔 Notification "$title" shown at ${DateTime.now()}');
+      debugPrint('Notification "$title" shown at ${DateTime.now()}');
     });
 
-    debugPrint('🔔 Notification "$title" scheduled in ${delay.inSeconds} seconds');
+    debugPrint('Notification "$title" scheduled in ${delay.inSeconds} seconds');
   }
 }
 
@@ -96,6 +96,6 @@ extension PushHelperResource on PushHelper {
       notificationDetails,
     );
 
-    debugPrint('⚠️ Resource notification "$title" sent immediately');
+    debugPrint(' Resource notification "$title" sent immediately');
   }
 }

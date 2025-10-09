@@ -86,7 +86,7 @@ class _MyAppState extends State<MyApp> {
           _processDynamicLink(link);
         })
         .onError((error) {
-          debugPrint("❌ Dynamic Link error: $error");
+          debugPrint("Dynamic Link error: $error");
         });
 
   
@@ -103,7 +103,7 @@ class _MyAppState extends State<MyApp> {
         _navigateToHistoryFromAppLink(uri);
       },
       onError: (err) {
-        debugPrint("❌ App Link error: $err");
+        debugPrint("App Link error: $err");
       },
     );
 
@@ -112,7 +112,7 @@ class _MyAppState extends State<MyApp> {
       final initialUri = await _appLinks.getInitialLink();
       if (initialUri != null) _navigateToHistoryFromAppLink(initialUri);
     } catch (e) {
-      debugPrint("❌ Error getting initial App Link: $e");
+      debugPrint("Error getting initial App Link: $e");
     }
   }
 
@@ -160,7 +160,7 @@ Future<void> savePartnerIdForUser(User user) async {
         'createdAt': FieldValue.serverTimestamp(),
       }, SetOptions(merge: true));
 
-      debugPrint("✅ User ${user.email} saved with partnerId=$partnerId");
+      debugPrint("User ${user.email} saved with partnerId=$partnerId");
 
    // update partner statistics on the client
       await FirebaseFirestore.instance.collection('partnerStats').doc(partnerId).set({

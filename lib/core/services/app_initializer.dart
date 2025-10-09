@@ -12,13 +12,17 @@ import 'package:core_cubit/cubit/referral/referral_cubit.dart';
 import 'package:core_cubit/cubit/registration/registration_cubit.dart';
 import 'package:core_cubit/cubit/schedule/schedule_cubit.dart';
 import 'package:core_data/core_data.dart';
-import 'package:core_repository/car_info_repository.dart';
 import 'package:core_repository/expense_repository.dart';
-import 'package:core_repository/history_repository.dart';
-import 'package:core_repository/reminder_repository.dart';
 import 'package:core_repository/schedule_repository.dart';
 import 'package:core_services/services/purchase_service.dart';
 import 'package:fines_plus/backend/fines_server.dart';
+import 'package:fines_plus/features/history/domain/history_repository.dart';
+import 'package:fines_plus/features/reminders/data/datasources/reminder_local_data_source.dart';
+import 'package:fines_plus/features/reminders/data/datasources/reminder_remote_data_source.dart';
+import 'package:fines_plus/features/reminders/data/models/reminder_model.dart';
+import 'package:fines_plus/features/reminders/data/repository/reminder_repository.dart';
+import 'package:fines_plus/features/vehicle/data/datasources/car_info_local_data_source.dart';
+import 'package:fines_plus/features/vehicle/data/repository/car_info_repository.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -45,7 +49,7 @@ class AppInitializer {
   final Map<String, int> _scheduledReminderIds = {};
   Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
     await Firebase.initializeApp();
-    debugPrint("🔔 Background message: ${message.messageId}");
+    debugPrint("Background message: ${message.messageId}");
   }
 
   Future<AppInitResult> init() async {
@@ -75,7 +79,7 @@ class AppInitializer {
     await flutterLocalNotificationsPlugin.initialize(
       initSettings,
       onDidReceiveNotificationResponse: (details) {
-        debugPrint('📩 Notification tapped! Payload: ${details.payload}');
+        debugPrint('Notification tapped! Payload: ${details.payload}');
       },
     );
 
@@ -104,31 +108,11 @@ class AppInitializer {
 
     final token = await FirebaseMessaging.instance.getToken();
     if (token != null) {
-      debugPrint("🔑 FCM Registration Token: $token");
+      debugPrint(" FCM Registration Token: $token");
     }
 
-    // final firestore = FirebaseFirestore.instance;
-    // final remindersSnapshot = await firestore.collection('reminders').get();
 
-    // for (var carDoc in remindersSnapshot.docs) {
-    //   final itemsSnapshot = await carDoc.reference.collection('items').get();
-    //   for (var itemDoc in itemsSnapshot.docs) {
-    //     final data = itemDoc.data();
-    //     final dateValue = data['dateTime'];
-    //     if (dateValue is Timestamp) {
-    //       final reminder = ReminderModel(
-    //         id: itemDoc.id,
-    //         title: data['title'] ?? '',
-    //         description: data['description'] ?? '',
-    //         dateTime: dateValue.toDate(),
-    //         isCompleted: data['isCompleted'] ?? false,
-    //       );
-    //       await scheduleReminder(reminder);
-    //     }
-    //   }
-    // }
-
-    debugPrint('✅ All reminders scheduled');
+    debugPrint('All reminders scheduled');
 
     // Load config
     const flavor = String.fromEnvironment('FLAVOR', defaultValue: 'autolux');
@@ -206,13 +190,13 @@ extension ReminderScheduling on AppInitializer {
     final pushEnabled = prefs.getBool("pushNotifications") ?? true;
 
     if (!(remindersEnabled && pushEnabled)) {
-      debugPrint("⚠️ Notifications disabled in settings, skip scheduling");
+      debugPrint(" Notifications disabled in settings, skip scheduling");
       return;
     }
 
     final now = DateTime.now();
     if (reminder.dateTime.isBefore(now)) {
-      debugPrint('⏱ Reminder ${reminder.id} time is in the past, skipping.');
+      debugPrint(' Reminder ${reminder.id} time is in the past, skipping.');
       return;
     }
 
@@ -220,7 +204,7 @@ extension ReminderScheduling on AppInitializer {
     _scheduledReminderIds[reminder.id] = notificationId;
 
     final delay = reminder.dateTime.difference(now);
-    debugPrint('🔔 Reminder ${reminder.id} scheduled in $delay');
+    debugPrint(' Reminder ${reminder.id} scheduled in $delay');
 
     Future.delayed(delay, () async {
       const String soundFileName = 'notify';
@@ -241,7 +225,7 @@ extension ReminderScheduling on AppInitializer {
         ),
         payload: reminder.id,
       );
-      debugPrint('🔔 Reminder ${reminder.id} triggered at ${DateTime.now()}');
+      debugPrint('Reminder ${reminder.id} triggered at ${DateTime.now()}');
     });
   }
 

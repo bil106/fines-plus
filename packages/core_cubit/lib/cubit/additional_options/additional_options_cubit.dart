@@ -17,9 +17,9 @@ class AdditionalOptionsCubit extends Cubit<AdditionalOptionsState> {
     final tokens = await tokensRepository.getSavedTokens();
     if (tokens != null) {
       emit(AdditionalOptionsTokensPresent());
-      debugPrint('✅ ${S.current.tokens_already_present}');
+      debugPrint(S.current.tokens_already_present);
     } else {
-      debugPrint('⚠️ ${S.current.no_tokens_yet}');
+      debugPrint(S.current.no_tokens_yet);
     }
   }
 
@@ -28,10 +28,10 @@ class AdditionalOptionsCubit extends Cubit<AdditionalOptionsState> {
     try {
       await extractTokensUseCase.execute(webController);
       emit(AdditionalOptionsExtracted());
-      debugPrint('✅ ${S.current.tokens_extracted}');
+      debugPrint(S.current.tokens_extracted);
     } catch (e) {
       emit(AdditionalOptionsError('${S.current.failed_extract_tokens}: $e'));
-      debugPrint('❌ ${S.current.failed_extract_tokens}: $e');
+      debugPrint('${S.current.failed_extract_tokens}: $e');
     }
   }
 }

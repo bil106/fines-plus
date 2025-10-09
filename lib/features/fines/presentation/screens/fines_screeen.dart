@@ -1,8 +1,7 @@
 // ignore_for_file: unused_field
 
 import 'package:auto_route/auto_route.dart';
-import 'package:core_cubit/cubit/car_info/car_info_cubit.dart';
-import 'package:core_cubit/cubit/car_info/car_info_state.dart';
+
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_borders.dart';
@@ -12,6 +11,8 @@ import 'package:design_system/theme/app_theme.dart';
 import 'package:fines_plus/core/widgets/ad_banner_widget.dart';
 import 'package:fines_plus/core/widgets/unauthorized_dialog.dart';
 import 'package:fines_plus/env/env.dart';
+import 'package:fines_plus/features/vehicle/presentation/cubit/car_info_cubit.dart';
+import 'package:fines_plus/features/vehicle/presentation/cubit/car_info_state.dart';
 import 'package:fines_plus/router/home_screen_wrapper.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';

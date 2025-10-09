@@ -35,7 +35,7 @@ class PurchaseService {
         'paidUsers': FieldValue.increment(1),
       }, SetOptions(merge: true));
 
-      debugPrint("✅ Partner $partnerId received bonus $bonus for purchase $purchaseId");
+      debugPrint("Partner $partnerId received bonus $bonus for purchase $purchaseId");
     }
   }
 }

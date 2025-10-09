@@ -20,7 +20,7 @@ class ExpenseRepository {
     final col = _expensesCollection(carNumber);
     final docRef = await col.add(expense.toFirestore());
 
-    debugPrint('✅ Expense saved to Firestore:');
+    debugPrint('Expense saved to Firestore:');
     debugPrint('Car: $carNumber');
     debugPrint('Expense ID: ${docRef.id}');
     debugPrint('Data: ${expense.toFirestore()}');
@@ -72,7 +72,7 @@ class ExpenseRepository {
     final query = await col.get();
 
     if (query.docs.isEmpty) {
-      debugPrint('ℹ️ There is no data to delete for this vehicle $carNumber');
+      debugPrint(' There is no data to delete for this vehicle $carNumber');
       return;
     }
 
@@ -82,7 +82,7 @@ class ExpenseRepository {
     }
 
     await batch.commit();
-    debugPrint('🧹 All expenses removed for the car $carNumber');
+    debugPrint(' All expenses removed for the car $carNumber');
   }
 
   Future<void> deleteExpensesByCategory({
@@ -94,7 +94,7 @@ class ExpenseRepository {
     final query = await col.where('category', isEqualTo: category).get();
 
     if (query.docs.isEmpty) {
-      debugPrint('ℹ️ There is no data to delete for this category. "$category" for the car $carNumber');
+      debugPrint(' There is no data to delete for this category. "$category" for the car $carNumber');
       return;
     }
 
@@ -104,6 +104,6 @@ class ExpenseRepository {
     }
 
     await batch.commit();
-    debugPrint('🧹 All expenses of the category "$category" removed for the machine $carNumber');
+    debugPrint(' All expenses of the category "$category" removed for the machine $carNumber');
   }
 }

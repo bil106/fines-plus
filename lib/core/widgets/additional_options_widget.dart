@@ -39,10 +39,10 @@ class _AdditionalOptionsWidgetState extends State<AdditionalOptionsWidget> {
         bool isExtracting = false;
 
         if (state is AdditionalOptionsLoading) isExtracting = true;
-        if (state is AdditionalOptionsTokensPresent) status = '✅ Tokens already present';
-        if (state is AdditionalOptionsTokensMissing) status = '⚠️ No tokens yet';
-        if (state is AdditionalOptionsExtracted) status = '✅ Tokens extracted';
-        if (state is AdditionalOptionsError) status = '❌ ${state.message}';
+        if (state is AdditionalOptionsTokensPresent) status = 'Tokens already present';
+        if (state is AdditionalOptionsTokensMissing) status = 'No tokens yet';
+        if (state is AdditionalOptionsExtracted) status = 'Tokens extracted';
+        if (state is AdditionalOptionsError) status = state.message;
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,

@@ -1,10 +1,11 @@
-import 'package:core_cubit/cubit/car_info/car_info_cubit.dart';
+
 import 'package:core_localization/generated/l10n.dart';
 import 'package:core_utils/formatters/vehicle_formatters.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_borders.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
+import 'package:fines_plus/features/vehicle/presentation/cubit/car_info_cubit.dart';
 import 'package:flutter/material.dart';
 
 class TechPassportInput extends StatelessWidget {

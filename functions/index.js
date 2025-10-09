@@ -31,9 +31,9 @@ exports.onReminderCreated = functions.firestore
             { reminderId, carNumber },
             { scheduleDelaySeconds: Math.floor(delay / 1000) }
          );
-         console.log(`✅ Task scheduled for ${reminderId} in ${Math.floor(delay / 1000)}s`);
+         console.log(`Task scheduled for ${reminderId} in ${Math.floor(delay / 1000)}s`);
       } else {
-         console.log(`⚠️ Reminder time already passed for ${reminderId}`);
+         console.log(` Reminder time already passed for ${reminderId}`);
       }
    });
 
@@ -63,7 +63,7 @@ exports.onReminderUpdated = functions.firestore
             );
             console.log(`✅ Updated task scheduled for ${reminderId} in ${Math.floor(delay / 1000)}s`);
          } else {
-            console.log(`⚠️ Reminder time already passed for ${reminderId}`);
+            console.log(`Reminder time already passed for ${reminderId}`);
          }
       }
    });
@@ -81,7 +81,7 @@ exports.sendReminderNotification = reminderQueue.onDispatch(async (data) => {
    const car = carDoc.data();
 
    if (!car?.fcmToken) {
-      console.log(`⚠️ No FCM token for car ${carNumber}`);
+      console.log(` No FCM token for car ${carNumber}`);
       return;
    }
 
