@@ -1,5 +1,10 @@
+
 import 'package:core_data/core_data.dart';
 import 'package:equatable/equatable.dart';
+
+
+
+
 
 
 abstract class FinesState extends Equatable {

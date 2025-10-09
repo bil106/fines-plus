@@ -8,7 +8,7 @@ import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
 import 'package:fines_plus/core/widgets/date_picker_card.dart';
-import 'package:fines_plus/core/widgets/extensions/service_list.dart';
+import 'package:fines_plus/core/extensions/service_list.dart';
 import 'package:fines_plus/core/widgets/mileage_card.dart';
 import 'package:fines_plus/env/env.dart';
 import 'package:fines_plus/presentation/screens/service_map_screen.dart';

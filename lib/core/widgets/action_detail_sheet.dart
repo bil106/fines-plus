@@ -2,7 +2,7 @@ import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
-import 'package:fines_plus/core/widgets/extensions/service_list.dart';
+import 'package:fines_plus/core/extensions/service_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 

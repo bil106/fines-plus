@@ -1,6 +1,7 @@
-import 'package:core_cubit/cubit/fines/fines_state.dart';
+
 
 import 'package:core_repository/fines_repository.dart';
+import 'package:fines_plus/features/fines/presentation/cubit/fines_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class FinesCubit extends Cubit<FinesState> {

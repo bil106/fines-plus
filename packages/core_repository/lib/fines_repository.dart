@@ -8,23 +8,23 @@ abstract class FinesRepository {
   });
 }
 
-class FinesRepositoryImpl implements FinesRepository {
-  final FinesBackendDataSource dataSource;
+// class FinesRepositoryImpl implements FinesRepository {
+//   final FinesBackendDataSource dataSource;
 
-  FinesRepositoryImpl(this.dataSource);
+//   FinesRepositoryImpl(this.dataSource);
 
-  @override
-  Future<List<Fine>> fetchFines({
-    required String carNumber,
-    required String docSeries,
-    required String docNumber,
-  }) {
-    return dataSource.getFines(
-      carNumber: carNumber,
-      docSeries: docSeries,
-      docNumber: docNumber,
-    );
-  }
+//   @override
+//   Future<List<Fine>> fetchFines({
+//     required String carNumber,
+//     required String docSeries,
+//     required String docNumber,
+//   }) {
+//     return dataSource.getFines(
+//       carNumber: carNumber,
+//       docSeries: docSeries,
+//       docNumber: docNumber,
+//     );
+//   }
   
-}
+
 

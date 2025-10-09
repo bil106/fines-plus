@@ -4,11 +4,11 @@ import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
-import 'package:fines_plus/services/app_initializer.dart';
+import 'package:fines_plus/core/services/app_initializer.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import '../main.dart';
+import '../../main.dart';
 
 class ReminderDialog extends StatefulWidget {
   final ReminderModel? reminder;

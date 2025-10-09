@@ -1,16 +1,18 @@
 // ignore_for_file: unused_field
 
 import 'package:auto_route/auto_route.dart';
-import 'package:core_cubit/cubit/fines/fines_cubit.dart';
-import 'package:core_cubit/cubit/fines/fines_state.dart';
 import 'package:core_data/core_data.dart';
+
 import 'package:core_localization/generated/l10n.dart';
-import 'package:core_repository/fines_repository.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_borders.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
 import 'package:fines_plus/core/widgets/ad_banner_widget.dart';
+import 'package:fines_plus/features/fines/domain/fines_repository_impl.dart';
+import 'package:fines_plus/features/fines/presentation/cubit/fines_cubit.dart';
+import 'package:fines_plus/features/fines/presentation/cubit/fines_state.dart';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

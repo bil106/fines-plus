@@ -4,7 +4,7 @@ import 'package:app_links/app_links.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:core_cubit/cubit/referral/referral_cubit.dart';
 import 'package:core_localization/generated/l10n.dart';
-import 'package:fines_plus/theme/theme_config.dart';
+import 'package:fines_plus/core/theme/theme_config.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
@@ -15,7 +15,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'config/app_config.dart';
+import 'core/config/app_config.dart';
 import 'router/app_router.dart';
 
 class MyApp extends StatefulWidget {

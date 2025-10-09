@@ -1,5 +1,6 @@
 
-import 'package:fines_plus/core/widgets/extensions/monthly_expense_stats.dart';
+
+import 'package:fines_plus/core/extensions/monthly_expense_stats.dart';
 
 class StatisticsState {
   final bool loading;

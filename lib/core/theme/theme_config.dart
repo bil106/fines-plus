@@ -1,6 +1,6 @@
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_borders.dart';
-import 'package:fines_plus/config/app_config.dart';
+import 'package:fines_plus/core/config/app_config.dart';
 import 'package:flutter/material.dart';
 
 class ThemeConfig {

@@ -1,5 +1,5 @@
 import 'package:design_system/colors/app_colors.dart';
-import 'package:fines_plus/core/widgets/extensions/fuel_type.dart';
+import 'package:fines_plus/core/extensions/fuel_type.dart';
 import 'package:flutter/material.dart';
 
 class FuelChoiceChips extends StatelessWidget {

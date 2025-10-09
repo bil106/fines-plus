@@ -6,7 +6,7 @@ import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
 import 'package:fines_plus/core/widgets/ad_banner_widget.dart';
 import 'package:fines_plus/core/widgets/date_picker_card.dart';
-import 'package:fines_plus/core/widgets/extensions/fuel_type.dart';
+import 'package:fines_plus/core/extensions/fuel_type.dart';
 import 'package:fines_plus/core/widgets/fuel_amount_card.dart';
 import 'package:fines_plus/core/widgets/fuel_choice_chips.dart';
 import 'package:fines_plus/core/widgets/fuel_input_card.dart';

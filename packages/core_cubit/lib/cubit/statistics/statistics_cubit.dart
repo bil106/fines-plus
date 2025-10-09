@@ -6,7 +6,7 @@ import 'package:core_cubit/cubit/maintenance/maintenance_cubit.dart';
 import 'package:core_cubit/cubit/maintenance/maintenance_state.dart';
 import 'package:core_cubit/cubit/statistics/statistics_state.dart';
 import 'package:core_data/core_data.dart';
-import 'package:fines_plus/core/widgets/extensions/monthly_expense_stats.dart';
+import 'package:fines_plus/core/extensions/monthly_expense_stats.dart';
 import 'package:intl/intl.dart';
 
 

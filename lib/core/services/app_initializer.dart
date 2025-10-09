@@ -29,7 +29,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
-import 'package:fines_plus/config/flavor_config.dart';
+import 'package:fines_plus/core/config/flavor_config.dart';
 import '../config/app_config.dart';
 
 class AppInitializer {
