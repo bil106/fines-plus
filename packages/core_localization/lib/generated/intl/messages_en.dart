@@ -174,6 +174,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "name": MessageLookupByLibrary.simpleMessage("Name"),
     "new_reminder": MessageLookupByLibrary.simpleMessage("New reminder"),
     "new_task": MessageLookupByLibrary.simpleMessage("New task"),
+    "new_version": MessageLookupByLibrary.simpleMessage(
+      "A new version of the application is available",
+    ),
     "no_fines": MessageLookupByLibrary.simpleMessage(
       "There are no fines for you",
     ),
@@ -211,6 +214,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "photo_selected": MessageLookupByLibrary.simpleMessage("Photo selected"),
     "please_log_in": MessageLookupByLibrary.simpleMessage(
       "Please leave or register to continue.",
+    ),
+    "please_update": MessageLookupByLibrary.simpleMessage(
+      "Please update the application to continue using it.",
     ),
     "previous": MessageLookupByLibrary.simpleMessage("Previous"),
     "price": MessageLookupByLibrary.simpleMessage("Price"),
@@ -755,6 +761,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "total_fines": MessageLookupByLibrary.simpleMessage("Total fines: "),
     "tuning": MessageLookupByLibrary.simpleMessage("Tuning"),
     "type": MessageLookupByLibrary.simpleMessage("Type"),
+    "update": MessageLookupByLibrary.simpleMessage("Update"),
     "verif_date": MessageLookupByLibrary.simpleMessage("Verification date:"),
     "verification_history": MessageLookupByLibrary.simpleMessage(
       "Verification history",

@@ -2838,6 +2838,31 @@ class S {
       args: [],
     );
   }
+
+  /// `A new version of the application is available`
+  String get new_version {
+    return Intl.message(
+      'A new version of the application is available',
+      name: 'new_version',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please update the application to continue using it.`
+  String get please_update {
+    return Intl.message(
+      'Please update the application to continue using it.',
+      name: 'please_update',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Update`
+  String get update {
+    return Intl.message('Update', name: 'update', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

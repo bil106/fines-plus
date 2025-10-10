@@ -173,6 +173,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "name": MessageLookupByLibrary.simpleMessage("Назва"),
     "new_reminder": MessageLookupByLibrary.simpleMessage("Нове нагадування"),
     "new_task": MessageLookupByLibrary.simpleMessage("Нове завдання"),
+    "new_version": MessageLookupByLibrary.simpleMessage(
+      "Доступна нова версія програми",
+    ),
     "no_fines": MessageLookupByLibrary.simpleMessage("На вас немає штрафів"),
     "no_name": MessageLookupByLibrary.simpleMessage("Без назви"),
     "no_records": MessageLookupByLibrary.simpleMessage("Немає записів"),
@@ -216,6 +219,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "photo_selected": MessageLookupByLibrary.simpleMessage("Фото вибрано"),
     "please_log_in": MessageLookupByLibrary.simpleMessage(
       "Будь ласка, увійдіть або зареєструйтесь, щоб продовжити.",
+    ),
+    "please_update": MessageLookupByLibrary.simpleMessage(
+      "Будь ласка, оновіть програму, щоб продовжити використання.",
     ),
     "previous": MessageLookupByLibrary.simpleMessage("Попереднє"),
     "price": MessageLookupByLibrary.simpleMessage("Ціна"),
@@ -736,6 +742,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "tuning": MessageLookupByLibrary.simpleMessage("Тюнінг"),
     "type": MessageLookupByLibrary.simpleMessage("Тип"),
+    "update": MessageLookupByLibrary.simpleMessage("Оновити"),
     "verif_date": MessageLookupByLibrary.simpleMessage("Дата перевірки:"),
     "verification_history": MessageLookupByLibrary.simpleMessage(
       "Історія перевірки",

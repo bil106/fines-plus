@@ -106,9 +106,9 @@ class _HistoryView extends StatelessWidget {
                             onPressed: () async {
                               final cubit = context.read<HistoryCubit>();
                               await cubit.deleteSingle(item.id);
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(backgroundColor: AppColors.blue700, content: Text(S.of(context).item_removed)),
-                              );
+                              // ScaffoldMessenger.of(context).showSnackBar(
+                              //   SnackBar(backgroundColor: AppColors.blue700, content: Text(S.of(context).item_removed)),
+                              // );
                             },
                           ),
                         );

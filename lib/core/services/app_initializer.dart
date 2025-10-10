@@ -3,10 +3,8 @@
 import 'dart:io';
 import 'package:app_links/app_links.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:core/config/src/usecases/extract_tokens_usecase.dart';
 import 'package:core_cubit/cubit/purchase/purchase_cubit.dart';
 import 'package:core_cubit/cubit/referral/referral_cubit.dart';
-import 'package:core_cubit/cubit/registration/registration_cubit.dart';
 import 'package:core_data/core_data.dart';
 import 'package:core_services/services/purchase_service.dart';
 import 'package:fines_plus/backend/fines_server.dart';
@@ -15,6 +13,10 @@ import 'package:fines_plus/features/history/domain/history_repository.dart';
 import 'package:fines_plus/features/maintenance/presentation/cubit/additional_options_cubit.dart';
 import 'package:fines_plus/features/maintenance/presentation/cubit/fuel_station_cubit.dart';
 import 'package:fines_plus/features/maintenance/presentation/cubit/maintenance_cubit.dart';
+import 'package:fines_plus/features/registration/data/datasources/iextract_tokens_usecase.dart';
+import 'package:fines_plus/features/registration/data/datasources/register_user_usecase.dart';
+import 'package:fines_plus/features/registration/data/models/flutter_secure_storage.dart';
+import 'package:fines_plus/features/registration/presentation/cubit/registration_cubit.dart';
 import 'package:fines_plus/features/reminders/data/datasources/reminder_local_data_source.dart';
 import 'package:fines_plus/features/reminders/data/datasources/reminder_remote_data_source.dart';
 import 'package:fines_plus/features/reminders/data/models/reminder_model.dart';
@@ -35,6 +37,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:fines_plus/core/config/flavor_config.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import '../config/app_config.dart';
 
 class AppInitializer {
@@ -48,9 +51,30 @@ class AppInitializer {
   late final AdditionalOptionsCubit additionalOptionsCubit;
   late final RemoteConfigService remoteConfigService;
   final Map<String, int> _scheduledReminderIds = {};
+
+
+
+
+  
   Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
     await Firebase.initializeApp();
     debugPrint("Background message: ${message.messageId}");
+  }
+bool _isVersionLower(String current, String required) {
+    List<int> parse(String v) => v.split('.').map(int.parse).toList();
+
+    try {
+      final c = parse(current);
+      final r = parse(required);
+      for (int i = 0; i < r.length; i++) {
+        if (c[i] < r[i]) return true;
+        if (c[i] > r[i]) return false;
+      }
+      return false;
+    } catch (e) {
+      debugPrint("Version parse error: $e");
+      return false;
+    }
   }
 
   Future<AppInitResult> init() async {
@@ -62,6 +86,18 @@ class AppInitializer {
     debugPrint(
       'Remote Config - remindersEnabled: ${remoteConfigService.isRemindersEnabled}, purchaseEnabled: ${remoteConfigService.isPurchaseEnabled}',
     );
+    
+    // Checking the application version
+    final packageInfo = await PackageInfo.fromPlatform();
+    final currentVersion = packageInfo.version; // e.g. "1.0.1"
+    final requiredVersion = remoteConfigService.minSupportedVersion;
+
+    bool isUpdateRequired = _isVersionLower(currentVersion, requiredVersion);
+
+    if (isUpdateRequired) {
+      debugPrint("⚠️ App version $currentVersion is lower than required $requiredVersion");
+
+    }
     tz.initializeTimeZones();
     tz.setLocalLocation(tz.getLocation('Europe/Kiev'));
 
@@ -180,7 +216,11 @@ class AppInitializer {
       additionalOptionsCubit: additionalOptionsCubit,
       remoteConfigService: remoteConfigService,
       expenseRepository: expenseRepository,
+      isUpdateRequired: isUpdateRequired,
     );
+
+
+    
   }
 }
 
@@ -255,6 +295,7 @@ class AppInitResult {
   final AdditionalOptionsCubit additionalOptionsCubit;
   final RemoteConfigService remoteConfigService;
   final ExpenseRepository expenseRepository;
+  final bool isUpdateRequired;
 
   AppInitResult({
     required this.config,
@@ -272,5 +313,6 @@ class AppInitResult {
     required this.additionalOptionsCubit,
     required this.remoteConfigService,
     required this.expenseRepository,
+    required this.isUpdateRequired,
   });
 }

@@ -18,12 +18,13 @@ import 'package:fines_plus/features/maintenance/presentation/screens/car_wash_ma
 import 'package:fines_plus/features/maintenance/presentation/screens/car_wash_screen.dart';
 import 'package:fines_plus/features/maintenance/presentation/screens/fuel_map_screen.dart';
 import 'package:fines_plus/features/maintenance/presentation/screens/fuel_up_screen.dart';
-import 'package:fines_plus/presentation/screens/registration_screen.dart';
+import 'package:fines_plus/features/registration/presentation/screens/registration_screen.dart';
 import 'package:fines_plus/features/schedule/presentation/screens/schedule_screen.dart';
 import 'package:fines_plus/features/maintenance/presentation/screens/service_screen.dart';
 import 'package:fines_plus/presentation/screens/settings_screen.dart';
 import 'package:fines_plus/features/maintenance/presentation/screens/maintenance_screen.dart';
 import 'package:fines_plus/features/maintenance/presentation/screens/tuning_screen.dart';
+import 'package:fines_plus/presentation/screens/update_required_screen.dart';
 import 'package:fines_plus/router/home_screen_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -69,6 +70,7 @@ class AppRouter extends RootStackRouter {
     AutoRoute(page: TuningRoute.page, path: '/tuning'),
     AutoRoute(page: CarWashRoute.page, path: '/car_wash'),
     AutoRoute(page: CarWashMapRoute.page, path: '/car_wash_map'),
+    AutoRoute(page: UpdateRequiredRoute.page, path: '/update'),
     
   ];
 }

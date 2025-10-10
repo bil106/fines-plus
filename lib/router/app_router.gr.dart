@@ -1201,3 +1201,19 @@ class TuningRouteArgs {
   @override
   int get hashCode => key.hashCode ^ onBack.hashCode;
 }
+
+/// generated route for
+/// [UpdateRequiredScreen]
+class UpdateRequiredRoute extends PageRouteInfo<void> {
+  const UpdateRequiredRoute({List<PageRouteInfo>? children})
+    : super(UpdateRequiredRoute.name, initialChildren: children);
+
+  static const String name = 'UpdateRequiredRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const UpdateRequiredScreen();
+    },
+  );
+}

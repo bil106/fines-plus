@@ -21,8 +21,10 @@ import 'router/app_router.dart';
 class MyApp extends StatefulWidget {
   final AppConfig config;
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
-
-  const MyApp({super.key, required this.config, required this.flutterLocalNotificationsPlugin});
+final bool isUpdateRequired;
+  const MyApp({super.key, required this.config, required this.flutterLocalNotificationsPlugin,
+    required this.isUpdateRequired,
+  });
 
   @override
   State<MyApp> createState() => _MyAppState();
@@ -46,6 +48,11 @@ class _MyAppState extends State<MyApp> {
     _initAppLinks();
 
     analytics.logAppOpen();
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (widget.isUpdateRequired) {
+        _appRouter.replaceAll([const UpdateRequiredRoute()]); 
+      }
+    });
   }
 
   /// Push notifications
@@ -73,7 +80,7 @@ class _MyAppState extends State<MyApp> {
     });
 
     FirebaseMessaging.onMessageOpenedApp.listen((message) {
-      debugPrint("➡️ Opened the app via notification");
+      debugPrint("Opened the app via notification");
     });
   }
 
@@ -137,7 +144,7 @@ class _MyAppState extends State<MyApp> {
     if (partnerId != null && partnerId.isNotEmpty) {
       final sp = await SharedPreferences.getInstance();
       await sp.setString('pending_ref', partnerId);
-      debugPrint("💾 Saved partnerId=$partnerId to SharedPreferences");
+      debugPrint(" Saved partnerId=$partnerId to SharedPreferences");
     }
 
     final carNumber = deepLink.queryParameters['car'];

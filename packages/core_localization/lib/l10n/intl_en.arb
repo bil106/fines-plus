@@ -319,5 +319,8 @@
 "remove": "Remove",
 "category_removed": "Category removed",
 "del_all_expenses": "Delete ALL expenses",
-"all_exp_hist_deleted": "All expense history deleted"
+"all_exp_hist_deleted": "All expense history deleted",
+"new_version": "A new version of the application is available",
+"please_update": "Please update the application to continue using it.",
+"update": "Update"
 }

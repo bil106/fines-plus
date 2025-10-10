@@ -1,13 +1,13 @@
 // ignore_for_file: unused_local_variable
 import 'package:auto_route/auto_route.dart';
 import 'package:core_cubit/cubit/purchase/purchase_cubit.dart';
-import 'package:core_cubit/cubit/registration/registration_cubit.dart';
-import 'package:core_cubit/cubit/registration/registration_state.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_borders.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
+import 'package:fines_plus/features/registration/presentation/cubit/registration_cubit.dart';
+import 'package:fines_plus/features/registration/presentation/cubit/registration_state.dart';
 import 'package:fines_plus/router/home_screen_wrapper.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';

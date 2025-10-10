@@ -1,6 +1,7 @@
 import 'package:core_cubit/cubit/referral/referral_cubit.dart';
-import 'package:core_cubit/cubit/registration/registration_state.dart';
-import 'package:core_data/core_data.dart';
+import 'package:fines_plus/features/registration/data/datasources/register_user_usecase.dart';
+import 'package:fines_plus/features/registration/presentation/cubit/registration_state.dart';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 

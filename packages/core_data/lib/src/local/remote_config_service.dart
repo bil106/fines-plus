@@ -15,6 +15,7 @@ class RemoteConfigService {
     await remoteConfig.setDefaults(const {
       'feature_reminders_enabled': true,
       'feature_purchase_enabled': true,
+      'min_supported_version': '1.0.1',
     });
 
     try {
@@ -32,13 +33,13 @@ class RemoteConfigService {
 
   bool get isRemindersEnabled {
     final val = _remoteConfig.getBool('feature_reminders_enabled');
-    debugPrint("🔹 isRemindersEnabled = $val");
+    debugPrint(" isRemindersEnabled = $val");
     return val;
   }
 
   bool get isPurchaseEnabled {
     final val = _remoteConfig.getBool('feature_purchase_enabled');
-    debugPrint("🔹 isPurchaseEnabled = $val");
+    debugPrint(" isPurchaseEnabled = $val");
     return val;
   }
 
@@ -46,4 +47,10 @@ class RemoteConfigService {
     await _remoteConfig.fetchAndActivate();
     debugPrint("Remote config refreshed");
   }
+  String get minSupportedVersion {
+    final val = _remoteConfig.getString('min_supported_version');
+    debugPrint("🔹 minSupportedVersion = $val");
+    return val.isNotEmpty ? val : '1.0.1';
+  }
+
 }

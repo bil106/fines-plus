@@ -33,9 +33,7 @@ class ReferralCubit extends Cubit<String?> {
       await _prefs.setString('pending_ref', ref);
       emit(ref);
 
-      //update click statistics
-      // FirebaseFirestore.instance.collection('partnerStats').doc(ref)
-      //   .set({'clicks': FieldValue.increment(1)}, SetOptions(merge: true));
+      
     }
   }
 

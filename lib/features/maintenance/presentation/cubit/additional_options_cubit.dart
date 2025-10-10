@@ -1,6 +1,6 @@
 import 'package:fines_plus/features/maintenance/presentation/cubit/additional_options_state.dart';
-import 'package:core_data/core_data.dart';
 import 'package:core_localization/generated/l10n.dart';
+import 'package:fines_plus/features/registration/data/models/tokens.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:core/config/src/usecases/extract_tokens_usecase.dart';

@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:core_cubit/cubit/purchase/purchase_cubit.dart';
 import 'package:core_cubit/cubit/referral/referral_cubit.dart';
-import 'package:core_cubit/cubit/registration/registration_cubit.dart';
 import 'package:fines_plus/features/expenses/data/repository/expense_repository.dart';
 import 'package:fines_plus/features/expenses/presentation/cubit/expenses_cubit.dart';
 import 'package:fines_plus/features/export/data/repository/injector.dart';
@@ -11,6 +10,7 @@ import 'package:fines_plus/features/maintenance/data/repository/maintenance_repo
 import 'package:fines_plus/features/maintenance/presentation/cubit/additional_options_cubit.dart';
 import 'package:fines_plus/features/maintenance/presentation/cubit/fuel_station_cubit.dart';
 import 'package:fines_plus/features/maintenance/presentation/cubit/maintenance_cubit.dart';
+import 'package:fines_plus/features/registration/presentation/cubit/registration_cubit.dart';
 import 'package:fines_plus/features/schedule/data/repository/schedule_repository.dart';
 import 'package:fines_plus/features/schedule/presentation/cubit/schedule_cubit.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -82,6 +82,7 @@ void main() {
             child: MyApp(
               config: result.config,
               flutterLocalNotificationsPlugin: result.flutterLocalNotificationsPlugin,
+              isUpdateRequired: result.isUpdateRequired,
             ),
           ),
         ),
