@@ -1,0 +1,6 @@
+import 'package:fines_plus/main.dart';
+
+
+void main() async {
+  await mainCommon(env: 'staging');
+}

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:flutter/material.dart';
@@ -26,11 +28,21 @@ class UpdateRequiredScreen extends StatelessWidget {
               const SizedBox(height: 16),
               Text(S.of(context).please_update, textAlign: TextAlign.center),
               const SizedBox(height: 24),
-              ElevatedButton(
+            ElevatedButton(
                 onPressed: () async {
-                  const url = 'https://play.google.com/store';
-                  if (await canLaunchUrl(Uri.parse(url))) {
-                    await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+                  const playStoreUrl =
+                      'https://play.google.com/store/apps/'; 
+                  const appStoreUrl = 'https://apps.apple.com/app/'; 
+
+                  final url = Platform.isIOS ? appStoreUrl : playStoreUrl;
+
+                  final uri = Uri.parse(url);
+                  if (await canLaunchUrl(uri)) {
+                    await launchUrl(uri, mode: LaunchMode.externalApplication);
+                  } else {
+                    ScaffoldMessenger.of(
+                      context,
+                    ).showSnackBar(SnackBar(content: Text(S.of(context).ok)));
                   }
                 },
                 child: Text(S.of(context).update),

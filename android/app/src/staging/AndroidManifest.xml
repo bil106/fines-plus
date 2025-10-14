@@ -1,0 +1,76 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+    
+   <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+   <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
+   <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+   <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+   <uses-permission android:name="android.permission.INTERNET"/>
+   <uses-permission android:name="android.permission.CAMERA"/>
+   <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+   <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+   <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+   <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
+   <application
+         android:name="${applicationName}"
+        android:label="fines_plus"
+        android:icon="@mipmap/ic_launcher"
+        android:usesCleartextTraffic="true"
+        tools:replace="android:label">
+      <activity
+            android:name=".MainActivity"
+            android:launchMode="singleTop"
+            android:exported="true"
+            android:theme="@style/LaunchTheme">
+         <intent-filter>
+            <action android:name="android.intent.action.MAIN"/>
+            <category android:name="android.intent.category.LAUNCHER"/>
+         </intent-filter>
+         <intent-filter android:autoVerify="true">
+            <action android:name="android.intent.action.VIEW"/>
+            <category android:name="android.intent.category.DEFAULT"/>
+            <category android:name="android.intent.category.BROWSABLE"/>
+            <data android:scheme="https"
+                      android:host="finesplus.web.app"
+                      android:pathPrefix="/addCar.html"/>
+            <data android:scheme="https"
+                      android:host="finesplus.web.app"
+                      android:pathPrefix="/register.html"/>
+         </intent-filter>
+         <intent-filter>
+            <action android:name="android.intent.action.VIEW"/>
+            <category android:name="android.intent.category.DEFAULT"/>
+            <category android:name="android.intent.category.BROWSABLE"/>
+            <data android:scheme="myapp" android:host="addexp"/>
+         </intent-filter>
+      </activity>
+      <activity
+            android:name="com.linusu.flutter_web_auth_2.CallbackActivity"
+            android:exported="true">
+         <intent-filter>
+            <action android:name="android.intent.action.VIEW"/>
+            <category android:name="android.intent.category.DEFAULT"/>
+            <category android:name="android.intent.category.BROWSABLE"/>
+            <data android:scheme="myapp"/>
+         </intent-filter>
+      </activity>
+      <!-- Meta-data -->
+      <meta-data android:name="flutterEmbedding" android:value="2"/>
+      <meta-data android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-3940256099942544~3347511713"/>
+      <meta-data android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyD8El-2EaU3iDuHLre3_Mz218iU-l1sr48"/>
+      <meta-data android:name="com.google.android.gms.games.APP_ID"
+            android:value="\ 1234567890"/>
+      <meta-data android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_notification" />
+      <meta-data android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/colorPrimary" />
+   </application>
+   <queries>
+      <intent>
+         <action android:name="android.intent.action.PROCESS_TEXT"/>
+         <data android:mimeType="text/plain"/>
+      </intent>
+   </queries>
+</manifest>
