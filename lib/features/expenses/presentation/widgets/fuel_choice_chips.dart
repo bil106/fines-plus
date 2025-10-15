@@ -1,6 +1,6 @@
-import 'package:design_system/colors/app_colors.dart';
-import 'package:fines_plus/core/extensions/fuel_type.dart';
 import 'package:flutter/material.dart';
+import 'package:fines_plus/core/extensions/fuel_type.dart';
+import 'package:design_system/colors/app_colors.dart';
 
 class FuelChoiceChips extends StatelessWidget {
   final List<FuelType> fuels;
@@ -12,18 +12,23 @@ class FuelChoiceChips extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Wrap(
-      spacing: 6,
+      spacing: 8,
       children: fuels.map((fuel) {
-        final isSelected = selectedFuel == fuel;
+        final isSelected = fuel == selectedFuel;
         return ChoiceChip(
-          label: Text(fuel.localized(context)),
+          label: Text(
+            fuel.name.toUpperCase(),
+            style: TextStyle(
+              color: isSelected ? Colors.white : AppColors.black87, 
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           selected: isSelected,
-          selectedColor: AppColors.blue700,
-          backgroundColor: AppColors.neutreBlanc,
-          labelStyle: TextStyle(color: isSelected ? AppColors.neutreBlanc : AppColors.black),
+          selectedColor: AppColors.blue700, 
+          backgroundColor: AppColors.grey300, 
           onSelected: (_) => onSelected(fuel),
-          showCheckmark: false,
-          labelPadding: const EdgeInsets.symmetric(horizontal: 2, vertical: 0),
+          checkmarkColor: Colors.white,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         );
       }).toList(),
     );

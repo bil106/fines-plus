@@ -5,7 +5,6 @@ import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_borders.dart';
 import 'package:design_system/constants/app_spacers.dart';
-import 'package:design_system/theme/app_theme.dart';
 import 'package:fines_plus/features/registration/presentation/cubit/registration_cubit.dart';
 import 'package:fines_plus/features/registration/presentation/cubit/registration_state.dart';
 import 'package:fines_plus/router/home_screen_wrapper.dart';
@@ -24,9 +23,11 @@ class RegistrationScreen extends StatefulWidget {
 }
 
 class _RegistrationScreenState extends State<RegistrationScreen> {
+  final _formKey = GlobalKey<FormState>();
   late TextEditingController emailController;
   late TextEditingController passwordController;
   bool isLoadingCredentials = true;
+  bool _isFormValid = false;
 
   @override
   void initState() {
@@ -34,6 +35,19 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     emailController = TextEditingController();
     passwordController = TextEditingController();
     isLoadingCredentials = false;
+
+    emailController.addListener(_validateForm);
+    passwordController.addListener(_validateForm);
+  }
+
+  void _validateForm() {
+    final email = emailController.text.trim();
+    final pass = passwordController.text.trim();
+    final isValid = email.isNotEmpty && email.contains('@') && pass.length >= 6;
+
+    if (isValid != _isFormValid) {
+      setState(() => _isFormValid = isValid);
+    }
   }
 
   Future<void> _signInWithGoogle() async {
@@ -52,7 +66,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       final user = userCredential.user;
 
       if (!mounted) return;
-
       if (user != null) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -62,7 +75,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         );
 
         final homeState = context.findAncestorStateOfType<HomeScreenWrapperState>();
-        homeState?.openPage(HomePage.addCar);
+        homeState?.openPage(HomePage.subscription);
       }
     } catch (e) {
       if (!mounted) return;
@@ -74,6 +87,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   @override
   void dispose() {
+    emailController.removeListener(_validateForm);
+    passwordController.removeListener(_validateForm);
     emailController.dispose();
     passwordController.dispose();
     super.dispose();
@@ -97,25 +112,47 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       backgroundColor: AppColors.grey50,
       body: BlocBuilder<RegistrationCubit, RegistrationState>(
         builder: (context, state) {
-          return Padding(
+          return SingleChildScrollView(
             padding: const EdgeInsets.all(20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 AppSpacers.verticalMediumLarge,
-                Text(S.of(context).registration, style: textTheme.title),
+                Text(S.of(context).registration, style: textTheme.titleLarge),
                 AppSpacers.verticalHuge,
 
-                TextField(
-                  controller: emailController,
-                  decoration: InputDecoration(labelText: S.of(context).email),
+                Form(
+                  key: _formKey,
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  child: Column(
+                    children: [
+                      TextFormField(
+                        controller: emailController,
+                        keyboardType: TextInputType.emailAddress,
+                        decoration: InputDecoration(labelText: S.of(context).email),
+                        validator: (value) {
+                          final v = (value ?? '').trim();
+                          if (v.isEmpty) return S.of(context).field_required;
+                          if (!v.contains('@')) return S.of(context).invalid_email;
+                          return null;
+                        },
+                      ),
+                      AppSpacers.verticalMediumLarge,
+                      TextFormField(
+                        controller: passwordController,
+                        decoration: InputDecoration(labelText: S.of(context).password),
+                        obscureText: true,
+                        validator: (value) {
+                          final v = (value ?? '');
+                          if (v.isEmpty) return S.of(context).field_required;
+                          if (v.length < 6) return S.of(context).password_too_short;
+                          return null;
+                        },
+                      ),
+                    ],
+                  ),
                 ),
-                AppSpacers.verticalMediumLarge,
-                TextField(
-                  controller: passwordController,
-                  decoration: InputDecoration(labelText: S.of(context).password),
-                  obscureText: true,
-                ),
+
                 AppSpacers.verticalXXXLarge,
 
                 state.isLoading
@@ -123,37 +160,47 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     : Padding(
                         padding: const EdgeInsets.only(left: 100),
                         child: ElevatedButton(
-                          onPressed: () async {
-                            try {
-                              await cubit.register(emailController.text, passwordController.text);
+                          onPressed: (_isFormValid && !state.isLoading)
+                              ? () async {
+                                  if (!(_formKey.currentState?.validate() ?? false)) return;
 
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  backgroundColor: AppColors.blue700,
-                                  content: Text(S.of(context).successfully_registration),
-                                ),
-                              );
+                                  try {
+                                    await cubit.register(emailController.text.trim(), passwordController.text.trim());
 
-                              final homeState = context.findAncestorStateOfType<HomeScreenWrapperState>();
-                              homeState?.openPage(HomePage.addCar);
-                            } catch (e) {
-                              ScaffoldMessenger.of(
-                                context,
-                              ).showSnackBar(SnackBar(backgroundColor: AppColors.blue700, content: Text("Error: $e")));
-                            }
-                          },
+                                    if (!mounted) return;
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        backgroundColor: AppColors.blue700,
+                                        content: Text(S.of(context).successfully_registration),
+                                      ),
+                                    );
+
+                                    final homeState = context.findAncestorStateOfType<HomeScreenWrapperState>();
+                                    homeState?.openPage(HomePage.subscription);
+                                  } catch (e) {
+                                    if (!mounted) return;
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(backgroundColor: AppColors.blue700, content: Text("Error: $e")),
+                                    );
+                                  }
+                                }
+                              : null,
+
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.blue700,
                             padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
                             shape: RoundedRectangleBorder(borderRadius: AppBorders.radiusLarge),
                           ),
-                          child: Text(S.of(context).registration, style: textTheme.white18W400),
+                          child: Text(
+                            S.of(context).registration,
+                            style: textTheme.bodyLarge?.copyWith(color: Colors.white),
+                          ),
                         ),
                       ),
 
                 AppSpacers.verticalMediumLarge,
 
-                // Google Sign-In button
+                // === Google Sign-In ===
                 Padding(
                   padding: const EdgeInsets.only(left: 100),
                   child: ElevatedButton.icon(
@@ -165,26 +212,46 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
                       shape: RoundedRectangleBorder(borderRadius: AppBorders.radiusLarge),
                     ),
-                    onPressed: () => _signInWithGoogle(),
+                    onPressed: _signInWithGoogle,
                   ),
                 ),
 
-                // Subscription button
+                AppSpacers.verticalMediumLarge,
+
+              
                 Padding(
                   padding: const EdgeInsets.only(left: 100),
                   child: ElevatedButton(
                     onPressed: () async {
                       final user = FirebaseAuth.instance.currentUser;
                       if (user == null) return;
-                      await purchaseCubit.buySubscription(user.uid, 9.99);
+
+                      await purchaseCubit.buySubscription(user.uid, 9.99, 3);
+
+                      if (!context.mounted) return;
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           backgroundColor: AppColors.blue700,
                           content: Text(S.of(context).successfully_subscription),
                         ),
                       );
+
+                      await Future.delayed(const Duration(milliseconds: 400));
+                      if (context.mounted) {
+                        final homeState = context.findAncestorStateOfType<HomeScreenWrapperState>();
+                        homeState?.openPage(HomePage.subscription);
+                      }
                     },
-                    child: Text(S.of(context).buy_subscription),
+
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.blue700,
+                      padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
+                      shape: RoundedRectangleBorder(borderRadius: AppBorders.radiusLarge),
+                    ),
+                    child: Text(
+                      S.of(context).buy_subscription,
+                      style: textTheme.bodyLarge?.copyWith(color: Colors.white),
+                    ),
                   ),
                 ),
               ],

@@ -8,7 +8,7 @@ import 'package:fines_plus/core/extensions/date_picker_card.dart';
 import 'package:fines_plus/core/extensions/fuel_type.dart';
 import 'package:fines_plus/features/expenses/presentation/widgets/fuel_amount_card.dart';
 import 'package:fines_plus/features/expenses/presentation/widgets/fuel_choice_chips.dart';
-import 'package:fines_plus/features/expenses/presentation/widgets/fuel_input_card.dart';
+import 'package:fines_plus/features/expenses/presentation/widgets/fuel_input_card.dart' ;
 import 'package:fines_plus/features/maintenance/presentation/widgets/mileage_card.dart';
 import 'package:fines_plus/env/env.dart';
 import 'package:fines_plus/features/expenses/data/models/fuel_record.dart';
@@ -32,18 +32,35 @@ class FuelUpScreen extends StatefulWidget {
 
 class _FuelUpScreenState extends State<FuelUpScreen> {
   final TextEditingController volumeController = TextEditingController();
-  late final VoidCallback? onBack;
+  final TextEditingController mileageController = TextEditingController();
+  final TextEditingController priceController = TextEditingController();
 
+  FuelType selectedFuel = FuelType.ai95;
+  DateTime? selectedDate;
   Map<String, dynamic>? _bestStation;
 
-  TextEditingController mileageController = TextEditingController();
-  FuelType selectedFuel = FuelType.ai95Plus;
-
-  DateTime? selectedDate;
   @override
   void initState() {
     super.initState();
     _initLocationAndStation();
+    _loadLastPrice(selectedFuel);
+  }
+
+
+  Future<void> _loadLastPrice(FuelType fuel) async {
+    final cached = await FuelPriceCache.getPrice(fuel.name);
+    if (cached != null) {
+      priceController.text = cached.toStringAsFixed(2);
+    } else {
+      priceController.clear();
+    }
+  }
+
+  void _onPriceChanged(String value) {
+    final parsed = double.tryParse(value);
+    if (parsed != null) {
+      FuelPriceCache.savePrice(selectedFuel.name, parsed);
+    }
   }
 
   Future<void> _initLocationAndStation() async {
@@ -52,19 +69,13 @@ class _FuelUpScreenState extends State<FuelUpScreen> {
     bool serviceEnabled = await location.serviceEnabled();
     if (!serviceEnabled) {
       serviceEnabled = await location.requestService();
-      if (!serviceEnabled) {
-        if (kDebugMode) print(" Location service not enabled");
-        return;
-      }
+      if (!serviceEnabled) return;
     }
 
     PermissionStatus permissionGranted = await location.hasPermission();
     if (permissionGranted == PermissionStatus.denied) {
       permissionGranted = await location.requestPermission();
-      if (permissionGranted != PermissionStatus.granted) {
-        if (kDebugMode) print(" Location permission not granted");
-        return;
-      }
+      if (permissionGranted != PermissionStatus.granted) return;
     }
 
     try {
@@ -77,7 +88,7 @@ class _FuelUpScreenState extends State<FuelUpScreen> {
         _bestStation = bestStation;
       });
     } catch (e) {
-      if (kDebugMode) print(" Error getting position: $e");
+      if (kDebugMode) print("Error getting position: $e");
     }
   }
 
@@ -98,7 +109,6 @@ class _FuelUpScreenState extends State<FuelUpScreen> {
               icon: const Icon(Icons.check, color: AppColors.blue700, size: 50),
               onPressed: () {
                 if (selectedDate == null || volumeController.text.isEmpty || mileageController.text.isEmpty) {
-                  if (!mounted) return;
                   ScaffoldMessenger.of(
                     context,
                   ).showSnackBar(SnackBar(backgroundColor: AppColors.blue700, content: Text(S.of(context).fill_date)));
@@ -107,12 +117,11 @@ class _FuelUpScreenState extends State<FuelUpScreen> {
 
                 final volume = double.tryParse(volumeController.text) ?? 0;
                 final mileage = int.tryParse(mileageController.text) ?? 0;
-                final pricePerLiter = fuelPrices[selectedFuel] ?? 0;
-
+                final pricePerLiter = double.tryParse(priceController.text) ?? 0;
                 final totalCost = volume * pricePerLiter;
 
                 final record = FuelRecord(
-                  fuelType: selectedFuel.localized(context),
+                  fuelType: selectedFuel.name,
                   volume: volume,
                   cost: totalCost,
                   date: "${selectedDate!.day}.${selectedDate!.month}.${selectedDate!.year}",
@@ -131,6 +140,7 @@ class _FuelUpScreenState extends State<FuelUpScreen> {
             children: [
               Text(S.of(context).fuel_up, style: textTheme.title),
 
+          
               Row(
                 children: [
                   _bestStation == null
@@ -171,7 +181,10 @@ class _FuelUpScreenState extends State<FuelUpScreen> {
                   ),
                 ],
               ),
+
               AppSpacers.verticalMedium,
+
+             
               Row(
                 children: [
                   Expanded(
@@ -180,8 +193,7 @@ class _FuelUpScreenState extends State<FuelUpScreen> {
                       onDateSelected: (date) => setState(() => selectedDate = date),
                     ),
                   ),
-
-                  SizedBox(width: 16),
+                  const SizedBox(width: 16),
                   Expanded(
                     child: MileageCard(textTheme: textTheme, controller: mileageController),
                   ),
@@ -190,21 +202,32 @@ class _FuelUpScreenState extends State<FuelUpScreen> {
 
               AppSpacers.verticalMedium,
 
+          
               Text(S.of(context).fuel, style: textTheme.subtitleText),
               AppSpacers.verticalMedium,
-              FuelChoiceChips(
+         FuelChoiceChips(
                 fuels: fuelPrices.keys.toList(),
                 selectedFuel: selectedFuel,
-                onSelected: (fuel) => setState(() => selectedFuel = fuel),
+                onSelected: (fuel) {
+                  setState(() {
+                    selectedFuel = fuel;
+                    _loadLastPrice(fuel); 
+                  });
+                },
               ),
 
               AppSpacers.verticalLarge,
 
-              FuelInputCard(controller: volumeController, fuel: selectedFuel),
+              FuelInputCard(
+                fuel: selectedFuel,
+                volumeController: volumeController,
+                priceController: priceController,
+                onPriceChanged: _onPriceChanged,
+              ),
 
               AppSpacers.verticalLarge,
 
-              FuelAmountCard(controller: volumeController, price: fuelPrices[selectedFuel] ?? 0),
+              FuelAmountCard(volumeController: volumeController, priceController: priceController),
 
               AppSpacers.verticalMaxMassive,
               const AdBannerWidget(),
@@ -215,15 +238,14 @@ class _FuelUpScreenState extends State<FuelUpScreen> {
     );
   }
 
+  
   Future<Map<String, dynamic>?> fetchBestNearbyGasStation(LatLng current, String apiKey) async {
     final stations = await fetchNearbyGasStations(current, apiKey);
     if (stations.isEmpty) return null;
 
-    // We filter only highly rated ones
     final highRated = stations.where((s) => (s['rating'] ?? 0) >= 4.5).toList();
     if (highRated.isEmpty) return null;
 
-    // Find the closest one
     highRated.sort((a, b) {
       final distA = Geolocator.distanceBetween(current.latitude, current.longitude, a['lat'], a['lng']);
       final distB = Geolocator.distanceBetween(current.latitude, current.longitude, b['lat'], b['lng']);
@@ -233,3 +255,4 @@ class _FuelUpScreenState extends State<FuelUpScreen> {
     return highRated.first;
   }
 }
+

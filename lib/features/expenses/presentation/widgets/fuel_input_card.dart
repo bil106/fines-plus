@@ -1,27 +1,48 @@
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_borders.dart';
+
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:fines_plus/core/extensions/fuel_type.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+class FuelPriceCache {
+  static Future<void> savePrice(String fuelName, double price) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setDouble('fuel_price_$fuelName', price.roundToDouble());
+  }
+
+  static Future<double?> getPrice(String fuelName) async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getDouble('fuel_price_$fuelName');
+  }
+}
 
 class FuelInputCard extends StatelessWidget {
-  final TextEditingController controller;
   final FuelType fuel;
+  final TextEditingController volumeController;
+  final TextEditingController priceController;
+  final ValueChanged<String>? onPriceChanged;
 
-  const FuelInputCard({super.key, required this.controller, required this.fuel});
+  const FuelInputCard({
+    super.key,
+    required this.fuel,
+    required this.volumeController,
+    required this.priceController,
+    this.onPriceChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    final price = fuelPrices[fuel] ?? 0;
-
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
         color: AppColors.neutreBlanc,
         borderRadius: AppBorders.radiusLarge,
-        border: Border.all(color: AppColors.grey300, width: 2.0),
+        border: Border.all(color: AppColors.grey300, width: 2),
       ),
       child: Row(
         children: [
@@ -29,29 +50,75 @@ class FuelInputCard extends StatelessWidget {
           AppSpacers.horizontalSmallMedium,
           Expanded(
             child: TextField(
-              controller: controller,
-              showCursor: false,
+              controller: volumeController,
               keyboardType: TextInputType.number,
-              decoration: const InputDecoration(
-                border: InputBorder.none,
-                focusedBorder: InputBorder.none,
-                hintText: "0 L",
-              ),
+              decoration: const InputDecoration(border: InputBorder.none,focusedBorder: InputBorder.none , hintText: "0 L"),
             ),
           ),
-          AppSpacers.horizontalMassive,
-          const Icon(Icons.monetization_on_outlined, color: AppColors.blue700),
-          AppSpacers.horizontalSmallMedium,
-          Column(
+        
+         
+
+       Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(S.of(context).price_liter, style: textTheme.bodySmall?.copyWith(color: AppColors.black87)),
-              Text(
-                "$price ${S.of(context).grn}",
-                style: textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold, color: AppColors.blue700),
+              const SizedBox(height: 4),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  
+                  const Icon(Icons.monetization_on_outlined, color: AppColors.blue700),
+                  const SizedBox(width: 4),
+
+                
+                  SizedBox(
+                    width:33,
+                    child: TextField(
+                      controller: priceController,
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.digitsOnly,
+                        LengthLimitingTextInputFormatter(2), 
+                      ],
+                      decoration: const InputDecoration(
+                        border: InputBorder.none,
+                        focusedBorder: InputBorder.none,
+                        hintText: "0",
+                        isDense: true,
+                        contentPadding: EdgeInsets.zero,
+                      ),
+                      style: textTheme.titleMedium?.copyWith(color: AppColors.black87),
+                      onChanged: (value) {
+                        if (value.isNotEmpty) {
+                         int parsed = double.tryParse(value)?.round() ?? 0;
+                          if (parsed > 99) {
+                            parsed = 99;
+                         
+                            priceController.value = TextEditingValue(
+                              text: parsed.toString(),
+                              selection: TextSelection.fromPosition(TextPosition(offset: parsed.toString().length)),
+                            );
+                          }
+                        }
+                        onPriceChanged?.call(value);
+                      },
+                    ),
+                  ),
+
+                  const SizedBox(width: 8),
+
+             
+                  Text(
+                    S.of(context).grn,
+                    style: textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold, color: AppColors.blue700),
+                  ),
+                ],
               ),
             ],
-          ),
+          )
+
+
         ],
       ),
     );

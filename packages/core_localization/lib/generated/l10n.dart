@@ -2863,6 +2863,116 @@ class S {
   String get update {
     return Intl.message('Update', name: 'update', desc: '', args: []);
   }
+
+  /// `Field required`
+  String get field_required {
+    return Intl.message(
+      'Field required',
+      name: 'field_required',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Invalid email`
+  String get invalid_email {
+    return Intl.message(
+      'Invalid email',
+      name: 'invalid_email',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Minimum 6 characters`
+  String get password_too_short {
+    return Intl.message(
+      'Minimum 6 characters',
+      name: 'password_too_short',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `3 Month Subscription`
+  String get subscription_3_month {
+    return Intl.message(
+      '3 Month Subscription',
+      name: 'subscription_3_month',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `6 Month Subscription`
+  String get subscription_6_month {
+    return Intl.message(
+      '6 Month Subscription',
+      name: 'subscription_6_month',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `12 Month Subscription`
+  String get subscription_12_month {
+    return Intl.message(
+      '12 Month Subscription',
+      name: 'subscription_12_month',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Test subscription for`
+  String get test_subscription {
+    return Intl.message(
+      'Test subscription for',
+      name: 'test_subscription',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `months successfully completed!`
+  String get successfully_completed {
+    return Intl.message(
+      'months successfully completed!',
+      name: 'successfully_completed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Authorization required`
+  String get authorization_required {
+    return Intl.message(
+      'Authorization required',
+      name: 'authorization_required',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Subscription`
+  String get subscription {
+    return Intl.message(
+      'Subscription',
+      name: 'subscription',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Store unavailable`
+  String get store_unavailable {
+    return Intl.message(
+      'Store unavailable',
+      name: 'store_unavailable',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

@@ -322,5 +322,16 @@
 "all_exp_hist_deleted": "All expense history deleted",
 "new_version": "A new version of the application is available",
 "please_update": "Please update the application to continue using it.",
-"update": "Update"
+"update": "Update",
+"field_required": "Field required",
+"invalid_email": "Invalid email",
+"password_too_short": "Minimum 6 characters",
+"subscription_3_month": "3 Month Subscription",
+"subscription_6_month": "6 Month Subscription",
+"subscription_12_month": "12 Month Subscription",
+"test_subscription": "Test subscription for",
+"successfully_completed": "months successfully completed!",
+"authorization_required": "Authorization required",
+"subscription": "Subscription",
+"store_unavailable": "Store unavailable"
 }

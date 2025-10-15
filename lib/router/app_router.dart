@@ -24,6 +24,7 @@ import 'package:fines_plus/features/maintenance/presentation/screens/service_scr
 import 'package:fines_plus/presentation/screens/settings_screen.dart';
 import 'package:fines_plus/features/maintenance/presentation/screens/maintenance_screen.dart';
 import 'package:fines_plus/features/maintenance/presentation/screens/tuning_screen.dart';
+import 'package:fines_plus/presentation/screens/subscription_screen.dart';
 import 'package:fines_plus/presentation/screens/update_required_screen.dart';
 import 'package:fines_plus/router/home_screen_wrapper.dart';
 import 'package:flutter/material.dart';
@@ -71,6 +72,7 @@ class AppRouter extends RootStackRouter {
     AutoRoute(page: CarWashRoute.page, path: '/car_wash'),
     AutoRoute(page: CarWashMapRoute.page, path: '/car_wash_map'),
     AutoRoute(page: UpdateRequiredRoute.page, path: '/update'),
+    AutoRoute(page: SubscriptionRoute.page, path: '/subscription'),
     
   ];
 }

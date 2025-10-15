@@ -26,10 +26,12 @@ class RegisterUserUseCase {
     if (user == null) throw Exception("User not created");
 
    // Save data to Firestore
-    await firestore.collection('users').doc(user.uid).set({
+  await firestore.collection('users').doc(user.uid).set({
       'email': params.email,
       if (params.partnerId != null) 'partnerId': params.partnerId,
       'createdAt': FieldValue.serverTimestamp(),
+      'isSubscribed': false,
+      'subscriptionEndDate': null,
     }, SetOptions(merge: true));
 
     // Updating partner statistics

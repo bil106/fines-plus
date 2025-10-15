@@ -38,6 +38,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "amount_month": MessageLookupByLibrary.simpleMessage("Сума за місяць"),
     "analitics": MessageLookupByLibrary.simpleMessage("Аналітика"),
+    "authorization_required": MessageLookupByLibrary.simpleMessage(
+      "Необхідна авторизація",
+    ),
     "auto": MessageLookupByLibrary.simpleMessage("Авто"),
     "average": MessageLookupByLibrary.simpleMessage("Середній"),
     "buy_subscription": MessageLookupByLibrary.simpleMessage(
@@ -126,6 +129,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "failed_extract_tokens": MessageLookupByLibrary.simpleMessage(
       "Не удалось извлечь токены",
     ),
+    "field_required": MessageLookupByLibrary.simpleMessage("Поле обов\'язкове"),
     "fill_date": MessageLookupByLibrary.simpleMessage(
       "Заповніть дату, пробіг та кількість палива",
     ),
@@ -156,6 +160,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "history_unavailable": MessageLookupByLibrary.simpleMessage(
       "Історія тимчасово недоступна: індекс будується. Спробуйте за кілька хвилин.",
     ),
+    "invalid_email": MessageLookupByLibrary.simpleMessage("Невірний email"),
     "item_removed": MessageLookupByLibrary.simpleMessage("Елемент видалено"),
     "loaded": MessageLookupByLibrary.simpleMessage("Завантажено"),
     "login": MessageLookupByLibrary.simpleMessage("Увійти"),
@@ -211,6 +216,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "other": MessageLookupByLibrary.simpleMessage("Інше"),
     "password": MessageLookupByLibrary.simpleMessage("Пароль"),
+    "password_too_short": MessageLookupByLibrary.simpleMessage(
+      "Мінімум 6 символів",
+    ),
     "pay": MessageLookupByLibrary.simpleMessage("Сплатити"),
     "pdf": MessageLookupByLibrary.simpleMessage("PDF"),
     "period": MessageLookupByLibrary.simpleMessage("середнє/рік"),
@@ -712,8 +720,24 @@ class MessageLookup extends MessageLookupByLibrary {
       "Увійти через Google",
     ),
     "statistics": MessageLookupByLibrary.simpleMessage("Статистика"),
+    "store_unavailable": MessageLookupByLibrary.simpleMessage(
+      "Магазин недоступний",
+    ),
+    "subscription": MessageLookupByLibrary.simpleMessage("Передплата"),
+    "subscription_12_month": MessageLookupByLibrary.simpleMessage(
+      "Передплата 12 місяців",
+    ),
+    "subscription_3_month": MessageLookupByLibrary.simpleMessage(
+      "Передплата 3 місяці",
+    ),
+    "subscription_6_month": MessageLookupByLibrary.simpleMessage(
+      "Передплата 6 місяці",
+    ),
     "successful_registration": MessageLookupByLibrary.simpleMessage(
       "Успішна реєстрація",
+    ),
+    "successfully_completed": MessageLookupByLibrary.simpleMessage(
+      "місяців успішно оформлено!",
     ),
     "successfully_registration": MessageLookupByLibrary.simpleMessage(
       "Реєстрація успішна",
@@ -726,6 +750,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "take_a_picture": MessageLookupByLibrary.simpleMessage("Сфотографувати"),
     "tech_service": MessageLookupByLibrary.simpleMessage("Тех. Обслуговування"),
     "technical_data": MessageLookupByLibrary.simpleMessage("Техпаспорт:"),
+    "test_subscription": MessageLookupByLibrary.simpleMessage(
+      "Тестова передплата на",
+    ),
     "tires": MessageLookupByLibrary.simpleMessage("шина"),
     "title": MessageLookupByLibrary.simpleMessage("Заголовок"),
     "to_be_performed": MessageLookupByLibrary.simpleMessage("До виконання:"),

@@ -8,10 +8,10 @@ class PurchaseCubit extends Cubit<void> {
 
   PurchaseCubit(this._service, {this.enabled = true}) : super(null);
 
-  Future<void> buySubscription(String uid, num amount) async {
+ Future<void> buySubscription(String uid, num amount, int months) async {
     if (!enabled) {
       debugPrint('Purchase feature disabled by Remote Config');
-      return; 
+      return;
     }
 
     final purchaseId = 'tx_${DateTime.now().millisecondsSinceEpoch}';
@@ -19,9 +19,11 @@ class PurchaseCubit extends Cubit<void> {
       purchaseId: purchaseId,
       uid: uid,
       amount: amount,
+      months: months,
     );
 
     debugPrint('Purchase completed: $purchaseId');
   }
+
 }
 

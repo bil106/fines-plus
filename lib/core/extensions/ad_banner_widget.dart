@@ -1,4 +1,6 @@
 import 'package:core_data/core_data.dart';
+import 'package:fines_plus/core/extensions/subscription_helper.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
@@ -38,19 +40,34 @@ class _AdBannerWidgetState extends State<AdBannerWidget> {
     super.dispose();
   }
 
-  @override
+@override
   Widget build(BuildContext context) {
-    if (_bannerAd == null) {
-      return const SizedBox.shrink();
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      return FutureBuilder<bool>(
+        future: SubscriptionHelper.isUserSubscribed(user.uid),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const SizedBox.shrink();
+          }
+          if (snapshot.data == true) {
+        
+            return const SizedBox.shrink();
+          }
+         
+          if (_bannerAd == null) return const SizedBox.shrink();
+          return Align(
+            alignment: Alignment.bottomCenter,
+            child: SizedBox(
+              width: _bannerAd!.size.width.toDouble(),
+              height: _bannerAd!.size.height.toDouble(),
+              child: AdWidget(ad: _bannerAd!),
+            ),
+          );
+        },
+      );
     }
-
-    return Align(
-      alignment: Alignment.bottomCenter,
-      child: SizedBox(
-        width: _bannerAd!.size.width.toDouble(),
-        height: _bannerAd!.size.height.toDouble(),
-        child: AdWidget(ad: _bannerAd!),
-      ),
-    );
+    return const SizedBox.shrink();
   }
+
 }

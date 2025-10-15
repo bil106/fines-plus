@@ -323,6 +323,17 @@
    "all_exp_hist_deleted": "Вилучено всю історію витрат",
    "new_version": "Доступна нова версія програми",
    "please_update": "Будь ласка, оновіть програму, щоб продовжити використання.",
-   "update": "Оновити"
+   "update": "Оновити",
+   "field_required": "Поле обов'язкове",
+   "invalid_email": "Невірний email",
+   "password_too_short": "Мінімум 6 символів",
+   "subscription_3_month": "Передплата 3 місяці",
+   "subscription_6_month": "Передплата 6 місяці",
+   "subscription_12_month": "Передплата 12 місяців",
+   "test_subscription": "Тестова передплата на",
+   "successfully_completed": "місяців успішно оформлено!",
+   "authorization_required": "Необхідна авторизація",
+   "subscription": "Передплата",
+   "store_unavailable": "Магазин недоступний"
    
 }

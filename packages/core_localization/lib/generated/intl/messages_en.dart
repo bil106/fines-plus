@@ -38,6 +38,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "amount_month": MessageLookupByLibrary.simpleMessage("Amount per month"),
     "analitics": MessageLookupByLibrary.simpleMessage("Analytics"),
+    "authorization_required": MessageLookupByLibrary.simpleMessage(
+      "Authorization required",
+    ),
     "auto": MessageLookupByLibrary.simpleMessage("Auto"),
     "average": MessageLookupByLibrary.simpleMessage("Average"),
     "buy_subscription": MessageLookupByLibrary.simpleMessage(
@@ -126,6 +129,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "failed_extract_tokens": MessageLookupByLibrary.simpleMessage(
       "Failed to extract tokens",
     ),
+    "field_required": MessageLookupByLibrary.simpleMessage("Field required"),
     "fill_date": MessageLookupByLibrary.simpleMessage(
       "Fill in date, mileage and fuel amount",
     ),
@@ -156,6 +160,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "history_unavailable": MessageLookupByLibrary.simpleMessage(
       "History is temporarily unavailable: index is being built. Please try again in a few minutes.",
     ),
+    "invalid_email": MessageLookupByLibrary.simpleMessage("Invalid email"),
     "item_removed": MessageLookupByLibrary.simpleMessage("Item removed"),
     "km": MessageLookupByLibrary.simpleMessage("km"),
     "loaded": MessageLookupByLibrary.simpleMessage("Loaded"),
@@ -206,6 +211,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "open_statistics": MessageLookupByLibrary.simpleMessage("Open statistics"),
     "other": MessageLookupByLibrary.simpleMessage("Other"),
     "password": MessageLookupByLibrary.simpleMessage("Password"),
+    "password_too_short": MessageLookupByLibrary.simpleMessage(
+      "Minimum 6 characters",
+    ),
     "pay": MessageLookupByLibrary.simpleMessage("Pay"),
     "pdf": MessageLookupByLibrary.simpleMessage("PDF"),
     "period": MessageLookupByLibrary.simpleMessage("average/year"),
@@ -729,8 +737,24 @@ class MessageLookup extends MessageLookupByLibrary {
       "Sign in with Google",
     ),
     "statistics": MessageLookupByLibrary.simpleMessage("Statistics"),
+    "store_unavailable": MessageLookupByLibrary.simpleMessage(
+      "Store unavailable",
+    ),
+    "subscription": MessageLookupByLibrary.simpleMessage("Subscription"),
+    "subscription_12_month": MessageLookupByLibrary.simpleMessage(
+      "12 Month Subscription",
+    ),
+    "subscription_3_month": MessageLookupByLibrary.simpleMessage(
+      "3 Month Subscription",
+    ),
+    "subscription_6_month": MessageLookupByLibrary.simpleMessage(
+      "6 Month Subscription",
+    ),
     "successful_registration": MessageLookupByLibrary.simpleMessage(
       "Successful registration",
+    ),
+    "successfully_completed": MessageLookupByLibrary.simpleMessage(
+      "months successfully completed!",
     ),
     "successfully_registration": MessageLookupByLibrary.simpleMessage(
       "Registration successful",
@@ -746,6 +770,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "technical_data": MessageLookupByLibrary.simpleMessage(
       "Technical data sheet:",
+    ),
+    "test_subscription": MessageLookupByLibrary.simpleMessage(
+      "Test subscription for",
     ),
     "tires": MessageLookupByLibrary.simpleMessage("tire"),
     "title": MessageLookupByLibrary.simpleMessage("Title"),

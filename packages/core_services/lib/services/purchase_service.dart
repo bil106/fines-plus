@@ -8,16 +8,28 @@ class PurchaseService {
     required String purchaseId,
     required String uid,
     required num amount,
+    required int months,
     String currency = 'USD',
     String source = 'play',
   }) async {
+    final now = DateTime.now();
+    final endDate = DateTime(now.year, now.month + months, now.day);
+
     await _firestore.collection('purchases').doc(purchaseId).set({
       'uid': uid,
       'amount': amount,
+      'months': months,
       'currency': currency,
       'source': source,
       'createdAt': FieldValue.serverTimestamp(),
+      'subscriptionEndDate': endDate,
     });
+
+    
+    await _firestore.collection('users').doc(uid).set({
+      'isSubscribed': true,
+      'subscriptionEndDate': endDate,
+    }, SetOptions(merge: true));
 
    // we credit the partner bonus immediately to the client
     final userDoc = await _firestore.collection('users').doc(uid).get();
@@ -38,5 +50,21 @@ class PurchaseService {
       debugPrint("Partner $partnerId received bonus $bonus for purchase $purchaseId");
     }
   }
+  Future<bool> hasActiveSubscription(String uid) async {
+    final userDoc = await _firestore.collection('users').doc(uid).get();
+    if (!userDoc.exists) return false;
+
+    final data = userDoc.data();
+    if (data == null) return false;
+
+    final isSubscribed = data['isSubscribed'] == true;
+    final endDate = (data['subscriptionEndDate'] as Timestamp?)?.toDate();
+
+    if (!isSubscribed || endDate == null) return false;
+
+ // Check if the subscription has expired
+    return endDate.isAfter(DateTime.now());
+  }
+
 }
 

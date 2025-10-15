@@ -1157,6 +1157,22 @@ class SettingsRouteArgs {
 }
 
 /// generated route for
+/// [SubscriptionScreen]
+class SubscriptionRoute extends PageRouteInfo<void> {
+  const SubscriptionRoute({List<PageRouteInfo>? children})
+    : super(SubscriptionRoute.name, initialChildren: children);
+
+  static const String name = 'SubscriptionRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const SubscriptionScreen();
+    },
+  );
+}
+
+/// generated route for
 /// [TuningScreen]
 class TuningRoute extends PageRouteInfo<TuningRouteArgs> {
   TuningRoute({Key? key, VoidCallback? onBack, List<PageRouteInfo>? children})
