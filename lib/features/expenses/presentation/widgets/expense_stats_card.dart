@@ -170,7 +170,7 @@ class _LegendItem extends StatelessWidget {
           height: 16,
           decoration: BoxDecoration(shape: BoxShape.circle, gradient: gradient),
         ),
-        const SizedBox(width: 6),
+        const SizedBox(width: 2),
         Text(text),
       ],
     );

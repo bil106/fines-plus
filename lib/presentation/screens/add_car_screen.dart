@@ -45,8 +45,8 @@ class _AddCarScreenState extends State<AddCarScreen> {
                   SizedBox(
                     width: double.infinity,
                     child: Wrap(
-                      spacing: 24,
-                      runSpacing: 16, 
+                      spacing: 20,
+                      runSpacing: 14, 
                       alignment: WrapAlignment.center,
                       children: [
                         _buildMenuSquare(

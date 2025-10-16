@@ -2973,6 +2973,16 @@ class S {
       args: [],
     );
   }
+
+  /// `Click again to exit`
+  String get click_again {
+    return Intl.message(
+      'Click again to exit',
+      name: 'click_again',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

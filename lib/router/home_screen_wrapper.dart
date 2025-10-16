@@ -38,6 +38,7 @@ import 'package:fines_plus/features/maintenance/presentation/screens/tuning_scre
 import 'package:fines_plus/presentation/screens/subscription_screen.dart';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -83,7 +84,7 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
 
  
   late final Map<HomePage, int> _pageIndexMap;
-
+DateTime? _lastPressedTime;
   @override
   void initState() {
     super.initState();
@@ -157,13 +158,43 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
     super.dispose();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    if (_carNumber == null) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
-    }
+ @override
+Widget build(BuildContext context) {
+  if (_carNumber == null) {
+    return const Scaffold(body: Center(child: CircularProgressIndicator()));
+  }
 
-    return MultiBlocProvider(
+  return WillPopScope(
+    onWillPop: () async {
+      
+      if (_currentIndex != 0) {
+       
+        openPage(HomePage.addCar);
+        return false; 
+      }
+
+     
+      final now = DateTime.now();
+      if (_lastPressedTime == null ||
+          now.difference(_lastPressedTime!) > const Duration(seconds: 2)) {
+        _lastPressedTime = now;
+
+       
+        ScaffoldMessenger.of(context).showSnackBar(
+           SnackBar(
+            content: Text(S.of(context).click_again),
+            duration: Duration(seconds: 2),
+          ),
+        );
+        return false; 
+      }
+
+    
+     await SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+
+      return false;
+    },
+    child: MultiBlocProvider(
       providers: [
         BlocProvider.value(value: historyCubit),
         BlocProvider.value(value: carInfoCubit),
@@ -294,7 +325,7 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
           ],
         ),
       ),
-    );
+  ));
   }
 }
 

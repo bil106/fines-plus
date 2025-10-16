@@ -72,6 +72,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "choose_from_gallery": MessageLookupByLibrary.simpleMessage(
       "Вибрати у галереї",
     ),
+    "click_again": MessageLookupByLibrary.simpleMessage(
+      "Натисніть ще раз, щоб вийти",
+    ),
     "close": MessageLookupByLibrary.simpleMessage("Закрити"),
     "comment": MessageLookupByLibrary.simpleMessage("Коментар"),
     "comment_published": MessageLookupByLibrary.simpleMessage(

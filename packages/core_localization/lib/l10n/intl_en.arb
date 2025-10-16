@@ -333,5 +333,6 @@
 "successfully_completed": "months successfully completed!",
 "authorization_required": "Authorization required",
 "subscription": "Subscription",
-"store_unavailable": "Store unavailable"
+"store_unavailable": "Store unavailable",
+"click_again": "Click again to exit"
 }

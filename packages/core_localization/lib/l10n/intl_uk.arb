@@ -334,6 +334,7 @@
    "successfully_completed": "місяців успішно оформлено!",
    "authorization_required": "Необхідна авторизація",
    "subscription": "Передплата",
-   "store_unavailable": "Магазин недоступний"
+   "store_unavailable": "Магазин недоступний",
+   "click_again": "Натисніть ще раз, щоб вийти"
    
 }
