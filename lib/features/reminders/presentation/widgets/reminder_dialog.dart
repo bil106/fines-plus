@@ -4,13 +4,12 @@ import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
-import 'package:fines_plus/core/services/app_initializer.dart';
 import 'package:fines_plus/features/reminders/data/models/reminder_model.dart';
 import 'package:fines_plus/features/reminders/presentation/cubit/reminder_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import '../../../../main.dart';
+
 
 class ReminderDialog extends StatefulWidget {
   final ReminderModel? reminder;
@@ -139,7 +138,7 @@ final textTheme = Theme.of(context).textTheme;
                 await cubit.updateReminder(newReminder);
               }
 
-              await appInitializer.scheduleReminder(newReminder);
+              // await appInitializer.scheduleReminder(newReminder);
 
               if (!mounted) return;
               Navigator.pop(context);

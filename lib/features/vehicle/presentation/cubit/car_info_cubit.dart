@@ -39,6 +39,7 @@ class CarInfoCubit extends Cubit<CarInfoState> {
 
   Future<void> _saveCarToFirestore(CarInfoModel m) async {
     final user = FirebaseAuth.instance.currentUser;
+    debugPrint('Current user UID: ${user?.uid}');
     if (user == null) {
       debugPrint("Unable to save the machine - user is not authorized");
       return;

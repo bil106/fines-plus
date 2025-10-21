@@ -15,24 +15,46 @@ class AdBannerWidget extends StatefulWidget {
 
 class _AdBannerWidgetState extends State<AdBannerWidget> {
   BannerAd? _bannerAd;
+  bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
+    _loadBanner();
+  }
 
-    _bannerAd = BannerAd(
+void _loadBanner() {
+    if (_bannerAd != null || _isLoading) return;
+    _isLoading = true;
+
+    debugPrint("🚀 Starting to load banner...");
+
+    final banner = BannerAd(
       adUnitId: AdHelper.bannerAdUnitId,
       size: widget.size,
       request: const AdRequest(),
       listener: BannerAdListener(
-        onAdLoaded: (_) => setState(() {}),
-        onAdFailedToLoad: (ad, error) {
-          ad.dispose();
-          debugPrint("BannerAd failed: $error");
+        onAdLoaded: (ad) {
+          debugPrint("✅ Banner uploaded successfully!");
+          setState(() {
+            _bannerAd = ad as BannerAd;
+            _isLoading = false;
+          });
         },
+        onAdFailedToLoad: (ad, error) {
+          debugPrint("❌ Error loading banner: $error");
+          ad.dispose();
+          _isLoading = false;
+        },
+        onAdOpened: (_) => debugPrint("📢 The banner was opened by the user"),
+        onAdClosed: (_) => debugPrint("📪 The banner is closed"),
+        onAdImpression: (_) => debugPrint("👁 The banner is shown to the user"),
       ),
-    )..load();
+    );
+
+    banner.load();
   }
+
 
   @override
   void dispose() {
@@ -40,34 +62,45 @@ class _AdBannerWidgetState extends State<AdBannerWidget> {
     super.dispose();
   }
 
-@override
+  @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
-      return FutureBuilder<bool>(
-        future: SubscriptionHelper.isUserSubscribed(user.uid),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const SizedBox.shrink();
-          }
-          if (snapshot.data == true) {
-        
-            return const SizedBox.shrink();
-          }
-         
-          if (_bannerAd == null) return const SizedBox.shrink();
-          return Align(
-            alignment: Alignment.bottomCenter,
-            child: SizedBox(
-              width: _bannerAd!.size.width.toDouble(),
-              height: _bannerAd!.size.height.toDouble(),
-              child: AdWidget(ad: _bannerAd!),
-            ),
-          );
-        },
-      );
-    }
-    return const SizedBox.shrink();
-  }
 
+    if (user == null) {
+     
+      return const SizedBox.shrink();
+    }
+
+    return FutureBuilder<bool>(
+      future: SubscriptionHelper.isUserSubscribed(user.uid),
+      builder: (context, snapshot) {
+    
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const SizedBox.shrink();
+        }
+
+     
+        if (snapshot.data == true) {
+          debugPrint("🚫 User with active subscription - ads hidden");
+          return const SizedBox.shrink();
+        }
+
+    
+        if (_bannerAd == null) {
+          debugPrint("ℹ️Advertisement not loaded yet");
+          return const SizedBox.shrink();
+        }
+
+       
+        return Align(
+          alignment: Alignment.bottomCenter,
+          child: SizedBox(
+            width: _bannerAd!.size.width.toDouble(),
+            height: _bannerAd!.size.height.toDouble(),
+            child: AdWidget(ad: _bannerAd!),
+          ),
+        );
+      },
+    );
+  }
 }

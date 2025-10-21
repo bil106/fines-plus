@@ -334,5 +334,21 @@
 "authorization_required": "Authorization required",
 "subscription": "Subscription",
 "store_unavailable": "Store unavailable",
-"click_again": "Click again to exit"
+"click_again": "Click again to exit",
+"sign_up": "Sign Up",
+"enter_email": "Enter email",
+"incorrect_email": "Incorrect email",
+"enter_password": "Enter password",
+"min_char": "Minimum 6 characters",
+"large_login": "LOG IN",
+"large_sign_up": "SIGN UP",
+"dont_have_account": "Don't have an account? Sign up",
+"already_have_account": "Already have an account? Sign in",
+"or_sign_in_using": "Or sign in using",
+"google_login": "Google login successful",
+"incorrect_password": "Incorrect password",
+"email_already_exists": "A user with this email already exists",
+"user_not_found": "User not found",
+"incorrect_email_address": "Incorrect email address",
+"email_verification_error": "Email verification error"
 }

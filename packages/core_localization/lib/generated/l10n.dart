@@ -2983,6 +2983,146 @@ class S {
       args: [],
     );
   }
+
+  /// `Sign Up`
+  String get sign_up {
+    return Intl.message('Sign Up', name: 'sign_up', desc: '', args: []);
+  }
+
+  /// `Enter email`
+  String get enter_email {
+    return Intl.message('Enter email', name: 'enter_email', desc: '', args: []);
+  }
+
+  /// `Incorrect email`
+  String get incorrect_email {
+    return Intl.message(
+      'Incorrect email',
+      name: 'incorrect_email',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter password`
+  String get enter_password {
+    return Intl.message(
+      'Enter password',
+      name: 'enter_password',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Minimum 6 characters`
+  String get min_char {
+    return Intl.message(
+      'Minimum 6 characters',
+      name: 'min_char',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `LOG IN`
+  String get large_login {
+    return Intl.message('LOG IN', name: 'large_login', desc: '', args: []);
+  }
+
+  /// `SIGN UP`
+  String get large_sign_up {
+    return Intl.message('SIGN UP', name: 'large_sign_up', desc: '', args: []);
+  }
+
+  /// `Don't have an account? Sign up`
+  String get dont_have_account {
+    return Intl.message(
+      'Don\'t have an account? Sign up',
+      name: 'dont_have_account',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Already have an account? Sign in`
+  String get already_have_account {
+    return Intl.message(
+      'Already have an account? Sign in',
+      name: 'already_have_account',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Or sign in using`
+  String get or_sign_in_using {
+    return Intl.message(
+      'Or sign in using',
+      name: 'or_sign_in_using',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Google login successful`
+  String get google_login {
+    return Intl.message(
+      'Google login successful',
+      name: 'google_login',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Incorrect password`
+  String get incorrect_password {
+    return Intl.message(
+      'Incorrect password',
+      name: 'incorrect_password',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `A user with this email already exists`
+  String get email_already_exists {
+    return Intl.message(
+      'A user with this email already exists',
+      name: 'email_already_exists',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `User not found`
+  String get user_not_found {
+    return Intl.message(
+      'User not found',
+      name: 'user_not_found',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Incorrect email address`
+  String get incorrect_email_address {
+    return Intl.message(
+      'Incorrect email address',
+      name: 'incorrect_email_address',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Email verification error`
+  String get email_verification_error {
+    return Intl.message(
+      'Email verification error',
+      name: 'email_verification_error',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

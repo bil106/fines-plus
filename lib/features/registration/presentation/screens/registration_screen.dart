@@ -1,19 +1,18 @@
-// ignore_for_file: unused_local_variable
-import 'package:auto_route/auto_route.dart';
-import 'package:core_cubit/cubit/purchase/purchase_cubit.dart';
+import 'dart:async';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_borders.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:fines_plus/features/registration/presentation/cubit/registration_cubit.dart';
 import 'package:fines_plus/features/registration/presentation/cubit/registration_state.dart';
-import 'package:fines_plus/router/home_screen_wrapper.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
+
 import 'package:google_sign_in/google_sign_in.dart';
 
-@RoutePage()
 class RegistrationScreen extends StatefulWidget {
   final VoidCallback? onBack;
   const RegistrationScreen({super.key, this.onBack});
@@ -26,69 +25,135 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   final _formKey = GlobalKey<FormState>();
   late TextEditingController emailController;
   late TextEditingController passwordController;
-  bool isLoadingCredentials = true;
-  bool _isFormValid = false;
+  Timer? _emailCheckTimer;
 
   @override
   void initState() {
     super.initState();
     emailController = TextEditingController();
     passwordController = TextEditingController();
-    isLoadingCredentials = false;
 
-    emailController.addListener(_validateForm);
+    final cubit = context.read<RegistrationCubit>();
+
+    cubit.loadCredentials().then((data) {
+      emailController.text = data['email']!;
+      passwordController.text = data['password']!;
+      _validateForm();
+      if (data['email']!.isNotEmpty) cubit.checkEmail(data['email']!);
+    });
+
+    emailController.addListener(() {
+      final email = emailController.text.trim();
+      _emailCheckTimer?.cancel();
+      _emailCheckTimer = Timer(const Duration(milliseconds: 600), () {
+        cubit.checkEmail(email);
+        _validateForm();
+      });
+    });
+
     passwordController.addListener(_validateForm);
   }
+
+  bool _isFormValid = false;
 
   void _validateForm() {
     final email = emailController.text.trim();
     final pass = passwordController.text.trim();
     final isValid = email.isNotEmpty && email.contains('@') && pass.length >= 6;
+    if (isValid != _isFormValid) setState(() => _isFormValid = isValid);
+  }
 
-    if (isValid != _isFormValid) {
-      setState(() => _isFormValid = isValid);
-    }
+  Future<void> _onSubmit(BuildContext context) async {
+    if (!(_formKey.currentState?.validate() ?? false)) return;
+
+    final cubit = context.read<RegistrationCubit>();
+    final email = emailController.text.trim();
+    final password = passwordController.text.trim();
+
+    await cubit.saveCredentials(email, password);
+
+    await cubit.register(email, password);
   }
 
   Future<void> _signInWithGoogle() async {
     try {
       final googleUser = await GoogleSignIn().signIn();
       if (googleUser == null) return;
-
       final googleAuth = await googleUser.authentication;
-
       final credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
+      await FirebaseAuth.instance.signInWithCredential(credential);
 
-      final userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
-      final user = userCredential.user;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar( SnackBar(content: Text(S.of(context).google_login), backgroundColor: AppColors.blue700));
+    } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('${S.of(context).google_login_error}: $e'), backgroundColor: AppColors.blue700));
+    }
+  }
+Future<void> _signInWithFacebook(BuildContext context) async {
+    try {
+      final result = await FacebookAuth.instance.login(permissions: ['email', 'public_profile']);
 
-      if (!mounted) return;
-      if (user != null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            backgroundColor: AppColors.blue700,
-            content: Text('${S.current.successful_registration}: ${user.email}'),
-          ),
-        );
+      if (result.status == LoginStatus.success) {
+        final accessToken = result.accessToken;
+        if (accessToken == null) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(const SnackBar(content: Text('Facebook Error: AccessToken is empty')));
+          return;
+        }
 
-        final homeState = context.findAncestorStateOfType<HomeScreenWrapperState>();
-        homeState?.openPage(HomePage.subscription);
+        final credential = FacebookAuthProvider.credential(accessToken.tokenString);
+
+        await FirebaseAuth.instance.signInWithCredential(credential);
+
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Facebook login successful')));
+      } else if (result.status == LoginStatus.cancelled) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Facebook login has been cancelled by the user.')));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Facebook login error: ${result.message}')));
+       debugPrint("${result.message}");
       }
     } catch (e) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(backgroundColor: AppColors.blue700, content: Text("${S.current.google_login_error}: $e")),
-      );
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Facebook login error: $e')));
+       debugPrint("error: $e");
     }
   }
 
+
+
+
+
+  Future<void> _signInWithApple() async {
+    try {
+      final credential = await SignInWithApple.getAppleIDCredential(
+        scopes: [AppleIDAuthorizationScopes.email, AppleIDAuthorizationScopes.fullName],
+      );
+
+      final oauthCredential = OAuthProvider(
+        "apple.com",
+      ).credential(idToken: credential.identityToken, accessToken: credential.authorizationCode);
+
+      await FirebaseAuth.instance.signInWithCredential(oauthCredential);
+
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Sign in with Apple successful'), backgroundColor: AppColors.blue700));
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Apple login error: $e')));
+      debugPrint('Apple login error: $e');
+    }
+  }
   @override
   void dispose() {
-    emailController.removeListener(_validateForm);
-    passwordController.removeListener(_validateForm);
+    _emailCheckTimer?.cancel();
     emailController.dispose();
     passwordController.dispose();
     super.dispose();
@@ -96,168 +161,141 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final purchaseCubit = context.read<PurchaseCubit>();
-    final cubit = context.read<RegistrationCubit>();
     final textTheme = Theme.of(context).textTheme;
 
-    if (isLoadingCredentials) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
-    }
-
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: AppColors.grey50,
-        leading: BackButton(color: AppColors.blue700, onPressed: widget.onBack ?? () {}),
-      ),
-      backgroundColor: AppColors.grey50,
-      body: BlocBuilder<RegistrationCubit, RegistrationState>(
-        builder: (context, state) {
-          return SingleChildScrollView(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                AppSpacers.verticalMediumLarge,
-                Text(S.of(context).registration, style: textTheme.titleLarge),
-                AppSpacers.verticalHuge,
+      backgroundColor: AppColors.neutreBlanc,
+      body: Center(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
+          child: Form(
+            key: _formKey,
+            child: BlocConsumer<RegistrationCubit, RegistrationState>(
+              listener: (context, state) {
+                if (state.error != null) {
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(SnackBar(content: Text(state.error!), backgroundColor: AppColors.blue700));
+                }
+                if (state.isRegistered) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(S.of(context).successful_registration), backgroundColor: AppColors.blue700),
+                  );
+                }
+              },
+              builder: (context, state) {
+                final isLogin = state.isExistingUser;
+                final isLoading = state.isLoading;
 
-                Form(
-                  key: _formKey,
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                  child: Column(
-                    children: [
-                      TextFormField(
-                        controller: emailController,
-                        keyboardType: TextInputType.emailAddress,
-                        decoration: InputDecoration(labelText: S.of(context).email),
-                        validator: (value) {
-                          final v = (value ?? '').trim();
-                          if (v.isEmpty) return S.of(context).field_required;
-                          if (!v.contains('@')) return S.of(context).invalid_email;
-                          return null;
-                        },
+                return Column(
+                  children: [
+                    Text(
+                      isLogin ? S.of(context).registration : S.of(context).sign_up,
+                      style: textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
+                    ),
+                    AppSpacers.verticalXXXLarge,
+
+                    // Email
+                    TextFormField(
+                      controller: emailController,
+                      decoration: InputDecoration(
+                        prefixIcon: const Icon(Icons.email_outlined),
+                        labelText: S.of(context).email,
+                        errorText: state.emailError,
+                        border: OutlineInputBorder(borderRadius: AppBorders.radiusLarge),
                       ),
-                      AppSpacers.verticalMediumLarge,
-                      TextFormField(
-                        controller: passwordController,
-                        decoration: InputDecoration(labelText: S.of(context).password),
-                        obscureText: true,
-                        validator: (value) {
-                          final v = (value ?? '');
-                          if (v.isEmpty) return S.of(context).field_required;
-                          if (v.length < 6) return S.of(context).password_too_short;
-                          return null;
-                        },
+                      keyboardType: TextInputType.emailAddress,
+                      validator: (v) {
+                        if (v == null || v.isEmpty) return S.of(context).enter_email;
+                        if (!v.contains('@')) return S.of(context).incorrect_email;
+                        return null;
+                      },
+                    ),
+                    AppSpacers.verticalLarge,
+
+                    // Password
+                    TextFormField(
+                      controller: passwordController,
+                      obscureText: true,
+                      decoration: InputDecoration(
+                        prefixIcon: const Icon(Icons.lock_outline),
+                        labelText: S.of(context).password,
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                       ),
-                    ],
-                  ),
-                ),
+                      validator: (v) {
+                        if (v == null || v.isEmpty) return S.of(context).enter_password;
+                        if (v.length < 6) return S.of(context).min_char;
+                        return null;
+                      },
+                    ),
+                      AppSpacers.verticalXXXLarge,
 
-                AppSpacers.verticalXXXLarge,
-
-                state.isLoading
-                    ? const CircularProgressIndicator()
-                    : Padding(
-                        padding: const EdgeInsets.only(left: 100),
-                        child: ElevatedButton(
-                          onPressed: (_isFormValid && !state.isLoading)
-                              ? () async {
-                                  if (!(_formKey.currentState?.validate() ?? false)) return;
-
-                                  try {
-                                    await cubit.register(emailController.text.trim(), passwordController.text.trim());
-
-                                    if (!mounted) return;
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        backgroundColor: AppColors.blue700,
-                                        content: Text(S.of(context).successfully_registration),
-                                      ),
-                                    );
-
-                                    final homeState = context.findAncestorStateOfType<HomeScreenWrapperState>();
-                                    homeState?.openPage(HomePage.subscription);
-                                  } catch (e) {
-                                    if (!mounted) return;
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(backgroundColor: AppColors.blue700, content: Text("Error: $e")),
-                                    );
-                                  }
-                                }
-                              : null,
-
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.blue700,
-                            padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
-                            shape: RoundedRectangleBorder(borderRadius: AppBorders.radiusLarge),
+                    // Button
+                    isLoading
+                        ? const CircularProgressIndicator()
+                        : InkWell(
+                            onTap: _isFormValid ? () => _onSubmit(context) : null,
+                            child: Container(
+                              width: double.infinity,
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(30),
+                                gradient: const LinearGradient(
+                                  colors: [Color(0xFF00C6FF), Color(0xFF7D2AE8)],
+                                  begin: Alignment.centerLeft,
+                                  end: Alignment.centerRight,
+                                ),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  isLogin ? S.of(context).large_login : S.of(context).large_sign_up,
+                                  style: textTheme.titleMedium?.copyWith(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
                           ),
-                          child: Text(
-                            S.of(context).registration,
-                            style: textTheme.bodyLarge?.copyWith(color: Colors.white),
-                          ),
-                        ),
+
+                      AppSpacers.verticalLargeXL,
+                    TextButton(
+                      onPressed: () => context.read<RegistrationCubit>().toggleLoginMode(),
+                      child: Text(
+                        isLogin ? S.of(context).dont_have_account : S.of(context).already_have_account,
+                        style: const TextStyle(color: Color(0xFF7D2AE8)),
                       ),
-
-                AppSpacers.verticalMediumLarge,
-
-                // === Google Sign-In ===
-                Padding(
-                  padding: const EdgeInsets.only(left: 100),
-                  child: ElevatedButton.icon(
-                    icon: Image.asset('assets/icons/google_logo.png', height: 20),
-                    label: Text(S.of(context).sign_in_google),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.neutreBlanc,
-                      foregroundColor: AppColors.black87,
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
-                      shape: RoundedRectangleBorder(borderRadius: AppBorders.radiusLarge),
                     ),
-                    onPressed: _signInWithGoogle,
-                  ),
-                ),
 
-                AppSpacers.verticalMediumLarge,
+                    AppSpacers.verticalXXLarge,
+                    Text(S.of(context).or_sign_in_using, style: TextStyle(color: Colors.grey)),
+                    AppSpacers.verticalMediumLarge,
 
-              
-                Padding(
-                  padding: const EdgeInsets.only(left: 100),
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      final user = FirebaseAuth.instance.currentUser;
-                      if (user == null) return;
-
-                      await purchaseCubit.buySubscription(user.uid, 9.99, 3);
-
-                      if (!context.mounted) return;
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          backgroundColor: AppColors.blue700,
-                          content: Text(S.of(context).successfully_subscription),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        IconButton(
+                          icon: Image.asset('assets/icons/google_logo.png', height: 30),
+                          onPressed: _signInWithGoogle,
                         ),
-                      );
-
-                      await Future.delayed(const Duration(milliseconds: 400));
-                      if (context.mounted) {
-                        final homeState = context.findAncestorStateOfType<HomeScreenWrapperState>();
-                        homeState?.openPage(HomePage.subscription);
-                      }
-                    },
-
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.blue700,
-                      padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
-                      shape: RoundedRectangleBorder(borderRadius: AppBorders.radiusLarge),
+                        AppSpacers.horizontalMedium,
+                        IconButton(
+                          icon: const Icon(Icons.facebook, color: Colors.blue, size: 30),
+                         onPressed: () => _signInWithFacebook(context),
+                        ),
+                        AppSpacers.horizontalMedium,
+                        IconButton(
+                          icon: const Icon(Icons.apple, color: Colors.black, size: 30),
+                          onPressed: () => _signInWithApple(),
+                        ),
+                      ],
                     ),
-                    child: Text(
-                      S.of(context).buy_subscription,
-                      style: textTheme.bodyLarge?.copyWith(color: Colors.white),
-                    ),
-                  ),
-                ),
-              ],
+                  ],
+                );
+              },
             ),
-          );
-        },
+          ),
+        ),
       ),
     );
   }

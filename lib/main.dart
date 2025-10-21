@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:core_cubit/cubit/purchase/purchase_cubit.dart';
 import 'package:core_cubit/cubit/referral/referral_cubit.dart';
+import 'package:fines_plus/env/env.dart';
 import 'package:fines_plus/features/expenses/data/repository/expense_repository.dart';
 import 'package:fines_plus/features/expenses/presentation/cubit/expenses_cubit.dart';
 import 'package:fines_plus/features/export/data/repository/injector.dart';
@@ -40,7 +41,10 @@ void main() {
       await Firebase.initializeApp();
 
       FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
-
+      RequestConfiguration configuration = RequestConfiguration(
+        testDeviceIds: Env.testDeviceIdList, 
+      );
+      MobileAds.instance.updateRequestConfiguration(configuration);
       await MobileAds.instance.initialize();
       FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 

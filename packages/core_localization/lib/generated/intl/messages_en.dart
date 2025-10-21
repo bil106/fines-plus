@@ -36,6 +36,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "all_exp_hist_deleted": MessageLookupByLibrary.simpleMessage(
       "All expense history deleted",
     ),
+    "already_have_account": MessageLookupByLibrary.simpleMessage(
+      "Already have an account? Sign in",
+    ),
     "amount_month": MessageLookupByLibrary.simpleMessage("Amount per month"),
     "analitics": MessageLookupByLibrary.simpleMessage("Analytics"),
     "authorization_required": MessageLookupByLibrary.simpleMessage(
@@ -102,8 +105,17 @@ class MessageLookup extends MessageLookupByLibrary {
       "Delete expense history",
     ),
     "description": MessageLookupByLibrary.simpleMessage("Description"),
+    "dont_have_account": MessageLookupByLibrary.simpleMessage(
+      "Don\'t have an account? Sign up",
+    ),
     "edit_reminder": MessageLookupByLibrary.simpleMessage("Edit reminder"),
     "email": MessageLookupByLibrary.simpleMessage("Email"),
+    "email_already_exists": MessageLookupByLibrary.simpleMessage(
+      "A user with this email already exists",
+    ),
+    "email_verification_error": MessageLookupByLibrary.simpleMessage(
+      "Email verification error",
+    ),
     "enter_amount": MessageLookupByLibrary.simpleMessage("Enter amount"),
     "enter_comment": MessageLookupByLibrary.simpleMessage("Enter comment"),
     "enter_correct_number_auto": MessageLookupByLibrary.simpleMessage(
@@ -112,8 +124,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "enter_correct_registration_number": MessageLookupByLibrary.simpleMessage(
       "Enter the correct registration number",
     ),
+    "enter_email": MessageLookupByLibrary.simpleMessage("Enter email"),
     "enter_liters": MessageLookupByLibrary.simpleMessage("Enter liters"),
     "enter_mileage": MessageLookupByLibrary.simpleMessage("Enter mileage"),
+    "enter_password": MessageLookupByLibrary.simpleMessage("Enter password"),
     "enter_vin": MessageLookupByLibrary.simpleMessage("Enter VIN"),
     "error": MessageLookupByLibrary.simpleMessage("Error:"),
     "error_photo": MessageLookupByLibrary.simpleMessage(
@@ -150,6 +164,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "gas_station_nearby": MessageLookupByLibrary.simpleMessage(
       "Gas stations nearby",
     ),
+    "google_login": MessageLookupByLibrary.simpleMessage(
+      "Google login successful",
+    ),
     "google_login_error": MessageLookupByLibrary.simpleMessage(
       "Google login error",
     ),
@@ -161,9 +178,18 @@ class MessageLookup extends MessageLookupByLibrary {
     "history_unavailable": MessageLookupByLibrary.simpleMessage(
       "History is temporarily unavailable: index is being built. Please try again in a few minutes.",
     ),
+    "incorrect_email": MessageLookupByLibrary.simpleMessage("Incorrect email"),
+    "incorrect_email_address": MessageLookupByLibrary.simpleMessage(
+      "Incorrect email address",
+    ),
+    "incorrect_password": MessageLookupByLibrary.simpleMessage(
+      "Incorrect password",
+    ),
     "invalid_email": MessageLookupByLibrary.simpleMessage("Invalid email"),
     "item_removed": MessageLookupByLibrary.simpleMessage("Item removed"),
     "km": MessageLookupByLibrary.simpleMessage("km"),
+    "large_login": MessageLookupByLibrary.simpleMessage("LOG IN"),
+    "large_sign_up": MessageLookupByLibrary.simpleMessage("SIGN UP"),
     "loaded": MessageLookupByLibrary.simpleMessage("Loaded"),
     "login": MessageLookupByLibrary.simpleMessage("Login"),
     "logo": MessageLookupByLibrary.simpleMessage("LOGO"),
@@ -175,6 +201,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "mileage_time_service": MessageLookupByLibrary.simpleMessage(
       "Mileage at time of service",
     ),
+    "min_char": MessageLookupByLibrary.simpleMessage("Minimum 6 characters"),
     "month": MessageLookupByLibrary.simpleMessage("Month"),
     "my_position": MessageLookupByLibrary.simpleMessage("You are here"),
     "name": MessageLookupByLibrary.simpleMessage("Name"),
@@ -210,6 +237,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "ok": MessageLookupByLibrary.simpleMessage("OK"),
     "open_site": MessageLookupByLibrary.simpleMessage("Open e-Drive"),
     "open_statistics": MessageLookupByLibrary.simpleMessage("Open statistics"),
+    "or_sign_in_using": MessageLookupByLibrary.simpleMessage(
+      "Or sign in using",
+    ),
     "other": MessageLookupByLibrary.simpleMessage("Other"),
     "password": MessageLookupByLibrary.simpleMessage("Password"),
     "password_too_short": MessageLookupByLibrary.simpleMessage(
@@ -737,6 +767,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "sign_in_google": MessageLookupByLibrary.simpleMessage(
       "Sign in with Google",
     ),
+    "sign_up": MessageLookupByLibrary.simpleMessage("Sign Up"),
     "statistics": MessageLookupByLibrary.simpleMessage("Statistics"),
     "store_unavailable": MessageLookupByLibrary.simpleMessage(
       "Store unavailable",
@@ -790,6 +821,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "tuning": MessageLookupByLibrary.simpleMessage("Tuning"),
     "type": MessageLookupByLibrary.simpleMessage("Type"),
     "update": MessageLookupByLibrary.simpleMessage("Update"),
+    "user_not_found": MessageLookupByLibrary.simpleMessage("User not found"),
     "verif_date": MessageLookupByLibrary.simpleMessage("Verification date:"),
     "verification_history": MessageLookupByLibrary.simpleMessage(
       "Verification history",

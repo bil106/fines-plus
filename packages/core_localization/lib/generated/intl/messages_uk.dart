@@ -36,6 +36,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "all_exp_hist_deleted": MessageLookupByLibrary.simpleMessage(
       "Вилучено всю історію витрат",
     ),
+    "already_have_account": MessageLookupByLibrary.simpleMessage(
+      "Вже маєте обліковий запис? Увійти",
+    ),
     "amount_month": MessageLookupByLibrary.simpleMessage("Сума за місяць"),
     "analitics": MessageLookupByLibrary.simpleMessage("Аналітика"),
     "authorization_required": MessageLookupByLibrary.simpleMessage(
@@ -102,10 +105,19 @@ class MessageLookup extends MessageLookupByLibrary {
       "Видалити історію витрат",
     ),
     "description": MessageLookupByLibrary.simpleMessage("Опис"),
+    "dont_have_account": MessageLookupByLibrary.simpleMessage(
+      "Немає облікового запису? Зареєструватися",
+    ),
     "edit_reminder": MessageLookupByLibrary.simpleMessage(
       "Редагувати нагадування",
     ),
     "email": MessageLookupByLibrary.simpleMessage("Email"),
+    "email_already_exists": MessageLookupByLibrary.simpleMessage(
+      "Користувач із таким email вже існує",
+    ),
+    "email_verification_error": MessageLookupByLibrary.simpleMessage(
+      "Помилка перевірки email",
+    ),
     "enter_amount": MessageLookupByLibrary.simpleMessage("Введіть суму"),
     "enter_comment": MessageLookupByLibrary.simpleMessage("Введіть коментар"),
     "enter_correct_number_auto": MessageLookupByLibrary.simpleMessage(
@@ -114,8 +126,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "enter_correct_registration_number": MessageLookupByLibrary.simpleMessage(
       "Введіть правильний номер техпаспорта",
     ),
+    "enter_email": MessageLookupByLibrary.simpleMessage("Введіть email"),
     "enter_liters": MessageLookupByLibrary.simpleMessage("Введіть літри"),
     "enter_mileage": MessageLookupByLibrary.simpleMessage("Введіть пробіг"),
+    "enter_password": MessageLookupByLibrary.simpleMessage("Введіть пароль"),
     "enter_vin": MessageLookupByLibrary.simpleMessage("Введіть VIN"),
     "error": MessageLookupByLibrary.simpleMessage("Ошибка:"),
     "error_photo": MessageLookupByLibrary.simpleMessage(
@@ -152,6 +166,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "gas_station_nearby": MessageLookupByLibrary.simpleMessage(
       "Заправки поруч",
     ),
+    "google_login": MessageLookupByLibrary.simpleMessage(
+      "Вхід через Google успішний",
+    ),
     "google_login_error": MessageLookupByLibrary.simpleMessage(
       "Помилка входу через Google",
     ),
@@ -163,8 +180,19 @@ class MessageLookup extends MessageLookupByLibrary {
     "history_unavailable": MessageLookupByLibrary.simpleMessage(
       "Історія тимчасово недоступна: індекс будується. Спробуйте за кілька хвилин.",
     ),
+    "incorrect_email": MessageLookupByLibrary.simpleMessage(
+      "Некоректний email",
+    ),
+    "incorrect_email_address": MessageLookupByLibrary.simpleMessage(
+      "Некоректна email адреса",
+    ),
+    "incorrect_password": MessageLookupByLibrary.simpleMessage(
+      "Неправильний пароль",
+    ),
     "invalid_email": MessageLookupByLibrary.simpleMessage("Невірний email"),
     "item_removed": MessageLookupByLibrary.simpleMessage("Елемент видалено"),
+    "large_login": MessageLookupByLibrary.simpleMessage("УВІЙТИ"),
+    "large_sign_up": MessageLookupByLibrary.simpleMessage("ЗАРЕЄСТРУВАТИСЯ"),
     "loaded": MessageLookupByLibrary.simpleMessage("Завантажено"),
     "login": MessageLookupByLibrary.simpleMessage("Увійти"),
     "logo": MessageLookupByLibrary.simpleMessage("LOGO"),
@@ -176,6 +204,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "mileage_time_service": MessageLookupByLibrary.simpleMessage(
       "Пробіг на момент обслуговування",
     ),
+    "min_char": MessageLookupByLibrary.simpleMessage("Мінімум 6 символів"),
     "month": MessageLookupByLibrary.simpleMessage("Місяць"),
     "my_position": MessageLookupByLibrary.simpleMessage("Ви тут"),
     "name": MessageLookupByLibrary.simpleMessage("Назва"),
@@ -216,6 +245,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "open_site": MessageLookupByLibrary.simpleMessage("Увійти у e-Drive"),
     "open_statistics": MessageLookupByLibrary.simpleMessage(
       "Відкрити статистику",
+    ),
+    "or_sign_in_using": MessageLookupByLibrary.simpleMessage(
+      "Або увійти за допомогою",
     ),
     "other": MessageLookupByLibrary.simpleMessage("Інше"),
     "password": MessageLookupByLibrary.simpleMessage("Пароль"),
@@ -722,6 +754,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "sign_in_google": MessageLookupByLibrary.simpleMessage(
       "Увійти через Google",
     ),
+    "sign_up": MessageLookupByLibrary.simpleMessage("Реєстрація"),
     "statistics": MessageLookupByLibrary.simpleMessage("Статистика"),
     "store_unavailable": MessageLookupByLibrary.simpleMessage(
       "Магазин недоступний",
@@ -773,6 +806,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "tuning": MessageLookupByLibrary.simpleMessage("Тюнінг"),
     "type": MessageLookupByLibrary.simpleMessage("Тип"),
     "update": MessageLookupByLibrary.simpleMessage("Оновити"),
+    "user_not_found": MessageLookupByLibrary.simpleMessage(
+      "Користувач не знайдено",
+    ),
     "verif_date": MessageLookupByLibrary.simpleMessage("Дата перевірки:"),
     "verification_history": MessageLookupByLibrary.simpleMessage(
       "Історія перевірки",

@@ -78,6 +78,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
 
   Future<void> _buy(dynamic product, int months) async {
     final user = FirebaseAuth.instance.currentUser;
+    debugPrint('Current user UID: ${user?.uid}');
     if (user == null) {
       _showSnack(S.of(context).authorization_required);
       return;

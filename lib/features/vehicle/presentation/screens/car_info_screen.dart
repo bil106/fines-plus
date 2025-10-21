@@ -236,6 +236,7 @@ class _CarInfoViewState extends State<_CarInfoView> {
                                 }
 
                                 final user = FirebaseAuth.instance.currentUser;
+                                debugPrint('Current user UID: ${user?.uid}');
                                 if (user == null) {
                                   _handleUnauthorized();
                                 } else {

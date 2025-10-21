@@ -1,23 +1,36 @@
-class RegistrationState {
-  final bool isLoading;
-  final bool isRegistered;
-  final String? error;
+import 'package:equatable/equatable.dart';
 
-  RegistrationState({
+class RegistrationState extends Equatable {
+  final bool isLoading;
+  final bool isExistingUser;
+  final String? emailError;
+  final String? error;
+  final bool isRegistered;
+
+  const RegistrationState({
     this.isLoading = false,
-    this.isRegistered = false,
+    this.isExistingUser = false,
+    this.emailError,
     this.error,
+    this.isRegistered = false,
   });
 
   RegistrationState copyWith({
     bool? isLoading,
-    bool? isRegistered,
+    bool? isExistingUser,
+    String? emailError,
     String? error,
+    bool? isRegistered,
   }) {
     return RegistrationState(
       isLoading: isLoading ?? this.isLoading,
-      isRegistered: isRegistered ?? this.isRegistered,
+      isExistingUser: isExistingUser ?? this.isExistingUser,
+      emailError: emailError,
       error: error,
+      isRegistered: isRegistered ?? this.isRegistered,
     );
   }
+
+  @override
+  List<Object?> get props => [isLoading, isExistingUser, emailError, error, isRegistered];
 }

@@ -15,6 +15,7 @@ import 'package:fines_plus/features/history/domain/history_repository.dart';
 import 'package:fines_plus/features/history/presentation/cubit/history_cubit.dart';
 import 'package:fines_plus/features/history/presentation/screens/history_screen.dart';
 import 'package:fines_plus/features/maintenance/presentation/cubit/maintenance_cubit.dart';
+import 'package:fines_plus/features/registration/presentation/cubit/registration_cubit.dart';
 import 'package:fines_plus/features/reminders/data/datasources/reminder_local_data_source.dart';
 import 'package:fines_plus/features/reminders/data/datasources/reminder_remote_data_source.dart';
 import 'package:fines_plus/features/reminders/data/repository/reminder_repository.dart';
@@ -36,11 +37,13 @@ import 'package:fines_plus/presentation/screens/settings_screen.dart';
 import 'package:fines_plus/features/maintenance/presentation/screens/maintenance_screen.dart';
 import 'package:fines_plus/features/maintenance/presentation/screens/tuning_screen.dart';
 import 'package:fines_plus/presentation/screens/subscription_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 enum HomePage {
@@ -267,7 +270,17 @@ Widget build(BuildContext context) {
               carNumber: _carNumber!,
               onBack: () => openPage(HomePage.analytics),
             ),
-            RegistrationScreen(key: const ValueKey('registration'), onBack: () => openPage(HomePage.addCar)),
+           BlocProvider(
+  create: (_) => RegistrationCubit(
+    auth: FirebaseAuth.instance,
+    storage: const FlutterSecureStorage(),
+  ),
+  child: RegistrationScreen(
+    key: const ValueKey('registration'),
+    onBack: () => openPage(HomePage.addCar),
+  ),
+),
+
             SubscriptionScreen(key: const ValueKey('subscription')),
             FuelUpScreen(key: const ValueKey('fuel'), onBack: () => openPage(HomePage.maintenance)),
             CarWashScreen(key: const ValueKey('car-wash'), onBack: () => openPage(HomePage.maintenance)),

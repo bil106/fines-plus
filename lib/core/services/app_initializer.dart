@@ -14,7 +14,6 @@ import 'package:fines_plus/features/maintenance/presentation/cubit/additional_op
 import 'package:fines_plus/features/maintenance/presentation/cubit/fuel_station_cubit.dart';
 import 'package:fines_plus/features/maintenance/presentation/cubit/maintenance_cubit.dart';
 import 'package:fines_plus/features/registration/data/datasources/iextract_tokens_usecase.dart';
-import 'package:fines_plus/features/registration/data/datasources/register_user_usecase.dart';
 import 'package:fines_plus/features/registration/data/models/flutter_secure_storage.dart';
 import 'package:fines_plus/features/registration/presentation/cubit/registration_cubit.dart';
 import 'package:fines_plus/features/reminders/data/datasources/reminder_local_data_source.dart';
@@ -184,9 +183,8 @@ bool _isVersionLower(String current, String required) {
     );
 
     final registrationCubit = RegistrationCubit(
-      registerUser: RegisterUserUseCase(auth: FirebaseAuth.instance, firestore: FirebaseFirestore.instance),
-      referralCubit: referralCubit,
-      storage: storage,
+    
+      storage: storage, auth: FirebaseAuth.instance,
     );
 
     await referralCubit.init();

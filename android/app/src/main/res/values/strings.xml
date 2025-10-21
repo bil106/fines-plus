@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">FinesPlus</string>
+    <string name="facebook_app_id">1263037285626970</string>
+    <string name="facebook_client_token">f116b1bbb98de9679b4106347b6d68b6</string>
+    <string name="fb_login_protocol_scheme">fb1263037285626970</string>
+</resources>

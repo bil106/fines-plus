@@ -335,6 +335,22 @@
    "authorization_required": "Необхідна авторизація",
    "subscription": "Передплата",
    "store_unavailable": "Магазин недоступний",
-   "click_again": "Натисніть ще раз, щоб вийти"
+   "click_again": "Натисніть ще раз, щоб вийти",
+   "sign_up": "Реєстрація",
+   "enter_email": "Введіть email",
+   "incorrect_email": "Некоректний email",
+   "enter_password": "Введіть пароль",
+   "min_char": "Мінімум 6 символів",
+   "large_login": "УВІЙТИ",
+   "large_sign_up": "ЗАРЕЄСТРУВАТИСЯ",
+   "dont_have_account": "Немає облікового запису? Зареєструватися",
+   "already_have_account": "Вже маєте обліковий запис? Увійти",
+   "or_sign_in_using": "Або увійти за допомогою",
+   "google_login": "Вхід через Google успішний",
+   "incorrect_password": "Неправильний пароль",
+   "email_already_exists": "Користувач із таким email вже існує",
+   "user_not_found": "Користувач не знайдено",
+   "incorrect_email_address": "Некоректна email адреса",
+   "email_verification_error": "Помилка перевірки email"
    
 }
