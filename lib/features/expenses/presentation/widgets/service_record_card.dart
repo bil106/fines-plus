@@ -42,16 +42,41 @@ class ServiceRecordCard extends StatelessWidget {
                   ),
                   AppSpacers.verticalXSmall,
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Icon(Icons.calendar_month, color: AppColors.energyBlue),
-                      AppSpacers.horizontalSmallMedium,
-                      Text(record.date, style: textTheme.subtitleText),
-                      AppSpacers.horizontalXLarge,
-                      Icon(Icons.speed, color: AppColors.energyBlue),
-                      AppSpacers.horizontalSmallMedium,
-                      Text("${record.mileage} ${S.of(context).km}", style: textTheme.subtitleText),
+                    
+                      Flexible(
+                        child: Row(
+                          children: [
+                            Icon(Icons.calendar_month, color: AppColors.energyBlue),
+                            AppSpacers.horizontalSmallMedium,
+                            Flexible(
+                              child: Text(record.date, style: textTheme.subtitleText, overflow: TextOverflow.ellipsis),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                   
+                      Flexible(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Icon(Icons.speed, color: AppColors.energyBlue),
+                            AppSpacers.horizontalSmallMedium,
+                            Flexible(
+                              child: Text(
+                                "${record.mileage} ${S.of(context).km}",
+                                style: textTheme.subtitleText,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
+
                 ],
               ),
             ),

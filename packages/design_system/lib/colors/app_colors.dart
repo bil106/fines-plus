@@ -16,9 +16,11 @@ abstract final class AppColors {
   static const redAccent = Color(0xFFFF5252);
   static const amber = Color(0xFFFFC107);
    static const lightRed = Color(0xFFF78A8A);
+   static const purpleRed = Color(0xFF7D2AE8);
   static const darkRed = Color(0xFFBE040A);
 
   static const cm = Color(0xff00A5B6);
+  static const colcm = Color(0xFF00C6FF);
   static const green = Color(0xFF4CAF50);
   static const lightGreen = Color(0xFF8BC34A);
   static const greenAccent = Color(0xFF69F0AE);

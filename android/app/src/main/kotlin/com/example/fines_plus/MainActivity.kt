@@ -1,4 +1,4 @@
-package com.example.fines_plus
+package com.finesplus
 
 import io.flutter.embedding.android.FlutterFragmentActivity
 

@@ -166,11 +166,12 @@ class _ServiceScreenState extends State<ServiceScreen> {
               _buildCostSummary(textTheme),
               const Divider(),
 
-           
-              AdditionalOptionsWidget(cubit: AdditionalOptionsCubit(
+              AdditionalOptionsWidget(
+                cubit: AdditionalOptionsCubit(
                   tokensRepository: _tokensRepository,
                   extractTokensUseCase: _extractTokensUseCase,
-                ),),
+                ),
+              ),
             ],
           ),
         ),
@@ -204,7 +205,6 @@ class _ServiceScreenState extends State<ServiceScreen> {
     Navigator.pop(context, records);
   }
 
-  
   Widget _buildBestStationRow(TextTheme textTheme) {
     return Row(
       children: [
@@ -339,9 +339,31 @@ class _ServiceScreenState extends State<ServiceScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(S.of(context).cost_of_work),
-                  Text(
-                    "${selectedPricesUah.isEmpty ? '0' : selectedPricesUah.values.last.toStringAsFixed(0)} ${S.of(context).grn}",
-                    style: textTheme.titleMedium,
+                  // Text(
+                  //   "${selectedPricesUah.isEmpty ? '0' : selectedPricesUah.values.last.toStringAsFixed(0)} ${S.of(context).grn}",
+                  //   style: textTheme.titleMedium,
+                  // ),
+                  SizedBox(
+                    width: 100,
+                    child: TextField(
+                      controller: costController,
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(
+                        focusedBorder: InputBorder.none ,
+                        
+                        // suffixText: S.of(context).grn,
+                        isDense: true,
+                        contentPadding: const EdgeInsets.symmetric(vertical: 1, horizontal: 8),
+                        border: InputBorder.none,
+                      ),
+                      style: textTheme.black16,
+                      onChanged: (val) {
+                        final manualCost = double.tryParse(val) ?? 0;
+                        setState(() {
+                          selectedPricesUah[selectedPricesUah.length - 1] = manualCost;
+                        });
+                      },
+                    ),
                   ),
                 ],
               ),
@@ -369,7 +391,6 @@ class _ServiceScreenState extends State<ServiceScreen> {
     );
   }
 }
-
 
 Future<Map<String, dynamic>?> fetchBestNearbyService(LatLng current, String apiKey) async {
   final stations = await fetchNearbyServices(current, apiKey);

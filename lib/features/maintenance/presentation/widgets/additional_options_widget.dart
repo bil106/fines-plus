@@ -74,7 +74,7 @@ class _AdditionalOptionsWidgetState extends State<AdditionalOptionsWidget> {
                     ),
                   if (_showWebViewForLogin)
                     SizedBox(
-                      height: 500,
+                      height: 1200,
                       child: Column(
                         children: [
                           Expanded(

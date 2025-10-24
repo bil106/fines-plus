@@ -63,7 +63,9 @@ enum HomePage {
   tuning,
   carWash,
   schedule,
-  subscription, fuelMap, carWashMap,
+  subscription,
+  fuelMap,
+  carWashMap,
 }
 
 @RoutePage()
@@ -281,7 +283,7 @@ Widget build(BuildContext context) {
   ),
 ),
 
-            SubscriptionScreen(key: const ValueKey('subscription')),
+            SubscriptionScreen(key: const ValueKey('subscription'), onBack: () => openPage(HomePage.addCar)),
             FuelUpScreen(key: const ValueKey('fuel'), onBack: () => openPage(HomePage.maintenance)),
             CarWashScreen(key: const ValueKey('car-wash'), onBack: () => openPage(HomePage.maintenance)),
             ServiceScreen(key: const ValueKey('service'), onBack: () => openPage(HomePage.maintenance)),
@@ -319,7 +321,7 @@ Widget build(BuildContext context) {
           ],
         ),
         bottomNavigationBar: BottomNavigationBar(
-          backgroundColor: AppColors.neutreBlanc,
+          backgroundColor: AppColors.energyBlue50,
           currentIndex: _bottomNavIndex,
           onTap: (i) {
             final page = HomePage.values[i];

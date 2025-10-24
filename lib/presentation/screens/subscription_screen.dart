@@ -7,12 +7,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 
-
-
 @RoutePage()
 class SubscriptionScreen extends StatefulWidget {
   final bool debugMode;
-  const SubscriptionScreen({super.key, this.debugMode = true});
+  final VoidCallback? onBack;
+  const SubscriptionScreen({super.key, this.debugMode = true, this.onBack});
 
   @override
   State<SubscriptionScreen> createState() => _SubscriptionScreenState();
@@ -21,7 +20,7 @@ class SubscriptionScreen extends StatefulWidget {
 class _SubscriptionScreenState extends State<SubscriptionScreen> {
   final InAppPurchase _iap = InAppPurchase.instance;
   bool _available = false;
-  bool _isLoading = true; 
+  bool _isLoading = true;
   List<dynamic> _products = [];
 
   @override
@@ -31,11 +30,10 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   }
 
   Future<void> _initStoreInfo() async {
-    setState(() => _isLoading = true); 
+    setState(() => _isLoading = true);
 
     if (widget.debugMode) {
-     
-      await Future.delayed(const Duration(milliseconds: 500)); 
+      await Future.delayed(const Duration(milliseconds: 500));
       final testProducts = [
         FakeProduct('sub_3_months', S.of(context).subscription_3_month, '1.99', 3),
         FakeProduct('sub_6_months', S.of(context).subscription_6_month, '2.99', 6),
@@ -52,7 +50,6 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
       return;
     }
 
-    
     final isAvailable = await _iap.isAvailable();
     if (!isAvailable) {
       if (mounted) {
@@ -107,11 +104,16 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     }
 
     if (!_available) {
-      return  Scaffold(body: Center(child: Text(S.of(context).store_unavailable)));
+      return Scaffold(body: Center(child: Text(S.of(context).store_unavailable)));
     }
 
     return Scaffold(
-      appBar: AppBar(title:  Text(S.of(context).subscription)),
+      backgroundColor: AppColors.grey50,
+      appBar: AppBar(
+        backgroundColor: AppColors.grey50,
+        leading: BackButton(color: AppColors.blue700, onPressed: widget.onBack),
+        title: Text(S.of(context).subscription),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: _products.isEmpty
@@ -149,7 +151,6 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg), backgroundColor: AppColors.blue700));
   }
 }
-
 
 class FakeProduct {
   final String id;

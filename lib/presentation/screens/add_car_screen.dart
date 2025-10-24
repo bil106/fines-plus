@@ -114,7 +114,7 @@ class _AddCarScreenState extends State<AddCarScreen> {
                                 context.router.push(SubscriptionRoute()); 
                               },
                               child: Text(
-                                'Купити передплату',
+                                S.of(context).subscription,
                                 style: textTheme.titleMedium?.copyWith(color: Colors.white, fontWeight: FontWeight.bold),
                               ),
                             ),

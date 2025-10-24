@@ -93,6 +93,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text('${S.of(context).google_login_error}: $e'), backgroundColor: AppColors.blue700));
+       debugPrint("${S.of(context).google_login_error}: $e");
     }
   }
 Future<void> _signInWithFacebook(BuildContext context) async {
@@ -241,7 +242,7 @@ Future<void> _signInWithFacebook(BuildContext context) async {
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(30),
                                 gradient: const LinearGradient(
-                                  colors: [Color(0xFF00C6FF), Color(0xFF7D2AE8)],
+                                  colors: [AppColors.colcm, AppColors.purpleRed],
                                   begin: Alignment.centerLeft,
                                   end: Alignment.centerRight,
                                 ),
@@ -250,7 +251,7 @@ Future<void> _signInWithFacebook(BuildContext context) async {
                                 child: Text(
                                   isLogin ? S.of(context).large_login : S.of(context).large_sign_up,
                                   style: textTheme.titleMedium?.copyWith(
-                                    color: Colors.white,
+                                    color: AppColors.neutreBlanc,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
@@ -263,7 +264,7 @@ Future<void> _signInWithFacebook(BuildContext context) async {
                       onPressed: () => context.read<RegistrationCubit>().toggleLoginMode(),
                       child: Text(
                         isLogin ? S.of(context).dont_have_account : S.of(context).already_have_account,
-                        style: const TextStyle(color: Color(0xFF7D2AE8)),
+                        style: const TextStyle(color: AppColors.purpleRed),
                       ),
                     ),
 
@@ -280,12 +281,12 @@ Future<void> _signInWithFacebook(BuildContext context) async {
                         ),
                         AppSpacers.horizontalMedium,
                         IconButton(
-                          icon: const Icon(Icons.facebook, color: Colors.blue, size: 30),
+                          icon: const Icon(Icons.facebook, color: AppColors.blue700, size: 30),
                          onPressed: () => _signInWithFacebook(context),
                         ),
                         AppSpacers.horizontalMedium,
                         IconButton(
-                          icon: const Icon(Icons.apple, color: Colors.black, size: 30),
+                          icon: const Icon(Icons.apple, color: AppColors.black, size: 30),
                           onPressed: () => _signInWithApple(),
                         ),
                       ],

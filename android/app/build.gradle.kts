@@ -1,3 +1,6 @@
+import java.util.Properties
+import java.io.FileInputStream
+
 plugins {
     id("com.android.application")
     id("kotlin-android")
@@ -6,13 +9,20 @@ plugins {
     id("com.google.firebase.crashlytics") version "3.0.6" apply false
 }
 
+
+val keystoreProperties = Properties()
+val keystorePropertiesFile = rootProject.file("key.properties")
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(FileInputStream(keystorePropertiesFile))
+}
+
 android {
-    namespace = "com.example.fines_plus"
+    namespace = "com.finesplus"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = "27.0.12077973"
 
     defaultConfig {
-        applicationId = "com.example.fines_plus"
+        applicationId = "com.finesplus"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
@@ -21,7 +31,6 @@ android {
     }
 
     compileOptions {
-      
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
         isCoreLibraryDesugaringEnabled = true
@@ -30,13 +39,29 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
+println("Keystore properties:")
+keystoreProperties.forEach { key, value ->
+    println("$key -> $value")
+}
 
-    buildTypes {
-        getByName("release") {
-            signingConfig = signingConfigs.getByName("debug")
-        }
+signingConfigs {
+    create("release") {
+        keyAlias = "upload"
+        keyPassword = "Test123"
+        storeFile = file("C:/Users/Igor/keys/my-release-key.jks")
+        storePassword = "Test123"
     }
-    
+}
+
+buildTypes {
+    getByName("release") {
+        signingConfig = signingConfigs.getByName("release")
+        isMinifyEnabled = false
+        isShrinkResources = false
+    }
+}
+
+
 }
 
 dependencies {
@@ -44,7 +69,7 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-dynamic-links:21.1.0"))
     implementation(platform("com.google.firebase:firebase-crashlytics-ndk"))
     implementation(platform("com.google.firebase:firebase-analytics"))
-    add("coreLibraryDesugaring", "com.android.tools:desugar_jdk_libs:2.1.4")
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
 }
 
 flutter {
