@@ -22,6 +22,10 @@ import 'package:fines_plus/features/reminders/data/models/reminder_model.dart';
 import 'package:fines_plus/features/reminders/data/repository/reminder_repository.dart';
 import 'package:fines_plus/features/schedule/data/repository/schedule_repository.dart';
 import 'package:fines_plus/features/schedule/presentation/cubit/schedule_cubit.dart';
+import 'package:fines_plus/features/subscription/data/repository/subscription_repository_impl.dart';
+import 'package:fines_plus/features/subscription/domain/usecases/buy_subscription.dart';
+import 'package:fines_plus/features/subscription/domain/usecases/get_available_plans.dart';
+import 'package:fines_plus/features/subscription/presentation/cubit/subscription_cubit.dart';
 import 'package:fines_plus/features/vehicle/data/datasources/car_info_local_data_source.dart';
 import 'package:fines_plus/features/vehicle/data/datasources/car_info_remote_data_source.dart';
 import 'package:fines_plus/features/vehicle/data/repository/car_info_repository.dart';
@@ -32,6 +36,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
@@ -47,19 +52,18 @@ class AppInitializer {
   late final FuelStationCubit fuelStationCubit;
   late final MaintenanceCubit maintenanceCubit;
   late final ScheduleCubit scheduleCubit;
+  late final SubscriptionCubit subscriptionCubit;
   late final AdditionalOptionsCubit additionalOptionsCubit;
   late final RemoteConfigService remoteConfigService;
   final Map<String, int> _scheduledReminderIds = {};
+late final SubscriptionRepositoryImpl subscriptionRepository;
 
-
-
-
-  
   Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
     await Firebase.initializeApp();
     debugPrint("Background message: ${message.messageId}");
   }
-bool _isVersionLower(String current, String required) {
+
+  bool _isVersionLower(String current, String required) {
     List<int> parse(String v) => v.split('.').map(int.parse).toList();
 
     try {
@@ -85,7 +89,7 @@ bool _isVersionLower(String current, String required) {
     debugPrint(
       'Remote Config - remindersEnabled: ${remoteConfigService.isRemindersEnabled}, purchaseEnabled: ${remoteConfigService.isPurchaseEnabled}',
     );
-    
+
     // Checking the application version
     final packageInfo = await PackageInfo.fromPlatform();
     final currentVersion = packageInfo.version; // e.g. "1.0.1"
@@ -95,7 +99,6 @@ bool _isVersionLower(String current, String required) {
 
     if (isUpdateRequired) {
       debugPrint("⚠️ App version $currentVersion is lower than required $requiredVersion");
-
     }
     tz.initializeTimeZones();
     tz.setLocalLocation(tz.getLocation('Europe/Kiev'));
@@ -147,7 +150,6 @@ bool _isVersionLower(String current, String required) {
       debugPrint(" FCM Registration Token: $token");
     }
 
-
     debugPrint('All reminders scheduled');
 
     // Load config
@@ -163,13 +165,18 @@ bool _isVersionLower(String current, String required) {
     final extractTokensUseCase = ExtractTokensUseCase(tokensRepository);
     final expenseRepository = ExpenseRepository(FirebaseFirestore.instance);
 
-   final carInfoLocalDataSource = CarInfoLocalDataSource(sharedPrefsManager);
+    final carInfoLocalDataSource = CarInfoLocalDataSource(sharedPrefsManager);
 
     referralCubit = ReferralCubit(appLinks, prefs);
     purchaseCubit = PurchaseCubit(PurchaseService(), enabled: remoteConfigService.isPurchaseEnabled);
     maintenanceCubit = MaintenanceCubit(expenseRepository: expenseRepository, localDataSource: carInfoLocalDataSource);
     fuelStationCubit = FuelStationCubit();
+    final subscriptionRepository = SubscriptionRepositoryImpl(InAppPurchase.instance, FirebaseAuth.instance);
 
+    final getPlansUseCase = GetAvailablePlansUseCase(subscriptionRepository);
+    final buySubscriptionUseCase = BuySubscriptionUseCase(subscriptionRepository);
+
+    subscriptionCubit = SubscriptionCubit(getPlansUseCase, buySubscriptionUseCase);
     additionalOptionsCubit = AdditionalOptionsCubit(
       extractTokensUseCase: extractTokensUseCase,
       tokensRepository: tokensRepository,
@@ -182,10 +189,7 @@ bool _isVersionLower(String current, String required) {
       enabled: remoteConfigService.isRemindersEnabled,
     );
 
-    final registrationCubit = RegistrationCubit(
-    
-      storage: storage, auth: FirebaseAuth.instance,
-    );
+    final registrationCubit = RegistrationCubit(storage: storage, auth: FirebaseAuth.instance);
 
     await referralCubit.init();
     final carInfoRepository = CarInfoRepository(CarInfoLocalDataSource(sharedPrefsManager), CarInfoRemoteDataSource());
@@ -215,10 +219,9 @@ bool _isVersionLower(String current, String required) {
       remoteConfigService: remoteConfigService,
       expenseRepository: expenseRepository,
       isUpdateRequired: isUpdateRequired,
+      subscriptionCubit: subscriptionCubit,
+      subscriptionRepository: subscriptionRepository,
     );
-
-
-    
   }
 }
 
@@ -290,10 +293,12 @@ class AppInitResult {
   final FuelStationCubit fuelStationCubit;
   final MaintenanceCubit maintenanceCubit;
   final ScheduleCubit scheduleCubit;
+  final SubscriptionCubit subscriptionCubit;
   final AdditionalOptionsCubit additionalOptionsCubit;
   final RemoteConfigService remoteConfigService;
   final ExpenseRepository expenseRepository;
   final bool isUpdateRequired;
+  final SubscriptionRepositoryImpl subscriptionRepository;
 
   AppInitResult({
     required this.config,
@@ -308,9 +313,11 @@ class AppInitResult {
     required this.fuelStationCubit,
     required this.maintenanceCubit,
     required this.scheduleCubit,
+    required this.subscriptionCubit,
     required this.additionalOptionsCubit,
     required this.remoteConfigService,
     required this.expenseRepository,
     required this.isUpdateRequired,
+    required this.subscriptionRepository,
   });
 }

@@ -36,7 +36,7 @@ import 'package:fines_plus/features/maintenance/presentation/screens/service_scr
 import 'package:fines_plus/presentation/screens/settings_screen.dart';
 import 'package:fines_plus/features/maintenance/presentation/screens/maintenance_screen.dart';
 import 'package:fines_plus/features/maintenance/presentation/screens/tuning_screen.dart';
-import 'package:fines_plus/presentation/screens/subscription_screen.dart';
+import 'package:fines_plus/features/subscription/presentation/screens/subscription_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:flutter/material.dart';
@@ -283,7 +283,11 @@ Widget build(BuildContext context) {
   ),
 ),
 
-            SubscriptionScreen(key: const ValueKey('subscription'), onBack: () => openPage(HomePage.addCar)),
+            SubscriptionScreen(key: const ValueKey('subscription'),
+            
+            //  onBack: () => openPage(HomePage.addCar)
+             
+             ),
             FuelUpScreen(key: const ValueKey('fuel'), onBack: () => openPage(HomePage.maintenance)),
             CarWashScreen(key: const ValueKey('car-wash'), onBack: () => openPage(HomePage.maintenance)),
             ServiceScreen(key: const ValueKey('service'), onBack: () => openPage(HomePage.maintenance)),

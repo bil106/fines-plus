@@ -13,12 +13,13 @@ void main() {
       for (int i = 0; i < lines.length; i++) {
         if (regex.hasMatch(lines[i])) {
           if (kDebugMode) {
-            print('Cyrillic found in file: ${file.path}, line ${i + 1}: ${lines[i]}');
+            print('⚠️ Cyrillic found in file: ${file.path}, line ${i + 1}: ${lines[i]}');
           }
         }
       }
     }
   });
 }
+
 
 //dart check_cyrillic.dart

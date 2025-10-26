@@ -24,7 +24,7 @@ import 'package:fines_plus/features/maintenance/presentation/screens/service_scr
 import 'package:fines_plus/presentation/screens/settings_screen.dart';
 import 'package:fines_plus/features/maintenance/presentation/screens/maintenance_screen.dart';
 import 'package:fines_plus/features/maintenance/presentation/screens/tuning_screen.dart';
-import 'package:fines_plus/presentation/screens/subscription_screen.dart';
+import 'package:fines_plus/features/subscription/presentation/screens/subscription_screen.dart';
 import 'package:fines_plus/presentation/screens/update_required_screen.dart';
 import 'package:fines_plus/router/home_screen_wrapper.dart';
 import 'package:flutter/material.dart';
@@ -52,6 +52,7 @@ class AppRouter extends RootStackRouter {
         AutoRoute(page: FuelUpRoute.page, path: 'fuel'),
         AutoRoute(page: ServiceRoute.page, path: 'service'),
         AutoRoute(page: ScheduleRoute.page, path: 'schedule'),
+        AutoRoute(page: SubscriptionRoute.page, path: 'subscription'),
       ],
     ),
 

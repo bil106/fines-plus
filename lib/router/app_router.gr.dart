@@ -397,7 +397,7 @@ class ExportRouteArgs {
     if (identical(this, other)) return true;
     if (other is! ExportRouteArgs) return false;
     return key == other.key &&
-        const ListEquality().equals(history, other.history) &&
+        const ListEquality<EventModel>().equals(history, other.history) &&
         carNumber == other.carNumber &&
         onBack == other.onBack;
   }
@@ -405,7 +405,7 @@ class ExportRouteArgs {
   @override
   int get hashCode =>
       key.hashCode ^
-      const ListEquality().hash(history) ^
+      const ListEquality<EventModel>().hash(history) ^
       carNumber.hashCode ^
       onBack.hashCode;
 }
@@ -1158,18 +1158,62 @@ class SettingsRouteArgs {
 
 /// generated route for
 /// [SubscriptionScreen]
-class SubscriptionRoute extends PageRouteInfo<void> {
-  const SubscriptionRoute({List<PageRouteInfo>? children})
-    : super(SubscriptionRoute.name, initialChildren: children);
+class SubscriptionRoute extends PageRouteInfo<SubscriptionRouteArgs> {
+  SubscriptionRoute({
+    Key? key,
+    bool debugMode = true,
+    VoidCallback? onBack,
+    List<PageRouteInfo>? children,
+  }) : super(
+         SubscriptionRoute.name,
+         args: SubscriptionRouteArgs(
+           key: key,
+           debugMode: debugMode,
+           onBack: onBack,
+         ),
+         initialChildren: children,
+       );
 
   static const String name = 'SubscriptionRoute';
 
   static PageInfo page = PageInfo(
     name,
     builder: (data) {
-      return const SubscriptionScreen();
+      final args = data.argsAs<SubscriptionRouteArgs>(
+        orElse: () => const SubscriptionRouteArgs(),
+      );
+      return SubscriptionScreen(
+        key: args.key,
+      );
     },
   );
+}
+
+class SubscriptionRouteArgs {
+  const SubscriptionRouteArgs({this.key, this.debugMode = true, this.onBack});
+
+  final Key? key;
+
+  final bool debugMode;
+
+  final VoidCallback? onBack;
+
+  @override
+  String toString() {
+    return 'SubscriptionRouteArgs{key: $key, debugMode: $debugMode, onBack: $onBack}';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! SubscriptionRouteArgs) return false;
+    return key == other.key &&
+        debugMode == other.debugMode &&
+        onBack == other.onBack;
+  }
+
+  @override
+  int get hashCode => key.hashCode ^ debugMode.hashCode ^ onBack.hashCode;
 }
 
 /// generated route for

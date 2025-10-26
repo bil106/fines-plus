@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:auto_route/auto_route.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_borders.dart';
@@ -13,6 +14,8 @@ import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 import 'package:google_sign_in/google_sign_in.dart';
 
+
+@RoutePage()
 class RegistrationScreen extends StatefulWidget {
   final VoidCallback? onBack;
   const RegistrationScreen({super.key, this.onBack});
@@ -165,7 +168,13 @@ Future<void> _signInWithFacebook(BuildContext context) async {
     final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
-      backgroundColor: AppColors.neutreBlanc,
+      backgroundColor: AppColors.grey50,
+       appBar: AppBar(
+        backgroundColor: AppColors.grey50,
+        elevation: 0,
+        leading: BackButton(color: AppColors.blue700, onPressed: widget.onBack),
+      
+      ),
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),

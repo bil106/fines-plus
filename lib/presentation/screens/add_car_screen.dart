@@ -5,11 +5,13 @@ import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
 import 'package:fines_plus/core/extensions/ad_banner_widget.dart';
 import 'package:fines_plus/router/app_router.dart';
+import 'package:fines_plus/router/home_screen_wrapper.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:auto_route/auto_route.dart';
 
+@RoutePage()
 class AddCarScreen extends StatefulWidget {
   final VoidCallback? onOpenCarInfo;
   final VoidCallback? onFineCheck;
@@ -105,19 +107,21 @@ class _AddCarScreenState extends State<AddCarScreen> {
                           child: SizedBox(
                             width: 200,
                             child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: AppColors.blue700,
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                                padding: const EdgeInsets.symmetric(vertical: 16),
-                              ),
-                              onPressed: () {
-                                context.router.push(SubscriptionRoute()); 
-                              },
-                              child: Text(
-                                S.of(context).subscription,
-                                style: textTheme.titleMedium?.copyWith(color: Colors.white, fontWeight: FontWeight.bold),
-                              ),
-                            ),
+  style: ElevatedButton.styleFrom(
+    backgroundColor: AppColors.blue700,
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+    padding: const EdgeInsets.symmetric(vertical: 16),
+  ),
+  onPressed: () {
+    final wrapperState = context.findAncestorStateOfType<HomeScreenWrapperState>();
+    wrapperState?.openPage(HomePage.subscription);
+  },
+  child: Text(
+    S.of(context).subscription,
+    style: textTheme.titleMedium?.copyWith(color: Colors.white, fontWeight: FontWeight.bold),
+  ),
+),
+
                           ),
                         ),
                       ),

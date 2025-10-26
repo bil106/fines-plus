@@ -14,6 +14,8 @@ import 'package:fines_plus/features/maintenance/presentation/cubit/maintenance_c
 import 'package:fines_plus/features/registration/presentation/cubit/registration_cubit.dart';
 import 'package:fines_plus/features/schedule/data/repository/schedule_repository.dart';
 import 'package:fines_plus/features/schedule/presentation/cubit/schedule_cubit.dart';
+import 'package:fines_plus/features/subscription/data/repository/subscription_repository.dart';
+import 'package:fines_plus/features/subscription/presentation/cubit/subscription_cubit.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -64,6 +66,9 @@ void main() {
             RepositoryProvider<IMaintenanceRepository>.value(value: repository),
             RepositoryProvider<ScheduleRepository>(create: (_) => ScheduleRepository()),
             RepositoryProvider.value(value: result.remoteConfigService),
+            RepositoryProvider<ISubscriptionRepository>.value(value: result.subscriptionRepository),
+
+
           ],
           child: MultiBlocProvider(
             providers: [
@@ -72,6 +77,7 @@ void main() {
               BlocProvider<RegistrationCubit>.value(value: result.registrationCubit),
               BlocProvider<FuelStationCubit>.value(value: result.fuelStationCubit),
               BlocProvider<MaintenanceCubit>.value(value: result.maintenanceCubit),
+              BlocProvider<SubscriptionCubit>.value(value: result.subscriptionCubit),
               BlocProvider<AdditionalOptionsCubit>.value(value: result.additionalOptionsCubit),
               BlocProvider<ScheduleCubit>(
                 create: (context) => ScheduleCubit(
