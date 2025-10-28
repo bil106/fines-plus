@@ -22,6 +22,9 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
+    "access_basic": MessageLookupByLibrary.simpleMessage(
+      "Access to basic features",
+    ),
     "add_cars": MessageLookupByLibrary.simpleMessage("Add a car"),
     "add_mileage": MessageLookupByLibrary.simpleMessage("Add mileage"),
     "add_new_photo": MessageLookupByLibrary.simpleMessage("Add new photo"),
@@ -154,6 +157,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "fines": MessageLookupByLibrary.simpleMessage("Fines"),
     "fines_length": MessageLookupByLibrary.simpleMessage("Fines:"),
+    "free_experience": MessageLookupByLibrary.simpleMessage(
+      "Ad-free experience",
+    ),
     "fuel": MessageLookupByLibrary.simpleMessage("Fuel"),
     "fuel_ai92": MessageLookupByLibrary.simpleMessage("AI-92"),
     "fuel_ai95": MessageLookupByLibrary.simpleMessage("AI-95"),
@@ -257,6 +263,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "please_update": MessageLookupByLibrary.simpleMessage(
       "Please update the application to continue using it.",
     ),
+    "premium_support": MessageLookupByLibrary.simpleMessage("Premium support"),
     "previous": MessageLookupByLibrary.simpleMessage("Previous"),
     "price": MessageLookupByLibrary.simpleMessage("Price"),
     "price_liter": MessageLookupByLibrary.simpleMessage("Price per 1 liter:"),
@@ -282,9 +289,11 @@ class MessageLookup extends MessageLookupByLibrary {
       "Select a service",
     ),
     "select_date": MessageLookupByLibrary.simpleMessage("Select date"),
+    "select_plan": MessageLookupByLibrary.simpleMessage("Select plan"),
     "select_service": MessageLookupByLibrary.simpleMessage(
       "Select a date and at least one service",
     ),
+    "selected": MessageLookupByLibrary.simpleMessage("Selected"),
     "selected_service_station": MessageLookupByLibrary.simpleMessage(
       "Selected service station",
     ),
@@ -781,6 +790,12 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "subscription_6_month": MessageLookupByLibrary.simpleMessage(
       "6 Month Subscription",
+    ),
+    "subscription_complected": MessageLookupByLibrary.simpleMessage(
+      "months completed",
+    ),
+    "subscription_for": MessageLookupByLibrary.simpleMessage(
+      "Subscription for",
     ),
     "successful_registration": MessageLookupByLibrary.simpleMessage(
       "Successful registration",

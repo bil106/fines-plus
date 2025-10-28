@@ -1,4 +1,7 @@
+import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
+import 'package:design_system/constants/app_spacers.dart';
+import 'package:design_system/theme/app_text_theme.dart';
 import 'package:fines_plus/features/subscription/data/models/fake_product.dart';
 import 'package:flutter/material.dart';
 
@@ -19,11 +22,12 @@ class SubscriptionPlanCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
     int activeFeatures = 1;
     if (months == 6) activeFeatures = 2;
     if (months == 12) activeFeatures = 3;
 
-    final allFeatures = ["Access to basic features", "Ad-free experience", "Premium support"];
+    final allFeatures = [S.of(context).access_basic, S.of(context).free_experience, S.of(context).premium_support];
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
@@ -38,13 +42,13 @@ class SubscriptionPlanCard extends StatelessWidget {
       ),
       child: Card(
         elevation: 0,
-        color: Colors.transparent,
+        color: AppColors.transparent,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         child: Column(
           children: [
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.all(4),
+              padding: const EdgeInsets.all(2),
               decoration: BoxDecoration(
                 color: AppColors.blue700,
                 borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
@@ -53,15 +57,16 @@ class SubscriptionPlanCard extends StatelessWidget {
                 children: [
                   Text(
                     "\$${product.price}",
-                    style: const TextStyle(color: Colors.white, fontSize: 26, fontWeight: FontWeight.bold),
+                    style:textTheme.whiteNormalBold
+                  
                   ),
-                  const SizedBox(height: 6),
-                  Text(product.title, style: const TextStyle(color: Colors.white70, fontSize: 16)),
+                  AppSpacers.verticalSmall,
+                  Text(product.title, style: textTheme.white70fs16),
                 ],
               ),
             ),
             Padding(
-              padding: const EdgeInsets.all(8),
+              padding: const EdgeInsets.all(6),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: allFeatures.asMap().entries.map((entry) {
@@ -74,15 +79,15 @@ class SubscriptionPlanCard extends StatelessWidget {
                       children: [
                         Icon(
                           isActive ? Icons.check_circle : Icons.cancel,
-                          color: isActive ? Colors.green : Colors.grey,
+                          color: isActive ? AppColors.green : AppColors.grey50,
                           size: 20,
                         ),
-                        const SizedBox(width: 8),
+                        AppSpacers.horizontalSmallMedium,                       
                         Expanded(
                           child: Text(
                             feature,
                             style: TextStyle(
-                              color: isActive ? Colors.black : Colors.grey,
+                              color: isActive ? AppColors.black : AppColors.grey50,
                               fontWeight: isActive ? FontWeight.w500 : FontWeight.w400,
                             ),
                           ),
@@ -99,12 +104,12 @@ class SubscriptionPlanCard extends StatelessWidget {
                 onPressed: onBuy,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: isSelected ? AppColors.blue700 : AppColors.blue700.withOpacity(0.8),
-                  minimumSize: const Size.fromHeight(42),
+                  minimumSize: const Size.fromHeight(44),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                 ),
                 child: Text(
-                  isSelected ? "Selected" : "Select Plan",
-                  style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                  isSelected ? S.of(context).selected : S.of(context).select_plan,
+                  style: textTheme.whiteButton,
                 ),
               ),
             ),

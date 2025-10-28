@@ -350,5 +350,12 @@
 "email_already_exists": "A user with this email already exists",
 "user_not_found": "User not found",
 "incorrect_email_address": "Incorrect email address",
-"email_verification_error": "Email verification error"
+"email_verification_error": "Email verification error",
+"subscription_for": "Subscription for",
+"subscription_complected": "months completed",
+"access_basic": "Access to basic features",
+"free_experience": "Ad-free experience",
+"premium_support": "Premium support",
+"selected": "Selected",
+"select_plan": "Select plan"
 }

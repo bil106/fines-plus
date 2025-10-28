@@ -22,6 +22,9 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
+    "access_basic": MessageLookupByLibrary.simpleMessage(
+      "Доступ до основних функцій",
+    ),
     "add_cars": MessageLookupByLibrary.simpleMessage("Додати авто"),
     "add_mileage": MessageLookupByLibrary.simpleMessage("Додати пробіг"),
     "add_new_photo": MessageLookupByLibrary.simpleMessage("Додати нове фото"),
@@ -156,6 +159,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "fines": MessageLookupByLibrary.simpleMessage("Штрафи"),
     "fines_length": MessageLookupByLibrary.simpleMessage("Штрафів:"),
+    "free_experience": MessageLookupByLibrary.simpleMessage("Без реклами"),
     "fuel": MessageLookupByLibrary.simpleMessage("Паливо"),
     "fuel_ai92": MessageLookupByLibrary.simpleMessage("АІ-92"),
     "fuel_ai95": MessageLookupByLibrary.simpleMessage("АІ-95"),
@@ -266,6 +270,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "please_update": MessageLookupByLibrary.simpleMessage(
       "Будь ласка, оновіть програму, щоб продовжити використання.",
     ),
+    "premium_support": MessageLookupByLibrary.simpleMessage(
+      "Преміум-підтримка",
+    ),
     "previous": MessageLookupByLibrary.simpleMessage("Попереднє"),
     "price": MessageLookupByLibrary.simpleMessage("Ціна"),
     "price_liter": MessageLookupByLibrary.simpleMessage("Ціна за 1 літр:"),
@@ -291,9 +298,11 @@ class MessageLookup extends MessageLookupByLibrary {
       "Виберіть послугу",
     ),
     "select_date": MessageLookupByLibrary.simpleMessage("Виберіть дату"),
+    "select_plan": MessageLookupByLibrary.simpleMessage("Виберіть план"),
     "select_service": MessageLookupByLibrary.simpleMessage(
       "Виберіть дату і хоча б один сервіс",
     ),
+    "selected": MessageLookupByLibrary.simpleMessage("Вибрано"),
     "selected_service_station": MessageLookupByLibrary.simpleMessage(
       "Вибрані СТО",
     ),
@@ -769,6 +778,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "subscription_6_month": MessageLookupByLibrary.simpleMessage(
       "Передплата 6 місяці",
     ),
+    "subscription_complected": MessageLookupByLibrary.simpleMessage(
+      "місяці завершена",
+    ),
+    "subscription_for": MessageLookupByLibrary.simpleMessage("Підписка на"),
     "successful_registration": MessageLookupByLibrary.simpleMessage(
       "Успішна реєстрація",
     ),

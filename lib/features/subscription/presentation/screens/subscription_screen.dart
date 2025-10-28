@@ -87,7 +87,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     final user = FirebaseAuth.instance.currentUser;
 
     if (user == null) {
-      _showSnack("Authorization required");
+      _showSnack(S.of(context).authorization_required);
       return;
     }
 
@@ -104,7 +104,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     final price = double.tryParse(product.price.replaceAll(RegExp('[^0-9.]'), '')) ?? 0.0;
     await context.read<PurchaseCubit>().buySubscription(user.uid, price, months);
 
-    _showSnack("Subscription for $months months completed");
+    _showSnack("${S.of(context).subscription_for} $months ${S.of(context).subscription_complected}");
   }
 
   void _showSnack(String msg) {
@@ -123,7 +123,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
       child: BlocConsumer<SubscriptionCubit, SubscriptionState>(
         listener: (context, state) {
           if (state is SubscriptionBought) {
-            _showSnack("Subscription for ${state.plan.months} months completed");
+            _showSnack("${S.of(context).subscription_for} ${state.plan.months} ${S.of(context).subscription_complected}");
           } else if (state is SubscriptionError) {
             _showSnack(state.message);
           }
@@ -131,15 +131,15 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         builder: (context, state) {
           if (_isLoading) {
             return const Scaffold(
-              backgroundColor: Colors.white,
+              backgroundColor: AppColors.neutreBlanc,
               body: Center(child: CircularProgressIndicator()),
             );
           }
 
           if (!_available) {
-            return const Scaffold(
-              backgroundColor: Colors.white,
-              body: Center(child: Text("Store unavailable")),
+            return  Scaffold(
+              backgroundColor: AppColors.neutreBlanc,
+              body: Center(child: Text(S.of(context).store_unavailable)),
             );
           }
 

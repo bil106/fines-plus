@@ -36,4 +36,19 @@ extension AppTextTheme on TextTheme {
         fontSize: 24,
         color: AppColors.neutreBlanc,
       );
+  TextStyle get whiteNormalBold => const TextStyle(
+        fontSize: 26,
+        color: AppColors.neutreBlanc,
+        fontWeight: FontWeight.bold,
+      );
+  TextStyle get white70fs16 => const TextStyle(
+        fontSize: 16,
+        color: AppColors.neutreBlanc,
+        fontWeight: FontWeight.w400
+      );
+  TextStyle get whiteButton => const TextStyle(
+        fontSize: 1,
+        color: AppColors.neutreBlanc,
+        fontWeight: FontWeight.w600
+      );
 }

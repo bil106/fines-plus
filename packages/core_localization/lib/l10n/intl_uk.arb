@@ -351,6 +351,13 @@
    "email_already_exists": "Користувач із таким email вже існує",
    "user_not_found": "Користувач не знайдено",
    "incorrect_email_address": "Некоректна email адреса",
-   "email_verification_error": "Помилка перевірки email"
-   
+   "email_verification_error": "Помилка перевірки email",
+   "subscription_for": "Підписка на",
+   "subscription_complected": "місяці завершена",
+   "access_basic": "Доступ до основних функцій",
+   "free_experience": "Без реклами",
+   "premium_support": "Преміум-підтримка",
+   "selected": "Вибрано",
+   "select_plan": "Виберіть план"
+
 }

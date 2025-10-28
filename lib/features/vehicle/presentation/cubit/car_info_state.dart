@@ -35,12 +35,14 @@ class CarInfoState extends Equatable {
   final String techPassport;
   final CarInfoStatus status;
   final bool hasCheckedFines; 
+  final Map<String, dynamic>? carDetails;
 
   const CarInfoState({
     this.carNumber = '',
     this.techPassport = '',
     this.status = const CarInfoInitialStatus(),
-    this.hasCheckedFines = false, 
+    this.hasCheckedFines = false,
+    this.carDetails, 
   });
 
   CarInfoState copyWith({
@@ -48,12 +50,14 @@ class CarInfoState extends Equatable {
     String? techPassport,
     CarInfoStatus? status,
     bool? hasCheckedFines, 
+    Map<String, dynamic>? carDetails,
   }) {
     return CarInfoState(
       carNumber: carNumber ?? this.carNumber,
       techPassport: techPassport ?? this.techPassport,
       status: status ?? this.status,
       hasCheckedFines: hasCheckedFines ?? this.hasCheckedFines,
+      carDetails: carDetails ?? this.carDetails,
     );
   }
 

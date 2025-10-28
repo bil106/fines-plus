@@ -3123,6 +3123,66 @@ class S {
       args: [],
     );
   }
+
+  /// `Subscription for`
+  String get subscription_for {
+    return Intl.message(
+      'Subscription for',
+      name: 'subscription_for',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `months completed`
+  String get subscription_complected {
+    return Intl.message(
+      'months completed',
+      name: 'subscription_complected',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Access to basic features`
+  String get access_basic {
+    return Intl.message(
+      'Access to basic features',
+      name: 'access_basic',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Ad-free experience`
+  String get free_experience {
+    return Intl.message(
+      'Ad-free experience',
+      name: 'free_experience',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Premium support`
+  String get premium_support {
+    return Intl.message(
+      'Premium support',
+      name: 'premium_support',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Selected`
+  String get selected {
+    return Intl.message('Selected', name: 'selected', desc: '', args: []);
+  }
+
+  /// `Select plan`
+  String get select_plan {
+    return Intl.message('Select plan', name: 'select_plan', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {
