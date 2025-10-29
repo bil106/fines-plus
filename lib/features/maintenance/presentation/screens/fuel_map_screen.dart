@@ -1,17 +1,18 @@
-import 'dart:convert';
 import 'package:auto_route/auto_route.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:fines_plus/env/env.dart';
+import 'package:fines_plus/features/maintenance/domain/gas_station_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:http/http.dart' as http;
+
 
 @RoutePage()
 class FuelMapScreen extends StatefulWidget {
   final LatLng? focusPosition;
   final String? focusName;
+
   const FuelMapScreen({super.key, this.focusPosition, this.focusName});
 
   @override
@@ -22,11 +23,12 @@ class _FuelMapScreenState extends State<FuelMapScreen> {
   GoogleMapController? _mapController;
   LatLng? _currentPosition;
   final Set<Marker> _markers = {};
-  final String _apiKey = Env.mapApiKey;
+  late final GasStationService _gasService;
 
   @override
   void initState() {
     super.initState();
+    _gasService = GasStationService(Env.mapApiKey);
     _checkLocationPermission().then((_) => _getCurrentLocation());
   }
 
@@ -47,16 +49,23 @@ class _FuelMapScreenState extends State<FuelMapScreen> {
         );
       });
 
-      if (_mapController != null) {
-        _mapController!.animateCamera(CameraUpdate.newLatLngZoom(current, 14));
-      }
+      _mapController?.animateCamera(CameraUpdate.newLatLngZoom(current, 14));
 
-      // Loading gas stations
-      final gasStations = await fetchNearbyGasStations(current, _apiKey);
+      await _loadGasStations(current);
+    } catch (e) {
+      if (kDebugMode) print("❌ Error getting location: $e");
+    }
+  }
+
+  Future<void> _loadGasStations(LatLng current) async {
+    try {
+      final stations = await _gasService.fetchNearbyGasStations(current);
+
       setState(() {
-        for (int i = 0; i < gasStations.length; i++) {
-          final station = gasStations[i];
-          final rating = (station['rating'] ?? 0).toDouble();
+        for (int i = 0; i < stations.length; i++) {
+          final station = stations[i];
+          final rating = station.rating;
+
           double hue;
           if (rating >= 4.5) {
             hue = BitmapDescriptor.hueGreen;
@@ -65,15 +74,16 @@ class _FuelMapScreenState extends State<FuelMapScreen> {
           } else {
             hue = BitmapDescriptor.hueRed;
           }
+
           _markers.add(
             Marker(
               markerId: MarkerId('gas_$i'),
-              position: LatLng(station['lat'], station['lng']),
+              position: LatLng(station.lat, station.lng),
               icon: BitmapDescriptor.defaultMarkerWithHue(hue),
               infoWindow: InfoWindow(
-                title: station['name'] ?? 'Refueling',
+                title: station.name,
                 snippet:
-                    '${station['vicinity'] ?? 'Address not specified'}${station['rating'] != null ? ', rating: $rating' : ''}',
+                    '${station.vicinity.isNotEmpty ? station.vicinity : 'Address not specified'}${rating > 0 ? ', rating: ${rating.toStringAsFixed(1)}' : ''}',
               ),
             ),
           );
@@ -93,16 +103,14 @@ class _FuelMapScreenState extends State<FuelMapScreen> {
         }
       });
     } catch (e) {
-      if (kDebugMode) print("Error getting geolocation: $e");
+      if (kDebugMode) print("❌ Error loading gas stations: $e");
     }
   }
 
   Future<void> _checkLocationPermission() async {
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
-      if (kDebugMode) {
-        print(" Geolocation is disabled on the device");
-      }
+      if (kDebugMode) print("⚠️ Geolocation is disabled");
       return;
     }
 
@@ -110,17 +118,13 @@ class _FuelMapScreenState extends State<FuelMapScreen> {
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
-        if (kDebugMode) {
-          print(" Geolocation permission denied");
-        }
+        if (kDebugMode) print("🚫 Permission denied");
         return;
       }
     }
 
     if (permission == LocationPermission.deniedForever) {
-      if (kDebugMode) {
-        print("Geolocation permission permanently denied");
-      }
+      if (kDebugMode) print("⛔ Permission permanently denied");
       return;
     }
   }
@@ -134,62 +138,16 @@ class _FuelMapScreenState extends State<FuelMapScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title:  Text(S.of(context).gas_station_nearby)),
+      appBar: AppBar(title: Text(S.of(context).gas_station_nearby)),
       body: _currentPosition == null
           ? const Center(child: CircularProgressIndicator())
           : GoogleMap(
               onMapCreated: (controller) => _mapController = controller,
               myLocationEnabled: true,
               markers: _markers,
-              initialCameraPosition: CameraPosition(
-                target: _currentPosition ?? const LatLng(50.4501, 30.5234),
-                zoom: 14,
-              ),
+              initialCameraPosition: CameraPosition(target: _currentPosition!, zoom: 14),
             ),
     );
   }
 }
 
-Future<List<Map<String, dynamic>>> fetchNearbyGasStations(LatLng location, String apiKey) async {
-  final url =
-      'https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${location.latitude},${location.longitude}&radius=3000&type=gas_station&key=$apiKey';
-
-  if (kDebugMode) {
-    print("🌍 Query Google Places: $url");
-  }
-
-  final response = await http.get(Uri.parse(url));
-
-  if (kDebugMode) {
-    print("🔎 API Response (${response.statusCode}): ${response.body}");
-  }
-
-  if (response.statusCode == 200) {
-    final data = json.decode(response.body);
-    if (data['status'] != 'OK') {
-      if (kDebugMode) {
-        print(" Error from Google API: ${data['status']} — ${data['error_message']}");
-      }
-      return [];
-    }
-
-    final results = data['results'] as List;
-
-    final stations = results.map((place) {
-      final loc = place['geometry']['location'];
-      return {
-        'lat': loc['lat'],
-        'lng': loc['lng'],
-        'name': place['name'],
-        'vicinity': place['vicinity'],
-        'rating': (place['rating'] ?? 0).toDouble(),
-      };
-    }).toList();
-
-    stations.sort((a, b) => b['rating'].compareTo(a['rating']));
-
-    return stations.take(10).toList();
-  } else {
-    throw Exception("Error loading gas stations");
-  }
-}

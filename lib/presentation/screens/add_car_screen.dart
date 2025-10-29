@@ -17,6 +17,7 @@ class AddCarScreen extends StatefulWidget {
   final VoidCallback? onFineCheck;
   final VoidCallback? onMaintenance;
   final VoidCallback? onAnalytics;
+
   const AddCarScreen({super.key, this.onOpenCarInfo, this.onFineCheck, this.onMaintenance, this.onAnalytics});
 
   @override
@@ -43,6 +44,7 @@ class _AddCarScreenState extends State<AddCarScreen> {
           child: StreamBuilder<DocumentSnapshot>(
             stream: user != null ? _firestore.collection('users').doc(user.uid).snapshots() : const Stream.empty(),
             builder: (context, snapshot) {
+            
               bool isSubscribed = false;
 
               if (snapshot.hasData && snapshot.data!.exists) {
@@ -57,7 +59,7 @@ class _AddCarScreenState extends State<AddCarScreen> {
                   children: [
                     AppSpacers.verticalXLarge,
 
-                   
+                 
                     SizedBox(
                       width: double.infinity,
                       child: Wrap(
@@ -93,12 +95,12 @@ class _AddCarScreenState extends State<AddCarScreen> {
 
                     AppSpacers.verticalMaxMassive,
 
-                    const AdBannerWidget(),
+                
+                    if (!isSubscribed) const AdBannerWidget(),
 
                     AppSpacers.verticalMaxMassive,
 
-
-                    
+                  
                     if (!isSubscribed)
                       Align(
                         alignment: Alignment.bottomRight,
@@ -107,21 +109,24 @@ class _AddCarScreenState extends State<AddCarScreen> {
                           child: SizedBox(
                             width: 200,
                             child: ElevatedButton(
-  style: ElevatedButton.styleFrom(
-    backgroundColor: AppColors.blue700,
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-    padding: const EdgeInsets.symmetric(vertical: 16),
-  ),
-  onPressed: () {
-    final wrapperState = context.findAncestorStateOfType<HomeScreenWrapperState>();
-    wrapperState?.openPage(HomePage.subscription);
-  },
-  child: Text(
-    S.of(context).subscription,
-    style: textTheme.titleMedium?.copyWith(color: Colors.white, fontWeight: FontWeight.bold),
-  ),
-),
-
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppColors.blue700,
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                padding: const EdgeInsets.symmetric(vertical: 16),
+                              ),
+                              onPressed: () {
+                                
+                                final wrapperState = context.findAncestorStateOfType<HomeScreenWrapperState>();
+                                wrapperState?.openPage(HomePage.subscription);
+                              },
+                              child: Text(
+                                S.of(context).subscription,
+                                style: textTheme.titleMedium?.copyWith(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
                           ),
                         ),
                       ),
@@ -135,6 +140,7 @@ class _AddCarScreenState extends State<AddCarScreen> {
     );
   }
 }
+
 
 Widget _buildSquareIcon(IconData icon, String text, TextTheme textTheme) {
   return Container(
@@ -152,6 +158,7 @@ Widget _buildSquareIcon(IconData icon, String text, TextTheme textTheme) {
     ),
   );
 }
+
 
 Widget _buildMenuSquare({Widget? iconWidget, required VoidCallback? onTap}) {
   return GestureDetector(

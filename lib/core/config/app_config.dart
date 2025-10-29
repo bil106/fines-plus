@@ -1,3 +1,8 @@
+import 'package:json_annotation/json_annotation.dart';
+
+part 'app_config.g.dart';
+
+@JsonSerializable()
 class AppConfig {
   final String brandName;
   final String primaryColorHex;
@@ -15,14 +20,7 @@ class AppConfig {
     required this.viberNumber,
   });
 
-  factory AppConfig.fromJson(Map<String, dynamic> json) {
-    return AppConfig(
-      brandName: json['brandName'],
-      primaryColorHex: json['primaryColorHex'],
-      logoAssetPath: json['logoAssetPath'],
-      supportEmail: json['supportEmail'],
-      phoneNumber: json['phoneNumber'],
-      viberNumber: json['viberNumber'],
-    );
-  }
+  factory AppConfig.fromJson(Map<String, dynamic> json) => _$AppConfigFromJson(json);
+
+  Map<String, dynamic> toJson() => _$AppConfigToJson(this);
 }

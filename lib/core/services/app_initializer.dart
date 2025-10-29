@@ -171,7 +171,9 @@ late final SubscriptionRepositoryImpl subscriptionRepository;
     purchaseCubit = PurchaseCubit(PurchaseService(), enabled: remoteConfigService.isPurchaseEnabled);
     maintenanceCubit = MaintenanceCubit(expenseRepository: expenseRepository, localDataSource: carInfoLocalDataSource);
     fuelStationCubit = FuelStationCubit();
-    final subscriptionRepository = SubscriptionRepositoryImpl(InAppPurchase.instance, FirebaseAuth.instance);
+    final subscriptionRepository = SubscriptionRepositoryImpl(InAppPurchase.instance, FirebaseAuth.instance,
+      FirebaseFirestore.instance,
+    );
 
     final getPlansUseCase = GetAvailablePlansUseCase(subscriptionRepository);
     final buySubscriptionUseCase = BuySubscriptionUseCase(subscriptionRepository);

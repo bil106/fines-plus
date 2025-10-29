@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fines_plus/features/subscription/data/repository/subscription_repository.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import '../../domain/entities/subscription.dart';
@@ -6,8 +7,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 class SubscriptionRepositoryImpl implements ISubscriptionRepository {
   final InAppPurchase iap;
   final FirebaseAuth auth;
+  final FirebaseFirestore firestore; 
 
-  SubscriptionRepositoryImpl(this.iap, this.auth);
+  SubscriptionRepositoryImpl(this.iap, this.auth, this.firestore);
 
   @override
   Future<List<SubscriptionPlan>> getAvailablePlans() async {
@@ -30,18 +32,27 @@ class SubscriptionRepositoryImpl implements ISubscriptionRepository {
 
   @override
   Future<void> buySubscription(String userId, SubscriptionPlan plan) async {
-    final purchaseParam = PurchaseParam(
-      productDetails: ProductDetails(
-        id: plan.id,
-        title: plan.title,
-        description: '',
-        price: plan.price.toString(),
-        currencyCode: 'USD',
-        rawPrice: plan.price,
-      ),
-    );
+    final response = await iap.queryProductDetails({plan.id});
+    if (response.productDetails.isEmpty) throw Exception("Product not found");
 
+
+    final purchaseParam = PurchaseParam(productDetails: response.productDetails.first);
     await iap.buyNonConsumable(purchaseParam: purchaseParam);
 
+
+    await FirebaseFirestore.instance.collection('users').doc(userId).set({
+      'isSubscribed': true,
+    }, SetOptions(merge: true));
   }
+
+
+//   Future<void> _markSubscribed(String userId, SubscriptionPlan plan) async {
+//     await firestore.collection('users').doc(userId).update({
+//       'isSubscribed': true,
+//       'subscriptionId': plan.id,
+//       'subscriptionMonths': plan.months,
+//       'subscriptionDate': FieldValue.serverTimestamp(),
+//     });
+//   }
 }
+

@@ -3183,6 +3183,11 @@ class S {
   String get select_plan {
     return Intl.message('Select plan', name: 'select_plan', desc: '', args: []);
   }
+
+  /// `Full tank`
+  String get full_tank {
+    return Intl.message('Full tank', name: 'full_tank', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

@@ -1,7 +1,5 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:core_localization/generated/l10n.dart';
-import 'package:design_system/colors/app_colors.dart';
-import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
 import 'package:fines_plus/core/extensions/ad_banner_widget.dart';
 import 'package:fines_plus/core/extensions/date_picker_card.dart';
@@ -9,6 +7,8 @@ import 'package:fines_plus/core/extensions/fuel_type.dart';
 import 'package:fines_plus/features/expenses/presentation/widgets/fuel_amount_card.dart';
 import 'package:fines_plus/features/expenses/presentation/widgets/fuel_choice_chips.dart';
 import 'package:fines_plus/features/expenses/presentation/widgets/fuel_input_card.dart' ;
+import 'package:fines_plus/features/maintenance/data/models/gas_station.dart';
+import 'package:fines_plus/features/maintenance/domain/gas_station_service.dart';
 import 'package:fines_plus/features/maintenance/presentation/widgets/mileage_card.dart';
 import 'package:fines_plus/env/env.dart';
 import 'package:fines_plus/features/expenses/data/models/fuel_record.dart';
@@ -37,15 +37,25 @@ class _FuelUpScreenState extends State<FuelUpScreen> {
 
   FuelType selectedFuel = FuelType.ai95;
   DateTime? selectedDate;
-  Map<String, dynamic>? _bestStation;
+  GasStation? _bestStation;
+
+  late final GasStationService _gasService;
 
   @override
   void initState() {
     super.initState();
+    _gasService = GasStationService(Env.mapApiKey);
     _initLocationAndStation();
     _loadLastPrice(selectedFuel);
   }
 
+  @override
+  void dispose() {
+    volumeController.dispose();
+    mileageController.dispose();
+    priceController.dispose();
+    super.dispose();
+  }
 
   Future<void> _loadLastPrice(FuelType fuel) async {
     final cached = await FuelPriceCache.getPrice(fuel.name);
@@ -79,11 +89,10 @@ class _FuelUpScreenState extends State<FuelUpScreen> {
     }
 
     try {
-      LocationData locationData = await location.getLocation();
-      LatLng current = LatLng(locationData.latitude!, locationData.longitude!);
+      final locationData = await location.getLocation();
+      final current = LatLng(locationData.latitude!, locationData.longitude!);
 
-      final bestStation = await fetchBestNearbyGasStation(current, Env.mapApiKey);
-
+      final bestStation = await _fetchBestNearbyGasStation(current);
       setState(() {
         _bestStation = bestStation;
       });
@@ -92,26 +101,48 @@ class _FuelUpScreenState extends State<FuelUpScreen> {
     }
   }
 
+  /// Возвращает лучшую станцию (рейтинг >= 4.5 и ближайшая из них), либо null.
+  Future<GasStation?> _fetchBestNearbyGasStation(LatLng current) async {
+    try {
+      final stations = await _gasService.fetchNearbyGasStations(current);
+      if (stations.isEmpty) return null;
+
+      final highRated = stations.where((s) => s.rating >= 4.5).toList();
+      if (highRated.isEmpty) return null;
+
+      highRated.sort((a, b) {
+        final distA = Geolocator.distanceBetween(current.latitude, current.longitude, a.lat, a.lng);
+        final distB = Geolocator.distanceBetween(current.latitude, current.longitude, b.lat, b.lng);
+        return distA.compareTo(distB);
+      });
+
+      return highRated.first;
+    } catch (e) {
+      if (kDebugMode) print("Error fetching stations: $e");
+      return null;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: const SystemUiOverlayStyle(statusBarColor: AppColors.grey50, statusBarIconBrightness: Brightness.dark),
+      value: const SystemUiOverlayStyle(statusBarColor: Colors.white, statusBarIconBrightness: Brightness.dark),
       child: Scaffold(
-        backgroundColor: AppColors.grey50,
+        backgroundColor: Colors.grey[50],
         appBar: AppBar(
-          backgroundColor: AppColors.grey50,
+          backgroundColor: Colors.grey[50],
           elevation: 0,
-          leading: BackButton(color: AppColors.blue700, onPressed: widget.onBack),
+          leading: BackButton(color: Colors.blue.shade700, onPressed: widget.onBack),
           actions: [
             IconButton(
-              icon: const Icon(Icons.check, color: AppColors.blue700, size: 50),
+              icon: const Icon(Icons.check, color: Colors.blue, size: 50),
               onPressed: () {
                 if (selectedDate == null || volumeController.text.isEmpty || mileageController.text.isEmpty) {
-                  ScaffoldMessenger.of(
-                    context,
-                  ).showSnackBar(SnackBar(backgroundColor: AppColors.blue700, content: Text(S.of(context).fill_date)));
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(backgroundColor: Colors.blue.shade700, content: Text(S.of(context).fill_date)),
+                  );
                   return;
                 }
 
@@ -138,32 +169,35 @@ class _FuelUpScreenState extends State<FuelUpScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(S.of(context).fuel_up, style: textTheme.title),
+              Text(S.of(context).fuel_up, style: textTheme.headlineMedium),
 
-          
               Row(
                 children: [
                   _bestStation == null
-                      ? AppLoaders.medium
+                      ?  const SizedBox(
+                          width: 200,
+                          child: Center(child: CircularProgressIndicator()),
+                        )
                       : GestureDetector(
                           onTap: () {
+                          
                             context.router.push(
                               FuelMapRoute(
-                                focusPosition: LatLng(_bestStation!['lat'], _bestStation!['lng']),
-                                focusName: _bestStation!['name'],
+                                focusPosition: LatLng(_bestStation!.lat, _bestStation!.lng),
+                                focusName: _bestStation!.name,
                               ),
                             );
                           },
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              const Icon(Icons.location_on, color: AppColors.energyBlue, size: 40),
-                              AppSpacers.horizontalSmallMedium,
+                              const Icon(Icons.location_on, color: Colors.blueAccent, size: 40),
+                              const SizedBox(width: 8),
                               SizedBox(
                                 width: 180,
                                 child: Text(
-                                  _bestStation!['name'] ?? S.of(context).fuel_up,
-                                  style: Theme.of(context).textTheme.bodyMedium,
+                                  _bestStation?.name ?? S.of(context).fuel_up,
+                                  style: Theme.of(context).textTheme.bodySmall,
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ),
@@ -182,9 +216,8 @@ class _FuelUpScreenState extends State<FuelUpScreen> {
                 ],
               ),
 
-              AppSpacers.verticalMedium,
+              const SizedBox(height: 16),
 
-             
               Row(
                 children: [
                   Expanded(
@@ -200,23 +233,23 @@ class _FuelUpScreenState extends State<FuelUpScreen> {
                 ],
               ),
 
-              AppSpacers.verticalMedium,
+              const SizedBox(height: 16),
 
-          
               Text(S.of(context).fuel, style: textTheme.subtitleText),
-              AppSpacers.verticalMedium,
-         FuelChoiceChips(
+              const SizedBox(height: 12),
+
+              FuelChoiceChips(
                 fuels: fuelPrices.keys.toList(),
                 selectedFuel: selectedFuel,
                 onSelected: (fuel) {
                   setState(() {
                     selectedFuel = fuel;
-                    _loadLastPrice(fuel); 
+                    _loadLastPrice(fuel);
                   });
                 },
               ),
 
-              AppSpacers.verticalLarge,
+              const SizedBox(height: 24),
 
               FuelInputCard(
                 fuel: selectedFuel,
@@ -225,34 +258,17 @@ class _FuelUpScreenState extends State<FuelUpScreen> {
                 onPriceChanged: _onPriceChanged,
               ),
 
-              AppSpacers.verticalLarge,
+              const SizedBox(height: 24),
 
               FuelAmountCard(volumeController: volumeController, priceController: priceController),
 
-              AppSpacers.verticalMaxMassive,
+              const SizedBox(height: 40),
               const AdBannerWidget(),
             ],
           ),
         ),
       ),
     );
-  }
-
-  
-  Future<Map<String, dynamic>?> fetchBestNearbyGasStation(LatLng current, String apiKey) async {
-    final stations = await fetchNearbyGasStations(current, apiKey);
-    if (stations.isEmpty) return null;
-
-    final highRated = stations.where((s) => (s['rating'] ?? 0) >= 4.5).toList();
-    if (highRated.isEmpty) return null;
-
-    highRated.sort((a, b) {
-      final distA = Geolocator.distanceBetween(current.latitude, current.longitude, a['lat'], a['lng']);
-      final distB = Geolocator.distanceBetween(current.latitude, current.longitude, b['lat'], b['lng']);
-      return distA.compareTo(distB);
-    });
-
-    return highRated.first;
   }
 }
 

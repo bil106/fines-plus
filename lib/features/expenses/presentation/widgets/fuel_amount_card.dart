@@ -8,24 +8,27 @@ import 'package:flutter/material.dart';
 class FuelAmountCard extends StatelessWidget {
   final TextEditingController volumeController;
   final TextEditingController priceController;
-  final String fullTankText;
+  final String? fullTankText; // nullable
 
   const FuelAmountCard({
     super.key,
     required this.volumeController,
     required this.priceController,
-    this.fullTankText = "Full tank",
+    this.fullTankText, 
   });
 
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
 
+    
+    final displayText = fullTankText ?? S.of(context).full_tank;
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
       decoration: BoxDecoration(
         color: AppColors.neutreBlanc,
-                borderRadius: AppBorders.radiusLarge,
+        borderRadius: AppBorders.radiusLarge,
         border: Border.all(color: AppColors.grey300, width: 2),
       ),
       child: Row(
@@ -43,9 +46,9 @@ class FuelAmountCard extends StatelessWidget {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                                        Text(S.of(context).sum, style: textTheme.bodySmall?.copyWith(color: AppColors.black87)),
+                    Text(S.of(context).sum, style: textTheme.bodySmall?.copyWith(color: AppColors.black87)),
                     Text(
-                                            "$total ${S.of(context).grn}",
+                      "$total ${S.of(context).grn}",
                       style: textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold, color: AppColors.blue700),
                     ),
                   ],
@@ -56,14 +59,14 @@ class FuelAmountCard extends StatelessWidget {
           AppSpacers.horizontalMassive,
           GestureDetector(
             onTap: () {
-              volumeController.text = "53"; 
+              volumeController.text = "53";
             },
             child: Row(
               children: [
                 const Icon(Icons.water_drop_outlined, color: AppColors.blue700),
                 AppSpacers.horizontalSmallMedium,
                 Text(
-                  fullTankText,
+                  displayText,
                   style: textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold, color: AppColors.blue700),
                 ),
               ],

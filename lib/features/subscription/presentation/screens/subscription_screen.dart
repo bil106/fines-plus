@@ -1,27 +1,20 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:core_cubit/cubit/purchase/purchase_cubit.dart';
-import 'package:core_localization/generated/l10n.dart';
-import 'package:design_system/colors/app_colors.dart';
-import 'package:fines_plus/features/subscription/data/models/fake_product.dart';
-import 'package:fines_plus/features/subscription/data/repository/subscription_repository.dart';
-import 'package:fines_plus/features/subscription/domain/entities/subscription.dart';
-import 'package:fines_plus/features/subscription/domain/usecases/buy_subscription.dart';
-import 'package:fines_plus/features/subscription/domain/usecases/get_available_plans.dart';
-import 'package:fines_plus/features/subscription/presentation/cubit/subscription_cubit.dart';
-import 'package:fines_plus/features/subscription/presentation/widgets/subscription_plan_card.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
+import 'package:core_localization/generated/l10n.dart';
+import 'package:design_system/colors/app_colors.dart';
+import 'package:fines_plus/features/subscription/data/models/fake_product.dart';
+import 'package:fines_plus/features/subscription/presentation/widgets/subscription_plan_card.dart';
 
 
 @RoutePage()
 class SubscriptionScreen extends StatefulWidget {
   final bool debugMode;
   final VoidCallback? onBack;
-
   const SubscriptionScreen({super.key, this.debugMode = true, this.onBack});
-
   @override
   State<SubscriptionScreen> createState() => _SubscriptionScreenState();
 }
@@ -45,9 +38,9 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     if (widget.debugMode) {
       await Future.delayed(const Duration(milliseconds: 500));
       final testProducts = [
-        FakeProduct('sub_3_months', '3 months', '1.99', 3),
-        FakeProduct('sub_6_months', '6 months', '2.99', 6),
-        FakeProduct('sub_12_months', '12 months', '3.99', 12),
+        FakeProduct('sub_3_months', S.of(context).subscription_3_month, '1.99', 3),
+        FakeProduct('sub_6_months', S.of(context).subscription_6_month, '2.99', 6),
+        FakeProduct('sub_12_months', S.of(context).subscription_12_month, '3.99', 12),
       ];
       if (mounted) {
         setState(() {
@@ -72,7 +65,6 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
 
     const productIds = {'sub_3_months', 'sub_6_months', 'sub_12_months'};
     final response = await _iap.queryProductDetails(productIds);
-
     if (mounted) {
       setState(() {
         _available = true;
@@ -85,7 +77,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   Future<void> _buy(dynamic product, int months) async {
     setState(() => _selectedMonths = months);
     final user = FirebaseAuth.instance.currentUser;
-
+    debugPrint('Current user UID: ${user?.uid}');
     if (user == null) {
       _showSnack(S.of(context).authorization_required);
       return;
@@ -93,8 +85,8 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
 
     if (widget.debugMode && product is FakeProduct) {
       await Future.delayed(const Duration(milliseconds: 500));
-      context.read<SubscriptionCubit>().purchase(user.uid, product as SubscriptionPlan);
-      _showSnack("Test subscription for $months months completed");
+      await context.read<PurchaseCubit>().buySubscription(user.uid, double.parse(product.price), months);
+      _showSnack("${S.of(context).test_subscription} $months ${S.of(context).successfully_completed}");
       return;
     }
 
@@ -104,86 +96,65 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     final price = double.tryParse(product.price.replaceAll(RegExp('[^0-9.]'), '')) ?? 0.0;
     await context.read<PurchaseCubit>().buySubscription(user.uid, price, months);
 
-    _showSnack("${S.of(context).subscription_for} $months ${S.of(context).subscription_complected}");
+    _showSnack("${S.of(context).test_subscription} $months ${S.of(context).successfully_completed}");
+  }
+
+  @override
+  Widget build(BuildContext context) {
+     final textTheme = Theme.of(context).textTheme;
+    if (_isLoading) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_available) {
+      return Scaffold(body: Center(child: Text(S.of(context).store_unavailable)));
+    }
+
+    return Scaffold(
+      backgroundColor: AppColors.grey50,
+      appBar: AppBar(
+        title: Text(S.of(context).subscription, style: textTheme.headlineMedium),
+        backgroundColor: AppColors.grey50,
+        elevation: 0,
+         leading: BackButton(color: AppColors.blue700, onPressed: widget.onBack),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: _products.isEmpty
+            ? const Center(child: CircularProgressIndicator())
+            : ListView.separated(
+                physics: const BouncingScrollPhysics(),
+                itemCount: _products.length,
+                separatorBuilder: (_, __) => const SizedBox(height: 12),
+                itemBuilder: (context, index) {
+                  final product = _products[index];
+
+              
+                  final months = product is FakeProduct
+                      ? product.months
+                      : product.id == 'sub_3_months'
+                      ? 3
+                      : product.id == 'sub_6_months'
+                      ? 6
+                      : 12;
+
+                  
+                  final fakeProduct = product is FakeProduct
+                      ? product
+                      : FakeProduct(product.id, product.title, product.price, months);
+
+                  return SubscriptionPlanCard(
+                    product: fakeProduct,
+                    months: months,
+                    isSelected: _selectedMonths == months,
+                    onBuy: () => _buy(product, months),
+                  );
+                },
+              ),
+      ),
+    );
   }
 
   void _showSnack(String msg) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg), backgroundColor: AppColors.blue700));
   }
-
-  @override
-  Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-
-    return BlocProvider(
-      create: (_) => SubscriptionCubit(
-        GetAvailablePlansUseCase(context.read<ISubscriptionRepository>()),
-        BuySubscriptionUseCase(context.read<ISubscriptionRepository>()),
-      )..loadPlans(),
-      child: BlocConsumer<SubscriptionCubit, SubscriptionState>(
-        listener: (context, state) {
-          if (state is SubscriptionBought) {
-            _showSnack("${S.of(context).subscription_for} ${state.plan.months} ${S.of(context).subscription_complected}");
-          } else if (state is SubscriptionError) {
-            _showSnack(state.message);
-          }
-        },
-        builder: (context, state) {
-          if (_isLoading) {
-            return const Scaffold(
-              backgroundColor: AppColors.neutreBlanc,
-              body: Center(child: CircularProgressIndicator()),
-            );
-          }
-
-          if (!_available) {
-            return  Scaffold(
-              backgroundColor: AppColors.neutreBlanc,
-              body: Center(child: Text(S.of(context).store_unavailable)),
-            );
-          }
-
-          return Scaffold(
-            backgroundColor: AppColors.grey50,
-            appBar: AppBar(
-              backgroundColor: AppColors.grey50,
-              elevation: 0,
-              leading: BackButton(color: AppColors.blue700, onPressed: widget.onBack),
-              title: Text(
-                S.of(context).subscription,
-                style: textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
-              ),
-            ),
-            body: SafeArea(
-              bottom: false,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                child: ListView.separated(
-                  physics: const BouncingScrollPhysics(),
-                  itemCount: _products.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: 12),
-                  itemBuilder: (context, index) {
-                    final product = _products[index];
-                    final months = product.id == 'sub_3_months'
-                        ? 3
-                        : product.id == 'sub_6_months'
-                        ? 6
-                        : 12;
-                    return SubscriptionPlanCard(
-                      product: product,
-                      months: months,
-                      isSelected: _selectedMonths == months,
-                      onBuy: () => _buy(product, months),
-                    );
-                  },
-                ),
-              ),
-            ),
-          );
-        },
-      ),
-    );
-  }
-
 }
-

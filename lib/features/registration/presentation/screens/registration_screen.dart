@@ -38,12 +38,14 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
     final cubit = context.read<RegistrationCubit>();
 
-    cubit.loadCredentials().then((data) {
+  cubit.loadCredentials().then((data) {
+      if (!mounted) return;
       emailController.text = data['email']!;
       passwordController.text = data['password']!;
       _validateForm();
       if (data['email']!.isNotEmpty) cubit.checkEmail(data['email']!);
     });
+
 
     emailController.addListener(() {
       final email = emailController.text.trim();

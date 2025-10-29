@@ -47,7 +47,7 @@ extension AppTextTheme on TextTheme {
         fontWeight: FontWeight.w400
       );
   TextStyle get whiteButton => const TextStyle(
-        fontSize: 1,
+        fontSize: 16,
         color: AppColors.neutreBlanc,
         fontWeight: FontWeight.w600
       );

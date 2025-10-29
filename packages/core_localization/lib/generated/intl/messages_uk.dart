@@ -167,6 +167,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "fuel_ai98": MessageLookupByLibrary.simpleMessage("АІ-98"),
     "fuel_gas_lpg": MessageLookupByLibrary.simpleMessage("Газ LPG"),
     "fuel_up": MessageLookupByLibrary.simpleMessage("Заправка"),
+    "full_tank": MessageLookupByLibrary.simpleMessage("Повний бак"),
     "gas_station_nearby": MessageLookupByLibrary.simpleMessage(
       "Заправки поруч",
     ),

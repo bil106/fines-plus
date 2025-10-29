@@ -79,7 +79,7 @@ class SubscriptionPlanCard extends StatelessWidget {
                       children: [
                         Icon(
                           isActive ? Icons.check_circle : Icons.cancel,
-                          color: isActive ? AppColors.green : AppColors.grey50,
+                          color: isActive ? AppColors.green : AppColors.energyBlue50,
                           size: 20,
                         ),
                         AppSpacers.horizontalSmallMedium,                       
@@ -87,7 +87,7 @@ class SubscriptionPlanCard extends StatelessWidget {
                           child: Text(
                             feature,
                             style: TextStyle(
-                              color: isActive ? AppColors.black : AppColors.grey50,
+                              color: isActive ? AppColors.black : AppColors.energyBlue50,
                               fontWeight: isActive ? FontWeight.w500 : FontWeight.w400,
                             ),
                           ),

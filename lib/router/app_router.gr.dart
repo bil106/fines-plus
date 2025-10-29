@@ -1184,6 +1184,8 @@ class SubscriptionRoute extends PageRouteInfo<SubscriptionRouteArgs> {
       );
       return SubscriptionScreen(
         key: args.key,
+        debugMode: args.debugMode,
+        onBack: args.onBack,
       );
     },
   );

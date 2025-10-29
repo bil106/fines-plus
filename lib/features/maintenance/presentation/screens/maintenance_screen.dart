@@ -63,7 +63,7 @@ class _MaintenanceScreenState extends State<MaintenanceScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final maintenanceCubit = context.read<MaintenanceCubit>();
-      maintenanceCubit.clearAllRecords();
+      // maintenanceCubit.clearAllRecords();
       await maintenanceCubit.syncExpensesFromFirestore();
     });
   }
