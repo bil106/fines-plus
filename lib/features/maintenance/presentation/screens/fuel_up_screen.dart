@@ -21,6 +21,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 
+
 @RoutePage()
 class FuelUpScreen extends StatefulWidget {
   final VoidCallback? onBack;
@@ -76,16 +77,10 @@ class _FuelUpScreenState extends State<FuelUpScreen> {
   Future<void> _initLocationAndStation() async {
     Location location = Location();
 
-    bool serviceEnabled = await location.serviceEnabled();
-    if (!serviceEnabled) {
-      serviceEnabled = await location.requestService();
-      if (!serviceEnabled) return;
-    }
-
-    PermissionStatus permissionGranted = await location.hasPermission();
-    if (permissionGranted == PermissionStatus.denied) {
-      permissionGranted = await location.requestPermission();
-      if (permissionGranted != PermissionStatus.granted) return;
+    if (!await location.serviceEnabled() && !await location.requestService()) return;
+    if (await location.hasPermission() == PermissionStatus.denied &&
+        await location.requestPermission() != PermissionStatus.granted) {
+      return;
     }
 
     try {
@@ -93,15 +88,12 @@ class _FuelUpScreenState extends State<FuelUpScreen> {
       final current = LatLng(locationData.latitude!, locationData.longitude!);
 
       final bestStation = await _fetchBestNearbyGasStation(current);
-      setState(() {
-        _bestStation = bestStation;
-      });
+      setState(() => _bestStation = bestStation);
     } catch (e) {
       if (kDebugMode) print("Error getting position: $e");
     }
   }
 
-  /// Возвращает лучшую станцию (рейтинг >= 4.5 и ближайшая из них), либо null.
   Future<GasStation?> _fetchBestNearbyGasStation(LatLng current) async {
     try {
       final stations = await _gasService.fetchNearbyGasStations(current);
@@ -174,13 +166,9 @@ class _FuelUpScreenState extends State<FuelUpScreen> {
               Row(
                 children: [
                   _bestStation == null
-                      ?  const SizedBox(
-                          width: 200,
-                          child: Center(child: CircularProgressIndicator()),
-                        )
+                      ? const SizedBox(width: 200, child: Center(child: CircularProgressIndicator()))
                       : GestureDetector(
                           onTap: () {
-                          
                             context.router.push(
                               FuelMapRoute(
                                 focusPosition: LatLng(_bestStation!.lat, _bestStation!.lng),
@@ -196,17 +184,15 @@ class _FuelUpScreenState extends State<FuelUpScreen> {
                               SizedBox(
                                 width: 180,
                                 child: Text(
-                                  _bestStation?.name ?? S.of(context).fuel_up,
-                                  style: Theme.of(context).textTheme.bodySmall,
+                                  _bestStation!.name,
+                                  style: textTheme.bodySmall,
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ),
                             ],
                           ),
                         ),
-
                   const Spacer(),
-
                   IconButton(
                     icon: Image.asset('assets/icons/map.png', width: 40, height: 40),
                     onPressed: () {
@@ -234,7 +220,6 @@ class _FuelUpScreenState extends State<FuelUpScreen> {
               ),
 
               const SizedBox(height: 16),
-
               Text(S.of(context).fuel, style: textTheme.subtitleText),
               const SizedBox(height: 12),
 
@@ -250,7 +235,6 @@ class _FuelUpScreenState extends State<FuelUpScreen> {
               ),
 
               const SizedBox(height: 24),
-
               FuelInputCard(
                 fuel: selectedFuel,
                 volumeController: volumeController,
@@ -259,7 +243,6 @@ class _FuelUpScreenState extends State<FuelUpScreen> {
               ),
 
               const SizedBox(height: 24),
-
               FuelAmountCard(volumeController: volumeController, priceController: priceController),
 
               const SizedBox(height: 40),
@@ -271,4 +254,3 @@ class _FuelUpScreenState extends State<FuelUpScreen> {
     );
   }
 }
-

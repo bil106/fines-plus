@@ -1,11 +1,12 @@
 import 'dart:convert';
+import 'package:fines_plus/features/vehicle/data/models/car_info_model.dart';
 import 'package:http/http.dart' as http;
 
 class CarPlatesService {
   static const _baseUrl = 'https://api.carplates.app/ua/gov-registration';
   static const _apiKey = 'DEMOdemoDEMOdemoDEMOdemoDEMOdemo';
 
-  Future<Map<String, dynamic>> fetchCarInfo(String number) async {
+  Future<CarInfoModel> fetchCarInfo(String number) async {
     final response = await http
         .post(
           Uri.parse(_baseUrl),
@@ -17,7 +18,7 @@ class CarPlatesService {
     if (response.statusCode == 200) {
       final json = jsonDecode(response.body);
       if (json['success'] == true) {
-        return json['data'] as Map<String, dynamic>;
+        return CarInfoModel.fromJson(json['data'] as Map<String, dynamic>);
       } else {
         throw Exception(json['error'] ?? 'Помилка запиту');
       }

@@ -1,13 +1,14 @@
+import 'package:json_annotation/json_annotation.dart';
+
+part 'car_info_model.g.dart';
+
+@JsonSerializable()
 class CarInfoModel {
   final String carNumber;
   final String techPassport;
   final String ownerId;
 
-  const CarInfoModel({
-    required this.carNumber,
-    required this.techPassport,
-    required this.ownerId,
-  });
+  const CarInfoModel({required this.carNumber, required this.techPassport, required this.ownerId});
 
   CarInfoModel copyWith({String? carNumber, String? techPassport, String? ownerId}) {
     return CarInfoModel(
@@ -16,6 +17,10 @@ class CarInfoModel {
       ownerId: ownerId ?? this.ownerId,
     );
   }
+
+  factory CarInfoModel.fromJson(Map<String, dynamic> json) => _$CarInfoModelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$CarInfoModelToJson(this);
 
   static const empty = CarInfoModel(carNumber: '', techPassport: '', ownerId: '');
 }

@@ -20,68 +20,55 @@ class CarInfoCubit extends Cubit<CarInfoState> {
   final HistoryCubit historyCubit;
 
   CarInfoCubit(this._repo, this.historyCubit) : super(const CarInfoState()) {
-    _load();
+    loadSavedCarInfo();
   }
 
   static final carReg = RegExp(r'^[А-ЯЇІЄҐ]{2}\d{4}[А-ЯЇІЄҐ]{2}$');
   static final techReg = RegExp(r'^[А-ЯІЇЄҐ]{3}\d{6}$');
-  Future<void> loadSavedCarInfo() async {
-    await _load();
-  }
 
-  Future<void> _load() async {
+ 
+  Future<void> loadSavedCarInfo() async {
     final m = await _repo.getCarInfo();
-    emit(state.copyWith(carNumber: m.carNumber, techPassport: m.techPassport));
+    emit(
+      state.copyWith(
+        carNumber: m.carNumber,
+        techPassport: m.techPassport,
+        carDetails: null, 
+      ),
+    );
 
     if (m.carNumber.isNotEmpty) {
       await _saveCarToFirestore(m);
     }
   }
 
+ 
   Future<void> _saveCarToFirestore(CarInfoModel m) async {
     final user = FirebaseAuth.instance.currentUser;
-    debugPrint('Current user UID: ${user?.uid}');
-    if (user == null) {
-      debugPrint("Unable to save the machine - user is not authorized");
-      return;
-    }
+    if (user == null) return;
 
     final token = await FirebaseMessaging.instance.getToken();
 
-    final data = {
-      "ownerId": user.uid,
-      "techPassport": m.techPassport,
-      "updatedAt": FieldValue.serverTimestamp(),
-    };
+    final data = {"ownerId": user.uid, "techPassport": m.techPassport, "updatedAt": FieldValue.serverTimestamp()};
 
-    if (token != null) {
-      data["fcmToken"] = token;
-    }
+    if (token != null) data["fcmToken"] = token;
 
     await FirebaseFirestore.instance.collection("cars").doc(m.carNumber).set(data, SetOptions(merge: true));
-
-    debugPrint("The car is saved in Firestore: $data");
   }
 
-Future<void> setCarNumber(String v) async {
-    final value = v.trim().replaceAll(RegExp(r'[^А-ЯЇІЄҐ0-9]'), '');
+  
+  Future<void> setCarNumber(String value) async {
+    final carNumber = value.trim().replaceAll(RegExp(r'[^А-ЯЇІЄҐ0-9]'), '');
     final user = FirebaseAuth.instance.currentUser;
     final ownerId = user?.uid ?? '';
 
-    final m = CarInfoModel(
-      carNumber: value,
-      techPassport: state.techPassport,
-      ownerId: ownerId,
-    );
+    final m = CarInfoModel(carNumber: carNumber, techPassport: state.techPassport, ownerId: ownerId);
 
     await _repo.saveCarInfo(m);
-    emit(state.copyWith(carNumber: value));
+    emit(state.copyWith(carNumber: carNumber));
 
     await _saveCarToFirestore(m);
 
-    debugPrint("Saved car number: $value");
-
- 
     try {
       await getIt<MaintenanceCubit>().syncExpensesFromFirestore();
     } catch (e) {
@@ -89,27 +76,18 @@ Future<void> setCarNumber(String v) async {
     }
   }
 
-
-Future<void> setTechPassport(String v) async {
-    if (isClosed) return;
-    final value = v.trim().toUpperCase();
+  
+  Future<void> setTechPassport(String value) async {
+    final techPassport = value.trim().toUpperCase();
     final user = FirebaseAuth.instance.currentUser;
     final ownerId = user?.uid ?? '';
 
-    final m = CarInfoModel(
-      carNumber: state.carNumber,
-      techPassport: value,
-      ownerId: ownerId,
-    );
+    final m = CarInfoModel(carNumber: state.carNumber, techPassport: techPassport, ownerId: ownerId);
 
     await _repo.saveCarInfo(m);
-    emit(state.copyWith(techPassport: value));
+    emit(state.copyWith(techPassport: techPassport));
 
     await _saveCarToFirestore(m);
-
-    final parts = getTechPassportParts();
-    debugPrint("Saved techPassport: $value (series=${parts['series']}, number=${parts['number']})");
-
 
     try {
       await getIt<MaintenanceCubit>().syncExpensesFromFirestore();
@@ -118,7 +96,7 @@ Future<void> setTechPassport(String v) async {
     }
   }
 
-
+ 
   bool get isFormValid => carReg.hasMatch(state.carNumber) && techReg.hasMatch(state.techPassport);
 
   String? validate() {
@@ -137,6 +115,7 @@ Future<void> setTechPassport(String v) async {
     return {'series': '', 'number': ''};
   }
 
+ 
   Future<void> checkFinesWithCaptcha(String captchaToken) async {
     final prefs = await SharedPreferences.getInstance();
     final finesEnabled = prefs.getBool("finesCheck") ?? true;
@@ -180,16 +159,23 @@ Future<void> setTechPassport(String v) async {
     }
   }
 
-   Future<void> loadCarDetailsFromApi() async {
+  
+  Future<void> loadCarDetailsFromApi() async {
     if (state.carNumber.isEmpty) return;
 
     emit(state.copyWith(status: CarInfoLoadingStatus()));
 
     try {
-      final carData = await CarPlatesService().fetchCarInfo(state.carNumber); 
-      emit(state.copyWith(status: CarInfoLoadedStatus([]), carDetails: carData));
+      final carData = await CarPlatesService().fetchCarInfo(state.carNumber);
+      emit(
+        state.copyWith(
+          status: CarInfoLoadedStatus([]),
+          carDetails: carData, 
+        ),
+      );
     } catch (e) {
       emit(state.copyWith(status: CarInfoErrorStatus('Failed to load car details: $e')));
     }
   }
 }
+

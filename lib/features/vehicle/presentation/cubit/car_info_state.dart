@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:fines_plus/features/vehicle/data/models/car_info_model.dart';
 
 abstract class CarInfoStatus extends Equatable {
   const CarInfoStatus();
@@ -34,23 +35,23 @@ class CarInfoState extends Equatable {
   final String carNumber;
   final String techPassport;
   final CarInfoStatus status;
-  final bool hasCheckedFines; 
-  final Map<String, dynamic>? carDetails;
+  final bool hasCheckedFines;
+  final CarInfoModel? carDetails; 
 
   const CarInfoState({
     this.carNumber = '',
     this.techPassport = '',
     this.status = const CarInfoInitialStatus(),
     this.hasCheckedFines = false,
-    this.carDetails, 
+    this.carDetails,
   });
 
   CarInfoState copyWith({
     String? carNumber,
     String? techPassport,
     CarInfoStatus? status,
-    bool? hasCheckedFines, 
-    Map<String, dynamic>? carDetails,
+    bool? hasCheckedFines,
+    CarInfoModel? carDetails,
   }) {
     return CarInfoState(
       carNumber: carNumber ?? this.carNumber,
@@ -62,6 +63,5 @@ class CarInfoState extends Equatable {
   }
 
   @override
-  List<Object?> get props => [carNumber, techPassport, status, hasCheckedFines];
+  List<Object?> get props => [carNumber, techPassport, status, hasCheckedFines, carDetails];
 }
-
