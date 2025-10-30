@@ -73,10 +73,7 @@ class _CarWashScreenState extends State<CarWashScreen> {
     final textTheme = Theme.of(context).textTheme;
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: const SystemUiOverlayStyle(
-        statusBarColor: AppColors.grey50,
-        statusBarIconBrightness: Brightness.dark,
-      ),
+      value: const SystemUiOverlayStyle(statusBarColor: AppColors.grey50, statusBarIconBrightness: Brightness.dark),
       child: Scaffold(
         backgroundColor: AppColors.grey50,
         appBar: AppBar(
@@ -86,29 +83,7 @@ class _CarWashScreenState extends State<CarWashScreen> {
           actions: [
             IconButton(
               icon: const Icon(Icons.check, color: AppColors.blue700, size: 50),
-              onPressed: () {
-                if (selectedDate == null || mileageController.text.isEmpty || costController.text.isEmpty) {
-                  if (!mounted) return;
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      backgroundColor: AppColors.blue700,
-                      content: Text(S.of(context).fill_date),
-                    ),
-                  );
-                  return;
-                }
-
-                final mileage = int.tryParse(mileageController.text) ?? 0;
-                final cost = double.tryParse(costController.text) ?? 0;
-
-                final record = CarWashRecord(
-                  date: "${selectedDate!.day}.${selectedDate!.month}.${selectedDate!.year}",
-                  mileage: mileage,
-                  cost: cost,
-                );
-
-                context.router.pop(record);
-              },
+              onPressed: _saveRecord,
             ),
           ],
         ),
@@ -118,6 +93,7 @@ class _CarWashScreenState extends State<CarWashScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(S.of(context).car_wash, style: textTheme.title),
+              const SizedBox(height: 16),
 
               Row(
                 children: [
@@ -152,9 +128,7 @@ class _CarWashScreenState extends State<CarWashScreen> {
                   IconButton(
                     icon: Image.asset('assets/icons/map.png', width: 40, height: 40),
                     onPressed: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(builder: (_) => const CarWashMapScreen()),
-                      );
+                      Navigator.of(context).push(MaterialPageRoute(builder: (_) => const CarWashMapScreen()));
                     },
                   ),
                 ],
@@ -169,7 +143,7 @@ class _CarWashScreenState extends State<CarWashScreen> {
                       onDateSelected: (date) => setState(() => selectedDate = date),
                     ),
                   ),
-                  SizedBox(width: 16),
+                  const SizedBox(width: 16),
                   Expanded(
                     child: MileageCard(textTheme: textTheme, controller: mileageController),
                   ),
@@ -179,7 +153,7 @@ class _CarWashScreenState extends State<CarWashScreen> {
               AppSpacers.verticalMedium,
               Text(S.of(context).price, style: textTheme.subtitleText),
               AppSpacers.verticalMedium,
-               CostInputCard(controller: costController),
+              CostInputCard(controller: costController),
 
               AppSpacers.verticalXXGigantic,
               const AdBannerWidget(),
@@ -188,6 +162,26 @@ class _CarWashScreenState extends State<CarWashScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> _saveRecord() async {
+    if (selectedDate == null || mileageController.text.isEmpty || costController.text.isEmpty) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(backgroundColor: AppColors.blue700, content: Text(S.of(context).fill_date)));
+      return;
+    }
+
+    final mileage = int.tryParse(mileageController.text) ?? 0;
+    final cost = double.tryParse(costController.text) ?? 0;
+
+  
+    final userId = 'default_user';
+
+    final record = CarWashRecord(date: selectedDate!, mileage: mileage, amount: cost, userId: userId);
+
+    context.router.pop(record);
   }
 
   Future<Map<String, dynamic>?> fetchBestNearbyCarWash(LatLng current, String apiKey) async {

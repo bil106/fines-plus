@@ -1,19 +1,24 @@
-// ignore_for_file: unnecessary_type_check
-
-import 'package:fines_plus/features/expenses/data/models/expense.dart';
-import 'package:fines_plus/features/expenses/data/models/expense_category.dart';
+import 'package:json_annotation/json_annotation.dart';
 import 'package:intl/intl.dart';
+import 'expense.dart'; // путь к твоей модели Expense
+import 'expense_category.dart'; // если есть отдельный enum
 
+part 'fuel_record.g.dart';
 
+@JsonSerializable(explicitToJson: true)
 class FuelRecord {
   final String? id;
   final String fuelType;
   final double volume;
   final double cost;
-  final String date; 
+
+
+  @JsonKey(fromJson: _fromJsonDate, toJson: _toJsonDate)
+  final DateTime date;
+
   final int mileage;
 
-  FuelRecord({
+  const FuelRecord({
     this.id,
     required this.fuelType,
     required this.volume,
@@ -22,57 +27,44 @@ class FuelRecord {
     required this.mileage,
   });
 
-  factory FuelRecord.fromJson(Map<String, dynamic> json) => FuelRecord(
-        id: json['id'] as String?,
-        fuelType: json['fuelType'] ?? '',
-        volume: (json['volume'] as num?)?.toDouble() ?? 0.0,
-        cost: (json['cost'] as num?)?.toDouble() ?? 0.0,
-        date: json['date'] ?? '',
-        mileage: json['mileage'] ?? 0,
-      );
+  
+  factory FuelRecord.fromJson(Map<String, dynamic> json) => _$FuelRecordFromJson(json);
 
-  Map<String, dynamic> toJson() => {
-    if (id != null) 'id': id,
-        'fuelType': fuelType,
-        'volume': volume,
-        'cost': cost,
-        'date': date,
-        'mileage': mileage,
-      };
+  Map<String, dynamic> toJson() => _$FuelRecordToJson(this);
 
-
-factory FuelRecord.fromExpense(Expense expense) {
-    final formattedDate =
-        (expense.date is DateTime) ? DateFormat('dd.MM.yyyy').format(expense.date) : (expense.date.toString());
-
+  
+  factory FuelRecord.fromExpense(Expense expense) {
     return FuelRecord(
       id: expense.id,
       fuelType: expense.comment ?? 'fuel',
-      volume: expense.fuelVolume ?? 0.0, 
+      volume: expense.fuelVolume ?? 0.0,
       cost: expense.amount.toDouble(),
-      date: formattedDate,
+      date: expense.date,
       mileage: expense.mileage ?? 0,
     );
   }
 
-
-
+  
   Expense toExpense(String userId) {
-    DateTime parsedDate;
-    try {
-      parsedDate = DateFormat('dd.MM.yyyy').parse(date);
-    } catch (_) {
-      parsedDate = DateTime.now();
-    }
-
     return Expense(
-      date: parsedDate,
+      date: date,
       amount: cost.round(),
       category: ExpenseCategory.fuel,
       mileage: mileage,
       comment: fuelType,
       userId: userId,
-      fuelVolume: volume
+      fuelVolume: volume,
     );
   }
+
+ 
+  static DateTime _fromJsonDate(String date) {
+    try {
+      return DateFormat('dd.MM.yyyy').parse(date);
+    } catch (_) {
+      return DateTime.tryParse(date) ?? DateTime.now();
+    }
+  }
+
+  static String _toJsonDate(DateTime date) => DateFormat('dd.MM.yyyy').format(date);
 }

@@ -91,16 +91,16 @@ MonthlyExpenseStats _calculateMonthlyStats({
     }
 
     for (final f in fuelRecords) {
-      final date = parseDate(f.date);
+      final date = parseDate(f.date.toString());
       if (date.year != year || date.month != month) continue;
       total += f.cost;
       categoryTotals[ExpenseCategory.fuel] = (categoryTotals[ExpenseCategory.fuel] ?? 0) + f.cost;
     }
     for (final c in carWashRecords) {
-      final date = parseDate(c.date);
+      final date = parseDate(c.date.toString());
       if (date.year != year || date.month != month) continue;
-      total += c.cost;
-      categoryTotals[ExpenseCategory.other] = (categoryTotals[ExpenseCategory.other] ?? 0) + c.cost;
+      total += c.amount;
+      categoryTotals[ExpenseCategory.other] = (categoryTotals[ExpenseCategory.other] ?? 0) + c.amount;
     }
   
     for (final c in tuningRecords) {

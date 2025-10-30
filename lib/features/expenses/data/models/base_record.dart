@@ -24,7 +24,9 @@ abstract class BaseRecord {
     this.isSynced = false,
   });
 
-  Map<String, dynamic> toJson() => {};
-   Expense toExpense(String userId);
-}
+ 
+  Map<String, dynamic> toJson();
 
+ 
+  Expense toExpense(String userId);
+}

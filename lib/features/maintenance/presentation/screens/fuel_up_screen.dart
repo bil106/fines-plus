@@ -147,7 +147,7 @@ class _FuelUpScreenState extends State<FuelUpScreen> {
                   fuelType: selectedFuel.name,
                   volume: volume,
                   cost: totalCost,
-                  date: "${selectedDate!.day}.${selectedDate!.month}.${selectedDate!.year}",
+                  date: selectedDate!,
                   mileage: mileage,
                 );
 

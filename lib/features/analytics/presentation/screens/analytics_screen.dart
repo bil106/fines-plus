@@ -4,6 +4,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:core_data/core_data.dart';
 import 'package:core_localization/generated/l10n.dart';
+import 'package:core_utils/formatters/date_formatter.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_borders.dart';
 import 'package:design_system/constants/app_spacers.dart';
@@ -92,7 +93,7 @@ Future<void> _loadRecords() async {
         fuelList.map((e) {
           final record = FuelRecord.fromJson(e);
           return EventModel(
-            date: record.date,
+            date: DateFormat('dd.MM.yyyy').format(record.date),
             title: "${record.fuelType} / ${record.volume} л.",
             amount: record.cost.toDouble(),
             mileage: "${record.mileage} ${S.of(context).km}",
@@ -124,7 +125,7 @@ Future<void> _loadRecords() async {
         }),
       );
     }
-// Car Wash
+    // Car Wash Records
     final carWashJson = prefs.getString('car_wash_records');
     if (carWashJson != null) {
       final List<dynamic> carWashList = jsonDecode(carWashJson);
@@ -132,9 +133,9 @@ Future<void> _loadRecords() async {
         carWashList.map((e) {
           final record = CarWashRecord.fromJson(e);
           return EventModel(
-            date: record.date,
+            date: DateFormatter.formatDate(record.date), 
             title: S.of(context).car_wash,
-            amount: record.cost.toDouble(),
+            amount: record.amount.toDouble(), 
             mileage: "${record.mileage} ${S.of(context).km}",
             icon: Icons.local_car_wash,
             iconColor: AppColors.energyBlue,

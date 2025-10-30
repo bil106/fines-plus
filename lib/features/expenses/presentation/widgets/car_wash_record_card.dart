@@ -1,7 +1,7 @@
 import 'package:core_localization/generated/l10n.dart';
+import 'package:core_utils/formatters/date_formatter.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_borders.dart';
-import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
 import 'package:fines_plus/features/expenses/data/models/car_wash_record.dart';
 import 'package:flutter/material.dart';
@@ -23,33 +23,28 @@ class CarWashRecordCard extends StatelessWidget {
         child: Row(
           children: [
             Icon(Icons.local_car_wash, color: AppColors.energyBlue, size: 50),
-
+            const SizedBox(width: 12),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  children: [
-                    AppSpacers.horizontalSmallMedium,
-                    Text(S.of(context).car_wash, style: textTheme.historyText),
-                  ],
-                ),
-                AppSpacers.verticalXSmall,
+                Row(children: [Text(S.of(context).car_wash, style: textTheme.historyText)]),
+                const SizedBox(height: 4),
                 Row(
                   children: [
                     Icon(Icons.attach_money, color: AppColors.green),
-                    AppSpacers.horizontalSmallMedium,
-                    Text("${record.cost} ${S.of(context).grn}", style: textTheme.subtitleText),
+                    const SizedBox(width: 8),
+                    Text("${record.amount.toStringAsFixed(2)} ${S.of(context).grn}", style: textTheme.subtitleText),
                   ],
                 ),
-                AppSpacers.verticalXSmall,
+                const SizedBox(height: 4),
                 Row(
                   children: [
                     Icon(Icons.calendar_month, color: AppColors.energyBlue),
-                    AppSpacers.horizontalSmallMedium,
-                    Text(record.date, style: textTheme.subtitleText),
-                    AppSpacers.horizontalXLarge,
+                    const SizedBox(width: 8),
+                    Text(DateFormatter.formatDate(record.date), style: textTheme.subtitleText),
+                    const SizedBox(width: 24),
                     Icon(Icons.speed, color: AppColors.energyBlue),
-                    AppSpacers.horizontalSmallMedium,
+                    const SizedBox(width: 8),
                     Text("${record.mileage} ${S.of(context).km}", style: textTheme.subtitleText),
                   ],
                 ),

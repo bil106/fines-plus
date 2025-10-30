@@ -27,6 +27,8 @@ dependencies:
     path: ../../
   flutter_bloc: ^9.1.1
   share_plus: ^11.1.0
+  json_annotation: ^4.9.0
+  intl: ^0.20.2
 
 flutter:
     uses-material-design: true

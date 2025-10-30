@@ -1,66 +1,105 @@
-// ignore_for_file: unnecessary_type_check
+// ignore_for_file: overridden_fields
 
+import 'package:fines_plus/features/expenses/data/models/base_record.dart';
 import 'package:fines_plus/features/expenses/data/models/expense.dart';
 import 'package:fines_plus/features/expenses/data/models/expense_category.dart';
-import 'package:intl/intl.dart';
+import 'package:json_annotation/json_annotation.dart';
+import 'package:core_utils/formatters/date_formatter.dart';
 
 
-class CarWashRecord {
+part 'car_wash_record.g.dart';
+
+/// JsonConverter для работы с DateTime через DateFormatter
+class DateFormatterConverter implements JsonConverter<DateTime, String> {
+  const DateFormatterConverter();
+
+  @override
+  DateTime fromJson(String json) {
+    try {
+      final parts = json.split('.');
+      final day = int.parse(parts[0]);
+      final month = int.parse(parts[1]);
+      final year = int.parse(parts[2]);
+      return DateTime(year, month, day);
+    } catch (_) {
+      return DateTime.now();
+    }
+  }
+
+  @override
+  String toJson(DateTime object) {
+    return DateFormatter.formatDate(object);
+  }
+}
+
+@JsonSerializable()
+class CarWashRecord extends BaseRecord {
   final String? id;
-  final double cost;
-  final String date; 
+
+  @override
+  @JsonKey(name: 'cost')
+  final double amount; 
+
+  @override
+  @DateFormatterConverter()
+  final DateTime date;
+
+  @override
   final int mileage;
 
   CarWashRecord({
     this.id,
-    required this.cost,
+    required this.amount,
     required this.date,
     required this.mileage,
-  });
+    required super.userId,
+    super.comment,
+    super.currency,
+    super.carNumber,
+    super.isSynced,
+  }) : super(
+         date: date,
+         amount: amount,
+         category: ExpenseCategory.carWash,
+         mileage: mileage,
+       );
 
-  factory CarWashRecord.fromJson(Map<String, dynamic> json) => CarWashRecord(
-       id: json['id'] as String?,
-        cost: (json['cost'] as num?)?.toDouble() ?? 0.0,
-        date: json['date'] ?? '',
-        mileage: json['mileage'] ?? 0,
-      );
+  
+  factory CarWashRecord.fromJson(Map<String, dynamic> json) => _$CarWashRecordFromJson(json);
 
-  Map<String, dynamic> toJson() => {
-    if (id != null) 'id': id,
-        'cost': cost,
-        'date': date,
-        'mileage': mileage,
-      };
+ 
+  @override
+  Map<String, dynamic> toJson() => _$CarWashRecordToJson(this);
 
 
   factory CarWashRecord.fromExpense(Expense expense) {
-    final formattedDate =
-        (expense.date is DateTime) ? DateFormat('dd.MM.yyyy').format(expense.date) : (expense.date.toString());
-
     return CarWashRecord(
       id: expense.id,
-      cost: expense.amount.toDouble(),
-      date: formattedDate,
+      amount: expense.amount.toDouble(),
+      date: expense.date,
       mileage: expense.mileage ?? 0,
+      userId: expense.userId,
+      comment: expense.comment,
+      currency: expense.currency,
+      carNumber: expense.carNumber,
+      isSynced: false,
     );
   }
 
-  Expense toExpense(String userId) {
-    DateTime parsedDate;
-    try {
-      parsedDate = DateFormat('dd.MM.yyyy').parse(date);
-    } catch (_) {
-      parsedDate = DateTime.now();
-    }
 
+ @override
+  Expense toExpense(String userId) {
     return Expense(
-      
-      date: parsedDate,
-      amount: cost.round(),     
+      id: id,
+      date: date,
+      amount: amount.round(), 
       category: ExpenseCategory.carWash,
       mileage: mileage,
-      comment: "CarWash",
+      comment: comment ?? "Car Wash",
       userId: userId,
+      currency: currency ?? "", 
+      carNumber: carNumber,
     );
   }
+
 }

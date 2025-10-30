@@ -5,6 +5,7 @@ import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
 import 'package:fines_plus/features/expenses/data/models/fuel_record.dart';
 import 'package:flutter/material.dart';
+import 'package:core_utils/formatters/date_formatter.dart';
 
 class FuelRecordCard extends StatelessWidget {
   final FuelRecord record;
@@ -46,7 +47,7 @@ class FuelRecordCard extends StatelessWidget {
                   children: [
                     Icon(Icons.calendar_month, color: AppColors.energyBlue),
                     AppSpacers.horizontalSmallMedium,
-                    Text(record.date, style: textTheme.subtitleText),
+                    Text(DateFormatter.formatDate(record.date), style: textTheme.subtitleText),
                     AppSpacers.horizontalXLarge,
                     Icon(Icons.speed, color: AppColors.energyBlue),
                     AppSpacers.horizontalSmallMedium,
