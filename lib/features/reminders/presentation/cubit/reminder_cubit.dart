@@ -11,12 +11,10 @@ class ReminderCubit extends Cubit<ReminderState> {
   final ReminderRepository repository;
   final PushHelper pushHelper;
   final String carNumber;
+  final String userId; 
 
-  ReminderCubit({
-    required this.repository,
-    required this.pushHelper,
-    required this.carNumber,
-  }) : super(ReminderState.initial()) {
+  ReminderCubit({required this.repository, required this.pushHelper, required this.carNumber, required this.userId})
+    : super(ReminderState.initial()) {
     load();
   }
 
@@ -58,7 +56,7 @@ class ReminderCubit extends Cubit<ReminderState> {
   Future<void> updateReminder(ReminderModel reminder) async {
     emit(state.copyWith(isLoading: true, errorMessage: null));
     try {
-      await repository.update(carNumber, reminder);
+      await repository.update(carNumber, reminder); 
       await load();
     } catch (e) {
       emit(state.copyWith(isLoading: false, errorMessage: 'Update error: $e'));
@@ -68,7 +66,7 @@ class ReminderCubit extends Cubit<ReminderState> {
   Future<void> deleteReminder(String id) async {
     emit(state.copyWith(isLoading: true, errorMessage: null));
     try {
-      await repository.delete(carNumber, id);
+      await repository.delete(carNumber, id); 
       await load();
     } catch (e) {
       emit(state.copyWith(isLoading: false, errorMessage: 'Delete error: $e'));
@@ -80,11 +78,15 @@ class ReminderCubit extends Cubit<ReminderState> {
 
     final reminder = ReminderModel(
       title: task.title,
-      dateTime: task.lastServiceDate != null ? DateTime.parse(task.lastServiceDate!) : DateTime.now(),
-      id: '',
+      dateTime: task.lastServiceDate ?? DateTime.now(),
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
       description: '',
+      userId: userId, 
     );
 
     await addReminder(reminder);
   }
 }
+
+
+

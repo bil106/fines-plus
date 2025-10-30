@@ -34,7 +34,7 @@ class ExportRepositoryImpl implements ExportRepository {
 
       return CarHistory(
         type: typeDetail,
-        date: e.date,
+        date: e.date.toString(),
         mileage: mileageValue,
         cost: costValue.roundToDouble(),
       );

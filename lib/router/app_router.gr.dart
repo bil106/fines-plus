@@ -890,6 +890,7 @@ class RemindersRoute extends PageRouteInfo<RemindersRouteArgs> {
   RemindersRoute({
     Key? key,
     required String carNumber,
+    required String userId,
     VoidCallback? onBack,
     List<PageRouteInfo>? children,
   }) : super(
@@ -897,6 +898,7 @@ class RemindersRoute extends PageRouteInfo<RemindersRouteArgs> {
          args: RemindersRouteArgs(
            key: key,
            carNumber: carNumber,
+           userId: userId,
            onBack: onBack,
          ),
          initialChildren: children,
@@ -911,6 +913,7 @@ class RemindersRoute extends PageRouteInfo<RemindersRouteArgs> {
       return RemindersScreen(
         key: args.key,
         carNumber: args.carNumber,
+        userId: args.userId,
         onBack: args.onBack,
       );
     },
@@ -918,17 +921,24 @@ class RemindersRoute extends PageRouteInfo<RemindersRouteArgs> {
 }
 
 class RemindersRouteArgs {
-  const RemindersRouteArgs({this.key, required this.carNumber, this.onBack});
+  const RemindersRouteArgs({
+    this.key,
+    required this.carNumber,
+    required this.userId,
+    this.onBack,
+  });
 
   final Key? key;
 
   final String carNumber;
 
+  final String userId;
+
   final VoidCallback? onBack;
 
   @override
   String toString() {
-    return 'RemindersRouteArgs{key: $key, carNumber: $carNumber, onBack: $onBack}';
+    return 'RemindersRouteArgs{key: $key, carNumber: $carNumber, userId: $userId, onBack: $onBack}';
   }
 
   @override
@@ -937,11 +947,13 @@ class RemindersRouteArgs {
     if (other is! RemindersRouteArgs) return false;
     return key == other.key &&
         carNumber == other.carNumber &&
+        userId == other.userId &&
         onBack == other.onBack;
   }
 
   @override
-  int get hashCode => key.hashCode ^ carNumber.hashCode ^ onBack.hashCode;
+  int get hashCode =>
+      key.hashCode ^ carNumber.hashCode ^ userId.hashCode ^ onBack.hashCode;
 }
 
 /// generated route for
@@ -953,6 +965,7 @@ class ScheduleRoute extends PageRouteInfo<ScheduleRouteArgs> {
     required ReminderRepository reminderRepository,
     required PushHelper pushHelper,
     required String carNumber,
+    required String userId,
     List<PageRouteInfo>? children,
   }) : super(
          ScheduleRoute.name,
@@ -962,6 +975,7 @@ class ScheduleRoute extends PageRouteInfo<ScheduleRouteArgs> {
            reminderRepository: reminderRepository,
            pushHelper: pushHelper,
            carNumber: carNumber,
+           userId: userId,
          ),
          initialChildren: children,
        );
@@ -978,6 +992,7 @@ class ScheduleRoute extends PageRouteInfo<ScheduleRouteArgs> {
         reminderRepository: args.reminderRepository,
         pushHelper: args.pushHelper,
         carNumber: args.carNumber,
+        userId: args.userId,
       );
     },
   );
@@ -990,6 +1005,7 @@ class ScheduleRouteArgs {
     required this.reminderRepository,
     required this.pushHelper,
     required this.carNumber,
+    required this.userId,
   });
 
   final Key? key;
@@ -1002,9 +1018,11 @@ class ScheduleRouteArgs {
 
   final String carNumber;
 
+  final String userId;
+
   @override
   String toString() {
-    return 'ScheduleRouteArgs{key: $key, repository: $repository, reminderRepository: $reminderRepository, pushHelper: $pushHelper, carNumber: $carNumber}';
+    return 'ScheduleRouteArgs{key: $key, repository: $repository, reminderRepository: $reminderRepository, pushHelper: $pushHelper, carNumber: $carNumber, userId: $userId}';
   }
 
   @override
@@ -1015,7 +1033,8 @@ class ScheduleRouteArgs {
         repository == other.repository &&
         reminderRepository == other.reminderRepository &&
         pushHelper == other.pushHelper &&
-        carNumber == other.carNumber;
+        carNumber == other.carNumber &&
+        userId == other.userId;
   }
 
   @override
@@ -1024,7 +1043,8 @@ class ScheduleRouteArgs {
       repository.hashCode ^
       reminderRepository.hashCode ^
       pushHelper.hashCode ^
-      carNumber.hashCode;
+      carNumber.hashCode ^
+      userId.hashCode;
 }
 
 /// generated route for

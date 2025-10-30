@@ -1,10 +1,11 @@
+import 'package:json_annotation/json_annotation.dart';
 
+part 'maintenance_task.g.dart';
 
-import 'package:fines_plus/features/maintenance/data/repository/maintenance_repository.dart';
-
+@JsonSerializable(explicitToJson: true)
 class MaintenanceTask {
   final String title;
-  final String? lastServiceDate;
+  final DateTime? lastServiceDate;
   final int lastMileage;
   final int? actualMileage;
   final int? intervalKm;
@@ -21,9 +22,14 @@ class MaintenanceTask {
     this.comment,
   });
 
+  // Генерация JSON
+  factory MaintenanceTask.fromJson(Map<String, dynamic> json) => _$MaintenanceTaskFromJson(json);
+
+  Map<String, dynamic> toJson() => _$MaintenanceTaskToJson(this);
+
   MaintenanceTask copyWith({
     String? title,
-    String? lastServiceDate,
+    DateTime? lastServiceDate,
     int? lastMileage,
     int? actualMileage,
     int? intervalKm,
@@ -49,58 +55,11 @@ class MaintenanceTask {
     }
 
     if (intervalTime != null && lastServiceDate != null) {
-      try {
-        final lastDate = DateTime.parse(_convertToISO(lastServiceDate!));
-        final daysPassed = DateTime.now().difference(lastDate).inDays;
-        final progress = daysPassed / intervalTime!.inDays;
-        return progress.clamp(0.0, 1.0);
-      } catch (_) {
-        return 0.0;
-      }
+      final daysPassed = DateTime.now().difference(lastServiceDate!).inDays;
+      final progress = daysPassed / intervalTime!.inDays;
+      return progress.clamp(0.0, 1.0);
     }
 
     return 0.0;
   }
-
-  String _convertToISO(String date) {
-    final parts = date.split('.');
-    if (parts.length != 3) return date;
-    return "${parts[2]}-${parts[1].padLeft(2, '0')}-${parts[0].padLeft(2, '0')}";
-  }
-
-  factory MaintenanceTask.fromJson(Map<String, dynamic> json) {
-    return MaintenanceTask(
-      title: json['title'],
-      lastServiceDate: json['lastServiceDate'],
-      lastMileage: json['lastMileage'],
-      actualMileage: json['actualMileage'],
-      intervalKm: json['intervalKm'],
-      intervalTime: json['intervalTime'] != null ? Duration(days: json['intervalTime']) : null,
-      comment: json['comment'],
-    );
-  }
-
-  Map<String, dynamic> toJson() => {
-        'title': title,
-        'lastServiceDate': lastServiceDate,
-        'lastMileage': lastMileage,
-        'actualMileage': actualMileage,
-        'intervalKm': intervalKm,
-        'intervalTime': intervalTime?.inDays,
-        'comment': comment,
-      };
-}
-
-class LoadTasksUseCase {
-  final IMaintenanceRepository repository;
-  LoadTasksUseCase(this.repository);
-
-  Future<List<MaintenanceTask>> call() => repository.getTasks();
-}
-
-class SaveTasksUseCase {
-  final IMaintenanceRepository repository;
-  SaveTasksUseCase(this.repository);
-
-  Future<void> call(List<MaintenanceTask> tasks) => repository.saveTasks(tasks);
 }

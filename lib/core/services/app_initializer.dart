@@ -188,7 +188,7 @@ late final SubscriptionRepositoryImpl subscriptionRepository;
       repository: ScheduleRepository(),
       maintenanceCubit: maintenanceCubit,
       pushHelper: PushHelper(FlutterLocalNotificationsPlugin()),
-      enabled: remoteConfigService.isRemindersEnabled,
+      enabled: remoteConfigService.isRemindersEnabled, userId: '',
     );
 
     final registrationCubit = RegistrationCubit(storage: storage, auth: FirebaseAuth.instance);

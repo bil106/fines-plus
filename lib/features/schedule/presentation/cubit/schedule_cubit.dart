@@ -14,11 +14,16 @@ class ScheduleCubit extends Cubit<ScheduleState> {
   final ScheduleRepository repository;
   final MaintenanceCubit maintenanceCubit;
   final PushHelper pushHelper;
+  final String userId; // ✅ добавляем userId
   bool enabled;
 
-  ScheduleCubit(
-      {required this.repository, required this.maintenanceCubit, required this.pushHelper, required this.enabled})
-      : super(ScheduleState(tasks: []));
+  ScheduleCubit({
+    required this.repository,
+    required this.maintenanceCubit,
+    required this.pushHelper,
+    required this.enabled,
+    required this.userId, // ✅ добавляем в конструктор
+  }) : super(ScheduleState(tasks: []));
 
   Future<void> loadTasks() async {
     final tasks = await repository.loadTasks();
@@ -32,7 +37,8 @@ class ScheduleCubit extends Cubit<ScheduleState> {
     await repository.saveTasks(updatedTasks);
 
     if (reminderCubit != null && task.intervalTime != null) {
-      reminderCubit.addReminderFromTask(task);
+      // ✅ передаем userId
+      await reminderCubit.addReminderFromTask(task);
     }
   }
 
@@ -58,8 +64,9 @@ class ScheduleCubit extends Cubit<ScheduleState> {
         description: _generateDescription(task.title),
         dateTime: DateTime.now().add(const Duration(seconds: 5)),
         isCompleted: false,
+        userId: userId, // ✅ передаем userId
       );
-      reminderCubit.addReminder(reminder);
+      await reminderCubit.addReminder(reminder);
       debugPrint("Reminder created for ${task.title}");
     }
 

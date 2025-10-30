@@ -4,7 +4,6 @@ import 'package:auto_route/auto_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:core_data/core_data.dart';
 import 'package:core_localization/generated/l10n.dart';
-import 'package:core_utils/formatters/date_formatter.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_borders.dart';
 import 'package:design_system/constants/app_spacers.dart';
@@ -65,7 +64,7 @@ class _AnalyticsScreenViewState extends State<_AnalyticsScreenView> {
 Future<void> _loadRecords() async {
     final prefs = await SharedPreferences.getInstance();
 
-   
+    // Service
     final serviceJson = prefs.getString('service_records');
     if (serviceJson != null) {
       final List<dynamic> serviceList = jsonDecode(serviceJson);
@@ -73,19 +72,19 @@ Future<void> _loadRecords() async {
         serviceList.map((e) {
           final record = ServiceRecord.fromJson(e);
           return EventModel(
-            date: record.date,
+            date: DateFormat('dd.MM.yyyy').parse(record.date),
             title: record.serviceName,
             amount: record.cost.toDouble(),
             mileage: "${record.mileage} ${S.of(context).km}",
-            icon: Icons.build,
-            iconColor: AppColors.red,
+            iconCodePoint: Icons.build.codePoint,
+            iconColorValue: AppColors.red.value,
             category: ExpenseCategory.service,
           );
         }),
       );
     }
 
-  
+    // Fuel
     final fuelJson = prefs.getString('fuel_records');
     if (fuelJson != null) {
       final List<dynamic> fuelList = jsonDecode(fuelJson);
@@ -93,19 +92,19 @@ Future<void> _loadRecords() async {
         fuelList.map((e) {
           final record = FuelRecord.fromJson(e);
           return EventModel(
-            date: DateFormat('dd.MM.yyyy').format(record.date),
+            date: record.date,
             title: "${record.fuelType} / ${record.volume} л.",
             amount: record.cost.toDouble(),
             mileage: "${record.mileage} ${S.of(context).km}",
-            icon: Icons.local_gas_station,
-            iconColor: AppColors.green,
+            iconCodePoint: Icons.local_gas_station.codePoint,
+            iconColorValue: AppColors.green.value,
             category: ExpenseCategory.fuel,
           );
         }),
       );
     }
 
- 
+    // Tuning
     final tuningJson = prefs.getString('tuning_records');
     if (tuningJson != null) {
       final List<dynamic> tuningList = jsonDecode(tuningJson);
@@ -113,19 +112,20 @@ Future<void> _loadRecords() async {
         tuningList.map((e) {
           final record = TuningRecord.fromJson(e);
           return EventModel(
-            date: record.date.toString(),
+            date: record.date,
             title: record.tuningName,
             amount: record.cost.toDouble(),
             mileage: "${record.mileage} ${S.of(context).km}",
-            icon: Icons.build_circle, 
-            iconColor: AppColors.blue700,
+            iconCodePoint: Icons.build_circle.codePoint,
+            iconColorValue: AppColors.blue700.value,
             category: ExpenseCategory.tuning,
             customIcon: Image.asset('assets/icons/tuning.jpg', height: 24, width: 24),
           );
         }),
       );
     }
-    // Car Wash Records
+
+    // Car Wash
     final carWashJson = prefs.getString('car_wash_records');
     if (carWashJson != null) {
       final List<dynamic> carWashList = jsonDecode(carWashJson);
@@ -133,28 +133,25 @@ Future<void> _loadRecords() async {
         carWashList.map((e) {
           final record = CarWashRecord.fromJson(e);
           return EventModel(
-            date: DateFormatter.formatDate(record.date), 
+            date: record.date,
             title: S.of(context).car_wash,
-            amount: record.amount.toDouble(), 
+            amount: record.amount.toDouble(),
             mileage: "${record.mileage} ${S.of(context).km}",
-            icon: Icons.local_car_wash,
-            iconColor: AppColors.energyBlue,
+            iconCodePoint: Icons.local_car_wash.codePoint,
+            iconColorValue: AppColors.energyBlue.value,
             category: ExpenseCategory.other,
           );
         }),
       );
     }
 
-
-    
-    events.sort((a, b) => DateFormat('dd.MM.yyyy').parse(b.date).compareTo(DateFormat('dd.MM.yyyy').parse(a.date)));
-
+    events.sort((a, b) => b.date.compareTo(a.date));
     setState(() {});
 
-   
     final homeState = context.findAncestorStateOfType<HomeScreenWrapperState>();
     homeState?.exportHistory = events;
   }
+
 
 
   @override
@@ -218,7 +215,7 @@ Future<void> _loadRecords() async {
                       repository: context.read<ScheduleRepository>(),
                       reminderRepository: context.read<ReminderRepository>(),
                       pushHelper: context.read<PushHelper>(),
-                      carNumber: S.of(context).car_number,
+                      carNumber: S.of(context).car_number, userId: '',
                     ),
                   ],
                 ),
@@ -230,13 +227,13 @@ Future<void> _loadRecords() async {
     );
   }
 
-  Map<String, List<EventModel>> groupEventsByMonth(List<EventModel> events) {
+Map<String, List<EventModel>> groupEventsByMonth(List<EventModel> events) {
     events.sort((a, b) => b.date.compareTo(a.date));
 
     Map<String, List<EventModel>> grouped = {};
 
     for (var event in events) {
-      final key = event.date;
+      final key = "${event.date.year}-${event.date.month.toString().padLeft(2, '0')}";
 
       if (!grouped.containsKey(key)) {
         grouped[key] = [];
@@ -246,4 +243,5 @@ Future<void> _loadRecords() async {
 
     return grouped;
   }
+
 }

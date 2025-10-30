@@ -14,8 +14,15 @@ import 'package:intl/intl.dart';
 @RoutePage()
 class RemindersScreen extends StatelessWidget {
   final String carNumber;
+  final String userId; // ✅ добавили
   final VoidCallback? onBack;
-  const RemindersScreen({super.key, required this.carNumber, this.onBack});
+
+  const RemindersScreen({
+    super.key,
+    required this.carNumber,
+    required this.userId, // ✅ добавили
+    this.onBack,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -23,6 +30,7 @@ class RemindersScreen extends StatelessWidget {
       create: (_) => ReminderCubit(
         repository: context.read<ReminderRepository>(),
         carNumber: carNumber,
+        userId: userId, // ✅ передаем userId в кубит
         pushHelper: context.read<PushHelper>(),
       )..load(),
       child: _RemindersView(onBack),
@@ -43,14 +51,7 @@ class _RemindersView extends StatelessWidget {
       backgroundColor: AppColors.grey50,
       appBar: AppBar(
         backgroundColor: AppColors.grey50,
-        leading: BackButton(
-          color: AppColors.blue700,
-          onPressed:
-              onBack ??
-              () {
-                Navigator.pop(context);
-              },
-        ),
+        leading: BackButton(color: AppColors.blue700, onPressed: onBack ?? () => Navigator.pop(context)),
       ),
       body: SafeArea(
         child: BlocBuilder<ReminderCubit, ReminderState>(

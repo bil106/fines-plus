@@ -32,7 +32,7 @@ class _ReminderDialogState extends State<ReminderDialog> {
     super.initState();
     titleController = TextEditingController(text: widget.reminder?.title ?? '');
     descriptionController = TextEditingController(text: widget.reminder?.description ?? '');
-    selectedDateTime = DateTime.now();
+    selectedDateTime = widget.reminder?.dateTime ?? DateTime.now();
   }
 
   @override
@@ -45,7 +45,8 @@ class _ReminderDialogState extends State<ReminderDialog> {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-final textTheme = Theme.of(context).textTheme;
+    final textTheme = Theme.of(context).textTheme;
+
     return AlertDialog(
       backgroundColor: AppColors.energyBlue50,
       insetPadding: EdgeInsets.symmetric(horizontal: screenWidth * 0.06, vertical: 24),
@@ -63,27 +64,18 @@ final textTheme = Theme.of(context).textTheme;
               AppSpacers.verticalMedium,
               TextField(
                 controller: titleController,
-                decoration: InputDecoration(
-                  labelText: S.of(context).title,
-                  labelStyle: textTheme.black18W400,
-                ),
+                decoration: InputDecoration(labelText: S.of(context).title, labelStyle: textTheme.black18W400),
               ),
               AppSpacers.verticalLarge,
               TextField(
                 controller: descriptionController,
-                decoration: InputDecoration(
-                  labelText: S.of(context).description,
-                  labelStyle: textTheme.black18W400,
-                ),
+                decoration: InputDecoration(labelText: S.of(context).description, labelStyle: textTheme.black18W400),
               ),
               AppSpacers.verticalLarge,
               Row(
                 children: [
                   Expanded(
-                    child: Text(
-                      DateFormat('dd.MM.yyyy HH:mm').format(selectedDateTime),
-                      style:  textTheme.black18W500,
-                    ),
+                    child: Text(DateFormat('dd.MM.yyyy HH:mm').format(selectedDateTime), style: textTheme.black18W500),
                   ),
                   TextButton(
                     onPressed: () async {
@@ -129,6 +121,7 @@ final textTheme = Theme.of(context).textTheme;
               description: descriptionController.text.trim().isEmpty ? 'Push check' : descriptionController.text.trim(),
               dateTime: selectedDateTime,
               isCompleted: widget.reminder?.isCompleted ?? false,
+              userId: cubit.userId, 
             );
 
             try {
@@ -138,10 +131,12 @@ final textTheme = Theme.of(context).textTheme;
                 await cubit.updateReminder(newReminder);
               }
 
-              // await appInitializer.scheduleReminder(newReminder);
-
               if (!mounted) return;
               Navigator.pop(context);
+
+              
+              widget.onSaved?.call();
+
               debugPrint('Reminder saved and scheduled: ${newReminder.id}');
             } catch (e, stackTrace) {
               debugPrint('Error saving reminder: $e');

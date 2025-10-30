@@ -84,7 +84,7 @@ void main() {
                   repository: context.read<ScheduleRepository>(),
                   maintenanceCubit: result.maintenanceCubit,
                   pushHelper: result.pushHelper,
-                  enabled: true,
+                  enabled: true, userId: '',
                 )..loadTasks(),
               ),
               BlocProvider(create: (_) => ExpensesCubit(repository: ExpenseRepository(firestore))),

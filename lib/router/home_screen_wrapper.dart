@@ -215,7 +215,7 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
               RemindersScreen(
                 key: const ValueKey('reminders'),
                 carNumber: _carNumber!,
-                onBack: () => openPage(HomePage.addCar),
+                onBack: () => openPage(HomePage.addCar), userId: '',
               ),
               AnalyticsScreen(
                 key: const ValueKey('analytics'),
@@ -304,7 +304,7 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
                         repository: scheduleRepository,
                         reminderRepository: reminderRepository,
                         pushHelper: PushHelper(FlutterLocalNotificationsPlugin()),
-                        carNumber: _carNumber ?? '',
+                        carNumber: _carNumber ?? '', userId: '',
                       );
                     },
                   );

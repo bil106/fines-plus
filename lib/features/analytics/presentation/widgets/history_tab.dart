@@ -12,10 +12,12 @@ class HistoryTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final grouped = groupEventsByMonth(events);
+
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: groupEventsByMonth(events).entries.map((entry) {
+        children: grouped.entries.map((entry) {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -40,7 +42,7 @@ class HistoryTab extends StatelessWidget {
                   icon: event.icon,
                   iconColor: event.iconColor,
                   customIcon: event.customIcon,
-                  date: event.date,
+                  date: DateFormat('dd.MM.yyyy').format(event.date),
                   title: event.title,
                   subtitle: '',
                   amount: event.amount,
@@ -55,33 +57,23 @@ class HistoryTab extends StatelessWidget {
   }
 
   Map<String, List<EventModel>> groupEventsByMonth(List<EventModel> events) {
-    final inputFormat = DateFormat('dd.MM.yyyy');
     final outputFormat = DateFormat('MMMM yyyy', 'uk');
-    final groupedEvents = <String, List<EventModel>>{};
+
+    final grouped = <String, List<EventModel>>{};
 
     for (final event in events) {
-      DateTime? parsedDate;
+      final key = outputFormat.format(event.date);
 
-      try {
-        parsedDate = inputFormat.parse(event.date);
-      } catch (_) {
-        continue;
-      }
-
-      final key = outputFormat.format(parsedDate);
-
-      groupedEvents.putIfAbsent(key, () => []);
-      groupedEvents[key]!.add(event);
+      grouped.putIfAbsent(key, () => []);
+      grouped[key]!.add(event);
     }
 
-    for (final group in groupedEvents.values) {
-      group.sort((a, b) {
-        final dateA = inputFormat.parse(a.date);
-        final dateB = inputFormat.parse(b.date);
-        return dateB.compareTo(dateA);
-      });
+    
+    for (final group in grouped.values) {
+      group.sort((a, b) => b.date.compareTo(a.date));
     }
 
-    return groupedEvents;
+    return grouped;
   }
 }
+
