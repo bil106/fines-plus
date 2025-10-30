@@ -1,4 +1,5 @@
 import 'package:core_localization/generated/l10n.dart';
+import 'package:core_utils/formatters/date_formatter.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_borders.dart';
 import 'package:design_system/theme/app_theme.dart';
@@ -69,7 +70,7 @@ class TuningRecordCard extends StatelessWidget {
                       const SizedBox(width: 4),
                       Expanded(
                         child: Text(
-                          record.date,
+                          DateFormatter.formatDate(record.date),
                           style: textTheme.subtitleText,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,

@@ -1,15 +1,15 @@
 // ignore_for_file: unnecessary_type_check
+
 import 'package:fines_plus/features/expenses/data/models/expense.dart';
 import 'package:fines_plus/features/expenses/data/models/expense_category.dart';
+import 'package:json_annotation/json_annotation.dart';
 import 'package:intl/intl.dart';
 
-enum ServiceType {
-  plannedService,
-  brakeChange,
-  oilChange,
-  other,
-}
+part 'service_record.g.dart';
 
+enum ServiceType { plannedService, brakeChange, oilChange, other }
+
+@JsonSerializable()
 class ServiceRecord {
   final String? id;
   final String serviceName;
@@ -17,35 +17,17 @@ class ServiceRecord {
   final String date; 
   final int mileage;
 
-  ServiceRecord({
-    this.id,
-    required this.serviceName,
-    required this.cost,
-    required this.date,
-    required this.mileage,
-  });
+  ServiceRecord({this.id, required this.serviceName, required this.cost, required this.date, required this.mileage});
 
-  factory ServiceRecord.fromJson(Map<String, dynamic> json) => ServiceRecord(
-        id: json['id'] as String?,
-        serviceName: json['serviceName'] ?? '',
-        cost: (json['cost'] as num?)?.toDouble() ?? 0.0,
-        date: json['date'] ?? '',
-        mileage: json['mileage'] ?? 0,
-      );
+  /// JSON
+  factory ServiceRecord.fromJson(Map<String, dynamic> json) => _$ServiceRecordFromJson(json);
 
-  Map<String, dynamic> toJson() => {
-     if (id != null) 'id': id,
-        'serviceName': serviceName,
-        'cost': cost,
-        'date': date,
-        'mileage': mileage,
-      };
+  Map<String, dynamic> toJson() => _$ServiceRecordToJson(this);
 
-
+ 
   factory ServiceRecord.fromExpense(Expense expense) {
     final dateValue = expense.date;
-    final formattedDate =
-        (dateValue is DateTime) ? DateFormat('dd.MM.yyyy').format(dateValue) : (dateValue.toString());
+    final formattedDate = (dateValue is DateTime) ? DateFormat('dd.MM.yyyy').format(dateValue) : dateValue.toString();
 
     return ServiceRecord(
       id: expense.id,
@@ -56,7 +38,7 @@ class ServiceRecord {
     );
   }
 
-
+ 
   Expense toExpense(String userId) {
     DateTime parsedDate;
     try {

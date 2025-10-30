@@ -58,9 +58,17 @@ class MaintenanceCubit extends Cubit<MaintenanceState> {
     }
   }
 
-  bool _containsRecord<T>(List<T> list, T record) {
-    final recordJson = (record as dynamic).toJson();
-    return list.any((e) => mapEquals((e as dynamic).toJson(), recordJson));
+ bool _containsRecord<T>(List<T> list, T record) {
+    final r = record as dynamic;
+
+    if (r.id != null && r.id!.isNotEmpty) {
+      return list.any((e) => (e as dynamic).id == r.id);
+    }
+
+    return list.any((e) {
+      final eDyn = e as dynamic;
+      return eDyn.date == r.date && eDyn.mileage == r.mileage && eDyn.amount == r.amount && eDyn.comment == r.comment;
+    });
   }
 
   Future<void> _loadAllFromPrefs() async {
@@ -545,7 +553,7 @@ extension MileageCalculations on MaintenanceCubit {
       ...state.serviceRecords.map((r) => {'date': DateFormat('dd.MM.yyyy').parse(r.date), 'mileage': r.mileage}),
       ...state.fuelRecords.map((r) => {'date': r.date, 'mileage': r.mileage}),
       ...state.carWashRecords.map((r) => {'date': r.date, 'mileage': r.mileage}),
-      ...state.tuningRecords.map((r) => {'date': DateFormat('dd.MM.yyyy').parse(r.date), 'mileage': r.mileage}),
+      ...state.tuningRecords.map((r) => {'date': r.date, 'mileage': r.mileage}),
     ];
 
     if (allRecords.isEmpty) return {};

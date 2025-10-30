@@ -113,7 +113,7 @@ Future<void> _loadRecords() async {
         tuningList.map((e) {
           final record = TuningRecord.fromJson(e);
           return EventModel(
-            date: record.date,
+            date: record.date.toString(),
             title: record.tuningName,
             amount: record.cost.toDouble(),
             mileage: "${record.mileage} ${S.of(context).km}",

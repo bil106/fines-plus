@@ -104,7 +104,7 @@ MonthlyExpenseStats _calculateMonthlyStats({
     }
   
     for (final c in tuningRecords) {
-      final date = parseDate(c.date);
+      final date = parseDate(c.date.toString());
       if (date.year != year || date.month != month) continue;
       total += c.cost;
       categoryTotals[ExpenseCategory.tuning] = (categoryTotals[ExpenseCategory.tuning] ?? 0) + c.cost;

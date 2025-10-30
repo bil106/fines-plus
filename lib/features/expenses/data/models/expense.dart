@@ -1,6 +1,10 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fines_plus/features/expenses/data/models/expense_category.dart';
+import 'package:json_annotation/json_annotation.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
+part 'expense.g.dart';
+
+@JsonSerializable()
 class Expense {
   final String? id;
   final DateTime date;
@@ -30,6 +34,7 @@ class Expense {
     this.fuelVolume,
   });
 
+  /// Firestore-specific serialization
   Map<String, dynamic> toFirestore() {
     return {
       'date': Timestamp.fromDate(date),
@@ -46,6 +51,7 @@ class Expense {
     };
   }
 
+  /// Firestore-specific factory
   factory Expense.fromFirestore(Map<String, dynamic> json, {String? id}) {
     dynamic dateField = json['date'];
     DateTime date;
@@ -91,4 +97,7 @@ class Expense {
     );
   }
 
+  /// JSON serialization for other purposes
+  factory Expense.fromJson(Map<String, dynamic> json) => _$ExpenseFromJson(json);
+  Map<String, dynamic> toJson() => _$ExpenseToJson(this);
 }

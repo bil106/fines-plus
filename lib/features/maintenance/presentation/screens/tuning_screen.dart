@@ -141,7 +141,7 @@ class _TuningScreenState extends State<TuningScreen> {
                   return TuningRecord(
                     tuningName: selectedTuning.name,
                     cost: selectedTuning.priceUSD * usdToUahRate,
-                    date: "${selectedDate!.day}.${selectedDate!.month}.${selectedDate!.year}",
+                    date: selectedDate!,
                     mileage: mileage,
                   );
                 }).toList();
