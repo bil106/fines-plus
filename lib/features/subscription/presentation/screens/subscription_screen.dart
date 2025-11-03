@@ -38,9 +38,9 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     if (widget.debugMode) {
       await Future.delayed(const Duration(milliseconds: 500));
       final testProducts = [
-        FakeProduct('sub_3_months', S.of(context).subscription_3_month, '1.99', 3),
-        FakeProduct('sub_6_months', S.of(context).subscription_6_month, '2.99', 6),
-        FakeProduct('sub_12_months', S.of(context).subscription_12_month, '3.99', 12),
+        FakeProduct(id:'sub_3_months',title: S.of(context).subscription_3_month,price: '1.99',months: 3),
+        FakeProduct(id: 'sub_6_months', title: S.of(context).subscription_6_month, price: '2.99', months: 6),
+        FakeProduct(id: 'sub_12_months', title: S.of(context).subscription_12_month, price: '3.99', months: 12),
       ];
       if (mounted) {
         setState(() {
@@ -140,7 +140,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                   
                   final fakeProduct = product is FakeProduct
                       ? product
-                      : FakeProduct(product.id, product.title, product.price, months);
+                      : FakeProduct(id: product.id,title: product.title,price: product.price,months: months);
 
                   return SubscriptionPlanCard(
                     product: fakeProduct,

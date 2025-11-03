@@ -44,7 +44,6 @@ class _AddCarScreenState extends State<AddCarScreen> {
           child: StreamBuilder<DocumentSnapshot>(
             stream: user != null ? _firestore.collection('users').doc(user.uid).snapshots() : const Stream.empty(),
             builder: (context, snapshot) {
-            
               bool isSubscribed = false;
 
               if (snapshot.hasData && snapshot.data!.exists) {
@@ -59,7 +58,6 @@ class _AddCarScreenState extends State<AddCarScreen> {
                   children: [
                     AppSpacers.verticalXLarge,
 
-                 
                     SizedBox(
                       width: double.infinity,
                       child: Wrap(
@@ -73,14 +71,11 @@ class _AddCarScreenState extends State<AddCarScreen> {
                               if (widget.onOpenCarInfo != null) {
                                 widget.onOpenCarInfo!.call();
                               } else {
-                                context.router.push(CarInfoRoute(initialCarNumber: ''));
+                                context.router.push(CarInfoRoute());
                               }
                             },
                           ),
-                          _buildMenuSquare(
-                            iconWidget: _buildSquareIcon(Icons.warning_amber_rounded, S.of(context).fines, textTheme),
-                            onTap: widget.onFineCheck,
-                          ),
+
                           _buildMenuSquare(
                             iconWidget: _buildSquareIcon(Icons.build, S.of(context).maintenance, textTheme),
                             onTap: widget.onMaintenance,
@@ -95,12 +90,10 @@ class _AddCarScreenState extends State<AddCarScreen> {
 
                     AppSpacers.verticalMaxMassive,
 
-                
                     if (!isSubscribed) const AdBannerWidget(),
 
                     AppSpacers.verticalMaxMassive,
 
-                  
                     if (!isSubscribed)
                       Align(
                         alignment: Alignment.bottomRight,
@@ -115,7 +108,6 @@ class _AddCarScreenState extends State<AddCarScreen> {
                                 padding: const EdgeInsets.symmetric(vertical: 16),
                               ),
                               onPressed: () {
-                                
                                 final wrapperState = context.findAncestorStateOfType<HomeScreenWrapperState>();
                                 wrapperState?.openPage(HomePage.subscription);
                               },
@@ -141,7 +133,6 @@ class _AddCarScreenState extends State<AddCarScreen> {
   }
 }
 
-
 Widget _buildSquareIcon(IconData icon, String text, TextTheme textTheme) {
   return Container(
     width: 165,
@@ -158,7 +149,6 @@ Widget _buildSquareIcon(IconData icon, String text, TextTheme textTheme) {
     ),
   );
 }
-
 
 Widget _buildMenuSquare({Widget? iconWidget, required VoidCallback? onTap}) {
   return GestureDetector(

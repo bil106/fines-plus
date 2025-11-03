@@ -6,10 +6,8 @@ import 'package:fines_plus/features/expenses/data/models/expense_category.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:core_utils/formatters/date_formatter.dart';
 
-
 part 'car_wash_record.g.dart';
 
-/// JsonConverter для работы с DateTime через DateFormatter
 class DateFormatterConverter implements JsonConverter<DateTime, String> {
   const DateFormatterConverter();
 
@@ -38,7 +36,7 @@ class CarWashRecord extends BaseRecord {
 
   @override
   @JsonKey(name: 'cost')
-  final double amount; 
+  final double amount;
 
   @override
   @DateFormatterConverter()
@@ -57,20 +55,12 @@ class CarWashRecord extends BaseRecord {
     super.currency,
     super.carNumber,
     super.isSynced,
-  }) : super(
-         date: date,
-         amount: amount,
-         category: ExpenseCategory.carWash,
-         mileage: mileage,
-       );
+  }) : super(date: date, amount: amount, category: ExpenseCategory.carWash, mileage: mileage);
 
-  
   factory CarWashRecord.fromJson(Map<String, dynamic> json) => _$CarWashRecordFromJson(json);
 
- 
   @override
   Map<String, dynamic> toJson() => _$CarWashRecordToJson(this);
-
 
   factory CarWashRecord.fromExpense(Expense expense) {
     return CarWashRecord(
@@ -86,20 +76,18 @@ class CarWashRecord extends BaseRecord {
     );
   }
 
-
- @override
+  @override
   Expense toExpense(String userId) {
     return Expense(
       id: id,
       date: date,
-      amount: amount.round(), 
+      amount: amount.round(),
       category: ExpenseCategory.carWash,
       mileage: mileage,
       comment: comment ?? "Car Wash",
       userId: userId,
-      currency: currency ?? "", 
+      currency: currency ?? "",
       carNumber: carNumber,
     );
   }
-
 }

@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:bloc/bloc.dart';
 import 'package:fines_plus/features/maintenance/data/models/maintenance_task.dart';
+import 'package:fines_plus/features/maintenance/data/repository/schedule_firebase_repository.dart';
 import 'package:fines_plus/features/maintenance/presentation/cubit/maintenance_cubit.dart';
 import 'package:fines_plus/features/schedule/data/repository/schedule_repository.dart';
 import 'package:fines_plus/features/schedule/presentation/cubit/schedule_state.dart';
@@ -7,37 +10,56 @@ import 'package:core_data/core_data.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:fines_plus/features/reminders/data/models/reminder_model.dart';
 import 'package:fines_plus/features/reminders/presentation/cubit/reminder_cubit.dart';
+import 'package:fines_plus/features/vehicle/presentation/cubit/car_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
 class ScheduleCubit extends Cubit<ScheduleState> {
   final ScheduleRepository repository;
+  final ScheduleFirebaseRepository firebaseRepo;
   final MaintenanceCubit maintenanceCubit;
   final PushHelper pushHelper;
-  final String userId; // ✅ добавляем userId
+  final String userId; 
+ String carNumber;
+  final CarCubit carCubit; 
+  late final StreamSubscription _carSub;
   bool enabled;
 
   ScheduleCubit({
     required this.repository,
+    required this.firebaseRepo,
     required this.maintenanceCubit,
     required this.pushHelper,
     required this.enabled,
-    required this.userId, // ✅ добавляем в конструктор
-  }) : super(ScheduleState(tasks: []));
+    required this.userId,
+    required this.carNumber,
+    required this.carCubit, 
+  }) : super(ScheduleState(tasks: [], loading: true)) {
+    _carSub = carCubit.stream.listen((state) {
+      final newCar = state.carNumber;
+      if (newCar != carNumber) {
+        onCarChanged(newCar);
+      }
+    });
 
-  Future<void> loadTasks() async {
-    final tasks = await repository.loadTasks();
-    emit(state.copyWith(tasks: tasks));
+    loadTasks();
   }
+
+Future<void> loadTasks() async {
+    emit(state.copyWith(loading: true));
+    final tasks = await repository.loadTasks(carNumber);
+    emit(state.copyWith(tasks: tasks, loading: false));
+  }
+
 
   void addTask(MaintenanceTask task, {ReminderCubit? reminderCubit}) async {
     final updatedTasks = List<MaintenanceTask>.from(state.tasks)..add(task);
     emit(state.copyWith(tasks: updatedTasks));
 
-    await repository.saveTasks(updatedTasks);
+    await repository.saveTasks(carNumber,updatedTasks);
 
     if (reminderCubit != null && task.intervalTime != null) {
-      // ✅ передаем userId
+    
       await reminderCubit.addReminderFromTask(task);
     }
   }
@@ -47,7 +69,7 @@ class ScheduleCubit extends Cubit<ScheduleState> {
     if (index >= 0 && index < updatedTasks.length) {
       updatedTasks[index] = task;
       emit(state.copyWith(tasks: updatedTasks));
-      await repository.saveTasks(updatedTasks);
+      await repository.saveTasks(carNumber,updatedTasks);
 
       await _checkTask(task, reminderCubit);
     }
@@ -64,7 +86,7 @@ class ScheduleCubit extends Cubit<ScheduleState> {
         description: _generateDescription(task.title),
         dateTime: DateTime.now().add(const Duration(seconds: 5)),
         isCompleted: false,
-        userId: userId, // ✅ передаем userId
+        userId: userId,
       );
       await reminderCubit.addReminder(reminder);
       debugPrint("Reminder created for ${task.title}");
@@ -84,7 +106,7 @@ class ScheduleCubit extends Cubit<ScheduleState> {
   Future<void> removeTask(int index, {ReminderCubit? reminderCubit}) async {
     final updatedTasks = List<MaintenanceTask>.from(state.tasks)..removeAt(index);
     emit(state.copyWith(tasks: updatedTasks));
-    await repository.saveTasks(updatedTasks);
+    await repository.saveTasks(carNumber,updatedTasks);
   }
 
   String _generateDescription(String title) {
@@ -93,5 +115,17 @@ class ScheduleCubit extends Cubit<ScheduleState> {
     if (lower.contains(S.current.tires)) return S.current.check_tires;
     if (lower.contains(S.current.filter)) return S.current.check_filter;
     return "${S.current.not_forget_task}: $title";
+  }
+
+  Future<void> onCarChanged(String newCar) async {
+    carNumber = newCar;
+    emit(state.copyWith(tasks: [], loading: true));
+    await loadTasks();
+  }
+
+    @override
+  Future<void> close() {
+    _carSub.cancel();
+    return super.close();
   }
 }

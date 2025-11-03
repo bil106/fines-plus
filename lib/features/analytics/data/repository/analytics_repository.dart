@@ -69,9 +69,13 @@ class AnalyticsRepository implements IAnalyticsRepository {
     ];
   }
 
-  Future<AnalyticsData> getAnalytics(DateTime date) async {
-    final doc =
-        await firestore.collection('analytics').doc("${date.year}-${date.month.toString().padLeft(2, '0')}").get();
+ Future<AnalyticsData> getAnalytics(DateTime date, String carNumber) async {
+    final doc = await firestore
+        .collection('analytics')
+        .doc(carNumber) 
+        .collection('months')
+        .doc("${date.year}-${date.month}")
+        .get();
 
     if (!doc.exists) {
       return AnalyticsData(fuelLiters: 0, fuelCost: 0, mileage: 0);
@@ -79,9 +83,10 @@ class AnalyticsRepository implements IAnalyticsRepository {
 
     final data = doc.data()!;
     return AnalyticsData(
-      fuelLiters: (data['fuelLiters'] ?? 0).toDouble(),
-      fuelCost: (data['fuelCost'] ?? 0).toDouble(),
-      mileage: (data['mileage'] ?? 0) as int,
+      fuelLiters: data['fuelLiters'] ?? 0,
+      fuelCost: data['fuelCost'] ?? 0,
+      mileage: data['mileage'] ?? 0,
     );
   }
+
 }

@@ -9,6 +9,7 @@ import 'package:design_system/theme/app_theme.dart';
 import 'package:fines_plus/features/history/domain/history_repository.dart';
 import 'package:fines_plus/features/history/presentation/cubit/history_cubit.dart';
 import 'package:fines_plus/features/history/presentation/cubit/history_state.dart';
+import 'package:fines_plus/features/vehicle/presentation/cubit/car_cubit.dart';
 import 'package:fines_plus/router/home_screen_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -24,7 +25,7 @@ class HistoryScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => HistoryCubit(repository: HistoryRepository(FirebaseFirestore.instance))..loadHistory(carNumber),
+      create: (_) => HistoryCubit(repository: HistoryRepository(FirebaseFirestore.instance), carCubit: context.read<CarCubit>())..loadHistory(carNumber),
       child: _HistoryView(carNumber: carNumber),
     );
   }

@@ -21,6 +21,7 @@ import 'package:fines_plus/features/reminders/data/repository/reminder_repositor
 import 'package:fines_plus/features/schedule/data/repository/schedule_repository.dart';
 import 'package:fines_plus/features/schedule/presentation/screens/schedule_screen.dart';
 import 'package:fines_plus/features/statistics/presentation/screens/statistics_screen.dart';
+import 'package:fines_plus/features/vehicle/presentation/cubit/car_cubit.dart';
 import 'package:fines_plus/router/home_screen_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -34,19 +35,24 @@ class AnalyticsScreen extends StatelessWidget {
 
   const AnalyticsScreen({super.key, this.onBack, required this.carNumber});
 
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => AnalyticsCubit(repository: AnalyticsRepository(firestore: FirebaseFirestore.instance)),
-      child: _AnalyticsScreenView(onBack: onBack),
+      create: (_) => AnalyticsCubit(
+        repository: AnalyticsRepository(firestore: FirebaseFirestore.instance),
+        carCubit: context.read<CarCubit>(),
+      ),
+      child: _AnalyticsScreenView(onBack: onBack, carNumber: carNumber),
     );
   }
 }
 
 class _AnalyticsScreenView extends StatefulWidget {
   final VoidCallback? onBack;
+  final String carNumber;
 
-  const _AnalyticsScreenView({this.onBack});
+  const _AnalyticsScreenView({this.onBack, required this.carNumber});
 
   @override
   State<_AnalyticsScreenView> createState() => _AnalyticsScreenViewState();
@@ -58,11 +64,14 @@ class _AnalyticsScreenViewState extends State<_AnalyticsScreenView> {
   @override
   void initState() {
     super.initState();
+   
+    context.read<AnalyticsCubit>().updateDate(DateTime.now());
     _loadRecords();
   }
 
-Future<void> _loadRecords() async {
+  Future<void> _loadRecords() async {
     final prefs = await SharedPreferences.getInstance();
+    events.clear();
 
     // Service
     final serviceJson = prefs.getString('service_records');
@@ -80,7 +89,7 @@ Future<void> _loadRecords() async {
             iconColorValue: AppColors.red.value,
             category: ExpenseCategory.service,
           );
-        }),
+        }).toList(),
       );
     }
 
@@ -100,7 +109,7 @@ Future<void> _loadRecords() async {
             iconColorValue: AppColors.green.value,
             category: ExpenseCategory.fuel,
           );
-        }),
+        }).toList(),
       );
     }
 
@@ -121,7 +130,7 @@ Future<void> _loadRecords() async {
             category: ExpenseCategory.tuning,
             customIcon: Image.asset('assets/icons/tuning.jpg', height: 24, width: 24),
           );
-        }),
+        }).toList(),
       );
     }
 
@@ -141,18 +150,16 @@ Future<void> _loadRecords() async {
             iconColorValue: AppColors.energyBlue.value,
             category: ExpenseCategory.other,
           );
-        }),
+        }).toList(),
       );
     }
 
     events.sort((a, b) => b.date.compareTo(a.date));
-    setState(() {});
+    if (mounted) setState(() {});
 
     final homeState = context.findAncestorStateOfType<HomeScreenWrapperState>();
     homeState?.exportHistory = events;
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -166,68 +173,71 @@ Future<void> _loadRecords() async {
           backgroundColor: AppColors.grey50,
           leading: BackButton(color: AppColors.blue700, onPressed: widget.onBack ?? () {}),
         ),
-        body: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
+        body: BlocBuilder<AnalyticsCubit, AnalyticsState>(
+          builder: (context, state) {
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(S.of(context).analitics, style: textTheme.title),
-                  AppSpacers.horizontalXXMassive,
-                  ElevatedButton.icon(
-                    onPressed: () {
-                      final homeState = context.findAncestorStateOfType<HomeScreenWrapperState>();
-                      if (homeState != null) {
-                        homeState.openPage(HomePage.export);
-                      }
-                    },
-                    label: Text(S.of(context).export, style: textTheme.white18W400),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.blue700,
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                      shape: RoundedRectangleBorder(borderRadius: AppBorders.radiusLarge),
-                      textStyle: textTheme.black16bold,
+                  Row(
+                    children: [
+                      Text(S.of(context).analitics, style: textTheme.title),
+                      AppSpacers.horizontalXXMassive,
+                      ElevatedButton.icon(
+                        onPressed: () {
+                          final homeState = context.findAncestorStateOfType<HomeScreenWrapperState>();
+                          if (homeState != null) {
+                            homeState.openPage(HomePage.export);
+                          }
+                        },
+                        label: Text(S.of(context).export, style: textTheme.white18W400),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.blue700,
+                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                          shape: RoundedRectangleBorder(borderRadius: AppBorders.radiusLarge),
+                        ),
+                      ),
+                    ],
+                  ),
+                  TabBar(
+                    indicatorColor: AppColors.blue700,
+                    labelColor: AppColors.blue700,
+                    unselectedLabelColor: AppColors.neutreGrey,
+                    tabs: [
+                      Tab(text: S.of(context).statistics),
+                      Tab(text: S.of(context).history),
+                      Tab(text: S.of(context).schedule),
+                    ],
+                  ),
+                  Expanded(
+                    child: TabBarView(
+                      children: [
+                        const StatisticsScreen(),
+                        HistoryTab(events: events), 
+                        ScheduleScreen(
+                          repository: context.read<ScheduleRepository>(),
+                          reminderRepository: context.read<ReminderRepository>(),
+                          pushHelper: context.read<PushHelper>(),
+                          carNumber: widget.carNumber,
+                          userId: context.read<CarCubit>().state.carNumber,
+                        ),
+                      ],
                     ),
                   ),
                 ],
               ),
-
-            
-
-              TabBar(
-                indicatorColor: AppColors.blue700,
-                labelColor: AppColors.blue700,
-                unselectedLabelColor: AppColors.neutreGrey,
-                tabs: [
-                  Tab(text: S.of(context).statistics),
-                  Tab(text: S.of(context).history),
-                  Tab(text: S.of(context).schedule),
-                ],
-              ),
-
-              Expanded(
-                child: TabBarView(
-                  children: [
-                    const StatisticsScreen(),
-                    HistoryTab(events: events),
-                    ScheduleScreen(
-                      repository: context.read<ScheduleRepository>(),
-                      reminderRepository: context.read<ReminderRepository>(),
-                      pushHelper: context.read<PushHelper>(),
-                      carNumber: S.of(context).car_number, userId: '',
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
+            );
+          },
         ),
       ),
     );
   }
+}
 
-Map<String, List<EventModel>> groupEventsByMonth(List<EventModel> events) {
+
+
+  Map<String, List<EventModel>> groupEventsByMonth(List<EventModel> events) {
     events.sort((a, b) => b.date.compareTo(a.date));
 
     Map<String, List<EventModel>> grouped = {};
@@ -244,4 +254,3 @@ Map<String, List<EventModel>> groupEventsByMonth(List<EventModel> events) {
     return grouped;
   }
 
-}

@@ -22,7 +22,7 @@ class MaintenanceTask {
     this.comment,
   });
 
-  // Генерация JSON
+
   factory MaintenanceTask.fromJson(Map<String, dynamic> json) => _$MaintenanceTaskFromJson(json);
 
   Map<String, dynamic> toJson() => _$MaintenanceTaskToJson(this);

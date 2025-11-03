@@ -8,6 +8,7 @@ import 'package:fines_plus/features/expenses/data/models/service_record.dart';
 import 'package:fines_plus/features/expenses/data/models/tuning_record.dart';
 import 'package:fines_plus/features/expenses/data/repository/expense_repository.dart';
 import 'package:fines_plus/features/vehicle/data/datasources/car_info_local_data_source.dart';
+import 'package:fines_plus/features/vehicle/presentation/cubit/car_cubit.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -15,18 +16,55 @@ import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'maintenance_state.dart';
+import 'dart:async';
+import 'package:bloc/bloc.dart';
+
+
+
 
 class MaintenanceCubit extends Cubit<MaintenanceState> {
   final ExpenseRepository expenseRepository;
   final CarInfoLocalDataSource localDataSource;
-  MaintenanceCubit({required this.expenseRepository, required this.localDataSource}) : super(const MaintenanceState()) {
+  final CarCubit carCubit; 
+  late final StreamSubscription _carSub; 
+
+  MaintenanceCubit({required this.expenseRepository, required this.localDataSource, required this.carCubit})
+    : super(const MaintenanceState()) {
+    // subscribe before initial load so we don't miss initial car emit
+    _carSub = carCubit.stream.listen((carState) {
+      final newCarNumber = carState.carNumber; 
+      _onCarChanged(newCarNumber);
+    });
+
+    // initial load
     init();
   }
+
   Future<void> init() async {
     emit(state.copyWith(isLoading: true));
     await _loadAllFromPrefs();
     await syncExpensesFromFirestore();
     emit(state.copyWith(isLoading: false));
+  }
+
+  // Called when car changes; clears UI and loads data for new car
+  Future<void> _onCarChanged(String newCarNumber) async {
+    try {
+      // If same as current local stored car, avoid double reload
+      final local = await localDataSource.getCarInfo();
+      if (local.carNumber == newCarNumber && state.serviceRecords.isNotEmpty) {
+        // nothing to do — already loaded for this car
+        return;
+      }
+
+      emit(state.copyWith(isLoading: true));
+      clearAllRecords(); // clear UI lists
+      await syncExpensesFromFirestore(); // will use localDataSource.getCarInfo() internally
+    } catch (e, st) {
+      debugPrint('MaintenanceCubit _onCarChanged error: $e\n$st');
+    } finally {
+      emit(state.copyWith(isLoading: false));
+    }
   }
 
   Future<void> addRecord<T>({
@@ -58,7 +96,7 @@ class MaintenanceCubit extends Cubit<MaintenanceState> {
     }
   }
 
- bool _containsRecord<T>(List<T> list, T record) {
+  bool _containsRecord<T>(List<T> list, T record) {
     final r = record as dynamic;
 
     if (r.id != null && r.id!.isNotEmpty) {
@@ -545,7 +583,16 @@ class MaintenanceCubit extends Cubit<MaintenanceState> {
   void clearAllRecords() {
     emit(const MaintenanceState(serviceRecords: [], tuningRecords: [], fuelRecords: [], carWashRecords: []));
   }
+
+  @override
+  Future<void> close() {
+    try {
+      _carSub.cancel();
+    } catch (_) {}
+    return super.close();
+  }
 }
+
 
 extension MileageCalculations on MaintenanceCubit {
   Map<String, int> getMonthlyMileage() {

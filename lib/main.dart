@@ -8,6 +8,7 @@ import 'package:fines_plus/features/expenses/data/repository/expense_repository.
 import 'package:fines_plus/features/expenses/presentation/cubit/expenses_cubit.dart';
 import 'package:fines_plus/features/export/data/repository/injector.dart';
 import 'package:fines_plus/features/maintenance/data/repository/maintenance_repository.dart';
+import 'package:fines_plus/features/maintenance/data/repository/schedule_firebase_repository.dart';
 import 'package:fines_plus/features/maintenance/presentation/cubit/additional_options_cubit.dart';
 import 'package:fines_plus/features/maintenance/presentation/cubit/fuel_station_cubit.dart';
 import 'package:fines_plus/features/maintenance/presentation/cubit/maintenance_cubit.dart';
@@ -16,6 +17,7 @@ import 'package:fines_plus/features/schedule/data/repository/schedule_repository
 import 'package:fines_plus/features/schedule/presentation/cubit/schedule_cubit.dart';
 import 'package:fines_plus/features/subscription/data/repository/subscription_repository.dart';
 import 'package:fines_plus/features/subscription/presentation/cubit/subscription_cubit.dart';
+import 'package:fines_plus/features/vehicle/presentation/cubit/car_cubit.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -54,6 +56,7 @@ void main() {
       final result = await appInitializer.init();
       final firestore = FirebaseFirestore.instance;
       final repository = SharedPrefsMaintenanceRepository(await SharedPreferences.getInstance());
+      final firebaseRepository = ScheduleFirebaseRepository(firestore);
       setupLocator();
 
       runApp(
@@ -63,6 +66,7 @@ void main() {
             RepositoryProvider.value(value: result.reminderRepository),
             RepositoryProvider.value(value: result.pushHelper),
             RepositoryProvider.value(value: result.historyRepository),
+            RepositoryProvider.value(value: result.firebaseRepository),
             RepositoryProvider<IMaintenanceRepository>.value(value: repository),
             RepositoryProvider<ScheduleRepository>(create: (_) => ScheduleRepository()),
             RepositoryProvider.value(value: result.remoteConfigService),
@@ -79,12 +83,13 @@ void main() {
               BlocProvider<MaintenanceCubit>.value(value: result.maintenanceCubit),
               BlocProvider<SubscriptionCubit>.value(value: result.subscriptionCubit),
               BlocProvider<AdditionalOptionsCubit>.value(value: result.additionalOptionsCubit),
+              BlocProvider<CarCubit>.value(value: result.carCubit),
               BlocProvider<ScheduleCubit>(
                 create: (context) => ScheduleCubit(
                   repository: context.read<ScheduleRepository>(),
                   maintenanceCubit: result.maintenanceCubit,
                   pushHelper: result.pushHelper,
-                  enabled: true, userId: '',
+                  enabled: true, userId: '', firebaseRepo: firebaseRepository, carNumber: '', carCubit: context.read<CarCubit>(),
                 )..loadTasks(),
               ),
               BlocProvider(create: (_) => ExpensesCubit(repository: ExpenseRepository(firestore))),

@@ -8,9 +8,6 @@ class ScheduleState {
   ScheduleState({required this.tasks, this.loading = false});
 
   ScheduleState copyWith({List<MaintenanceTask>? tasks, bool? loading}) {
-    return ScheduleState(
-      tasks: tasks ?? this.tasks,
-      loading: loading ?? this.loading,
-    );
+    return ScheduleState(tasks: tasks ?? this.tasks, loading: loading ?? this.loading);
   }
 }

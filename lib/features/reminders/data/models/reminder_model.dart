@@ -1,13 +1,18 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
+import 'package:json_annotation/json_annotation.dart';
 
+part 'reminder_model.g.dart';
+
+@JsonSerializable(explicitToJson: true)
 class ReminderModel extends Equatable {
   final String id;
   final String title;
   final String description;
+  @JsonKey(fromJson: _fromTimestamp, toJson: _toTimestamp)
   final DateTime dateTime;
   final bool isCompleted;
-  final String userId; // ✅ добавили
+  final String userId;
 
   const ReminderModel({
     required this.id,
@@ -36,39 +41,23 @@ class ReminderModel extends Equatable {
     );
   }
 
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'title': title,
-      'description': description,
-      'dateTime': Timestamp.fromDate(dateTime.toUtc()),
-      'isCompleted': isCompleted,
-      'userId': userId,
-    };
-  }
+  factory ReminderModel.fromJson(Map<String, dynamic> json) => _$ReminderModelFromJson(json);
 
-  factory ReminderModel.fromJson(Map<String, dynamic> json) {
-    final dateTimeValue = json['dateTime'];
-    DateTime dateTime;
-
-    if (dateTimeValue is Timestamp) {
-      dateTime = dateTimeValue.toDate().toLocal();
-    } else if (dateTimeValue is String) {
-      dateTime = DateTime.parse(dateTimeValue).toLocal();
-    } else {
-      dateTime = DateTime.now();
-    }
-
-    return ReminderModel(
-      id: json['id'] ?? '',
-      title: json['title'] ?? '',
-      description: json['description'] ?? '',
-      dateTime: dateTime,
-      isCompleted: json['isCompleted'] ?? false,
-      userId: json['userId'] ?? '',
-    );
-  }
+  Map<String, dynamic> toJson() => _$ReminderModelToJson(this);
 
   @override
   List<Object?> get props => [id, title, description, dateTime, isCompleted, userId];
+
+
+  static DateTime _fromTimestamp(dynamic timestamp) {
+    if (timestamp is Timestamp) {
+      return timestamp.toDate().toLocal();
+    } else if (timestamp is String) {
+      return DateTime.parse(timestamp).toLocal();
+    } else {
+      return DateTime.now();
+    }
+  }
+
+  static Timestamp _toTimestamp(DateTime date) => Timestamp.fromDate(date.toUtc());
 }

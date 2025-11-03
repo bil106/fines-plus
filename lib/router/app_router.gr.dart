@@ -162,7 +162,6 @@ class CarInfoRoute extends PageRouteInfo<CarInfoRouteArgs> {
     Key? key,
     void Function(String, String, String)? onCheckFine,
     VoidCallback? onBack,
-    required String initialCarNumber,
     List<PageRouteInfo>? children,
   }) : super(
          CarInfoRoute.name,
@@ -170,7 +169,6 @@ class CarInfoRoute extends PageRouteInfo<CarInfoRouteArgs> {
            key: key,
            onCheckFine: onCheckFine,
            onBack: onBack,
-           initialCarNumber: initialCarNumber,
          ),
          initialChildren: children,
        );
@@ -180,24 +178,20 @@ class CarInfoRoute extends PageRouteInfo<CarInfoRouteArgs> {
   static PageInfo page = PageInfo(
     name,
     builder: (data) {
-      final args = data.argsAs<CarInfoRouteArgs>();
+      final args = data.argsAs<CarInfoRouteArgs>(
+        orElse: () => const CarInfoRouteArgs(),
+      );
       return CarInfoScreen(
         key: args.key,
         onCheckFine: args.onCheckFine,
         onBack: args.onBack,
-        initialCarNumber: args.initialCarNumber,
       );
     },
   );
 }
 
 class CarInfoRouteArgs {
-  const CarInfoRouteArgs({
-    this.key,
-    this.onCheckFine,
-    this.onBack,
-    required this.initialCarNumber,
-  });
+  const CarInfoRouteArgs({this.key, this.onCheckFine, this.onBack});
 
   final Key? key;
 
@@ -205,25 +199,20 @@ class CarInfoRouteArgs {
 
   final VoidCallback? onBack;
 
-  final String initialCarNumber;
-
   @override
   String toString() {
-    return 'CarInfoRouteArgs{key: $key, onCheckFine: $onCheckFine, onBack: $onBack, initialCarNumber: $initialCarNumber}';
+    return 'CarInfoRouteArgs{key: $key, onCheckFine: $onCheckFine, onBack: $onBack}';
   }
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
     if (other is! CarInfoRouteArgs) return false;
-    return key == other.key &&
-        onBack == other.onBack &&
-        initialCarNumber == other.initialCarNumber;
+    return key == other.key && onBack == other.onBack;
   }
 
   @override
-  int get hashCode =>
-      key.hashCode ^ onBack.hashCode ^ initialCarNumber.hashCode;
+  int get hashCode => key.hashCode ^ onBack.hashCode;
 }
 
 /// generated route for

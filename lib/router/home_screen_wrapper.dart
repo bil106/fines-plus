@@ -5,6 +5,8 @@ import 'package:core_data/core_data.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:fines_plus/features/analytics/data/models/event_model.dart';
+import 'package:fines_plus/features/analytics/data/repository/analytics_repository.dart';
+import 'package:fines_plus/features/analytics/presentation/cubit/analytics_cubit.dart';
 import 'package:fines_plus/features/analytics/presentation/screens/analytics_screen.dart';
 import 'package:fines_plus/features/expenses/data/repository/expense_repository.dart';
 import 'package:fines_plus/features/expenses/presentation/cubit/expenses_cubit.dart';
@@ -23,6 +25,7 @@ import 'package:fines_plus/features/reminders/presentation/screens/reminders_scr
 import 'package:fines_plus/features/schedule/data/repository/schedule_repository.dart';
 import 'package:fines_plus/features/schedule/presentation/cubit/schedule_cubit.dart';
 import 'package:fines_plus/features/vehicle/data/repository/car_info_repository.dart';
+import 'package:fines_plus/features/vehicle/presentation/cubit/car_cubit.dart';
 import 'package:fines_plus/features/vehicle/presentation/cubit/car_info_cubit.dart';
 import 'package:fines_plus/features/vehicle/presentation/screens/car_info_screen.dart';
 import 'package:fines_plus/presentation/screens/add_car_screen.dart';
@@ -86,6 +89,7 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
 
   late final HistoryCubit historyCubit;
   late final CarInfoCubit carInfoCubit;
+  late final AnalyticsCubit analyticsCubit;
 
   late final Map<HomePage, int> _pageIndexMap;
   DateTime? _lastPressedTime;
@@ -94,9 +98,12 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
     super.initState();
     _loadCarNumber();
 
-    historyCubit = HistoryCubit(repository: context.read<HistoryRepository>());
+    historyCubit = HistoryCubit(repository: context.read<HistoryRepository>(), carCubit: context.read<CarCubit>());
     carInfoCubit = CarInfoCubit(context.read<CarInfoRepository>(), historyCubit);
-
+    analyticsCubit = AnalyticsCubit(
+      repository: AnalyticsRepository(firestore: FirebaseFirestore.instance),
+      carCubit: context.read<CarCubit>(),
+    );
     _pageIndexMap = {
       HomePage.addCar: 0,
       HomePage.fines: 1,
@@ -119,11 +126,11 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
       HomePage.carWashMap: 18,
     };
   }
+
   void refreshUserData() {
-    setState(() {
-      
-    });
+    setState(() {});
   }
+
   Future<void> _loadCarNumber() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
@@ -163,11 +170,14 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
     _pageController.dispose();
     historyCubit.close();
     carInfoCubit.close();
+    analyticsCubit.close();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final carState = context.watch<CarCubit>().state;
+    final carNumber = carState.carNumber;
     if (_carNumber == null) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
@@ -196,12 +206,14 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
       child: MultiBlocProvider(
         providers: [
           BlocProvider.value(value: historyCubit),
-          BlocProvider.value(value: carInfoCubit),
+          BlocProvider.value(value: analyticsCubit),
+          BlocProvider(create: (_) => CarInfoCubit(context.read<CarInfoRepository>(), historyCubit)),
         ],
         child: Scaffold(
           backgroundColor: AppColors.grey50,
           body: PageView(
             controller: _pageController,
+             physics: const NeverScrollableScrollPhysics(),
             onPageChanged: (index) => setState(() => _currentIndex = index),
             children: [
               AddCarScreen(
@@ -215,18 +227,21 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
               RemindersScreen(
                 key: const ValueKey('reminders'),
                 carNumber: _carNumber!,
-                onBack: () => openPage(HomePage.addCar), userId: '',
+                onBack: () => openPage(HomePage.addCar),
+                userId: '',
               ),
-              AnalyticsScreen(
+            AnalyticsScreen(
                 key: const ValueKey('analytics'),
-                carNumber: _carNumber!,
+                carNumber: carNumber,
                 onBack: () => openPage(HomePage.addCar),
               ),
+
+
               BlocProvider(
                 create: (_) => ExpensesCubit(repository: ExpenseRepository(FirebaseFirestore.instance)),
                 child: CarInfoScreen(
                   key: const ValueKey('car_info_screen'),
-                  initialCarNumber: _carNumber!,
+               
                   onBack: () => openPage(HomePage.addCar),
                   onCheckFine: (carNumber, series, number) {
                     _saveCarInfo(carNumber, series, number);
@@ -248,7 +263,7 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
                 scheduleCubit: context.read<ScheduleCubit>(),
                 purchaseCubit: context.read<PurchaseCubit>(),
               ),
-              HistoryScreen(key: const ValueKey('history_screen'), carNumber: _carNumber!),
+              HistoryScreen(key: const ValueKey('history_screen'), carNumber: carNumber),
               Builder(
                 key: const ValueKey('maintenance_screen'),
                 builder: (_) {
@@ -304,7 +319,8 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
                         repository: scheduleRepository,
                         reminderRepository: reminderRepository,
                         pushHelper: PushHelper(FlutterLocalNotificationsPlugin()),
-                        carNumber: _carNumber ?? '', userId: '',
+                        carNumber: carNumber,
+                        userId: '',
                       );
                     },
                   );

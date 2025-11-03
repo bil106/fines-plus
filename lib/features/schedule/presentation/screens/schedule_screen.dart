@@ -1,8 +1,10 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:core_data/core_data.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_spacers.dart';
+import 'package:fines_plus/features/maintenance/data/repository/schedule_firebase_repository.dart';
 import 'package:fines_plus/features/schedule/presentation/widgets/action_detail_sheet.dart';
 import 'package:fines_plus/features/maintenance/presentation/widgets/maintenance_card.dart';
 import 'package:fines_plus/features/maintenance/data/models/maintenance_task.dart';
@@ -12,6 +14,7 @@ import 'package:fines_plus/features/reminders/presentation/cubit/reminder_cubit.
 import 'package:fines_plus/features/schedule/data/repository/schedule_repository.dart';
 import 'package:fines_plus/features/schedule/presentation/cubit/schedule_cubit.dart';
 import 'package:fines_plus/features/schedule/presentation/cubit/schedule_state.dart';
+import 'package:fines_plus/features/vehicle/presentation/cubit/car_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -56,13 +59,30 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(
-          create: (_) => ScheduleCubit(
-            repository: widget.repository,
-            maintenanceCubit: context.read<MaintenanceCubit>(),
-            pushHelper: widget.pushHelper,
-            enabled: true, userId: '',
-          )..loadTasks(),
+       BlocProvider(
+          create: (_) {
+            final maintenanceCubit = context.read<MaintenanceCubit>();
+           
+            final carCubit = context.read<CarCubit>();
+
+            final firebaseRepo = ScheduleFirebaseRepository(FirebaseFirestore.instance);
+
+            final scheduleCubit = ScheduleCubit(
+              repository: widget.repository,
+              firebaseRepo: firebaseRepo,
+              maintenanceCubit: maintenanceCubit,
+              pushHelper: widget.pushHelper,
+              enabled: true,
+              userId: widget.userId,
+              carNumber: widget.carNumber,
+              carCubit: carCubit,
+            );
+
+        
+            scheduleCubit.loadTasks();
+
+            return scheduleCubit;
+          },
         ),
         BlocProvider(
           create: (_) => ReminderCubit(

@@ -46,7 +46,7 @@ class CarInfoCard extends StatelessWidget {
             _buildParam(Icons.event_seat, 'Кількість місць', data['seating'], textTheme),
             AppSpacers.verticalMedium,
 
-            // Регистрационные данные
+            
             _buildText('Держ. номер', data['plate']),
             _buildText('Рег. адреса (KOATUU)', data['reg_addr_koatuu']),
             _buildText('Адреса власника', data['address']),
@@ -60,7 +60,7 @@ class CarInfoCard extends StatelessWidget {
             _buildText('VIN', data['vin']),
             AppSpacers.verticalMedium,
 
-            // Последняя запись (если есть)
+         
             if (data.containsKey('last_record_date') || data.containsKey('last_plate'))
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

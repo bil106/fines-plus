@@ -1,7 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:intl/intl.dart';
-import 'expense.dart'; // путь к твоей модели Expense
-import 'expense_category.dart'; // если есть отдельный enum
+import 'expense.dart'; 
+import 'expense_category.dart'; 
 
 part 'fuel_record.g.dart';
 

@@ -78,7 +78,7 @@ class _FuelMapScreenState extends State<FuelMapScreen> {
 
           _markers.add(
             Marker(
-              markerId: MarkerId('gas_$i'), // уникальный маркер по индексу
+              markerId: MarkerId('gas_$i'), 
               position: LatLng(station.lat, station.lng),
               icon: BitmapDescriptor.defaultMarkerWithHue(hue),
               infoWindow: InfoWindow(
@@ -90,7 +90,7 @@ class _FuelMapScreenState extends State<FuelMapScreen> {
           );
         }
 
-        // Добавляем выбранный фокус
+     
         if (widget.focusPosition != null) {
           _markers.add(
             Marker(

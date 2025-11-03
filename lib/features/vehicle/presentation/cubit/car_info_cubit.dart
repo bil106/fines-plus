@@ -7,6 +7,7 @@ import 'package:fines_plus/features/history/presentation/cubit/history_cubit.dar
 import 'package:fines_plus/features/maintenance/presentation/cubit/maintenance_cubit.dart';
 import 'package:fines_plus/features/vehicle/data/models/car_info_model.dart';
 import 'package:fines_plus/features/vehicle/data/repository/car_info_repository.dart';
+import 'package:fines_plus/features/vehicle/presentation/cubit/car_cubit.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -64,16 +65,18 @@ class CarInfoCubit extends Cubit<CarInfoState> {
 
     final m = CarInfoModel(carNumber: carNumber, techPassport: state.techPassport, ownerId: ownerId);
 
-    await _repo.saveCarInfo(m);
+ await _repo.saveCarInfo(m);
     emit(state.copyWith(carNumber: carNumber));
-
     await _saveCarToFirestore(m);
 
+
     try {
-      await getIt<MaintenanceCubit>().syncExpensesFromFirestore();
+      final carCubit = getIt<CarCubit>();
+      await carCubit.changeCar(carNumber);
     } catch (e) {
-      debugPrint("Failed to update expenses after changing the car: $e");
+      debugPrint("CarCubit not found: $e");
     }
+
   }
 
   

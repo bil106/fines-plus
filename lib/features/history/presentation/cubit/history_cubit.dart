@@ -4,6 +4,7 @@ import 'package:fines_plus/features/history/domain/history_repository.dart';
 import 'package:fines_plus/features/history/presentation/cubit/history_state.dart';
 import 'package:fines_plus/features/history/presentation/cubit/history_unauthorized.dart';
 import 'package:core_localization/generated/l10n.dart';
+import 'package:fines_plus/features/vehicle/presentation/cubit/car_cubit.dart';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -13,34 +14,44 @@ import 'package:flutter/foundation.dart';
 
 class HistoryCubit extends Cubit<HistoryState> {
   final HistoryRepository repository;
-  StreamSubscription? _subscription;
-
-  HistoryCubit({required this.repository}) : super(HistoryLoading());
+  final CarCubit carCubit;
+  StreamSubscription? _carSubscription;
+  StreamSubscription? _historySubscription;
+  HistoryCubit({required this.repository, required this.carCubit}) : super(HistoryInitial()) {
+    _carSubscription = carCubit.stream.listen((carState) {
+      if (carState.carNumber.isNotEmpty) {
+        loadHistory(carState.carNumber);
+      }
+    });
+  }
 
   void loadHistory(String carNumber) {
-    _subscription?.cancel();
+    _historySubscription?.cancel();
 
+    emit(HistoryLoading());
     try {
-      _subscription = repository.getHistory(carNumber).listen(
-        (items) {
-          if (items.isEmpty) {
-            emit(HistoryEmpty());
-          } else {
-            emit(HistoryLoaded(items));
-          }
-        },
-        onError: (e, st) {
-          debugPrint('HistoryCubit stream error: $e\n$st');
+      _historySubscription = repository
+          .getHistory(carNumber)
+          .listen(
+            (items) {
+              if (items.isEmpty) {
+                emit(HistoryEmpty());
+              } else {
+                emit(HistoryLoaded(items));
+              }
+            },
+            onError: (e, st) {
+              debugPrint('HistoryCubit stream error: $e\n$st');
 
-          if (e.toString().contains("User is not signed in")) {
-            emit(HistoryUnauthorized());
-          } else if (e is FirebaseException && e.code == 'failed-precondition') {
-            emit(HistoryError(S.current.history_unavailable));
-          } else {
-            emit(HistoryError(e.toString()));
-          }
-        },
-      );
+              if (e.toString().contains("User is not signed in")) {
+                emit(HistoryUnauthorized());
+              } else if (e is FirebaseException && e.code == 'failed-precondition') {
+                emit(HistoryError(S.current.history_unavailable));
+              } else {
+                emit(HistoryError(e.toString()));
+              }
+            },
+          );
     } catch (e) {
       if (e.toString().contains("User is not signed in")) {
         emit(HistoryUnauthorized());
@@ -57,12 +68,7 @@ class HistoryCubit extends Cubit<HistoryState> {
     required List<Map<String, dynamic>> fines,
   }) async {
     try {
-      await repository.addToHistory(
-        carNumber: carNumber,
-        docSeries: docSeries,
-        docNumber: docNumber,
-        fines: fines,
-      );
+      await repository.addToHistory(carNumber: carNumber, docSeries: docSeries, docNumber: docNumber, fines: fines);
       loadHistory(carNumber);
     } catch (e, st) {
       debugPrint('HistoryCubit addHistory error: $e\n$st');
@@ -116,7 +122,8 @@ class HistoryCubit extends Cubit<HistoryState> {
 
   @override
   Future<void> close() {
-    _subscription?.cancel();
+    _carSubscription?.cancel();
+    _historySubscription?.cancel();
     return super.close();
   }
 }

@@ -14,13 +14,13 @@ import 'package:intl/intl.dart';
 @RoutePage()
 class RemindersScreen extends StatelessWidget {
   final String carNumber;
-  final String userId; // ✅ добавили
+  final String userId; 
   final VoidCallback? onBack;
 
   const RemindersScreen({
     super.key,
     required this.carNumber,
-    required this.userId, // ✅ добавили
+    required this.userId,
     this.onBack,
   });
 
@@ -30,7 +30,7 @@ class RemindersScreen extends StatelessWidget {
       create: (_) => ReminderCubit(
         repository: context.read<ReminderRepository>(),
         carNumber: carNumber,
-        userId: userId, // ✅ передаем userId в кубит
+        userId: userId, 
         pushHelper: context.read<PushHelper>(),
       )..load(),
       child: _RemindersView(onBack),

@@ -10,6 +10,8 @@ import 'package:core_services/services/purchase_service.dart';
 import 'package:fines_plus/backend/fines_server.dart';
 import 'package:fines_plus/features/expenses/data/repository/expense_repository.dart';
 import 'package:fines_plus/features/history/domain/history_repository.dart';
+import 'package:fines_plus/features/history/presentation/cubit/history_cubit.dart';
+import 'package:fines_plus/features/maintenance/data/repository/schedule_firebase_repository.dart';
 import 'package:fines_plus/features/maintenance/presentation/cubit/additional_options_cubit.dart';
 import 'package:fines_plus/features/maintenance/presentation/cubit/fuel_station_cubit.dart';
 import 'package:fines_plus/features/maintenance/presentation/cubit/maintenance_cubit.dart';
@@ -29,6 +31,7 @@ import 'package:fines_plus/features/subscription/presentation/cubit/subscription
 import 'package:fines_plus/features/vehicle/data/datasources/car_info_local_data_source.dart';
 import 'package:fines_plus/features/vehicle/data/datasources/car_info_remote_data_source.dart';
 import 'package:fines_plus/features/vehicle/data/repository/car_info_repository.dart';
+import 'package:fines_plus/features/vehicle/presentation/cubit/car_cubit.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -53,10 +56,15 @@ class AppInitializer {
   late final MaintenanceCubit maintenanceCubit;
   late final ScheduleCubit scheduleCubit;
   late final SubscriptionCubit subscriptionCubit;
+  late final CarCubit carCubit;
+  late final HistoryCubit historyCubit;
   late final AdditionalOptionsCubit additionalOptionsCubit;
   late final RemoteConfigService remoteConfigService;
   final Map<String, int> _scheduledReminderIds = {};
-late final SubscriptionRepositoryImpl subscriptionRepository;
+  late final SubscriptionRepositoryImpl subscriptionRepository;
+  late final ScheduleFirebaseRepository firebaseRepository;
+  late final HistoryRepository historyRepository;
+  late final CarInfoRepository carInfoRepository;
 
   Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
     await Firebase.initializeApp();
@@ -80,26 +88,25 @@ late final SubscriptionRepositoryImpl subscriptionRepository;
     }
   }
 
-  Future<AppInitResult> init() async {
+ Future<AppInitResult> init() async {
     WidgetsFlutterBinding.ensureInitialized();
 
     final finesServer = FinesServer();
     await finesServer.start();
+
     remoteConfigService = await RemoteConfigService.init();
     debugPrint(
       'Remote Config - remindersEnabled: ${remoteConfigService.isRemindersEnabled}, purchaseEnabled: ${remoteConfigService.isPurchaseEnabled}',
     );
 
-    // Checking the application version
     final packageInfo = await PackageInfo.fromPlatform();
-    final currentVersion = packageInfo.version; // e.g. "1.0.1"
+    final currentVersion = packageInfo.version;
     final requiredVersion = remoteConfigService.minSupportedVersion;
-
     bool isUpdateRequired = _isVersionLower(currentVersion, requiredVersion);
-
     if (isUpdateRequired) {
       debugPrint("⚠️ App version $currentVersion is lower than required $requiredVersion");
     }
+
     tz.initializeTimeZones();
     tz.setLocalLocation(tz.getLocation('Europe/Kiev'));
 
@@ -112,7 +119,6 @@ late final SubscriptionRepositoryImpl subscriptionRepository;
       requestBadgePermission: true,
       requestSoundPermission: true,
     );
-
     const initSettings = InitializationSettings(android: androidSettings, iOS: iosSettings);
 
     await flutterLocalNotificationsPlugin.initialize(
@@ -136,42 +142,56 @@ late final SubscriptionRepositoryImpl subscriptionRepository;
           sound: RawResourceAndroidNotificationSound(soundFileName),
         );
         await androidImpl.createNotificationChannel(channel);
-
         final granted = await androidImpl.requestNotificationsPermission();
         debugPrint('Android notifications permission granted: $granted');
       }
     }
 
-    // FCM permissions (iOS)
     await FirebaseMessaging.instance.requestPermission();
-
     final token = await FirebaseMessaging.instance.getToken();
-    if (token != null) {
-      debugPrint(" FCM Registration Token: $token");
-    }
+    if (token != null) debugPrint(" FCM Registration Token: $token");
 
-    debugPrint('All reminders scheduled');
-
-    // Load config
     const flavor = String.fromEnvironment('FLAVOR', defaultValue: 'autolux');
     final config = await loadAppConfig(flavor);
 
-    // SharedPrefs
+    
     final prefs = await SharedPreferences.getInstance();
     final storage = FlutterSecureStorage();
     final sharedPrefsManager = SharedPrefsManager(prefs);
     final appLinks = AppLinks();
     final tokensRepository = TokensRepositoryImpl(storage);
+    final firebaseRepository = ScheduleFirebaseRepository(FirebaseFirestore.instance);
     final extractTokensUseCase = ExtractTokensUseCase(tokensRepository);
     final expenseRepository = ExpenseRepository(FirebaseFirestore.instance);
+    final historyRepository = HistoryRepository(FirebaseFirestore.instance);
+
 
     final carInfoLocalDataSource = CarInfoLocalDataSource(sharedPrefsManager);
+    final carInfoRepository = CarInfoRepository(carInfoLocalDataSource, CarInfoRemoteDataSource());
 
+   
     referralCubit = ReferralCubit(appLinks, prefs);
+
+    
+    carCubit = CarCubit(local: carInfoLocalDataSource, repo: carInfoRepository,);
+
+    
+    historyCubit = HistoryCubit(repository: historyRepository, carCubit: carCubit);
+
+
+    carCubit.setHistoryCubit(historyCubit);
+
     purchaseCubit = PurchaseCubit(PurchaseService(), enabled: remoteConfigService.isPurchaseEnabled);
-    maintenanceCubit = MaintenanceCubit(expenseRepository: expenseRepository, localDataSource: carInfoLocalDataSource);
+    maintenanceCubit = MaintenanceCubit(
+      expenseRepository: expenseRepository,
+      localDataSource: carInfoLocalDataSource,
+      carCubit: carCubit,
+    );
     fuelStationCubit = FuelStationCubit();
-    final subscriptionRepository = SubscriptionRepositoryImpl(InAppPurchase.instance, FirebaseAuth.instance,
+
+    subscriptionRepository = SubscriptionRepositoryImpl(
+      InAppPurchase.instance,
+      FirebaseAuth.instance,
       FirebaseFirestore.instance,
     );
 
@@ -187,23 +207,24 @@ late final SubscriptionRepositoryImpl subscriptionRepository;
     scheduleCubit = ScheduleCubit(
       repository: ScheduleRepository(),
       maintenanceCubit: maintenanceCubit,
-      pushHelper: PushHelper(FlutterLocalNotificationsPlugin()),
-      enabled: remoteConfigService.isRemindersEnabled, userId: '',
+      pushHelper: PushHelper(flutterLocalNotificationsPlugin),
+      enabled: remoteConfigService.isRemindersEnabled,
+      userId: '',
+      carNumber: '',
+      carCubit: carCubit,
+      firebaseRepo: firebaseRepository,
     );
 
-    final registrationCubit = RegistrationCubit(storage: storage, auth: FirebaseAuth.instance);
+    registrationCubit = RegistrationCubit(storage: storage, auth: FirebaseAuth.instance);
 
     await referralCubit.init();
-    final carInfoRepository = CarInfoRepository(CarInfoLocalDataSource(sharedPrefsManager), CarInfoRemoteDataSource());
 
     final reminderRepository = ReminderRepository(
       localDataSource: ReminderLocalDataSourceImpl(sharedPrefsManager),
       remoteDataSource: ReminderRemoteDataSourceImpl(FirebaseFirestore.instance),
     );
-
     final pushHelper = PushHelper(flutterLocalNotificationsPlugin);
 
-    final historyRepository = HistoryRepository(FirebaseFirestore.instance);
     return AppInitResult(
       config: config,
       carInfoRepository: carInfoRepository,
@@ -217,14 +238,17 @@ late final SubscriptionRepositoryImpl subscriptionRepository;
       fuelStationCubit: fuelStationCubit,
       maintenanceCubit: maintenanceCubit,
       scheduleCubit: scheduleCubit,
+      carCubit: carCubit,
       additionalOptionsCubit: additionalOptionsCubit,
       remoteConfigService: remoteConfigService,
       expenseRepository: expenseRepository,
       isUpdateRequired: isUpdateRequired,
       subscriptionCubit: subscriptionCubit,
       subscriptionRepository: subscriptionRepository,
+      firebaseRepository: firebaseRepository,
     );
   }
+
 }
 
 extension ReminderScheduling on AppInitializer {
@@ -295,12 +319,15 @@ class AppInitResult {
   final FuelStationCubit fuelStationCubit;
   final MaintenanceCubit maintenanceCubit;
   final ScheduleCubit scheduleCubit;
+  final CarCubit carCubit;
   final SubscriptionCubit subscriptionCubit;
   final AdditionalOptionsCubit additionalOptionsCubit;
   final RemoteConfigService remoteConfigService;
   final ExpenseRepository expenseRepository;
   final bool isUpdateRequired;
   final SubscriptionRepositoryImpl subscriptionRepository;
+  final ScheduleFirebaseRepository firebaseRepository;
+  
 
   AppInitResult({
     required this.config,
@@ -315,11 +342,14 @@ class AppInitResult {
     required this.fuelStationCubit,
     required this.maintenanceCubit,
     required this.scheduleCubit,
+    required this.carCubit,
     required this.subscriptionCubit,
     required this.additionalOptionsCubit,
     required this.remoteConfigService,
     required this.expenseRepository,
     required this.isUpdateRequired,
     required this.subscriptionRepository,
+    required this.firebaseRepository,
+
   });
 }
