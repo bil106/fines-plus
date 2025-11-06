@@ -29,14 +29,16 @@ import 'package:fines_plus/my_app.dart';
 import 'package:fines_plus/core/services/app_initializer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+
+late final AppInitializer appInitializer;
+
+
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
   if (kDebugMode) {
     print("BG Message: ${message.messageId}");
   }
 }
-
-late final AppInitializer appInitializer;
 
 void main() {
   runZonedGuarded<Future<void>>(
@@ -45,9 +47,7 @@ void main() {
       await Firebase.initializeApp();
 
       FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
-      RequestConfiguration configuration = RequestConfiguration(
-        testDeviceIds: Env.testDeviceIdList, 
-      );
+      RequestConfiguration configuration = RequestConfiguration(testDeviceIds: Env.testDeviceIdList);
       MobileAds.instance.updateRequestConfiguration(configuration);
       await MobileAds.instance.initialize();
       FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
@@ -71,8 +71,6 @@ void main() {
             RepositoryProvider<ScheduleRepository>(create: (_) => ScheduleRepository()),
             RepositoryProvider.value(value: result.remoteConfigService),
             RepositoryProvider<ISubscriptionRepository>.value(value: result.subscriptionRepository),
-
-
           ],
           child: MultiBlocProvider(
             providers: [
@@ -89,7 +87,11 @@ void main() {
                   repository: context.read<ScheduleRepository>(),
                   maintenanceCubit: result.maintenanceCubit,
                   pushHelper: result.pushHelper,
-                  enabled: true, userId: '', firebaseRepo: firebaseRepository, carNumber: '', carCubit: context.read<CarCubit>(),
+                  enabled: true,
+                  userId: '',
+                  firebaseRepo: firebaseRepository,
+                  carNumber: '',
+                  carCubit: context.read<CarCubit>(),
                 )..loadTasks(),
               ),
               BlocProvider(create: (_) => ExpensesCubit(repository: ExpenseRepository(firestore))),
@@ -108,3 +110,4 @@ void main() {
     },
   );
 }
+

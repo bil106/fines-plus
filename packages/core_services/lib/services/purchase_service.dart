@@ -9,6 +9,7 @@ class PurchaseService {
     required String uid,
     required num amount,
     required int months,
+    DateTime? trialEndsAt,
     String currency = 'USD',
     String source = 'play',
   }) async {
@@ -21,6 +22,7 @@ class PurchaseService {
       'months': months,
       'currency': currency,
       'source': source,
+      'trialEndsAt': trialEndsAt,
       'createdAt': FieldValue.serverTimestamp(),
       'subscriptionEndDate': endDate,
     });

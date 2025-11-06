@@ -8,20 +8,23 @@ class SubscriptionLoading extends SubscriptionState {}
 
 class SubscriptionLoaded extends SubscriptionState {
   final List<SubscriptionPlan> plans;
-  SubscriptionLoaded(this.plans);
+  final SubscriptionStatus status;
+  final TrialInfo? trialInfo;
+
+  SubscriptionLoaded(this.plans, this.status, this.trialInfo);
 }
 
-class SubscriptionBuying extends SubscriptionState {
-  final SubscriptionPlan plan;
-  SubscriptionBuying(this.plan);
-}
+class SubscriptionBuying extends SubscriptionState {}
 
-class SubscriptionBought extends SubscriptionState {
-  final SubscriptionPlan plan;
-  SubscriptionBought(this.plan);
-}
+class SubscriptionBought extends SubscriptionState {}
+
+class SubscriptionTrialStarted extends SubscriptionState {}
 
 class SubscriptionError extends SubscriptionState {
   final String message;
   SubscriptionError(this.message);
+}
+class SubscriptionPlanSelected extends SubscriptionState {
+  final SubscriptionPlan plan;
+  SubscriptionPlanSelected(this.plan);
 }

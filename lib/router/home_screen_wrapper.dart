@@ -247,6 +247,7 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
                     _saveCarInfo(carNumber, series, number);
                     openPage(HomePage.history);
                   },
+              
                 ),
               ),
               FineCheckScreen(
@@ -287,7 +288,7 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
               ),
 
               SubscriptionScreen(
-                key: const ValueKey('subscription'),
+                key: const ValueKey('subscription'), debugMode: true,
 
                 //  onBack: () => openPage(HomePage.addCar)
               ),

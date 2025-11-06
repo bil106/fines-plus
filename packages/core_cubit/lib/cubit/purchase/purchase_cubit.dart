@@ -8,22 +8,34 @@ class PurchaseCubit extends Cubit<void> {
 
   PurchaseCubit(this._service, {this.enabled = true}) : super(null);
 
- Future<void> buySubscription(String uid, num amount, int months) async {
+  Future<void> buySubscription(
+    String uid,
+    num amount,
+    int months, {
+    int trialDays = 0,
+  }) async {
     if (!enabled) {
       debugPrint('Purchase feature disabled by Remote Config');
       return;
     }
 
+    final now = DateTime.now();
+    final trialEndsAt = trialDays > 0 ? now.add(Duration(days: trialDays)) : null;
+
     final purchaseId = 'tx_${DateTime.now().millisecondsSinceEpoch}';
+
     await _service.recordPurchase(
       purchaseId: purchaseId,
       uid: uid,
       amount: amount,
       months: months,
+      trialEndsAt: trialEndsAt, // ✅ передаём trial
     );
 
-    debugPrint('Purchase completed: $purchaseId');
+    debugPrint(
+      trialEndsAt != null
+          ? 'Trial started ($trialDays days), purchase pending: $purchaseId'
+          : 'Purchase completed: $purchaseId',
+    );
   }
-
 }
-

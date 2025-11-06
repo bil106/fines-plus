@@ -8,7 +8,7 @@ import 'package:fines_plus/core/extensions/ad_banner_widget.dart';
 import 'package:fines_plus/core/extensions/unauthorized_dialog.dart';
 import 'package:fines_plus/env/env.dart';
 import 'package:fines_plus/features/vehicle/presentation/cubit/car_cubit.dart';
-import 'package:fines_plus/router/home_screen_wrapper.dart';
+import 'package:fines_plus/router/app_router.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:core_utils/formatters/vehicle_formatters.dart';
@@ -20,12 +20,13 @@ import 'package:flutter_easy_recaptcha_v2/flutter_easy_recaptcha_v2.dart';
 class CarInfoScreen extends StatelessWidget {
   final VoidCallback? onBack;
   final void Function(String carNumber, String series, String number)? onCheckFine;
-
-  const CarInfoScreen({super.key, this.onCheckFine, this.onBack});
+  
+  
+  const CarInfoScreen({super.key, this.onCheckFine, this.onBack,});
 
   @override
   Widget build(BuildContext context) {
-    return _CarInfoView(onCheckFine: onCheckFine, onBack: onBack);
+    return _CarInfoView(onCheckFine: onCheckFine, onBack: onBack, );
   }
 }
 
@@ -33,7 +34,7 @@ class _CarInfoView extends StatefulWidget {
   final void Function(String carNumber, String series, String number)? onCheckFine;
   final VoidCallback? onBack;
 
-  const _CarInfoView({this.onCheckFine, this.onBack});
+  const _CarInfoView({this.onCheckFine, this.onBack, });
 
   @override
   State<_CarInfoView> createState() => _CarInfoViewState();
@@ -91,17 +92,24 @@ class _CarInfoViewState extends State<_CarInfoView> {
     }
   }
 
-  void _navigateToRegistration() {
-    final homeState = context.findAncestorStateOfType<HomeScreenWrapperState>();
-    homeState?.openPage(HomePage.registration);
-  }
 
-  void _handleUnauthorized() {
+
+
+
+void _handleUnauthorized() {
     showDialog(
       context: context,
-      builder: (_) => UnauthorizedDialog(onLogin: _navigateToRegistration),
+      builder: (_) => UnauthorizedDialog(
+        onLogin: () {
+          Navigator.of(context).pop(); 
+         context.router.push(RegistrationRoute());
+
+        },
+      ),
     );
   }
+
+
 
   @override
   Widget build(BuildContext context) {

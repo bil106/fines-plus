@@ -8,8 +8,9 @@ class FakeProduct {
   final String title;
   final String price;
   final int months;
+  final int trialDays;
 
-  FakeProduct({required this.id, required this.title, required this.price, required this.months});
+  FakeProduct({required this.id, required this.title, required this.price, required this.months,this.trialDays = 0,});
 
   factory FakeProduct.fromJson(Map<String, dynamic> json) => _$FakeProductFromJson(json);
 

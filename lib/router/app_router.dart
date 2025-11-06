@@ -21,6 +21,7 @@ import 'package:fines_plus/features/maintenance/presentation/screens/fuel_up_scr
 import 'package:fines_plus/features/registration/presentation/screens/registration_screen.dart';
 import 'package:fines_plus/features/schedule/presentation/screens/schedule_screen.dart';
 import 'package:fines_plus/features/maintenance/presentation/screens/service_screen.dart';
+import 'package:fines_plus/presentation/screens/onboarding_screen.dart';
 import 'package:fines_plus/presentation/screens/settings_screen.dart';
 import 'package:fines_plus/features/maintenance/presentation/screens/maintenance_screen.dart';
 import 'package:fines_plus/features/maintenance/presentation/screens/tuning_screen.dart';
@@ -34,13 +35,15 @@ part 'app_router.gr.dart';
 
 @AutoRouterConfig(replaceInRouteName: 'Screen,Route')
 class AppRouter extends RootStackRouter {
+  final bool showOnboarding;
+
+  AppRouter({this.showOnboarding = false, super.navigatorKey});
+
   @override
   List<AutoRoute> get routes => [
-   
     AutoRoute(
       page: HomeRouteWrapper.page,
       path: '/',
-      initial: true,
       children: [
         AutoRoute(page: AddCarRoute.page, path: 'add-car', initial: true),
         AutoRoute(page: FinesRoute.page, path: 'fines'),
@@ -56,24 +59,19 @@ class AppRouter extends RootStackRouter {
       ],
     ),
 
-   
+    
+    AutoRoute(page: OnboardingRoute.page, path: '/onboarding'),
+
     AutoRoute(page: CarInfoRoute.page, path: '/car-info'),
     AutoRoute(page: FineCheckRoute.page, path: '/fine_check'),
     AutoRoute(page: SettingsRoute.page, path: '/settings'),
-    AutoRoute(page: HistoryRoute.page, path: '/history'),
-    AutoRoute(page: MaintenanceRoute.page, path: '/maintenance'),
-    AutoRoute(page: AnalyticsRoute.page, path: '/analytics'),
     AutoRoute(page: ExportRoute.page, path: '/export'),
-    AutoRoute(page: RegistrationRoute.page, path: '/registration'),
-    AutoRoute(page: FuelUpRoute.page, path: '/fuel'),
-    AutoRoute(page: ServiceRoute.page, path: '/service'),
     AutoRoute(page: FuelMapRoute.page, path: '/fuel-map'),
-    AutoRoute(page: ScheduleRoute.page, path: '/schedule'),
     AutoRoute(page: TuningRoute.page, path: '/tuning'),
     AutoRoute(page: CarWashRoute.page, path: '/car_wash'),
     AutoRoute(page: CarWashMapRoute.page, path: '/car_wash_map'),
     AutoRoute(page: UpdateRequiredRoute.page, path: '/update'),
     AutoRoute(page: SubscriptionRoute.page, path: '/subscription'),
-    
+    AutoRoute(page: RegistrationRoute.page, path: '/registration'),
   ];
 }

@@ -6,6 +6,8 @@ import 'package:design_system/constants/app_borders.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:fines_plus/features/registration/presentation/cubit/registration_cubit.dart';
 import 'package:fines_plus/features/registration/presentation/cubit/registration_state.dart';
+import 'package:fines_plus/features/subscription/presentation/cubit/subscription_cubit.dart';
+import 'package:fines_plus/router/app_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -68,7 +70,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     if (isValid != _isFormValid) setState(() => _isFormValid = isValid);
   }
 
-  Future<void> _onSubmit(BuildContext context) async {
+Future<void> _onSubmit(BuildContext context) async {
     if (!(_formKey.currentState?.validate() ?? false)) return;
 
     final cubit = context.read<RegistrationCubit>();
@@ -78,7 +80,27 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     await cubit.saveCredentials(email, password);
 
     await cubit.register(email, password);
+
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Потрібна авторизація")));
+      return;
+    }
+
+  
+    try {
+      await context.read<SubscriptionCubit>().finishPurchase(user.uid);
+
+      final subState = context.read<SubscriptionCubit>().state;
+      if (subState is SubscriptionBought) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("План успішно активований ✅")));
+        Navigator.of(context).pop(); 
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Не вдалося активувати підписку: $e")));
+    }
   }
+
 
   Future<void> _signInWithGoogle() async {
     try {
@@ -171,144 +193,160 @@ Future<void> _signInWithFacebook(BuildContext context) async {
 
     return Scaffold(
       backgroundColor: AppColors.grey50,
-       appBar: AppBar(
+      appBar: AppBar(
         backgroundColor: AppColors.grey50,
         elevation: 0,
         leading: BackButton(color: AppColors.blue700, onPressed: widget.onBack),
-      
       ),
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
-          child: Form(
-            key: _formKey,
-            child: BlocConsumer<RegistrationCubit, RegistrationState>(
-              listener: (context, state) {
-                if (state.error != null) {
-                  ScaffoldMessenger.of(
-                    context,
-                  ).showSnackBar(SnackBar(content: Text(state.error!), backgroundColor: AppColors.blue700));
-                }
-                if (state.isRegistered) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(S.of(context).successful_registration), backgroundColor: AppColors.blue700),
-                  );
-                }
-              },
-              builder: (context, state) {
-                final isLogin = state.isExistingUser;
-                final isLoading = state.isLoading;
-
-                return Column(
-                  children: [
-                    Text(
-                      isLogin ? S.of(context).registration : S.of(context).sign_up,
-                      style: textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
-                    ),
-                    AppSpacers.verticalXXXLarge,
-
-                    // Email
-                    TextFormField(
-                      controller: emailController,
-                      decoration: InputDecoration(
-                        prefixIcon: const Icon(Icons.email_outlined),
-                        labelText: S.of(context).email,
-                        errorText: state.emailError,
-                        border: OutlineInputBorder(borderRadius: AppBorders.radiusLarge),
+          child: BlocListener<SubscriptionCubit, SubscriptionState>(
+            listener: (context, state) {
+              if (state is SubscriptionBought) {
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("План успішно активований ✅")));
+                Navigator.of(context).pop();
+              } else if (state is SubscriptionError) {
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(SnackBar(content: Text("Помилка підписки: ${state.message}")));
+              }
+            },
+            child: Form(
+              key: _formKey,
+              child: BlocConsumer<RegistrationCubit, RegistrationState>(
+                listener: (context, state) {
+                  if (state.error != null) {
+                    ScaffoldMessenger.of(
+                      context,
+                    ).showSnackBar(SnackBar(content: Text(state.error!), backgroundColor: AppColors.blue700));
+                  }
+                  if (state.isRegistered) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(S.of(context).successful_registration),
+                        backgroundColor: AppColors.blue700,
                       ),
-                      keyboardType: TextInputType.emailAddress,
-                      validator: (v) {
-                        if (v == null || v.isEmpty) return S.of(context).enter_email;
-                        if (!v.contains('@')) return S.of(context).incorrect_email;
-                        return null;
-                      },
-                    ),
-                    AppSpacers.verticalLarge,
+                    );
+                    context.router.replace(SubscriptionRoute());
+                  }
+                },
+                builder: (context, state) {
+                  final isLogin = state.isExistingUser;
+                  final isLoading = state.isLoading;
 
-                    // Password
-                    TextFormField(
-                      controller: passwordController,
-                      obscureText: true,
-                      decoration: InputDecoration(
-                        prefixIcon: const Icon(Icons.lock_outline),
-                        labelText: S.of(context).password,
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                  return Column(
+                    children: [
+                      Text(
+                        isLogin ? S.of(context).registration : S.of(context).sign_up,
+                        style: textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
                       ),
-                      validator: (v) {
-                        if (v == null || v.isEmpty) return S.of(context).enter_password;
-                        if (v.length < 6) return S.of(context).min_char;
-                        return null;
-                      },
-                    ),
                       AppSpacers.verticalXXXLarge,
 
-                    // Button
-                    isLoading
-                        ? const CircularProgressIndicator()
-                        : InkWell(
-                            onTap: _isFormValid ? () => _onSubmit(context) : null,
-                            child: Container(
-                              width: double.infinity,
-                              padding: const EdgeInsets.symmetric(vertical: 16),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(30),
-                                gradient: const LinearGradient(
-                                  colors: [AppColors.colcm, AppColors.purpleRed],
-                                  begin: Alignment.centerLeft,
-                                  end: Alignment.centerRight,
+                      // Email
+                      TextFormField(
+                        controller: emailController,
+                        decoration: InputDecoration(
+                          prefixIcon: const Icon(Icons.email_outlined),
+                          labelText: S.of(context).email,
+                          errorText: state.emailError,
+                          border: OutlineInputBorder(borderRadius: AppBorders.radiusLarge),
+                        ),
+                        keyboardType: TextInputType.emailAddress,
+                        validator: (v) {
+                          if (v == null || v.isEmpty) return S.of(context).enter_email;
+                          if (!v.contains('@')) return S.of(context).incorrect_email;
+                          return null;
+                        },
+                      ),
+                      AppSpacers.verticalLarge,
+
+                      // Password
+                      TextFormField(
+                        controller: passwordController,
+                        obscureText: true,
+                        decoration: InputDecoration(
+                          prefixIcon: const Icon(Icons.lock_outline),
+                          labelText: S.of(context).password,
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                        ),
+                        validator: (v) {
+                          if (v == null || v.isEmpty) return S.of(context).enter_password;
+                          if (v.length < 6) return S.of(context).min_char;
+                          return null;
+                        },
+                      ),
+                      AppSpacers.verticalXXXLarge,
+
+                      // Button
+                      isLoading
+                          ? const CircularProgressIndicator()
+                          : InkWell(
+                              onTap: _isFormValid ? () => _onSubmit(context) : null,
+                              child: Container(
+                                width: double.infinity,
+                                padding: const EdgeInsets.symmetric(vertical: 16),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(30),
+                                  gradient: const LinearGradient(
+                                    colors: [AppColors.colcm, AppColors.purpleRed],
+                                    begin: Alignment.centerLeft,
+                                    end: Alignment.centerRight,
+                                  ),
                                 ),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  isLogin ? S.of(context).large_login : S.of(context).large_sign_up,
-                                  style: textTheme.titleMedium?.copyWith(
-                                    color: AppColors.neutreBlanc,
-                                    fontWeight: FontWeight.bold,
+                                child: Center(
+                                  child: Text(
+                                    isLogin ? S.of(context).large_login : S.of(context).large_sign_up,
+                                    style: textTheme.titleMedium?.copyWith(
+                                      color: AppColors.neutreBlanc,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
-                          ),
 
                       AppSpacers.verticalLargeXL,
-                    TextButton(
-                      onPressed: () => context.read<RegistrationCubit>().toggleLoginMode(),
-                      child: Text(
-                        isLogin ? S.of(context).dont_have_account : S.of(context).already_have_account,
-                        style: const TextStyle(color: AppColors.purpleRed),
+                      TextButton(
+                        onPressed: () => context.read<RegistrationCubit>().toggleLoginMode(),
+                        child: Text(
+                          isLogin ? S.of(context).dont_have_account : S.of(context).already_have_account,
+                          style: const TextStyle(color: AppColors.purpleRed),
+                        ),
                       ),
-                    ),
 
-                    AppSpacers.verticalXXLarge,
-                    Text(S.of(context).or_sign_in_using, style: TextStyle(color: Colors.grey)),
-                    AppSpacers.verticalMediumLarge,
+                      AppSpacers.verticalXXLarge,
+                      Text(S.of(context).or_sign_in_using, style: const TextStyle(color: Colors.grey)),
+                      AppSpacers.verticalMediumLarge,
 
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        IconButton(
-                          icon: Image.asset('assets/icons/google_logo.png', height: 30),
-                          onPressed: _signInWithGoogle,
-                        ),
-                        AppSpacers.horizontalMedium,
-                        IconButton(
-                          icon: const Icon(Icons.facebook, color: AppColors.blue700, size: 30),
-                         onPressed: () => _signInWithFacebook(context),
-                        ),
-                        AppSpacers.horizontalMedium,
-                        IconButton(
-                          icon: const Icon(Icons.apple, color: AppColors.black, size: 30),
-                          onPressed: () => _signInWithApple(),
-                        ),
-                      ],
-                    ),
-                  ],
-                );
-              },
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          IconButton(
+                            icon: Image.asset('assets/icons/google_logo.png', height: 30),
+                            onPressed: _signInWithGoogle,
+                          ),
+                          AppSpacers.horizontalMedium,
+                          IconButton(
+                            icon: const Icon(Icons.facebook, color: AppColors.blue700, size: 30),
+                            onPressed: () => _signInWithFacebook(context),
+                          ),
+                          AppSpacers.horizontalMedium,
+                          IconButton(
+                            icon: const Icon(Icons.apple, color: AppColors.black, size: 30),
+                            onPressed: () => _signInWithApple(),
+                          ),
+                        ],
+                      ),
+                    ],
+                  );
+                },
+              ),
             ),
           ),
         ),
       ),
     );
   }
+
 }

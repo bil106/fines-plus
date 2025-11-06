@@ -24,6 +24,8 @@ import 'package:fines_plus/features/reminders/data/models/reminder_model.dart';
 import 'package:fines_plus/features/reminders/data/repository/reminder_repository.dart';
 import 'package:fines_plus/features/schedule/data/repository/schedule_repository.dart';
 import 'package:fines_plus/features/schedule/presentation/cubit/schedule_cubit.dart';
+import 'package:fines_plus/features/subscription/data/datasources/load_user_subscription_usecase.dart';
+import 'package:fines_plus/features/subscription/data/datasources/save_trial_info_usecase.dart';
 import 'package:fines_plus/features/subscription/data/repository/subscription_repository_impl.dart';
 import 'package:fines_plus/features/subscription/domain/usecases/buy_subscription.dart';
 import 'package:fines_plus/features/subscription/domain/usecases/get_available_plans.dart';
@@ -198,7 +200,15 @@ class AppInitializer {
     final getPlansUseCase = GetAvailablePlansUseCase(subscriptionRepository);
     final buySubscriptionUseCase = BuySubscriptionUseCase(subscriptionRepository);
 
-    subscriptionCubit = SubscriptionCubit(getPlansUseCase, buySubscriptionUseCase);
+    final loadUserSubscriptionUseCase = LoadUserSubscriptionUseCase(subscriptionRepository);
+    final saveTrialInfoUseCase = SaveTrialInfoUseCase(subscriptionRepository);
+
+    subscriptionCubit = SubscriptionCubit(
+      getPlansUseCase,
+      buySubscriptionUseCase,
+      loadUserSubscriptionUseCase,
+      saveTrialInfoUseCase,
+    );
     additionalOptionsCubit = AdditionalOptionsCubit(
       extractTokensUseCase: extractTokensUseCase,
       tokensRepository: tokensRepository,

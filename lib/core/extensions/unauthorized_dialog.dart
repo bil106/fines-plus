@@ -1,6 +1,10 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/theme/app_theme.dart';
+import 'package:fines_plus/router/app_router.dart';
 import 'package:flutter/material.dart';
+
+
 
 class UnauthorizedDialog extends StatelessWidget {
   final VoidCallback onLogin;
@@ -10,18 +14,24 @@ class UnauthorizedDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     return AlertDialog(
-      title: Text(S.of(context).not_auth,style: textTheme.blue28W400),
+      title: Text(S.of(context).not_auth, style: textTheme.blue28W400),
       content: Text(S.of(context).please_log_in, style: textTheme.black16bold),
       actions: [
-        TextButton(onPressed: () => Navigator.pop(context), child: Text(S.current.close,style: textTheme.blue20W400,)),
         TextButton(
-          onPressed: () {
-            Navigator.pop(context);
-            onLogin();
-          },
-          child: Text(S.of(context).login, style: textTheme.blue20W400),
+          onPressed: () => Navigator.pop(context),
+          child: Text(S.current.close, style: textTheme.blue20W400),
         ),
+    TextButton(
+  onPressed: () {
+    Navigator.of(context).pop();  
+    context.router.push(RegistrationRoute()); 
+  },
+  child: Text(S.of(context).login),
+),
+
+
       ],
     );
   }
 }
+

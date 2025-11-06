@@ -1,12 +1,10 @@
 import 'dart:async';
 
 import 'package:app_links/app_links.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:core_cubit/cubit/referral/referral_cubit.dart';
 import 'package:core_localization/generated/l10n.dart';
+import 'package:fines_plus/core/services/launch_service.dart';
 import 'package:fines_plus/core/theme/theme_config.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +12,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:auto_route/auto_route.dart';
 
 import 'core/config/app_config.dart';
 import 'router/app_router.dart';
@@ -21,8 +20,12 @@ import 'router/app_router.dart';
 class MyApp extends StatefulWidget {
   final AppConfig config;
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
-final bool isUpdateRequired;
-  const MyApp({super.key, required this.config, required this.flutterLocalNotificationsPlugin,
+  final bool isUpdateRequired;
+
+  const MyApp({
+    super.key,
+    required this.config,
+    required this.flutterLocalNotificationsPlugin,
     required this.isUpdateRequired,
   });
 
@@ -31,31 +34,41 @@ final bool isUpdateRequired;
 }
 
 class _MyAppState extends State<MyApp> {
-  final _appRouter = AppRouter();
   final AppLinks _appLinks = AppLinks();
-
   static FirebaseAnalytics analytics = FirebaseAnalytics.instance;
-  
-  late final ReferralCubit referralCubit;
+
   StreamSubscription? _appLinksSub;
   Locale? _locale;
+
+  bool? firstLaunch;
+  bool _didNavigate = false; 
+
+  late final AppRouter _router;
 
   @override
   void initState() {
     super.initState();
+    
+    _initOnce();
+  }
+
+  Future<void> _initOnce() async {
+ 
+    firstLaunch = await LaunchService.isFirstLaunch();
+
+  
+    _router = AppRouter();
+
+   
     _setupPushNotifications();
-    _handleDynamicLinks();
+    await _initDynamicLinks(); 
     _initAppLinks();
 
     analytics.logAppOpen();
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (widget.isUpdateRequired) {
-        _appRouter.replaceAll([const UpdateRequiredRoute()]); 
-      }
-    });
+
+    if (mounted) setState(() {}); 
   }
 
-  /// Push notifications
   void _setupPushNotifications() {
     FirebaseMessaging.onMessage.listen((message) async {
       final notification = message.notification;
@@ -84,102 +97,67 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
-  /// Firebase Dynamic Links
-  void _handleDynamicLinks() async {
-   
-    FirebaseDynamicLinks.instance.onLink
-        .listen((data) {
-          final link = data.link;
-          _processDynamicLink(link);
-        })
-        .onError((error) {
-          debugPrint("Dynamic Link error: $error");
-        });
+  Future<void> _initDynamicLinks() async {
+    FirebaseDynamicLinks.instance.onLink.listen(
+      (data) {
+        _handleDeepLink(data.link);
+      },
+      onError: (err) {
+        debugPrint('Dynamic link listen error: $err');
+      },
+    );
 
-  
-    final PendingDynamicLinkData? initialLink = await FirebaseDynamicLinks.instance.getInitialLink();
-    if (initialLink != null) {
-      _processDynamicLink(initialLink.link);
-    }
+    final initial = await FirebaseDynamicLinks.instance.getInitialLink();
+    if (initial != null) _handleDeepLink(initial.link);
   }
 
+  void _handleDeepLink(Uri link) async {
+    final partnerId = link.queryParameters['partnerId'];
+    if (partnerId != null && partnerId.isNotEmpty) {
+      final sp = await SharedPreferences.getInstance();
+      await sp.setString('pending_ref', partnerId);
+    }
+    final car = link.queryParameters['car'];
+    if (car != null && mounted) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        context.router.push(HistoryRoute(carNumber: car));
+      });
+    }
+  }
 
   void _initAppLinks() async {
     _appLinksSub = _appLinks.uriLinkStream.listen(
       (uri) {
-        _navigateToHistoryFromAppLink(uri);
+        _routeFromAppLink(uri);
       },
       onError: (err) {
-        debugPrint("App Link error: $err");
+        debugPrint("App link error: $err");
       },
     );
 
-    // Cold start
     try {
       final initialUri = await _appLinks.getInitialLink();
-      if (initialUri != null) _navigateToHistoryFromAppLink(initialUri);
+      if (initialUri != null) _routeFromAppLink(initialUri);
     } catch (e) {
-      debugPrint("Error getting initial App Link: $e");
+      debugPrint("Error getting initial app link: $e");
     }
   }
 
-
- void _navigateToHistoryFromAppLink(Uri uri) {
-    final carNumber = uri.queryParameters['car'];
+  void _routeFromAppLink(Uri uri) {
+    final car = uri.queryParameters['car'];
     final isAddCar = uri.path.contains("addCar");
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (isAddCar) {
-        _appRouter.push(AddCarRoute());
-      } else if (carNumber != null) {
-        _appRouter.push(HistoryRoute(carNumber: carNumber));
-      }
-    });
-  }
-
-
-/// Firebase Dynamic Link processing
-  void _processDynamicLink(Uri deepLink) async {
-    final partnerId = deepLink.queryParameters['partnerId'];
-    if (partnerId != null && partnerId.isNotEmpty) {
-      final sp = await SharedPreferences.getInstance();
-      await sp.setString('pending_ref', partnerId);
-      debugPrint(" Saved partnerId=$partnerId to SharedPreferences");
-    }
-
-    final carNumber = deepLink.queryParameters['car'];
-    if (carNumber != null) {
-      debugPrint("Dynamic Link carNumber: $carNumber");
+    if (mounted) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        _appRouter.push(HistoryRoute(carNumber: carNumber));
+        if (!mounted) return;
+        if (isAddCar) {
+          context.router.push( AddCarRoute());
+        } else if (car != null) {
+          context.router.push(HistoryRoute(carNumber: car));
+        }
       });
     }
   }
-  
-Future<void> savePartnerIdForUser(User user) async {
-    final sp = await SharedPreferences.getInstance();
-    final partnerId = sp.getString('pending_ref');
-
-    if (partnerId != null && partnerId.isNotEmpty) {
-      await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
-        'email': user.email ?? 'unknown',
-        'partnerId': partnerId,
-        'createdAt': FieldValue.serverTimestamp(),
-      }, SetOptions(merge: true));
-
-      debugPrint("User ${user.email} saved with partnerId=$partnerId");
-
-   // update partner statistics on the client
-      await FirebaseFirestore.instance.collection('partnerStats').doc(partnerId).set({
-        'registrations': FieldValue.increment(1),
-      }, SetOptions(merge: true));
-
-     // clear the local cache
-      await sp.remove('pending_ref');
-    }
-  }
-
-
 
   @override
   void dispose() {
@@ -189,10 +167,21 @@ Future<void> savePartnerIdForUser(User user) async {
 
   @override
   Widget build(BuildContext context) {
-    return Provider<AppConfig>.value(
+   
+    if (firstLaunch == null) {
+      return const MaterialApp(
+        home: Scaffold(body: Center(child: CircularProgressIndicator())),
+      );
+    }
+
+   
+    final app = Provider<AppConfig>.value(
       value: widget.config,
       child: MaterialApp.router(
-        routerConfig: _appRouter.config(),
+        routerConfig: _router.config(
+          deepLinkBuilder: (_) =>
+              firstLaunch == true ? const DeepLink([OnboardingRoute()]) : DeepLink([SubscriptionRoute()]),
+        ),
         title: 'Fines+',
         locale: _locale ?? const Locale('uk'),
         theme: ThemeConfig.createTheme(widget.config),
@@ -206,5 +195,24 @@ Future<void> savePartnerIdForUser(User user) async {
         debugShowCheckedModeBanner: false,
       ),
     );
+
+   
+    if (!_didNavigate) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+      
+        if (widget.isUpdateRequired) {
+          context.router.replaceAll([const UpdateRequiredRoute()]);
+          _didNavigate = true;
+          return;
+        }
+      
+        _didNavigate = true;
+      });
+    }
+
+    return app;
   }
 }
+
+

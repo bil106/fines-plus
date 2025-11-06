@@ -11,6 +11,7 @@ FakeProduct _$FakeProductFromJson(Map<String, dynamic> json) => FakeProduct(
   title: json['title'] as String,
   price: json['price'] as String,
   months: (json['months'] as num).toInt(),
+  trialDays: (json['trialDays'] as num?)?.toInt() ?? 0,
 );
 
 Map<String, dynamic> _$FakeProductToJson(FakeProduct instance) =>
@@ -19,4 +20,5 @@ Map<String, dynamic> _$FakeProductToJson(FakeProduct instance) =>
       'title': instance.title,
       'price': instance.price,
       'months': instance.months,
+      'trialDays': instance.trialDays,
     };

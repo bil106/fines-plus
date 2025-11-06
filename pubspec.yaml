@@ -86,6 +86,8 @@ dependencies:
   sign_in_with_apple: ^7.0.1
   freezed_annotation: ^3.1.0
   json_annotation: ^4.9.0
+  introduction_screen: ^3.1.12
+
  
 
      
@@ -118,10 +120,16 @@ flutter:
     - assets/icons/map.png
     - assets/icons/google_logo.png
     - assets/icons/logo_app.png
+    - assets/icons/insurance.png
     - assets/icons/car-wash.svg
     - assets/icons/tuning.jpg
     - assets/fonts/Fines/Roboto-Regular.ttf
     - assets/images/cars/tesla_model_x_red.png
+    - assets/images/insurance_bg.png
+    - assets/images/fines_bg.png
+    - assets/images/analytics_bg.png
+    - assets/images/maintenance_bg.png
+   
     
 flutter_icons:
   android: true
