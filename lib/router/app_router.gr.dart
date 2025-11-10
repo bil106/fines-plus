@@ -708,19 +708,68 @@ class HistoryRouteArgs {
 }
 
 /// generated route for
+/// [HomeScreen]
+class HomeRoute extends PageRouteInfo<void> {
+  const HomeRoute({List<PageRouteInfo>? children})
+    : super(HomeRoute.name, initialChildren: children);
+
+  static const String name = 'HomeRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const HomeScreen();
+    },
+  );
+}
+
+/// generated route for
 /// [HomeScreenWrapper]
-class HomeRouteWrapper extends PageRouteInfo<void> {
-  const HomeRouteWrapper({List<PageRouteInfo>? children})
-    : super(HomeRouteWrapper.name, initialChildren: children);
+class HomeRouteWrapper extends PageRouteInfo<HomeRouteWrapperArgs> {
+  HomeRouteWrapper({
+    Key? key,
+    HomePage initialPage = HomePage.home,
+    List<PageRouteInfo>? children,
+  }) : super(
+         HomeRouteWrapper.name,
+         args: HomeRouteWrapperArgs(key: key, initialPage: initialPage),
+         initialChildren: children,
+       );
 
   static const String name = 'HomeRouteWrapper';
 
   static PageInfo page = PageInfo(
     name,
     builder: (data) {
-      return const HomeScreenWrapper();
+      final args = data.argsAs<HomeRouteWrapperArgs>(
+        orElse: () => const HomeRouteWrapperArgs(),
+      );
+      return HomeScreenWrapper(key: args.key, initialPage: args.initialPage);
     },
   );
+}
+
+class HomeRouteWrapperArgs {
+  const HomeRouteWrapperArgs({this.key, this.initialPage = HomePage.home});
+
+  final Key? key;
+
+  final HomePage initialPage;
+
+  @override
+  String toString() {
+    return 'HomeRouteWrapperArgs{key: $key, initialPage: $initialPage}';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! HomeRouteWrapperArgs) return false;
+    return key == other.key && initialPage == other.initialPage;
+  }
+
+  @override
+  int get hashCode => key.hashCode ^ initialPage.hashCode;
 }
 
 /// generated route for
@@ -894,18 +943,12 @@ class RegistrationRouteArgs {
 class RemindersRoute extends PageRouteInfo<RemindersRouteArgs> {
   RemindersRoute({
     Key? key,
-    required String carNumber,
     required String userId,
     VoidCallback? onBack,
     List<PageRouteInfo>? children,
   }) : super(
          RemindersRoute.name,
-         args: RemindersRouteArgs(
-           key: key,
-           carNumber: carNumber,
-           userId: userId,
-           onBack: onBack,
-         ),
+         args: RemindersRouteArgs(key: key, userId: userId, onBack: onBack),
          initialChildren: children,
        );
 
@@ -917,7 +960,6 @@ class RemindersRoute extends PageRouteInfo<RemindersRouteArgs> {
       final args = data.argsAs<RemindersRouteArgs>();
       return RemindersScreen(
         key: args.key,
-        carNumber: args.carNumber,
         userId: args.userId,
         onBack: args.onBack,
       );
@@ -926,16 +968,9 @@ class RemindersRoute extends PageRouteInfo<RemindersRouteArgs> {
 }
 
 class RemindersRouteArgs {
-  const RemindersRouteArgs({
-    this.key,
-    required this.carNumber,
-    required this.userId,
-    this.onBack,
-  });
+  const RemindersRouteArgs({this.key, required this.userId, this.onBack});
 
   final Key? key;
-
-  final String carNumber;
 
   final String userId;
 
@@ -943,22 +978,18 @@ class RemindersRouteArgs {
 
   @override
   String toString() {
-    return 'RemindersRouteArgs{key: $key, carNumber: $carNumber, userId: $userId, onBack: $onBack}';
+    return 'RemindersRouteArgs{key: $key, userId: $userId, onBack: $onBack}';
   }
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
     if (other is! RemindersRouteArgs) return false;
-    return key == other.key &&
-        carNumber == other.carNumber &&
-        userId == other.userId &&
-        onBack == other.onBack;
+    return key == other.key && userId == other.userId && onBack == other.onBack;
   }
 
   @override
-  int get hashCode =>
-      key.hashCode ^ carNumber.hashCode ^ userId.hashCode ^ onBack.hashCode;
+  int get hashCode => key.hashCode ^ userId.hashCode ^ onBack.hashCode;
 }
 
 /// generated route for
@@ -1188,6 +1219,7 @@ class SubscriptionRoute extends PageRouteInfo<SubscriptionRouteArgs> {
     Key? key,
     bool debugMode = true,
     VoidCallback? onBack,
+    VoidCallback? onPurchaseSuccess,
     List<PageRouteInfo>? children,
   }) : super(
          SubscriptionRoute.name,
@@ -1195,6 +1227,7 @@ class SubscriptionRoute extends PageRouteInfo<SubscriptionRouteArgs> {
            key: key,
            debugMode: debugMode,
            onBack: onBack,
+           onPurchaseSuccess: onPurchaseSuccess,
          ),
          initialChildren: children,
        );
@@ -1211,13 +1244,19 @@ class SubscriptionRoute extends PageRouteInfo<SubscriptionRouteArgs> {
         key: args.key,
         debugMode: args.debugMode,
         onBack: args.onBack,
+        onPurchaseSuccess: args.onPurchaseSuccess,
       );
     },
   );
 }
 
 class SubscriptionRouteArgs {
-  const SubscriptionRouteArgs({this.key, this.debugMode = true, this.onBack});
+  const SubscriptionRouteArgs({
+    this.key,
+    this.debugMode = true,
+    this.onBack,
+    this.onPurchaseSuccess,
+  });
 
   final Key? key;
 
@@ -1225,9 +1264,11 @@ class SubscriptionRouteArgs {
 
   final VoidCallback? onBack;
 
+  final VoidCallback? onPurchaseSuccess;
+
   @override
   String toString() {
-    return 'SubscriptionRouteArgs{key: $key, debugMode: $debugMode, onBack: $onBack}';
+    return 'SubscriptionRouteArgs{key: $key, debugMode: $debugMode, onBack: $onBack, onPurchaseSuccess: $onPurchaseSuccess}';
   }
 
   @override
@@ -1236,11 +1277,16 @@ class SubscriptionRouteArgs {
     if (other is! SubscriptionRouteArgs) return false;
     return key == other.key &&
         debugMode == other.debugMode &&
-        onBack == other.onBack;
+        onBack == other.onBack &&
+        onPurchaseSuccess == other.onPurchaseSuccess;
   }
 
   @override
-  int get hashCode => key.hashCode ^ debugMode.hashCode ^ onBack.hashCode;
+  int get hashCode =>
+      key.hashCode ^
+      debugMode.hashCode ^
+      onBack.hashCode ^
+      onPurchaseSuccess.hashCode;
 }
 
 /// generated route for

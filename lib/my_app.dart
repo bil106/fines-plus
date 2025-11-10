@@ -2,9 +2,13 @@ import 'dart:async';
 
 import 'package:app_links/app_links.dart';
 import 'package:core_localization/generated/l10n.dart';
+import 'package:core_services/services/purchase_service.dart';
 import 'package:fines_plus/core/services/launch_service.dart';
 import 'package:fines_plus/core/theme/theme_config.dart';
+import 'package:fines_plus/features/subscription/data/models/trial_manager.dart';
+import 'package:fines_plus/router/home_screen_wrapper.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -42,7 +46,7 @@ class _MyAppState extends State<MyApp> {
 
   bool? firstLaunch;
   bool _didNavigate = false; 
-
+bool? _hasActiveSubscription;
   late final AppRouter _router;
 
   @override
@@ -53,20 +57,36 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> _initOnce() async {
- 
     firstLaunch = await LaunchService.isFirstLaunch();
-
-  
     _router = AppRouter();
 
-   
     _setupPushNotifications();
-    await _initDynamicLinks(); 
+    await _initDynamicLinks();
     _initAppLinks();
 
     analytics.logAppOpen();
 
-    if (mounted) setState(() {}); 
+    // Checking active subscription (or trial)
+    bool hasActiveSub = false;
+    final user = FirebaseAuth.instance.currentUser;
+
+    if (user != null) {
+      final trialStatus = await TrialManager.getTrialStatus();
+      if (trialStatus == TrialStatus.active) {
+        hasActiveSub = true; // if the trial is active - the user is "subscribed"
+      } else {
+        final purchaseService = PurchaseService();
+        hasActiveSub = await purchaseService.hasActiveSubscription(user.uid);
+      }
+
+      debugPrint('🔍 Active subscription or trial: $hasActiveSub');
+    }
+
+    if (mounted) {
+      setState(() {
+        _hasActiveSubscription = hasActiveSub; 
+      });
+    }
   }
 
   void _setupPushNotifications() {
@@ -159,28 +179,38 @@ class _MyAppState extends State<MyApp> {
     }
   }
 
+
   @override
   void dispose() {
     _appLinksSub?.cancel();
     super.dispose();
   }
 
-  @override
+@override
   Widget build(BuildContext context) {
-   
-    if (firstLaunch == null) {
+  
+    if (firstLaunch == null || _hasActiveSubscription == null) {
       return const MaterialApp(
         home: Scaffold(body: Center(child: CircularProgressIndicator())),
       );
     }
 
-   
     final app = Provider<AppConfig>.value(
       value: widget.config,
       child: MaterialApp.router(
         routerConfig: _router.config(
-          deepLinkBuilder: (_) =>
-              firstLaunch == true ? const DeepLink([OnboardingRoute()]) : DeepLink([SubscriptionRoute()]),
+          deepLinkBuilder: (_) {
+            // first launch → onboarding
+            if (firstLaunch == true) {
+              return const DeepLink([OnboardingRoute()]);
+            }
+            // there is a subscription or a trial → on the main screen
+            if (_hasActiveSubscription == true) {
+              return DeepLink([HomeRouteWrapper(initialPage: HomePage.home)]);
+            }
+
+            return DeepLink([SubscriptionRoute()]);
+          },
         ),
         title: 'Fines+',
         locale: _locale ?? const Locale('uk'),
@@ -196,17 +226,16 @@ class _MyAppState extends State<MyApp> {
       ),
     );
 
-   
     if (!_didNavigate) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
-      
+
         if (widget.isUpdateRequired) {
           context.router.replaceAll([const UpdateRequiredRoute()]);
           _didNavigate = true;
           return;
         }
-      
+
         _didNavigate = true;
       });
     }

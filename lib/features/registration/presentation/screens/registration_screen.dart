@@ -8,6 +8,7 @@ import 'package:fines_plus/features/registration/presentation/cubit/registration
 import 'package:fines_plus/features/registration/presentation/cubit/registration_state.dart';
 import 'package:fines_plus/features/subscription/presentation/cubit/subscription_cubit.dart';
 import 'package:fines_plus/router/app_router.dart';
+import 'package:fines_plus/router/home_screen_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -228,7 +229,27 @@ Future<void> _signInWithFacebook(BuildContext context) async {
                         backgroundColor: AppColors.blue700,
                       ),
                     );
-                    context.router.replace(SubscriptionRoute());
+                    context.router.replaceAll([
+                      SubscriptionRoute(
+                        debugMode: true,
+                        onPurchaseSuccess: () async {
+                         
+
+                          await Future.delayed(const Duration(milliseconds: 150));
+
+                          final wrapperState = context.findAncestorStateOfType<HomeScreenWrapperState>();
+                          if (wrapperState != null) {
+                          
+                            wrapperState.openPage(HomePage.addCar);
+                            return;
+                          }
+
+                         
+                          context.router.root.replaceAll([HomeRouteWrapper(initialPage: HomePage.addCar)]);
+                        },
+                      ),
+                    ]);
+
                   }
                 },
                 builder: (context, state) {

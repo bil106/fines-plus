@@ -3188,6 +3188,61 @@ class S {
   String get full_tank {
     return Intl.message('Full tank', name: 'full_tank', desc: '', args: []);
   }
+
+  /// `Costs`
+  String get total_costs {
+    return Intl.message('Costs', name: 'total_costs', desc: '', args: []);
+  }
+
+  /// `Oil`
+  String get oil_icon {
+    return Intl.message('Oil', name: 'oil_icon', desc: '', args: []);
+  }
+
+  /// `Coolant`
+  String get coolant_icon {
+    return Intl.message('Coolant', name: 'coolant_icon', desc: '', args: []);
+  }
+
+  /// `Service`
+  String get service_icon {
+    return Intl.message('Service', name: 'service_icon', desc: '', args: []);
+  }
+
+  /// `Repair`
+  String get repair_icon {
+    return Intl.message('Repair', name: 'repair_icon', desc: '', args: []);
+  }
+
+  /// `Battery`
+  String get battery {
+    return Intl.message('Battery', name: 'battery', desc: '', args: []);
+  }
+
+  /// `Tires`
+  String get tires_icon {
+    return Intl.message('Tires', name: 'tires_icon', desc: '', args: []);
+  }
+
+  /// `Car`
+  String get car_icon {
+    return Intl.message('Car', name: 'car_icon', desc: '', args: []);
+  }
+
+  /// `Insurance`
+  String get insurance {
+    return Intl.message('Insurance', name: 'insurance', desc: '', args: []);
+  }
+
+  /// `Last event`
+  String get last_event {
+    return Intl.message('Last event', name: 'last_event', desc: '', args: []);
+  }
+
+  /// `Open events`
+  String get open_events {
+    return Intl.message('Open events', name: 'open_events', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

@@ -106,4 +106,13 @@ class ExpenseRepository {
     await batch.commit();
     debugPrint(' All expenses of the category "$category" removed for the machine $carNumber');
   }
+ Future<Expense?> getLatestExpense({required String carNumber}) async {
+    final col = _expensesCollection(carNumber);
+    final snap = await col.orderBy('date', descending: true).limit(1).get();
+    if (snap.docs.isEmpty) return null;
+    final doc = snap.docs.first;
+    return Expense.fromFirestore(doc.data() as Map<String, dynamic>, id: doc.id);
+  }
+
+
 }

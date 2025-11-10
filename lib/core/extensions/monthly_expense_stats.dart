@@ -15,6 +15,19 @@ class MonthlyExpenseStats {
   factory MonthlyExpenseStats.fromJson(Map<String, dynamic> json) => _$MonthlyExpenseStatsFromJson(json);
 
   Map<String, dynamic> toJson() => _$MonthlyExpenseStatsToJson(this);
+factory MonthlyExpenseStats.initial() {
+    return MonthlyExpenseStats(
+      monthLabel: '',
+      total: 0.0,
+      categoryTotals: {
+        ExpenseCategory.fuel: 0.0,
+        ExpenseCategory.service: 0.0,
+        ExpenseCategory.tuning: 0.0,
+        ExpenseCategory.carWash: 0.0,
+        ExpenseCategory.other: 0.0,
+      },);}
+
+
 }
 
 MonthlyExpenseStats calculateMonthlyStats(List<ExpenseRecord> expenses, int year, int month) {
@@ -38,4 +51,7 @@ MonthlyExpenseStats calculateMonthlyStats(List<ExpenseRecord> expenses, int year
   }
 
   return MonthlyExpenseStats(monthLabel: monthLabel, total: total, categoryTotals: categoryTotals);
+
+
+
 }

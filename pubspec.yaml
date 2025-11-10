@@ -87,7 +87,8 @@ dependencies:
   freezed_annotation: ^3.1.0
   json_annotation: ^4.9.0
   introduction_screen: ^3.1.12
-
+  rxdart: ^0.28.0
+  percent_indicator: ^4.2.3
  
 
      
@@ -123,12 +124,23 @@ flutter:
     - assets/icons/insurance.png
     - assets/icons/car-wash.svg
     - assets/icons/tuning.jpg
+    - assets/icons/battery.png
+    - assets/icons/brake.png
+    - assets/icons/chassis.png
+    - assets/icons/conditioning.png
+    - assets/icons/cooling_radiator.png
+    - assets/icons/muffler.png
+    - assets/icons/oil_service.png
+    - assets/icons/transmission.jpg
+    - assets/icons/wheels.png
     - assets/fonts/Fines/Roboto-Regular.ttf
     - assets/images/cars/tesla_model_x_red.png
     - assets/images/insurance_bg.png
     - assets/images/fines_bg.png
     - assets/images/analytics_bg.png
     - assets/images/maintenance_bg.png
+    - assets/icons/insurance.png
+    - assets/icons/finance.png
    
     
 flutter_icons:

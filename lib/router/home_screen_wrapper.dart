@@ -16,6 +16,7 @@ import 'package:fines_plus/features/fines/presentation/screens/fines_screeen.dar
 import 'package:fines_plus/features/history/domain/history_repository.dart';
 import 'package:fines_plus/features/history/presentation/cubit/history_cubit.dart';
 import 'package:fines_plus/features/history/presentation/screens/history_screen.dart';
+import 'package:fines_plus/features/home/presentation/screens/home_screen.dart';
 import 'package:fines_plus/features/maintenance/presentation/cubit/maintenance_cubit.dart';
 import 'package:fines_plus/features/registration/presentation/cubit/registration_cubit.dart';
 import 'package:fines_plus/features/reminders/data/datasources/reminder_local_data_source.dart';
@@ -40,6 +41,7 @@ import 'package:fines_plus/presentation/screens/settings_screen.dart';
 import 'package:fines_plus/features/maintenance/presentation/screens/maintenance_screen.dart';
 import 'package:fines_plus/features/maintenance/presentation/screens/tuning_screen.dart';
 import 'package:fines_plus/features/subscription/presentation/screens/subscription_screen.dart';
+import 'package:fines_plus/router/app_router.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:flutter/material.dart';
@@ -50,6 +52,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 enum HomePage {
+  home,
   addCar,
   fines,
   reminders,
@@ -73,15 +76,16 @@ enum HomePage {
 
 @RoutePage()
 class HomeScreenWrapper extends StatefulWidget {
-  const HomeScreenWrapper({super.key});
+  final HomePage initialPage;
+  const HomeScreenWrapper({super.key, this.initialPage = HomePage.home}); 
 
   @override
   State<HomeScreenWrapper> createState() => HomeScreenWrapperState();
 }
 
 class HomeScreenWrapperState extends State<HomeScreenWrapper> {
-  final PageController _pageController = PageController();
-  int _currentIndex = 0;
+  late final PageController _pageController;
+  late int _currentIndex;
   List<EventModel> exportHistory = [];
   String? _carNumber;
   String? _docSeries;
@@ -96,6 +100,7 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
   @override
   void initState() {
     super.initState();
+    debugPrint('HomeScreenWrapper: widget.initialPage = ${widget.initialPage}');
     _loadCarNumber();
 
     historyCubit = HistoryCubit(repository: context.read<HistoryRepository>(), carCubit: context.read<CarCubit>());
@@ -105,26 +110,31 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
       carCubit: context.read<CarCubit>(),
     );
     _pageIndexMap = {
-      HomePage.addCar: 0,
-      HomePage.fines: 1,
-      HomePage.reminders: 2,
-      HomePage.analytics: 3,
-      HomePage.carInfo: 4,
-      HomePage.fineCheck: 5,
-      HomePage.settings: 6,
-      HomePage.history: 7,
-      HomePage.maintenance: 8,
-      HomePage.export: 9,
-      HomePage.registration: 10,
-      HomePage.subscription: 11,
-      HomePage.fuel: 12,
-      HomePage.service: 13,
-      HomePage.tuning: 14,
-      HomePage.carWash: 15,
-      HomePage.schedule: 16,
-      HomePage.fuelMap: 17,
-      HomePage.carWashMap: 18,
+      HomePage.home: 0,
+      HomePage.addCar: 1,
+      HomePage.fines: 2,
+      HomePage.reminders: 3,
+      HomePage.analytics: 4,
+      HomePage.carInfo: 5,
+      HomePage.fineCheck: 6,
+      HomePage.settings: 7,
+      HomePage.history: 8,
+      HomePage.maintenance: 9,
+      HomePage.export: 10,
+      HomePage.registration: 11,
+      HomePage.subscription: 12,
+      HomePage.fuel: 13,
+      HomePage.service: 14,
+      HomePage.tuning: 15,
+      HomePage.carWash: 16,
+      HomePage.schedule: 17,
+      HomePage.fuelMap: 18,
+      HomePage.carWashMap: 19,
     };
+      _currentIndex = _pageIndexMap[HomePage.home]!;
+        debugPrint('HomeScreenWrapper: initial computed _currentIndex = $_currentIndex');
+    _pageController = PageController(initialPage: _currentIndex);
+    
   }
 
   void refreshUserData() {
@@ -163,7 +173,6 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
     }
   }
 
-  int get _bottomNavIndex => _currentIndex.clamp(0, 2);
 
   @override
   void dispose() {
@@ -178,14 +187,16 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
   Widget build(BuildContext context) {
     final carState = context.watch<CarCubit>().state;
     final carNumber = carState.carNumber;
+
     if (_carNumber == null) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
     return WillPopScope(
       onWillPop: () async {
-        if (_currentIndex != 0) {
-          openPage(HomePage.addCar);
+        
+        if (_currentIndex != _pageIndexMap[HomePage.home]) {
+          openPage(HomePage.home);
           return false;
         }
 
@@ -195,12 +206,11 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
 
           ScaffoldMessenger.of(
             context,
-          ).showSnackBar(SnackBar(content: Text(S.of(context).click_again), duration: Duration(seconds: 2)));
+          ).showSnackBar(SnackBar(content: Text(S.of(context).click_again), duration: const Duration(seconds: 2)));
           return false;
         }
 
         await SystemChannels.platform.invokeMethod('SystemNavigator.pop');
-
         return false;
       },
       child: MultiBlocProvider(
@@ -213,9 +223,11 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
           backgroundColor: AppColors.grey50,
           body: PageView(
             controller: _pageController,
-             physics: const NeverScrollableScrollPhysics(),
+            physics: const BouncingScrollPhysics(),
+
             onPageChanged: (index) => setState(() => _currentIndex = index),
             children: [
+              HomeScreen(key: const ValueKey('home')),
               AddCarScreen(
                 key: const ValueKey('add_car_screen'),
                 onOpenCarInfo: () => openPage(HomePage.carInfo),
@@ -223,31 +235,22 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
                 onMaintenance: () => openPage(HomePage.maintenance),
                 onAnalytics: () => openPage(HomePage.analytics),
               ),
-              FinesScreen(key: const ValueKey('fines_screen'), onBack: () => openPage(HomePage.addCar)),
-              RemindersScreen(
-                key: const ValueKey('reminders'),
-                carNumber: _carNumber!,
-                onBack: () => openPage(HomePage.addCar),
-                userId: '',
-              ),
-            AnalyticsScreen(
+              FinesScreen(key: const ValueKey('fines_screen'), onBack: () => openPage(HomePage.home)),
+              RemindersScreen(key: const ValueKey('reminders'), onBack: () => openPage(HomePage.home), userId: ''),
+              AnalyticsScreen(
                 key: const ValueKey('analytics'),
                 carNumber: carNumber,
-                onBack: () => openPage(HomePage.addCar),
+                onBack: () => openPage(HomePage.home),
               ),
-
-
               BlocProvider(
                 create: (_) => ExpensesCubit(repository: ExpenseRepository(FirebaseFirestore.instance)),
                 child: CarInfoScreen(
                   key: const ValueKey('car_info_screen'),
-               
-                  onBack: () => openPage(HomePage.addCar),
+                  onBack: () => openPage(HomePage.home),
                   onCheckFine: (carNumber, series, number) {
                     _saveCarInfo(carNumber, series, number);
                     openPage(HomePage.history);
                   },
-              
                 ),
               ),
               FineCheckScreen(
@@ -255,7 +258,7 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
                 carNumber: _carNumber!,
                 docSeries: _docSeries ?? '',
                 docNumber: _docNumber ?? '',
-                onBack: () => openPage(HomePage.addCar),
+                onBack: () => openPage(HomePage.home),
               ),
               SettingsScreen(
                 key: const ValueKey('settings_screen'),
@@ -272,7 +275,7 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
                     onFuelUp: () => openPage(HomePage.fuel),
                     onService: () => openPage(HomePage.service),
                     onTuning: () => openPage(HomePage.tuning),
-                    onBack: () => openPage(HomePage.addCar),
+                    onBack: () => openPage(HomePage.home),
                   );
                 },
               ),
@@ -284,13 +287,19 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
               ),
               BlocProvider(
                 create: (_) => RegistrationCubit(auth: FirebaseAuth.instance, storage: const FlutterSecureStorage()),
-                child: RegistrationScreen(key: const ValueKey('registration'), onBack: () => openPage(HomePage.addCar)),
+                child: RegistrationScreen(key: const ValueKey('registration'), onBack: () => openPage(HomePage.home)),
               ),
-
               SubscriptionScreen(
-                key: const ValueKey('subscription'), debugMode: true,
-
-                //  onBack: () => openPage(HomePage.addCar)
+                debugMode: true,
+                onPurchaseSuccess: () async {
+                  await Future.delayed(const Duration(milliseconds: 150));
+                  final wrapperState = context.findAncestorStateOfType<HomeScreenWrapperState>();
+                  if (wrapperState != null) {
+                    wrapperState.openPage(HomePage.home);
+                    return;
+                  }
+                  context.router.root.replaceAll([HomeRouteWrapper(initialPage: HomePage.home)]);
+                },
               ),
               FuelUpScreen(key: const ValueKey('fuel'), onBack: () => openPage(HomePage.maintenance)),
               CarWashScreen(key: const ValueKey('car-wash'), onBack: () => openPage(HomePage.maintenance)),
@@ -304,7 +313,10 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
                   return FutureBuilder<SharedPreferences>(
                     future: SharedPreferences.getInstance(),
                     builder: (context, snapshot) {
-                      if (!snapshot.hasData) return const Center(child: CircularProgressIndicator());
+                      if (!snapshot.hasData) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+
                       final prefs = snapshot.data!;
                       final localDataSource = ReminderLocalDataSourceImpl(SharedPrefsManager(prefs));
                       final remoteDataSource = ReminderRemoteDataSourceImpl(FirebaseFirestore.instance);
@@ -329,27 +341,55 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
               ),
             ],
           ),
-          bottomNavigationBar: BottomNavigationBar(
-            backgroundColor: AppColors.energyBlue50,
-            currentIndex: _bottomNavIndex,
-            onTap: (i) {
-              final page = HomePage.values[i];
-              if (page == HomePage.fineCheck) {
-                openPage(HomePage.fineCheck);
-              } else {
-                openPage(page);
-              }
-            },
-            selectedIconTheme: IconThemeData(color: AppColors.blue700),
-            unselectedItemColor: AppColors.grey700,
-            items: [
-              BottomNavigationBarItem(icon: Icon(Icons.directions_car), label: S.of(context).auto),
-              BottomNavigationBarItem(icon: Icon(Icons.receipt), label: S.of(context).fines),
-              BottomNavigationBarItem(icon: Icon(Icons.support), label: S.of(context).reminder),
-            ],
-          ),
+           bottomNavigationBar: _isMainTab(_currentIndex)
+              ? BottomNavigationBar(
+                  backgroundColor: AppColors.energyBlue50,
+                  currentIndex: _bottomNavIndexFor(_currentIndex),
+                  onTap: (i) {
+                    final page = [HomePage.home, HomePage.fines, HomePage.reminders][i];
+                    openPage(page);
+                  },
+                  items: [
+                    BottomNavigationBarItem(
+                      icon: Icon(
+                        Icons.home,
+                        color: _bottomNavIndexFor(_currentIndex) == 0 ? AppColors.blue700 : AppColors.grey700,
+                      ),
+                      label: 'Home',
+                    ),
+                    BottomNavigationBarItem(
+                      icon: Icon(
+                        Icons.receipt,
+                        color: _bottomNavIndexFor(_currentIndex) == 1 ? AppColors.blue700 : AppColors.grey700,
+                      ),
+                      label: S.of(context).fines,
+                    ),
+                    BottomNavigationBarItem(
+                      icon: Icon(
+                        Icons.support,
+                        color: _bottomNavIndexFor(_currentIndex) == 2 ? AppColors.blue700 : AppColors.grey700,
+                      ),
+                      label: S.of(context).reminder,
+                    ),
+                  ],
+                )
+              : null,
         ),
       ),
     );
   }
+
+  bool _isMainTab(int index) {
+    return index == _pageIndexMap[HomePage.home] ||
+        index == _pageIndexMap[HomePage.fines] ||
+        index == _pageIndexMap[HomePage.reminders];
+  }
+
+  int _bottomNavIndexFor(int pageIndex) {
+    if (pageIndex == _pageIndexMap[HomePage.home]) return 0;
+    if (pageIndex == _pageIndexMap[HomePage.fines]) return 1;
+    if (pageIndex == _pageIndexMap[HomePage.reminders]) return 2;
+    return 0;
+  }
 }
+

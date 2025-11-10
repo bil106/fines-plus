@@ -7,33 +7,39 @@ import 'package:design_system/theme/app_theme.dart';
 import 'package:fines_plus/features/reminders/presentation/widgets/reminder_dialog.dart';
 import 'package:fines_plus/features/reminders/data/repository/reminder_repository.dart';
 import 'package:fines_plus/features/reminders/presentation/cubit/reminder_cubit.dart';
+import 'package:fines_plus/features/vehicle/presentation/cubit/car_cubit.dart';
+import 'package:fines_plus/features/vehicle/presentation/cubit/car_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
 @RoutePage()
 class RemindersScreen extends StatelessWidget {
-  final String carNumber;
-  final String userId; 
+  final String userId;
   final VoidCallback? onBack;
 
-  const RemindersScreen({
-    super.key,
-    required this.carNumber,
-    required this.userId,
-    this.onBack,
-  });
+  const RemindersScreen({super.key, required this.userId, this.onBack});
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => ReminderCubit(
-        repository: context.read<ReminderRepository>(),
-        carNumber: carNumber,
-        userId: userId, 
-        pushHelper: context.read<PushHelper>(),
-      )..load(),
-      child: _RemindersView(onBack),
+    return BlocBuilder<CarCubit, CarState>(
+      builder: (context, carState) {
+        final carNumber = carState.carNumber;
+
+        if (carNumber.isEmpty) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        return BlocProvider(
+          create: (_) => ReminderCubit(
+            repository: context.read<ReminderRepository>(),
+            carNumber: carNumber,
+            userId: userId,
+            pushHelper: context.read<PushHelper>(), carCubit: context.read<CarCubit>(),
+          ),
+          child: _RemindersView(onBack),
+        );
+      },
     );
   }
 }

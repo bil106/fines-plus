@@ -239,7 +239,7 @@ class _MaintenanceScreenView extends StatelessWidget {
                       }
                     },
                   ),
-                  FABAction(
+              FABAction(
                     icon: const Icon(Icons.local_gas_station, color: AppColors.energyBlue),
                     onTap: () async {
                       cubit.closeMenu();
@@ -250,6 +250,7 @@ class _MaintenanceScreenView extends StatelessWidget {
                       }
                     },
                   ),
+
                 ],
               ),
             ],

@@ -59,6 +59,11 @@ class PushHelper {
 
     debugPrint('Notification "$title" scheduled in ${delay.inSeconds} seconds');
   }
+  Future<void> cancelNotification(int id) async {
+  
+    await _notificationsPlugin.cancel(id);
+  }
+
 }
 
 extension PushHelperResource on PushHelper {

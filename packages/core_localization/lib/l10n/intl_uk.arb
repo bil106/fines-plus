@@ -359,6 +359,17 @@
    "premium_support": "Преміум-підтримка",
    "selected": "Вибрано",
    "select_plan": "Виберіть план",
-   "full_tank": "Повний бак"
+   "full_tank": "Повний бак",
+   "total_costs": "Витрати",
+   "oil_icon": "Олія",
+   "coolant_icon": "Охолодження",
+   "service_icon": "Послуга",
+   "repair_icon": "Ремонт",
+   "battery": "Батарея",
+   "tires_icon": "Шини",
+   "car_icon": "Авто",
+   "insurance": "Страхування",
+   "last_event": "Остання подія",
+   "open_events": "Відкриті події"
 
 }

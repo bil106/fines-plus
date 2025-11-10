@@ -29,7 +29,7 @@ class PurchaseCubit extends Cubit<void> {
       uid: uid,
       amount: amount,
       months: months,
-      trialEndsAt: trialEndsAt, // ✅ передаём trial
+      trialEndsAt: trialEndsAt,
     );
 
     debugPrint(
@@ -37,5 +37,13 @@ class PurchaseCubit extends Cubit<void> {
           ? 'Trial started ($trialDays days), purchase pending: $purchaseId'
           : 'Purchase completed: $purchaseId',
     );
+  }
+  Future<bool> hasActiveSubscription(String uid) async {
+    try {
+      return await _service.hasActiveSubscription(uid);
+    } catch (e) {
+      debugPrint('Error checking active subscription: $e');
+      return false;
+    }
   }
 }

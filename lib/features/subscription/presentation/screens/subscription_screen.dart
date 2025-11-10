@@ -4,6 +4,7 @@ import 'package:fines_plus/features/subscription/data/models/trial_manager.dart'
 import 'package:fines_plus/features/subscription/domain/entities/subscription.dart';
 import 'package:fines_plus/features/subscription/presentation/cubit/subscription_cubit.dart';
 import 'package:fines_plus/router/app_router.dart';
+import 'package:fines_plus/router/home_screen_wrapper.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -18,8 +19,8 @@ import 'package:fines_plus/features/subscription/presentation/widgets/subscripti
 class SubscriptionScreen extends StatefulWidget {
   final bool debugMode;
   final VoidCallback? onBack;
-  
-  const SubscriptionScreen({super.key, this.debugMode = true, this.onBack});
+  final VoidCallback? onPurchaseSuccess;
+  const SubscriptionScreen({super.key, this.debugMode = true, this.onBack, this.onPurchaseSuccess});
   @override
   State<SubscriptionScreen> createState() => _SubscriptionScreenState();
 }
@@ -28,6 +29,8 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   final InAppPurchase _iap = InAppPurchase.instance;
   bool _available = false;
   bool _isLoading = true;
+  bool get _isUserLoggedIn => FirebaseAuth.instance.currentUser != null;
+
   List<dynamic> _products = [];
   int? _selectedMonths;
 TrialStatus _trialStatus = TrialStatus.none;
@@ -49,17 +52,32 @@ Future<void> _loadTrialStatus() async {
   }
 Future<void> _startTrial() async {
     final user = FirebaseAuth.instance.currentUser;
+
     if (user == null) {
-      _showSnack("Потрібна авторизація");
+      context.router.push(CarInfoRoute());
       return;
     }
 
     await TrialManager.startTrial();
-    await context.read<PurchaseCubit>().buySubscription(user.uid, 0.0, 1); 
+    await context.read<PurchaseCubit>().buySubscription(user.uid, 0.0, 1);
 
     setState(() => _trialStatus = TrialStatus.active);
     _showSnack("Пробний період активовано ✅");
+
+ 
+    final rootRouter = context.router.root;
+
+    await Future.delayed(const Duration(seconds: 1));
+
+   
+    widget.onPurchaseSuccess?.call();
+
+ 
+    rootRouter.replaceAll([HomeRouteWrapper(initialPage: HomePage.addCar)]);
   }
+
+
+
 
   Future<void> _initStoreInfo() async {
     setState(() => _isLoading = true);
@@ -185,23 +203,26 @@ Future<void> _startTrial() async {
                           product: fakeProduct,
                           months: months,
                           isSelected: _selectedMonths == months,
-                         onBuy: () {
-                            // 1) создаём SubscriptionPlan из FakeProduct (или используем SubscriptionPlan, если есть)
+                        onBuy: () {
                             final plan = SubscriptionPlan(
                               id: product.id,
                               title: product.title,
                               price: double.tryParse(product.price.toString()) ?? 0.0,
                               months: months,
-                              features: [], 
+                              features: [],
                             );
 
-                            // 2) сохраняем выбор в кубите
                             context.read<SubscriptionCubit>().selectPlan(plan);
 
-                        
-                            context.router.push(CarInfoRoute());
-                           
+                            if (_isUserLoggedIn) {
+                              // ✅ Уже зарегистрирован — переходим в основной экран
+                              widget.onPurchaseSuccess?.call();
+                            } else {
+                              // ❌ Не зарегистрирован — идём на ввод данных авто (CarInfoScreen)
+                              context.router.push(CarInfoRoute());
+                            }
                           },
+
 
                         );
                       },

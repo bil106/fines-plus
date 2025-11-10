@@ -114,12 +114,11 @@ class _StatisticsScreenView extends StatelessWidget {
               ),
               AppSpacers.verticalMedium,
 
-              if (state.expenseStats != null)
-                ExpenseStatsCard(
-                  stats: state.expenseStats!,
-                  onMaintenance: () =>
-                      context.findAncestorStateOfType<HomeScreenWrapperState>()?.openPage(HomePage.maintenance),
-                ),
+              ExpenseStatsCard(
+                stats: state.expenseStats,
+                onMaintenance: () =>
+                    context.findAncestorStateOfType<HomeScreenWrapperState>()?.openPage(HomePage.maintenance),
+              ),
             ],
           ),
         );

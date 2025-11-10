@@ -4,7 +4,6 @@ import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
 import 'package:fines_plus/core/extensions/ad_banner_widget.dart';
-import 'package:fines_plus/router/app_router.dart';
 import 'package:fines_plus/router/home_screen_wrapper.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -65,16 +64,16 @@ class _AddCarScreenState extends State<AddCarScreen> {
                         runSpacing: 14,
                         alignment: WrapAlignment.center,
                         children: [
-                          _buildMenuSquare(
-                            iconWidget: _buildSquareIcon(Icons.directions_car_rounded, S.of(context).auto, textTheme),
-                            onTap: () {
-                              if (widget.onOpenCarInfo != null) {
-                                widget.onOpenCarInfo!.call();
-                              } else {
-                                context.router.push(CarInfoRoute());
-                              }
-                            },
-                          ),
+                          // _buildMenuSquare(
+                          //   iconWidget: _buildSquareIcon(Icons.directions_car_rounded, S.of(context).auto, textTheme),
+                          //   onTap: () {
+                          //     if (widget.onOpenCarInfo != null) {
+                          //       widget.onOpenCarInfo!.call();
+                          //     } else {
+                          //       context.router.push(CarInfoRoute());
+                          //     }
+                          //   },
+                          // ),
 
                           _buildMenuSquare(
                             iconWidget: _buildSquareIcon(Icons.build, S.of(context).maintenance, textTheme),

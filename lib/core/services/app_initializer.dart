@@ -24,6 +24,7 @@ import 'package:fines_plus/features/reminders/data/models/reminder_model.dart';
 import 'package:fines_plus/features/reminders/data/repository/reminder_repository.dart';
 import 'package:fines_plus/features/schedule/data/repository/schedule_repository.dart';
 import 'package:fines_plus/features/schedule/presentation/cubit/schedule_cubit.dart';
+import 'package:fines_plus/features/statistics/presentation/cubit/statistics_cubit.dart';
 import 'package:fines_plus/features/subscription/data/datasources/load_user_subscription_usecase.dart';
 import 'package:fines_plus/features/subscription/data/datasources/save_trial_info_usecase.dart';
 import 'package:fines_plus/features/subscription/data/repository/subscription_repository_impl.dart';
@@ -57,6 +58,7 @@ class AppInitializer {
   late final FuelStationCubit fuelStationCubit;
   late final MaintenanceCubit maintenanceCubit;
   late final ScheduleCubit scheduleCubit;
+  late final StatisticsCubit statisticsCubit;
   late final SubscriptionCubit subscriptionCubit;
   late final CarCubit carCubit;
   late final HistoryCubit historyCubit;
@@ -190,6 +192,7 @@ class AppInitializer {
       carCubit: carCubit,
     );
     fuelStationCubit = FuelStationCubit();
+    statisticsCubit = StatisticsCubit(maintenanceCubit);
 
     subscriptionRepository = SubscriptionRepositoryImpl(
       InAppPurchase.instance,
@@ -247,6 +250,7 @@ class AppInitializer {
       registrationCubit: registrationCubit,
       fuelStationCubit: fuelStationCubit,
       maintenanceCubit: maintenanceCubit,
+      statisticsCubit:statisticsCubit,
       scheduleCubit: scheduleCubit,
       carCubit: carCubit,
       additionalOptionsCubit: additionalOptionsCubit,
@@ -328,6 +332,7 @@ class AppInitResult {
   final RegistrationCubit registrationCubit;
   final FuelStationCubit fuelStationCubit;
   final MaintenanceCubit maintenanceCubit;
+  final StatisticsCubit statisticsCubit;
   final ScheduleCubit scheduleCubit;
   final CarCubit carCubit;
   final SubscriptionCubit subscriptionCubit;
@@ -351,6 +356,7 @@ class AppInitResult {
     required this.registrationCubit,
     required this.fuelStationCubit,
     required this.maintenanceCubit,
+    required this.statisticsCubit,
     required this.scheduleCubit,
     required this.carCubit,
     required this.subscriptionCubit,

@@ -358,5 +358,16 @@
 "premium_support": "Premium support",
 "selected": "Selected",
 "select_plan": "Select plan",
-"full_tank": "Full tank"
+"full_tank": "Full tank",
+"total_costs": "Costs",
+"oil_icon": "Oil",
+"coolant_icon": "Coolant",
+"service_icon": "Service",
+"repair_icon": "Repair",
+"battery": "Battery",
+"tires_icon": "Tires",
+"car_icon": "Car",
+"insurance": "Insurance",
+"last_event": "Last event",
+"open_events": "Open events"
 }

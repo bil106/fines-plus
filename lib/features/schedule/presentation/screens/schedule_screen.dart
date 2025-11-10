@@ -90,6 +90,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
             pushHelper: widget.pushHelper,
             carNumber: widget.carNumber,
             userId: widget.userId,
+            carCubit: context.read<CarCubit>(),
           ),
         ),
       ],

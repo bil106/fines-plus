@@ -49,6 +49,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "auto": MessageLookupByLibrary.simpleMessage("Авто"),
     "average": MessageLookupByLibrary.simpleMessage("Середній"),
+    "battery": MessageLookupByLibrary.simpleMessage("Батарея"),
     "buy_subscription": MessageLookupByLibrary.simpleMessage(
       "Купити передплату",
     ),
@@ -60,6 +61,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Цю дію не можна буде скасувати.",
     ),
     "car_history": MessageLookupByLibrary.simpleMessage("Історія автомобіля"),
+    "car_icon": MessageLookupByLibrary.simpleMessage("Авто"),
     "car_number": MessageLookupByLibrary.simpleMessage("Номер авто"),
     "car_wash": MessageLookupByLibrary.simpleMessage("Автомийка"),
     "car_wash_nearby": MessageLookupByLibrary.simpleMessage("Автомийка поруч"),
@@ -88,6 +90,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "configure_action": MessageLookupByLibrary.simpleMessage("Налаштувати дію"),
     "contact_us": MessageLookupByLibrary.simpleMessage("Зв\'яжіться з нами:"),
+    "coolant_icon": MessageLookupByLibrary.simpleMessage("Охолодження"),
     "cost_of_work": MessageLookupByLibrary.simpleMessage("Вартість робіт:"),
     "cost_statistics": MessageLookupByLibrary.simpleMessage(
       "Статистика витрат",
@@ -194,10 +197,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "incorrect_password": MessageLookupByLibrary.simpleMessage(
       "Неправильний пароль",
     ),
+    "insurance": MessageLookupByLibrary.simpleMessage("Страхування"),
     "invalid_email": MessageLookupByLibrary.simpleMessage("Невірний email"),
     "item_removed": MessageLookupByLibrary.simpleMessage("Елемент видалено"),
     "large_login": MessageLookupByLibrary.simpleMessage("УВІЙТИ"),
     "large_sign_up": MessageLookupByLibrary.simpleMessage("ЗАРЕЄСТРУВАТИСЯ"),
+    "last_event": MessageLookupByLibrary.simpleMessage("Остання подія"),
     "loaded": MessageLookupByLibrary.simpleMessage("Завантажено"),
     "login": MessageLookupByLibrary.simpleMessage("Увійти"),
     "logo": MessageLookupByLibrary.simpleMessage("LOGO"),
@@ -246,7 +251,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Аварії на дорогах",
     ),
     "oil": MessageLookupByLibrary.simpleMessage("масло"),
+    "oil_icon": MessageLookupByLibrary.simpleMessage("Олія"),
     "ok": MessageLookupByLibrary.simpleMessage("ОК"),
+    "open_events": MessageLookupByLibrary.simpleMessage("Відкриті події"),
     "open_site": MessageLookupByLibrary.simpleMessage("Увійти у e-Drive"),
     "open_statistics": MessageLookupByLibrary.simpleMessage(
       "Відкрити статистику",
@@ -290,6 +297,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "reminder": MessageLookupByLibrary.simpleMessage("Нагадування"),
     "remove": MessageLookupByLibrary.simpleMessage("Видалити"),
     "repair": MessageLookupByLibrary.simpleMessage("Ремонт"),
+    "repair_icon": MessageLookupByLibrary.simpleMessage("Ремонт"),
     "resource": MessageLookupByLibrary.simpleMessage("Ресурс:"),
     "resource_out": MessageLookupByLibrary.simpleMessage("Ресурс закінчується"),
     "save": MessageLookupByLibrary.simpleMessage("Зберегти"),
@@ -365,6 +373,7 @@ class MessageLookup extends MessageLookupByLibrary {
         MessageLookupByLibrary.simpleMessage(
           "Головний циліндр зчеплення - заміна",
         ),
+    "service_icon": MessageLookupByLibrary.simpleMessage("Послуга"),
     "service_inzhektor_chystka": MessageLookupByLibrary.simpleMessage(
       "Інжектор - чистка (без урахування спецрідини)",
     ),
@@ -804,6 +813,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Тестова передплата на",
     ),
     "tires": MessageLookupByLibrary.simpleMessage("шина"),
+    "tires_icon": MessageLookupByLibrary.simpleMessage("Шини"),
     "title": MessageLookupByLibrary.simpleMessage("Заголовок"),
     "to_be_performed": MessageLookupByLibrary.simpleMessage("До виконання:"),
     "tokens_already_present": MessageLookupByLibrary.simpleMessage(
@@ -814,6 +824,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "total": MessageLookupByLibrary.simpleMessage("Разом"),
     "total_amount": MessageLookupByLibrary.simpleMessage("Загальна сума:"),
+    "total_costs": MessageLookupByLibrary.simpleMessage("Витрати"),
     "total_fines": MessageLookupByLibrary.simpleMessage(
       "Загальна кількість штрафів: ",
     ),
