@@ -13,10 +13,7 @@ class ExpenseRepository {
     return firestore.collection('cars').doc(carNumber).collection('expenses');
   }
 
-  Future<DocumentReference> addExpense({
-    required String carNumber,
-    required Expense expense,
-  }) async {
+  Future<DocumentReference> addExpense({required String carNumber, required Expense expense}) async {
     final col = _expensesCollection(carNumber);
     final docRef = await col.add(expense.toFirestore());
 
@@ -28,20 +25,14 @@ class ExpenseRepository {
     return docRef;
   }
 
-  Stream<List<Expense>> watchExpenses({
-    required String carNumber,
-    int limit = 1000,
-  }) {
+  Stream<List<Expense>> watchExpenses({required String carNumber, int limit = 1000}) {
     final col = _expensesCollection(carNumber);
     return col.orderBy('date', descending: true).limit(limit).snapshots().map((snap) {
       return snap.docs.map((d) => Expense.fromFirestore(d.data() as Map<String, dynamic>, id: d.id)).toList();
     });
   }
 
-  Future<List<Expense>> getExpensesOnce({
-    required String carNumber,
-    int limit = 1000,
-  }) async {
+  Future<List<Expense>> getExpensesOnce({required String carNumber, int limit = 1000}) async {
     final col = _expensesCollection(carNumber);
     final snap = await col.orderBy('date', descending: true).limit(limit).get();
     return snap.docs.map((d) => Expense.fromFirestore(d.data() as Map<String, dynamic>, id: d.id)).toList();
@@ -57,17 +48,12 @@ class ExpenseRepository {
     await col.doc(expenseId).update(updatedFields);
   }
 
-  Future<void> deleteExpense({
-    required String carNumber,
-    required String expenseId,
-  }) async {
+  Future<void> deleteExpense({required String carNumber, required String expenseId}) async {
     final col = _expensesCollection(carNumber);
     await col.doc(expenseId).delete();
   }
 
-  Future<void> deleteAllExpenses({
-    required String carNumber,
-  }) async {
+  Future<void> deleteAllExpenses({required String carNumber}) async {
     final col = _expensesCollection(carNumber);
     final query = await col.get();
 
@@ -85,10 +71,7 @@ class ExpenseRepository {
     debugPrint(' All expenses removed for the car $carNumber');
   }
 
-  Future<void> deleteExpensesByCategory({
-    required String carNumber,
-    required String category,
-  }) async {
+  Future<void> deleteExpensesByCategory({required String carNumber, required String category}) async {
     final col = _expensesCollection(carNumber);
 
     final query = await col.where('category', isEqualTo: category).get();
@@ -106,13 +89,12 @@ class ExpenseRepository {
     await batch.commit();
     debugPrint(' All expenses of the category "$category" removed for the machine $carNumber');
   }
- Future<Expense?> getLatestExpense({required String carNumber}) async {
+
+  Future<Expense?> getLatestExpense({required String carNumber}) async {
     final col = _expensesCollection(carNumber);
     final snap = await col.orderBy('date', descending: true).limit(1).get();
     if (snap.docs.isEmpty) return null;
     final doc = snap.docs.first;
     return Expense.fromFirestore(doc.data() as Map<String, dynamic>, id: doc.id);
   }
-
-
 }

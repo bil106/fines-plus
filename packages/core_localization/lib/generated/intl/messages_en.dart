@@ -44,6 +44,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "amount_month": MessageLookupByLibrary.simpleMessage("Amount per month"),
     "analitics": MessageLookupByLibrary.simpleMessage("Analytics"),
+    "analytics": MessageLookupByLibrary.simpleMessage("Analytics"),
     "authorization_required": MessageLookupByLibrary.simpleMessage(
       "Authorization required",
     ),
@@ -62,6 +63,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "car_history": MessageLookupByLibrary.simpleMessage("Car history"),
     "car_icon": MessageLookupByLibrary.simpleMessage("Car"),
+    "car_inspection": MessageLookupByLibrary.simpleMessage(
+      "Reminders for car inspection and service",
+    ),
     "car_number": MessageLookupByLibrary.simpleMessage("Car number"),
     "car_wash": MessageLookupByLibrary.simpleMessage("Car wash"),
     "car_wash_nearby": MessageLookupByLibrary.simpleMessage("Car wash nearby"),
@@ -91,16 +95,21 @@ class MessageLookup extends MessageLookupByLibrary {
     "configure_action": MessageLookupByLibrary.simpleMessage(
       "Configure action",
     ),
+    "connection_error": MessageLookupByLibrary.simpleMessage(
+      "Connection error",
+    ),
     "contact_us": MessageLookupByLibrary.simpleMessage("Contact us:"),
     "coolant_icon": MessageLookupByLibrary.simpleMessage("Coolant"),
     "cost_of_work": MessageLookupByLibrary.simpleMessage("Cost of work:"),
     "cost_statistics": MessageLookupByLibrary.simpleMessage("Cost statistics"),
+    "costs_stat": MessageLookupByLibrary.simpleMessage("Cost Statistics"),
     "csv": MessageLookupByLibrary.simpleMessage("CSV"),
     "date": MessageLookupByLibrary.simpleMessage("Date"),
     "date_previous_maintenance": MessageLookupByLibrary.simpleMessage(
       "Previous maintenance date",
     ),
     "days": MessageLookupByLibrary.simpleMessage("days"),
+    "days_free": MessageLookupByLibrary.simpleMessage("days free"),
     "del_all_expenses": MessageLookupByLibrary.simpleMessage(
       "Delete ALL expenses",
     ),
@@ -111,6 +120,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Delete expense history",
     ),
     "description": MessageLookupByLibrary.simpleMessage("Description"),
+    "done": MessageLookupByLibrary.simpleMessage("Done"),
     "dont_have_account": MessageLookupByLibrary.simpleMessage(
       "Don\'t have an account? Sign up",
     ),
@@ -146,6 +156,18 @@ class MessageLookup extends MessageLookupByLibrary {
     "export_history": MessageLookupByLibrary.simpleMessage("Export history"),
     "extract_tokens": MessageLookupByLibrary.simpleMessage("Extract tokens"),
     "extracting": MessageLookupByLibrary.simpleMessage("Extracting..."),
+    "facebook_error": MessageLookupByLibrary.simpleMessage(
+      "Facebook error: AccessToken empty",
+    ),
+    "facebook_login_cancelled": MessageLookupByLibrary.simpleMessage(
+      "Facebook login canceled by user.",
+    ),
+    "facebook_login_error": MessageLookupByLibrary.simpleMessage(
+      "Facebook login error:",
+    ),
+    "facebook_login_successful": MessageLookupByLibrary.simpleMessage(
+      "Facebook login successful",
+    ),
     "fact": MessageLookupByLibrary.simpleMessage("Fact"),
     "failed_extract_tokens": MessageLookupByLibrary.simpleMessage(
       "Failed to extract tokens",
@@ -159,6 +181,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Fine checking is disabled in settings",
     ),
     "fines": MessageLookupByLibrary.simpleMessage("Fines"),
+    "fines_control": MessageLookupByLibrary.simpleMessage("Fine fines control"),
     "fines_length": MessageLookupByLibrary.simpleMessage("Fines:"),
     "free_experience": MessageLookupByLibrary.simpleMessage(
       "Ad-free experience",
@@ -173,6 +196,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "full_tank": MessageLookupByLibrary.simpleMessage("Full tank"),
     "gas_station_nearby": MessageLookupByLibrary.simpleMessage(
       "Gas stations nearby",
+    ),
+    "get_notified": MessageLookupByLibrary.simpleMessage(
+      "Get notified and pay on time",
     ),
     "google_login": MessageLookupByLibrary.simpleMessage(
       "Google login successful",
@@ -196,8 +222,14 @@ class MessageLookup extends MessageLookupByLibrary {
       "Incorrect password",
     ),
     "insurance": MessageLookupByLibrary.simpleMessage("Insurance"),
+    "insurance_control": MessageLookupByLibrary.simpleMessage(
+      "Insurance control",
+    ),
     "invalid_email": MessageLookupByLibrary.simpleMessage("Invalid email"),
     "item_removed": MessageLookupByLibrary.simpleMessage("Item removed"),
+    "keep_track": MessageLookupByLibrary.simpleMessage(
+      "Track car insurance due dates",
+    ),
     "km": MessageLookupByLibrary.simpleMessage("km"),
     "large_login": MessageLookupByLibrary.simpleMessage("LOG IN"),
     "large_sign_up": MessageLookupByLibrary.simpleMessage("SIGN UP"),
@@ -206,7 +238,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "login": MessageLookupByLibrary.simpleMessage("Login"),
     "logo": MessageLookupByLibrary.simpleMessage("LOGO"),
     "maintenance": MessageLookupByLibrary.simpleMessage("Maintenance"),
+    "maintenance_control": MessageLookupByLibrary.simpleMessage(
+      "Maintenance control",
+    ),
     "mileage": MessageLookupByLibrary.simpleMessage("Mileage"),
+    "mileage_stat": MessageLookupByLibrary.simpleMessage("Mileage Statistics"),
     "mileage_statistics": MessageLookupByLibrary.simpleMessage(
       "Mileage statistics",
     ),
@@ -214,6 +250,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Mileage at time of service",
     ),
     "min_char": MessageLookupByLibrary.simpleMessage("Minimum 6 characters"),
+    "miss": MessageLookupByLibrary.simpleMessage("Skip"),
     "month": MessageLookupByLibrary.simpleMessage("Month"),
     "my_position": MessageLookupByLibrary.simpleMessage("You are here"),
     "name": MessageLookupByLibrary.simpleMessage("Name"),
@@ -226,6 +263,12 @@ class MessageLookup extends MessageLookupByLibrary {
       "There are no fines for you",
     ),
     "no_name": MessageLookupByLibrary.simpleMessage("No name"),
+    "no_plan_selected": MessageLookupByLibrary.simpleMessage(
+      "No plan selected",
+    ),
+    "no_recent_events": MessageLookupByLibrary.simpleMessage(
+      "No recent events",
+    ),
     "no_records": MessageLookupByLibrary.simpleMessage("No records"),
     "no_reminders": MessageLookupByLibrary.simpleMessage("No reminders"),
     "no_tasks": MessageLookupByLibrary.simpleMessage("No tasks"),
@@ -261,10 +304,14 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "pay": MessageLookupByLibrary.simpleMessage("Pay"),
     "pdf": MessageLookupByLibrary.simpleMessage("PDF"),
+    "per_month": MessageLookupByLibrary.simpleMessage("per month"),
     "period": MessageLookupByLibrary.simpleMessage("average/year"),
     "periodicity": MessageLookupByLibrary.simpleMessage("Periodicity:"),
     "phone": MessageLookupByLibrary.simpleMessage("Phone"),
     "photo_selected": MessageLookupByLibrary.simpleMessage("Photo selected"),
+    "plan_activated": MessageLookupByLibrary.simpleMessage(
+      "Plan successfully activated",
+    ),
     "please_log_in": MessageLookupByLibrary.simpleMessage(
       "Please leave or register to continue.",
     ),
@@ -289,6 +336,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "remove": MessageLookupByLibrary.simpleMessage("Remove"),
     "repair": MessageLookupByLibrary.simpleMessage("Repair"),
     "repair_icon": MessageLookupByLibrary.simpleMessage("Repair"),
+    "request_error": MessageLookupByLibrary.simpleMessage("Request error"),
     "resource": MessageLookupByLibrary.simpleMessage("Resource:"),
     "resource_out": MessageLookupByLibrary.simpleMessage("Resource out"),
     "save": MessageLookupByLibrary.simpleMessage("Save"),
@@ -804,6 +852,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "subscription_complected": MessageLookupByLibrary.simpleMessage(
       "months completed",
     ),
+    "subscription_error": MessageLookupByLibrary.simpleMessage(
+      "Subscription error",
+    ),
+    "subscription_failed": MessageLookupByLibrary.simpleMessage(
+      "Subscription failed to activate",
+    ),
     "subscription_for": MessageLookupByLibrary.simpleMessage(
       "Subscription for",
     ),
@@ -845,6 +899,15 @@ class MessageLookup extends MessageLookupByLibrary {
     "total_amount": MessageLookupByLibrary.simpleMessage("Total amount:"),
     "total_costs": MessageLookupByLibrary.simpleMessage("Costs"),
     "total_fines": MessageLookupByLibrary.simpleMessage("Total fines: "),
+    "track_costs": MessageLookupByLibrary.simpleMessage(
+      "Track costs, mileage and efficiency",
+    ),
+    "trial_expired": MessageLookupByLibrary.simpleMessage(
+      "Trial period expired",
+    ),
+    "trial_period_activated": MessageLookupByLibrary.simpleMessage(
+      "Trial period activated",
+    ),
     "tuning": MessageLookupByLibrary.simpleMessage("Tuning"),
     "type": MessageLookupByLibrary.simpleMessage("Type"),
     "update": MessageLookupByLibrary.simpleMessage("Update"),

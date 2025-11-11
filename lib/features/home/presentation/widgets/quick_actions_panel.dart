@@ -1,85 +1,65 @@
 import 'package:core_localization/generated/l10n.dart';
+import 'package:fines_plus/features/home/presentation/cubit/quick_actions_cubit.dart';
+import 'package:fines_plus/features/home/presentation/cubit/quick_actions_state.dart';
+import 'package:fines_plus/features/home/presentation/widgets/action_item.dart';
 import 'package:flutter/material.dart';
-
-
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class QuickActionsPanel extends StatelessWidget {
   const QuickActionsPanel({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final icons = [
-      Icons.oil_barrel,
-      Icons.water_drop,
-      Icons.settings,
-      Icons.build_circle,
-      Icons.battery_full,
-      Icons.tune,
-      Icons.tire_repair,
-      Icons.umbrella_outlined,
-    ];
+    return BlocBuilder<QuickActionsCubit, QuickActionsState>(
+      builder: (context, state) {
+        return GridView.builder(
+          shrinkWrap: true,
+          itemCount: state.actions.length,
+          physics: const NeverScrollableScrollPhysics(),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 4,
+            mainAxisSpacing: 5,
+            crossAxisSpacing: 5,
+            childAspectRatio: 1.52,
+          ),
+          itemBuilder: (context, index) {
+            final action = state.actions[index];
+            final isSelected = state.selectedIndex == index;
 
-    final labels = [S.of(context).oil_icon, S.of(context).coolant_icon, S.of(context).service_icon,
-      S.of(context).repair_icon, S.of(context).battery, S.of(context).tuning, S.of(context).tires_icon, S.of(context).insurance,
-    ];
+            final localizedLabel = _translateLabel(action.labelKey, context);
 
-    return GridView.builder(
-      shrinkWrap: true,
-      itemCount: icons.length,
-      physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 4,
-        mainAxisSpacing: 5,
-        crossAxisSpacing: 5,
-        childAspectRatio: 1.3,
-      ),
-      itemBuilder: (context, index) {
-        return _ActionItem(
-          icon: icons[index],
-          label: labels[index],
-          onTap: () {
-            
+            return ActionItem(
+              icon: action.icon,
+              label: localizedLabel,
+              isSelected: isSelected,
+              onTap: () => context.read<QuickActionsCubit>().selectAction(index),
+            );
           },
         );
       },
     );
   }
-}
 
-class _ActionItem extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final VoidCallback onTap;
-
-  const _ActionItem({required this.icon, required this.label, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return Material(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(16),
-      elevation: 2,
-      shadowColor: Colors.black26,
-      child: InkWell(
-        borderRadius: BorderRadius.circular(16),
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(icon, size: 32, color: theme.primaryColor),
-              const SizedBox(height: 6),
-              Text(
-                label,
-                style: theme.textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w500, color: Colors.black87),
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+  String _translateLabel(String key, BuildContext context) {
+    switch (key) {
+      case 'Oil':
+        return S.of(context).oil_icon;
+      case 'Coolant':
+        return S.of(context).coolant_icon;
+      case 'Service':
+        return S.of(context).service_icon;
+      case 'Repair':
+        return S.of(context).repair_icon;
+      case 'Battery':
+        return S.of(context).battery;
+      case 'Tuning':
+        return S.of(context).tuning;
+      case 'Tires':
+        return S.of(context).tires_icon;
+      case 'Insurance':
+        return S.of(context).insurance;
+      default:
+        return key;
+    }
   }
 }

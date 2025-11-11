@@ -1,74 +1,66 @@
 import 'dart:math' as math;
+import 'package:design_system/colors/app_colors.dart';
 import 'package:flutter/material.dart';
-
-
 
 class StatsRingsPainter extends CustomPainter {
   final double totalCostPercent;
   final double costPerKmPercent;
   final double fuelPercent;
-  final Color activeColor;
-  final Color bgColor;
 
-  StatsRingsPainter({
-    required this.totalCostPercent,
-    required this.costPerKmPercent,
-    required this.fuelPercent,
-    required this.activeColor,
-    required this.bgColor,
-  });
+  const StatsRingsPainter({required this.totalCostPercent, required this.costPerKmPercent, required this.fuelPercent});
 
   @override
   void paint(Canvas canvas, Size size) {
-    final center = Offset(size.width / 2, size.height / 2);
-    const strokeWidth = 10.0;
-    final radius = size.width * 0.35;
+    final center = Offset(size.width / 2, size.height / 1.15);
+    const mainStroke = 10.0;
+    const smallStroke = 6.0;
+
+    final bgColor = AppColors.energyBlue25;
+    final activeColor = AppColors.blue700;
 
     final bgPaint = Paint()
       ..color = bgColor
       ..style = PaintingStyle.stroke
-      ..strokeWidth = strokeWidth
+      ..strokeWidth = mainStroke
       ..strokeCap = StrokeCap.round;
 
     final activePaint = Paint()
       ..color = activeColor
       ..style = PaintingStyle.stroke
-      ..strokeWidth = strokeWidth
+      ..strokeWidth = mainStroke
       ..strokeCap = StrokeCap.round;
 
-    // Общий угол (2/3 круга)
-    const totalAngle = math.pi * 4 / 3;
-    const startAngle = math.pi * 5 / 6;
-
-    // Рисуем три сегмента кольца, как на скрине — не вложенные, а последовательно расположенные
-
+    final radius = size.width * 0.3;
     final rect = Rect.fromCircle(center: center, radius: radius);
+    canvas.drawArc(rect, math.pi * 5 / 6, math.pi * 4 / 3, false, bgPaint);
+    canvas.drawArc(rect, math.pi * 5 / 6, math.pi * 4 / 3 * totalCostPercent, false, activePaint);
 
-    // Сегмент 1 — totalCost
-    final arc1Start = startAngle;
-    final arc1Sweep = totalAngle * totalCostPercent;
-    canvas.drawArc(rect, arc1Start, totalAngle / 3, false, bgPaint);
-    canvas.drawArc(rect, arc1Start, arc1Sweep / 3, false, activePaint);
+    final smallBg = Paint()
+      ..color = bgColor
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = smallStroke
+      ..strokeCap = StrokeCap.round;
 
-    // Сегмент 2 — costPerKm
-    final arc2Start = startAngle + totalAngle / 3 + 0.1; // немного отступ
-    final arc2Sweep = totalAngle * costPerKmPercent;
-    canvas.drawArc(rect, arc2Start, totalAngle / 3, false, bgPaint);
-    canvas.drawArc(rect, arc2Start, arc2Sweep / 3, false, activePaint);
+    final smallActive = Paint()
+      ..color = activeColor
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = smallStroke
+      ..strokeCap = StrokeCap.round;
 
-    // Сегмент 3 — fuel
-    final arc3Start = startAngle + 2 * (totalAngle / 3) + 0.2; // отступ
-    final arc3Sweep = totalAngle * fuelPercent;
-    canvas.drawArc(rect, arc3Start, totalAngle / 3, false, bgPaint);
-    canvas.drawArc(rect, arc3Start, arc3Sweep / 3, false, activePaint);
+    final leftCenter = Offset(center.dx - radius - 35, center.dy);
+    final leftRect = Rect.fromCircle(center: leftCenter, radius: 52);
+    canvas.drawArc(leftRect, math.pi / 1.45, math.pi, false, smallBg);
+    canvas.drawArc(leftRect, math.pi / 1.45, math.pi * costPerKmPercent, false, smallActive);
+
+    final rightCenter = Offset(center.dx + radius + 35, center.dy);
+    final rightRect = Rect.fromCircle(center: rightCenter, radius: 52);
+    canvas.drawArc(rightRect, -math.pi / 1.45, math.pi, false, smallBg);
+    canvas.drawArc(rightRect, -math.pi / 1.45, math.pi * fuelPercent, false, smallActive);
   }
 
   @override
-  bool shouldRepaint(covariant StatsRingsPainter oldDelegate) {
-    return totalCostPercent != oldDelegate.totalCostPercent ||
-        costPerKmPercent != oldDelegate.costPerKmPercent ||
-        fuelPercent != oldDelegate.fuelPercent ||
-        activeColor != oldDelegate.activeColor ||
-        bgColor != oldDelegate.bgColor;
-  }
+  bool shouldRepaint(covariant StatsRingsPainter old) =>
+      old.totalCostPercent != totalCostPercent ||
+      old.costPerKmPercent != costPerKmPercent ||
+      old.fuelPercent != fuelPercent;
 }

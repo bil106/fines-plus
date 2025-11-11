@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:fines_plus/router/app_router.dart';
 import 'package:introduction_screen/introduction_screen.dart';
@@ -69,8 +70,8 @@ class OnboardingScreen extends StatelessWidget {
             bodyWidget: const SizedBox.shrink(),
             decoration: const PageDecoration(fullScreen: true),
             image: _buildPage(
-              title: "Контроль ТО",
-              subtitle: "Нагадування про техогляд та сервіс авто",
+              title: S.current.maintenance_control,
+              subtitle: S.current.car_inspection,
               imagePath: "assets/images/maintenance_bg.png",
             ),
           ),
@@ -79,8 +80,8 @@ class OnboardingScreen extends StatelessWidget {
             bodyWidget: const SizedBox.shrink(),
             decoration: const PageDecoration(fullScreen: true),
             image: _buildPage(
-              title: "Контроль страховки",
-              subtitle: "Слідкуйте за термінами страховки авто",
+              title: S.current.insurance_control,
+              subtitle: S.current.keep_track,
               imagePath: "assets/images/insurance_bg.png",
             ),
           ),
@@ -89,8 +90,8 @@ class OnboardingScreen extends StatelessWidget {
             bodyWidget: const SizedBox.shrink(),
             decoration: const PageDecoration(fullScreen: true),
             image: _buildPage(
-              title: "Контроль штрафів",
-              subtitle: "Отримуйте сповіщення і оплачуйте вчасно",
+              title: S.current.fines_control,
+              subtitle: S.current.get_notified,
               imagePath: "assets/images/fines_bg.png",
             ),
           ),
@@ -99,22 +100,22 @@ class OnboardingScreen extends StatelessWidget {
             bodyWidget: const SizedBox.shrink(),
             decoration: const PageDecoration(fullScreen: true),
             image: _buildPage(
-              title: "Аналітика",
-              subtitle: "Стежте за витратами, пробігом та ефективністю",
+              title: S.current.analytics,
+              subtitle: S.current.track_costs,
               imagePath: "assets/images/analytics_bg.png",
             ),
           ),
         ],
 
         showSkipButton: true,
-        skip: const Text(
-          "Пропустити",
+        skip: Text(
+          S.current.miss,
           style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
         ),
         next: const Icon(Icons.arrow_forward, color: Colors.white, size: 30),
 
-        done: const Text(
-          "Готово",
+        done: Text(
+          S.current.done,
           style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
         ),
 
@@ -125,7 +126,7 @@ class OnboardingScreen extends StatelessWidget {
           activeSize: Size(22, 10),
           activeShape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(25))),
         ),
-onSkip: () {
+        onSkip: () {
           context.router.replaceAll([SubscriptionRoute()]);
         },
         onDone: () {

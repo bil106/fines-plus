@@ -17,7 +17,6 @@ import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 import 'package:google_sign_in/google_sign_in.dart';
 
-
 @RoutePage()
 class RegistrationScreen extends StatefulWidget {
   final VoidCallback? onBack;
@@ -41,14 +40,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
     final cubit = context.read<RegistrationCubit>();
 
-  cubit.loadCredentials().then((data) {
+    cubit.loadCredentials().then((data) {
       if (!mounted) return;
       emailController.text = data['email']!;
       passwordController.text = data['password']!;
       _validateForm();
       if (data['email']!.isNotEmpty) cubit.checkEmail(data['email']!);
     });
-
 
     emailController.addListener(() {
       final email = emailController.text.trim();
@@ -71,7 +69,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     if (isValid != _isFormValid) setState(() => _isFormValid = isValid);
   }
 
-Future<void> _onSubmit(BuildContext context) async {
+  Future<void> _onSubmit(BuildContext context) async {
     if (!(_formKey.currentState?.validate() ?? false)) return;
 
     final cubit = context.read<RegistrationCubit>();
@@ -84,24 +82,22 @@ Future<void> _onSubmit(BuildContext context) async {
 
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Потрібна авторизація")));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(S.of(context).authorization_required)));
       return;
     }
 
-  
     try {
       await context.read<SubscriptionCubit>().finishPurchase(user.uid);
 
       final subState = context.read<SubscriptionCubit>().state;
       if (subState is SubscriptionBought) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("План успішно активований ✅")));
-        Navigator.of(context).pop(); 
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(S.of(context).plan_activated)));
+        Navigator.of(context).pop();
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Не вдалося активувати підписку: $e")));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${S.of(context).subscription_failed}:$e")));
     }
   }
-
 
   Future<void> _signInWithGoogle() async {
     try {
@@ -116,24 +112,23 @@ Future<void> _onSubmit(BuildContext context) async {
 
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar( SnackBar(content: Text(S.of(context).google_login), backgroundColor: AppColors.blue700));
+      ).showSnackBar(SnackBar(content: Text(S.of(context).google_login), backgroundColor: AppColors.blue700));
     } catch (e) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('${S.of(context).google_login_error}: $e'), backgroundColor: AppColors.blue700));
-       debugPrint("${S.of(context).google_login_error}: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('${S.of(context).google_login_error}: $e'), backgroundColor: AppColors.blue700),
+      );
+      debugPrint("${S.of(context).google_login_error}: $e");
     }
   }
-Future<void> _signInWithFacebook(BuildContext context) async {
+
+  Future<void> _signInWithFacebook(BuildContext context) async {
     try {
       final result = await FacebookAuth.instance.login(permissions: ['email', 'public_profile']);
 
       if (result.status == LoginStatus.success) {
         final accessToken = result.accessToken;
         if (accessToken == null) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(const SnackBar(content: Text('Facebook Error: AccessToken is empty')));
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(S.of(context).facebook_error)));
           return;
         }
 
@@ -141,24 +136,20 @@ Future<void> _signInWithFacebook(BuildContext context) async {
 
         await FirebaseAuth.instance.signInWithCredential(credential);
 
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Facebook login successful')));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(S.of(context).facebook_login_successful)));
       } else if (result.status == LoginStatus.cancelled) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(S.of(context).facebook_login_cancelled)));
+      } else {
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(const SnackBar(content: Text('Facebook login has been cancelled by the user.')));
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Facebook login error: ${result.message}')));
-       debugPrint("${result.message}");
+        ).showSnackBar(SnackBar(content: Text('${S.of(context).facebook_login_error}: ${result.message}')));
+        debugPrint("${result.message}");
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Facebook login error: $e')));
-       debugPrint("error: $e");
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('${S.of(context).facebook_login_error}: $e')));
+      debugPrint("error: $e");
     }
   }
-
-
-
-
 
   Future<void> _signInWithApple() async {
     try {
@@ -172,14 +163,15 @@ Future<void> _signInWithFacebook(BuildContext context) async {
 
       await FirebaseAuth.instance.signInWithCredential(oauthCredential);
 
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Sign in with Apple successful'), backgroundColor: AppColors.blue700));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Sign in with Apple successful'), backgroundColor: AppColors.blue700),
+      );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Apple login error: $e')));
       debugPrint('Apple login error: $e');
     }
   }
+
   @override
   void dispose() {
     _emailCheckTimer?.cancel();
@@ -205,12 +197,12 @@ Future<void> _signInWithFacebook(BuildContext context) async {
           child: BlocListener<SubscriptionCubit, SubscriptionState>(
             listener: (context, state) {
               if (state is SubscriptionBought) {
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("План успішно активований ✅")));
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(S.current.plan_activated)));
                 Navigator.of(context).pop();
               } else if (state is SubscriptionError) {
                 ScaffoldMessenger.of(
                   context,
-                ).showSnackBar(SnackBar(content: Text("Помилка підписки: ${state.message}")));
+                ).showSnackBar(SnackBar(content: Text("${S.current.subscription_error}: ${state.message}")));
               }
             },
             child: Form(
@@ -233,23 +225,18 @@ Future<void> _signInWithFacebook(BuildContext context) async {
                       SubscriptionRoute(
                         debugMode: true,
                         onPurchaseSuccess: () async {
-                         
-
                           await Future.delayed(const Duration(milliseconds: 150));
 
                           final wrapperState = context.findAncestorStateOfType<HomeScreenWrapperState>();
                           if (wrapperState != null) {
-                          
                             wrapperState.openPage(HomePage.addCar);
                             return;
                           }
 
-                         
                           context.router.root.replaceAll([HomeRouteWrapper(initialPage: HomePage.addCar)]);
                         },
                       ),
                     ]);
-
                   }
                 },
                 builder: (context, state) {
@@ -299,7 +286,6 @@ Future<void> _signInWithFacebook(BuildContext context) async {
                       ),
                       AppSpacers.verticalXXXLarge,
 
-                      // Button
                       isLoading
                           ? const CircularProgressIndicator()
                           : InkWell(
@@ -369,5 +355,4 @@ Future<void> _signInWithFacebook(BuildContext context) async {
       ),
     );
   }
-
 }

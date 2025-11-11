@@ -1,3 +1,4 @@
+import 'package:core_localization/generated/l10n.dart';
 import 'package:fines_plus/features/subscription/data/datasources/load_user_subscription_usecase.dart';
 import 'package:fines_plus/features/subscription/data/datasources/save_trial_info_usecase.dart';
 import 'package:fines_plus/features/subscription/data/models/subscription_status.dart';
@@ -81,7 +82,7 @@ SubscriptionPlan? selectedPlan;
  
   Future<void> finishPurchase(String userId) async {
     if (selectedPlan == null) {
-      emit(SubscriptionError("План не выбран"));
+      emit(SubscriptionError(S.current.no_plan_selected));
       return;
     }
 

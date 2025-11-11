@@ -14,7 +14,6 @@ import 'package:design_system/colors/app_colors.dart';
 import 'package:fines_plus/features/subscription/data/models/fake_product.dart';
 import 'package:fines_plus/features/subscription/presentation/widgets/subscription_plan_card.dart';
 
-
 @RoutePage()
 class SubscriptionScreen extends StatefulWidget {
   final bool debugMode;
@@ -33,7 +32,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
 
   List<dynamic> _products = [];
   int? _selectedMonths;
-TrialStatus _trialStatus = TrialStatus.none;
+  TrialStatus _trialStatus = TrialStatus.none;
   bool _trialLoading = true;
   @override
   void initState() {
@@ -41,7 +40,8 @@ TrialStatus _trialStatus = TrialStatus.none;
     _initStoreInfo();
     _loadTrialStatus();
   }
-Future<void> _loadTrialStatus() async {
+
+  Future<void> _loadTrialStatus() async {
     final status = await TrialManager.getTrialStatus();
     if (mounted) {
       setState(() {
@@ -50,7 +50,8 @@ Future<void> _loadTrialStatus() async {
       });
     }
   }
-Future<void> _startTrial() async {
+
+  Future<void> _startTrial() async {
     final user = FirebaseAuth.instance.currentUser;
 
     if (user == null) {
@@ -62,22 +63,16 @@ Future<void> _startTrial() async {
     await context.read<PurchaseCubit>().buySubscription(user.uid, 0.0, 1);
 
     setState(() => _trialStatus = TrialStatus.active);
-    _showSnack("Пробний період активовано ✅");
+    _showSnack(S.current.trial_period_activated);
 
- 
     final rootRouter = context.router.root;
 
     await Future.delayed(const Duration(seconds: 1));
 
-   
     widget.onPurchaseSuccess?.call();
 
- 
     rootRouter.replaceAll([HomeRouteWrapper(initialPage: HomePage.addCar)]);
   }
-
-
-
 
   Future<void> _initStoreInfo() async {
     setState(() => _isLoading = true);
@@ -85,7 +80,7 @@ Future<void> _startTrial() async {
     if (widget.debugMode) {
       await Future.delayed(const Duration(milliseconds: 500));
       final testProducts = [
-        FakeProduct(id:'sub_3_months',title: S.of(context).subscription_3_month,price: '1.99',months: 3),
+        FakeProduct(id: 'sub_3_months', title: S.of(context).subscription_3_month, price: '1.99', months: 3),
         FakeProduct(id: 'sub_6_months', title: S.of(context).subscription_6_month, price: '2.99', months: 6),
         FakeProduct(id: 'sub_12_months', title: S.of(context).subscription_12_month, price: '3.99', months: 12),
       ];
@@ -121,10 +116,9 @@ Future<void> _startTrial() async {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
-     final textTheme = Theme.of(context).textTheme;
+    final textTheme = Theme.of(context).textTheme;
     if (_isLoading) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
@@ -138,28 +132,26 @@ Future<void> _startTrial() async {
         title: Text(S.of(context).subscription, style: textTheme.headlineMedium),
         backgroundColor: AppColors.grey50,
         elevation: 0,
-         leading: BackButton(color: AppColors.blue700, onPressed: widget.onBack),
+        leading: BackButton(color: AppColors.blue700, onPressed: widget.onBack),
       ),
-    body: Padding(
+      body: Padding(
         padding: const EdgeInsets.all(16),
         child: _products.isEmpty
             ? const Center(child: CircularProgressIndicator())
             : Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-             
                   if (_trialLoading)
                     const Center(child: CircularProgressIndicator())
                   else ...[
-                  
                     if (_trialStatus == TrialStatus.none)
-                      ElevatedButton(onPressed: _startTrial, child: Text("7 днів безкоштовно 🎁")),
+                      ElevatedButton(onPressed: _startTrial, child: Text("7 ${S.current.days_free}")),
 
                     if (_trialStatus == TrialStatus.active)
                       Padding(
                         padding: const EdgeInsets.only(bottom: 8),
                         child: Text(
-                          "Пробний період активний ✅",
+                          S.current.trial_period_activated,
                           textAlign: TextAlign.center,
                           style: const TextStyle(color: Colors.green),
                         ),
@@ -169,7 +161,7 @@ Future<void> _startTrial() async {
                       Padding(
                         padding: const EdgeInsets.only(bottom: 8),
                         child: Text(
-                          "Пробний період минув❗️",
+                          S.current.trial_expired,
                           textAlign: TextAlign.center,
                           style: const TextStyle(color: Colors.red),
                         ),
@@ -178,7 +170,6 @@ Future<void> _startTrial() async {
                     const SizedBox(height: 12),
                   ],
 
-                  // Subscription plans list
                   Expanded(
                     child: ListView.separated(
                       physics: const BouncingScrollPhysics(),
@@ -203,7 +194,7 @@ Future<void> _startTrial() async {
                           product: fakeProduct,
                           months: months,
                           isSelected: _selectedMonths == months,
-                        onBuy: () {
+                          onBuy: () {
                             final plan = SubscriptionPlan(
                               id: product.id,
                               title: product.title,
@@ -215,15 +206,11 @@ Future<void> _startTrial() async {
                             context.read<SubscriptionCubit>().selectPlan(plan);
 
                             if (_isUserLoggedIn) {
-                              // ✅ Уже зарегистрирован — переходим в основной экран
                               widget.onPurchaseSuccess?.call();
                             } else {
-                              // ❌ Не зарегистрирован — идём на ввод данных авто (CarInfoScreen)
                               context.router.push(CarInfoRoute());
                             }
                           },
-
-
                         );
                       },
                     ),
@@ -231,7 +218,6 @@ Future<void> _startTrial() async {
                 ],
               ),
       ),
-
     );
   }
 

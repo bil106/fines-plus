@@ -57,13 +57,12 @@ class MaintenanceScreen extends StatefulWidget {
 }
 
 class _MaintenanceScreenState extends State<MaintenanceScreen> {
- 
-@override
+  @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final maintenanceCubit = context.read<MaintenanceCubit>();
-       maintenanceCubit.clearAllRecords();
+      maintenanceCubit.clearAllRecords();
       await maintenanceCubit.syncExpensesFromFirestore();
     });
   }
@@ -187,7 +186,8 @@ class _MaintenanceScreenView extends StatelessWidget {
                           repository: scheduleRepository,
                           reminderRepository: reminderRepository,
                           pushHelper: PushHelper(FlutterLocalNotificationsPlugin()),
-                          carNumber: '', userId: '',
+                          carNumber: '',
+                          userId: '',
                         ),
                       );
                     },
@@ -239,7 +239,7 @@ class _MaintenanceScreenView extends StatelessWidget {
                       }
                     },
                   ),
-              FABAction(
+                  FABAction(
                     icon: const Icon(Icons.local_gas_station, color: AppColors.energyBlue),
                     onTap: () async {
                       cubit.closeMenu();
@@ -250,7 +250,6 @@ class _MaintenanceScreenView extends StatelessWidget {
                       }
                     },
                   ),
-
                 ],
               ),
             ],

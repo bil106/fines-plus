@@ -6,7 +6,7 @@ import 'package:fines_plus/core/extensions/date_picker_card.dart';
 import 'package:fines_plus/core/extensions/fuel_type.dart';
 import 'package:fines_plus/features/expenses/presentation/widgets/fuel_amount_card.dart';
 import 'package:fines_plus/features/expenses/presentation/widgets/fuel_choice_chips.dart';
-import 'package:fines_plus/features/expenses/presentation/widgets/fuel_input_card.dart' ;
+import 'package:fines_plus/features/expenses/presentation/widgets/fuel_input_card.dart';
 import 'package:fines_plus/features/maintenance/data/models/gas_station.dart';
 import 'package:fines_plus/features/maintenance/domain/gas_station_service.dart';
 import 'package:fines_plus/features/maintenance/presentation/widgets/mileage_card.dart';
@@ -20,7 +20,6 @@ import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
-
 
 @RoutePage()
 class FuelUpScreen extends StatefulWidget {
@@ -36,7 +35,7 @@ class _FuelUpScreenState extends State<FuelUpScreen> {
   final TextEditingController mileageController = TextEditingController();
   final TextEditingController priceController = TextEditingController();
 
-  FuelType selectedFuel = FuelType.ai95;
+  FuelType selectedFuel = FuelType.Ai95;
   DateTime? selectedDate;
   GasStation? _bestStation;
 

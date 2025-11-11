@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 abstract final class AppSpacers {
   // Vertical spacers
+  static const verticalLSmall = SizedBox(height: 2);
   static const verticalXSmall = SizedBox(height: 4);
   static const verticalSmall = SizedBox(height: 6);
   static const verticalSmallMedium = SizedBox(height: 8);

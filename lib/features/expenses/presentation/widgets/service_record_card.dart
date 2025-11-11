@@ -26,7 +26,6 @@ class ServiceRecordCard extends StatelessWidget {
             Icon(Icons.build, size: 50, color: AppColors.blue700),
             const SizedBox(width: 12),
 
-            
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -44,7 +43,6 @@ class ServiceRecordCard extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                    
                       Flexible(
                         child: Row(
                           children: [
@@ -57,7 +55,6 @@ class ServiceRecordCard extends StatelessWidget {
                         ),
                       ),
 
-                   
                       Flexible(
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.end,
@@ -76,7 +73,6 @@ class ServiceRecordCard extends StatelessWidget {
                       ),
                     ],
                   ),
-
                 ],
               ),
             ),

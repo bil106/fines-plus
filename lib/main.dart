@@ -7,6 +7,7 @@ import 'package:fines_plus/env/env.dart';
 import 'package:fines_plus/features/expenses/data/repository/expense_repository.dart';
 import 'package:fines_plus/features/expenses/presentation/cubit/expenses_cubit.dart';
 import 'package:fines_plus/features/export/data/repository/injector.dart';
+import 'package:fines_plus/features/home/presentation/cubit/quick_actions_cubit.dart';
 import 'package:fines_plus/features/maintenance/data/repository/maintenance_repository.dart';
 import 'package:fines_plus/features/maintenance/data/repository/schedule_firebase_repository.dart';
 import 'package:fines_plus/features/maintenance/presentation/cubit/additional_options_cubit.dart';
@@ -82,6 +83,7 @@ void main() {
               BlocProvider<MaintenanceCubit>.value(value: result.maintenanceCubit),
               BlocProvider<StatisticsCubit>.value(value: result.statisticsCubit),
               BlocProvider<SubscriptionCubit>.value(value: result.subscriptionCubit),
+              BlocProvider<QuickActionsCubit>.value(value: result.quickActionsCubit),
               BlocProvider<AdditionalOptionsCubit>.value(value: result.additionalOptionsCubit),
               BlocProvider<CarCubit>.value(value: result.carCubit),
               BlocProvider<ScheduleCubit>(
@@ -105,6 +107,7 @@ void main() {
               flutterLocalNotificationsPlugin: result.flutterLocalNotificationsPlugin,
               isUpdateRequired: result.isUpdateRequired,
             ),
+            
           ),
         ),
       );

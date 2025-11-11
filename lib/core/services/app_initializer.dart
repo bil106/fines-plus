@@ -11,6 +11,8 @@ import 'package:fines_plus/backend/fines_server.dart';
 import 'package:fines_plus/features/expenses/data/repository/expense_repository.dart';
 import 'package:fines_plus/features/history/domain/history_repository.dart';
 import 'package:fines_plus/features/history/presentation/cubit/history_cubit.dart';
+import 'package:fines_plus/features/home/domain/entities/quick_action.dart';
+import 'package:fines_plus/features/home/presentation/cubit/quick_actions_cubit.dart';
 import 'package:fines_plus/features/maintenance/data/repository/schedule_firebase_repository.dart';
 import 'package:fines_plus/features/maintenance/presentation/cubit/additional_options_cubit.dart';
 import 'package:fines_plus/features/maintenance/presentation/cubit/fuel_station_cubit.dart';
@@ -62,6 +64,7 @@ class AppInitializer {
   late final SubscriptionCubit subscriptionCubit;
   late final CarCubit carCubit;
   late final HistoryCubit historyCubit;
+  late final QuickActionsCubit quickActionsCubit;
   late final AdditionalOptionsCubit additionalOptionsCubit;
   late final RemoteConfigService remoteConfigService;
   final Map<String, int> _scheduledReminderIds = {};
@@ -92,7 +95,7 @@ class AppInitializer {
     }
   }
 
- Future<AppInitResult> init() async {
+  Future<AppInitResult> init() async {
     WidgetsFlutterBinding.ensureInitialized();
 
     final finesServer = FinesServer();
@@ -158,7 +161,6 @@ class AppInitializer {
     const flavor = String.fromEnvironment('FLAVOR', defaultValue: 'autolux');
     final config = await loadAppConfig(flavor);
 
-    
     final prefs = await SharedPreferences.getInstance();
     final storage = FlutterSecureStorage();
     final sharedPrefsManager = SharedPrefsManager(prefs);
@@ -169,19 +171,27 @@ class AppInitializer {
     final expenseRepository = ExpenseRepository(FirebaseFirestore.instance);
     final historyRepository = HistoryRepository(FirebaseFirestore.instance);
 
-
     final carInfoLocalDataSource = CarInfoLocalDataSource(sharedPrefsManager);
     final carInfoRepository = CarInfoRepository(carInfoLocalDataSource, CarInfoRemoteDataSource());
+final quickActions = [
+      QuickAction(id: 'oil', labelKey: 'Oil', icon: Icons.oil_barrel),
+      QuickAction(id: 'coolant', labelKey: 'Coolant', icon: Icons.water_drop),
+      QuickAction(id: 'service', labelKey: 'Service', icon: Icons.settings),
+      QuickAction(id: 'repair', labelKey: 'Repair', icon: Icons.build_circle),
+      QuickAction(id: 'battery', labelKey: 'Battery', icon: Icons.battery_full),
+      QuickAction(id: 'tuning', labelKey: 'Tuning', icon: Icons.tune),
+      QuickAction(id: 'tires', labelKey: 'Tires', icon: Icons.tire_repair),
+      QuickAction(id: 'insurance', labelKey: 'Insurance', icon: Icons.umbrella_outlined),
+    ];
 
-   
+    quickActionsCubit = QuickActionsCubit(quickActions);
+
     referralCubit = ReferralCubit(appLinks, prefs);
 
-    
-    carCubit = CarCubit(local: carInfoLocalDataSource, repo: carInfoRepository,);
+    carCubit = CarCubit(local: carInfoLocalDataSource, repo: carInfoRepository);
 
-    
     historyCubit = HistoryCubit(repository: historyRepository, carCubit: carCubit);
-
+  
 
     carCubit.setHistoryCubit(historyCubit);
 
@@ -250,7 +260,7 @@ class AppInitializer {
       registrationCubit: registrationCubit,
       fuelStationCubit: fuelStationCubit,
       maintenanceCubit: maintenanceCubit,
-      statisticsCubit:statisticsCubit,
+      statisticsCubit: statisticsCubit,
       scheduleCubit: scheduleCubit,
       carCubit: carCubit,
       additionalOptionsCubit: additionalOptionsCubit,
@@ -258,11 +268,11 @@ class AppInitializer {
       expenseRepository: expenseRepository,
       isUpdateRequired: isUpdateRequired,
       subscriptionCubit: subscriptionCubit,
+      quickActionsCubit: quickActionsCubit,
       subscriptionRepository: subscriptionRepository,
       firebaseRepository: firebaseRepository,
     );
   }
-
 }
 
 extension ReminderScheduling on AppInitializer {
@@ -336,13 +346,13 @@ class AppInitResult {
   final ScheduleCubit scheduleCubit;
   final CarCubit carCubit;
   final SubscriptionCubit subscriptionCubit;
+  final QuickActionsCubit quickActionsCubit;
   final AdditionalOptionsCubit additionalOptionsCubit;
   final RemoteConfigService remoteConfigService;
   final ExpenseRepository expenseRepository;
   final bool isUpdateRequired;
   final SubscriptionRepositoryImpl subscriptionRepository;
   final ScheduleFirebaseRepository firebaseRepository;
-  
 
   AppInitResult({
     required this.config,
@@ -360,12 +370,12 @@ class AppInitResult {
     required this.scheduleCubit,
     required this.carCubit,
     required this.subscriptionCubit,
+    required this.quickActionsCubit,
     required this.additionalOptionsCubit,
     required this.remoteConfigService,
     required this.expenseRepository,
     required this.isUpdateRequired,
     required this.subscriptionRepository,
     required this.firebaseRepository,
-
   });
 }

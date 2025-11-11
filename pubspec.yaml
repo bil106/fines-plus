@@ -141,6 +141,8 @@ flutter:
     - assets/images/maintenance_bg.png
     - assets/icons/insurance.png
     - assets/icons/finance.png
+    - assets/icons/coin_stack.png
+    - assets/icons/steeringWheel.png
    
     
 flutter_icons:

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:core_localization/generated/l10n.dart';
 import 'package:fines_plus/features/vehicle/data/models/car_info_model.dart';
 import 'package:http/http.dart' as http;
 
@@ -20,10 +21,10 @@ class CarPlatesService {
       if (json['success'] == true) {
         return CarInfoModel.fromJson(json['data'] as Map<String, dynamic>);
       } else {
-        throw Exception(json['error'] ?? 'Помилка запиту');
+        throw Exception(json['error'] ?? S.current.request_error);
       }
     } else {
-      throw Exception('Помилка з’єднання (${response.statusCode})');
+      throw Exception('${S.current.connection_error} (${response.statusCode})');
     }
   }
 }

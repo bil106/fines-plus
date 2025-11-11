@@ -3243,6 +3243,251 @@ class S {
   String get open_events {
     return Intl.message('Open events', name: 'open_events', desc: '', args: []);
   }
+
+  /// `No recent events`
+  String get no_recent_events {
+    return Intl.message(
+      'No recent events',
+      name: 'no_recent_events',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Cost Statistics`
+  String get costs_stat {
+    return Intl.message(
+      'Cost Statistics',
+      name: 'costs_stat',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Mileage Statistics`
+  String get mileage_stat {
+    return Intl.message(
+      'Mileage Statistics',
+      name: 'mileage_stat',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Request error`
+  String get request_error {
+    return Intl.message(
+      'Request error',
+      name: 'request_error',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Connection error`
+  String get connection_error {
+    return Intl.message(
+      'Connection error',
+      name: 'connection_error',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `per month`
+  String get per_month {
+    return Intl.message('per month', name: 'per_month', desc: '', args: []);
+  }
+
+  /// `Plan successfully activated`
+  String get plan_activated {
+    return Intl.message(
+      'Plan successfully activated',
+      name: 'plan_activated',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Subscription failed to activate`
+  String get subscription_failed {
+    return Intl.message(
+      'Subscription failed to activate',
+      name: 'subscription_failed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Facebook error: AccessToken empty`
+  String get facebook_error {
+    return Intl.message(
+      'Facebook error: AccessToken empty',
+      name: 'facebook_error',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Facebook login successful`
+  String get facebook_login_successful {
+    return Intl.message(
+      'Facebook login successful',
+      name: 'facebook_login_successful',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Facebook login canceled by user.`
+  String get facebook_login_cancelled {
+    return Intl.message(
+      'Facebook login canceled by user.',
+      name: 'facebook_login_cancelled',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Facebook login error:`
+  String get facebook_login_error {
+    return Intl.message(
+      'Facebook login error:',
+      name: 'facebook_login_error',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Subscription error`
+  String get subscription_error {
+    return Intl.message(
+      'Subscription error',
+      name: 'subscription_error',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Trial period activated`
+  String get trial_period_activated {
+    return Intl.message(
+      'Trial period activated',
+      name: 'trial_period_activated',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `days free`
+  String get days_free {
+    return Intl.message('days free', name: 'days_free', desc: '', args: []);
+  }
+
+  /// `Trial period expired`
+  String get trial_expired {
+    return Intl.message(
+      'Trial period expired',
+      name: 'trial_expired',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Maintenance control`
+  String get maintenance_control {
+    return Intl.message(
+      'Maintenance control',
+      name: 'maintenance_control',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Reminders for car inspection and service`
+  String get car_inspection {
+    return Intl.message(
+      'Reminders for car inspection and service',
+      name: 'car_inspection',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Insurance control`
+  String get insurance_control {
+    return Intl.message(
+      'Insurance control',
+      name: 'insurance_control',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Track car insurance due dates`
+  String get keep_track {
+    return Intl.message(
+      'Track car insurance due dates',
+      name: 'keep_track',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Fine fines control`
+  String get fines_control {
+    return Intl.message(
+      'Fine fines control',
+      name: 'fines_control',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Get notified and pay on time`
+  String get get_notified {
+    return Intl.message(
+      'Get notified and pay on time',
+      name: 'get_notified',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Analytics`
+  String get analytics {
+    return Intl.message('Analytics', name: 'analytics', desc: '', args: []);
+  }
+
+  /// `Track costs, mileage and efficiency`
+  String get track_costs {
+    return Intl.message(
+      'Track costs, mileage and efficiency',
+      name: 'track_costs',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Skip`
+  String get miss {
+    return Intl.message('Skip', name: 'miss', desc: '', args: []);
+  }
+
+  /// `Done`
+  String get done {
+    return Intl.message('Done', name: 'done', desc: '', args: []);
+  }
+
+  /// `No plan selected`
+  String get no_plan_selected {
+    return Intl.message(
+      'No plan selected',
+      name: 'no_plan_selected',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {
