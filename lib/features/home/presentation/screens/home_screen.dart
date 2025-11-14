@@ -5,10 +5,12 @@ import 'package:design_system/constants/app_spacers.dart';
 import 'package:fines_plus/features/expenses/data/repository/expense_repository.dart';
 import 'package:fines_plus/features/home/domain/entities/last_event_ui_model.dart';
 import 'package:fines_plus/features/home/domain/entities/main_stats.dart';
+import 'package:fines_plus/features/home/presentation/cubit/quick_actions_cubit.dart';
 import 'package:fines_plus/features/home/presentation/widgets/quick_actions_panel.dart';
 import 'package:fines_plus/features/statistics/presentation/cubit/statistics_cubit.dart';
 import 'package:fines_plus/features/statistics/presentation/cubit/statistics_state.dart';
 import 'package:fines_plus/features/vehicle/presentation/cubit/car_cubit.dart';
+import 'package:fines_plus/features/vehicle/presentation/cubit/car_state.dart';
 import 'package:fines_plus/router/home_screen_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -32,10 +34,11 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    context.read<QuickActionsCubit>().init();
     _loadLatestExpense();
   }
 
- Future<void> _loadLatestExpense() async {
+  Future<void> _loadLatestExpense() async {
     final repo = ExpenseRepository(FirebaseFirestore.instance);
     final carNumber = context.read<CarCubit>().state.carNumber;
 
@@ -49,7 +52,6 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -57,14 +59,26 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         elevation: 0,
         backgroundColor: AppColors.energyBlue50,
-        title: const Text(
-          "Ford Fusion 2016",
-          style: TextStyle(color: Colors.black87, fontWeight: FontWeight.w600),
+        centerTitle: true,
+        title: BlocBuilder<CarCubit, CarState>(
+          builder: (context, state) {
+            final carNumber = state.carNumber.isNotEmpty ? state.carNumber : "Ford Fusion 2016";
+            return Text(
+              carNumber,
+              style: const TextStyle(color: Colors.black87, fontWeight: FontWeight.w600),
+            );
+          },
         ),
         leading: IconButton(
-          icon: const Icon(Icons.menu, color: AppColors.grey700),
-          onPressed: () {},
+          icon: const Icon(Icons.settings, color: AppColors.grey700),
+          onPressed: () {
+            final homeState = context.findAncestorStateOfType<HomeScreenWrapperState>();
+            if (homeState != null) {
+              homeState.openPage(HomePage.settings);
+            }
+          },
         ),
+
         actions: [
           IconButton(
             icon: const Icon(Icons.directions_car, color: AppColors.grey700),
@@ -100,7 +114,6 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             AppSpacers.verticalXSmall,
             const QuickActionsPanel(),
-          
 
             if (isLoading)
               const Center(child: CircularProgressIndicator())
@@ -114,9 +127,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 },
               ),
 
-           
             StatisticsMileageCard(),
-          
+
             StatisticsCostsCard(),
           ],
         ),

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:core_localization/generated/l10n.dart';
 import 'package:fines_plus/core/extensions/fuel_calculator.dart';
 import 'package:fines_plus/features/expenses/data/models/car_wash_record.dart';
 import 'package:fines_plus/features/expenses/data/models/fuel_record.dart';
@@ -63,6 +64,8 @@ class StatisticsCubit extends Cubit<StatisticsState> {
     } catch (e, st) {
       debugPrint('Error calculating average fuel: $e\n$st');
     }
+
+    if (isClosed) return;
 
     final lastOdometer = _getLastOdometer(maintenanceState);
 
@@ -157,10 +160,31 @@ class StatisticsCubit extends Cubit<StatisticsState> {
     return MonthlyExpenseStats(monthLabel: "$monthLabel $year", total: total, categoryTotals: categoryTotals);
   }
 
-  String _monthName(int month) {
-    const months = ["Січ", "Лют", "Бер", "Квіт", "Трав", "Черв", "Лип", "Серп", "Верес", "Жовт", "Лист", "Груд"];
-    return months[month - 1];
+String _monthName(int month) {
+    final fallback = ["Січ", "Лют", "Бер", "Квіт", "Трав", "Черв", "Лип", "Серп", "Верес", "Жовт", "Лист", "Груд"];
+
+    try {
+      final months = [
+        S.current.month_jan,
+        S.current.month_feb,
+        S.current.month_mar,
+        S.current.month_apr,
+        S.current.month_may,
+        S.current.month_jun,
+        S.current.month_jul,
+        S.current.month_aug,
+        S.current.month_sep,
+        S.current.month_oct,
+        S.current.month_nov,
+        S.current.month_dec,
+      ];
+      return months[month - 1];
+    } catch (_) {
+     
+      return fallback[month - 1];
+    }
   }
+
 
   double calculateAverageFuelConsumption(List<FuelRecord> records) {
     if (records.length < 2) return 0.0;

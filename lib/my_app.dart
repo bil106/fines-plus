@@ -5,6 +5,8 @@ import 'package:core_localization/generated/l10n.dart';
 import 'package:core_services/services/purchase_service.dart';
 import 'package:fines_plus/core/services/launch_service.dart';
 import 'package:fines_plus/core/theme/theme_config.dart';
+import 'package:fines_plus/features/settings/presentation/cubit/settings_cubit.dart';
+import 'package:fines_plus/features/settings/presentation/cubit/settings_state.dart';
 import 'package:fines_plus/features/subscription/data/models/trial_manager.dart';
 import 'package:fines_plus/router/home_screen_wrapper.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
@@ -12,6 +14,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
@@ -43,16 +46,14 @@ class _MyAppState extends State<MyApp> {
 
   StreamSubscription? _appLinksSub;
   Locale? _locale;
-
   bool? firstLaunch;
-  bool _didNavigate = false; 
-bool? _hasActiveSubscription;
+  bool _didNavigate = false;
+  bool? _hasActiveSubscription;
   late final AppRouter _router;
 
   @override
   void initState() {
     super.initState();
-    
     _initOnce();
   }
 
@@ -66,14 +67,13 @@ bool? _hasActiveSubscription;
 
     analytics.logAppOpen();
 
-    // Checking active subscription (or trial)
     bool hasActiveSub = false;
     final user = FirebaseAuth.instance.currentUser;
 
     if (user != null) {
       final trialStatus = await TrialManager.getTrialStatus();
       if (trialStatus == TrialStatus.active) {
-        hasActiveSub = true; // if the trial is active - the user is "subscribed"
+        hasActiveSub = true;
       } else {
         final purchaseService = PurchaseService();
         hasActiveSub = await purchaseService.hasActiveSubscription(user.uid);
@@ -84,7 +84,7 @@ bool? _hasActiveSubscription;
 
     if (mounted) {
       setState(() {
-        _hasActiveSubscription = hasActiveSub; 
+        _hasActiveSubscription = hasActiveSub;
       });
     }
   }
@@ -171,14 +171,13 @@ bool? _hasActiveSubscription;
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
         if (isAddCar) {
-          context.router.push( AddCarRoute());
+          context.router.push(AddCarRoute());
         } else if (car != null) {
           context.router.push(HistoryRoute(carNumber: car));
         }
       });
     }
   }
-
 
   @override
   void dispose() {
@@ -188,7 +187,6 @@ bool? _hasActiveSubscription;
 
 @override
   Widget build(BuildContext context) {
-  
     if (firstLaunch == null || _hasActiveSubscription == null) {
       return const MaterialApp(
         home: Scaffold(body: Center(child: CircularProgressIndicator())),
@@ -197,51 +195,57 @@ bool? _hasActiveSubscription;
 
     final app = Provider<AppConfig>.value(
       value: widget.config,
-      child: MaterialApp.router(
-        routerConfig: _router.config(
-          deepLinkBuilder: (_) {
-            // first launch → onboarding
-            if (firstLaunch == true) {
-              return const DeepLink([OnboardingRoute()]);
-            }
-            // there is a subscription or a trial → on the main screen
-            if (_hasActiveSubscription == true) {
-              return DeepLink([HomeRouteWrapper(initialPage: HomePage.home)]);
-            }
+      child: BlocBuilder<SettingsCubit, SettingsState>(
+        builder: (context, settingsState) {
+      
+          final currentLocale = settingsState.locale;
 
-            return DeepLink([SubscriptionRoute()]);
-          },
-        ),
-        title: 'Fines+',
-        locale: _locale ?? const Locale('uk'),
-        theme: ThemeConfig.createTheme(widget.config),
-        localizationsDelegates: const [
-          S.delegate,
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-        ],
-        supportedLocales: S.delegate.supportedLocales,
-        debugShowCheckedModeBanner: false,
+          final materialApp = MaterialApp.router(
+            locale: currentLocale,
+            routerConfig: _router.config(
+              deepLinkBuilder: (_) {
+                if (firstLaunch == true) {
+                  return const DeepLink([OnboardingRoute()]);
+                }
+                if (_hasActiveSubscription == true) {
+                  return DeepLink([HomeRouteWrapper(initialPage: HomePage.home)]);
+                }
+                return DeepLink([SubscriptionRoute()]);
+              },
+            ),
+            title: 'Fines+',
+            theme: ThemeConfig.createTheme(widget.config),
+            localizationsDelegates: const [
+              S.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            supportedLocales: S.delegate.supportedLocales,
+            debugShowCheckedModeBanner: false,
+          );
+
+     
+          if (!_didNavigate) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (!mounted) return;
+
+              if (widget.isUpdateRequired) {
+                context.router.replaceAll([const UpdateRequiredRoute()]);
+              }
+
+              _didNavigate = true;
+            });
+          }
+
+          return materialApp;
+        },
       ),
     );
 
-    if (!_didNavigate) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (!mounted) return;
-
-        if (widget.isUpdateRequired) {
-          context.router.replaceAll([const UpdateRequiredRoute()]);
-          _didNavigate = true;
-          return;
-        }
-
-        _didNavigate = true;
-      });
-    }
-
     return app;
   }
+
 }
 
 

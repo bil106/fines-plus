@@ -1,3 +1,4 @@
+import 'package:design_system/colors/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class ActionItem extends StatelessWidget {
@@ -6,12 +7,13 @@ class ActionItem extends StatelessWidget {
   final VoidCallback onTap;
   final bool isSelected;
 
-  const ActionItem({super.key, required this.icon, required this.label, required this.onTap, required this.isSelected});
+  const ActionItem({super.key, required this.icon, required this.label, required this.onTap, required this.isSelected, required String labelKey});
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final activeColor = Colors.amber.shade700;
+    final Color activeColor = AppColors.energyBlue;
+    final Color inactiveColor = Colors.grey.shade400;
 
     return Material(
       color: Colors.white,
@@ -31,11 +33,12 @@ class ActionItem extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(icon, size: 32, color: isSelected ? activeColor : theme.primaryColor),
+               Icon(icon, size: 32, color: isSelected ? activeColor : inactiveColor),
               const SizedBox(height: 1),
               Text(
                 label,
-                style: theme.textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w500, color: Colors.black87),
+                style: theme.textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w500, color: isSelected ? activeColor : Colors.black87,
+                ),
                 textAlign: TextAlign.center,
               ),
             ],

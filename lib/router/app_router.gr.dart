@@ -102,6 +102,7 @@ class AnalyticsRoute extends PageRouteInfo<AnalyticsRouteArgs> {
     Key? key,
     VoidCallback? onBack,
     required String carNumber,
+    int initialTabIndex = 0,
     List<PageRouteInfo>? children,
   }) : super(
          AnalyticsRoute.name,
@@ -109,6 +110,7 @@ class AnalyticsRoute extends PageRouteInfo<AnalyticsRouteArgs> {
            key: key,
            onBack: onBack,
            carNumber: carNumber,
+           initialTabIndex: initialTabIndex,
          ),
          initialChildren: children,
        );
@@ -123,13 +125,19 @@ class AnalyticsRoute extends PageRouteInfo<AnalyticsRouteArgs> {
         key: args.key,
         onBack: args.onBack,
         carNumber: args.carNumber,
+        initialTabIndex: args.initialTabIndex,
       );
     },
   );
 }
 
 class AnalyticsRouteArgs {
-  const AnalyticsRouteArgs({this.key, this.onBack, required this.carNumber});
+  const AnalyticsRouteArgs({
+    this.key,
+    this.onBack,
+    required this.carNumber,
+    this.initialTabIndex = 0,
+  });
 
   final Key? key;
 
@@ -137,9 +145,11 @@ class AnalyticsRouteArgs {
 
   final String carNumber;
 
+  final int initialTabIndex;
+
   @override
   String toString() {
-    return 'AnalyticsRouteArgs{key: $key, onBack: $onBack, carNumber: $carNumber}';
+    return 'AnalyticsRouteArgs{key: $key, onBack: $onBack, carNumber: $carNumber, initialTabIndex: $initialTabIndex}';
   }
 
   @override
@@ -148,11 +158,16 @@ class AnalyticsRouteArgs {
     if (other is! AnalyticsRouteArgs) return false;
     return key == other.key &&
         onBack == other.onBack &&
-        carNumber == other.carNumber;
+        carNumber == other.carNumber &&
+        initialTabIndex == other.initialTabIndex;
   }
 
   @override
-  int get hashCode => key.hashCode ^ onBack.hashCode ^ carNumber.hashCode;
+  int get hashCode =>
+      key.hashCode ^
+      onBack.hashCode ^
+      carNumber.hashCode ^
+      initialTabIndex.hashCode;
 }
 
 /// generated route for
@@ -1002,6 +1017,7 @@ class ScheduleRoute extends PageRouteInfo<ScheduleRouteArgs> {
     required PushHelper pushHelper,
     required String carNumber,
     required String userId,
+    String? initialActionKey,
     List<PageRouteInfo>? children,
   }) : super(
          ScheduleRoute.name,
@@ -1012,6 +1028,7 @@ class ScheduleRoute extends PageRouteInfo<ScheduleRouteArgs> {
            pushHelper: pushHelper,
            carNumber: carNumber,
            userId: userId,
+           initialActionKey: initialActionKey,
          ),
          initialChildren: children,
        );
@@ -1029,6 +1046,7 @@ class ScheduleRoute extends PageRouteInfo<ScheduleRouteArgs> {
         pushHelper: args.pushHelper,
         carNumber: args.carNumber,
         userId: args.userId,
+        initialActionKey: args.initialActionKey,
       );
     },
   );
@@ -1042,6 +1060,7 @@ class ScheduleRouteArgs {
     required this.pushHelper,
     required this.carNumber,
     required this.userId,
+    this.initialActionKey,
   });
 
   final Key? key;
@@ -1056,9 +1075,11 @@ class ScheduleRouteArgs {
 
   final String userId;
 
+  final String? initialActionKey;
+
   @override
   String toString() {
-    return 'ScheduleRouteArgs{key: $key, repository: $repository, reminderRepository: $reminderRepository, pushHelper: $pushHelper, carNumber: $carNumber, userId: $userId}';
+    return 'ScheduleRouteArgs{key: $key, repository: $repository, reminderRepository: $reminderRepository, pushHelper: $pushHelper, carNumber: $carNumber, userId: $userId, initialActionKey: $initialActionKey}';
   }
 
   @override
@@ -1070,7 +1091,8 @@ class ScheduleRouteArgs {
         reminderRepository == other.reminderRepository &&
         pushHelper == other.pushHelper &&
         carNumber == other.carNumber &&
-        userId == other.userId;
+        userId == other.userId &&
+        initialActionKey == other.initialActionKey;
   }
 
   @override
@@ -1080,7 +1102,8 @@ class ScheduleRouteArgs {
       reminderRepository.hashCode ^
       pushHelper.hashCode ^
       carNumber.hashCode ^
-      userId.hashCode;
+      userId.hashCode ^
+      initialActionKey.hashCode;
 }
 
 /// generated route for

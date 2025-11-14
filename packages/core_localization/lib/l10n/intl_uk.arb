@@ -397,7 +397,23 @@
    "track_costs": "Стежте за витратами, пробігом та ефективністю",
    "miss": "Пропустити",
    "done": "Готово",
-   "no_plan_selected": "План не обрано"
+   "no_plan_selected": "План не обрано",
+   "month_jan": "Січ",
+   "month_feb": "Лют",
+   "month_mar": "Бер",
+   "month_apr": "Квіт",
+   "month_may": "Трав",
+   "month_jun": "Черв",
+   "month_jul": "Лип",
+   "month_aug": "Серп",
+   "month_sep": "Верес",
+   "month_oct": "Жовт",
+   "month_nov": "Лист",
+   "month_dec": "Груд",
+   "home": "Дім",
+   "units": "Одиниці",
+   "currency": "Валюта",
+   "language": "Мова"
   
 
 }

@@ -1,12 +1,23 @@
-import 'package:fines_plus/features/home/domain/entities/quick_action.dart';
+import 'package:flutter/material.dart';
 
 class QuickActionsState {
-  final List<QuickAction> actions;
-  final int? selectedIndex;
+  final List<ActionItemModel> actions;
+  final int selectedIndex;
+  final bool hasOilTask;
 
-  const QuickActionsState({required this.actions, this.selectedIndex});
+  QuickActionsState({required this.actions, this.selectedIndex = -1, this.hasOilTask = false});
 
-  QuickActionsState copyWith({List<QuickAction>? actions, int? selectedIndex}) {
-    return QuickActionsState(actions: actions ?? this.actions, selectedIndex: selectedIndex);
+  QuickActionsState copyWith({List<ActionItemModel>? actions, int? selectedIndex, bool? hasOilTask}) {
+    return QuickActionsState(
+      actions: actions ?? this.actions,
+      selectedIndex: selectedIndex ?? this.selectedIndex,
+      hasOilTask: hasOilTask ?? this.hasOilTask,
+    );
   }
+}
+class ActionItemModel {
+  final String labelKey;
+  final IconData icon;
+
+  ActionItemModel({required this.labelKey, required this.icon});
 }

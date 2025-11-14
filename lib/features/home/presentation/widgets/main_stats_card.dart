@@ -65,7 +65,7 @@ class MainStatsCard extends StatelessWidget {
                   children: [
                     Image.asset('assets/icons/coin_stack.png', width: 24, height: 24, color: Colors.blueAccent),
                     const SizedBox(height: 4),
-                    StatValue(value: stats.costPerKm.toStringAsFixed(2), label: "UAH/km"),
+                    StatValue(value: stats.costPerKm.toStringAsFixed(1), label: "UAH/km"),
                   ],
                 ),
                 Column(

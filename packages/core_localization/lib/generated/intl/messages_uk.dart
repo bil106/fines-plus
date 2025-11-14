@@ -104,6 +104,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "costs_stat": MessageLookupByLibrary.simpleMessage("Статистика витрат"),
     "csv": MessageLookupByLibrary.simpleMessage("CSV"),
+    "currency": MessageLookupByLibrary.simpleMessage("Валюта"),
     "date": MessageLookupByLibrary.simpleMessage("Дата"),
     "date_previous_maintenance": MessageLookupByLibrary.simpleMessage(
       "Дата попереднього ТО",
@@ -214,6 +215,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "history_unavailable": MessageLookupByLibrary.simpleMessage(
       "Історія тимчасово недоступна: індекс будується. Спробуйте за кілька хвилин.",
     ),
+    "home": MessageLookupByLibrary.simpleMessage("Дім"),
     "incorrect_email": MessageLookupByLibrary.simpleMessage(
       "Некоректний email",
     ),
@@ -232,6 +234,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "keep_track": MessageLookupByLibrary.simpleMessage(
       "Слідкуйте за термінами страховки авто",
     ),
+    "language": MessageLookupByLibrary.simpleMessage("Мова"),
     "large_login": MessageLookupByLibrary.simpleMessage("УВІЙТИ"),
     "large_sign_up": MessageLookupByLibrary.simpleMessage("ЗАРЕЄСТРУВАТИСЯ"),
     "last_event": MessageLookupByLibrary.simpleMessage("Остання подія"),
@@ -251,6 +254,18 @@ class MessageLookup extends MessageLookupByLibrary {
     "min_char": MessageLookupByLibrary.simpleMessage("Мінімум 6 символів"),
     "miss": MessageLookupByLibrary.simpleMessage("Пропустити"),
     "month": MessageLookupByLibrary.simpleMessage("Місяць"),
+    "month_apr": MessageLookupByLibrary.simpleMessage("Квіт"),
+    "month_aug": MessageLookupByLibrary.simpleMessage("Серп"),
+    "month_dec": MessageLookupByLibrary.simpleMessage("Груд"),
+    "month_feb": MessageLookupByLibrary.simpleMessage("Лют"),
+    "month_jan": MessageLookupByLibrary.simpleMessage("Січ"),
+    "month_jul": MessageLookupByLibrary.simpleMessage("Лип"),
+    "month_jun": MessageLookupByLibrary.simpleMessage("Черв"),
+    "month_mar": MessageLookupByLibrary.simpleMessage("Бер"),
+    "month_may": MessageLookupByLibrary.simpleMessage("Трав"),
+    "month_nov": MessageLookupByLibrary.simpleMessage("Лист"),
+    "month_oct": MessageLookupByLibrary.simpleMessage("Жовт"),
+    "month_sep": MessageLookupByLibrary.simpleMessage("Верес"),
     "my_position": MessageLookupByLibrary.simpleMessage("Ви тут"),
     "name": MessageLookupByLibrary.simpleMessage("Назва"),
     "new_reminder": MessageLookupByLibrary.simpleMessage("Нове нагадування"),
@@ -889,6 +904,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "tuning": MessageLookupByLibrary.simpleMessage("Тюнінг"),
     "type": MessageLookupByLibrary.simpleMessage("Тип"),
+    "units": MessageLookupByLibrary.simpleMessage("Одиниці"),
     "update": MessageLookupByLibrary.simpleMessage("Оновити"),
     "user_not_found": MessageLookupByLibrary.simpleMessage(
       "Користувач не знайдено",

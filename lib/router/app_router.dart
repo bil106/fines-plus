@@ -23,7 +23,7 @@ import 'package:fines_plus/features/registration/presentation/screens/registrati
 import 'package:fines_plus/features/schedule/presentation/screens/schedule_screen.dart';
 import 'package:fines_plus/features/maintenance/presentation/screens/service_screen.dart';
 import 'package:fines_plus/presentation/screens/onboarding_screen.dart';
-import 'package:fines_plus/presentation/screens/settings_screen.dart';
+import 'package:fines_plus/features/settings/presentation/screens/settings_screen.dart';
 import 'package:fines_plus/features/maintenance/presentation/screens/maintenance_screen.dart';
 import 'package:fines_plus/features/maintenance/presentation/screens/tuning_screen.dart';
 import 'package:fines_plus/features/subscription/presentation/screens/subscription_screen.dart';
@@ -76,5 +76,8 @@ class AppRouter extends RootStackRouter {
     AutoRoute(page: UpdateRequiredRoute.page, path: '/update'),
     AutoRoute(page: SubscriptionRoute.page, path: '/subscription'),
     AutoRoute(page: RegistrationRoute.page, path: '/registration'),
+   
+
+  
   ];
 }

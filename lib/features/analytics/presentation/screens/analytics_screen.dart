@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:auto_route/auto_route.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:core_data/core_data.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
@@ -10,7 +9,6 @@ import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
 import 'package:fines_plus/features/analytics/presentation/widgets/history_tab.dart';
 import 'package:fines_plus/features/analytics/data/models/event_model.dart';
-import 'package:fines_plus/features/analytics/data/repository/analytics_repository.dart';
 import 'package:fines_plus/features/analytics/presentation/cubit/analytics_cubit.dart';
 import 'package:fines_plus/features/expenses/data/models/car_wash_record.dart';
 import 'package:fines_plus/features/expenses/data/models/expense_category.dart';
@@ -32,41 +30,45 @@ import 'package:shared_preferences/shared_preferences.dart';
 class AnalyticsScreen extends StatelessWidget {
   final VoidCallback? onBack;
   final String carNumber;
+  final int initialTabIndex;
 
-  const AnalyticsScreen({super.key, this.onBack, required this.carNumber});
-
+  const AnalyticsScreen({super.key, this.onBack, required this.carNumber, this.initialTabIndex = 0});
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => AnalyticsCubit(
-        repository: AnalyticsRepository(firestore: FirebaseFirestore.instance),
-        carCubit: context.read<CarCubit>(),
-      ),
-      child: _AnalyticsScreenView(onBack: onBack, carNumber: carNumber),
-    );
+    return _AnalyticsScreenView(onBack: onBack, carNumber: carNumber, initialTabIndex: initialTabIndex);
   }
 }
+
 
 class _AnalyticsScreenView extends StatefulWidget {
   final VoidCallback? onBack;
   final String carNumber;
-
-  const _AnalyticsScreenView({this.onBack, required this.carNumber});
+  final int initialTabIndex;
+  const _AnalyticsScreenView({this.onBack, required this.carNumber,this.initialTabIndex = 0,});
 
   @override
-  State<_AnalyticsScreenView> createState() => _AnalyticsScreenViewState();
+  State<_AnalyticsScreenView> createState() => AnalyticsScreenViewState();
 }
 
-class _AnalyticsScreenViewState extends State<_AnalyticsScreenView> {
+class AnalyticsScreenViewState extends State<_AnalyticsScreenView> with SingleTickerProviderStateMixin {
   List<EventModel> events = [];
-
+  late TabController _tabController;
   @override
   void initState() {
     super.initState();
-   
+    _tabController = TabController(
+      length: 3,
+      vsync: this,
+      initialIndex: widget.initialTabIndex,
+    );
     context.read<AnalyticsCubit>().updateDate(DateTime.now());
     _loadRecords();
+  }
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
   }
 
   Future<void> _loadRecords() async {
@@ -204,6 +206,7 @@ class _AnalyticsScreenViewState extends State<_AnalyticsScreenView> {
                     indicatorColor: AppColors.blue700,
                     labelColor: AppColors.blue700,
                     unselectedLabelColor: AppColors.neutreGrey,
+                     controller: _tabController,
                     tabs: [
                       Tab(text: S.of(context).statistics),
                       Tab(text: S.of(context).history),
@@ -212,6 +215,7 @@ class _AnalyticsScreenViewState extends State<_AnalyticsScreenView> {
                   ),
                   Expanded(
                     child: TabBarView(
+                      controller: _tabController,
                       children: [
                         const StatisticsScreen(),
                         HistoryTab(events: events), 

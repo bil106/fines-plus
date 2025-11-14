@@ -3,8 +3,6 @@ import 'package:fines_plus/features/home/presentation/cubit/quick_actions_cubit.
 import 'package:fines_plus/features/home/presentation/cubit/quick_actions_state.dart';
 import 'package:fines_plus/features/home/presentation/widgets/action_item.dart';
 import 'package:fines_plus/router/home_screen_wrapper.dart';
-import 'package:flutter/foundation.dart';
-
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -31,7 +29,6 @@ class QuickActionsPanel extends StatelessWidget {
             final isOilAction = action.labelKey == 'Oil';
             final isActive = action.labelKey == 'Oil' && state.hasOilTask;
 
-
             return ActionItem(
               icon: action.icon,
               label: _translateLabel(action.labelKey, context),
@@ -39,18 +36,11 @@ class QuickActionsPanel extends StatelessWidget {
               labelKey: action.labelKey,
               onTap: () async {
                 final wrapperState = context.findAncestorStateOfType<HomeScreenWrapperState>();
-              
+
                 if (isOilAction) {
                   if (state.hasOilTask) {
-                    if (kDebugMode) {
-                      print('💧 Oil action tapped: going to ScheduleScreen');
-                    }
-                       
-                   wrapperState?.openAnalyticsTab(2);
+                    wrapperState?.openAnalyticsTab(2);
                   } else {
-                    if (kDebugMode) {
-                      print('💧 Oil action tapped: no Oil task');
-                    }
                     wrapperState?.openAnalyticsTab(2);
                   }
                 }

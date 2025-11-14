@@ -4,6 +4,8 @@ import 'package:core_data/core_data.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_spacers.dart';
+import 'package:fines_plus/features/expenses/data/models/service_record.dart';
+import 'package:fines_plus/features/home/presentation/cubit/quick_actions_cubit.dart';
 import 'package:fines_plus/features/maintenance/data/repository/schedule_firebase_repository.dart';
 import 'package:fines_plus/features/schedule/presentation/widgets/action_detail_sheet.dart';
 import 'package:fines_plus/features/maintenance/presentation/widgets/maintenance_card.dart';
@@ -20,7 +22,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:intl/intl.dart';
 
-
 @RoutePage()
 class ScheduleScreen extends StatefulWidget {
   final ScheduleRepository repository;
@@ -28,6 +29,7 @@ class ScheduleScreen extends StatefulWidget {
   final PushHelper pushHelper;
   final String carNumber;
   final String userId;
+  final String? initialActionKey;
 
   const ScheduleScreen({
     super.key,
@@ -36,6 +38,7 @@ class ScheduleScreen extends StatefulWidget {
     required this.pushHelper,
     required this.carNumber,
     required this.userId,
+    this.initialActionKey,
   });
 
   @override
@@ -43,6 +46,79 @@ class ScheduleScreen extends StatefulWidget {
 }
 
 class _ScheduleScreenState extends State<ScheduleScreen> {
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkInitialAction();
+
+  
+      final quickActionsCubit = context.read<QuickActionsCubit>();
+      // final scheduleCubit = context.read<ScheduleCubit>();
+      quickActionsCubit.init();
+    });
+  }
+
+  Future<void> _checkInitialAction() async {
+    final key = widget.initialActionKey;
+    if (key == null) return;
+
+    final maintenanceCubit = context.read<MaintenanceCubit>();
+
+    ServiceRecord? matchingTask;
+    try {
+      matchingTask = maintenanceCubit.state.serviceRecords.firstWhere(
+        (r) => r.serviceName.toLowerCase() == key.toLowerCase(),
+      );
+    } catch (_) {
+      matchingTask = null;
+    }
+
+    if (matchingTask == null) {
+      final shouldCreate = await showDialog<bool>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('attention'),
+          content: Text('no_such_service'),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(context, false), child: Text(S.of(context).cancel)),
+            TextButton(onPressed: () => Navigator.pop(context, true), child: Text('create')),
+          ],
+        ),
+      );
+
+      if (shouldCreate == true && mounted) {
+        _openActionDetailSheet(key);
+      }
+    } else {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("${matchingTask.serviceName} вже заплановано")));
+    }
+  }
+
+  void _openActionDetailSheet(String key) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      builder: (context) => Padding(
+        padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+        child: ActionDetailSheet(
+          title: key,
+          lastServiceDate: null,
+          lastMileage: 0,
+          actualMileage: 0,
+          intervalKm: 10000,
+          comment: '',
+          byDate: false,
+          byMileage: true,
+        ),
+      ),
+    );
+  }
+
   int getMaxMileage({int? newMileage}) {
     final cubit = context.read<MaintenanceCubit>();
     final allMileages = [
@@ -59,12 +135,10 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-       BlocProvider(
+        BlocProvider(
           create: (_) {
             final maintenanceCubit = context.read<MaintenanceCubit>();
-           
             final carCubit = context.read<CarCubit>();
-
             final firebaseRepo = ScheduleFirebaseRepository(FirebaseFirestore.instance);
 
             final scheduleCubit = ScheduleCubit(
@@ -78,9 +152,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
               carCubit: carCubit,
             );
 
-        
             scheduleCubit.loadTasks();
-
             return scheduleCubit;
           },
         ),
@@ -112,7 +184,6 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                     separatorBuilder: (_, __) => AppSpacers.verticalMedium,
                     itemBuilder: (context, index) {
                       final task = state.tasks[index];
-
                       return MaintenanceCard(
                         title: task.title,
                         progress: task.getProgress(),
@@ -149,7 +220,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
 
                             final updatedTask = task.copyWith(
                               title: result["title"],
-                              lastServiceDate: result["date"] as DateTime?, // ✅ DateTime
+                              lastServiceDate: result["date"] as DateTime?,
                               lastMileage: last,
                               actualMileage: actual,
                               intervalKm: result["intervalKm"] ?? task.intervalKm,
@@ -158,19 +229,33 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                             );
 
                             scheduleCubit.updateTask(index, updatedTask, reminderCubit: reminderCubit);
+
+                            context.read<QuickActionsCubit>().init();
                           }
                         },
-                        onDelete: () => scheduleCubit.removeTask(index),
+                        onDelete: () {
+                          scheduleCubit.removeTask(index);
+
+                          context.read<QuickActionsCubit>().onOilTaskDeleted();
+                        },
                       );
                     },
                   ),
             floatingActionButton: FloatingActionButton(
               onPressed: () async {
+                final cubit = context.read<QuickActionsCubit>();
+
                 final result = await showModalBottomSheet<Map<String, dynamic>>(
                   context: context,
                   isScrollControlled: true,
                   shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
-                  builder: (_) => const ActionDetailSheet(),
+                  builder: (_) => ActionDetailSheet(
+                    onSave: (data) {
+                      if ((data["title"] as String).toLowerCase() == 'oil') {
+                        cubit.onOilTaskCreated();
+                      }
+                    },
+                  ),
                 );
 
                 if (result != null) {
@@ -179,7 +264,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
 
                   final newTask = MaintenanceTask(
                     title: result["title"] ?? S.of(context).no_name,
-                    lastServiceDate: result["date"] as DateTime?, // ✅ DateTime
+                    lastServiceDate: result["date"] as DateTime?,
                     lastMileage: last,
                     actualMileage: actual,
                     intervalKm: result["intervalKm"] ?? 0,
@@ -198,7 +283,3 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     );
   }
 }
-
-
-
-

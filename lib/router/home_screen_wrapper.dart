@@ -16,6 +16,7 @@ import 'package:fines_plus/features/fines/presentation/screens/fines_screeen.dar
 import 'package:fines_plus/features/history/domain/history_repository.dart';
 import 'package:fines_plus/features/history/presentation/cubit/history_cubit.dart';
 import 'package:fines_plus/features/history/presentation/screens/history_screen.dart';
+import 'package:fines_plus/features/home/presentation/cubit/quick_actions_cubit.dart';
 import 'package:fines_plus/features/home/presentation/screens/home_screen.dart';
 import 'package:fines_plus/features/maintenance/presentation/cubit/maintenance_cubit.dart';
 import 'package:fines_plus/features/registration/presentation/cubit/registration_cubit.dart';
@@ -37,7 +38,7 @@ import 'package:fines_plus/features/maintenance/presentation/screens/fuel_up_scr
 import 'package:fines_plus/features/registration/presentation/screens/registration_screen.dart';
 import 'package:fines_plus/features/schedule/presentation/screens/schedule_screen.dart';
 import 'package:fines_plus/features/maintenance/presentation/screens/service_screen.dart';
-import 'package:fines_plus/presentation/screens/settings_screen.dart';
+import 'package:fines_plus/features/settings/presentation/screens/settings_screen.dart';
 import 'package:fines_plus/features/maintenance/presentation/screens/maintenance_screen.dart';
 import 'package:fines_plus/features/maintenance/presentation/screens/tuning_screen.dart';
 import 'package:fines_plus/features/subscription/presentation/screens/subscription_screen.dart';
@@ -77,7 +78,7 @@ enum HomePage {
 @RoutePage()
 class HomeScreenWrapper extends StatefulWidget {
   final HomePage initialPage;
-  const HomeScreenWrapper({super.key, this.initialPage = HomePage.home}); 
+  const HomeScreenWrapper({super.key, this.initialPage = HomePage.home});
 
   @override
   State<HomeScreenWrapper> createState() => HomeScreenWrapperState();
@@ -90,7 +91,7 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
   String? _carNumber;
   String? _docSeries;
   String? _docNumber;
-
+  int _analyticsTabIndex = 0;
   late final HistoryCubit historyCubit;
   late final CarInfoCubit carInfoCubit;
   late final AnalyticsCubit analyticsCubit;
@@ -131,10 +132,9 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
       HomePage.fuelMap: 18,
       HomePage.carWashMap: 19,
     };
-      _currentIndex = _pageIndexMap[HomePage.home]!;
-        debugPrint('HomeScreenWrapper: initial computed _currentIndex = $_currentIndex');
+    _currentIndex = _pageIndexMap[HomePage.home]!;
+    debugPrint('HomeScreenWrapper: initial computed _currentIndex = $_currentIndex');
     _pageController = PageController(initialPage: _currentIndex);
-    
   }
 
   void refreshUserData() {
@@ -173,6 +173,12 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
     }
   }
 
+  void openAnalyticsTab(int tabIndex) {
+    _analyticsTabIndex = tabIndex;
+    final index = _pageIndexMap[HomePage.analytics]!;
+    _pageController.animateToPage(index, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+    setState(() => _currentIndex = index);
+  }
 
   @override
   void dispose() {
@@ -194,7 +200,6 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
 
     return WillPopScope(
       onWillPop: () async {
-        
         if (_currentIndex != _pageIndexMap[HomePage.home]) {
           openPage(HomePage.home);
           return false;
@@ -227,7 +232,11 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
 
             onPageChanged: (index) => setState(() => _currentIndex = index),
             children: [
-              HomeScreen(key: const ValueKey('home')),
+             BlocProvider.value(
+                value: context.read<QuickActionsCubit>(),
+                child: HomeScreen(key: const ValueKey('home')),
+              ),
+
               AddCarScreen(
                 key: const ValueKey('add_car_screen'),
                 onOpenCarInfo: () => openPage(HomePage.carInfo),
@@ -237,10 +246,14 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
               ),
               FinesScreen(key: const ValueKey('fines_screen'), onBack: () => openPage(HomePage.home)),
               RemindersScreen(key: const ValueKey('reminders'), onBack: () => openPage(HomePage.home), userId: ''),
-              AnalyticsScreen(
-                key: const ValueKey('analytics'),
-                carNumber: carNumber,
-                onBack: () => openPage(HomePage.home),
+              BlocProvider.value(
+                value: analyticsCubit,
+                child: AnalyticsScreen(
+                  key: const ValueKey('analytics'),
+                  carNumber: carNumber,
+                  onBack: () => openPage(HomePage.home),
+                  initialTabIndex: _analyticsTabIndex,
+                ),
               ),
               BlocProvider(
                 create: (_) => ExpensesCubit(repository: ExpenseRepository(FirebaseFirestore.instance)),
@@ -262,7 +275,7 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
               ),
               SettingsScreen(
                 key: const ValueKey('settings_screen'),
-                onBack: () => openPage(HomePage.maintenance),
+                onBack: () => openPage(HomePage.home),
                 remoteConfigService: context.read<RemoteConfigService>(),
                 scheduleCubit: context.read<ScheduleCubit>(),
                 purchaseCubit: context.read<PurchaseCubit>(),
@@ -305,8 +318,7 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
               CarWashScreen(key: const ValueKey('car-wash'), onBack: () => openPage(HomePage.maintenance)),
               ServiceScreen(key: const ValueKey('service'), onBack: () => openPage(HomePage.maintenance)),
               TuningScreen(key: const ValueKey('tuning'), onBack: () => openPage(HomePage.maintenance)),
-              FuelMapScreen(key: const ValueKey('fuel-map')),
-              CarWashMapScreen(key: const ValueKey('car-wash-map')),
+
               Builder(
                 key: const ValueKey('schedule_screen'),
                 builder: (context) {
@@ -339,9 +351,11 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
                   );
                 },
               ),
+              FuelMapScreen(key: const ValueKey('fuel-map')),
+              CarWashMapScreen(key: const ValueKey('car-wash-map')),
             ],
           ),
-           bottomNavigationBar: _isMainTab(_currentIndex)
+          bottomNavigationBar: _isMainTab(_currentIndex)
               ? BottomNavigationBar(
                   backgroundColor: AppColors.energyBlue50,
                   currentIndex: _bottomNavIndexFor(_currentIndex),
@@ -355,7 +369,7 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
                         Icons.home,
                         color: _bottomNavIndexFor(_currentIndex) == 0 ? AppColors.blue700 : AppColors.grey700,
                       ),
-                      label: 'Home',
+                      label: S.of(context).home,
                     ),
                     BottomNavigationBarItem(
                       icon: Icon(
@@ -382,7 +396,11 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
   bool _isMainTab(int index) {
     return index == _pageIndexMap[HomePage.home] ||
         index == _pageIndexMap[HomePage.fines] ||
-        index == _pageIndexMap[HomePage.reminders];
+        index == _pageIndexMap[HomePage.reminders] ||
+        index == _pageIndexMap[HomePage.addCar] ||
+        index == _pageIndexMap[HomePage.analytics] ||
+        index == _pageIndexMap[HomePage.schedule]||
+        index == _pageIndexMap[HomePage.settings];
   }
 
   int _bottomNavIndexFor(int pageIndex) {
@@ -392,4 +410,3 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
     return 0;
   }
 }
-

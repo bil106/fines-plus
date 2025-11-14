@@ -8,10 +8,12 @@ import 'package:core_cubit/cubit/referral/referral_cubit.dart';
 import 'package:core_data/core_data.dart';
 import 'package:core_services/services/purchase_service.dart';
 import 'package:fines_plus/backend/fines_server.dart';
+import 'package:fines_plus/features/analytics/data/repository/analytics_repository.dart';
+import 'package:fines_plus/features/analytics/presentation/cubit/analytics_cubit.dart';
 import 'package:fines_plus/features/expenses/data/repository/expense_repository.dart';
 import 'package:fines_plus/features/history/domain/history_repository.dart';
 import 'package:fines_plus/features/history/presentation/cubit/history_cubit.dart';
-import 'package:fines_plus/features/home/domain/entities/quick_action.dart';
+import 'package:fines_plus/features/home/data/repositories/tasks_repository.dart';
 import 'package:fines_plus/features/home/presentation/cubit/quick_actions_cubit.dart';
 import 'package:fines_plus/features/maintenance/data/repository/schedule_firebase_repository.dart';
 import 'package:fines_plus/features/maintenance/presentation/cubit/additional_options_cubit.dart';
@@ -26,6 +28,7 @@ import 'package:fines_plus/features/reminders/data/models/reminder_model.dart';
 import 'package:fines_plus/features/reminders/data/repository/reminder_repository.dart';
 import 'package:fines_plus/features/schedule/data/repository/schedule_repository.dart';
 import 'package:fines_plus/features/schedule/presentation/cubit/schedule_cubit.dart';
+import 'package:fines_plus/features/settings/presentation/cubit/settings_cubit.dart';
 import 'package:fines_plus/features/statistics/presentation/cubit/statistics_cubit.dart';
 import 'package:fines_plus/features/subscription/data/datasources/load_user_subscription_usecase.dart';
 import 'package:fines_plus/features/subscription/data/datasources/save_trial_info_usecase.dart';
@@ -64,7 +67,9 @@ class AppInitializer {
   late final SubscriptionCubit subscriptionCubit;
   late final CarCubit carCubit;
   late final HistoryCubit historyCubit;
+  late final AnalyticsCubit analyticsCubit;
   late final QuickActionsCubit quickActionsCubit;
+  late final SettingsCubit settingsCubit;
   late final AdditionalOptionsCubit additionalOptionsCubit;
   late final RemoteConfigService remoteConfigService;
   final Map<String, int> _scheduledReminderIds = {};
@@ -72,6 +77,8 @@ class AppInitializer {
   late final ScheduleFirebaseRepository firebaseRepository;
   late final HistoryRepository historyRepository;
   late final CarInfoRepository carInfoRepository;
+  late final AnalyticsRepository analyticsRepository;
+  late final TasksRepository  tasksRepository;
 
   Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
     await Firebase.initializeApp();
@@ -170,28 +177,20 @@ class AppInitializer {
     final extractTokensUseCase = ExtractTokensUseCase(tokensRepository);
     final expenseRepository = ExpenseRepository(FirebaseFirestore.instance);
     final historyRepository = HistoryRepository(FirebaseFirestore.instance);
+    final analyticsRepository  = AnalyticsRepository(firestore: FirebaseFirestore.instance);
+    final tasksRepository   = TasksRepository();
 
     final carInfoLocalDataSource = CarInfoLocalDataSource(sharedPrefsManager);
     final carInfoRepository = CarInfoRepository(carInfoLocalDataSource, CarInfoRemoteDataSource());
-final quickActions = [
-      QuickAction(id: 'oil', labelKey: 'Oil', icon: Icons.oil_barrel),
-      QuickAction(id: 'coolant', labelKey: 'Coolant', icon: Icons.water_drop),
-      QuickAction(id: 'service', labelKey: 'Service', icon: Icons.settings),
-      QuickAction(id: 'repair', labelKey: 'Repair', icon: Icons.build_circle),
-      QuickAction(id: 'battery', labelKey: 'Battery', icon: Icons.battery_full),
-      QuickAction(id: 'tuning', labelKey: 'Tuning', icon: Icons.tune),
-      QuickAction(id: 'tires', labelKey: 'Tires', icon: Icons.tire_repair),
-      QuickAction(id: 'insurance', labelKey: 'Insurance', icon: Icons.umbrella_outlined),
-    ];
 
-    quickActionsCubit = QuickActionsCubit(quickActions);
+    quickActionsCubit = QuickActionsCubit(tasksRepository);
 
     referralCubit = ReferralCubit(appLinks, prefs);
 
     carCubit = CarCubit(local: carInfoLocalDataSource, repo: carInfoRepository);
 
     historyCubit = HistoryCubit(repository: historyRepository, carCubit: carCubit);
-  
+  analyticsCubit = AnalyticsCubit(repository: analyticsRepository, carCubit: carCubit);
 
     carCubit.setHistoryCubit(historyCubit);
 
@@ -203,6 +202,7 @@ final quickActions = [
     );
     fuelStationCubit = FuelStationCubit();
     statisticsCubit = StatisticsCubit(maintenanceCubit);
+    settingsCubit = SettingsCubit();
 
     subscriptionRepository = SubscriptionRepositoryImpl(
       InAppPurchase.instance,
@@ -263,6 +263,8 @@ final quickActions = [
       statisticsCubit: statisticsCubit,
       scheduleCubit: scheduleCubit,
       carCubit: carCubit,
+      analyticsCubit:analyticsCubit,
+      settingsCubit: settingsCubit,
       additionalOptionsCubit: additionalOptionsCubit,
       remoteConfigService: remoteConfigService,
       expenseRepository: expenseRepository,
@@ -271,6 +273,8 @@ final quickActions = [
       quickActionsCubit: quickActionsCubit,
       subscriptionRepository: subscriptionRepository,
       firebaseRepository: firebaseRepository,
+      analyticsRepository: analyticsRepository,
+      tasksRepository: tasksRepository,
     );
   }
 }
@@ -345,6 +349,8 @@ class AppInitResult {
   final StatisticsCubit statisticsCubit;
   final ScheduleCubit scheduleCubit;
   final CarCubit carCubit;
+  final AnalyticsCubit analyticsCubit;
+  final SettingsCubit settingsCubit;
   final SubscriptionCubit subscriptionCubit;
   final QuickActionsCubit quickActionsCubit;
   final AdditionalOptionsCubit additionalOptionsCubit;
@@ -353,6 +359,8 @@ class AppInitResult {
   final bool isUpdateRequired;
   final SubscriptionRepositoryImpl subscriptionRepository;
   final ScheduleFirebaseRepository firebaseRepository;
+  final AnalyticsRepository analyticsRepository;
+  final TasksRepository  tasksRepository;
 
   AppInitResult({
     required this.config,
@@ -369,6 +377,8 @@ class AppInitResult {
     required this.statisticsCubit,
     required this.scheduleCubit,
     required this.carCubit,
+    required this.analyticsCubit,
+    required this.settingsCubit,
     required this.subscriptionCubit,
     required this.quickActionsCubit,
     required this.additionalOptionsCubit,
@@ -377,5 +387,7 @@ class AppInitResult {
     required this.isUpdateRequired,
     required this.subscriptionRepository,
     required this.firebaseRepository,
+    required this.analyticsRepository,
+    required this.tasksRepository,
   });
 }

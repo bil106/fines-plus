@@ -3,10 +3,13 @@ import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
 import 'package:fines_plus/core/extensions/service_list.dart';
+import 'package:fines_plus/features/home/presentation/cubit/quick_actions_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ActionDetailSheet extends StatefulWidget {
+  final void Function(Map<String, dynamic>)? onSave;
   final String? title;
   final String? lastServiceDate;
   final int? lastMileage;
@@ -26,6 +29,7 @@ class ActionDetailSheet extends StatefulWidget {
     this.comment,
     this.byDate = false,
     this.byMileage = true,
+    this.onSave,
   });
 
   @override
@@ -167,11 +171,11 @@ class _ActionDetailSheetState extends State<ActionDetailSheet> {
             ),
             AppSpacers.verticalMediumLarge,
 
-            SizedBox(
+         SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () {
-                  Navigator.pop(context, {
+                onPressed: () async {
+                  final result = {
                     "title": titleController.text,
                     "date": selectedDate,
                     "mileage": int.tryParse(mileageController.text),
@@ -180,11 +184,20 @@ class _ActionDetailSheetState extends State<ActionDetailSheet> {
                     "byDate": byDate,
                     "byMileage": byMileage,
                     "comment": commentController.text,
-                  });
+                  };
+
+                  if (widget.onSave != null) {
+                    widget.onSave!(result); 
+                      final cubit = context.read<QuickActionsCubit>();
+                await cubit.onOilTaskCreated();
+                  }
+
+                  Navigator.pop(context, result);
                 },
                 child: Text(S.of(context).save),
               ),
-            ),
+            )
+
           ],
         ),
       ),

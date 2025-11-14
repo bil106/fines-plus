@@ -1,0 +1,13 @@
+import 'package:flutter/material.dart';
+
+class SettingsState {
+  final String unit;
+  final String currency;
+  final Locale locale;
+
+  SettingsState({required this.unit, required this.currency, required this.locale});
+
+  SettingsState copyWith({String? unit, String? currency, Locale? locale}) {
+    return SettingsState(unit: unit ?? this.unit, currency: currency ?? this.currency, locale: locale ?? this.locale);
+  }
+}

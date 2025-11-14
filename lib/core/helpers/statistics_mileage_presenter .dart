@@ -33,7 +33,20 @@ class StatisticsMileagePresenter {
       "${NumberFormat.decimalPattern('uk').format(mileageThisMonth)}${S.current.km}";
 
   static String _monthName(int month) {
-    const months = ["Січ", "Лют", "Бер", "Квіт", "Трав", "Черв", "Лип", "Серп", "Верес", "Жовт", "Лист", "Груд"];
+    final months = [
+      S.current.month_jan,
+      S.current.month_feb,
+      S.current.month_mar,
+      S.current.month_apr,
+      S.current.month_may,
+      S.current.month_jun,
+      S.current.month_jul,
+      S.current.month_aug,
+      S.current.month_sep,
+      S.current.month_oct,
+      S.current.month_nov,
+      S.current.month_dec,
+    ];
     return months[month - 1];
   }
 }

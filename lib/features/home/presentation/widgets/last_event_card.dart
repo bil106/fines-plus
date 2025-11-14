@@ -76,13 +76,16 @@ class LastEventCardAction extends StatelessWidget {
         const SizedBox(width: 16),
         Expanded(
           child: Padding(
-              padding: const EdgeInsets.only(left: 48.0),
+              padding: const EdgeInsets.only(left: 4.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(event!.description, style: textTheme.black18W400),
                
-                Text(event!.amount, style: textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold,color: AppColors.blueAccent)),
+                Padding(
+                  padding: const EdgeInsets.only(left: 49.0),
+                  child: Text(event!.amount, style: textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold,color: AppColors.blueAccent)),
+                ),
               ],
             ),
           ),

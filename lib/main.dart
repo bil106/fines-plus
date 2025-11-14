@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:core_cubit/cubit/purchase/purchase_cubit.dart';
 import 'package:core_cubit/cubit/referral/referral_cubit.dart';
 import 'package:fines_plus/env/env.dart';
+import 'package:fines_plus/features/analytics/presentation/cubit/analytics_cubit.dart';
 import 'package:fines_plus/features/expenses/data/repository/expense_repository.dart';
 import 'package:fines_plus/features/expenses/presentation/cubit/expenses_cubit.dart';
 import 'package:fines_plus/features/export/data/repository/injector.dart';
@@ -16,6 +17,7 @@ import 'package:fines_plus/features/maintenance/presentation/cubit/maintenance_c
 import 'package:fines_plus/features/registration/presentation/cubit/registration_cubit.dart';
 import 'package:fines_plus/features/schedule/data/repository/schedule_repository.dart';
 import 'package:fines_plus/features/schedule/presentation/cubit/schedule_cubit.dart';
+import 'package:fines_plus/features/settings/presentation/cubit/settings_cubit.dart';
 import 'package:fines_plus/features/statistics/presentation/cubit/statistics_cubit.dart';
 import 'package:fines_plus/features/subscription/data/repository/subscription_repository.dart';
 import 'package:fines_plus/features/subscription/presentation/cubit/subscription_cubit.dart';
@@ -31,9 +33,7 @@ import 'package:fines_plus/my_app.dart';
 import 'package:fines_plus/core/services/app_initializer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-
 late final AppInitializer appInitializer;
-
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
@@ -69,6 +69,7 @@ void main() {
             RepositoryProvider.value(value: result.pushHelper),
             RepositoryProvider.value(value: result.historyRepository),
             RepositoryProvider.value(value: result.firebaseRepository),
+            RepositoryProvider.value(value: result.tasksRepository),
             RepositoryProvider<IMaintenanceRepository>.value(value: repository),
             RepositoryProvider<ScheduleRepository>(create: (_) => ScheduleRepository()),
             RepositoryProvider.value(value: result.remoteConfigService),
@@ -76,6 +77,7 @@ void main() {
           ],
           child: MultiBlocProvider(
             providers: [
+              BlocProvider<QuickActionsCubit>.value(value: result.quickActionsCubit),
               BlocProvider<ReferralCubit>.value(value: result.referralCubit),
               BlocProvider<PurchaseCubit>.value(value: result.purchaseCubit),
               BlocProvider<RegistrationCubit>.value(value: result.registrationCubit),
@@ -83,7 +85,8 @@ void main() {
               BlocProvider<MaintenanceCubit>.value(value: result.maintenanceCubit),
               BlocProvider<StatisticsCubit>.value(value: result.statisticsCubit),
               BlocProvider<SubscriptionCubit>.value(value: result.subscriptionCubit),
-              BlocProvider<QuickActionsCubit>.value(value: result.quickActionsCubit),
+              BlocProvider<SettingsCubit>.value(value: result.settingsCubit),
+              BlocProvider<AnalyticsCubit>.value(value: result.analyticsCubit),
               BlocProvider<AdditionalOptionsCubit>.value(value: result.additionalOptionsCubit),
               BlocProvider<CarCubit>.value(value: result.carCubit),
               BlocProvider<ScheduleCubit>(
@@ -99,15 +102,12 @@ void main() {
                 )..loadTasks(),
               ),
               BlocProvider(create: (_) => ExpensesCubit(repository: ExpenseRepository(firestore))),
-            
-            
             ],
             child: MyApp(
               config: result.config,
               flutterLocalNotificationsPlugin: result.flutterLocalNotificationsPlugin,
               isUpdateRequired: result.isUpdateRequired,
             ),
-            
           ),
         ),
       );
@@ -117,4 +117,3 @@ void main() {
     },
   );
 }
-

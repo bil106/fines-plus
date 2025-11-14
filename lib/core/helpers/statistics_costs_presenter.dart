@@ -1,44 +1,46 @@
+import 'package:core_localization/generated/l10n.dart';
 import 'package:fines_plus/features/statistics/presentation/cubit/statistics_state.dart';
+import 'package:flutter/material.dart';
 
 class StatisticsCostsPresenter {
   final StatisticsState state;
+  final BuildContext context;
 
-  StatisticsCostsPresenter(this.state);
+  StatisticsCostsPresenter(this.state, this.context);
 
   double get currentTotal => state.expenseStats.total;
   double get previousTotal => state.previousExpenseStats.total;
-
   bool get increased => currentTotal > previousTotal;
 
-  String get currentMonthLabel =>
-      state.expenseStats.monthLabel.isNotEmpty ? state.expenseStats.monthLabel : _getMonthLabel(DateTime.now());
+  String get currentMonthLabel {
+    final now = DateTime.now();
+    return _getMonthLabel(now);
+  }
 
   String get previousMonthLabel {
-    if (state.previousExpenseStats.monthLabel.isNotEmpty) {
-      return state.previousExpenseStats.monthLabel;
-    }
-    return _getPreviousMonthLabel(currentMonthLabel);
+    final now = DateTime.now();
+    final prevMonth = DateTime(now.year, now.month - 1, 1);
+    return _getMonthLabel(prevMonth);
   }
 
   String _getMonthLabel(DateTime date) {
-    const monthNames = ["Січ", "Лют", "Бер", "Квіт", "Трав", "Черв", "Лип", "Серп", "Верес", "Жовт", "Лист", "Груд"];
-    return "${monthNames[date.month - 1]} '${date.year % 100}";
-  }
+    final s = S.of(context);
 
-  String _getPreviousMonthLabel(String currentMonthLabel) {
-    final parts = currentMonthLabel.split(' ');
-    if (parts.length != 2) return currentMonthLabel;
+    final monthNames = [
+      s.month_jan,
+      s.month_feb,
+      s.month_mar,
+      s.month_apr,
+      s.month_may,
+      s.month_jun,
+      s.month_jul,
+      s.month_aug,
+      s.month_sep,
+      s.month_oct,
+      s.month_nov,
+      s.month_dec,
+    ];
 
-    const monthNames = ["Січ", "Лют", "Бер", "Квіт", "Трав", "Черв", "Лип", "Серп", "Верес", "Жовт", "Лист", "Груд"];
-    final currentMonthIndex = monthNames.indexOf(parts[0]);
-    int prevMonthIndex = currentMonthIndex - 1;
-    int year = int.tryParse(parts[1].replaceAll("'", "")) ?? DateTime.now().year;
-
-    if (prevMonthIndex < 0) {
-      prevMonthIndex = 11;
-      year -= 1;
-    }
-
-    return "${monthNames[prevMonthIndex]} '$year";
+    return "${monthNames[date.month - 1]} ${date.year}";
   }
 }

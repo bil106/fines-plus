@@ -3488,6 +3488,86 @@ class S {
       args: [],
     );
   }
+
+  /// `Jan`
+  String get month_jan {
+    return Intl.message('Jan', name: 'month_jan', desc: '', args: []);
+  }
+
+  /// `Feb`
+  String get month_feb {
+    return Intl.message('Feb', name: 'month_feb', desc: '', args: []);
+  }
+
+  /// `Mar`
+  String get month_mar {
+    return Intl.message('Mar', name: 'month_mar', desc: '', args: []);
+  }
+
+  /// `Apr`
+  String get month_apr {
+    return Intl.message('Apr', name: 'month_apr', desc: '', args: []);
+  }
+
+  /// `May`
+  String get month_may {
+    return Intl.message('May', name: 'month_may', desc: '', args: []);
+  }
+
+  /// `Jun`
+  String get month_jun {
+    return Intl.message('Jun', name: 'month_jun', desc: '', args: []);
+  }
+
+  /// `Jul`
+  String get month_jul {
+    return Intl.message('Jul', name: 'month_jul', desc: '', args: []);
+  }
+
+  /// `Aug`
+  String get month_aug {
+    return Intl.message('Aug', name: 'month_aug', desc: '', args: []);
+  }
+
+  /// `Sep`
+  String get month_sep {
+    return Intl.message('Sep', name: 'month_sep', desc: '', args: []);
+  }
+
+  /// `Oct`
+  String get month_oct {
+    return Intl.message('Oct', name: 'month_oct', desc: '', args: []);
+  }
+
+  /// `Nov`
+  String get month_nov {
+    return Intl.message('Nov', name: 'month_nov', desc: '', args: []);
+  }
+
+  /// `Dec`
+  String get month_dec {
+    return Intl.message('Dec', name: 'month_dec', desc: '', args: []);
+  }
+
+  /// `Home`
+  String get home {
+    return Intl.message('Home', name: 'home', desc: '', args: []);
+  }
+
+  /// `Units`
+  String get units {
+    return Intl.message('Units', name: 'units', desc: '', args: []);
+  }
+
+  /// `Currency`
+  String get currency {
+    return Intl.message('Currency', name: 'currency', desc: '', args: []);
+  }
+
+  /// `Language`
+  String get language {
+    return Intl.message('Language', name: 'language', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

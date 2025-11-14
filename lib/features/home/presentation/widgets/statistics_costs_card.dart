@@ -14,7 +14,7 @@ class StatisticsCostsCard extends StatelessWidget {
 
     return BlocBuilder<StatisticsCubit, StatisticsState>(
       builder: (context, state) {
-        final presenter = StatisticsCostsPresenter(state);
+        final presenter = StatisticsCostsPresenter(state, context);
 
         return _buildCard(
           child: Column(
@@ -23,7 +23,7 @@ class StatisticsCostsCard extends StatelessWidget {
               Text(S.of(context).costs_stat, style: textTheme.titleMedium),
               Container(height: 1, width: double.infinity, color: Colors.grey[300]),
               const SizedBox(height: 8),
-              _buildRow(presenter),
+              _buildRow(presenter, context),
             ],
           ),
         );
@@ -31,7 +31,7 @@ class StatisticsCostsCard extends StatelessWidget {
     );
   }
 
-  Widget _buildRow(StatisticsCostsPresenter presenter) {
+  Widget _buildRow(StatisticsCostsPresenter presenter, BuildContext context) {
     final arrowColor = presenter.increased ? Colors.redAccent : Colors.green;
     final arrowIcon = presenter.increased ? Icons.arrow_upward : Icons.arrow_downward;
 
@@ -42,7 +42,11 @@ class StatisticsCostsCard extends StatelessWidget {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(presenter.currentMonthLabel, style: const TextStyle(color: Colors.black54)),
+            Text(
+             "${_getMonthLabel(context, DateTime.now())} ${DateTime.now().year}",
+              style: const TextStyle(color: Colors.black54),
+            ),
+
             Text(
               "${presenter.currentTotal.toStringAsFixed(0)} UAH",
               style: const TextStyle(color: Colors.blueAccent, fontWeight: FontWeight.bold, fontSize: 22),
@@ -81,5 +85,24 @@ class StatisticsCostsCard extends StatelessWidget {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12), child: child),
     );
+  }
+
+  String _getMonthLabel(BuildContext context, DateTime date) {
+    final s = S.of(context);
+    final monthNames = [
+      s.month_jan,
+      s.month_feb,
+      s.month_mar,
+      s.month_apr,
+      s.month_may,
+      s.month_jun,
+      s.month_jul,
+      s.month_aug,
+      s.month_sep,
+      s.month_oct,
+      s.month_nov,
+      s.month_dec,
+    ];
+    return monthNames[date.month - 1];
   }
 }
