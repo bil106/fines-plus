@@ -1,8 +1,9 @@
-
 import 'package:design_system/colors/app_colors.dart';
 import 'package:fines_plus/features/analytics/presentation/widgets/time_line_item.dart';
 import 'package:fines_plus/features/analytics/data/models/event_model.dart';
+import 'package:fines_plus/features/settings/presentation/cubit/settings_cubit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
 class HistoryTab extends StatelessWidget {
@@ -13,6 +14,8 @@ class HistoryTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final grouped = groupEventsByMonth(events);
+    final settingsCubit = context.watch<SettingsCubit>();
+    final userCurrency = settingsCubit.state.currency;
 
     return SingleChildScrollView(
       child: Column(
@@ -37,18 +40,23 @@ class HistoryTab extends StatelessWidget {
                   ),
                 ),
               ),
-              ...entry.value.map(
-                (event) => TimelineItem(
+              ...entry.value.map((event) {
+                final convertedAmount = settingsCubit.convertFromUAH(event.amount);
+                settingsCubit.getCurrencyLabel(context, userCurrency);
+
+                final currencyLabel = settingsCubit.getCurrencyLabel(context, userCurrency);
+                return TimelineItem(
                   icon: event.icon,
                   iconColor: event.iconColor,
                   customIcon: event.customIcon,
                   date: DateFormat('dd.MM.yyyy').format(event.date),
                   title: event.title,
                   subtitle: '',
-                  amount: event.amount,
+                  amount: convertedAmount,
+                  currencyLabel: currencyLabel,
                   mileage: event.mileage,
-                ),
-              ),
+                );
+              }),
             ],
           );
         }).toList(),
@@ -63,12 +71,10 @@ class HistoryTab extends StatelessWidget {
 
     for (final event in events) {
       final key = outputFormat.format(event.date);
-
       grouped.putIfAbsent(key, () => []);
       grouped[key]!.add(event);
     }
 
-    
     for (final group in grouped.values) {
       group.sort((a, b) => b.date.compareTo(a.date));
     }
@@ -76,4 +82,3 @@ class HistoryTab extends StatelessWidget {
     return grouped;
   }
 }
-

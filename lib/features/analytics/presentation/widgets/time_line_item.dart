@@ -1,4 +1,3 @@
-import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_borders.dart';
 import 'package:design_system/constants/app_spacers.dart';
@@ -14,6 +13,7 @@ class TimelineItem extends StatelessWidget {
   final String subtitle;
   final double amount;
   final String mileage;
+  final String currencyLabel; // новый параметр
 
   const TimelineItem({
     super.key,
@@ -25,6 +25,7 @@ class TimelineItem extends StatelessWidget {
     required this.subtitle,
     required this.amount,
     required this.mileage,
+    required this.currencyLabel,
   });
 
   @override
@@ -65,9 +66,9 @@ class TimelineItem extends StatelessWidget {
                   AppSpacers.verticalSmallMedium,
                   Row(
                     children: [
-                      const Icon(Icons.attach_money, size: 16,color: AppColors.energyBlue,),
+                      const Icon(Icons.attach_money, size: 16, color: AppColors.energyBlue),
                       AppSpacers.horizontalXSmall,
-                      Text("${amount.toStringAsFixed(0)} ${S.of(context).grn}"),
+                      Text("${amount.toStringAsFixed(0)} $currencyLabel"), 
                       AppSpacers.horizontalMediumLarge,
                       const Icon(Icons.directions_car, size: 16, color: AppColors.energyBlue),
                       AppSpacers.horizontalXSmall,

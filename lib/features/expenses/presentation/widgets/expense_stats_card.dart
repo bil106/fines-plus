@@ -5,8 +5,10 @@ import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
 import 'package:fines_plus/core/extensions/monthly_expense_stats.dart';
 import 'package:fines_plus/features/expenses/data/models/expense_category.dart';
+import 'package:fines_plus/features/settings/presentation/cubit/settings_cubit.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ExpenseStatsCard extends StatelessWidget {
   final MonthlyExpenseStats stats;
@@ -38,7 +40,11 @@ class ExpenseStatsCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(stats.monthLabel, style: textTheme.black14bold),
-                        Text("${stats.total.toStringAsFixed(0)} ${S.current.grn}", style: textTheme.black20bold),
+                       Text(
+                          "${context.read<SettingsCubit>().convertFromUAH(stats.total).toStringAsFixed(0)} ${context.read<SettingsCubit>().getCurrencyLabel(context, context.read<SettingsCubit>().state.currency)}",
+                          style: textTheme.black20bold,
+                        ),
+
                       ],
                     ),
                   ],
@@ -53,18 +59,18 @@ class ExpenseStatsCard extends StatelessWidget {
                 PieChartData(
                   sectionsSpace: 0.5,
                   centerSpaceRadius: 40,
-                  sections: stats.categoryTotals.entries.map((e) {
+             sections: stats.categoryTotals.entries.map((e) {
+                    final convertedValue = context.read<SettingsCubit>().convertFromUAH(e.value);
                     return PieChartSectionData(
-                      value: e.value,
+                      value: convertedValue,
                       radius: 50,
-
                       gradient: _gradientForCategory(e.key),
-
-                      title: e.value.toStringAsFixed(0),
+                      title: convertedValue.toStringAsFixed(0),
                       titleStyle: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white),
                       borderSide: const BorderSide(color: AppColors.neutreBlanc, width: 1),
                     );
                   }).toList(),
+
                 ),
               ),
             ),
