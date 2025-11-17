@@ -45,7 +45,7 @@ class _MyAppState extends State<MyApp> {
   static FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
   StreamSubscription? _appLinksSub;
-  Locale? _locale;
+  // Locale? _locale;
   bool? firstLaunch;
   bool _didNavigate = false;
   bool? _hasActiveSubscription;

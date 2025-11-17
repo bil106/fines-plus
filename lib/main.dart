@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:core_cubit/cubit/purchase/purchase_cubit.dart';
 import 'package:core_cubit/cubit/referral/referral_cubit.dart';
+import 'package:fines_plus/core/extensions/currency_service.dart';
 import 'package:fines_plus/env/env.dart';
 import 'package:fines_plus/features/analytics/presentation/cubit/analytics_cubit.dart';
 import 'package:fines_plus/features/expenses/data/repository/expense_repository.dart';
@@ -31,6 +32,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:fines_plus/my_app.dart';
 import 'package:fines_plus/core/services/app_initializer.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 late final AppInitializer appInitializer;
@@ -56,6 +58,10 @@ void main() {
 
       appInitializer = AppInitializer();
       final result = await appInitializer.init();
+
+      // ⚡ ВАЖНО: Инициализация CurrencyService до запуска приложения
+      await result.currencyService.init();
+
       final firestore = FirebaseFirestore.instance;
       final repository = SharedPrefsMaintenanceRepository(await SharedPreferences.getInstance());
       final firebaseRepository = ScheduleFirebaseRepository(firestore);
@@ -88,6 +94,7 @@ void main() {
               BlocProvider<SettingsCubit>.value(value: result.settingsCubit),
               BlocProvider<AnalyticsCubit>.value(value: result.analyticsCubit),
               BlocProvider<AdditionalOptionsCubit>.value(value: result.additionalOptionsCubit),
+              Provider<CurrencyService>.value(value: result.currencyService), // теперь уже инициализирован
               BlocProvider<CarCubit>.value(value: result.carCubit),
               BlocProvider<ScheduleCubit>(
                 create: (context) => ScheduleCubit(
@@ -117,3 +124,4 @@ void main() {
     },
   );
 }
+

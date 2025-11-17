@@ -136,6 +136,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ],
               onChanged: (v) => context.read<SettingsCubit>().setUnit(v!),
             ),
+
+            Divider(thickness: 1.5, color: AppColors.grey50),
+
+                          _buildDropdownRow<String>(
+                            context,
+                            icon: Icons.local_gas_station,
+                            title: S.of(context).fuel_consumption,
+                            value: state.fuelConsumptionUnit,
+                            items: const [
+                              DropdownMenuItem(value: 'l/100km', child: Text('l/100km')),
+                              DropdownMenuItem(value: 'mpg', child: Text('mpg')),
+                            ],
+                            onChanged: (v) => context.read<SettingsCubit>().setFuelConsumptionUnit(v!),
+                          ),
+
             Divider(thickness: 1.5, color: AppColors.grey50),
             _buildDropdownRow<String>(
               context,

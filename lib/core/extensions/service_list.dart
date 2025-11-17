@@ -7,7 +7,7 @@ class ServiceItem {
 }
 
 class ServiceList {
-  static final serviceItems = <ServiceItem>[
+ static List<ServiceItem> get serviceItems => [
    
     ServiceItem(name: S.current.service_dvs_diagnostika, priceUSD: 25),
     ServiceItem(name: S.current.service_dvs_znyattya_ustanovka, priceUSD: 275),

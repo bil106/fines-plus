@@ -13,8 +13,13 @@ class LastEventUiModel {
   final String title;
   final String date;
   final String description;
-  final String amount;
+  final double amountValue; 
+  final String amount; 
   final String? category;
+
+
+  final double? amountOriginal; 
+  final String? originalCurrency;
 
   @JsonKey(ignore: true)
   Widget get icon {
@@ -37,13 +42,15 @@ class LastEventUiModel {
     required this.title,
     required this.date,
     required this.description,
+    required this.amountValue,
     required this.amount,
     this.category,
+    this.amountOriginal,
+    this.originalCurrency,
   });
 
   factory LastEventUiModel.fromExpense(Expense expense) {
     final date = DateFormat('dd MMM yyyy').format(expense.date);
-    final amount = "${expense.amount} ${expense.currency}";
 
     String description;
     switch (expense.category) {
@@ -76,7 +83,10 @@ class LastEventUiModel {
       title: 'Last Event',
       date: date,
       description: description,
-      amount: amount,
+      amountValue: expense.amount.toDouble(), 
+      amountOriginal: expense.amount.toDouble(), 
+      originalCurrency: expense.currency, 
+      amount: "${expense.amount} ${expense.currency}",
       category: expense.category.name,
     );
   }

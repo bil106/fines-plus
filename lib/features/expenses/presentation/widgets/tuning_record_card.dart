@@ -3,8 +3,11 @@ import 'package:core_utils/formatters/date_formatter.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_borders.dart';
 import 'package:design_system/theme/app_theme.dart';
+import 'package:fines_plus/core/helpers/format_currency.dart';
 import 'package:fines_plus/features/expenses/data/models/tuning_record.dart';
+import 'package:fines_plus/features/settings/presentation/cubit/settings_cubit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class TuningRecordCard extends StatelessWidget {
   final TuningRecord record;
@@ -13,6 +16,16 @@ class TuningRecordCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+
+
+    final settingsCubit = context.watch<SettingsCubit>();
+    final currency = settingsCubit.state.currency;
+
+ 
+    final currencyService = settingsCubit.currencyService;
+    final converted = currencyService.convert(record.cost, currency, fromCurrency: 'UAH');
+
+  
 
     return Card(
       color: AppColors.neutreBlanc,
@@ -23,35 +36,24 @@ class TuningRecordCard extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Image.asset(
-              'assets/icons/tuning.jpg',
-              height: 50,
-              width: 50,
-            ),
-            const SizedBox(width: 8), 
+            Image.asset('assets/icons/tuning.jpg', height: 50, width: 50),
+            const SizedBox(width: 8),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                 
-                  Text(
-                    record.tuningName,
-                    style: textTheme.historyText,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
+                  Text(record.tuningName, style: textTheme.historyText, maxLines: 1, overflow: TextOverflow.ellipsis),
 
                   const SizedBox(height: 4),
 
-                
                   Row(
                     children: [
-                      const Icon(Icons.attach_money,
-                          color: AppColors.green, size: 18),
+                      const Icon(Icons.attach_money, color: AppColors.green, size: 18),
                       const SizedBox(width: 4),
                       Expanded(
                         child: Text(
-                          "${record.cost.toStringAsFixed(0)} ${S.of(context).grn}",
+                     
+                          "${formatCurrency(converted, context, fromCurrency: '')} ${settingsCubit.getCurrencyLabel(context, currency)}",
                           style: textTheme.subtitleText,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,

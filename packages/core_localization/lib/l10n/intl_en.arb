@@ -84,7 +84,7 @@
 "mileage": "Mileage",
 "enter_mileage": "Enter mileage",
 "km": "km",
-"grn": "grn",
+"grn": "UAH",
 "new_reminder": "New reminder",
 "edit_reminder": "Edit reminder",
 "title": "Title",
@@ -412,5 +412,12 @@
 "home": "Home",
 "units": "Units",
 "currency": "Currency",
-"language": "Language"
+"language": "Language",
+"fuel_consumption": "Fuel consumption",
+"l": "l.",
+"usd": "USD",
+"eur": "EUR",
+"already_planned": "already planned",
+"ukr": "Ukrainian",
+"create": "Create"
 }

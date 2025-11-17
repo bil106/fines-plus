@@ -1,10 +1,13 @@
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/theme/app_theme.dart';
+import 'package:fines_plus/core/extensions/currency_service.dart';
 import 'package:fines_plus/features/home/domain/entities/main_stats.dart';
 import 'package:fines_plus/features/home/presentation/widgets/stat_value.dart';
 import 'package:fines_plus/features/home/presentation/widgets/stats_rings_painter.dart';
+import 'package:fines_plus/features/settings/presentation/cubit/settings_cubit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class MainStatsCard extends StatelessWidget {
   final MainStats stats;
@@ -14,6 +17,24 @@ class MainStatsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+
+    final currencyService = context.read<CurrencyService>();
+    final settingsCubit = context.watch<SettingsCubit>();
+    final selectedCurrency = settingsCubit.state.currency;
+
+    /// 🔵 Конвертация общей стоимости
+    final totalCostConverted = currencyService.convert(
+      stats.totalCost,
+      selectedCurrency,
+      fromCurrency: "UAH",
+    );
+
+    /// 🔵 Конвертация стоимости за 1 км
+    final costPerKmConverted = currencyService.convert(
+      stats.costPerKm,
+      selectedCurrency,
+      fromCurrency: "UAH",
+    );
 
     return Card(
       color: AppColors.energyBlue50,
@@ -41,7 +62,7 @@ class MainStatsCard extends StatelessWidget {
                       children: [
                         Text(S.of(context).total_costs, style: textTheme.black20bold),
                         Text(
-                          stats.totalCost.toStringAsFixed(0),
+                          '${totalCostConverted.toStringAsFixed(0)} $selectedCurrency',
                           style: const TextStyle(
                             color: AppColors.blueAccent,
                             fontSize: 32,
@@ -58,22 +79,34 @@ class MainStatsCard extends StatelessWidget {
                 ),
               ),
             ),
+
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Column(
                   children: [
-                    Image.asset('assets/icons/coin_stack.png', width: 24, height: 24, color: Colors.blueAccent),
+                    Image.asset(
+                      'assets/icons/coin_stack.png',
+                      width: 24,
+                      height: 24,
+                      color: Colors.blueAccent,
+                    ),
                     const SizedBox(height: 4),
-                    StatValue(value: stats.costPerKm.toStringAsFixed(1), label: "UAH/km"),
+                    StatValue(
+                      value: costPerKmConverted.toStringAsFixed(1),
+                      label: "$selectedCurrency/km",
+                    )
                   ],
                 ),
+
                 Column(
                   children: [
                     const Icon(Icons.local_gas_station, color: Colors.blueAccent, size: 24),
                     const SizedBox(height: 4),
                     StatValue(
-                      value: stats.averageFuelConsumption > 0 ? stats.averageFuelConsumption.toStringAsFixed(1) : "0.0",
+                      value: stats.averageFuelConsumption > 0
+                          ? stats.averageFuelConsumption.toStringAsFixed(1)
+                          : "0.0",
                       label: "l/100km",
                     ),
                   ],
@@ -86,3 +119,6 @@ class MainStatsCard extends StatelessWidget {
     );
   }
 }
+
+  
+

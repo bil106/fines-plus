@@ -1,3 +1,5 @@
+import 'package:core_localization/generated/l10n.dart';
+import 'package:fines_plus/core/extensions/currency_service.dart';
 import 'package:fines_plus/features/settings/presentation/cubit/settings_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -5,19 +7,29 @@ import 'package:flutter/material.dart';
 
 
 class SettingsCubit extends Cubit<SettingsState> {
-  SettingsCubit() : super(SettingsState(unit: 'km', currency: 'UAH', locale: const Locale('uk'))) {
+   late SharedPreferences _prefs;
+   final CurrencyService currencyService;
+  SettingsCubit({required this.currencyService}) : super(SettingsState(unit: 'km', currency: 'UAH', locale: const Locale('uk'), fuelConsumptionUnit: 'l/100km')) {
     _loadSettings();
   }
 
-  late SharedPreferences _prefs;
 
   Future<void> _loadSettings() async {
     _prefs = await SharedPreferences.getInstance();
-    final unit = _prefs.getString('unit') ?? 'km';
-    final currency = _prefs.getString('currency') ?? 'UAH';
-    final localeCode = _prefs.getString('localeCode') ?? 'uk';
-    emit(SettingsState(unit: unit, currency: currency, locale: Locale(localeCode)));
 
+    emit(
+      state.copyWith(
+        unit: _prefs.getString('unit') ?? state.unit,
+        currency: _prefs.getString('currency') ?? state.currency,
+        locale: Locale(_prefs.getString('locale') ?? 'uk'),
+        fuelConsumptionUnit: _prefs.getString('fuelConsumptionUnit') ?? 'l/100km',
+      ),
+    );
+  }
+
+  void setFuelConsumptionUnit(String value) {
+    _prefs.setString('fuelConsumptionUnit', value);
+    emit(state.copyWith(fuelConsumptionUnit: value));
   }
 
   Future<void> setUnit(String unit) async {
@@ -25,18 +37,11 @@ class SettingsCubit extends Cubit<SettingsState> {
     emit(state.copyWith(unit: unit));
   }
 
-  Future<void> setCurrency(String currency) async {
-    await _prefs.setString('currency', currency);
-    emit(state.copyWith(currency: currency));
+
+double convertFromUAH(double amountUAH) {
+    return currencyService.convert(amountUAH, state.currency, fromCurrency: "UAH");
   }
 
-  // Future<void> _loadSavedLocale() async {
-  //   final prefs = await SharedPreferences.getInstance();
-  //   final code = prefs.getString('localeCode');
-  //   if (code != null) {
-  //     emit(state.copyWith(locale: Locale(code)));
-  //   }
-  // }
 
 Future<void> setLocale(Locale locale) async {
     await _prefs.setString('localeCode', locale.languageCode);
@@ -44,6 +49,26 @@ Future<void> setLocale(Locale locale) async {
   }
 
 
-  // void setUnit(String value) => emit(state.copyWith(unit: value));
-  // void setCurrency(String value) => emit(state.copyWith(currency: value));
+ Future<void> setCurrency(String newCurrency) async {
+    await _prefs.setString('currency', newCurrency);
+
+    await currencyService.setCurrency(newCurrency); 
+
+    emit(state.copyWith(currency: newCurrency));
+  }
+String getCurrencyLabel(BuildContext context, String currency) {
+    final s = S.of(context);
+
+    switch (currency) {
+      case 'UAH':
+        return s.grn;
+      case 'USD':
+        return s.usd;
+      case 'EUR':
+        return s.eur;
+      default:
+        return currency;
+    }
+  }
+
 }

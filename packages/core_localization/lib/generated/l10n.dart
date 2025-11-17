@@ -664,9 +664,9 @@ class S {
     return Intl.message('km', name: 'km', desc: '', args: []);
   }
 
-  /// `grn`
+  /// `UAH`
   String get grn {
-    return Intl.message('grn', name: 'grn', desc: '', args: []);
+    return Intl.message('UAH', name: 'grn', desc: '', args: []);
   }
 
   /// `New reminder`
@@ -3567,6 +3567,51 @@ class S {
   /// `Language`
   String get language {
     return Intl.message('Language', name: 'language', desc: '', args: []);
+  }
+
+  /// `Fuel consumption`
+  String get fuel_consumption {
+    return Intl.message(
+      'Fuel consumption',
+      name: 'fuel_consumption',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `l.`
+  String get l {
+    return Intl.message('l.', name: 'l', desc: '', args: []);
+  }
+
+  /// `USD`
+  String get usd {
+    return Intl.message('USD', name: 'usd', desc: '', args: []);
+  }
+
+  /// `EUR`
+  String get eur {
+    return Intl.message('EUR', name: 'eur', desc: '', args: []);
+  }
+
+  /// `already planned`
+  String get already_planned {
+    return Intl.message(
+      'already planned',
+      name: 'already_planned',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Ukrainian`
+  String get ukr {
+    return Intl.message('Ukrainian', name: 'ukr', desc: '', args: []);
+  }
+
+  /// `Create`
+  String get create {
+    return Intl.message('Create', name: 'create', desc: '', args: []);
   }
 }
 

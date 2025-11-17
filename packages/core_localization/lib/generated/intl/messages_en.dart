@@ -42,6 +42,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "already_have_account": MessageLookupByLibrary.simpleMessage(
       "Already have an account? Sign in",
     ),
+    "already_planned": MessageLookupByLibrary.simpleMessage("already planned"),
     "amount_month": MessageLookupByLibrary.simpleMessage("Amount per month"),
     "analitics": MessageLookupByLibrary.simpleMessage("Analytics"),
     "analytics": MessageLookupByLibrary.simpleMessage("Analytics"),
@@ -103,6 +104,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "cost_of_work": MessageLookupByLibrary.simpleMessage("Cost of work:"),
     "cost_statistics": MessageLookupByLibrary.simpleMessage("Cost statistics"),
     "costs_stat": MessageLookupByLibrary.simpleMessage("Cost Statistics"),
+    "create": MessageLookupByLibrary.simpleMessage("Create"),
     "csv": MessageLookupByLibrary.simpleMessage("CSV"),
     "currency": MessageLookupByLibrary.simpleMessage("Currency"),
     "date": MessageLookupByLibrary.simpleMessage("Date"),
@@ -150,6 +152,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "error_photo": MessageLookupByLibrary.simpleMessage(
       "Error choosing photo:",
     ),
+    "eur": MessageLookupByLibrary.simpleMessage("EUR"),
     "event_invisible": MessageLookupByLibrary.simpleMessage(
       "Event will be invisible",
     ),
@@ -192,6 +195,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "fuel_ai95": MessageLookupByLibrary.simpleMessage("AI-95"),
     "fuel_ai95_plus": MessageLookupByLibrary.simpleMessage("AI-95+"),
     "fuel_ai98": MessageLookupByLibrary.simpleMessage("AI-98"),
+    "fuel_consumption": MessageLookupByLibrary.simpleMessage(
+      "Fuel consumption",
+    ),
     "fuel_gas_lpg": MessageLookupByLibrary.simpleMessage("Gas LPG"),
     "fuel_up": MessageLookupByLibrary.simpleMessage("Filling up"),
     "full_tank": MessageLookupByLibrary.simpleMessage("Full tank"),
@@ -207,7 +213,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "google_login_error": MessageLookupByLibrary.simpleMessage(
       "Google login error",
     ),
-    "grn": MessageLookupByLibrary.simpleMessage("grn"),
+    "grn": MessageLookupByLibrary.simpleMessage("UAH"),
     "hint_auto_num": MessageLookupByLibrary.simpleMessage("АН0000НА"),
     "hint_tech_data_num": MessageLookupByLibrary.simpleMessage("ХЕE128436"),
     "history": MessageLookupByLibrary.simpleMessage("History"),
@@ -233,6 +239,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Track car insurance due dates",
     ),
     "km": MessageLookupByLibrary.simpleMessage("km"),
+    "l": MessageLookupByLibrary.simpleMessage("l."),
     "language": MessageLookupByLibrary.simpleMessage("Language"),
     "large_login": MessageLookupByLibrary.simpleMessage("LOG IN"),
     "large_sign_up": MessageLookupByLibrary.simpleMessage("SIGN UP"),
@@ -925,8 +932,10 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "tuning": MessageLookupByLibrary.simpleMessage("Tuning"),
     "type": MessageLookupByLibrary.simpleMessage("Type"),
+    "ukr": MessageLookupByLibrary.simpleMessage("Ukrainian"),
     "units": MessageLookupByLibrary.simpleMessage("Units"),
     "update": MessageLookupByLibrary.simpleMessage("Update"),
+    "usd": MessageLookupByLibrary.simpleMessage("USD"),
     "user_not_found": MessageLookupByLibrary.simpleMessage("User not found"),
     "verif_date": MessageLookupByLibrary.simpleMessage("Verification date:"),
     "verification_history": MessageLookupByLibrary.simpleMessage(

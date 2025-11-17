@@ -8,6 +8,7 @@ import 'package:core_cubit/cubit/referral/referral_cubit.dart';
 import 'package:core_data/core_data.dart';
 import 'package:core_services/services/purchase_service.dart';
 import 'package:fines_plus/backend/fines_server.dart';
+import 'package:fines_plus/core/extensions/currency_service.dart';
 import 'package:fines_plus/features/analytics/data/repository/analytics_repository.dart';
 import 'package:fines_plus/features/analytics/presentation/cubit/analytics_cubit.dart';
 import 'package:fines_plus/features/expenses/data/repository/expense_repository.dart';
@@ -72,6 +73,7 @@ class AppInitializer {
   late final SettingsCubit settingsCubit;
   late final AdditionalOptionsCubit additionalOptionsCubit;
   late final RemoteConfigService remoteConfigService;
+  late final CurrencyService currencyService;
   final Map<String, int> _scheduledReminderIds = {};
   late final SubscriptionRepositoryImpl subscriptionRepository;
   late final ScheduleFirebaseRepository firebaseRepository;
@@ -184,7 +186,8 @@ class AppInitializer {
     final carInfoRepository = CarInfoRepository(carInfoLocalDataSource, CarInfoRemoteDataSource());
 
     quickActionsCubit = QuickActionsCubit(tasksRepository);
-
+currencyService = CurrencyService();
+await currencyService.init();
     referralCubit = ReferralCubit(appLinks, prefs);
 
     carCubit = CarCubit(local: carInfoLocalDataSource, repo: carInfoRepository);
@@ -202,7 +205,7 @@ class AppInitializer {
     );
     fuelStationCubit = FuelStationCubit();
     statisticsCubit = StatisticsCubit(maintenanceCubit);
-    settingsCubit = SettingsCubit();
+    settingsCubit = SettingsCubit(currencyService: currencyService);
 
     subscriptionRepository = SubscriptionRepositoryImpl(
       InAppPurchase.instance,
@@ -275,6 +278,7 @@ class AppInitializer {
       firebaseRepository: firebaseRepository,
       analyticsRepository: analyticsRepository,
       tasksRepository: tasksRepository,
+      currencyService: currencyService,
     );
   }
 }
@@ -361,6 +365,7 @@ class AppInitResult {
   final ScheduleFirebaseRepository firebaseRepository;
   final AnalyticsRepository analyticsRepository;
   final TasksRepository  tasksRepository;
+  final CurrencyService  currencyService;
 
   AppInitResult({
     required this.config,
@@ -389,5 +394,6 @@ class AppInitResult {
     required this.firebaseRepository,
     required this.analyticsRepository,
     required this.tasksRepository,
+    required this.currencyService,
   });
 }

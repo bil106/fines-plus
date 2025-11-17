@@ -1,23 +1,25 @@
-import 'dart:convert';
+
 
 import 'package:auto_route/auto_route.dart';
-import 'package:core/config/app_urls.dart';
+
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
 import 'package:fines_plus/core/extensions/date_picker_card.dart';
 import 'package:fines_plus/core/extensions/service_list.dart';
+import 'package:fines_plus/core/helpers/format_currency.dart';
 import 'package:fines_plus/features/maintenance/presentation/widgets/mileage_card.dart';
 import 'package:fines_plus/env/env.dart';
 import 'package:fines_plus/features/expenses/data/models/tuning_record.dart';
 import 'package:fines_plus/features/maintenance/presentation/screens/service_map_screen.dart';
+import 'package:fines_plus/features/settings/presentation/cubit/settings_cubit.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:http/http.dart' as http;
 import 'package:location/location.dart';
 
 @RoutePage()
@@ -35,34 +37,28 @@ class _TuningScreenState extends State<TuningScreen> {
   final TextEditingController mileageController = TextEditingController();
   Map<String, dynamic>? _bestStation;
   DateTime? selectedDate;
-  double usdToUahRate = 40.0;
+
   Map<int, double> selectedPricesUah = {};
 
   @override
   void initState() {
     super.initState();
     _initLocationAndService();
-    _fetchRate();
   }
+
   Future<void> _initLocationAndService() async {
     Location location = Location();
 
     bool serviceEnabled = await location.serviceEnabled();
     if (!serviceEnabled) {
       serviceEnabled = await location.requestService();
-      if (!serviceEnabled) {
-        if (kDebugMode) print("Location service not enabled");
-        return;
-      }
+      if (!serviceEnabled) return;
     }
 
     PermissionStatus permissionGranted = await location.hasPermission();
     if (permissionGranted == PermissionStatus.denied) {
       permissionGranted = await location.requestPermission();
-      if (permissionGranted != PermissionStatus.granted) {
-        if (kDebugMode) print("Location permission not granted");
-        return;
-      }
+      if (permissionGranted != PermissionStatus.granted) return;
     }
 
     try {
@@ -70,7 +66,6 @@ class _TuningScreenState extends State<TuningScreen> {
       LatLng current = LatLng(locationData.latitude!, locationData.longitude!);
 
       final bestStation = await fetchBestNearbyService(current, Env.mapApiKey);
-
       setState(() {
         _bestStation = bestStation;
       });
@@ -78,39 +73,16 @@ class _TuningScreenState extends State<TuningScreen> {
       if (kDebugMode) print("Error getting position: $e");
     }
   }
-  Future<void> _fetchRate() async {
-    try {
-      final response = await http.get(Uri.parse(AppUrls.nbuRateUSD));
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        if (data is List && data.isNotEmpty) {
-          final newRate = (data[0]['rate'] as num).toDouble();
-
-          setState(() {
-            usdToUahRate = newRate;
-
-            selectedPricesUah.updateAll((key, oldValue) {
-              final serviceName = tuningControllers[key].text;
-              final selectedItem = ServiceList.tuningItems.firstWhere(
-                (item) => item.name == serviceName,
-                orElse: () => ServiceItem(name: serviceName, priceUSD: 0),
-              );
-              return selectedItem.priceUSD * usdToUahRate;
-            });
-
-            double total = selectedPricesUah.values.fold(0, (a, b) => a + b);
-            costController.text = total.toStringAsFixed(0);
-          });
-        }
-      }
-    } catch (e) {
-      if (kDebugMode) print(" Error fetching rate: $e");
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+
+    final settings = context.watch<SettingsCubit>();
+    final currency = settings.state.currency;
+    final currencyService = settings.currencyService;
+
+    selectedPricesUah.values.fold(0.0, (sum, val) => sum + val);
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(statusBarColor: AppColors.grey50, statusBarIconBrightness: Brightness.dark),
@@ -138,9 +110,13 @@ class _TuningScreenState extends State<TuningScreen> {
                     (item) => item.name == c.text,
                     orElse: () => ServiceItem(name: c.text, priceUSD: 0),
                   );
+
+                  // конвертируем цену в UAH перед сохранением
+                  final costUah = currencyService.convert(selectedTuning.priceUSD, "UAH", fromCurrency: "USD");
+
                   return TuningRecord(
                     tuningName: selectedTuning.name,
-                    cost: selectedTuning.priceUSD * usdToUahRate,
+                    cost: costUah,
                     date: selectedDate!,
                     mileage: mileage,
                   );
@@ -151,13 +127,12 @@ class _TuningScreenState extends State<TuningScreen> {
             ),
           ],
         ),
-
         body: SingleChildScrollView(
           padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(S.of(context).tuning, style: textTheme.title), 
+              Text(S.of(context).tuning, style: textTheme.title),
               Row(
                 children: [
                   _bestStation == null
@@ -198,7 +173,6 @@ class _TuningScreenState extends State<TuningScreen> {
                   ),
                 ],
               ),
-
               const Divider(),
               Row(
                 children: [
@@ -214,12 +188,9 @@ class _TuningScreenState extends State<TuningScreen> {
                   ),
                 ],
               ),
-
               AppSpacers.verticalMedium,
-
               Text(S.of(context).selecting_service, style: textTheme.subtitleText),
               AppSpacers.verticalMedium,
-
               Column(
                 children: List.generate(tuningControllers.length, (index) {
                   return Padding(
@@ -240,9 +211,17 @@ class _TuningScreenState extends State<TuningScreen> {
                                 (item) => item.name == val,
                                 orElse: () => ServiceItem(name: val, priceUSD: 0),
                               );
-                              selectedPricesUah[index] = selectedItem.priceUSD * usdToUahRate;
+
+                              // ✅ конвертация через CurrencyService
+                              selectedPricesUah[index] = currencyService.convert(
+                                selectedItem.priceUSD,
+                                "UAH",
+                                fromCurrency: "USD",
+                              );
+
                               double total = selectedPricesUah.values.fold(0, (a, b) => a + b);
                               costController.text = total.toStringAsFixed(0);
+
                               setState(() {});
                             },
                             fieldViewBuilder: (context, controller, focusNode, onFieldSubmitted) {
@@ -275,7 +254,6 @@ class _TuningScreenState extends State<TuningScreen> {
                   );
                 }),
               ),
-
               Center(
                 child: IconButton(
                   icon: const CircleAvatar(
@@ -289,9 +267,7 @@ class _TuningScreenState extends State<TuningScreen> {
                   },
                 ),
               ),
-
               AppSpacers.verticalMediumLarge,
-
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
@@ -310,7 +286,9 @@ class _TuningScreenState extends State<TuningScreen> {
                           children: [
                             Text(S.of(context).sum),
                             Text(
-                              "${selectedPricesUah.isEmpty ? '0' : selectedPricesUah.values.last.toStringAsFixed(0)} ${S.of(context).grn}",
+                              selectedPricesUah.isEmpty
+                                  ? '0 $currency'
+                                  : "${formatCurrency(selectedPricesUah.values.last, context, fromCurrency: 'UAH')} $currency",
                               style: textTheme.titleMedium,
                             ),
                           ],
@@ -326,7 +304,9 @@ class _TuningScreenState extends State<TuningScreen> {
                           children: [
                             Text(S.of(context).total_amount),
                             Text(
-                              "${costController.text.isEmpty ? '0' : costController.text} ${S.of(context).grn}",
+                              costController.text.isEmpty
+                                  ? '0 $currency'
+                                  : "${formatCurrency(double.tryParse(costController.text) ?? 0, context, fromCurrency: 'UAH')} $currency",
                               style: textTheme.titleMedium,
                             ),
                           ],
@@ -343,6 +323,7 @@ class _TuningScreenState extends State<TuningScreen> {
     );
   }
 }
+
 Future<Map<String, dynamic>?> fetchBestNearbyService(LatLng current, String apiKey) async {
   final stations = await fetchNearbyServices(current, apiKey);
   if (stations.isEmpty) return null;

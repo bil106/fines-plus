@@ -11,6 +11,7 @@ LastEventUiModel _$LastEventUiModelFromJson(Map<String, dynamic> json) =>
       title: json['title'] as String,
       date: json['date'] as String,
       description: json['description'] as String,
+      amountValue: (json['amountValue'] as num).toDouble(),
       amount: json['amount'] as String,
       category: json['category'] as String?,
     );
@@ -20,6 +21,7 @@ Map<String, dynamic> _$LastEventUiModelToJson(LastEventUiModel instance) =>
       'title': instance.title,
       'date': instance.date,
       'description': instance.description,
+      'amountValue': instance.amountValue,
       'amount': instance.amount,
       'category': instance.category,
     };

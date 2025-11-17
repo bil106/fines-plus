@@ -1,5 +1,4 @@
 // ignore_for_file: invalid_use_of_visible_for_testing_member, invalid_use_of_protected_member
-
 import 'package:fines_plus/features/expenses/data/models/car_wash_record.dart';
 import 'package:fines_plus/features/expenses/data/models/expense.dart';
 import 'package:fines_plus/features/expenses/data/models/expense_category.dart';
@@ -153,6 +152,7 @@ class MaintenanceCubit extends Cubit<MaintenanceState> {
       final fuelRecords = <FuelRecord>[];
       final tuningRecords = <TuningRecord>[];
       final carWashRecords = <CarWashRecord>[];
+     
 
       for (final exp in expenses) {
         switch (exp.category) {
@@ -163,7 +163,7 @@ class MaintenanceCubit extends Cubit<MaintenanceState> {
             fuelRecords.add(FuelRecord.fromExpense(exp));
             break;
           case ExpenseCategory.tuning:
-            tuningRecords.add(TuningRecord.fromExpense(exp));
+            tuningRecords.add(TuningRecord.fromExpense(exp,));
             break;
           case ExpenseCategory.carWash:
             carWashRecords.add(CarWashRecord.fromExpense(exp));

@@ -42,6 +42,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "already_have_account": MessageLookupByLibrary.simpleMessage(
       "Вже маєте обліковий запис? Увійти",
     ),
+    "already_planned": MessageLookupByLibrary.simpleMessage("вже заплановано"),
     "amount_month": MessageLookupByLibrary.simpleMessage("Сума за місяць"),
     "analitics": MessageLookupByLibrary.simpleMessage("Аналітика"),
     "analytics": MessageLookupByLibrary.simpleMessage("Аналітика"),
@@ -103,6 +104,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Статистика витрат",
     ),
     "costs_stat": MessageLookupByLibrary.simpleMessage("Статистика витрат"),
+    "create": MessageLookupByLibrary.simpleMessage("Створити"),
     "csv": MessageLookupByLibrary.simpleMessage("CSV"),
     "currency": MessageLookupByLibrary.simpleMessage("Валюта"),
     "date": MessageLookupByLibrary.simpleMessage("Дата"),
@@ -152,6 +154,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "error_photo": MessageLookupByLibrary.simpleMessage(
       "Помилка при виборі фото:",
     ),
+    "eur": MessageLookupByLibrary.simpleMessage("EUR"),
     "event_invisible": MessageLookupByLibrary.simpleMessage(
       "Подія буде невидимою",
     ),
@@ -192,6 +195,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "fuel_ai95": MessageLookupByLibrary.simpleMessage("АІ-95"),
     "fuel_ai95_plus": MessageLookupByLibrary.simpleMessage("АІ-95+"),
     "fuel_ai98": MessageLookupByLibrary.simpleMessage("АІ-98"),
+    "fuel_consumption": MessageLookupByLibrary.simpleMessage("Витрата палива"),
     "fuel_gas_lpg": MessageLookupByLibrary.simpleMessage("Газ LPG"),
     "fuel_up": MessageLookupByLibrary.simpleMessage("Заправка"),
     "full_tank": MessageLookupByLibrary.simpleMessage("Повний бак"),
@@ -207,7 +211,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "google_login_error": MessageLookupByLibrary.simpleMessage(
       "Помилка входу через Google",
     ),
-    "grn": MessageLookupByLibrary.simpleMessage("грн"),
+    "grn": MessageLookupByLibrary.simpleMessage("UAH"),
     "hint_auto_num": MessageLookupByLibrary.simpleMessage("АН0000НА"),
     "hint_tech_data_num": MessageLookupByLibrary.simpleMessage("ХЕE128436"),
     "history": MessageLookupByLibrary.simpleMessage("Історія"),
@@ -234,6 +238,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "keep_track": MessageLookupByLibrary.simpleMessage(
       "Слідкуйте за термінами страховки авто",
     ),
+    "l": MessageLookupByLibrary.simpleMessage("л."),
     "language": MessageLookupByLibrary.simpleMessage("Мова"),
     "large_login": MessageLookupByLibrary.simpleMessage("УВІЙТИ"),
     "large_sign_up": MessageLookupByLibrary.simpleMessage("ЗАРЕЄСТРУВАТИСЯ"),
@@ -904,8 +909,10 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "tuning": MessageLookupByLibrary.simpleMessage("Тюнінг"),
     "type": MessageLookupByLibrary.simpleMessage("Тип"),
+    "ukr": MessageLookupByLibrary.simpleMessage("Українська"),
     "units": MessageLookupByLibrary.simpleMessage("Одиниці"),
     "update": MessageLookupByLibrary.simpleMessage("Оновити"),
+    "usd": MessageLookupByLibrary.simpleMessage("USD"),
     "user_not_found": MessageLookupByLibrary.simpleMessage(
       "Користувач не знайдено",
     ),

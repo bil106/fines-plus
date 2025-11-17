@@ -84,7 +84,7 @@
    "mileage": "Пробіг",
    "enter_mileage": "Введіть пробіг",
    "км": "км",
-   "grn": "грн",
+   "grn": "UAH",
    "new_reminder": "Нове нагадування",
    "edit_reminder": "Редагувати нагадування",
    "title": "Заголовок",
@@ -413,7 +413,14 @@
    "home": "Дім",
    "units": "Одиниці",
    "currency": "Валюта",
-   "language": "Мова"
+   "language": "Мова",
+   "fuel_consumption": "Витрата палива",
+   "l": "л.",
+   "usd": "USD",
+   "eur": "EUR",
+   "already_planned": "вже заплановано",
+   "ukr": "Українська",
+   "create": "Створити"
   
 
 }
