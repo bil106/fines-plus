@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:core_localization/generated/l10n.dart';
 import 'package:fines_plus/core/extensions/currency_service.dart';
 import 'package:fines_plus/features/settings/domain/services/settings_service.dart';
 import 'package:fines_plus/features/settings/presentation/cubit/settings_state.dart';
@@ -32,7 +33,19 @@ class SettingsCubit extends Cubit<SettingsState> {
   Future<void> setFuelConsumptionUnit(String value) => SettingsService.instance.setFuelConsumptionUnit(value);
 
   double convertFromUAH(double amountUAH) => currencyService.convert(amountUAH, state.currency, fromCurrency: "UAH");
-
+  String getCurrencyLabel(BuildContext context, String currency) {
+    final s = S.of(context); 
+    switch (currency) {
+      case 'UAH':
+        return s.grn;
+      case 'USD':
+        return s.usd;
+      case 'EUR':
+        return s.eur;
+      default:
+        return currency;
+    }
+  }
   @override
   Future<void> close() async {
     await _settingsSub.cancel();
