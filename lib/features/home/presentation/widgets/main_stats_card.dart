@@ -22,14 +22,14 @@ class MainStatsCard extends StatelessWidget {
     final settingsCubit = context.watch<SettingsCubit>();
     final selectedCurrency = settingsCubit.state.currency;
 
-    /// 🔵 Конвертация общей стоимости
+ 
     final totalCostConverted = currencyService.convert(
       stats.totalCost,
       selectedCurrency,
       fromCurrency: "UAH",
     );
 
-    /// 🔵 Конвертация стоимости за 1 км
+  
     final costPerKmConverted = currencyService.convert(
       stats.costPerKm,
       selectedCurrency,

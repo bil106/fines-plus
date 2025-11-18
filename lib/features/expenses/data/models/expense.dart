@@ -18,6 +18,7 @@ class Expense {
   final String userId;
   final String? carNumber;
   final double? fuelVolume;
+  
 
   Expense({
     this.id,
@@ -32,6 +33,7 @@ class Expense {
     this.updatedAt,
     this.carNumber,
     this.fuelVolume,
+    
   });
 
   /// Firestore-specific serialization

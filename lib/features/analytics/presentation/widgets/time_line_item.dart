@@ -13,7 +13,7 @@ class TimelineItem extends StatelessWidget {
   final String subtitle;
   final double amount;
   final String mileage;
-  final String currencyLabel; // новый параметр
+  final String currencyLabel; 
 
   const TimelineItem({
     super.key,

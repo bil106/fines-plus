@@ -18,9 +18,11 @@ import 'package:fines_plus/features/expenses/data/models/service_record.dart';
 import 'package:fines_plus/features/maintenance/presentation/screens/service_map_screen.dart';
 import 'package:fines_plus/features/registration/data/datasources/iextract_tokens_usecase.dart';
 import 'package:fines_plus/features/registration/data/models/flutter_secure_storage.dart';
+import 'package:fines_plus/features/settings/presentation/cubit/settings_cubit.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -280,13 +282,14 @@ class _ServiceScreenState extends State<ServiceScreen> {
                   },
                   onSelected: (val) {
                     serviceControllers[index].text = val;
+
                     final selectedItem = ServiceList.serviceItems.firstWhere(
                       (item) => item.name == val,
                       orElse: () => ServiceItem(name: val, priceUSD: 0),
                     );
+
                     selectedPricesUah[index] = selectedItem.priceUSD * usdToUahRate;
-                    final total = selectedPricesUah.values.fold(0.0, (a, b) => a + b);
-                    costController.text = total.toStringAsFixed(0);
+
                     setState(() {});
                   },
                   fieldViewBuilder: (context, controller, focusNode, onFieldSubmitted) {
@@ -304,8 +307,6 @@ class _ServiceScreenState extends State<ServiceScreen> {
                             setState(() {
                               serviceControllers.removeAt(index);
                               selectedPricesUah.remove(index);
-                              final total = selectedPricesUah.values.fold(0.0, (a, b) => a + b);
-                              costController.text = total.toStringAsFixed(0);
                             });
                           },
                         ),
@@ -322,6 +323,16 @@ class _ServiceScreenState extends State<ServiceScreen> {
   }
 
   Widget _buildCostSummary(TextTheme textTheme) {
+    final settingsCubit = context.watch<SettingsCubit>();
+    final currency = settingsCubit.state.currency;
+    final symbol = settingsCubit.getCurrencyLabel(context, currency);
+
+    final totalUah = selectedPricesUah.values.fold(0.0, (a, b) => a + b);
+
+    final convertedTotal = settingsCubit.convertFromUAH(totalUah);
+
+    final displayController = TextEditingController(text: convertedTotal.toStringAsFixed(0));
+
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -339,37 +350,43 @@ class _ServiceScreenState extends State<ServiceScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(S.of(context).cost_of_work),
-                  // Text(
-                  //   "${selectedPricesUah.isEmpty ? '0' : selectedPricesUah.values.last.toStringAsFixed(0)} ${S.of(context).grn}",
-                  //   style: textTheme.titleMedium,
-                  // ),
                   SizedBox(
                     width: 100,
-                    child: TextField(
-                      controller: costController,
-                      keyboardType: TextInputType.number,
-                      decoration: InputDecoration(
-                        focusedBorder: InputBorder.none ,
-                        
-                        // suffixText: S.of(context).grn,
-                        isDense: true,
-                        contentPadding: const EdgeInsets.symmetric(vertical: 1, horizontal: 8),
-                        border: InputBorder.none,
-                      ),
-                      style: textTheme.black16,
-                      onChanged: (val) {
-                        final manualCost = double.tryParse(val) ?? 0;
-                        setState(() {
-                          selectedPricesUah[selectedPricesUah.length - 1] = manualCost;
-                        });
-                      },
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            controller: displayController,
+                            keyboardType: TextInputType.number,
+                            decoration: const InputDecoration(
+                              focusedBorder: InputBorder.none,
+                              isDense: true,
+                              contentPadding: EdgeInsets.symmetric(vertical: 1, horizontal: 8),
+                              border: InputBorder.none,
+                            ),
+                            style: textTheme.black16,
+                            onChanged: (val) {
+                              final entered = double.tryParse(val) ?? 0;
+
+                              final manualUah = settingsCubit.convertFromUAH(entered);
+                              setState(() {
+                                selectedPricesUah[selectedPricesUah.length - 1] = manualUah;
+                              });
+                            },
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+                        Text(symbol, style: textTheme.black16),
+                      ],
                     ),
                   ),
                 ],
               ),
             ],
           ),
-          AppSpacers.horizontalXMassive,
+
+          AppSpacers.horizontalXXMassive,
+
           Row(
             children: [
               const Icon(Icons.attach_money, color: AppColors.blueAccent),
@@ -378,10 +395,7 @@ class _ServiceScreenState extends State<ServiceScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(S.of(context).total_amount),
-                  Text(
-                    "${costController.text.isEmpty ? '0' : costController.text} ${S.of(context).grn}",
-                    style: textTheme.titleMedium,
-                  ),
+                  Text("${convertedTotal.toStringAsFixed(0)} $symbol", style: textTheme.titleMedium),
                 ],
               ),
             ],

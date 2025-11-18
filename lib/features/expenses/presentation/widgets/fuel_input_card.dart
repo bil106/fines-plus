@@ -1,11 +1,12 @@
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_borders.dart';
-
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:fines_plus/core/extensions/fuel_type.dart';
+import 'package:fines_plus/features/settings/presentation/cubit/settings_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class FuelPriceCache {
@@ -37,6 +38,7 @@ class FuelInputCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
@@ -52,13 +54,15 @@ class FuelInputCard extends StatelessWidget {
             child: TextField(
               controller: volumeController,
               keyboardType: TextInputType.number,
-              decoration: const InputDecoration(border: InputBorder.none,focusedBorder: InputBorder.none , hintText: "0 L"),
+              decoration: const InputDecoration(
+                border: InputBorder.none,
+                focusedBorder: InputBorder.none,
+                hintText: "0 L",
+              ),
             ),
           ),
-        
-         
 
-       Column(
+          Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(S.of(context).price_liter, style: textTheme.bodySmall?.copyWith(color: AppColors.black87)),
@@ -67,20 +71,14 @@ class FuelInputCard extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  
                   const Icon(Icons.monetization_on_outlined, color: AppColors.blue700),
                   const SizedBox(width: 4),
-
-                
                   SizedBox(
-                    width:33,
+                    width: 33,
                     child: TextField(
                       controller: priceController,
                       keyboardType: TextInputType.number,
-                      inputFormatters: [
-                        FilteringTextInputFormatter.digitsOnly,
-                        LengthLimitingTextInputFormatter(2), 
-                      ],
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly, LengthLimitingTextInputFormatter(2)],
                       decoration: const InputDecoration(
                         border: InputBorder.none,
                         focusedBorder: InputBorder.none,
@@ -89,36 +87,26 @@ class FuelInputCard extends StatelessWidget {
                         contentPadding: EdgeInsets.zero,
                       ),
                       style: textTheme.titleMedium?.copyWith(color: AppColors.black87),
-                      onChanged: (value) {
-                        if (value.isNotEmpty) {
-                         int parsed = double.tryParse(value)?.round() ?? 0;
-                          if (parsed > 99) {
-                            parsed = 99;
-                         
-                            priceController.value = TextEditingValue(
-                              text: parsed.toString(),
-                              selection: TextSelection.fromPosition(TextPosition(offset: parsed.toString().length)),
-                            );
-                          }
-                        }
-                        onPriceChanged?.call(value);
-                      },
+                      onChanged: onPriceChanged,
                     ),
                   ),
-
                   const SizedBox(width: 8),
 
-             
-                  Text(
-                    S.of(context).grn,
-                    style: textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold, color: AppColors.blue700),
+                  Builder(
+                    builder: (context) {
+                      final settingsCubit = context.watch<SettingsCubit>();
+                      final currencyLabel = settingsCubit.getCurrencyLabel(context, settingsCubit.state.currency);
+
+                      return Text(
+                        currencyLabel,
+                        style: textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold, color: AppColors.blue700),
+                      );
+                    },
                   ),
                 ],
               ),
             ],
-          )
-
-
+          ),
         ],
       ),
     );

@@ -72,49 +72,66 @@ class LastEventCardAction extends StatelessWidget {
     );
   }
 
-  Widget _buildContent(TextTheme textTheme, BuildContext context) {
-    final settingsCubit = context.watch<SettingsCubit>();
-    final targetCurrency = settingsCubit.state.currency;
+Widget _buildContent(TextTheme textTheme, BuildContext context) {
+  final settingsCubit = context.watch<SettingsCubit>();
+  final targetCurrency = settingsCubit.state.currency;
 
-    final displayValue = event!.originalCurrency != null
-        ? formatCurrency(event!.amountOriginal!, context, fromCurrency: event!.originalCurrency!)
-        : formatCurrency(event!.amountValue, context, fromCurrency: 'UAH');
+  final displayValue = event!.originalCurrency != null
+      ? formatCurrency(
+          event!.amountOriginal!, 
+          context, 
+          fromCurrency: event!.originalCurrency!
+        )
+      : formatCurrency(
+          event!.amountValue, 
+          context, 
+          fromCurrency: 'UAH'
+        );
 
-    final displayCurrency = event!.originalCurrency != null ? targetCurrency : targetCurrency;
+  final displayCurrency = targetCurrency;
 
-    return Row(
-      children: [
-        event!.icon,
-        const SizedBox(width: 16),
-        Expanded(
-          child: Padding(
-            padding: const EdgeInsets.only(left: 4.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(event!.description, style: textTheme.black18W400),
+  return Row(
+    children: [
+      event!.icon,
+      const SizedBox(width: 16),
+      Expanded(
+        child: Padding(
+          padding: const EdgeInsets.only(left: 4.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(event!.description, style: textTheme.black18W400),
+              if (event!.mileage != null)
                 Padding(
-                  padding: const EdgeInsets.only(left: 49.0),
+                  padding: const EdgeInsets.only(left: 49.0, top: 4),
                   child: Text(
-                    "$displayValue $displayCurrency",
-                    style: textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold, color: AppColors.blueAccent),
+                    "${event!.mileage!.toStringAsFixed(0)} ${settingsCubit.state.unit}",
+                    style: textTheme.bodyMedium?.copyWith(color: Colors.black54),
                   ),
                 ),
-              ],
-            ),
-          ),
+              Padding(
+                padding: const EdgeInsets.only(left: 49.0, top: 2),
+                child: Text(
+                  "$displayValue $displayCurrency",
+                  style: textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold, color: AppColors.blueAccent),
+                ),
+              ),
+            ],
+
         ),
-      ],
-    );
-  }
+      ),
+   ) ],
+  );
+}
 
   static Widget _buildCard({required Widget child}) {
     return Card(
       elevation: 2,
       shadowColor: Colors.black26,
-      color: Colors.white,
+      color: Colors.grey[100],
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
       child: Padding(padding: const EdgeInsets.only(left: 12, right: 12, top: 4, bottom: 1), child: child),
     );
   }
 }
+

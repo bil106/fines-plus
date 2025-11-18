@@ -147,7 +147,7 @@ class _FuelUpScreenState extends State<FuelUpScreen> {
                   volume: volume,
                   cost: totalCost,
                   date: selectedDate!,
-                  mileage: mileage,
+                  mileage: mileage, currency: '',
                 );
 
                 context.router.pop(record);

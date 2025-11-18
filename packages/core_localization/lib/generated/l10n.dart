@@ -349,9 +349,9 @@ class S {
     );
   }
 
-  /// `Filling up`
+  /// `Fuel`
   String get fuel_up {
-    return Intl.message('Filling up', name: 'fuel_up', desc: '', args: []);
+    return Intl.message('Fuel', name: 'fuel_up', desc: '', args: []);
   }
 
   /// `Fuel`

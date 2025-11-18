@@ -3,7 +3,9 @@ import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_borders.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
+import 'package:fines_plus/features/settings/presentation/cubit/settings_cubit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class CostInputCard extends StatelessWidget {
   final TextEditingController controller;
@@ -13,6 +15,11 @@ class CostInputCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+
+    final settingsCubit = context.watch<SettingsCubit>();
+    final settings = settingsCubit.state;
+
+    final currencyLabel = settingsCubit.getCurrencyLabel(context, settings.currency);
 
     return Card(
       color: AppColors.neutreBlanc,
@@ -28,14 +35,26 @@ class CostInputCard extends StatelessWidget {
                 controller: controller,
                 keyboardType: const TextInputType.numberWithOptions(decimal: true),
                 decoration: InputDecoration(
-                  border: InputBorder.none,focusedBorder: InputBorder.none ,
-                  hintText: S.of(context).enter_amount, 
+                  border: InputBorder.none,
+                  focusedBorder: InputBorder.none,
+                  hintText: S.of(context).enter_amount,
                   hintStyle: textTheme.subtitleText.copyWith(color: AppColors.grey300),
                 ),
                 style: textTheme.subtitleText,
+                onChanged: (value) {
+                  final input = double.tryParse(value.replaceAll(',', '.')) ?? 0.0;
+
+                  final amountInUah = settingsCubit.currencyService.convert(
+                    input,
+                    "UAH",
+                    fromCurrency: settings.currency,
+                  );
+
+                  debugPrint("Введено: $input ${settings.currency} => $amountInUah UAH");
+                },
               ),
             ),
-            Text(S.of(context).grn, style: textTheme.subtitleText),
+            Text(currencyLabel, style: textTheme.subtitleText),
           ],
         ),
       ),

@@ -1,5 +1,3 @@
-
-
 import 'package:auto_route/auto_route.dart';
 
 import 'package:core_localization/generated/l10n.dart';
@@ -111,7 +109,6 @@ class _TuningScreenState extends State<TuningScreen> {
                     orElse: () => ServiceItem(name: c.text, priceUSD: 0),
                   );
 
-                  // конвертируем цену в UAH перед сохранением
                   final costUah = currencyService.convert(selectedTuning.priceUSD, "UAH", fromCurrency: "USD");
 
                   return TuningRecord(
@@ -212,7 +209,6 @@ class _TuningScreenState extends State<TuningScreen> {
                                 orElse: () => ServiceItem(name: val, priceUSD: 0),
                               );
 
-                              // ✅ конвертация через CurrencyService
                               selectedPricesUah[index] = currencyService.convert(
                                 selectedItem.priceUSD,
                                 "UAH",

@@ -1,4 +1,3 @@
-
 class MainStats {
   final int lastOdometer;
   final double totalCost;
@@ -18,3 +17,5 @@ class MainStats {
   double get costPerKmPercent => (costPerKm / 17).clamp(0.0, 1.0);
   double get fuelPercent => (averageFuelConsumption / 20).clamp(0.0, 1.0);
 }
+
+

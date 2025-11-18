@@ -38,19 +38,33 @@ class _HomeScreenState extends State<HomeScreen> {
     _loadLatestExpense();
   }
 
-  Future<void> _loadLatestExpense() async {
+Future<void> _loadLatestExpense() async {
     final repo = ExpenseRepository(FirebaseFirestore.instance);
     final carNumber = context.read<CarCubit>().state.carNumber;
 
-    final expense = await repo.getLatestExpense(carNumber: carNumber);
 
-    final eventUi = expense != null ? LastEventUiModel.fromExpense(expense) : null;
+    final allExpenses = await repo.getExpensesOnce(carNumber: carNumber);
+
+    if (allExpenses.isEmpty) {
+      setState(() {
+        latestExpense = null;
+        isLoading = false;
+      });
+      return;
+    }
+
+   
+    final allEvents = allExpenses.map((e) => LastEventUiModel.fromExpense(e)).toList();
+
+  
+    final latestByMileage = allEvents.reduce((a, b) => (a.mileage ?? 0) > (b.mileage ?? 0) ? a : b);
 
     setState(() {
-      latestExpense = eventUi;
+      latestExpense = latestByMileage;
       isLoading = false;
     });
   }
+
 
   @override
   Widget build(BuildContext context) {

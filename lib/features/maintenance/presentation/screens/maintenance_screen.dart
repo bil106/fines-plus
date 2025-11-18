@@ -117,16 +117,26 @@ class _MaintenanceScreenView extends StatelessWidget {
                   children: [
                     Text(S.of(context).tech_service, style: textTheme.title),
                     AppSpacers.verticalMedium,
-                    Expanded(
+                   Expanded(
                       child: Builder(
                         builder: (_) {
-                          final hasRecords =
-                              state.serviceRecords.isNotEmpty ||
-                              state.tuningRecords.isNotEmpty ||
-                              state.fuelRecords.isNotEmpty ||
-                              state.carWashRecords.isNotEmpty;
+                       
+                          final allRecords = <Map<String, dynamic>>[];
 
-                          if (!hasRecords) {
+                          allRecords.addAll(
+                            state.serviceRecords.map((r) => {'type': 'service', 'record': r, 'mileage': r.mileage}),
+                          );
+                          allRecords.addAll(
+                            state.tuningRecords.map((r) => {'type': 'tuning', 'record': r, 'mileage': r.mileage}),
+                          );
+                          allRecords.addAll(
+                            state.fuelRecords.map((r) => {'type': 'fuel', 'record': r, 'mileage': r.mileage}),
+                          );
+                          allRecords.addAll(
+                            state.carWashRecords.map((r) => {'type': 'carWash', 'record': r, 'mileage': r.mileage}),
+                          );
+
+                          if (allRecords.isEmpty) {
                             return Center(
                               child: Text(
                                 S.current.no_records,
@@ -135,17 +145,29 @@ class _MaintenanceScreenView extends StatelessWidget {
                             );
                           }
 
+                          allRecords.sort((a, b) => (b['mileage'] ?? 0).compareTo(a['mileage'] ?? 0));
+
+                       
                           return ListView(
-                            children: [
-                              ...state.serviceRecords.map((r) => ServiceRecordCard(record: r)),
-                              ...state.tuningRecords.map((r) => TuningRecordCard(record: r)),
-                              ...state.fuelRecords.map((r) => FuelRecordCard(record: r)),
-                              ...state.carWashRecords.map((r) => CarWashRecordCard(record: r)),
-                            ],
+                            children: allRecords.map<Widget>((item) {
+                              switch (item['type']) {
+                                case 'service':
+                                  return ServiceRecordCard(record: item['record']);
+                                case 'tuning':
+                                  return TuningRecordCard(record: item['record']);
+                                case 'fuel':
+                                  return FuelRecordCard(record: item['record']);
+                                case 'carWash':
+                                  return CarWashRecordCard(record: item['record']);
+                                default:
+                                  return const SizedBox.shrink();
+                              }
+                            }).toList(),
                           );
                         },
                       ),
                     ),
+
                     AppSpacers.verticalLargeXL,
                     const AdBannerWidget(),
                   ],

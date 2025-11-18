@@ -12,11 +12,12 @@ class FuelRecord {
   final double volume;
   final double cost;
 
-
   @JsonKey(fromJson: _fromJsonDate, toJson: _toJsonDate)
   final DateTime date;
 
   final int mileage;
+
+  final String currency; 
 
   const FuelRecord({
     this.id,
@@ -25,15 +26,14 @@ class FuelRecord {
     required this.cost,
     required this.date,
     required this.mileage,
+    required this.currency, 
   });
 
-  
   factory FuelRecord.fromJson(Map<String, dynamic> json) => _$FuelRecordFromJson(json);
 
   Map<String, dynamic> toJson() => _$FuelRecordToJson(this);
 
-  
-  factory FuelRecord.fromExpense(Expense expense) {
+  factory FuelRecord.fromExpense(Expense expense, {required String currency}) {
     return FuelRecord(
       id: expense.id,
       fuelType: expense.comment ?? 'fuel',
@@ -41,10 +41,10 @@ class FuelRecord {
       cost: expense.amount.toDouble(),
       date: expense.date,
       mileage: expense.mileage ?? 0,
+      currency: currency, 
     );
   }
 
-  
   Expense toExpense(String userId) {
     return Expense(
       date: date,
@@ -57,7 +57,6 @@ class FuelRecord {
     );
   }
 
- 
   static DateTime _fromJsonDate(String date) {
     try {
       return DateFormat('dd.MM.yyyy').parse(date);

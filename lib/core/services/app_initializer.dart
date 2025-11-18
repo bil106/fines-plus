@@ -76,11 +76,8 @@ class AppInitializer {
   late final CurrencyService currencyService;
   final Map<String, int> _scheduledReminderIds = {};
   late final SubscriptionRepositoryImpl subscriptionRepository;
-  late final ScheduleFirebaseRepository firebaseRepository;
   late final HistoryRepository historyRepository;
-  late final CarInfoRepository carInfoRepository;
   late final AnalyticsRepository analyticsRepository;
-  late final TasksRepository  tasksRepository;
 
   Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
     await Firebase.initializeApp();
@@ -179,21 +176,21 @@ class AppInitializer {
     final extractTokensUseCase = ExtractTokensUseCase(tokensRepository);
     final expenseRepository = ExpenseRepository(FirebaseFirestore.instance);
     final historyRepository = HistoryRepository(FirebaseFirestore.instance);
-    final analyticsRepository  = AnalyticsRepository(firestore: FirebaseFirestore.instance);
-    final tasksRepository   = TasksRepository();
+    final analyticsRepository = AnalyticsRepository(firestore: FirebaseFirestore.instance);
+    final tasksRepository = TasksRepository();
 
     final carInfoLocalDataSource = CarInfoLocalDataSource(sharedPrefsManager);
     final carInfoRepository = CarInfoRepository(carInfoLocalDataSource, CarInfoRemoteDataSource());
 
     quickActionsCubit = QuickActionsCubit(tasksRepository);
-currencyService = CurrencyService();
-await currencyService.init();
+    currencyService = CurrencyService();
+    await currencyService.init();
     referralCubit = ReferralCubit(appLinks, prefs);
 
     carCubit = CarCubit(local: carInfoLocalDataSource, repo: carInfoRepository);
 
     historyCubit = HistoryCubit(repository: historyRepository, carCubit: carCubit);
-  analyticsCubit = AnalyticsCubit(repository: analyticsRepository, carCubit: carCubit);
+    analyticsCubit = AnalyticsCubit(repository: analyticsRepository, carCubit: carCubit);
 
     carCubit.setHistoryCubit(historyCubit);
 
@@ -266,7 +263,7 @@ await currencyService.init();
       statisticsCubit: statisticsCubit,
       scheduleCubit: scheduleCubit,
       carCubit: carCubit,
-      analyticsCubit:analyticsCubit,
+      analyticsCubit: analyticsCubit,
       settingsCubit: settingsCubit,
       additionalOptionsCubit: additionalOptionsCubit,
       remoteConfigService: remoteConfigService,
@@ -364,8 +361,8 @@ class AppInitResult {
   final SubscriptionRepositoryImpl subscriptionRepository;
   final ScheduleFirebaseRepository firebaseRepository;
   final AnalyticsRepository analyticsRepository;
-  final TasksRepository  tasksRepository;
-  final CurrencyService  currencyService;
+  final TasksRepository tasksRepository;
+  final CurrencyService currencyService;
 
   AppInitResult({
     required this.config,

@@ -14,6 +14,9 @@ LastEventUiModel _$LastEventUiModelFromJson(Map<String, dynamic> json) =>
       amountValue: (json['amountValue'] as num).toDouble(),
       amount: json['amount'] as String,
       category: json['category'] as String?,
+      amountOriginal: (json['amountOriginal'] as num?)?.toDouble(),
+      originalCurrency: json['originalCurrency'] as String?,
+      mileage: (json['mileage'] as num?)?.toDouble(),
     );
 
 Map<String, dynamic> _$LastEventUiModelToJson(LastEventUiModel instance) =>
@@ -24,4 +27,7 @@ Map<String, dynamic> _$LastEventUiModelToJson(LastEventUiModel instance) =>
       'amountValue': instance.amountValue,
       'amount': instance.amount,
       'category': instance.category,
+      'amountOriginal': instance.amountOriginal,
+      'originalCurrency': instance.originalCurrency,
+      'mileage': instance.mileage,
     };

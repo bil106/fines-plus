@@ -18,6 +18,7 @@ import 'package:fines_plus/features/maintenance/presentation/cubit/maintenance_c
 import 'package:fines_plus/features/registration/presentation/cubit/registration_cubit.dart';
 import 'package:fines_plus/features/schedule/data/repository/schedule_repository.dart';
 import 'package:fines_plus/features/schedule/presentation/cubit/schedule_cubit.dart';
+import 'package:fines_plus/features/settings/domain/services/settings_service.dart';
 import 'package:fines_plus/features/settings/presentation/cubit/settings_cubit.dart';
 import 'package:fines_plus/features/statistics/presentation/cubit/statistics_cubit.dart';
 import 'package:fines_plus/features/subscription/data/repository/subscription_repository.dart';
@@ -58,8 +59,7 @@ void main() {
 
       appInitializer = AppInitializer();
       final result = await appInitializer.init();
-
-      // ⚡ ВАЖНО: Инициализация CurrencyService до запуска приложения
+      await SettingsService.instance.init();
       await result.currencyService.init();
 
       final firestore = FirebaseFirestore.instance;
@@ -94,7 +94,7 @@ void main() {
               BlocProvider<SettingsCubit>.value(value: result.settingsCubit),
               BlocProvider<AnalyticsCubit>.value(value: result.analyticsCubit),
               BlocProvider<AdditionalOptionsCubit>.value(value: result.additionalOptionsCubit),
-              Provider<CurrencyService>.value(value: result.currencyService), // теперь уже инициализирован
+              Provider<CurrencyService>.value(value: result.currencyService),
               BlocProvider<CarCubit>.value(value: result.carCubit),
               BlocProvider<ScheduleCubit>(
                 create: (context) => ScheduleCubit(
@@ -124,4 +124,3 @@ void main() {
     },
   );
 }
-

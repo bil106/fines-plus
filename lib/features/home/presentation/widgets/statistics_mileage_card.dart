@@ -76,7 +76,7 @@ class StatisticsMileageCard extends StatelessWidget {
     return Card(
       elevation: 2,
       shadowColor: Colors.black26,
-      color: Colors.white,
+      color: Colors.grey[100],
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12), child: child),
     );

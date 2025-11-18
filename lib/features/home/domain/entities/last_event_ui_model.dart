@@ -1,7 +1,12 @@
 import 'package:core_localization/generated/l10n.dart';
+import 'package:core_utils/formatters/date_formatter.dart';
 import 'package:design_system/colors/app_colors.dart';
+import 'package:fines_plus/features/expenses/data/models/car_wash_record.dart';
 import 'package:fines_plus/features/expenses/data/models/expense.dart';
 import 'package:fines_plus/features/expenses/data/models/expense_category.dart';
+import 'package:fines_plus/features/expenses/data/models/fuel_record.dart';
+import 'package:fines_plus/features/expenses/data/models/service_record.dart';
+import 'package:fines_plus/features/expenses/data/models/tuning_record.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -13,13 +18,14 @@ class LastEventUiModel {
   final String title;
   final String date;
   final String description;
-  final double amountValue; 
-  final String amount; 
+  final double amountValue;
+  final String amount;
   final String? category;
 
-
-  final double? amountOriginal; 
+  final double? amountOriginal;
   final String? originalCurrency;
+
+  final double? mileage; 
 
   @JsonKey(ignore: true)
   Widget get icon {
@@ -47,7 +53,59 @@ class LastEventUiModel {
     this.category,
     this.amountOriginal,
     this.originalCurrency,
+    this.mileage, 
   });
+
+
+  static LastEventUiModel fromService(ServiceRecord r) => LastEventUiModel(
+    title: 'Last Event',
+    date: r.date,
+    description: r.serviceName,
+    amountValue: r.cost,
+    amount: '${r.cost} UAH',
+    category: 'service',
+    mileage: r.mileage.toDouble(),
+  );
+
+  static LastEventUiModel fromTuning(TuningRecord r) => LastEventUiModel(
+    title: 'Last Event',
+    date: DateFormatter.formatLongDate(r.date),
+    description: r.tuningName ,
+    amountValue: r.cost,
+    amount: '${r.cost} UAH',
+    category: 'tuning',
+    mileage: r.mileage.toDouble(),
+  );
+
+static LastEventUiModel fromFuel(FuelRecord r) => LastEventUiModel(
+    title: 'Last Event',
+    date: DateFormatter.formatLongDate(r.date),
+    description: '${r.volume} L',
+    amountValue: r.cost,
+    amountOriginal: r.cost,
+    originalCurrency: r.currency, 
+    amount: '${r.cost} ${r.currency}',
+    category: 'fuel',
+    mileage: r.mileage.toDouble(),
+  );
+
+
+
+  static LastEventUiModel fromCarWash(CarWashRecord r) => LastEventUiModel(
+    title: 'Last Event',
+    date: DateFormatter.formatLongDate(r.date),
+    description: r.comment ?? 'Car Wash',
+    amountValue: r.amount,
+    amount: '${r.amount} UAH',
+    category: 'carWash',
+    mileage: r.mileage.toDouble(),
+  );
+
+
+
+
+
+
 
   factory LastEventUiModel.fromExpense(Expense expense) {
     final date = DateFormat('dd MMM yyyy').format(expense.date);
@@ -83,11 +141,12 @@ class LastEventUiModel {
       title: 'Last Event',
       date: date,
       description: description,
-      amountValue: expense.amount.toDouble(), 
-      amountOriginal: expense.amount.toDouble(), 
-      originalCurrency: expense.currency, 
+      amountValue: expense.amount.toDouble(),
+      amountOriginal: expense.amount.toDouble(),
+      originalCurrency: expense.currency,
       amount: "${expense.amount} ${expense.currency}",
       category: expense.category.name,
+      mileage: expense.mileage?.toDouble(),
     );
   }
 

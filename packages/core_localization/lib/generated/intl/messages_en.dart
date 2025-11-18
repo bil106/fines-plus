@@ -199,7 +199,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Fuel consumption",
     ),
     "fuel_gas_lpg": MessageLookupByLibrary.simpleMessage("Gas LPG"),
-    "fuel_up": MessageLookupByLibrary.simpleMessage("Filling up"),
+    "fuel_up": MessageLookupByLibrary.simpleMessage("Fuel"),
     "full_tank": MessageLookupByLibrary.simpleMessage("Full tank"),
     "gas_station_nearby": MessageLookupByLibrary.simpleMessage(
       "Gas stations nearby",

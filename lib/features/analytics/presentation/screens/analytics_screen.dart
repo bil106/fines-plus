@@ -40,12 +40,11 @@ class AnalyticsScreen extends StatelessWidget {
   }
 }
 
-
 class _AnalyticsScreenView extends StatefulWidget {
   final VoidCallback? onBack;
   final String carNumber;
   final int initialTabIndex;
-  const _AnalyticsScreenView({this.onBack, required this.carNumber,this.initialTabIndex = 0,});
+  const _AnalyticsScreenView({this.onBack, required this.carNumber, this.initialTabIndex = 0});
 
   @override
   State<_AnalyticsScreenView> createState() => AnalyticsScreenViewState();
@@ -57,14 +56,11 @@ class AnalyticsScreenViewState extends State<_AnalyticsScreenView> with SingleTi
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(
-      length: 3,
-      vsync: this,
-      initialIndex: widget.initialTabIndex,
-    );
+    _tabController = TabController(length: 3, vsync: this, initialIndex: widget.initialTabIndex);
     context.read<AnalyticsCubit>().updateDate(DateTime.now());
     _loadRecords();
   }
+
   @override
   void dispose() {
     _tabController.dispose();
@@ -104,7 +100,7 @@ class AnalyticsScreenViewState extends State<_AnalyticsScreenView> with SingleTi
           final record = FuelRecord.fromJson(e);
           return EventModel(
             date: record.date,
-            title: "${record.fuelType} / ${record.volume} л.",
+            title: "${record.fuelType} / ${record.volume} ${S.of(context).l}",
             amount: record.cost.toDouble(),
             mileage: "${record.mileage} ${S.of(context).km}",
             iconCodePoint: Icons.local_gas_station.codePoint,
@@ -206,7 +202,7 @@ class AnalyticsScreenViewState extends State<_AnalyticsScreenView> with SingleTi
                     indicatorColor: AppColors.blue700,
                     labelColor: AppColors.blue700,
                     unselectedLabelColor: AppColors.neutreGrey,
-                     controller: _tabController,
+                    controller: _tabController,
                     tabs: [
                       Tab(text: S.of(context).statistics),
                       Tab(text: S.of(context).history),
@@ -218,7 +214,7 @@ class AnalyticsScreenViewState extends State<_AnalyticsScreenView> with SingleTi
                       controller: _tabController,
                       children: [
                         const StatisticsScreen(),
-                        HistoryTab(events: events), 
+                        HistoryTab(events: events),
                         ScheduleScreen(
                           repository: context.read<ScheduleRepository>(),
                           reminderRepository: context.read<ReminderRepository>(),
@@ -239,22 +235,19 @@ class AnalyticsScreenViewState extends State<_AnalyticsScreenView> with SingleTi
   }
 }
 
+Map<String, List<EventModel>> groupEventsByMonth(List<EventModel> events) {
+  events.sort((a, b) => b.date.compareTo(a.date));
 
+  Map<String, List<EventModel>> grouped = {};
 
-  Map<String, List<EventModel>> groupEventsByMonth(List<EventModel> events) {
-    events.sort((a, b) => b.date.compareTo(a.date));
+  for (var event in events) {
+    final key = "${event.date.year}-${event.date.month.toString().padLeft(2, '0')}";
 
-    Map<String, List<EventModel>> grouped = {};
-
-    for (var event in events) {
-      final key = "${event.date.year}-${event.date.month.toString().padLeft(2, '0')}";
-
-      if (!grouped.containsKey(key)) {
-        grouped[key] = [];
-      }
-      grouped[key]!.add(event);
+    if (!grouped.containsKey(key)) {
+      grouped[key] = [];
     }
-
-    return grouped;
+    grouped[key]!.add(event);
   }
 
+  return grouped;
+}

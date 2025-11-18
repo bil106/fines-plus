@@ -4,8 +4,10 @@ import 'package:design_system/constants/app_borders.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
 import 'package:fines_plus/features/expenses/data/models/fuel_record.dart';
+import 'package:fines_plus/features/settings/presentation/cubit/settings_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:core_utils/formatters/date_formatter.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class FuelRecordCard extends StatelessWidget {
   final FuelRecord record;
@@ -35,13 +37,22 @@ class FuelRecordCard extends StatelessWidget {
                   ],
                 ),
                 AppSpacers.verticalXSmall,
-                Row(
+              Row(
                   children: [
                     Icon(Icons.attach_money, color: AppColors.green),
                     AppSpacers.horizontalSmallMedium,
-                    Text("${record.cost.toInt()} ${S.of(context).grn}", style: textTheme.subtitleText),
+
+                    Builder(
+                      builder: (context) {
+                        final settingsCubit = context.watch<SettingsCubit>();
+                        final currencyLabel = settingsCubit.getCurrencyLabel(context, settingsCubit.state.currency);
+
+                        return Text("${record.cost.toStringAsFixed(0)} $currencyLabel", style: textTheme.subtitleText);
+                      },
+                    ),
                   ],
                 ),
+
                 AppSpacers.verticalXSmall,
                 Row(
                   children: [

@@ -160,7 +160,7 @@ class MaintenanceCubit extends Cubit<MaintenanceState> {
             serviceRecords.add(ServiceRecord.fromExpense(exp));
             break;
           case ExpenseCategory.fuel:
-            fuelRecords.add(FuelRecord.fromExpense(exp));
+            fuelRecords.add(FuelRecord.fromExpense(exp, currency: ''));
             break;
           case ExpenseCategory.tuning:
             tuningRecords.add(TuningRecord.fromExpense(exp,));

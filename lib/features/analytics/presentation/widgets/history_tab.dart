@@ -13,8 +13,8 @@ class HistoryTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final grouped = groupEventsByMonth(events);
     final settingsCubit = context.watch<SettingsCubit>();
+    final grouped = groupEventsByMonth(events, settingsCubit.state.locale);
     final userCurrency = settingsCubit.state.currency;
 
     return SingleChildScrollView(
@@ -64,8 +64,8 @@ class HistoryTab extends StatelessWidget {
     );
   }
 
-  Map<String, List<EventModel>> groupEventsByMonth(List<EventModel> events) {
-    final outputFormat = DateFormat('MMMM yyyy', 'uk');
+Map<String, List<EventModel>> groupEventsByMonth(List<EventModel> events, Locale locale) {
+    final outputFormat = DateFormat('MMMM yyyy', locale.languageCode);
 
     final grouped = <String, List<EventModel>>{};
 
@@ -76,9 +76,18 @@ class HistoryTab extends StatelessWidget {
     }
 
     for (final group in grouped.values) {
-      group.sort((a, b) => b.date.compareTo(a.date));
+      group.sort((a, b) {
+        final mileageA = int.tryParse(a.mileage.replaceAll(RegExp(r'\D'), '')) ?? 0;
+        final mileageB = int.tryParse(b.mileage.replaceAll(RegExp(r'\D'), '')) ?? 0;
+
+        final mileageCompare = mileageB.compareTo(mileageA);
+        if (mileageCompare != 0) return mileageCompare;
+
+        return b.date.compareTo(a.date);
+      });
     }
 
     return grouped;
   }
+
 }

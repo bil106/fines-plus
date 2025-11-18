@@ -4,7 +4,9 @@ import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_borders.dart';
 import 'package:design_system/theme/app_theme.dart';
 import 'package:fines_plus/features/expenses/data/models/car_wash_record.dart';
+import 'package:fines_plus/features/settings/presentation/cubit/settings_cubit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class CarWashRecordCard extends StatelessWidget {
   final CarWashRecord record;
@@ -29,13 +31,27 @@ class CarWashRecordCard extends StatelessWidget {
               children: [
                 Row(children: [Text(S.of(context).car_wash, style: textTheme.historyText)]),
                 const SizedBox(height: 4),
-                Row(
+             Row(
                   children: [
                     Icon(Icons.attach_money, color: AppColors.green),
                     const SizedBox(width: 8),
-                    Text("${record.amount.toStringAsFixed(2)} ${S.of(context).grn}", style: textTheme.subtitleText),
+
+                    Builder(
+                      builder: (context) {
+                        final settingsCubit = context.watch<SettingsCubit>();
+                        final currency = settingsCubit.state.currency;
+                        final currencyLabel = settingsCubit.getCurrencyLabel(context, currency);
+
+                        return Text(
+                          "${record.amount.toStringAsFixed(0)} $currencyLabel",
+                          style: textTheme.subtitleText,
+                        );
+                      },
+                    ),
                   ],
                 ),
+
+
                 const SizedBox(height: 4),
                 Row(
                   children: [

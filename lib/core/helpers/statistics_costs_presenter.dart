@@ -1,46 +1,61 @@
-import 'package:core_localization/generated/l10n.dart';
+
+// ignore_for_file: implementation_imports
+
+import 'package:core_localization/src/stats_localization.dart';
+
+import 'package:fines_plus/core/extensions/currency_service.dart';
 import 'package:fines_plus/features/statistics/presentation/cubit/statistics_state.dart';
-import 'package:flutter/material.dart';
 
 class StatisticsCostsPresenter {
   final StatisticsState state;
-  final BuildContext context;
+  final StatsLocalization loc;
+  final String currency;
+  final CurrencyService currencyService;
 
-  StatisticsCostsPresenter(this.state, this.context);
+  StatisticsCostsPresenter({
+    required this.state,
+    required this.loc,
+    required this.currency,
+    required this.currencyService,
+  });
 
-  double get currentTotal => state.expenseStats.total;
-  double get previousTotal => state.previousExpenseStats.total;
-  bool get increased => currentTotal > previousTotal;
 
-  String get currentMonthLabel {
-    final now = DateTime.now();
-    return _getMonthLabel(now);
-  }
+
+  String get currentFormatted => _format(state.expenseStats.total);
+
+  String get previousFormatted => _format(state.previousExpenseStats.total);
+
+  bool get increased => state.expenseStats.total > state.previousExpenseStats.total;
+
+  String get currentMonthLabel => _monthLabel(DateTime.now());
 
   String get previousMonthLabel {
     final now = DateTime.now();
-    final prevMonth = DateTime(now.year, now.month - 1, 1);
-    return _getMonthLabel(prevMonth);
+    final prev = DateTime(now.year, now.month - 1);
+    return _monthLabel(prev);
   }
 
-  String _getMonthLabel(DateTime date) {
-    final s = S.of(context);
+  String _format(double valueUAH) {
+    final converted = currencyService.convert(valueUAH, currency, fromCurrency: 'UAH');
+    return converted.toStringAsFixed(0);
+  }
 
-    final monthNames = [
-      s.month_jan,
-      s.month_feb,
-      s.month_mar,
-      s.month_apr,
-      s.month_may,
-      s.month_jun,
-      s.month_jul,
-      s.month_aug,
-      s.month_sep,
-      s.month_oct,
-      s.month_nov,
-      s.month_dec,
+  String _monthLabel(DateTime date) {
+    final names = [
+      loc.monthJan,
+      loc.monthFeb,
+      loc.monthMar,
+      loc.monthApr,
+      loc.monthMay,
+      loc.monthJun,
+      loc.monthJul,
+      loc.monthAug,
+      loc.monthSep,
+      loc.monthOct,
+      loc.monthNov,
+      loc.monthDec,
     ];
 
-    return "${monthNames[date.month - 1]} ${date.year}";
+    return "${names[date.month - 1]} ${date.year}";
   }
 }

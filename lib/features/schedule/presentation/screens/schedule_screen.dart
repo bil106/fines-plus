@@ -94,7 +94,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     } else {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text("${matchingTask.serviceName} вже заплановано")));
+      ).showSnackBar(SnackBar(content: Text("${matchingTask.serviceName} ${S.of(context).already_planned}")));
     }
   }
 
