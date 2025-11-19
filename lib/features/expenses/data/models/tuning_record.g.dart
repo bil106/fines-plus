@@ -12,6 +12,7 @@ TuningRecord _$TuningRecordFromJson(Map<String, dynamic> json) => TuningRecord(
   cost: (json['cost'] as num).toDouble(),
   date: DateTime.parse(json['date'] as String),
   mileage: (json['mileage'] as num).toInt(),
+  currency: json['currency'] as String,
 );
 
 Map<String, dynamic> _$TuningRecordToJson(TuningRecord instance) =>
@@ -21,4 +22,5 @@ Map<String, dynamic> _$TuningRecordToJson(TuningRecord instance) =>
       'cost': instance.cost,
       'date': instance.date.toIso8601String(),
       'mileage': instance.mileage,
+      'currency': instance.currency,
     };

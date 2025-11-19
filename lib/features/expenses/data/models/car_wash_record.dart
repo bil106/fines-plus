@@ -45,6 +45,9 @@ class CarWashRecord extends BaseRecord {
   @override
   final int mileage;
 
+  @override
+  final String? currency; 
+
   CarWashRecord({
     this.id,
     required this.amount,
@@ -52,7 +55,7 @@ class CarWashRecord extends BaseRecord {
     required this.mileage,
     required super.userId,
     super.comment,
-    super.currency,
+    this.currency,
     super.carNumber,
     super.isSynced,
   }) : super(date: date, amount: amount, category: ExpenseCategory.carWash, mileage: mileage);
@@ -70,7 +73,7 @@ class CarWashRecord extends BaseRecord {
       mileage: expense.mileage ?? 0,
       userId: expense.userId,
       comment: expense.comment,
-      currency: expense.currency,
+      currency: expense.currency, 
       carNumber: expense.carNumber,
       isSynced: false,
     );
@@ -81,13 +84,14 @@ class CarWashRecord extends BaseRecord {
     return Expense(
       id: id,
       date: date,
-      amount: amount.round(),
+      amount: amount.toInt(),
       category: ExpenseCategory.carWash,
       mileage: mileage,
       comment: comment ?? "Car Wash",
       userId: userId,
-      currency: currency ?? "",
+      currency: currency?.isNotEmpty == true ? currency! : "UAH",
       carNumber: carNumber,
     );
   }
 }
+

@@ -13,10 +13,12 @@ import 'package:fines_plus/features/maintenance/presentation/widgets/mileage_car
 import 'package:fines_plus/env/env.dart';
 import 'package:fines_plus/features/expenses/data/models/fuel_record.dart';
 import 'package:fines_plus/features/maintenance/presentation/screens/fuel_map_screen.dart';
+import 'package:fines_plus/features/settings/presentation/cubit/settings_cubit.dart';
 import 'package:fines_plus/router/app_router.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
@@ -117,7 +119,7 @@ class _FuelUpScreenState extends State<FuelUpScreen> {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-
+final settingsCubit = context.watch<SettingsCubit>();
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(statusBarColor: Colors.white, statusBarIconBrightness: Brightness.dark),
       child: Scaffold(
@@ -147,7 +149,8 @@ class _FuelUpScreenState extends State<FuelUpScreen> {
                   volume: volume,
                   cost: totalCost,
                   date: selectedDate!,
-                  mileage: mileage, currency: '',
+                  mileage: mileage, 
+                  currency: settingsCubit.state.currency,
                 );
 
                 context.router.pop(record);

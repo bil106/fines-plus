@@ -14,17 +14,25 @@ class ServiceRecord {
   final String? id;
   final String serviceName;
   final double cost;
-  final String date; 
+  final String date;
   final int mileage;
+  final String currency; 
 
-  ServiceRecord({this.id, required this.serviceName, required this.cost, required this.date, required this.mileage});
+  ServiceRecord({
+    this.id,
+    required this.serviceName,
+    required this.cost,
+    required this.date,
+    required this.mileage,
+    required this.currency, 
+  });
 
-  /// JSON
+
   factory ServiceRecord.fromJson(Map<String, dynamic> json) => _$ServiceRecordFromJson(json);
 
   Map<String, dynamic> toJson() => _$ServiceRecordToJson(this);
 
- 
+
   factory ServiceRecord.fromExpense(Expense expense) {
     final dateValue = expense.date;
     final formattedDate = (dateValue is DateTime) ? DateFormat('dd.MM.yyyy').format(dateValue) : dateValue.toString();
@@ -35,6 +43,7 @@ class ServiceRecord {
       cost: expense.amount.toDouble(),
       date: formattedDate,
       mileage: expense.mileage ?? 0,
+      currency: expense.currency.isNotEmpty ? expense.currency : "UAH", 
     );
   }
 
@@ -55,6 +64,7 @@ class ServiceRecord {
       mileage: mileage,
       userId: userId,
       comment: serviceName,
+      currency: currency, 
     );
   }
 }

@@ -31,7 +31,7 @@ class CarWashRecordCard extends StatelessWidget {
               children: [
                 Row(children: [Text(S.of(context).car_wash, style: textTheme.historyText)]),
                 const SizedBox(height: 4),
-             Row(
+                Row(
                   children: [
                     Icon(Icons.attach_money, color: AppColors.green),
                     const SizedBox(width: 8),
@@ -39,18 +39,24 @@ class CarWashRecordCard extends StatelessWidget {
                     Builder(
                       builder: (context) {
                         final settingsCubit = context.watch<SettingsCubit>();
-                        final currency = settingsCubit.state.currency;
-                        final currencyLabel = settingsCubit.getCurrencyLabel(context, currency);
+                 
 
+                         final targetCurrency = settingsCubit.state.currency;
+                        final amountBase = record.amount; 
+                         final displayCurrency = settingsCubit.getCurrencyLabel(context, targetCurrency);
+                        final convertedCost = settingsCubit.currencyService.convert(
+                          amountBase,
+                          targetCurrency,
+                          fromCurrency: 'UAH',
+                        );
                         return Text(
-                          "${record.amount.toStringAsFixed(0)} $currencyLabel",
+                          "${convertedCost.toStringAsFixed(0)} $displayCurrency",
                           style: textTheme.subtitleText,
                         );
                       },
                     ),
                   ],
                 ),
-
 
                 const SizedBox(height: 4),
                 Row(

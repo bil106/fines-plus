@@ -200,7 +200,7 @@ class _ServiceScreenState extends State<ServiceScreen> {
         serviceName: selectedService.name,
         cost: selectedService.priceUSD * usdToUahRate,
         date: "${selectedDate!.day}.${selectedDate!.month}.${selectedDate!.year}",
-        mileage: mileage,
+        mileage: mileage, currency: 'UAH',
       );
     }).toList();
 

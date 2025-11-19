@@ -1,40 +1,61 @@
-import 'dart:async';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:fines_plus/core/extensions/currency_service.dart';
-import 'package:fines_plus/features/settings/domain/services/settings_service.dart';
 import 'package:fines_plus/features/settings/presentation/cubit/settings_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 
-
 class SettingsCubit extends Cubit<SettingsState> {
+  late SharedPreferences _prefs;
   final CurrencyService currencyService;
-
-  late final StreamSubscription _settingsSub;
-  StreamSubscription? _currencySub;
-
-  SettingsCubit({required this.currencyService}) : super(SettingsService.instance.current) {
-    /// Subscribe to settings changes
-    _settingsSub = SettingsService.instance.stream.listen(emit);
-
-    /// Subscribe to exchange rate updates
-    _currencySub = currencyService.currencyStream.listen((_) {
-      emit(state.copyWith()); // forces the UI to refresh
-    });
+  SettingsCubit({required this.currencyService})
+    : super(SettingsState(unit: 'km', currency: 'UAH', locale: const Locale('uk'), fuelConsumptionUnit: 'l/100km')) {
+    _loadSettings();
   }
 
-  // Methods simply call the service.с
-  Future<void> setUnit(String value) => SettingsService.instance.setUnit(value);
+  Future<void> _loadSettings() async {
+    _prefs = await SharedPreferences.getInstance();
 
-  Future<void> setCurrency(String value) => SettingsService.instance.setCurrency(value);
+    emit(
+      state.copyWith(
+        unit: _prefs.getString('unit') ?? state.unit,
+        currency: _prefs.getString('currency') ?? state.currency,
+        locale: Locale(_prefs.getString('locale') ?? 'uk'),
+        fuelConsumptionUnit: _prefs.getString('fuelConsumptionUnit') ?? 'l/100km',
+      ),
+    );
+  }
 
-  Future<void> setLocale(Locale locale) => SettingsService.instance.setLocale(locale);
+  void setFuelConsumptionUnit(String value) {
+    _prefs.setString('fuelConsumptionUnit', value);
+    emit(state.copyWith(fuelConsumptionUnit: value));
+  }
 
-  Future<void> setFuelConsumptionUnit(String value) => SettingsService.instance.setFuelConsumptionUnit(value);
+  Future<void> setUnit(String unit) async {
+    await _prefs.setString('unit', unit);
+    emit(state.copyWith(unit: unit));
+  }
 
-  double convertFromUAH(double amountUAH) => currencyService.convert(amountUAH, state.currency, fromCurrency: "UAH");
+  double convertFromUAH(double amountUAH) {
+    return currencyService.convert(amountUAH, state.currency, fromCurrency: "UAH");
+  }
+
+  Future<void> setLocale(Locale locale) async {
+    await _prefs.setString('localeCode', locale.languageCode);
+    emit(state.copyWith(locale: locale));
+  }
+
+  Future<void> setCurrency(String newCurrency) async {
+    await _prefs.setString('currency', newCurrency);
+
+    await currencyService.setCurrency(newCurrency);
+
+    emit(state.copyWith(currency: newCurrency));
+  }
+
   String getCurrencyLabel(BuildContext context, String currency) {
-    final s = S.of(context); 
+    final s = S.of(context);
+
     switch (currency) {
       case 'UAH':
         return s.grn;
@@ -45,11 +66,5 @@ class SettingsCubit extends Cubit<SettingsState> {
       default:
         return currency;
     }
-  }
-  @override
-  Future<void> close() async {
-    await _settingsSub.cancel();
-    await _currencySub?.cancel();
-    return super.close();
   }
 }

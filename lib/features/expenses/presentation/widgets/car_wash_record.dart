@@ -7,13 +7,14 @@ class CarWashRecord {
   final int amount;
   final int mileage;
   final String? comment;
-
-  CarWashRecord({required this.date, required this.amount, required this.mileage, this.comment});
+final String currency;
+  CarWashRecord({required this.date, required this.amount, required this.mileage, this.comment, this.currency = "UAH"});
 
   Map<String, dynamic> toJson() => {
     'date': date.toIso8601String(),
     'amount': amount,
     'mileage': mileage,
+    'currency': currency,
     'comment': comment,
   };
 
@@ -21,6 +22,7 @@ class CarWashRecord {
     date: DateTime.parse(json['date'] as String),
     amount: json['amount'] as int,
     mileage: json['mileage'] as int,
+    currency: json['currency'] as String? ?? 'UAH',
     comment: json['comment'] as String?,
   );
 
@@ -33,6 +35,7 @@ class CarWashRecord {
       comment: comment,
       category: ExpenseCategory.carWash, 
       userId: userId,
+      currency: currency, 
     );
   }
 }

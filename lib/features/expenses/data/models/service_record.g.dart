@@ -13,6 +13,7 @@ ServiceRecord _$ServiceRecordFromJson(Map<String, dynamic> json) =>
       cost: (json['cost'] as num).toDouble(),
       date: json['date'] as String,
       mileage: (json['mileage'] as num).toInt(),
+      currency: json['currency'] as String,
     );
 
 Map<String, dynamic> _$ServiceRecordToJson(ServiceRecord instance) =>
@@ -22,4 +23,5 @@ Map<String, dynamic> _$ServiceRecordToJson(ServiceRecord instance) =>
       'cost': instance.cost,
       'date': instance.date,
       'mileage': instance.mileage,
+      'currency': instance.currency,
     };

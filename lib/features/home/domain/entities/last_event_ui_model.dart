@@ -56,13 +56,27 @@ class LastEventUiModel {
     this.mileage, 
   });
 
+static LastEventUiModel fromCarWash(CarWashRecord r) => LastEventUiModel(
+    title: 'Last Event',
+    date: DateFormatter.formatLongDate(r.date),
+    description: r.comment ?? 'Car Wash',
+    amountValue: r.amount,
+    amountOriginal: r.amount,
+    originalCurrency: r.currency?.isNotEmpty == true ? r.currency : 'UAH', 
+    amount: '${r.amount} ${r.currency?.isNotEmpty == true ? r.currency : 'UAH'}',
+    category: 'carWash',
+    mileage: r.mileage.toDouble(),
+  );
+
 
   static LastEventUiModel fromService(ServiceRecord r) => LastEventUiModel(
     title: 'Last Event',
     date: r.date,
     description: r.serviceName,
     amountValue: r.cost,
-    amount: '${r.cost} UAH',
+    amountOriginal: r.cost,
+    originalCurrency: r.currency.isNotEmpty == true ? r.currency : 'UAH',
+    amount: '${r.cost} ${r.currency.isNotEmpty == true ? r.currency : 'UAH'}',
     category: 'service',
     mileage: r.mileage.toDouble(),
   );
@@ -70,12 +84,17 @@ class LastEventUiModel {
   static LastEventUiModel fromTuning(TuningRecord r) => LastEventUiModel(
     title: 'Last Event',
     date: DateFormatter.formatLongDate(r.date),
-    description: r.tuningName ,
+    description: r.tuningName,
     amountValue: r.cost,
-    amount: '${r.cost} UAH',
+    amountOriginal: r.cost,
+    originalCurrency: r.currency.isNotEmpty == true ? r.currency : 'UAH',
+    amount: '${r.cost} ${r.currency.isNotEmpty == true ? r.currency : 'UAH'}',
     category: 'tuning',
     mileage: r.mileage.toDouble(),
   );
+
+
+
 
 static LastEventUiModel fromFuel(FuelRecord r) => LastEventUiModel(
     title: 'Last Event',
@@ -83,27 +102,11 @@ static LastEventUiModel fromFuel(FuelRecord r) => LastEventUiModel(
     description: '${r.volume} L',
     amountValue: r.cost,
     amountOriginal: r.cost,
-    originalCurrency: r.currency, 
+    originalCurrency: r.currency,
     amount: '${r.cost} ${r.currency}',
     category: 'fuel',
     mileage: r.mileage.toDouble(),
   );
-
-
-
-  static LastEventUiModel fromCarWash(CarWashRecord r) => LastEventUiModel(
-    title: 'Last Event',
-    date: DateFormatter.formatLongDate(r.date),
-    description: r.comment ?? 'Car Wash',
-    amountValue: r.amount,
-    amount: '${r.amount} UAH',
-    category: 'carWash',
-    mileage: r.mileage.toDouble(),
-  );
-
-
-
-
 
 
 

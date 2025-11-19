@@ -115,7 +115,7 @@ class _TuningScreenState extends State<TuningScreen> {
                     tuningName: selectedTuning.name,
                     cost: costUah,
                     date: selectedDate!,
-                    mileage: mileage,
+                    mileage: mileage, currency: 'UAH',
                   );
                 }).toList();
 
