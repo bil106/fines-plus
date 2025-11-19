@@ -1,10 +1,10 @@
-import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_borders.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
 import 'package:fines_plus/features/expenses/data/models/service_record.dart';
 import 'package:fines_plus/features/settings/presentation/cubit/settings_cubit.dart';
+import 'package:fines_plus/features/settings/presentation/cubit/unit_stream.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -17,11 +17,9 @@ class ServiceRecordCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
 
-    
     final settingsCubit = context.watch<SettingsCubit>();
     final currency = settingsCubit.state.currency;
     final symbol = settingsCubit.getCurrencyLabel(context, currency);
-
 
     final convertedCost = settingsCubit.convertFromUAH(record.cost);
 
@@ -46,8 +44,7 @@ class ServiceRecordCard extends StatelessWidget {
                     children: [
                       Icon(Icons.attach_money, color: AppColors.green),
                       AppSpacers.horizontalSmallMedium,
-                      Text("${convertedCost.toStringAsFixed(0)} $symbol",
-                          style: textTheme.subtitleText),
+                      Text("${convertedCost.toStringAsFixed(0)} $symbol", style: textTheme.subtitleText),
                     ],
                   ),
                   AppSpacers.verticalXSmall,
@@ -60,11 +57,7 @@ class ServiceRecordCard extends StatelessWidget {
                             Icon(Icons.calendar_month, color: AppColors.energyBlue),
                             AppSpacers.horizontalSmallMedium,
                             Flexible(
-                              child: Text(
-                                record.date,
-                                style: textTheme.subtitleText,
-                                overflow: TextOverflow.ellipsis,
-                              ),
+                              child: Text(record.date, style: textTheme.subtitleText, overflow: TextOverflow.ellipsis),
                             ),
                           ],
                         ),
@@ -76,12 +69,23 @@ class ServiceRecordCard extends StatelessWidget {
                             Icon(Icons.speed, color: AppColors.energyBlue),
                             AppSpacers.horizontalSmallMedium,
                             Flexible(
-                              child: Text(
-                                "${record.mileage} ${S.of(context).km}",
-                                style: textTheme.subtitleText,
-                                overflow: TextOverflow.ellipsis,
+                              child: StreamBuilder<double>(
+                                stream: UnitStream(settingsCubit).unitValueStream(record.mileage.toDouble()),
+                                initialData: UnitStream(settingsCubit).convert(record.mileage.toDouble()),
+                                builder: (context, snapshot) {
+                                  final value = snapshot.data ?? record.mileage.toDouble();
+                                  final unit = settingsCubit.state.unit == 'mil'
+                                      ? 'mil'
+                                      : 'km'; 
+                                  return Text(
+                                    "${value.toStringAsFixed(0)} $unit",
+                                    style: textTheme.subtitleText,
+                                    overflow: TextOverflow.ellipsis,
+                                  );
+                                },
                               ),
                             ),
+
                           ],
                         ),
                       ),

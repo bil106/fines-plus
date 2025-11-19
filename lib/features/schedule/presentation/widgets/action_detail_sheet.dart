@@ -4,6 +4,8 @@ import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
 import 'package:fines_plus/core/extensions/service_list.dart';
 import 'package:fines_plus/features/home/presentation/cubit/quick_actions_cubit.dart';
+import 'package:fines_plus/features/settings/presentation/cubit/settings_cubit.dart';
+import 'package:fines_plus/features/settings/presentation/cubit/unit_stream.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -50,12 +52,21 @@ class _ActionDetailSheetState extends State<ActionDetailSheet> {
   @override
   void initState() {
     super.initState();
+    final settingsCubit = context.read<SettingsCubit>();
+    final unit = settingsCubit.state.unit;
 
     titleController = TextEditingController(text: widget.title);
     dateController = TextEditingController(text: widget.lastServiceDate);
-    mileageController = TextEditingController(text: widget.lastMileage?.toString());
-    intervalController = TextEditingController(text: widget.intervalKm?.toString());
     commentController = TextEditingController(text: widget.comment);
+
+    final mileageValue = widget.lastMileage?.toDouble() ?? 0;
+    final intervalValue = widget.intervalKm?.toDouble() ?? 0;
+
+    mileageController = TextEditingController(
+        text: unit == 'mil' ? (mileageValue * 0.621371).toStringAsFixed(0) : mileageValue.toStringAsFixed(0));
+
+    intervalController = TextEditingController(
+        text: unit == 'mil' ? (intervalValue * 0.621371).toStringAsFixed(0) : intervalValue.toStringAsFixed(0));
 
     byDate = widget.byDate;
     byMileage = widget.byMileage;
@@ -67,7 +78,6 @@ class _ActionDetailSheetState extends State<ActionDetailSheet> {
       }
     }
   }
-
   Future<void> _pickDate() async {
     final picked = await showDatePicker(
       context: context,
@@ -83,12 +93,19 @@ class _ActionDetailSheetState extends State<ActionDetailSheet> {
       });
     }
   }
-
   @override
   Widget build(BuildContext context) {
+    final settingsCubit = context.watch<SettingsCubit>();
+    final unit = settingsCubit.state.unit;
+    final unitStream = UnitStream(settingsCubit);
     final textTheme = Theme.of(context).textTheme;
     return Padding(
-      padding: EdgeInsets.only(left: 16, right: 16, top: 1, bottom: MediaQuery.of(context).viewInsets.bottom + 16),
+      padding: EdgeInsets.only(
+        left: 16,
+        right: 16,
+        top: 1,
+        bottom: MediaQuery.of(context).viewInsets.bottom + 16,
+      ),
       child: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -100,7 +117,7 @@ class _ActionDetailSheetState extends State<ActionDetailSheet> {
               ],
             ),
             AppSpacers.verticalMedium,
-
+            
             Autocomplete<String>(
               optionsBuilder: (TextEditingValue value) {
                 if (value.text.isEmpty) return ServiceList.names;
@@ -123,7 +140,7 @@ class _ActionDetailSheetState extends State<ActionDetailSheet> {
               },
             ),
             AppSpacers.verticalMedium,
-            TextField(
+                   TextField(
               controller: dateController,
               readOnly: true,
               onTap: _pickDate,
@@ -134,24 +151,37 @@ class _ActionDetailSheetState extends State<ActionDetailSheet> {
               ),
             ),
             AppSpacers.verticalMedium,
-            TextField(
-              controller: mileageController,
-              keyboardType: TextInputType.number,
-              inputFormatters: [FilteringTextInputFormatter.digitsOnly, LengthLimitingTextInputFormatter(6)],
-              decoration: InputDecoration(
-                labelText: "${S.of(context).mileage} (${S.of(context).km})",
-                border: OutlineInputBorder(),
-              ),
+            StreamBuilder<double>(
+              stream: unitStream.unitValueStream(double.tryParse(mileageController.text) ?? 0),
+              initialData: double.tryParse(mileageController.text) ?? 0,
+              builder: (context, snapshot) {
+                mileageController.text = snapshot.data?.toStringAsFixed(0) ?? '0';
+                return TextField(
+                  controller: mileageController,
+                  keyboardType: TextInputType.number,
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly, LengthLimitingTextInputFormatter(6)],
+                  decoration: InputDecoration(
+                    labelText: "${S.of(context).mileage} ($unit)",
+                    border: OutlineInputBorder(),
+                  ),
+                );
+              },
             ),
             AppSpacers.verticalMedium,
-            TextField(
-              controller: intervalController,
-              keyboardType: TextInputType.number,
-              inputFormatters: [FilteringTextInputFormatter.digitsOnly, LengthLimitingTextInputFormatter(6)],
-              decoration: InputDecoration(
-                labelText: "${S.of(context).periodicity} (${S.of(context).km})",
-                border: OutlineInputBorder(),
-              ),
+            StreamBuilder<double>(
+              stream: unitStream.unitValueStream(double.tryParse(intervalController.text) ?? 0),
+              initialData: double.tryParse(intervalController.text) ?? 0,
+              builder: (context, snapshot) {
+                intervalController.text = snapshot.data?.toStringAsFixed(0) ?? '0';
+                return TextField(
+                  controller: intervalController,
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                    labelText: "${S.of(context).periodicity} ($unit)",
+                    border: OutlineInputBorder(),
+                  ),
+                );
+              },
             ),
             AppSpacers.verticalMedium,
             Row(
@@ -195,12 +225,11 @@ class _ActionDetailSheetState extends State<ActionDetailSheet> {
                   Navigator.pop(context, result);
                 },
                 child: Text(S.of(context).save),
-              ),
-            )
-
+              ),)
           ],
         ),
       ),
     );
   }
 }
+

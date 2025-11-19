@@ -6,6 +6,7 @@ import 'package:design_system/theme/app_theme.dart';
 import 'package:fines_plus/core/helpers/format_currency.dart';
 import 'package:fines_plus/features/expenses/data/models/tuning_record.dart';
 import 'package:fines_plus/features/settings/presentation/cubit/settings_cubit.dart';
+import 'package:fines_plus/features/settings/presentation/cubit/unit_stream.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -27,6 +28,8 @@ class TuningRecordCard extends StatelessWidget {
 
   
 
+
+    final unitStream = UnitStream(settingsCubit);
     return Card(
       color: AppColors.neutreBlanc,
       margin: const EdgeInsets.only(bottom: 12),
@@ -82,14 +85,24 @@ class TuningRecordCard extends StatelessWidget {
                       const Icon(Icons.speed,
                           color: AppColors.energyBlue, size: 18),
                       const SizedBox(width: 4),
-                      Flexible(
-                        child: Text(
-                          "${record.mileage} ${S.of(context).km}",
-                          style: textTheme.subtitleText,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
+                     Flexible(
+                        child: StreamBuilder<double>(
+                          stream: unitStream.unitValueStream(record.mileage.toDouble()),
+                          initialData: unitStream.convert(record.mileage.toDouble()),
+                          builder: (context, snapshot) {
+                            final value = snapshot.data ?? record.mileage.toDouble();
+                            final unit = settingsCubit.state.unit;
+
+                            return Text(
+                              "${value.toStringAsFixed(0)} ${unit == 'km' ? S.of(context).km : 'mil'}",
+                              style: textTheme.subtitleText,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            );
+                          },
                         ),
                       ),
+
                     ],
                   ),
                 ],

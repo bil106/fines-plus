@@ -18,6 +18,7 @@ import 'package:fines_plus/features/expenses/data/models/tuning_record.dart';
 import 'package:fines_plus/features/reminders/data/repository/reminder_repository.dart';
 import 'package:fines_plus/features/schedule/data/repository/schedule_repository.dart';
 import 'package:fines_plus/features/schedule/presentation/screens/schedule_screen.dart';
+import 'package:fines_plus/features/settings/presentation/cubit/settings_cubit.dart';
 import 'package:fines_plus/features/statistics/presentation/screens/statistics_screen.dart';
 import 'package:fines_plus/features/vehicle/presentation/cubit/car_cubit.dart';
 import 'package:fines_plus/router/home_screen_wrapper.dart';
@@ -67,9 +68,19 @@ class AnalyticsScreenViewState extends State<_AnalyticsScreenView> with SingleTi
     super.dispose();
   }
 
-  Future<void> _loadRecords() async {
+Future<void> _loadRecords() async {
     final prefs = await SharedPreferences.getInstance();
     events.clear();
+
+    final settingsCubit = context.read<SettingsCubit>();
+    final isMi = settingsCubit.state.unit == 'mil';
+
+    
+    String formatMileage(int mileage) {
+      final value = isMi ? (mileage * 0.621371).toStringAsFixed(0) : mileage.toString();
+      final unit = isMi ? 'mil' : 'km';
+      return "$value $unit";
+    }
 
     // Service
     final serviceJson = prefs.getString('service_records');
@@ -82,12 +93,12 @@ class AnalyticsScreenViewState extends State<_AnalyticsScreenView> with SingleTi
             date: DateFormat('dd.MM.yyyy').parse(record.date),
             title: record.serviceName,
             amount: record.cost.toDouble(),
-            mileage: "${record.mileage} ${S.of(context).km}",
+            mileage: formatMileage(record.mileage),
             iconCodePoint: Icons.build.codePoint,
             iconColorValue: AppColors.red.value,
             category: ExpenseCategory.service,
           );
-        }).toList(),
+        }),
       );
     }
 
@@ -102,12 +113,12 @@ class AnalyticsScreenViewState extends State<_AnalyticsScreenView> with SingleTi
             date: record.date,
             title: "${record.fuelType} / ${record.volume} ${S.of(context).l}",
             amount: record.cost.toDouble(),
-            mileage: "${record.mileage} ${S.of(context).km}",
+            mileage: formatMileage(record.mileage),
             iconCodePoint: Icons.local_gas_station.codePoint,
             iconColorValue: AppColors.green.value,
             category: ExpenseCategory.fuel,
           );
-        }).toList(),
+        }),
       );
     }
 
@@ -122,13 +133,13 @@ class AnalyticsScreenViewState extends State<_AnalyticsScreenView> with SingleTi
             date: record.date,
             title: record.tuningName,
             amount: record.cost.toDouble(),
-            mileage: "${record.mileage} ${S.of(context).km}",
+            mileage: formatMileage(record.mileage),
             iconCodePoint: Icons.build_circle.codePoint,
             iconColorValue: AppColors.blue700.value,
             category: ExpenseCategory.tuning,
             customIcon: Image.asset('assets/icons/tuning.jpg', height: 24, width: 24),
           );
-        }).toList(),
+        }),
       );
     }
 
@@ -143,21 +154,23 @@ class AnalyticsScreenViewState extends State<_AnalyticsScreenView> with SingleTi
             date: record.date,
             title: S.of(context).car_wash,
             amount: record.amount.toDouble(),
-            mileage: "${record.mileage} ${S.of(context).km}",
+            mileage: formatMileage(record.mileage),
             iconCodePoint: Icons.local_car_wash.codePoint,
             iconColorValue: AppColors.energyBlue.value,
             category: ExpenseCategory.other,
           );
-        }).toList(),
+        }),
       );
     }
 
     events.sort((a, b) => b.date.compareTo(a.date));
+
     if (mounted) setState(() {});
 
     final homeState = context.findAncestorStateOfType<HomeScreenWrapperState>();
     homeState?.exportHistory = events;
   }
+
 
   @override
   Widget build(BuildContext context) {

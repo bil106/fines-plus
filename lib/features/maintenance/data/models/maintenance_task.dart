@@ -2,6 +2,10 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'maintenance_task.g.dart';
 
+
+
+
+
 @JsonSerializable(explicitToJson: true)
 class MaintenanceTask {
   final String title;
@@ -21,7 +25,6 @@ class MaintenanceTask {
     this.intervalTime,
     this.comment,
   });
-
 
   factory MaintenanceTask.fromJson(Map<String, dynamic> json) => _$MaintenanceTaskFromJson(json);
 
@@ -47,17 +50,16 @@ class MaintenanceTask {
     );
   }
 
+  /// Возвращает прогресс выполнения задачи в диапазоне 0.0–1.0
   double getProgress() {
     if (intervalKm != null && actualMileage != null) {
       final kmPassed = actualMileage! - lastMileage;
-      final progress = kmPassed / intervalKm!;
-      return progress.clamp(0.0, 1.0);
+      return (kmPassed / intervalKm!).clamp(0.0, 1.0);
     }
 
     if (intervalTime != null && lastServiceDate != null) {
       final daysPassed = DateTime.now().difference(lastServiceDate!).inDays;
-      final progress = daysPassed / intervalTime!.inDays;
-      return progress.clamp(0.0, 1.0);
+      return (daysPassed / intervalTime!.inDays).clamp(0.0, 1.0);
     }
 
     return 0.0;

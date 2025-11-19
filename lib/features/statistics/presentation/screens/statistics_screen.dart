@@ -6,6 +6,8 @@ import 'package:design_system/theme/app_theme.dart';
 import 'package:fines_plus/features/expenses/presentation/widgets/expense_stats_card.dart';
 import 'package:fines_plus/features/maintenance/presentation/cubit/maintenance_cubit.dart';
 import 'package:fines_plus/features/maintenance/presentation/cubit/maintenance_state.dart';
+import 'package:fines_plus/features/settings/presentation/cubit/settings_cubit.dart';
+import 'package:fines_plus/features/settings/presentation/cubit/unit_stream.dart';
 import 'package:fines_plus/features/statistics/presentation/cubit/statistics_cubit.dart';
 import 'package:fines_plus/features/statistics/presentation/cubit/statistics_state.dart';
 import 'package:fines_plus/router/home_screen_wrapper.dart';
@@ -68,11 +70,23 @@ class _StatisticsScreenView extends StatelessWidget {
                                 children: [
                                   Text(DateFormat('MMMM yyyy', 'uk').format(now), style: textTheme.black16bold),
                                   BlocSelector<MaintenanceCubit, MaintenanceState, int>(
-                                    selector: (state) => context.read<MaintenanceCubit>().getCurrentMonthMileage(now),
-                                    builder: (context, currentMonthMileage) {
-                                      return Text(
-                                        "$currentMonthMileage ${S.of(context).km}",
-                                        style: textTheme.black20bold,
+                                    selector: (state) => context.read<MaintenanceCubit>().getAverageMileage(),
+                                    builder: (context, averageMileage) {
+                                      final settingsCubit = context.watch<SettingsCubit>();
+                                      final unitStream = UnitStream(settingsCubit);
+
+                                      return StreamBuilder<double>(
+                                        stream: unitStream.unitValueStream(averageMileage.toDouble()),
+                                        initialData: unitStream.convert(averageMileage.toDouble()),
+                                        builder: (context, snapshot) {
+                                          final value = snapshot.data ?? averageMileage.toDouble();
+                                          final unit = settingsCubit.state.unit == 'mil' ? 'mil' : 'km';
+
+                                          return Text(
+                                            "${value.toStringAsFixed(0)} $unit",
+                                            style: textTheme.black16bold,
+                                          );
+                                        },
                                       );
                                     },
                                   ),
@@ -86,12 +100,20 @@ class _StatisticsScreenView extends StatelessWidget {
                               BlocSelector<MaintenanceCubit, MaintenanceState, int>(
                                 selector: (state) => context.read<MaintenanceCubit>().getAverageMileage(),
                                 builder: (context, averageMileage) {
-                                  return Text("$averageMileage ${S.of(context).km}", style: textTheme.green20W400);
+                                  final settingsCubit = context.watch<SettingsCubit>();
+                                  final unitStream = UnitStream(settingsCubit);
+
+                                  return StreamBuilder<double>(
+                                    stream: unitStream.unitValueStream(averageMileage.toDouble()),
+                                    initialData: unitStream.convert(averageMileage.toDouble()),
+                                    builder: (context, snapshot) {
+                                      final value = snapshot.data ?? averageMileage.toDouble();
+                                      final unit = settingsCubit.state.unit == 'mil' ? 'mil' : 'km';
+
+                                      return Text("${value.toStringAsFixed(0)} $unit", style: textTheme.green20W400);
+                                    },
+                                  );
                                 },
-                              ),
-                              Transform.translate(
-                                offset: const Offset(5, -5),
-                                child: Text(S.of(context).period, style: textTheme.black13W400),
                               ),
                             ],
                           ),

@@ -23,11 +23,11 @@ Map<String, dynamic> _$CarWashRecordToJson(CarWashRecord instance) =>
     <String, dynamic>{
       'userId': instance.userId,
       'comment': instance.comment,
-      'currency': instance.currency,
       'carNumber': instance.carNumber,
       'isSynced': instance.isSynced,
       'id': instance.id,
       'cost': instance.amount,
       'date': const DateFormatterConverter().toJson(instance.date),
       'mileage': instance.mileage,
+      'currency': instance.currency,
     };

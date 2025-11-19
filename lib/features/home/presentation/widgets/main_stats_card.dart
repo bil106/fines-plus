@@ -6,6 +6,7 @@ import 'package:fines_plus/features/home/domain/entities/main_stats.dart';
 import 'package:fines_plus/features/home/presentation/widgets/stat_value.dart';
 import 'package:fines_plus/features/home/presentation/widgets/stats_rings_painter.dart';
 import 'package:fines_plus/features/settings/presentation/cubit/settings_cubit.dart';
+import 'package:fines_plus/features/settings/presentation/cubit/unit_stream.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -36,6 +37,8 @@ class MainStatsCard extends StatelessWidget {
       fromCurrency: "UAH",
     );
 
+
+    final unitStream = UnitStream(settingsCubit);
     return Card(
       color: AppColors.energyBlue50,
       elevation: 3,
@@ -69,10 +72,21 @@ class MainStatsCard extends StatelessWidget {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        Text(
-                          "${S.of(context).mileage} ${stats.lastOdometer}${S.of(context).km}",
-                          style: textTheme.black18W400,
-                        ),
+                        
+                 StreamBuilder<double>(
+                          stream: unitStream.unitValueStream(stats.lastOdometer.toDouble()),
+                          initialData: unitStream.convert(stats.lastOdometer.toDouble()),
+                          builder: (context, snapshot) {
+                            final mileageValue = snapshot.data ?? stats.lastOdometer.toDouble();
+                            final unit = settingsCubit.state.unit == 'mil' ? 'mil' : 'km';
+
+                            return Text(
+                              "${S.of(context).mileage} ${mileageValue.toStringAsFixed(0)} $unit",
+                              style: textTheme.black18W400,
+                            );
+                          },
+                        )
+
                       ],
                     ),
                   ),
@@ -92,10 +106,11 @@ class MainStatsCard extends StatelessWidget {
                       color: Colors.blueAccent,
                     ),
                     const SizedBox(height: 4),
-                    StatValue(
+                  StatValue(
                       value: costPerKmConverted.toStringAsFixed(1),
-                      label: "$selectedCurrency/km",
+                      label: "$selectedCurrency/${settingsCubit.state.unit}",
                     )
+
                   ],
                 ),
 
@@ -103,12 +118,19 @@ class MainStatsCard extends StatelessWidget {
                   children: [
                     const Icon(Icons.local_gas_station, color: Colors.blueAccent, size: 24),
                     const SizedBox(height: 4),
-                    StatValue(
-                      value: stats.averageFuelConsumption > 0
-                          ? stats.averageFuelConsumption.toStringAsFixed(1)
-                          : "0.0",
-                      label: "l/100km",
-                    ),
+                    StreamBuilder<double>(
+  stream: unitStream.fuelConsumptionStream(stats.averageFuelConsumption),
+  builder: (context, snapshot) {
+    final value = snapshot.data ?? stats.averageFuelConsumption;
+    final unit = settingsCubit.state.unit == "km" ? "l/100km" : "mpg";
+
+    return StatValue(
+      value: value.toStringAsFixed(1),
+      label: unit,
+    );
+  },
+),
+
                   ],
                 ),
               ],

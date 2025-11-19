@@ -3,7 +3,9 @@ import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_borders.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
+import 'package:fines_plus/features/settings/presentation/cubit/settings_cubit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class MaintenanceCard extends StatelessWidget {
   final String title;
@@ -37,14 +39,24 @@ class MaintenanceCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+    final settingsCubit = context.watch<SettingsCubit>();
+    final unit = settingsCubit.state.unit; // 'km' или 'mil'
+
+    // функция конвертации
+    double convert(int? value) {
+      if (value == null) return 0;
+      return unit == 'mil' ? value * 0.621371 : value.toDouble();
+    }
+
     return Card(
       elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: AppBorders.radiusLarge),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal:16,vertical: 8 ),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // заголовок
             Row(
               children: [
                 Expanded(child: Text(title, style: textTheme.black16bold)),
@@ -53,6 +65,7 @@ class MaintenanceCard extends StatelessWidget {
             ),
             AppSpacers.verticalMedium,
 
+            // прогресс
             Row(
               children: [
                 Stack(
@@ -98,8 +111,9 @@ class MaintenanceCard extends StatelessWidget {
               ],
             ),
 
-            
+            AppSpacers.verticalMedium,
 
+            // показатели
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -107,17 +121,26 @@ class MaintenanceCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text("${S.of(context).previous}: ${priorExecution ?? "-"}", style: textTheme.black13W400),
-                    Text("${S.of(context).mileage}: ${lastMileage?.toString() ?? "-"}", style: textTheme.black13W400),
-                    Text("${S.of(context).fact}: ${actualMileage?.toString() ?? "-"}", style: textTheme.black13W400),
+                    Text(
+                      "${S.of(context).mileage}: ${convert(lastMileage).toStringAsFixed(0)} $unit",
+                      style: textTheme.black13W400,
+                    ),
+                    Text(
+                      "${S.of(context).fact}: ${convert(actualMileage).toStringAsFixed(0)} $unit",
+                      style: textTheme.black13W400,
+                    ),
                   ],
                 ),
                 Text(
-                  "${S.of(context).periodicity} ${intervalKm?.toString() ?? "-"} ${S.of(context).km}",
+                  "${S.of(context).periodicity} ${convert(intervalKm).toStringAsFixed(0)} $unit",
                   style: textTheme.black13W400,
                 ),
               ],
             ),
 
+            AppSpacers.verticalMedium,
+
+            // кнопки действия
             Row(
               children: [
                 Padding(
@@ -136,3 +159,4 @@ class MaintenanceCard extends StatelessWidget {
     );
   }
 }
+

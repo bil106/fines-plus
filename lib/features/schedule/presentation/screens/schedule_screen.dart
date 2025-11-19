@@ -16,6 +16,7 @@ import 'package:fines_plus/features/reminders/presentation/cubit/reminder_cubit.
 import 'package:fines_plus/features/schedule/data/repository/schedule_repository.dart';
 import 'package:fines_plus/features/schedule/presentation/cubit/schedule_cubit.dart';
 import 'package:fines_plus/features/schedule/presentation/cubit/schedule_state.dart';
+import 'package:fines_plus/features/settings/presentation/cubit/settings_cubit.dart';
 import 'package:fines_plus/features/vehicle/presentation/cubit/car_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -259,19 +260,35 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                 );
 
                 if (result != null) {
-                  final last = result["mileage"] ?? 0;
-                  final actual = getMaxMileage(newMileage: last);
+                  // final last = result["mileage"] ?? 0;
+                  // final actual = getMaxMileage(newMileage: last);
 
-                  final newTask = MaintenanceTask(
+                  // final newTask = MaintenanceTask(
+                  //   title: result["title"] ?? S.of(context).no_name,
+                  //   lastServiceDate: result["date"] as DateTime?,
+                  //   lastMileage: last,
+                  //   actualMileage: actual,
+                  //   intervalKm: result["intervalKm"] ?? 0,
+                  //   intervalTime: result["byDate"] ? Duration(days: result["intervalDays"]) : null,
+                  //   comment: result["comment"],
+                  // );
+                  final settingsCubit = context.read<SettingsCubit>();
+                  final unit = settingsCubit.state.unit;
+
+                  final lastMileageInput = result["mileage"] ?? 0;
+                  final intervalInput = result["intervalKm"] ?? 0;
+
+                  final lastMileageKm = unit == 'mil' ? (lastMileageInput / 0.621371).round() : lastMileageInput;
+                  final intervalKm = unit == 'mil' ? (intervalInput / 0.621371).round() : intervalInput;
+final newTask = MaintenanceTask(
                     title: result["title"] ?? S.of(context).no_name,
                     lastServiceDate: result["date"] as DateTime?,
-                    lastMileage: last,
-                    actualMileage: actual,
-                    intervalKm: result["intervalKm"] ?? 0,
+                    lastMileage: lastMileageKm,
+                    actualMileage: getMaxMileage(newMileage: lastMileageKm),
+                    intervalKm: intervalKm,
                     intervalTime: result["byDate"] ? Duration(days: result["intervalDays"]) : null,
                     comment: result["comment"],
                   );
-
                   scheduleCubit.addTask(newTask, reminderCubit: reminderCubit);
                 }
               },

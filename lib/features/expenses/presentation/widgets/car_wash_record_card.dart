@@ -5,6 +5,7 @@ import 'package:design_system/constants/app_borders.dart';
 import 'package:design_system/theme/app_theme.dart';
 import 'package:fines_plus/features/expenses/data/models/car_wash_record.dart';
 import 'package:fines_plus/features/settings/presentation/cubit/settings_cubit.dart';
+import 'package:fines_plus/features/settings/presentation/cubit/unit_stream.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -29,21 +30,25 @@ class CarWashRecordCard extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(children: [Text(S.of(context).car_wash, style: textTheme.historyText)]),
+                // Название услуги
+                Row(
+                  children: [
+                    Text(S.of(context).car_wash, style: textTheme.historyText),
+                  ],
+                ),
                 const SizedBox(height: 4),
+
+                // Стоимость
                 Row(
                   children: [
                     Icon(Icons.attach_money, color: AppColors.green),
                     const SizedBox(width: 8),
-
                     Builder(
                       builder: (context) {
                         final settingsCubit = context.watch<SettingsCubit>();
-                 
-
-                         final targetCurrency = settingsCubit.state.currency;
-                        final amountBase = record.amount; 
-                         final displayCurrency = settingsCubit.getCurrencyLabel(context, targetCurrency);
+                        final targetCurrency = settingsCubit.state.currency;
+                        final amountBase = record.amount;
+                        final displayCurrency = settingsCubit.getCurrencyLabel(context, targetCurrency);
                         final convertedCost = settingsCubit.currencyService.convert(
                           amountBase,
                           targetCurrency,
@@ -57,8 +62,9 @@ class CarWashRecordCard extends StatelessWidget {
                     ),
                   ],
                 ),
-
                 const SizedBox(height: 4),
+
+                // Дата и пробег
                 Row(
                   children: [
                     Icon(Icons.calendar_month, color: AppColors.energyBlue),
@@ -67,7 +73,25 @@ class CarWashRecordCard extends StatelessWidget {
                     const SizedBox(width: 24),
                     Icon(Icons.speed, color: AppColors.energyBlue),
                     const SizedBox(width: 8),
-                    Text("${record.mileage} ${S.of(context).km}", style: textTheme.subtitleText),
+                    Builder(
+                      builder: (context) {
+                        final settingsCubit = context.watch<SettingsCubit>();
+                        final unitStream = UnitStream(settingsCubit);
+
+                        return StreamBuilder<double>(
+                          stream: unitStream.unitValueStream(record.mileage.toDouble()),
+                          initialData: unitStream.convert(record.mileage.toDouble()),
+                          builder: (context, snapshot) {
+                            final value = snapshot.data ?? record.mileage.toDouble();
+                            final unit = settingsCubit.state.unit; 
+                            return Text(
+                              "${value.toStringAsFixed(0)} $unit",
+                              style: textTheme.subtitleText,
+                            );
+                          },
+                        );
+                      },
+                    ),
                   ],
                 ),
               ],
@@ -78,3 +102,5 @@ class CarWashRecordCard extends StatelessWidget {
     );
   }
 }
+
+          
