@@ -30,15 +30,9 @@ class CarWashRecordCard extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Название услуги
-                Row(
-                  children: [
-                    Text(S.of(context).car_wash, style: textTheme.historyText),
-                  ],
-                ),
+                Row(children: [Text(S.of(context).car_wash, style: textTheme.historyText)]),
                 const SizedBox(height: 4),
 
-                // Стоимость
                 Row(
                   children: [
                     Icon(Icons.attach_money, color: AppColors.green),
@@ -64,7 +58,6 @@ class CarWashRecordCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
 
-                // Дата и пробег
                 Row(
                   children: [
                     Icon(Icons.calendar_month, color: AppColors.energyBlue),
@@ -83,11 +76,8 @@ class CarWashRecordCard extends StatelessWidget {
                           initialData: unitStream.convert(record.mileage.toDouble()),
                           builder: (context, snapshot) {
                             final value = snapshot.data ?? record.mileage.toDouble();
-                            final unit = settingsCubit.state.unit; 
-                            return Text(
-                              "${value.toStringAsFixed(0)} $unit",
-                              style: textTheme.subtitleText,
-                            );
+                            final unit = settingsCubit.state.unit;
+                            return Text("${value.toStringAsFixed(0)} $unit", style: textTheme.subtitleText);
                           },
                         );
                       },
@@ -102,5 +92,3 @@ class CarWashRecordCard extends StatelessWidget {
     );
   }
 }
-
-          

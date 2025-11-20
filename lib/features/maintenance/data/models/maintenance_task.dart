@@ -50,7 +50,7 @@ class MaintenanceTask {
     );
   }
 
-  /// Возвращает прогресс выполнения задачи в диапазоне 0.0–1.0
+
   double getProgress() {
     if (intervalKm != null && actualMileage != null) {
       final kmPassed = actualMileage! - lastMileage;

@@ -44,13 +44,12 @@ class CostInputCard extends StatelessWidget {
                 onChanged: (value) {
                   final input = double.tryParse(value.replaceAll(',', '.')) ?? 0.0;
 
-                  final amountInUah = settingsCubit.currencyService.convert(
+                  settingsCubit.currencyService.convert(
                     input,
                     "UAH",
                     fromCurrency: settings.currency,
                   );
 
-                  debugPrint("Введено: $input ${settings.currency} => $amountInUah UAH");
                 },
               ),
             ),

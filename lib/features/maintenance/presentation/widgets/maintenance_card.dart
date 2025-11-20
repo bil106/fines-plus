@@ -40,9 +40,8 @@ class MaintenanceCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final settingsCubit = context.watch<SettingsCubit>();
-    final unit = settingsCubit.state.unit; // 'km' или 'mil'
+    final unit = settingsCubit.state.unit;
 
-    // функция конвертации
     double convert(int? value) {
       if (value == null) return 0;
       return unit == 'mil' ? value * 0.621371 : value.toDouble();
@@ -56,7 +55,6 @@ class MaintenanceCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // заголовок
             Row(
               children: [
                 Expanded(child: Text(title, style: textTheme.black16bold)),
@@ -65,7 +63,6 @@ class MaintenanceCard extends StatelessWidget {
             ),
             AppSpacers.verticalMedium,
 
-            // прогресс
             Row(
               children: [
                 Stack(
@@ -113,7 +110,6 @@ class MaintenanceCard extends StatelessWidget {
 
             AppSpacers.verticalMedium,
 
-            // показатели
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -140,7 +136,6 @@ class MaintenanceCard extends StatelessWidget {
 
             AppSpacers.verticalMedium,
 
-            // кнопки действия
             Row(
               children: [
                 Padding(
@@ -159,4 +154,3 @@ class MaintenanceCard extends StatelessWidget {
     );
   }
 }
-
