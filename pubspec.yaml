@@ -123,6 +123,7 @@ flutter:
     - assets/icons/logo_app.png
     - assets/icons/insurance.png
     - assets/icons/car-wash.svg
+    - assets/icons/no_ad.svg
     - assets/icons/tuning.jpg
     - assets/icons/battery.png
     - assets/icons/brake.png

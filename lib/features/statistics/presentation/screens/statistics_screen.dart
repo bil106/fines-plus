@@ -13,7 +13,7 @@ import 'package:fines_plus/features/statistics/presentation/cubit/statistics_sta
 import 'package:fines_plus/router/home_screen_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
+
 
 class StatisticsScreen extends StatelessWidget {
   const StatisticsScreen({super.key});
@@ -35,7 +35,7 @@ class _StatisticsScreenView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final now = DateTime.now();
+
     final textTheme = Theme.of(context).textTheme;
 
     return BlocBuilder<StatisticsCubit, StatisticsState>(
@@ -43,7 +43,7 @@ class _StatisticsScreenView extends StatelessWidget {
         if (state.loading) {
           return const Center(child: CircularProgressIndicator());
         }
-
+final monthLabel = state.expenseStats.monthLabel;
         return SingleChildScrollView(
           padding: const EdgeInsets.all(12),
           child: Column(
@@ -68,7 +68,7 @@ class _StatisticsScreenView extends StatelessWidget {
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(DateFormat('MMMM yyyy', 'uk').format(now), style: textTheme.black16bold),
+                                   Text(monthLabel, style: textTheme.black16bold),
                                   BlocSelector<MaintenanceCubit, MaintenanceState, int>(
                                     selector: (state) => context.read<MaintenanceCubit>().getAverageMileage(),
                                     builder: (context, averageMileage) {

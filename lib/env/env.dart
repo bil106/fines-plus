@@ -40,4 +40,15 @@ static const testDeviceIds = String.fromEnvironment(
   );
   static List<String> get testDeviceIdList =>
       testDeviceIds.split(',').map((id) => id.trim()).where((id) => id.isNotEmpty).toList();
+static const privacyPolicyUrl = String.fromEnvironment(
+    'PRIVACY_POLICY_URL',
+    defaultValue: 'https://bil106.github.io/finesplus-privacy-policy/',
+  );
+
+static const termsUrl = String.fromEnvironment(
+    'TERMS_URL',
+    defaultValue: 'https://bil106.github.io/finesplus-privacy-policy/finesplus-terms-of-use/',
+  );
+
+
 }
