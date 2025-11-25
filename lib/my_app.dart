@@ -1,13 +1,13 @@
 import 'dart:async';
 
 import 'package:app_links/app_links.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:core_services/services/purchase_service.dart';
 import 'package:fines_plus/core/services/launch_service.dart';
 import 'package:fines_plus/core/theme/theme_config.dart';
 import 'package:fines_plus/features/settings/presentation/cubit/settings_cubit.dart';
 import 'package:fines_plus/features/settings/presentation/cubit/settings_state.dart';
-import 'package:fines_plus/features/subscription/data/models/trial_manager.dart';
 import 'package:fines_plus/router/home_screen_wrapper.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -45,7 +45,6 @@ class _MyAppState extends State<MyApp> {
   static FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
   StreamSubscription? _appLinksSub;
-  // Locale? _locale;
   bool? firstLaunch;
   bool _didNavigate = false;
   bool? _hasActiveSubscription;
@@ -68,19 +67,41 @@ class _MyAppState extends State<MyApp> {
     analytics.logAppOpen();
 
     bool hasActiveSub = false;
-    final user = FirebaseAuth.instance.currentUser;
+    final prefs = await SharedPreferences.getInstance();
 
-    if (user != null) {
-      final trialStatus = await TrialManager.getTrialStatus();
-      if (trialStatus == TrialStatus.active) {
+    final trialTs = prefs.getInt('trial_end_timestamp');
+    if (trialTs != null) {
+      final trialEnd = DateTime.fromMillisecondsSinceEpoch(trialTs);
+      if (trialEnd.isAfter(DateTime.now())) {
         hasActiveSub = true;
-      } else {
+      }
+    }
+
+    final subTs = prefs.getInt('subscription_end_timestamp');
+    if (!hasActiveSub && subTs != null) {
+      final subEnd = DateTime.fromMillisecondsSinceEpoch(subTs);
+      if (subEnd.isAfter(DateTime.now())) {
+        hasActiveSub = true;
+      }
+    }
+
+    final user = FirebaseAuth.instance.currentUser;
+    if (!hasActiveSub && user != null) {
+      try {
         final purchaseService = PurchaseService();
         hasActiveSub = await purchaseService.hasActiveSubscription(user.uid);
-      }
-
-      debugPrint('🔍 Active subscription or trial: $hasActiveSub');
+        if (hasActiveSub) {
+          final endDate =
+              (await FirebaseFirestore.instance.collection('users').doc(user.uid).get()).data()?['subscriptionEndDate']
+                  as Timestamp?;
+          if (endDate != null) {
+            await prefs.setInt('subscription_end_timestamp', endDate.toDate().millisecondsSinceEpoch);
+          }
+        }
+      } catch (_) {}
     }
+
+    debugPrint('🔍 Active subscription or trial: $hasActiveSub');
 
     if (mounted) {
       setState(() {
@@ -185,7 +206,7 @@ class _MyAppState extends State<MyApp> {
     super.dispose();
   }
 
-@override
+  @override
   Widget build(BuildContext context) {
     if (firstLaunch == null || _hasActiveSubscription == null) {
       return const MaterialApp(
@@ -197,7 +218,6 @@ class _MyAppState extends State<MyApp> {
       value: widget.config,
       child: BlocBuilder<SettingsCubit, SettingsState>(
         builder: (context, settingsState) {
-      
           final currentLocale = settingsState.locale;
 
           final materialApp = MaterialApp.router(
@@ -225,7 +245,6 @@ class _MyAppState extends State<MyApp> {
             debugShowCheckedModeBanner: false,
           );
 
-     
           if (!_didNavigate) {
             WidgetsBinding.instance.addPostFrameCallback((_) {
               if (!mounted) return;
@@ -245,7 +264,4 @@ class _MyAppState extends State<MyApp> {
 
     return app;
   }
-
 }
-
-

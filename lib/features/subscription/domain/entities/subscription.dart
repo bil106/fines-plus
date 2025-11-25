@@ -19,4 +19,6 @@ class SubscriptionPlan {
     required this.months,
     required this.features,
   });
+
+  bool get isTrial => title.contains("3 дні безплатно");
 }

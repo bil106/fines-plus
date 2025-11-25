@@ -1,5 +1,6 @@
 import 'package:core_localization/generated/l10n.dart';
 import 'package:flutter/widgets.dart';
+
 Map<String, String> getServiceMap(BuildContext context) {
   final s = S.of(context);
 
@@ -31,9 +32,10 @@ Map<String, String> getServiceMap(BuildContext context) {
     "service_palivna_systema_diagnostyka": s.service_palivna_systema_diagnostyka,
   };
 }
+
 String getServiceName(BuildContext context, String? key) {
   if (key == null) return "";
 
   final map = getServiceMap(context);
-  return map[key] ?? key; 
+  return map[key] ?? key;
 }

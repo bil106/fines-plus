@@ -15,18 +15,16 @@ import 'package:core_utils/formatters/vehicle_formatters.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easy_recaptcha_v2/flutter_easy_recaptcha_v2.dart';
 
-
 @RoutePage()
 class CarInfoScreen extends StatelessWidget {
   final VoidCallback? onBack;
   final void Function(String carNumber, String series, String number)? onCheckFine;
-  
-  
-  const CarInfoScreen({super.key, this.onCheckFine, this.onBack,});
+
+  const CarInfoScreen({super.key, this.onCheckFine, this.onBack});
 
   @override
   Widget build(BuildContext context) {
-    return _CarInfoView(onCheckFine: onCheckFine, onBack: onBack, );
+    return _CarInfoView(onCheckFine: onCheckFine, onBack: onBack);
   }
 }
 
@@ -34,7 +32,7 @@ class _CarInfoView extends StatefulWidget {
   final void Function(String carNumber, String series, String number)? onCheckFine;
   final VoidCallback? onBack;
 
-  const _CarInfoView({this.onCheckFine, this.onBack, });
+  const _CarInfoView({this.onCheckFine, this.onBack});
 
   @override
   State<_CarInfoView> createState() => _CarInfoViewState();
@@ -85,31 +83,23 @@ class _CarInfoViewState extends State<_CarInfoView> {
     setState(() => _showRecaptcha = false);
     await carCubit.checkFines(token);
 
-    
     if (widget.onCheckFine != null) {
       final parts = carCubit.getTechPassportParts();
       widget.onCheckFine!(carCubit.state.carNumber, parts['series']!, parts['number']!);
     }
   }
 
-
-
-
-
-void _handleUnauthorized() {
+  void _handleUnauthorized() {
     showDialog(
       context: context,
       builder: (_) => UnauthorizedDialog(
         onLogin: () {
-          Navigator.of(context).pop(); 
-         context.router.push(RegistrationRoute());
-
+          Navigator.of(context).pop();
+          context.router.push(RegistrationRoute());
         },
       ),
     );
   }
-
-
 
   @override
   Widget build(BuildContext context) {

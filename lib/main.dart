@@ -24,6 +24,7 @@ import 'package:fines_plus/features/statistics/presentation/cubit/statistics_cub
 import 'package:fines_plus/features/subscription/data/repository/subscription_repository.dart';
 import 'package:fines_plus/features/subscription/presentation/cubit/subscription_cubit.dart';
 import 'package:fines_plus/features/vehicle/presentation/cubit/car_cubit.dart';
+import 'package:fines_plus/features/vehicle/presentation/cubit/car_info_cubit.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -93,6 +94,7 @@ void main() {
               BlocProvider<SubscriptionCubit>.value(value: result.subscriptionCubit),
               BlocProvider<SettingsCubit>.value(value: result.settingsCubit),
               BlocProvider<AnalyticsCubit>.value(value: result.analyticsCubit),
+              BlocProvider<CarInfoCubit>.value(value: result.carInfoCubit),
               BlocProvider<AdditionalOptionsCubit>.value(value: result.additionalOptionsCubit),
               Provider<CurrencyService>.value(value: result.currencyService),
               BlocProvider<CarCubit>.value(value: result.carCubit),

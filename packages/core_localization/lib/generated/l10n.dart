@@ -3613,6 +3613,111 @@ class S {
   String get create {
     return Intl.message('Create', name: 'create', desc: '', args: []);
   }
+
+  /// `Next`
+  String get next {
+    return Intl.message('Next', name: 'next', desc: '', args: []);
+  }
+
+  /// `Good`
+  String get good {
+    return Intl.message('Good', name: 'good', desc: '', args: []);
+  }
+
+  /// `Of course`
+  String get of_course {
+    return Intl.message('Of course', name: 'of_course', desc: '', args: []);
+  }
+
+  /// `Terms of Use`
+  String get terms_of_use {
+    return Intl.message(
+      'Terms of Use',
+      name: 'terms_of_use',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Privacy Policy`
+  String get privacy_policy {
+    return Intl.message(
+      'Privacy Policy',
+      name: 'privacy_policy',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Cancel anytime on Google Play`
+  String get cancel_anytime {
+    return Intl.message(
+      'Cancel anytime on Google Play',
+      name: 'cancel_anytime',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Try Premium`
+  String get try_premium {
+    return Intl.message('Try Premium', name: 'try_premium', desc: '', args: []);
+  }
+
+  /// `Sign Up`
+  String get sign_up_button {
+    return Intl.message('Sign Up', name: 'sign_up_button', desc: '', args: []);
+  }
+
+  /// `Trial period active`
+  String get trial_period_active {
+    return Intl.message(
+      'Trial period active',
+      name: 'trial_period_active',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `days left`
+  String get days_left {
+    return Intl.message('days left', name: 'days_left', desc: '', args: []);
+  }
+
+  /// `Trial period ended`
+  String get trial_period_ended {
+    return Intl.message(
+      'Trial period ended',
+      name: 'trial_period_ended',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No ads`
+  String get no_ads {
+    return Intl.message('No ads', name: 'no_ads', desc: '', args: []);
+  }
+
+  /// `Increased download limit`
+  String get increased_download_limit {
+    return Intl.message(
+      'Increased download limit',
+      name: 'increased_download_limit',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Search fines`
+  String get search_fines {
+    return Intl.message(
+      'Search fines',
+      name: 'search_fines',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

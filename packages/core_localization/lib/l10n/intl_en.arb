@@ -419,5 +419,20 @@
 "eur": "EUR",
 "already_planned": "already planned",
 "ukr": "Ukrainian",
-"create": "Create"
+"create": "Create",
+"next": "Next",
+"good": "Good",
+"of_course": "Of course",
+"terms_of_use": "Terms of Use",
+"privacy_policy": "Privacy Policy",
+"cancel_anytime": "Cancel anytime on Google Play",
+"try_premium": "Try Premium",
+"sign_up_button": "Sign Up",
+"trial_period_active": "Trial period active",
+"days_left": "days left",
+"trial_period_ended": "Trial period ended",
+"no_ads": "No ads",
+"increased_download_limit": "Increased download limit",
+"search_fines": "Search fines"
+
 }

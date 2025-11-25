@@ -68,14 +68,13 @@ class AnalyticsScreenViewState extends State<_AnalyticsScreenView> with SingleTi
     super.dispose();
   }
 
-Future<void> _loadRecords() async {
+  Future<void> _loadRecords() async {
     final prefs = await SharedPreferences.getInstance();
     events.clear();
 
     final settingsCubit = context.read<SettingsCubit>();
     final isMi = settingsCubit.state.unit == 'mil';
 
-    
     String formatMileage(int mileage) {
       final value = isMi ? (mileage * 0.621371).toStringAsFixed(0) : mileage.toString();
       final unit = isMi ? 'mil' : 'km';
@@ -170,7 +169,6 @@ Future<void> _loadRecords() async {
     final homeState = context.findAncestorStateOfType<HomeScreenWrapperState>();
     homeState?.exportHistory = events;
   }
-
 
   @override
   Widget build(BuildContext context) {

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:auto_route/auto_route.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_borders.dart';
@@ -9,6 +10,7 @@ import 'package:fines_plus/features/registration/presentation/cubit/registration
 import 'package:fines_plus/features/subscription/presentation/cubit/subscription_cubit.dart';
 import 'package:fines_plus/router/app_router.dart';
 import 'package:fines_plus/router/home_screen_wrapper.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -99,27 +101,28 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     }
   }
 
-  Future<void> _signInWithGoogle() async {
+Future<void> _signInWithGoogle(BuildContext context) async {
     try {
       final googleUser = await GoogleSignIn().signIn();
       if (googleUser == null) return;
+
       final googleAuth = await googleUser.authentication;
+
       final credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
+
       await FirebaseAuth.instance.signInWithCredential(credential);
 
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(S.of(context).google_login), backgroundColor: AppColors.blue700));
+      await _onSocialLoginSuccess(context); 
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('${S.of(context).google_login_error}: $e'), backgroundColor: AppColors.blue700),
-      );
-      debugPrint("${S.of(context).google_login_error}: $e");
+      if (kDebugMode) {
+        print("Google login error: $e");
+      }
     }
   }
+
 
   Future<void> _signInWithFacebook(BuildContext context) async {
     try {
@@ -135,7 +138,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         final credential = FacebookAuthProvider.credential(accessToken.tokenString);
 
         await FirebaseAuth.instance.signInWithCredential(credential);
-
+await _onSocialLoginSuccess(context);
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(S.of(context).facebook_login_successful)));
       } else if (result.status == LoginStatus.cancelled) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(S.of(context).facebook_login_cancelled)));
@@ -151,7 +154,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     }
   }
 
-  Future<void> _signInWithApple() async {
+  Future<void> _signInWithApple(BuildContext context) async {
     try {
       final credential = await SignInWithApple.getAppleIDCredential(
         scopes: [AppleIDAuthorizationScopes.email, AppleIDAuthorizationScopes.fullName],
@@ -162,13 +165,39 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       ).credential(idToken: credential.identityToken, accessToken: credential.authorizationCode);
 
       await FirebaseAuth.instance.signInWithCredential(oauthCredential);
-
+await _onSocialLoginSuccess(context);
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Sign in with Apple successful'), backgroundColor: AppColors.blue700),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Apple login error: $e')));
       debugPrint('Apple login error: $e');
+    }
+  }
+Future<void> _onSocialLoginSuccess(BuildContext context) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    final usersRef = FirebaseFirestore.instance.collection("users").doc(user.uid);
+
+    final doc = await usersRef.get();
+    if (!doc.exists) {
+      await usersRef.set({
+        "email": user.email,
+        "createdAt": FieldValue.serverTimestamp(),
+        "isSubscribed": false,
+        "subscriptionEndDate": null,
+        "trialInfo": null,
+      });
+    }
+
+  
+    final hasSubscription = await context.read<RegistrationCubit>().checkSubscription();
+
+    if (hasSubscription) {
+      context.router.replaceAll([ HomeRouteWrapper(initialPage: HomePage.home)]);
+    } else {
+      context.router.replaceAll([SubscriptionRoute(debugMode: true)]);
     }
   }
 
@@ -200,20 +229,21 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(S.current.plan_activated)));
                 Navigator.of(context).pop();
               } else if (state is SubscriptionError) {
-                ScaffoldMessenger.of(
-                  context,
-                ).showSnackBar(SnackBar(content: Text("${S.current.subscription_error}: ${state.message}")));
+                // ScaffoldMessenger.of(
+                //   context,
+                // ).showSnackBar(SnackBar(content: Text("${S.current.subscription_error}: ${state.message}")));
               }
             },
             child: Form(
               key: _formKey,
               child: BlocConsumer<RegistrationCubit, RegistrationState>(
-                listener: (context, state) {
+                listener: (context, state) async {
                   if (state.error != null) {
                     ScaffoldMessenger.of(
                       context,
                     ).showSnackBar(SnackBar(content: Text(state.error!), backgroundColor: AppColors.blue700));
                   }
+
                   if (state.isRegistered) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
@@ -221,24 +251,33 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         backgroundColor: AppColors.blue700,
                       ),
                     );
-                    context.router.replaceAll([
-                      SubscriptionRoute(
-                        debugMode: true,
-                        onPurchaseSuccess: () async {
-                          await Future.delayed(const Duration(milliseconds: 150));
 
-                          final wrapperState = context.findAncestorStateOfType<HomeScreenWrapperState>();
-                          if (wrapperState != null) {
-                            wrapperState.openPage(HomePage.addCar);
-                            return;
-                          }
+                    final regCubit = context.read<RegistrationCubit>();
+                    final hasSubscription = await regCubit.checkSubscription();
 
-                          context.router.root.replaceAll([HomeRouteWrapper(initialPage: HomePage.addCar)]);
-                        },
-                      ),
-                    ]);
+                    if (hasSubscription) {
+                      context.router.replaceAll([HomeRouteWrapper()]);
+                    } else {
+                      context.router.replaceAll([
+                        SubscriptionRoute(
+                          debugMode: true,
+                          onBack: () async {
+                            await Future.delayed(const Duration(milliseconds: 150));
+
+                            final wrapperState = context.findAncestorStateOfType<HomeScreenWrapperState>();
+                            if (wrapperState != null) {
+                              wrapperState.openPage(HomePage.home);
+                              return;
+                            }
+
+                            context.router.root.replaceAll([HomeRouteWrapper(initialPage: HomePage.subscription)]);
+                          },
+                        ),
+                      ]);
+                    }
                   }
                 },
+
                 builder: (context, state) {
                   final isLogin = state.isExistingUser;
                   final isLoading = state.isLoading;
@@ -269,7 +308,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       ),
                       AppSpacers.verticalLarge,
 
-                      // Password
                       TextFormField(
                         controller: passwordController,
                         obscureText: true,
@@ -331,7 +369,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         children: [
                           IconButton(
                             icon: Image.asset('assets/icons/google_logo.png', height: 30),
-                            onPressed: _signInWithGoogle,
+                            onPressed: () => _signInWithGoogle(context),
+
                           ),
                           AppSpacers.horizontalMedium,
                           IconButton(
@@ -341,7 +380,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                           AppSpacers.horizontalMedium,
                           IconButton(
                             icon: const Icon(Icons.apple, color: AppColors.black, size: 30),
-                            onPressed: () => _signInWithApple(),
+                            onPressed: () => _signInWithApple(context),
                           ),
                         ],
                       ),

@@ -59,6 +59,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "by_mileage": MessageLookupByLibrary.simpleMessage("By mileage"),
     "calendar": MessageLookupByLibrary.simpleMessage("Calendar"),
     "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
+    "cancel_anytime": MessageLookupByLibrary.simpleMessage(
+      "Cancel anytime on Google Play",
+    ),
     "cannot_be_undone": MessageLookupByLibrary.simpleMessage(
       "This action cannot be undone.",
     ),
@@ -113,6 +116,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "days": MessageLookupByLibrary.simpleMessage("days"),
     "days_free": MessageLookupByLibrary.simpleMessage("days free"),
+    "days_left": MessageLookupByLibrary.simpleMessage("days left"),
     "del_all_expenses": MessageLookupByLibrary.simpleMessage(
       "Delete ALL expenses",
     ),
@@ -207,6 +211,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "get_notified": MessageLookupByLibrary.simpleMessage(
       "Get notified and pay on time",
     ),
+    "good": MessageLookupByLibrary.simpleMessage("Good"),
     "google_login": MessageLookupByLibrary.simpleMessage(
       "Google login successful",
     ),
@@ -228,6 +233,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "incorrect_password": MessageLookupByLibrary.simpleMessage(
       "Incorrect password",
+    ),
+    "increased_download_limit": MessageLookupByLibrary.simpleMessage(
+      "Increased download limit",
     ),
     "insurance": MessageLookupByLibrary.simpleMessage("Insurance"),
     "insurance_control": MessageLookupByLibrary.simpleMessage(
@@ -281,6 +289,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "new_version": MessageLookupByLibrary.simpleMessage(
       "A new version of the application is available",
     ),
+    "next": MessageLookupByLibrary.simpleMessage("Next"),
+    "no_ads": MessageLookupByLibrary.simpleMessage("No ads"),
     "no_fines": MessageLookupByLibrary.simpleMessage(
       "There are no fines for you",
     ),
@@ -309,6 +319,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Odometer at the beginning of the month",
     ),
     "odometer_today": MessageLookupByLibrary.simpleMessage("Odometer today"),
+    "of_course": MessageLookupByLibrary.simpleMessage("Of course"),
     "of_road_accidents": MessageLookupByLibrary.simpleMessage("Road accidents"),
     "oil": MessageLookupByLibrary.simpleMessage("oil"),
     "oil_icon": MessageLookupByLibrary.simpleMessage("Oil"),
@@ -344,6 +355,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "previous": MessageLookupByLibrary.simpleMessage("Previous"),
     "price": MessageLookupByLibrary.simpleMessage("Price"),
     "price_liter": MessageLookupByLibrary.simpleMessage("Price per 1 liter:"),
+    "privacy_policy": MessageLookupByLibrary.simpleMessage("Privacy Policy"),
     "publish": MessageLookupByLibrary.simpleMessage("Publish"),
     "push_notifications": MessageLookupByLibrary.simpleMessage(
       "Push notifications",
@@ -364,6 +376,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "save": MessageLookupByLibrary.simpleMessage("Save"),
     "schedule": MessageLookupByLibrary.simpleMessage("Schedule"),
     "search": MessageLookupByLibrary.simpleMessage("Search"),
+    "search_fines": MessageLookupByLibrary.simpleMessage("Search fines"),
     "select_a_service": MessageLookupByLibrary.simpleMessage(
       "Select a service",
     ),
@@ -857,6 +870,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Sign in with Google",
     ),
     "sign_up": MessageLookupByLibrary.simpleMessage("Sign Up"),
+    "sign_up_button": MessageLookupByLibrary.simpleMessage("Sign Up"),
     "statistics": MessageLookupByLibrary.simpleMessage("Statistics"),
     "store_unavailable": MessageLookupByLibrary.simpleMessage(
       "Store unavailable",
@@ -904,6 +918,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "technical_data": MessageLookupByLibrary.simpleMessage(
       "Technical data sheet:",
     ),
+    "terms_of_use": MessageLookupByLibrary.simpleMessage("Terms of Use"),
     "test_subscription": MessageLookupByLibrary.simpleMessage(
       "Test subscription for",
     ),
@@ -930,6 +945,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "trial_period_activated": MessageLookupByLibrary.simpleMessage(
       "Trial period activated",
     ),
+    "trial_period_active": MessageLookupByLibrary.simpleMessage(
+      "Trial period active",
+    ),
+    "trial_period_ended": MessageLookupByLibrary.simpleMessage(
+      "Trial period ended",
+    ),
+    "try_premium": MessageLookupByLibrary.simpleMessage("Try Premium"),
     "tuning": MessageLookupByLibrary.simpleMessage("Tuning"),
     "type": MessageLookupByLibrary.simpleMessage("Type"),
     "ukr": MessageLookupByLibrary.simpleMessage("Ukrainian"),

@@ -148,6 +148,18 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
       _docSeries = prefs.getString('docSeries') ?? '';
       _docNumber = prefs.getString('docNumber') ?? '';
     });
+
+    final hasSubscription = await context.read<RegistrationCubit>().checkSubscription();
+
+    if (hasSubscription) {
+      final index = _pageIndexMap[HomePage.home] ?? 0;
+      _pageController.jumpToPage(index);
+      setState(() => _currentIndex = index);
+    } else {
+      final index = _pageIndexMap[HomePage.home] ?? 0;
+      _pageController.jumpToPage(index);
+      setState(() => _currentIndex = index);
+    }
   }
 
   void _saveCarInfo(String carNumber, String series, String number) async {
@@ -232,7 +244,7 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
 
             onPageChanged: (index) => setState(() => _currentIndex = index),
             children: [
-             BlocProvider.value(
+              BlocProvider.value(
                 value: context.read<QuickActionsCubit>(),
                 child: HomeScreen(key: const ValueKey('home')),
               ),
@@ -303,8 +315,7 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
                 child: RegistrationScreen(key: const ValueKey('registration'), onBack: () => openPage(HomePage.home)),
               ),
               SubscriptionScreen(
-                debugMode: true,
-                onPurchaseSuccess: () async {
+                onBack: () async {
                   await Future.delayed(const Duration(milliseconds: 150));
                   final wrapperState = context.findAncestorStateOfType<HomeScreenWrapperState>();
                   if (wrapperState != null) {
@@ -399,7 +410,7 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
         index == _pageIndexMap[HomePage.reminders] ||
         index == _pageIndexMap[HomePage.addCar] ||
         index == _pageIndexMap[HomePage.analytics] ||
-        index == _pageIndexMap[HomePage.schedule]||
+        index == _pageIndexMap[HomePage.schedule] ||
         index == _pageIndexMap[HomePage.settings];
   }
 

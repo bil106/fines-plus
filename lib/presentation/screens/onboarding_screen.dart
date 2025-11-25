@@ -16,14 +16,15 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   final pageController = PageController();
   int currentPage = 0;
 
-
   Widget _buildPage({
     required int pageIndex,
     required String title,
     required String subtitle,
     required String imagePath,
   }) {
-    String buttonText = (pageIndex == 0) ? "Далі" : (pageIndex <= 2 ? "Добре" : "Зрозуміло");
+    String buttonText = (pageIndex == 0)
+        ? S.of(context).next
+        : (pageIndex <= 2 ? S.of(context).good : S.of(context).of_course);
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -58,7 +59,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   if (pageIndex < 4) {
                     pageController.nextPage(duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
                   }
-                 
                 },
                 child: Text(buttonText, style: const TextStyle(fontSize: 18, color: Colors.white)),
               ),
@@ -69,15 +69,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     );
   }
 
-  
   Widget _buildSubscriptionPage() {
     return SubscriptionScreen(
-      debugMode: false,
+     
       onBack: () {
         pageController.previousPage(duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
-      },
-      onPurchaseSuccess: () {
-
       },
     );
   }
@@ -135,7 +131,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 subtitle: S.current.track_costs,
                 imagePath: "assets/images/analytics_bg.png",
               ),
-              _buildSubscriptionPage(), 
+              _buildSubscriptionPage(),
             ],
           ),
           Positioned(bottom: 40, left: 0, right: 0, child: _buildDots()),
@@ -144,5 +140,3 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     );
   }
 }
-
-

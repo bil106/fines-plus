@@ -24,6 +24,7 @@ dependencies:
     path: ../core_data
   core_repository:
     path: ../core_repository
+  shared_preferences: ^2.5.3
 
 
 

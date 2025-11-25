@@ -1242,7 +1242,6 @@ class SubscriptionRoute extends PageRouteInfo<SubscriptionRouteArgs> {
     Key? key,
     bool debugMode = true,
     VoidCallback? onBack,
-    VoidCallback? onPurchaseSuccess,
     List<PageRouteInfo>? children,
   }) : super(
          SubscriptionRoute.name,
@@ -1250,7 +1249,6 @@ class SubscriptionRoute extends PageRouteInfo<SubscriptionRouteArgs> {
            key: key,
            debugMode: debugMode,
            onBack: onBack,
-           onPurchaseSuccess: onPurchaseSuccess,
          ),
          initialChildren: children,
        );
@@ -1265,21 +1263,15 @@ class SubscriptionRoute extends PageRouteInfo<SubscriptionRouteArgs> {
       );
       return SubscriptionScreen(
         key: args.key,
-        debugMode: args.debugMode,
+       
         onBack: args.onBack,
-        onPurchaseSuccess: args.onPurchaseSuccess,
       );
     },
   );
 }
 
 class SubscriptionRouteArgs {
-  const SubscriptionRouteArgs({
-    this.key,
-    this.debugMode = true,
-    this.onBack,
-    this.onPurchaseSuccess,
-  });
+  const SubscriptionRouteArgs({this.key, this.debugMode = true, this.onBack});
 
   final Key? key;
 
@@ -1287,11 +1279,9 @@ class SubscriptionRouteArgs {
 
   final VoidCallback? onBack;
 
-  final VoidCallback? onPurchaseSuccess;
-
   @override
   String toString() {
-    return 'SubscriptionRouteArgs{key: $key, debugMode: $debugMode, onBack: $onBack, onPurchaseSuccess: $onPurchaseSuccess}';
+    return 'SubscriptionRouteArgs{key: $key, debugMode: $debugMode, onBack: $onBack}';
   }
 
   @override
@@ -1300,16 +1290,11 @@ class SubscriptionRouteArgs {
     if (other is! SubscriptionRouteArgs) return false;
     return key == other.key &&
         debugMode == other.debugMode &&
-        onBack == other.onBack &&
-        onPurchaseSuccess == other.onPurchaseSuccess;
+        onBack == other.onBack;
   }
 
   @override
-  int get hashCode =>
-      key.hashCode ^
-      debugMode.hashCode ^
-      onBack.hashCode ^
-      onPurchaseSuccess.hashCode;
+  int get hashCode => key.hashCode ^ debugMode.hashCode ^ onBack.hashCode;
 }
 
 /// generated route for

@@ -74,9 +74,7 @@ class ServiceRecordCard extends StatelessWidget {
                                 initialData: UnitStream(settingsCubit).convert(record.mileage.toDouble()),
                                 builder: (context, snapshot) {
                                   final value = snapshot.data ?? record.mileage.toDouble();
-                                  final unit = settingsCubit.state.unit == 'mil'
-                                      ? 'mil'
-                                      : 'km'; 
+                                  final unit = settingsCubit.state.unit == 'mil' ? 'mil' : 'km';
                                   return Text(
                                     "${value.toStringAsFixed(0)} $unit",
                                     style: textTheme.subtitleText,
@@ -85,7 +83,6 @@ class ServiceRecordCard extends StatelessWidget {
                                 },
                               ),
                             ),
-
                           ],
                         ),
                       ),

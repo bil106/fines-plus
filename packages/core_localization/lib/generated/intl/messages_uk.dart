@@ -59,6 +59,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "by_mileage": MessageLookupByLibrary.simpleMessage("За пробігом"),
     "calendar": MessageLookupByLibrary.simpleMessage("Календар"),
     "cancel": MessageLookupByLibrary.simpleMessage("Скасувати"),
+    "cancel_anytime": MessageLookupByLibrary.simpleMessage(
+      "Скасування у будь-який час у GooglePlay",
+    ),
     "cannot_be_undone": MessageLookupByLibrary.simpleMessage(
       "Цю дію не можна буде скасувати.",
     ),
@@ -113,6 +116,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "days": MessageLookupByLibrary.simpleMessage("днів"),
     "days_free": MessageLookupByLibrary.simpleMessage("днів безкоштовно"),
+    "days_left": MessageLookupByLibrary.simpleMessage("днів залишилось"),
     "del_all_expenses": MessageLookupByLibrary.simpleMessage(
       "Видалити ВСІ витрати",
     ),
@@ -205,6 +209,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "get_notified": MessageLookupByLibrary.simpleMessage(
       "Отримуйте сповіщення і оплачуйте вчасно",
     ),
+    "good": MessageLookupByLibrary.simpleMessage("Добре"),
     "google_login": MessageLookupByLibrary.simpleMessage(
       "Вхід через Google успішний",
     ),
@@ -228,6 +233,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "incorrect_password": MessageLookupByLibrary.simpleMessage(
       "Неправильний пароль",
+    ),
+    "increased_download_limit": MessageLookupByLibrary.simpleMessage(
+      "Збільшений ліміт завантаження",
     ),
     "insurance": MessageLookupByLibrary.simpleMessage("Страхування"),
     "insurance_control": MessageLookupByLibrary.simpleMessage(
@@ -278,6 +286,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "new_version": MessageLookupByLibrary.simpleMessage(
       "Доступна нова версія програми",
     ),
+    "next": MessageLookupByLibrary.simpleMessage("Далі"),
+    "no_ads": MessageLookupByLibrary.simpleMessage("Без реклами"),
     "no_fines": MessageLookupByLibrary.simpleMessage("На вас немає штрафів"),
     "no_name": MessageLookupByLibrary.simpleMessage("Без назви"),
     "no_plan_selected": MessageLookupByLibrary.simpleMessage("План не обрано"),
@@ -306,6 +316,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "odometer_today": MessageLookupByLibrary.simpleMessage(
       "Одометр на сьогодні",
     ),
+    "of_course": MessageLookupByLibrary.simpleMessage("Зрозуміло"),
     "of_road_accidents": MessageLookupByLibrary.simpleMessage(
       "Аварії на дорогах",
     ),
@@ -347,6 +358,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "previous": MessageLookupByLibrary.simpleMessage("Попереднє"),
     "price": MessageLookupByLibrary.simpleMessage("Ціна"),
     "price_liter": MessageLookupByLibrary.simpleMessage("Ціна за 1 літр:"),
+    "privacy_policy": MessageLookupByLibrary.simpleMessage(
+      "Політика конфіденційності",
+    ),
     "publish": MessageLookupByLibrary.simpleMessage("Опублікувати"),
     "push_notifications": MessageLookupByLibrary.simpleMessage(
       "Push-сповіщення",
@@ -367,6 +381,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "save": MessageLookupByLibrary.simpleMessage("Зберегти"),
     "schedule": MessageLookupByLibrary.simpleMessage("Розклад"),
     "search": MessageLookupByLibrary.simpleMessage("Пошук"),
+    "search_fines": MessageLookupByLibrary.simpleMessage("Пошук штрафів"),
     "select_a_service": MessageLookupByLibrary.simpleMessage(
       "Виберіть послугу",
     ),
@@ -838,6 +853,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Увійти через Google",
     ),
     "sign_up": MessageLookupByLibrary.simpleMessage("Реєстрація"),
+    "sign_up_button": MessageLookupByLibrary.simpleMessage("Підписатися"),
     "statistics": MessageLookupByLibrary.simpleMessage("Статистика"),
     "store_unavailable": MessageLookupByLibrary.simpleMessage(
       "Магазин недоступний",
@@ -879,6 +895,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "take_a_picture": MessageLookupByLibrary.simpleMessage("Сфотографувати"),
     "tech_service": MessageLookupByLibrary.simpleMessage("Тех. Обслуговування"),
     "technical_data": MessageLookupByLibrary.simpleMessage("Техпаспорт:"),
+    "terms_of_use": MessageLookupByLibrary.simpleMessage("Умови використання"),
     "test_subscription": MessageLookupByLibrary.simpleMessage(
       "Тестова передплата на",
     ),
@@ -907,6 +924,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "trial_period_activated": MessageLookupByLibrary.simpleMessage(
       "Пробний період активовано",
     ),
+    "trial_period_active": MessageLookupByLibrary.simpleMessage(
+      "Пробний період активний",
+    ),
+    "trial_period_ended": MessageLookupByLibrary.simpleMessage(
+      "Пробний період завершено",
+    ),
+    "try_premium": MessageLookupByLibrary.simpleMessage("Спробуй Premium"),
     "tuning": MessageLookupByLibrary.simpleMessage("Тюнінг"),
     "type": MessageLookupByLibrary.simpleMessage("Тип"),
     "ukr": MessageLookupByLibrary.simpleMessage("Українська"),

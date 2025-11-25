@@ -420,7 +420,19 @@
    "eur": "EUR",
    "already_planned": "вже заплановано",
    "ukr": "Українська",
-   "create": "Створити"
-  
-
+   "create": "Створити",
+   "next": "Далі",
+   "good": "Добре",
+   "of_course": "Зрозуміло",
+   "terms_of_use": "Умови використання",
+   "privacy_policy": "Політика конфіденційності",
+   "cancel_anytime": "Скасування у будь-який час у GooglePlay",
+   "try_premium": "Спробуй Premium",
+   "sign_up_button": "Підписатися",
+   "trial_period_active": "Пробний період активний",
+   "days_left": "днів залишилось",
+   "trial_period_ended": "Пробний період завершено",
+   "no_ads": "Без реклами",
+   "increased_download_limit": "Збільшений ліміт завантаження",
+   "search_fines": "Пошук штрафів"
 }

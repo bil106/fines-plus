@@ -38,6 +38,7 @@ class PurchaseCubit extends Cubit<void> {
           : 'Purchase completed: $purchaseId',
     );
   }
+
   Future<bool> hasActiveSubscription(String uid) async {
     try {
       return await _service.hasActiveSubscription(uid);

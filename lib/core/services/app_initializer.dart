@@ -41,6 +41,7 @@ import 'package:fines_plus/features/vehicle/data/datasources/car_info_local_data
 import 'package:fines_plus/features/vehicle/data/datasources/car_info_remote_data_source.dart';
 import 'package:fines_plus/features/vehicle/data/repository/car_info_repository.dart';
 import 'package:fines_plus/features/vehicle/presentation/cubit/car_cubit.dart';
+import 'package:fines_plus/features/vehicle/presentation/cubit/car_info_cubit.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -59,6 +60,7 @@ import '../config/app_config.dart';
 class AppInitializer {
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
   late final ReferralCubit referralCubit;
+  late final CarInfoCubit carInfoCubit;
   late final PurchaseCubit purchaseCubit;
   late final RegistrationCubit registrationCubit;
   late final FuelStationCubit fuelStationCubit;
@@ -191,7 +193,7 @@ class AppInitializer {
 
     historyCubit = HistoryCubit(repository: historyRepository, carCubit: carCubit);
     analyticsCubit = AnalyticsCubit(repository: analyticsRepository, carCubit: carCubit);
-
+    carInfoCubit = CarInfoCubit(carInfoRepository, historyCubit);
     carCubit.setHistoryCubit(historyCubit);
 
     purchaseCubit = PurchaseCubit(PurchaseService(), enabled: remoteConfigService.isPurchaseEnabled);
@@ -257,6 +259,7 @@ class AppInitializer {
       historyRepository: historyRepository,
       referralCubit: referralCubit,
       purchaseCubit: purchaseCubit,
+      carInfoCubit: carInfoCubit,
       registrationCubit: registrationCubit,
       fuelStationCubit: fuelStationCubit,
       maintenanceCubit: maintenanceCubit,
@@ -341,6 +344,7 @@ class AppInitResult {
   final ReminderRepository reminderRepository;
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
   final PushHelper pushHelper;
+  final CarInfoCubit carInfoCubit;
   final HistoryRepository historyRepository;
   final ReferralCubit referralCubit;
   final PurchaseCubit purchaseCubit;
@@ -370,6 +374,7 @@ class AppInitResult {
     required this.reminderRepository,
     required this.flutterLocalNotificationsPlugin,
     required this.pushHelper,
+    required this.carInfoCubit,
     required this.historyRepository,
     required this.referralCubit,
     required this.purchaseCubit,
