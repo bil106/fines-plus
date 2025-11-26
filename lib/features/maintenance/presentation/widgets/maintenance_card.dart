@@ -8,7 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class MaintenanceCard extends StatelessWidget {
-  final String title;
+  final String description;
+  final String category;
   final double progress;
   final String? priorExecution;
   final int? lastMileage;
@@ -23,7 +24,8 @@ class MaintenanceCard extends StatelessWidget {
 
   const MaintenanceCard({
     super.key,
-    required this.title,
+    required this.description,
+    required this.category,
     required this.progress,
     this.priorExecution,
     this.lastMileage,
@@ -55,12 +57,26 @@ class MaintenanceCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
+          Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(child: Text(title, style: textTheme.black16bold)),
-                const Icon(Icons.settings, size: 20, color: AppColors.neutreGrey),
+              
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(category, style: textTheme.black16bold.copyWith(fontWeight: FontWeight.bold)),
+                      const SizedBox(height: 4),
+                      Text(description, style: textTheme.black16bold),
+                    ],
+                  ),
+                ),
+
+               
+                Icon(Icons.settings, size: 20, color: AppColors.neutreGrey),
               ],
             ),
+
             AppSpacers.verticalMedium,
 
             Row(

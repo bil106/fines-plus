@@ -452,7 +452,7 @@ class MessageLookup extends MessageLookupByLibrary {
         MessageLookupByLibrary.simpleMessage(
           "Головний циліндр зчеплення - заміна",
         ),
-    "service_icon": MessageLookupByLibrary.simpleMessage("Послуга"),
+    "service_icon": MessageLookupByLibrary.simpleMessage("Сервис"),
     "service_inzhektor_chystka": MessageLookupByLibrary.simpleMessage(
       "Інжектор - чистка (без урахування спецрідини)",
     ),

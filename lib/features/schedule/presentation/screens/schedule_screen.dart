@@ -6,6 +6,7 @@ import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:fines_plus/features/expenses/data/models/service_record.dart';
 import 'package:fines_plus/features/home/presentation/cubit/quick_actions_cubit.dart';
+import 'package:fines_plus/features/home/presentation/cubit/quick_actions_state.dart';
 import 'package:fines_plus/features/maintenance/data/repository/schedule_firebase_repository.dart';
 import 'package:fines_plus/features/schedule/presentation/widgets/action_detail_sheet.dart';
 import 'package:fines_plus/features/maintenance/presentation/widgets/maintenance_card.dart';
@@ -54,9 +55,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _checkInitialAction();
 
-  
       final quickActionsCubit = context.read<QuickActionsCubit>();
-      // final scheduleCubit = context.read<ScheduleCubit>();
       quickActionsCubit.init();
     });
   }
@@ -83,8 +82,14 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
           title: Text('attention'),
           content: Text('no_such_service'),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(context, false), child: Text(S.of(context).cancel)),
-            TextButton(onPressed: () => Navigator.pop(context, true), child: Text('create')),
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: Text(S.of(context).cancel),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: Text('create'),
+            ),
           ],
         ),
       );
@@ -93,9 +98,11 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
         _openActionDetailSheet(key);
       }
     } else {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text("${matchingTask.serviceName} ${S.of(context).already_planned}")));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("${matchingTask.serviceName} ${S.of(context).already_planned}"),
+        ),
+      );
     }
   }
 
@@ -103,11 +110,13 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
       builder: (context) => Padding(
         padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
         child: ActionDetailSheet(
-          title: key,
+          description: key,
           lastServiceDate: null,
           lastMileage: 0,
           actualMileage: 0,
@@ -167,136 +176,183 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
           ),
         ),
       ],
-      child: BlocBuilder<ScheduleCubit, ScheduleState>(
-        builder: (context, state) {
-          final scheduleCubit = context.read<ScheduleCubit>();
-          final reminderCubit = context.read<ReminderCubit>();
+      child: BlocListener<QuickActionsCubit, QuickActionsState>(
+        listener: (context, state) {
+          if (state.hasOilTask) {
+            final scheduleCubit = context.read<ScheduleCubit>();
+            final reminderCubit = context.read<ReminderCubit>();
 
-          return Scaffold(
-            backgroundColor: AppColors.grey50,
-            appBar: AppBar(backgroundColor: AppColors.grey50),
-            body: state.loading
-                ? const Center(child: CircularProgressIndicator())
-                : state.tasks.isEmpty
-                ? Center(child: Text(S.of(context).no_tasks))
-                : ListView.separated(
-                    padding: const EdgeInsets.all(1),
-                    itemCount: state.tasks.length,
-                    separatorBuilder: (_, __) => AppSpacers.verticalMedium,
-                    itemBuilder: (context, index) {
-                      final task = state.tasks[index];
-                      return MaintenanceCard(
-                        title: task.title,
-                        progress: task.getProgress(),
-                        priorExecution: task.lastServiceDate != null
-                            ? DateFormat('dd.MM.yyyy').format(task.lastServiceDate!)
-                            : null,
-                        lastMileage: task.lastMileage,
-                        actualMileage: getMaxMileage(newMileage: task.lastMileage),
-                        intervalKm: task.intervalKm,
-                        onPressed: () async {
-                          final result = await showModalBottomSheet<Map<String, dynamic>>(
-                            context: context,
-                            isScrollControlled: true,
-                            shape: const RoundedRectangleBorder(
-                              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-                            ),
-                            builder: (_) => ActionDetailSheet(
-                              title: task.title,
-                              lastServiceDate: task.lastServiceDate != null
+            final alreadyExists = scheduleCubit.state.tasks.any(
+              (t) => t.description.toLowerCase() == 'oil',
+            );
+            if (!alreadyExists) {
+              final settingsCubit = context.read<SettingsCubit>();
+              final unit = settingsCubit.state.unit;
+
+             
+final data = state.lastCreatedTaskData;
+              if (data == null) return;
+
+              final lastMileageKm = data["mileage"] ?? 0;
+              final intervalKm = data["intervalKm"] ?? 0;
+              // final lastMil = unit == 'mil' ? (lastMileageKm / 0.621371).round() : lastMileageKm;
+              final intervalKmValue = unit == 'mil' ? (intervalKm / 0.621371).round() : intervalKm;
+              int getMaxMileage({int? newMileage}) {
+                final cubit = context.read<MaintenanceCubit>();
+                final allMileages = [
+                  ...cubit.state.serviceRecords.map((r) => r.mileage),
+                  ...cubit.state.fuelRecords.map((r) => r.mileage),
+                  ...cubit.state.tuningRecords.map((r) => r.mileage),
+                  ...cubit.state.carWashRecords.map((r) => r.mileage),
+                  if (newMileage != null) newMileage,
+                ];
+                return allMileages.isEmpty ? 0 : allMileages.reduce((a, b) => a > b ? a : b);
+              }
+               final DateTime? selectedDate = data['date'] as DateTime?;
+            final newTask = MaintenanceTask(
+                description: data['description'] ?? 'No name',
+                category: data['category'] ?? 'No name',
+                lastServiceDate: selectedDate,
+                lastMileage: lastMileageKm,
+                 actualMileage: getMaxMileage(newMileage: lastMileageKm),
+                intervalKm: intervalKmValue == 0 ? null : intervalKmValue,
+                intervalTime: data['byDate'] == true ? Duration(days: data['intervalDays'] ?? 180) : null,
+                comment: data['comment'] as String?,
+              );
+
+              scheduleCubit.addTask(newTask, reminderCubit: reminderCubit);
+            
+            }
+          }
+        },
+        child: BlocBuilder<ScheduleCubit, ScheduleState>(
+          builder: (context, state) {
+            final scheduleCubit = context.read<ScheduleCubit>();
+            final reminderCubit = context.read<ReminderCubit>();
+
+            return Scaffold(
+              backgroundColor: AppColors.grey50,
+              appBar: AppBar(backgroundColor: AppColors.grey50),
+              body: state.loading
+                  ? const Center(child: CircularProgressIndicator())
+                  : state.tasks.isEmpty
+                      ? Center(child: Text(S.of(context).no_tasks))
+                      : ListView.separated(
+                          padding: const EdgeInsets.all(1),
+                          itemCount: state.tasks.length,
+                          separatorBuilder: (_, __) => AppSpacers.verticalMedium,
+                          itemBuilder: (context, index) {
+                            final task = state.tasks[index];
+                            return MaintenanceCard(
+                              description: task.description,
+                              category: task.category,
+                              progress: task.getProgress(),
+                              priorExecution: task.lastServiceDate != null
                                   ? DateFormat('dd.MM.yyyy').format(task.lastServiceDate!)
                                   : null,
                               lastMileage: task.lastMileage,
                               actualMileage: getMaxMileage(newMileage: task.lastMileage),
                               intervalKm: task.intervalKm,
-                              comment: task.comment,
-                              byDate: task.intervalTime != null,
-                              byMileage: task.intervalKm != null,
-                            ),
-                          );
+                              onPressed: () async {
+                                final result = await showModalBottomSheet<Map<String, dynamic>>(
+                                  context: context,
+                                  isScrollControlled: true,
+                                  shape: const RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                                  ),
+                                  builder: (_) => ActionDetailSheet(
+                                    description: task.description,
+                                    category: task.category,
+                                    lastServiceDate: task.lastServiceDate != null
+                                        ? DateFormat('dd.MM.yyyy').format(task.lastServiceDate!)
+                                        : null,
+                                    lastMileage: task.lastMileage,
+                                    actualMileage: getMaxMileage(newMileage: task.lastMileage),
+                                    intervalKm: task.intervalKm,
+                                    comment: task.comment,
+                                    byDate: task.intervalTime != null,
+                                    byMileage: task.intervalKm != null,
+                                  ),
+                                );
 
-                          if (result != null) {
-                            final last = result["mileage"] ?? task.lastMileage;
-                            final actual = getMaxMileage(newMileage: last);
+                                if (result != null) {
+                                  final last = result["mileage"] ?? task.lastMileage;
+                                  final actual = getMaxMileage(newMileage: last);
 
-                            final updatedTask = task.copyWith(
-                              title: result["title"],
-                              lastServiceDate: result["date"] as DateTime?,
-                              lastMileage: last,
-                              actualMileage: actual,
-                              intervalKm: result["intervalKm"] ?? task.intervalKm,
-                              intervalTime: result["byDate"] ? Duration(days: result["intervalDays"]) : null,
-                              comment: result["comment"],
+                                  final updatedTask = task.copyWith(
+                                    description: result["description"],
+                                    category: result["category"],
+                                    lastServiceDate: result["date"] as DateTime?,
+                                    lastMileage: last,
+                                    actualMileage: actual,
+                                    intervalKm: result["intervalKm"] ?? task.intervalKm,
+                                    intervalTime: result["byDate"] ? Duration(days: result["intervalDays"]) : null,
+                                    comment: result["comment"],
+                                  );
+
+                                  scheduleCubit.updateTask(index, updatedTask, reminderCubit: reminderCubit);
+                                  context.read<QuickActionsCubit>().init();
+                                }
+                              },
+                              onDelete: () {
+                                scheduleCubit.removeTask(index);
+                                context.read<QuickActionsCubit>().onOilTaskDeleted();
+                              },
                             );
+                          },
+                        ),
+              floatingActionButton: FloatingActionButton(
+                onPressed: () async {
+                  final cubit = context.read<QuickActionsCubit>();
 
-                            scheduleCubit.updateTask(index, updatedTask, reminderCubit: reminderCubit);
-
-                            context.read<QuickActionsCubit>().init();
-                          }
-                        },
-                        onDelete: () {
-                          scheduleCubit.removeTask(index);
-
-                          context.read<QuickActionsCubit>().onOilTaskDeleted();
-                        },
-                      );
-                    },
-                  ),
-            floatingActionButton: FloatingActionButton(
-              onPressed: () async {
-                final cubit = context.read<QuickActionsCubit>();
-
-                final result = await showModalBottomSheet<Map<String, dynamic>>(
-                  context: context,
-                  isScrollControlled: true,
-                  shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
-                  builder: (_) => ActionDetailSheet(
-                    onSave: (data) {
-                      if ((data["title"] as String).toLowerCase() == 'oil') {
-                        cubit.onOilTaskCreated();
-                      }
-                    },
-                  ),
-                );
-
-                if (result != null) {
-                  // final last = result["mileage"] ?? 0;
-                  // final actual = getMaxMileage(newMileage: last);
-
-                  // final newTask = MaintenanceTask(
-                  //   title: result["title"] ?? S.of(context).no_name,
-                  //   lastServiceDate: result["date"] as DateTime?,
-                  //   lastMileage: last,
-                  //   actualMileage: actual,
-                  //   intervalKm: result["intervalKm"] ?? 0,
-                  //   intervalTime: result["byDate"] ? Duration(days: result["intervalDays"]) : null,
-                  //   comment: result["comment"],
-                  // );
-                  final settingsCubit = context.read<SettingsCubit>();
-                  final unit = settingsCubit.state.unit;
-
-                  final lastMileageInput = result["mileage"] ?? 0;
-                  final intervalInput = result["intervalKm"] ?? 0;
-
-                  final lastMileageKm = unit == 'mil' ? (lastMileageInput / 0.621371).round() : lastMileageInput;
-                  final intervalKm = unit == 'mil' ? (intervalInput / 0.621371).round() : intervalInput;
-final newTask = MaintenanceTask(
-                    title: result["title"] ?? S.of(context).no_name,
-                    lastServiceDate: result["date"] as DateTime?,
-                    lastMileage: lastMileageKm,
-                    actualMileage: getMaxMileage(newMileage: lastMileageKm),
-                    intervalKm: intervalKm,
-                    intervalTime: result["byDate"] ? Duration(days: result["intervalDays"]) : null,
-                    comment: result["comment"],
+                  final result = await showModalBottomSheet<Map<String, dynamic>>(
+                    context: context,
+                    isScrollControlled: true,
+                    shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+                    builder: (_) => ActionDetailSheet(
+                      onSave: (data) async {
+                        if ((data["title"] as String).toLowerCase() == 'oil') {
+                          await cubit.onTaskCreated(data);
+                        }
+                      },
+                    ),
                   );
-                  scheduleCubit.addTask(newTask, reminderCubit: reminderCubit);
-                }
-              },
-              child: const Icon(Icons.add),
-            ),
-          );
-        },
+
+                  if (result != null) {
+                    final settingsCubit = context.read<SettingsCubit>();
+                    final unit = settingsCubit.state.unit;
+
+                    final lastMileageInput = result["mileage"] ?? 0;
+                    final intervalInput = result["intervalKm"] ?? 0;
+
+                    final lastMileageKm =
+                        unit == 'mil' ? (lastMileageInput / 0.621371).round() : lastMileageInput;
+                    final intervalKm = unit == 'mil' ? (intervalInput / 0.621371).round() : intervalInput;
+
+                    final newTask = MaintenanceTask(
+                      description: result["description"] ?? S.of(context).no_name,
+                      category: result["category"] ?? S.of(context).no_name,
+                      lastServiceDate: result["date"] as DateTime?,
+                      lastMileage: lastMileageKm,
+                      actualMileage: getMaxMileage(newMileage: lastMileageKm),
+                      intervalKm: intervalKm,
+                      intervalTime: result["byDate"] ? Duration(days: result["intervalDays"]) : null,
+                      comment: result["comment"],
+                    );
+
+                    scheduleCubit.addTask(newTask, reminderCubit: reminderCubit);
+                     
+                  }
+                },
+                child: const Icon(Icons.add),
+              ),
+            );
+          },
+        ),
       ),
     );
   }
 }
+
+

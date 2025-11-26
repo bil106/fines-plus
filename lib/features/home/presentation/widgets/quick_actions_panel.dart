@@ -2,8 +2,8 @@ import 'package:core_localization/generated/l10n.dart';
 import 'package:fines_plus/features/home/presentation/cubit/quick_actions_cubit.dart';
 import 'package:fines_plus/features/home/presentation/cubit/quick_actions_state.dart';
 import 'package:fines_plus/features/home/presentation/widgets/action_item.dart';
+import 'package:fines_plus/features/schedule/presentation/widgets/action_detail_sheet.dart';
 import 'package:fines_plus/router/home_screen_wrapper.dart';
-import 'package:flutter/foundation.dart';
 
 
 import 'package:flutter/material.dart';
@@ -28,8 +28,8 @@ class QuickActionsPanel extends StatelessWidget {
           ),
           itemBuilder: (context, index) {
             final action = state.actions[index];
-            final isOilAction = action.labelKey == 'Oil';
-            final isActive = action.labelKey == 'Oil' && state.hasOilTask;
+           
+          final isActive = state.activeCategories.contains(action.labelKey);
 
 
             return ActionItem(
@@ -37,24 +37,32 @@ class QuickActionsPanel extends StatelessWidget {
               label: _translateLabel(action.labelKey, context),
               isSelected: isActive,
               labelKey: action.labelKey,
-              onTap: () async {
+            onTap: () async {
+                final labelKey = action.labelKey;
                 final wrapperState = context.findAncestorStateOfType<HomeScreenWrapperState>();
-              
-                if (isOilAction) {
-                  if (state.hasOilTask) {
-                    if (kDebugMode) {
-                      print('💧 Oil action tapped: going to ScheduleScreen');
-                    }
-                       
-                   wrapperState?.openAnalyticsTab(2);
-                  } else {
-                    if (kDebugMode) {
-                      print('💧 Oil action tapped: no Oil task');
-                    }
-                    wrapperState?.openAnalyticsTab(2);
-                  }
-                }
+
+                await showModalBottomSheet<Map<String, dynamic>>(
+                  context: context,
+                  isScrollControlled: true,
+                  builder: (ctx) => ActionDetailSheet(
+                    description: _translateLabel(labelKey, context),
+                   category: labelKey,
+                    byDate: false,
+                    byMileage: true,
+                    
+                  ),
+                ).then((result) async {
+                  if (result == null) return;
+
+             
+                  final quick = context.read<QuickActionsCubit>();
+                  await quick.onTaskCreated(result, labelKey: labelKey);
+
+                
+                  wrapperState?.openAnalyticsTab(2); 
+                });
               },
+
             );
           },
         );

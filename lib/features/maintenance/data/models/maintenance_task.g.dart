@@ -8,7 +8,8 @@ part of 'maintenance_task.dart';
 
 MaintenanceTask _$MaintenanceTaskFromJson(Map<String, dynamic> json) =>
     MaintenanceTask(
-      title: json['title'] as String,
+      description: json['description'] as String,
+      category: json['category'] as String,
       lastServiceDate: json['lastServiceDate'] == null
           ? null
           : DateTime.parse(json['lastServiceDate'] as String),
@@ -23,7 +24,8 @@ MaintenanceTask _$MaintenanceTaskFromJson(Map<String, dynamic> json) =>
 
 Map<String, dynamic> _$MaintenanceTaskToJson(MaintenanceTask instance) =>
     <String, dynamic>{
-      'title': instance.title,
+      'description': instance.description,
+      'category': instance.category,
       'lastServiceDate': instance.lastServiceDate?.toIso8601String(),
       'lastMileage': instance.lastMileage,
       'actualMileage': instance.actualMileage,

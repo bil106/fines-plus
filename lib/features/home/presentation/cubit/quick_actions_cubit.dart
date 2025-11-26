@@ -21,20 +21,43 @@ class QuickActionsCubit extends Cubit<QuickActionsState> {
           ],
         ),
       );
-
   Future<void> init() async {
     final hasOil = await tasksRepository.hasTaskOfType('oil');
     emit(state.copyWith(hasOilTask: hasOil));
   }
 
-  Future<void> onOilTaskCreated() async {
-    await tasksRepository.createTask('oil');
-    emit(state.copyWith(hasOilTask: true));
+ 
+Future<void> onTaskCreated(Map<String, dynamic> data, {String? labelKey}) async {
+    if (labelKey != null) {
+    
+      final updated = List<String>.from(state.activeCategories);
+
+    
+      if (!updated.contains(labelKey)) {
+        updated.add(labelKey);
+      }
+
+      if (labelKey.toLowerCase() == 'oil') {
+        await tasksRepository.createTask('oil');
+        emit(state.copyWith(hasOilTask: true, lastCreatedOilTask: data, activeCategories: updated));
+      } else {
+        emit(state.copyWith(lastCreatedOilTask: data, activeCategories: updated));
+      }
+    } else {
+      emit(state.copyWith(lastCreatedOilTask: data));
+    }
+  }
+
+
+
+  void clearLastCreatedTaskData() {
+    emit(state.copyWith(lastCreatedOilTask: null));
   }
 
   Future<void> onOilTaskDeleted() async {
-    await tasksRepository.removeTask('oil'); 
+    await tasksRepository.removeTask('oil');
     emit(state.copyWith(hasOilTask: false));
   }
+  
 }
 

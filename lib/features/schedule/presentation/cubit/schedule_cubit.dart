@@ -52,17 +52,17 @@ Future<void> loadTasks() async {
   }
 
 
-  void addTask(MaintenanceTask task, {ReminderCubit? reminderCubit}) async {
+ void addTask(MaintenanceTask task, {ReminderCubit? reminderCubit}) async {
     final updatedTasks = List<MaintenanceTask>.from(state.tasks)..add(task);
     emit(state.copyWith(tasks: updatedTasks));
 
-    await repository.saveTasks(carNumber,updatedTasks);
+    await repository.saveTasks(carNumber, updatedTasks);
 
-    if (reminderCubit != null && task.intervalTime != null) {
-    
-      await reminderCubit.addReminderFromTask(task);
-    }
+
+    await _checkTask(task, reminderCubit);
   }
+
+
 
   Future<void> updateTask(int index, MaintenanceTask task, {ReminderCubit? reminderCubit}) async {
     final updatedTasks = List<MaintenanceTask>.from(state.tasks);
@@ -77,29 +77,29 @@ Future<void> loadTasks() async {
 
   Future<void> _checkTask(MaintenanceTask task, ReminderCubit? reminderCubit) async {
     final progress = task.getProgress();
-    debugPrint("🔍 Checking progress for ${task.title}: ${(progress * 100).toStringAsFixed(1)}%");
+    debugPrint("🔍 Checking progress for ${task.description}: ${(progress * 100).toStringAsFixed(1)}%");
 
     if (reminderCubit != null && progress >= 0.9) {
       final reminder = ReminderModel(
         id: const Uuid().v4(),
-        title: "${S.current.reminder}: ${task.title}",
-        description: _generateDescription(task.title),
+        title: "${S.current.reminder}: ${task.description}",
+        description: _generateDescription(task.description),
         dateTime: DateTime.now().add(const Duration(seconds: 5)),
         isCompleted: false,
         userId: userId,
       );
       await reminderCubit.addReminder(reminder);
-      debugPrint("Reminder created for ${task.title}");
+      debugPrint("Reminder created for ${task.description}");
     }
 
     if (progress >= 0.9) {
       await pushHelper.scheduleNotification(
-        id: task.title.hashCode,
+        id: task.description.hashCode,
         title: S.current.resource_out,
-        body: '${task.title} ${S.current.reached_usage}',
+        body: '${task.description} ${S.current.reached_usage}',
         dateTime: DateTime.now().add(const Duration(seconds: 5)),
       );
-      debugPrint("Notification scheduled for ${task.title}");
+      debugPrint("Notification scheduled for ${task.description}");
     }
   }
 
@@ -122,6 +122,23 @@ Future<void> loadTasks() async {
     emit(state.copyWith(tasks: [], loading: true));
     await loadTasks();
   }
+Future<void> addReminderFromTask(MaintenanceTask task, ReminderCubit? reminderCubit) async {
+  // Старая проверка:
+  // if (task.intervalTime == null) return;
+
+  final reminder = ReminderModel(
+    title: task.description,
+    dateTime: task.lastServiceDate ?? DateTime.now(),
+    id: DateTime.now().millisecondsSinceEpoch.toString(),
+    description: '',
+    userId: userId, 
+  );
+
+  await reminderCubit?.addReminder(reminder);
+}
+
+
+
 
     @override
   Future<void> close() {

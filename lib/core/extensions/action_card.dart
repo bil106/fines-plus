@@ -115,7 +115,7 @@ class ActionCard extends StatelessWidget {
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
                     builder: (_) => Padding(
                       padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-                      child: ActionDetailSheet(title: title),
+                      child: ActionDetailSheet(description: title),
                     ),
                   );
                 },

@@ -5,14 +5,14 @@ import 'package:design_system/theme/app_theme.dart';
 import 'package:fines_plus/core/extensions/service_list.dart';
 import 'package:fines_plus/features/home/presentation/cubit/quick_actions_cubit.dart';
 import 'package:fines_plus/features/settings/presentation/cubit/settings_cubit.dart';
-import 'package:fines_plus/features/settings/presentation/cubit/unit_stream.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ActionDetailSheet extends StatefulWidget {
   final void Function(Map<String, dynamic>)? onSave;
-  final String? title;
+  final String? description;
+  final String? category;
   final String? lastServiceDate;
   final int? lastMileage;
   final int? actualMileage;
@@ -23,7 +23,8 @@ class ActionDetailSheet extends StatefulWidget {
 
   const ActionDetailSheet({
     super.key,
-    this.title,
+    this.description,
+    this.category,
     this.lastServiceDate,
     this.lastMileage,
     this.actualMileage,
@@ -39,7 +40,8 @@ class ActionDetailSheet extends StatefulWidget {
 }
 
 class _ActionDetailSheetState extends State<ActionDetailSheet> {
-  late TextEditingController titleController;
+  late TextEditingController descriptionController;
+  late TextEditingController categoryController;
   late TextEditingController dateController;
   late TextEditingController mileageController;
   late TextEditingController intervalController;
@@ -48,14 +50,15 @@ class _ActionDetailSheetState extends State<ActionDetailSheet> {
   bool byDate = false;
   bool byMileage = true;
   DateTime? selectedDate;
-
+  final List<String> nameOptions = ['Oil', 'Coolant', 'Service', 'Repair', 'Battery', 'Tuning', 'Tires', 'Insurance'];
   @override
   void initState() {
     super.initState();
     final settingsCubit = context.read<SettingsCubit>();
     final unit = settingsCubit.state.unit;
 
-    titleController = TextEditingController(text: widget.title);
+    descriptionController = TextEditingController(text: widget.description);
+    categoryController = TextEditingController(text: widget.category);
     dateController = TextEditingController(text: widget.lastServiceDate);
     commentController = TextEditingController(text: widget.comment);
 
@@ -93,11 +96,12 @@ class _ActionDetailSheetState extends State<ActionDetailSheet> {
       });
     }
   }
+  
   @override
   Widget build(BuildContext context) {
     final settingsCubit = context.watch<SettingsCubit>();
     final unit = settingsCubit.state.unit;
-    final unitStream = UnitStream(settingsCubit);
+    // final unitStream = UnitStream(settingsCubit);
     final textTheme = Theme.of(context).textTheme;
     return Padding(
       padding: EdgeInsets.only(
@@ -112,22 +116,40 @@ class _ActionDetailSheetState extends State<ActionDetailSheet> {
           children: [
             Row(
               children: [
-                Expanded(child: Text(widget.title ?? S.of(context).new_task, style: textTheme.black18W500)),
+                Expanded(child: Text(widget.description ?? S.of(context).new_task, style: textTheme.black18W500)),
                 IconButton(icon: const Icon(Icons.close), onPressed: () => Navigator.pop(context)),
               ],
             ),
             AppSpacers.verticalMedium,
-            
+            DropdownButtonFormField<String>(
+              decoration: InputDecoration(
+                labelText: "Category",
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.list, color: AppColors.blueAccent),
+              ),
+              value: nameOptions.contains(categoryController.text) ? categoryController.text : null,
+              items: nameOptions.map((name) => DropdownMenuItem<String>(value: name, child: Text(name))).toList(),
+              onChanged: (value) {
+                if (value != null) {
+                  setState(() {
+                    categoryController.text = value;
+                  });
+                }
+              },
+            ),
+
+            SizedBox(height: 16),
+
             Autocomplete<String>(
               optionsBuilder: (TextEditingValue value) {
                 if (value.text.isEmpty) return ServiceList.names;
                 return ServiceList.names.where((option) => option.toLowerCase().contains(value.text.toLowerCase()));
               },
               onSelected: (val) {
-                titleController.text = val;
+                descriptionController.text = val;
               },
               fieldViewBuilder: (context, controller, focusNode, onFieldSubmitted) {
-                titleController = titleController;
+                descriptionController = descriptionController;
                 return TextField(
                   controller: controller,
                   focusNode: focusNode,
@@ -140,7 +162,8 @@ class _ActionDetailSheetState extends State<ActionDetailSheet> {
               },
             ),
             AppSpacers.verticalMedium,
-                   TextField(
+                  // --- Input Date ---
+            TextField(
               controller: dateController,
               readOnly: true,
               onTap: _pickDate,
@@ -151,38 +174,28 @@ class _ActionDetailSheetState extends State<ActionDetailSheet> {
               ),
             ),
             AppSpacers.verticalMedium,
-            StreamBuilder<double>(
-              stream: unitStream.unitValueStream(double.tryParse(mileageController.text) ?? 0),
-              initialData: double.tryParse(mileageController.text) ?? 0,
-              builder: (context, snapshot) {
-                mileageController.text = snapshot.data?.toStringAsFixed(0) ?? '0';
-                return TextField(
-                  controller: mileageController,
-                  keyboardType: TextInputType.number,
-                  inputFormatters: [FilteringTextInputFormatter.digitsOnly, LengthLimitingTextInputFormatter(6)],
-                  decoration: InputDecoration(
-                    labelText: "${S.of(context).mileage} ($unit)",
-                    border: OutlineInputBorder(),
-                  ),
-                );
-              },
+
+            // --- Mileage ---
+            TextField(
+              controller: mileageController,
+              keyboardType: TextInputType.number,
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly, LengthLimitingTextInputFormatter(6)],
+              decoration: InputDecoration(labelText: "${S.of(context).mileage} ($unit)", border: OutlineInputBorder()),
             ),
             AppSpacers.verticalMedium,
-            StreamBuilder<double>(
-              stream: unitStream.unitValueStream(double.tryParse(intervalController.text) ?? 0),
-              initialData: double.tryParse(intervalController.text) ?? 0,
-              builder: (context, snapshot) {
-                intervalController.text = snapshot.data?.toStringAsFixed(0) ?? '0';
-                return TextField(
-                  controller: intervalController,
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                    labelText: "${S.of(context).periodicity} ($unit)",
-                    border: OutlineInputBorder(),
-                  ),
-                );
-              },
+
+            // --- Interval ---
+            TextField(
+              controller: intervalController,
+              keyboardType: TextInputType.number,
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly, LengthLimitingTextInputFormatter(6)],
+              decoration: InputDecoration(
+                labelText: "${S.of(context).periodicity} ($unit)",
+                border: OutlineInputBorder(),
+              ),
             ),
+          
+
             AppSpacers.verticalMedium,
             Row(
               children: [
@@ -206,7 +219,8 @@ class _ActionDetailSheetState extends State<ActionDetailSheet> {
               child: ElevatedButton(
                 onPressed: () async {
                   final result = {
-                    "title": titleController.text,
+                    "description": descriptionController.text,
+                    "category": categoryController.text,
                     "date": selectedDate,
                     "mileage": int.tryParse(mileageController.text),
                     "intervalKm": int.tryParse(intervalController.text),
@@ -219,7 +233,7 @@ class _ActionDetailSheetState extends State<ActionDetailSheet> {
                   if (widget.onSave != null) {
                     widget.onSave!(result); 
                       final cubit = context.read<QuickActionsCubit>();
-                await cubit.onOilTaskCreated();
+                await cubit.onTaskCreated(result);
                   }
 
                   Navigator.pop(context, result);

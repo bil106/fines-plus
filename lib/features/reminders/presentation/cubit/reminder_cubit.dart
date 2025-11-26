@@ -119,19 +119,18 @@ Future<void> updateReminder(ReminderModel reminder) async {
     }
   }
 
-  Future<void> addReminderFromTask(MaintenanceTask task) async {
-    if (task.intervalTime == null) return;
-
+Future<void> addReminderFromTask(MaintenanceTask task) async {
     final reminder = ReminderModel(
-      title: task.title,
+      title: task.description,
       dateTime: task.lastServiceDate ?? DateTime.now(),
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       description: '',
-      userId: userId, 
+      userId: userId,
     );
 
     await addReminder(reminder);
   }
+
 }
 
 
