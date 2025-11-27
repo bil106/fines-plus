@@ -2,27 +2,40 @@ import 'package:flutter/material.dart';
 
 class QuickActionsState {
   final List<ActionItemModel> actions;
-  final List<String> activeCategories;
   final int selectedIndex;
   final bool hasOilTask;
-  final Map<String, dynamic>? lastCreatedTaskData;
 
-  QuickActionsState({required this.actions,
-    this.activeCategories = const [], this.selectedIndex = -1, this.hasOilTask = false,this.lastCreatedTaskData,});
+  /// map: labelKey -> task data
+  final Map<String, Map<String, dynamic>> createdTasks;
 
-  QuickActionsState copyWith({List<ActionItemModel>? actions,
-    List<String>? activeCategories, int? selectedIndex, bool? hasOilTask,
-    Map<String, dynamic>? lastCreatedOilTask,
+  final List<String> activeCategories;
+
+  QuickActionsState({
+    required this.actions,
+    this.selectedIndex = -1,
+    this.hasOilTask = false,
+    this.createdTasks = const {},
+    this.activeCategories = const [],
+  });
+
+  QuickActionsState copyWith({
+    List<ActionItemModel>? actions,
+    int? selectedIndex,
+    bool? hasOilTask,
+    Map<String, Map<String, dynamic>>? createdTasks,
+    List<String>? activeCategories,
   }) {
     return QuickActionsState(
       actions: actions ?? this.actions,
-       activeCategories: activeCategories ?? this.activeCategories,
       selectedIndex: selectedIndex ?? this.selectedIndex,
       hasOilTask: hasOilTask ?? this.hasOilTask,
-      lastCreatedTaskData: lastCreatedOilTask ?? lastCreatedTaskData,
+      createdTasks: createdTasks ?? this.createdTasks,
+      activeCategories: activeCategories ?? this.activeCategories,
     );
   }
 }
+
+
 class ActionItemModel {
   final String labelKey;
   final IconData icon;

@@ -33,7 +33,7 @@ class QuickActionsPanel extends StatelessWidget {
               icon: action.icon,
               label: _translateLabel(action.labelKey, context),
               isSelected: isActive,
-              labelKey: action.labelKey,
+            
               onTap: () async {
                 final wrapperState = context.findAncestorStateOfType<HomeScreenWrapperState>();
 

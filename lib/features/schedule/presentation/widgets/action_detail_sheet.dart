@@ -233,7 +233,8 @@ class _ActionDetailSheetState extends State<ActionDetailSheet> {
                   if (widget.onSave != null) {
                     widget.onSave!(result); 
                       final cubit = context.read<QuickActionsCubit>();
-                await cubit.onTaskCreated(result);
+                      final category = (result["title"] as String).isNotEmpty ? result["title"] : 'Unknown';
+                await cubit.onTaskCreated(result, labelKey: category.toString());
                   }
 
                   Navigator.pop(context, result);

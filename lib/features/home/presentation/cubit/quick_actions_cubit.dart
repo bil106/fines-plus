@@ -21,43 +21,46 @@ class QuickActionsCubit extends Cubit<QuickActionsState> {
           ],
         ),
       );
+
   Future<void> init() async {
     final hasOil = await tasksRepository.hasTaskOfType('oil');
     emit(state.copyWith(hasOilTask: hasOil));
   }
 
- 
-Future<void> onTaskCreated(Map<String, dynamic> data, {String? labelKey}) async {
-    if (labelKey != null) {
-    
-      final updated = List<String>.from(state.activeCategories);
+  /// Создание задачи для любой категории
+  Future<void> onTaskCreated(Map<String, dynamic> data, {required String labelKey}) async {
+    final updatedActive = List<String>.from(state.activeCategories);
+    if (!updatedActive.contains(labelKey)) updatedActive.add(labelKey);
 
-    
-      if (!updated.contains(labelKey)) {
-        updated.add(labelKey);
-      }
+    final updatedTasks = Map<String, Map<String, dynamic>>.from(state.createdTasks);
+    updatedTasks[labelKey] = data;
 
-      if (labelKey.toLowerCase() == 'oil') {
-        await tasksRepository.createTask('oil');
-        emit(state.copyWith(hasOilTask: true, lastCreatedOilTask: data, activeCategories: updated));
-      } else {
-        emit(state.copyWith(lastCreatedOilTask: data, activeCategories: updated));
-      }
-    } else {
-      emit(state.copyWith(lastCreatedOilTask: data));
+    // Создаём задачу в репозитории для всех категорий
+    await tasksRepository.createTask(labelKey.toLowerCase());
+
+    emit(
+      state.copyWith(
+        activeCategories: updatedActive,
+        createdTasks: updatedTasks,
+        hasOilTask: labelKey.toLowerCase() == 'oil' ? true : state.hasOilTask,
+      ),
+    );
+  }
+
+  void clearCreatedTask(String labelKey) {
+    final updatedTasks = Map<String, Map<String, dynamic>>.from(state.createdTasks);
+    updatedTasks.remove(labelKey);
+
+    final updatedActive = List<String>.from(state.activeCategories)..remove(labelKey);
+    emit(state.copyWith(createdTasks: updatedTasks, activeCategories: updatedActive));
+  }
+
+  Future<void> onTaskDeleted(String labelKey) async {
+    await tasksRepository.removeTask(labelKey.toLowerCase());
+    clearCreatedTask(labelKey);
+    if (labelKey.toLowerCase() == 'oil') {
+      emit(state.copyWith(hasOilTask: false));
     }
   }
-
-
-
-  void clearLastCreatedTaskData() {
-    emit(state.copyWith(lastCreatedOilTask: null));
-  }
-
-  Future<void> onOilTaskDeleted() async {
-    await tasksRepository.removeTask('oil');
-    emit(state.copyWith(hasOilTask: false));
-  }
-  
 }
 

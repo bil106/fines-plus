@@ -178,52 +178,37 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
       ],
       child: BlocListener<QuickActionsCubit, QuickActionsState>(
         listener: (context, state) {
-          if (state.hasOilTask) {
-            final scheduleCubit = context.read<ScheduleCubit>();
-            final reminderCubit = context.read<ReminderCubit>();
+          final scheduleCubit = context.read<ScheduleCubit>();
+          final reminderCubit = context.read<ReminderCubit>();
 
+          // проходимся по всем созданным задачам
+          state.createdTasks.forEach((labelKey, data) {
             final alreadyExists = scheduleCubit.state.tasks.any(
-              (t) => t.description.toLowerCase() == 'oil',
+              (t) => t.description.toLowerCase() == (data['description'] ?? '').toLowerCase(),
             );
             if (!alreadyExists) {
               final settingsCubit = context.read<SettingsCubit>();
               final unit = settingsCubit.state.unit;
 
-             
-final data = state.lastCreatedTaskData;
-              if (data == null) return;
-
               final lastMileageKm = data["mileage"] ?? 0;
               final intervalKm = data["intervalKm"] ?? 0;
-              // final lastMil = unit == 'mil' ? (lastMileageKm / 0.621371).round() : lastMileageKm;
               final intervalKmValue = unit == 'mil' ? (intervalKm / 0.621371).round() : intervalKm;
-              int getMaxMileage({int? newMileage}) {
-                final cubit = context.read<MaintenanceCubit>();
-                final allMileages = [
-                  ...cubit.state.serviceRecords.map((r) => r.mileage),
-                  ...cubit.state.fuelRecords.map((r) => r.mileage),
-                  ...cubit.state.tuningRecords.map((r) => r.mileage),
-                  ...cubit.state.carWashRecords.map((r) => r.mileage),
-                  if (newMileage != null) newMileage,
-                ];
-                return allMileages.isEmpty ? 0 : allMileages.reduce((a, b) => a > b ? a : b);
-              }
-               final DateTime? selectedDate = data['date'] as DateTime?;
-            final newTask = MaintenanceTask(
+
+              final selectedDate = data['date'] as DateTime?;
+              final newTask = MaintenanceTask(
                 description: data['description'] ?? 'No name',
                 category: data['category'] ?? 'No name',
                 lastServiceDate: selectedDate,
                 lastMileage: lastMileageKm,
-                 actualMileage: getMaxMileage(newMileage: lastMileageKm),
+                actualMileage: getMaxMileage(newMileage: lastMileageKm),
                 intervalKm: intervalKmValue == 0 ? null : intervalKmValue,
                 intervalTime: data['byDate'] == true ? Duration(days: data['intervalDays'] ?? 180) : null,
                 comment: data['comment'] as String?,
               );
 
               scheduleCubit.addTask(newTask, reminderCubit: reminderCubit);
-            
             }
-          }
+          });
         },
         child: BlocBuilder<ScheduleCubit, ScheduleState>(
           builder: (context, state) {
@@ -296,7 +281,7 @@ final data = state.lastCreatedTaskData;
                               },
                               onDelete: () {
                                 scheduleCubit.removeTask(index);
-                                context.read<QuickActionsCubit>().onOilTaskDeleted();
+                                context.read<QuickActionsCubit>().onTaskDeleted(task.category);
                               },
                             );
                           },
@@ -304,17 +289,17 @@ final data = state.lastCreatedTaskData;
               floatingActionButton: FloatingActionButton(
                 onPressed: () async {
                   final cubit = context.read<QuickActionsCubit>();
+                  final scheduleCubit = context.read<ScheduleCubit>();
+                  final reminderCubit = context.read<ReminderCubit>();
 
                   final result = await showModalBottomSheet<Map<String, dynamic>>(
                     context: context,
                     isScrollControlled: true,
-                    shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+                    shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
                     builder: (_) => ActionDetailSheet(
                       onSave: (data) async {
-                        if ((data["title"] as String).toLowerCase() == 'oil') {
-                          await cubit.onTaskCreated(data);
-                        }
+                        final category = data['category'] as String? ?? 'Unknown';
+                        await cubit.onTaskCreated(data, labelKey: category);
                       },
                     ),
                   );
@@ -326,8 +311,7 @@ final data = state.lastCreatedTaskData;
                     final lastMileageInput = result["mileage"] ?? 0;
                     final intervalInput = result["intervalKm"] ?? 0;
 
-                    final lastMileageKm =
-                        unit == 'mil' ? (lastMileageInput / 0.621371).round() : lastMileageInput;
+                    final lastMileageKm = unit == 'mil' ? (lastMileageInput / 0.621371).round() : lastMileageInput;
                     final intervalKm = unit == 'mil' ? (intervalInput / 0.621371).round() : intervalInput;
 
                     final newTask = MaintenanceTask(
@@ -342,11 +326,11 @@ final data = state.lastCreatedTaskData;
                     );
 
                     scheduleCubit.addTask(newTask, reminderCubit: reminderCubit);
-                     
                   }
                 },
                 child: const Icon(Icons.add),
               ),
+
             );
           },
         ),

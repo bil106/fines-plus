@@ -6,9 +6,16 @@ class ActionItem extends StatelessWidget {
   final String label;
   final VoidCallback onTap;
   final bool isSelected;
+  final String labelKey;
 
-  const ActionItem({super.key, required this.icon, required this.label, required this.onTap, required this.isSelected, required String labelKey});
-
+  const ActionItem({
+    super.key,
+    required this.icon,
+    required this.label,
+    required this.onTap,
+    required this.isSelected,
+    required this.labelKey,
+  });
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
