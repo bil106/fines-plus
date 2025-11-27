@@ -46,6 +46,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "amount_month": MessageLookupByLibrary.simpleMessage("Amount per month"),
     "analitics": MessageLookupByLibrary.simpleMessage("Analytics"),
     "analytics": MessageLookupByLibrary.simpleMessage("Analytics"),
+    "attention": MessageLookupByLibrary.simpleMessage("Attention"),
     "authorization_required": MessageLookupByLibrary.simpleMessage(
       "Authorization required",
     ),
@@ -117,6 +118,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "days": MessageLookupByLibrary.simpleMessage("days"),
     "days_free": MessageLookupByLibrary.simpleMessage("days free"),
+    "days_interv": MessageLookupByLibrary.simpleMessage("Days"),
     "days_left": MessageLookupByLibrary.simpleMessage("days left"),
     "del_all_expenses": MessageLookupByLibrary.simpleMessage(
       "Delete ALL expenses",
@@ -242,6 +244,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "insurance_control": MessageLookupByLibrary.simpleMessage(
       "Insurance control",
     ),
+    "interval": MessageLookupByLibrary.simpleMessage("Interval (km)"),
+    "interval_by_date": MessageLookupByLibrary.simpleMessage(
+      "Interval by date",
+    ),
     "invalid_email": MessageLookupByLibrary.simpleMessage("Invalid email"),
     "item_removed": MessageLookupByLibrary.simpleMessage("Item removed"),
     "keep_track": MessageLookupByLibrary.simpleMessage(
@@ -253,6 +259,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "large_login": MessageLookupByLibrary.simpleMessage("LOG IN"),
     "large_sign_up": MessageLookupByLibrary.simpleMessage("SIGN UP"),
     "last_event": MessageLookupByLibrary.simpleMessage("Last event"),
+    "last_service_date": MessageLookupByLibrary.simpleMessage(
+      "Last service date",
+    ),
     "loaded": MessageLookupByLibrary.simpleMessage("Loaded"),
     "login": MessageLookupByLibrary.simpleMessage("Login"),
     "logo": MessageLookupByLibrary.simpleMessage("LOGO"),
@@ -283,6 +292,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "month_nov": MessageLookupByLibrary.simpleMessage("Nov"),
     "month_oct": MessageLookupByLibrary.simpleMessage("Oct"),
     "month_sep": MessageLookupByLibrary.simpleMessage("Sep"),
+    "months": MessageLookupByLibrary.simpleMessage("Months"),
     "my_position": MessageLookupByLibrary.simpleMessage("You are here"),
     "name": MessageLookupByLibrary.simpleMessage("Name"),
     "new_reminder": MessageLookupByLibrary.simpleMessage("New reminder"),
@@ -304,6 +314,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "no_records": MessageLookupByLibrary.simpleMessage("No records"),
     "no_reminders": MessageLookupByLibrary.simpleMessage("No reminders"),
+    "no_such_service": MessageLookupByLibrary.simpleMessage("No_such_service"),
     "no_tasks": MessageLookupByLibrary.simpleMessage("No tasks"),
     "no_tokens_yet": MessageLookupByLibrary.simpleMessage("No tokens yet"),
     "not_auth": MessageLookupByLibrary.simpleMessage("Not authorized"),
@@ -965,5 +976,6 @@ class MessageLookup extends MessageLookupByLibrary {
       "Verification history",
     ),
     "write_viber": MessageLookupByLibrary.simpleMessage("Write to Viber"),
+    "years": MessageLookupByLibrary.simpleMessage("Years"),
   };
 }

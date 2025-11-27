@@ -3,11 +3,12 @@ import 'package:fines_plus/features/home/data/repositories/tasks_repository.dart
 import 'package:fines_plus/features/home/domain/entities/action_item_model.dart';
 import 'package:fines_plus/features/home/presentation/cubit/quick_actions_state.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class QuickActionsCubit extends Cubit<QuickActionsState> {
   final TasksRepository tasksRepository;
-
-  QuickActionsCubit(this.tasksRepository)
+  final SharedPreferences prefs;
+  QuickActionsCubit(this.tasksRepository, this.prefs)
     : super(
         QuickActionsState(
           actions: [
@@ -20,6 +21,7 @@ class QuickActionsCubit extends Cubit<QuickActionsState> {
             ActionItemModel(labelKey: 'Tires', icon: Icons.tire_repair),
             ActionItemModel(labelKey: 'Insurance', icon: Icons.shield),
           ],
+          activeCategories: prefs.getStringList('activeCategories') ?? [],
         ),
       );
 
@@ -44,6 +46,7 @@ class QuickActionsCubit extends Cubit<QuickActionsState> {
         hasOilTask: labelKey.toLowerCase() == 'oil' ? true : state.hasOilTask,
       ),
     );
+    await prefs.setStringList('activeCategories', updatedActive);
   }
 
   void clearCreatedTask(String labelKey) {

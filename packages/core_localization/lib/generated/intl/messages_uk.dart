@@ -46,6 +46,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "amount_month": MessageLookupByLibrary.simpleMessage("Сума за місяць"),
     "analitics": MessageLookupByLibrary.simpleMessage("Аналітика"),
     "analytics": MessageLookupByLibrary.simpleMessage("Аналітика"),
+    "attention": MessageLookupByLibrary.simpleMessage("Увага"),
     "authorization_required": MessageLookupByLibrary.simpleMessage(
       "Потрібна авторизація",
     ),
@@ -73,6 +74,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "car_number": MessageLookupByLibrary.simpleMessage("Номер авто"),
     "car_wash": MessageLookupByLibrary.simpleMessage("Автомийка"),
     "car_wash_nearby": MessageLookupByLibrary.simpleMessage("Автомийка поруч"),
+    "category": MessageLookupByLibrary.simpleMessage("Категорії"),
     "category_removed": MessageLookupByLibrary.simpleMessage(
       "Вилучено категорію",
     ),
@@ -116,6 +118,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "days": MessageLookupByLibrary.simpleMessage("днів"),
     "days_free": MessageLookupByLibrary.simpleMessage("днів безкоштовно"),
+    "days_interv": MessageLookupByLibrary.simpleMessage("Дні"),
     "days_left": MessageLookupByLibrary.simpleMessage("днів залишилось"),
     "del_all_expenses": MessageLookupByLibrary.simpleMessage(
       "Видалити ВСІ витрати",
@@ -241,6 +244,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "insurance_control": MessageLookupByLibrary.simpleMessage(
       "Контроль страховки",
     ),
+    "interval": MessageLookupByLibrary.simpleMessage("Інтервал (км)"),
+    "interval_by_date": MessageLookupByLibrary.simpleMessage(
+      "Інтервал за датою",
+    ),
     "invalid_email": MessageLookupByLibrary.simpleMessage("Невірний email"),
     "item_removed": MessageLookupByLibrary.simpleMessage("Елемент видалено"),
     "keep_track": MessageLookupByLibrary.simpleMessage(
@@ -251,6 +258,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "large_login": MessageLookupByLibrary.simpleMessage("УВІЙТИ"),
     "large_sign_up": MessageLookupByLibrary.simpleMessage("ЗАРЕЄСТРУВАТИСЯ"),
     "last_event": MessageLookupByLibrary.simpleMessage("Остання подія"),
+    "last_service_date": MessageLookupByLibrary.simpleMessage(
+      "Дата останнього обслуговування",
+    ),
     "loaded": MessageLookupByLibrary.simpleMessage("Завантажено"),
     "login": MessageLookupByLibrary.simpleMessage("Увійти"),
     "logo": MessageLookupByLibrary.simpleMessage("LOGO"),
@@ -279,6 +289,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "month_nov": MessageLookupByLibrary.simpleMessage("Лист"),
     "month_oct": MessageLookupByLibrary.simpleMessage("Жовт"),
     "month_sep": MessageLookupByLibrary.simpleMessage("Верес"),
+    "months": MessageLookupByLibrary.simpleMessage("Місяці"),
     "my_position": MessageLookupByLibrary.simpleMessage("Ви тут"),
     "name": MessageLookupByLibrary.simpleMessage("Назва"),
     "new_reminder": MessageLookupByLibrary.simpleMessage("Нове нагадування"),
@@ -296,6 +307,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "no_records": MessageLookupByLibrary.simpleMessage("Немає записів"),
     "no_reminders": MessageLookupByLibrary.simpleMessage("Немає нагадувань"),
+    "no_such_service": MessageLookupByLibrary.simpleMessage(
+      "Немає_такої_послуги",
+    ),
     "no_tasks": MessageLookupByLibrary.simpleMessage("Немає завдань"),
     "no_tokens_yet": MessageLookupByLibrary.simpleMessage(
       "Токены пока отсутствуют",
@@ -945,5 +959,6 @@ class MessageLookup extends MessageLookupByLibrary {
       "Історія перевірки",
     ),
     "write_viber": MessageLookupByLibrary.simpleMessage("Написати у Viber"),
+    "years": MessageLookupByLibrary.simpleMessage("Роки"),
   };
 }

@@ -434,6 +434,15 @@
 "no_ads": "No ads",
 "increased_download_limit": "Increased download limit",
 "search_fines": "Search fines",
-"category": "Categories"
+"category": "Categories",
+"interval_by_date": "Interval by date",
+"days_interv": "Days",
+"months": "Months",
+"years": "Years",
+"interval": "Interval (km)",
+"last_service_date": "Last service date",
+"attention": "Attention",
+"no_such_service": "No_such_service"
+
 
 }

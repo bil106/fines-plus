@@ -14,6 +14,7 @@ class MaintenanceCard extends StatelessWidget {
   final String? priorExecution;
   final int? lastMileage;
   final int? actualMileage;
+  final Duration? intervalTime;
   final int? intervalKm;
   final VoidCallback? onPressed;
   final VoidCallback? onDelete;
@@ -31,6 +32,7 @@ class MaintenanceCard extends StatelessWidget {
     this.lastMileage,
     this.actualMileage,
     this.intervalKm,
+    this.intervalTime,
     this.onPressed,
     this.onDelete,
     this.isWarning,
@@ -53,7 +55,7 @@ class MaintenanceCard extends StatelessWidget {
       elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: AppBorders.radiusLarge),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        padding: const EdgeInsets.only(left: 16,right: 16, top: 8,bottom: 2),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -75,7 +77,7 @@ class MaintenanceCard extends StatelessWidget {
               ],
             ),
 
-            AppSpacers.verticalMedium,
+            AppSpacers.verticalSmall,
 
             Row(
               children: [
@@ -122,8 +124,6 @@ class MaintenanceCard extends StatelessWidget {
               ],
             ),
 
-            AppSpacers.verticalMedium,
-
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -141,14 +141,20 @@ class MaintenanceCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                Text(
-                  "${S.of(context).periodicity} ${convert(intervalKm).toStringAsFixed(0)} $unit",
-                  style: textTheme.black13W400,
+                Column(
+                  children: [
+                    Text(
+                      "${S.of(context).periodicity} ${convert(intervalKm).toStringAsFixed(0)} $unit",
+                      style: textTheme.black13W400,
+                    ),
+                    Text(
+                      intervalTime != null ? "Каждые ${intervalTime!.inDays} дней" : "Каждые ${intervalKm ?? 0} км",
+                      style: textTheme.black13W400,
+                    ),
+                  ],
                 ),
               ],
             ),
-
-            AppSpacers.verticalMedium,
 
             Row(
               children: [

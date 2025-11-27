@@ -184,7 +184,7 @@ class AppInitializer {
     final carInfoLocalDataSource = CarInfoLocalDataSource(sharedPrefsManager);
     final carInfoRepository = CarInfoRepository(carInfoLocalDataSource, CarInfoRemoteDataSource());
 
-    quickActionsCubit = QuickActionsCubit(tasksRepository);
+    quickActionsCubit = QuickActionsCubit(tasksRepository,prefs);
     currencyService = CurrencyService();
     await currencyService.init();
     referralCubit = ReferralCubit(appLinks, prefs);

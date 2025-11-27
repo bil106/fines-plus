@@ -3723,6 +3723,61 @@ class S {
   String get category {
     return Intl.message('Categories', name: 'category', desc: '', args: []);
   }
+
+  /// `Interval by date`
+  String get interval_by_date {
+    return Intl.message(
+      'Interval by date',
+      name: 'interval_by_date',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Days`
+  String get days_interv {
+    return Intl.message('Days', name: 'days_interv', desc: '', args: []);
+  }
+
+  /// `Months`
+  String get months {
+    return Intl.message('Months', name: 'months', desc: '', args: []);
+  }
+
+  /// `Years`
+  String get years {
+    return Intl.message('Years', name: 'years', desc: '', args: []);
+  }
+
+  /// `Interval (km)`
+  String get interval {
+    return Intl.message('Interval (km)', name: 'interval', desc: '', args: []);
+  }
+
+  /// `Last service date`
+  String get last_service_date {
+    return Intl.message(
+      'Last service date',
+      name: 'last_service_date',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Attention`
+  String get attention {
+    return Intl.message('Attention', name: 'attention', desc: '', args: []);
+  }
+
+  /// `No_such_service`
+  String get no_such_service {
+    return Intl.message(
+      'No_such_service',
+      name: 'no_such_service',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

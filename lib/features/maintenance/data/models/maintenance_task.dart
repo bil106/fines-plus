@@ -50,17 +50,29 @@ class MaintenanceTask {
     );
   }
 
-  double getProgress() {
-    if (intervalKm != null && actualMileage != null) {
-      final kmPassed = actualMileage! - lastMileage;
-      return (kmPassed / intervalKm!).clamp(0.0, 1.0);
-    }
-
+double getProgress() {
     if (intervalTime != null && lastServiceDate != null) {
-      final daysPassed = DateTime.now().difference(lastServiceDate!).inDays;
-      return (daysPassed / intervalTime!.inDays).clamp(0.0, 1.0);
+      final now = DateTime.now();
+      final totalDays = intervalTime!.inDays;
+      final passedDays = now.difference(lastServiceDate!).inDays;
+
+      if (passedDays <= 0) return 0; 
+      if (passedDays >= totalDays) return 1;
+
+      return passedDays / totalDays;
     }
 
-    return 0.0;
+   
+    if (intervalKm != null && actualMileage != null) {
+      final total = intervalKm!;
+      final used = actualMileage! - lastMileage;
+      if (used <= 0) return 0;
+      if (used >= total) return 1;
+
+      return used / total;
+    }
+
+    return 0;
   }
+
 }

@@ -435,5 +435,13 @@
    "no_ads": "Без реклами",
    "increased_download_limit": "Збільшений ліміт завантаження",
    "search_fines": "Пошук штрафів",
-   "сategory": "Категорії"
+   "category": "Категорії",
+   "interval_by_date": "Інтервал за датою",
+   "days_interv": "Дні",
+   "months": "Місяці",
+   "years": "Роки",
+   "interval": "Інтервал (км)",
+   "last_service_date": "Дата останнього обслуговування",
+   "attention": "Увага",
+   "no_such_service": "Немає_такої_послуги"
 }

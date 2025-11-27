@@ -2,7 +2,6 @@ import 'package:auto_route/auto_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:core_data/core_data.dart';
 import 'package:core_localization/generated/l10n.dart';
-import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:fines_plus/features/expenses/data/models/service_record.dart';
 import 'package:fines_plus/features/home/presentation/cubit/quick_actions_cubit.dart';
@@ -79,11 +78,11 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
       final shouldCreate = await showDialog<bool>(
         context: context,
         builder: (context) => AlertDialog(
-          title: Text('attention'),
-          content: Text('no_such_service'),
+          title: Text(S.of(context).attention),
+          content: Text(S.of(context).no_such_service),
           actions: [
             TextButton(onPressed: () => Navigator.pop(context, false), child: Text(S.of(context).cancel)),
-            TextButton(onPressed: () => Navigator.pop(context, true), child: Text('create')),
+            TextButton(onPressed: () => Navigator.pop(context, true), child: Text(S.of(context).create)),
           ],
         ),
       );
@@ -185,8 +184,8 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
 
               final selectedDate = data['date'] as DateTime?;
               final newTask = MaintenanceTask(
-                description: data['description'] ?? 'No name',
-                category: data['category'] ?? 'No name',
+                description: data['description'] ?? S.of(context).no_name,
+                category: data['category'] ?? S.of(context).no_name,
                 lastServiceDate: selectedDate,
                 lastMileage: lastMileageKm,
                 actualMileage: getMaxMileage(newMileage: lastMileageKm),
@@ -204,78 +203,86 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
             final scheduleCubit = context.read<ScheduleCubit>();
             final reminderCubit = context.read<ReminderCubit>();
 
-            return Scaffold(
-              backgroundColor: AppColors.grey50,
-              appBar: AppBar(backgroundColor: AppColors.grey50),
-              body: state.loading
+          return Stack(
+  children: [ state.loading
                   ? const Center(child: CircularProgressIndicator())
                   : state.tasks.isEmpty
                   ? Center(child: Text(S.of(context).no_tasks))
-                  : ListView.separated(
-                      padding: const EdgeInsets.all(1),
-                      itemCount: state.tasks.length,
-                      separatorBuilder: (_, __) => AppSpacers.verticalMedium,
-                      itemBuilder: (context, index) {
-                        final task = state.tasks[index];
-                        return MaintenanceCard(
-                          description: task.description,
-                          category: task.category,
-                          progress: task.getProgress(),
-                          priorExecution: task.lastServiceDate != null
-                              ? DateFormat('dd.MM.yyyy').format(task.lastServiceDate!)
-                              : null,
-                          lastMileage: task.lastMileage,
-                          actualMileage: getMaxMileage(newMileage: task.lastMileage),
-                          intervalKm: task.intervalKm,
-                          onPressed: () async {
-                            final result = await showModalBottomSheet<Map<String, dynamic>>(
-                              context: context,
-                              isScrollControlled: true,
-                              shape: const RoundedRectangleBorder(
-                                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-                              ),
-                              builder: (_) => ActionDetailSheet(
-                                description: task.description,
-                                category: task.category,
-                                lastServiceDate: task.lastServiceDate != null
-                                    ? DateFormat('dd.MM.yyyy').format(task.lastServiceDate!)
-                                    : null,
-                                lastMileage: task.lastMileage,
-                                actualMileage: getMaxMileage(newMileage: task.lastMileage),
-                                intervalKm: task.intervalKm,
-                                comment: task.comment,
-                                byDate: task.intervalTime != null,
-                                byMileage: task.intervalKm != null,
-                              ),
-                            );
-
-                            if (result != null) {
-                              final last = result["mileage"] ?? task.lastMileage;
-                              final actual = getMaxMileage(newMileage: last);
-
-                              final updatedTask = task.copyWith(
-                                description: result["description"],
-                                category: result["category"],
-                                lastServiceDate: result["date"] as DateTime?,
-                                lastMileage: last,
-                                actualMileage: actual,
-                                intervalKm: result["intervalKm"] ?? task.intervalKm,
-                                intervalTime: result["byDate"] ? Duration(days: result["intervalDays"]) : null,
-                                comment: result["comment"],
+                  :  ListView.separated(
+                     physics: const ClampingScrollPhysics(),
+                       padding: const EdgeInsets.symmetric(vertical: 8),
+                        itemCount: state.tasks.length,
+                        separatorBuilder: (_, __) => AppSpacers.verticalMedium,
+                        itemBuilder: (context, index) {
+                          final task = state.tasks[index];
+                          return MaintenanceCard(
+                            description: task.description,
+                            category: task.category,
+                            progress: task.getProgress(),
+                            priorExecution: task.lastServiceDate != null
+                                ? DateFormat('dd.MM.yyyy').format(task.lastServiceDate!)
+                                : null,
+                            lastMileage: task.lastMileage,
+                            actualMileage: getMaxMileage(newMileage: task.lastMileage),
+                            intervalKm: task.intervalKm,
+                            intervalTime: task.intervalTime,
+                            onPressed: () async {
+                              final result = await showModalBottomSheet<Map<String, dynamic>>(
+                                context: context,
+                                isScrollControlled: true,
+                                shape: const RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                                ),
+                                builder: (_) => ActionDetailSheet(
+                                  description: task.description,
+                                  category: task.category,
+                                  lastServiceDate: task.lastServiceDate != null
+                                      ? DateFormat('dd.MM.yyyy').format(task.lastServiceDate!)
+                                      : null,
+                    
+                                  lastMileage: task.lastMileage,
+                                  actualMileage: getMaxMileage(newMileage: task.lastMileage),
+                                  intervalKm: task.intervalKm,
+                                  comment: task.comment,
+                                  byDate: task.intervalTime != null,
+                                  byMileage: task.intervalKm != null,
+                                ),
                               );
-
-                              scheduleCubit.updateTask(index, updatedTask, reminderCubit: reminderCubit);
-                              context.read<QuickActionsCubit>().init();
-                            }
-                          },
-                          onDelete: () {
-                            scheduleCubit.removeTask(index);
-                            context.read<QuickActionsCubit>().onTaskDeleted(task.category);
-                          },
-                        );
-                      },
-                    ),
-              floatingActionButton: FloatingActionButton(
+                    
+                              if (result != null) {
+                                final last = result["mileage"] ?? task.lastMileage;
+                                final actual = getMaxMileage(newMileage: last);
+                    
+                                final updatedTask = task.copyWith(
+                                  description: result["description"],
+                                  category: result["category"],
+                                  lastServiceDate: result["date"] as DateTime?,
+                                  lastMileage: last,
+                                  actualMileage: actual,
+                                  intervalKm: result["intervalKm"] ?? task.intervalKm,
+                                  intervalTime: result["byDate"] == true
+                                      ? Duration(days: (result["intervalDays"] ?? 0))
+                                      : null,
+                    
+                                  comment: result["comment"],
+                                );
+                    
+                                scheduleCubit.updateTask(index, updatedTask, reminderCubit: reminderCubit);
+                                context.read<QuickActionsCubit>().init();
+                              }
+                            },
+                            onDelete: () {
+                              scheduleCubit.removeTask(index);
+                              context.read<QuickActionsCubit>().onTaskDeleted(task.category);
+                            },
+                          );
+  },
+                      
+                  ),
+              Positioned(
+      bottom: 8,
+      right: 4,
+      child: FloatingActionButton(
                 onPressed: () async {
                   final cubit = context.read<QuickActionsCubit>();
                   final scheduleCubit = context.read<ScheduleCubit>();
@@ -287,7 +294,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                     shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
                     builder: (_) => ActionDetailSheet(
                       onSave: (data) async {
-                        final category = data['category'] as String? ?? 'Unknown';
+                        final category = data['category'] as String? ?? S.of(context).no_name;
                         await cubit.onTaskCreated(data, labelKey: category);
                       },
                     ),
@@ -319,7 +326,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                 },
                 child: const Icon(Icons.add),
               ),
-            );
+            )]);
           },
         ),
       ),
