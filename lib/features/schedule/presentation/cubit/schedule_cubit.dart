@@ -19,9 +19,9 @@ class ScheduleCubit extends Cubit<ScheduleState> {
   final ScheduleFirebaseRepository firebaseRepo;
   final MaintenanceCubit maintenanceCubit;
   final PushHelper pushHelper;
-  final String userId; 
- String carNumber;
-  final CarCubit carCubit; 
+  final String userId;
+  String carNumber;
+  final CarCubit carCubit;
   late final StreamSubscription _carSub;
   bool enabled;
 
@@ -33,7 +33,7 @@ class ScheduleCubit extends Cubit<ScheduleState> {
     required this.enabled,
     required this.userId,
     required this.carNumber,
-    required this.carCubit, 
+    required this.carCubit,
   }) : super(ScheduleState(tasks: [], loading: true)) {
     _carSub = carCubit.stream.listen((state) {
       final newCar = state.carNumber;
@@ -45,31 +45,27 @@ class ScheduleCubit extends Cubit<ScheduleState> {
     loadTasks();
   }
 
-Future<void> loadTasks() async {
+  Future<void> loadTasks() async {
     emit(state.copyWith(loading: true));
     final tasks = await repository.loadTasks(carNumber);
     emit(state.copyWith(tasks: tasks, loading: false));
   }
 
-
- void addTask(MaintenanceTask task, {ReminderCubit? reminderCubit}) async {
+  void addTask(MaintenanceTask task, {ReminderCubit? reminderCubit}) async {
     final updatedTasks = List<MaintenanceTask>.from(state.tasks)..add(task);
     emit(state.copyWith(tasks: updatedTasks));
 
     await repository.saveTasks(carNumber, updatedTasks);
 
-
     await _checkTask(task, reminderCubit);
   }
-
-
 
   Future<void> updateTask(int index, MaintenanceTask task, {ReminderCubit? reminderCubit}) async {
     final updatedTasks = List<MaintenanceTask>.from(state.tasks);
     if (index >= 0 && index < updatedTasks.length) {
       updatedTasks[index] = task;
       emit(state.copyWith(tasks: updatedTasks));
-      await repository.saveTasks(carNumber,updatedTasks);
+      await repository.saveTasks(carNumber, updatedTasks);
 
       await _checkTask(task, reminderCubit);
     }
@@ -106,7 +102,7 @@ Future<void> loadTasks() async {
   Future<void> removeTask(int index, {ReminderCubit? reminderCubit}) async {
     final updatedTasks = List<MaintenanceTask>.from(state.tasks)..removeAt(index);
     emit(state.copyWith(tasks: updatedTasks));
-    await repository.saveTasks(carNumber,updatedTasks);
+    await repository.saveTasks(carNumber, updatedTasks);
   }
 
   String _generateDescription(String title) {
@@ -122,25 +118,20 @@ Future<void> loadTasks() async {
     emit(state.copyWith(tasks: [], loading: true));
     await loadTasks();
   }
-Future<void> addReminderFromTask(MaintenanceTask task, ReminderCubit? reminderCubit) async {
-  // Старая проверка:
-  // if (task.intervalTime == null) return;
 
-  final reminder = ReminderModel(
-    title: task.description,
-    dateTime: task.lastServiceDate ?? DateTime.now(),
-    id: DateTime.now().millisecondsSinceEpoch.toString(),
-    description: '',
-    userId: userId, 
-  );
+  Future<void> addReminderFromTask(MaintenanceTask task, ReminderCubit? reminderCubit) async {
+    final reminder = ReminderModel(
+      title: task.description,
+      dateTime: task.lastServiceDate ?? DateTime.now(),
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      description: '',
+      userId: userId,
+    );
 
-  await reminderCubit?.addReminder(reminder);
-}
+    await reminderCubit?.addReminder(reminder);
+  }
 
-
-
-
-    @override
+  @override
   Future<void> close() {
     _carSub.cancel();
     return super.close();

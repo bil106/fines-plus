@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:fines_plus/features/home/data/repositories/tasks_repository.dart';
+import 'package:fines_plus/features/home/domain/entities/action_item_model.dart';
 import 'package:fines_plus/features/home/presentation/cubit/quick_actions_state.dart';
 import 'package:flutter/material.dart';
 
@@ -27,7 +28,6 @@ class QuickActionsCubit extends Cubit<QuickActionsState> {
     emit(state.copyWith(hasOilTask: hasOil));
   }
 
-  /// Создание задачи для любой категории
   Future<void> onTaskCreated(Map<String, dynamic> data, {required String labelKey}) async {
     final updatedActive = List<String>.from(state.activeCategories);
     if (!updatedActive.contains(labelKey)) updatedActive.add(labelKey);
@@ -35,7 +35,6 @@ class QuickActionsCubit extends Cubit<QuickActionsState> {
     final updatedTasks = Map<String, Map<String, dynamic>>.from(state.createdTasks);
     updatedTasks[labelKey] = data;
 
-    // Создаём задачу в репозитории для всех категорий
     await tasksRepository.createTask(labelKey.toLowerCase());
 
     emit(
@@ -63,4 +62,3 @@ class QuickActionsCubit extends Cubit<QuickActionsState> {
     }
   }
 }
-

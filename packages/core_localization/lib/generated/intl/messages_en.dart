@@ -73,6 +73,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "car_number": MessageLookupByLibrary.simpleMessage("Car number"),
     "car_wash": MessageLookupByLibrary.simpleMessage("Car wash"),
     "car_wash_nearby": MessageLookupByLibrary.simpleMessage("Car wash nearby"),
+    "category": MessageLookupByLibrary.simpleMessage("Categories"),
     "category_removed": MessageLookupByLibrary.simpleMessage(
       "Category removed",
     ),

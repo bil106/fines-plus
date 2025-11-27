@@ -26,11 +26,10 @@ class ReminderCubit extends Cubit<ReminderState> {
     required this.userId,
     required CarCubit carCubit,
   }) : super(ReminderState.initial()) {
-    
     carSubscription = carCubit.stream.listen((state) {
       if (carNumber != state.carNumber) {
         carNumber = state.carNumber;
-        load(); 
+        load();
       }
     });
     load();
@@ -41,6 +40,7 @@ class ReminderCubit extends Cubit<ReminderState> {
     carSubscription.cancel();
     return super.close();
   }
+
   Future<void> load() async {
     if (isClosed) return;
     emit(state.copyWith(isLoading: true, errorMessage: null));
@@ -76,35 +76,28 @@ class ReminderCubit extends Cubit<ReminderState> {
     }
   }
 
-Future<void> updateReminder(ReminderModel reminder) async {
+  Future<void> updateReminder(ReminderModel reminder) async {
     emit(state.copyWith(isLoading: true, errorMessage: null));
     try {
       await repository.update(carNumber, reminder);
-    
-
 
       await pushHelper.cancelNotification(reminder.id.hashCode);
-      
 
-    
       final prefs = await SharedPreferences.getInstance();
       final remindersEnabled = prefs.getBool("reminders") ?? true;
       final pushEnabled = prefs.getBool("pushNotifications") ?? true;
 
       if (remindersEnabled && pushEnabled) {
-      
         await pushHelper.scheduleNotification(
           id: reminder.id.hashCode,
           title: reminder.title,
           body: reminder.description,
           dateTime: reminder.dateTime,
         );
-       
       }
 
       await load();
     } catch (e) {
-     
       emit(state.copyWith(isLoading: false, errorMessage: 'Update error: $e'));
     }
   }
@@ -112,14 +105,14 @@ Future<void> updateReminder(ReminderModel reminder) async {
   Future<void> deleteReminder(String id) async {
     emit(state.copyWith(isLoading: true, errorMessage: null));
     try {
-      await repository.delete(carNumber, id); 
+      await repository.delete(carNumber, id);
       await load();
     } catch (e) {
       emit(state.copyWith(isLoading: false, errorMessage: 'Delete error: $e'));
     }
   }
 
-Future<void> addReminderFromTask(MaintenanceTask task) async {
+  Future<void> addReminderFromTask(MaintenanceTask task) async {
     final reminder = ReminderModel(
       title: task.description,
       dateTime: task.lastServiceDate ?? DateTime.now(),
@@ -130,8 +123,4 @@ Future<void> addReminderFromTask(MaintenanceTask task) async {
 
     await addReminder(reminder);
   }
-
 }
-
-
-

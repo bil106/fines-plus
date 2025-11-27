@@ -57,10 +57,9 @@ class MaintenanceCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-          Row(
+            Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-              
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -72,7 +71,6 @@ class MaintenanceCard extends StatelessWidget {
                   ),
                 ),
 
-               
                 Icon(Icons.settings, size: 20, color: AppColors.neutreGrey),
               ],
             ),

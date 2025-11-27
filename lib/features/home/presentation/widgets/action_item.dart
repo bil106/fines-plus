@@ -40,11 +40,13 @@ class ActionItem extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-               Icon(icon, size: 32, color: isSelected ? activeColor : inactiveColor),
+              Icon(icon, size: 32, color: isSelected ? activeColor : inactiveColor),
               const SizedBox(height: 1),
               Text(
                 label,
-                style: theme.textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w500, color: isSelected ? activeColor : Colors.black87,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  fontWeight: FontWeight.w500,
+                  color: isSelected ? activeColor : Colors.black87,
                 ),
                 textAlign: TextAlign.center,
               ),

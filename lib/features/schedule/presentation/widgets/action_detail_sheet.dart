@@ -66,10 +66,12 @@ class _ActionDetailSheetState extends State<ActionDetailSheet> {
     final intervalValue = widget.intervalKm?.toDouble() ?? 0;
 
     mileageController = TextEditingController(
-        text: unit == 'mil' ? (mileageValue * 0.621371).toStringAsFixed(0) : mileageValue.toStringAsFixed(0));
+      text: unit == 'mil' ? (mileageValue * 0.621371).toStringAsFixed(0) : mileageValue.toStringAsFixed(0),
+    );
 
     intervalController = TextEditingController(
-        text: unit == 'mil' ? (intervalValue * 0.621371).toStringAsFixed(0) : intervalValue.toStringAsFixed(0));
+      text: unit == 'mil' ? (intervalValue * 0.621371).toStringAsFixed(0) : intervalValue.toStringAsFixed(0),
+    );
 
     byDate = widget.byDate;
     byMileage = widget.byMileage;
@@ -81,6 +83,7 @@ class _ActionDetailSheetState extends State<ActionDetailSheet> {
       }
     }
   }
+
   Future<void> _pickDate() async {
     final picked = await showDatePicker(
       context: context,
@@ -96,7 +99,7 @@ class _ActionDetailSheetState extends State<ActionDetailSheet> {
       });
     }
   }
-  
+
   @override
   Widget build(BuildContext context) {
     final settingsCubit = context.watch<SettingsCubit>();
@@ -104,12 +107,7 @@ class _ActionDetailSheetState extends State<ActionDetailSheet> {
     // final unitStream = UnitStream(settingsCubit);
     final textTheme = Theme.of(context).textTheme;
     return Padding(
-      padding: EdgeInsets.only(
-        left: 16,
-        right: 16,
-        top: 1,
-        bottom: MediaQuery.of(context).viewInsets.bottom + 16,
-      ),
+      padding: EdgeInsets.only(left: 16, right: 16, top: 1, bottom: MediaQuery.of(context).viewInsets.bottom + 16),
       child: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -123,7 +121,7 @@ class _ActionDetailSheetState extends State<ActionDetailSheet> {
             AppSpacers.verticalMedium,
             DropdownButtonFormField<String>(
               decoration: InputDecoration(
-                labelText: "Category",
+                labelText: S.of(context).category,
                 border: OutlineInputBorder(),
                 prefixIcon: Icon(Icons.list, color: AppColors.blueAccent),
               ),
@@ -162,7 +160,7 @@ class _ActionDetailSheetState extends State<ActionDetailSheet> {
               },
             ),
             AppSpacers.verticalMedium,
-                  // --- Input Date ---
+
             TextField(
               controller: dateController,
               readOnly: true,
@@ -175,7 +173,6 @@ class _ActionDetailSheetState extends State<ActionDetailSheet> {
             ),
             AppSpacers.verticalMedium,
 
-            // --- Mileage ---
             TextField(
               controller: mileageController,
               keyboardType: TextInputType.number,
@@ -184,7 +181,6 @@ class _ActionDetailSheetState extends State<ActionDetailSheet> {
             ),
             AppSpacers.verticalMedium,
 
-            // --- Interval ---
             TextField(
               controller: intervalController,
               keyboardType: TextInputType.number,
@@ -194,7 +190,6 @@ class _ActionDetailSheetState extends State<ActionDetailSheet> {
                 border: OutlineInputBorder(),
               ),
             ),
-          
 
             AppSpacers.verticalMedium,
             Row(
@@ -214,7 +209,7 @@ class _ActionDetailSheetState extends State<ActionDetailSheet> {
             ),
             AppSpacers.verticalMediumLarge,
 
-         SizedBox(
+            SizedBox(
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () async {
@@ -231,20 +226,20 @@ class _ActionDetailSheetState extends State<ActionDetailSheet> {
                   };
 
                   if (widget.onSave != null) {
-                    widget.onSave!(result); 
-                      final cubit = context.read<QuickActionsCubit>();
-                      final category = (result["title"] as String).isNotEmpty ? result["title"] : 'Unknown';
-                await cubit.onTaskCreated(result, labelKey: category.toString());
+                    widget.onSave!(result);
+                    final cubit = context.read<QuickActionsCubit>();
+                    final category = (result["title"] as String).isNotEmpty ? result["title"] : 'Unknown';
+                    await cubit.onTaskCreated(result, labelKey: category.toString());
                   }
 
                   Navigator.pop(context, result);
                 },
                 child: Text(S.of(context).save),
-              ),)
+              ),
+            ),
           ],
         ),
       ),
     );
   }
 }
-

@@ -38,9 +38,7 @@ class ActionCard extends StatelessWidget {
           children: [
             Row(
               children: [
-                Expanded(
-                  child: Text(title, style: textTheme.black16bold),
-                ),
+                Expanded(child: Text(title, style: textTheme.black16bold)),
                 const Icon(Icons.settings, size: 20, color: AppColors.neutreGrey),
               ],
             ),
@@ -84,10 +82,7 @@ class ActionCard extends StatelessWidget {
                             backgroundColor: AppColors.grey300,
                             valueColor: AlwaysStoppedAnimation<Color>(isWarning ? AppColors.red : AppColors.lightGreen),
                           ),
-                          Text(
-                            "${(progress * 100).toStringAsFixed(0)}%",
-                            style: textTheme.white14W400,
-                          ),
+                          Text("${(progress * 100).toStringAsFixed(0)}%", style: textTheme.white14W400),
                         ],
                       ),
                     ],

@@ -2,10 +2,6 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'maintenance_task.g.dart';
 
-
-
-
-
 @JsonSerializable(explicitToJson: true)
 class MaintenanceTask {
   final String description;
@@ -53,7 +49,6 @@ class MaintenanceTask {
       comment: comment ?? this.comment,
     );
   }
-
 
   double getProgress() {
     if (intervalKm != null && actualMileage != null) {

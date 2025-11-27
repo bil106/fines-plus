@@ -1,11 +1,10 @@
-import 'package:flutter/material.dart';
+import 'package:fines_plus/features/home/domain/entities/action_item_model.dart';
 
 class QuickActionsState {
   final List<ActionItemModel> actions;
   final int selectedIndex;
   final bool hasOilTask;
 
-  /// map: labelKey -> task data
   final Map<String, Map<String, dynamic>> createdTasks;
 
   final List<String> activeCategories;
@@ -35,10 +34,3 @@ class QuickActionsState {
   }
 }
 
-
-class ActionItemModel {
-  final String labelKey;
-  final IconData icon;
-
-  ActionItemModel({required this.labelKey, required this.icon});
-}

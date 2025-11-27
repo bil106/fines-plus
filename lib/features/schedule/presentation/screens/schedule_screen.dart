@@ -82,14 +82,8 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
           title: Text('attention'),
           content: Text('no_such_service'),
           actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context, false),
-              child: Text(S.of(context).cancel),
-            ),
-            TextButton(
-              onPressed: () => Navigator.pop(context, true),
-              child: Text('create'),
-            ),
+            TextButton(onPressed: () => Navigator.pop(context, false), child: Text(S.of(context).cancel)),
+            TextButton(onPressed: () => Navigator.pop(context, true), child: Text('create')),
           ],
         ),
       );
@@ -98,11 +92,9 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
         _openActionDetailSheet(key);
       }
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("${matchingTask.serviceName} ${S.of(context).already_planned}"),
-        ),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("${matchingTask.serviceName} ${S.of(context).already_planned}")));
     }
   }
 
@@ -110,9 +102,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
       builder: (context) => Padding(
         padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
         child: ActionDetailSheet(
@@ -181,7 +171,6 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
           final scheduleCubit = context.read<ScheduleCubit>();
           final reminderCubit = context.read<ReminderCubit>();
 
-          // проходимся по всем созданным задачам
           state.createdTasks.forEach((labelKey, data) {
             final alreadyExists = scheduleCubit.state.tasks.any(
               (t) => t.description.toLowerCase() == (data['description'] ?? '').toLowerCase(),
@@ -221,71 +210,71 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
               body: state.loading
                   ? const Center(child: CircularProgressIndicator())
                   : state.tasks.isEmpty
-                      ? Center(child: Text(S.of(context).no_tasks))
-                      : ListView.separated(
-                          padding: const EdgeInsets.all(1),
-                          itemCount: state.tasks.length,
-                          separatorBuilder: (_, __) => AppSpacers.verticalMedium,
-                          itemBuilder: (context, index) {
-                            final task = state.tasks[index];
-                            return MaintenanceCard(
-                              description: task.description,
-                              category: task.category,
-                              progress: task.getProgress(),
-                              priorExecution: task.lastServiceDate != null
-                                  ? DateFormat('dd.MM.yyyy').format(task.lastServiceDate!)
-                                  : null,
-                              lastMileage: task.lastMileage,
-                              actualMileage: getMaxMileage(newMileage: task.lastMileage),
-                              intervalKm: task.intervalKm,
-                              onPressed: () async {
-                                final result = await showModalBottomSheet<Map<String, dynamic>>(
-                                  context: context,
-                                  isScrollControlled: true,
-                                  shape: const RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-                                  ),
-                                  builder: (_) => ActionDetailSheet(
-                                    description: task.description,
-                                    category: task.category,
-                                    lastServiceDate: task.lastServiceDate != null
-                                        ? DateFormat('dd.MM.yyyy').format(task.lastServiceDate!)
-                                        : null,
-                                    lastMileage: task.lastMileage,
-                                    actualMileage: getMaxMileage(newMileage: task.lastMileage),
-                                    intervalKm: task.intervalKm,
-                                    comment: task.comment,
-                                    byDate: task.intervalTime != null,
-                                    byMileage: task.intervalKm != null,
-                                  ),
-                                );
-
-                                if (result != null) {
-                                  final last = result["mileage"] ?? task.lastMileage;
-                                  final actual = getMaxMileage(newMileage: last);
-
-                                  final updatedTask = task.copyWith(
-                                    description: result["description"],
-                                    category: result["category"],
-                                    lastServiceDate: result["date"] as DateTime?,
-                                    lastMileage: last,
-                                    actualMileage: actual,
-                                    intervalKm: result["intervalKm"] ?? task.intervalKm,
-                                    intervalTime: result["byDate"] ? Duration(days: result["intervalDays"]) : null,
-                                    comment: result["comment"],
-                                  );
-
-                                  scheduleCubit.updateTask(index, updatedTask, reminderCubit: reminderCubit);
-                                  context.read<QuickActionsCubit>().init();
-                                }
-                              },
-                              onDelete: () {
-                                scheduleCubit.removeTask(index);
-                                context.read<QuickActionsCubit>().onTaskDeleted(task.category);
-                              },
+                  ? Center(child: Text(S.of(context).no_tasks))
+                  : ListView.separated(
+                      padding: const EdgeInsets.all(1),
+                      itemCount: state.tasks.length,
+                      separatorBuilder: (_, __) => AppSpacers.verticalMedium,
+                      itemBuilder: (context, index) {
+                        final task = state.tasks[index];
+                        return MaintenanceCard(
+                          description: task.description,
+                          category: task.category,
+                          progress: task.getProgress(),
+                          priorExecution: task.lastServiceDate != null
+                              ? DateFormat('dd.MM.yyyy').format(task.lastServiceDate!)
+                              : null,
+                          lastMileage: task.lastMileage,
+                          actualMileage: getMaxMileage(newMileage: task.lastMileage),
+                          intervalKm: task.intervalKm,
+                          onPressed: () async {
+                            final result = await showModalBottomSheet<Map<String, dynamic>>(
+                              context: context,
+                              isScrollControlled: true,
+                              shape: const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                              ),
+                              builder: (_) => ActionDetailSheet(
+                                description: task.description,
+                                category: task.category,
+                                lastServiceDate: task.lastServiceDate != null
+                                    ? DateFormat('dd.MM.yyyy').format(task.lastServiceDate!)
+                                    : null,
+                                lastMileage: task.lastMileage,
+                                actualMileage: getMaxMileage(newMileage: task.lastMileage),
+                                intervalKm: task.intervalKm,
+                                comment: task.comment,
+                                byDate: task.intervalTime != null,
+                                byMileage: task.intervalKm != null,
+                              ),
                             );
+
+                            if (result != null) {
+                              final last = result["mileage"] ?? task.lastMileage;
+                              final actual = getMaxMileage(newMileage: last);
+
+                              final updatedTask = task.copyWith(
+                                description: result["description"],
+                                category: result["category"],
+                                lastServiceDate: result["date"] as DateTime?,
+                                lastMileage: last,
+                                actualMileage: actual,
+                                intervalKm: result["intervalKm"] ?? task.intervalKm,
+                                intervalTime: result["byDate"] ? Duration(days: result["intervalDays"]) : null,
+                                comment: result["comment"],
+                              );
+
+                              scheduleCubit.updateTask(index, updatedTask, reminderCubit: reminderCubit);
+                              context.read<QuickActionsCubit>().init();
+                            }
                           },
-                        ),
+                          onDelete: () {
+                            scheduleCubit.removeTask(index);
+                            context.read<QuickActionsCubit>().onTaskDeleted(task.category);
+                          },
+                        );
+                      },
+                    ),
               floatingActionButton: FloatingActionButton(
                 onPressed: () async {
                   final cubit = context.read<QuickActionsCubit>();
@@ -330,7 +319,6 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                 },
                 child: const Icon(Icons.add),
               ),
-
             );
           },
         ),
@@ -338,5 +326,3 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     );
   }
 }
-
-

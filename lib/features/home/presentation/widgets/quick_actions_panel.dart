@@ -5,7 +5,6 @@ import 'package:fines_plus/features/home/presentation/widgets/action_item.dart';
 import 'package:fines_plus/features/schedule/presentation/widgets/action_detail_sheet.dart';
 import 'package:fines_plus/router/home_screen_wrapper.dart';
 
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -28,16 +27,15 @@ class QuickActionsPanel extends StatelessWidget {
           ),
           itemBuilder: (context, index) {
             final action = state.actions[index];
-           
-          final isActive = state.activeCategories.contains(action.labelKey);
 
+            final isActive = state.activeCategories.contains(action.labelKey);
 
             return ActionItem(
               icon: action.icon,
               label: _translateLabel(action.labelKey, context),
               isSelected: isActive,
               labelKey: action.labelKey,
-            onTap: () async {
+              onTap: () async {
                 final labelKey = action.labelKey;
                 final wrapperState = context.findAncestorStateOfType<HomeScreenWrapperState>();
 
@@ -46,23 +44,19 @@ class QuickActionsPanel extends StatelessWidget {
                   isScrollControlled: true,
                   builder: (ctx) => ActionDetailSheet(
                     description: _translateLabel(labelKey, context),
-                   category: labelKey,
+                    category: labelKey,
                     byDate: false,
                     byMileage: true,
-                    
                   ),
                 ).then((result) async {
                   if (result == null) return;
 
-             
                   final quick = context.read<QuickActionsCubit>();
                   await quick.onTaskCreated(result, labelKey: labelKey);
 
-                
-                  wrapperState?.openAnalyticsTab(2); 
+                  wrapperState?.openAnalyticsTab(2);
                 });
               },
-
             );
           },
         );
