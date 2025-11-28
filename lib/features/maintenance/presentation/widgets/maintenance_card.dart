@@ -148,7 +148,7 @@ class MaintenanceCard extends StatelessWidget {
                       style: textTheme.black13W400,
                     ),
                     Text(
-                      intervalTime != null ? "Каждые ${intervalTime!.inDays} дней" : "Каждые ${intervalKm ?? 0} км",
+                      intervalTime != null ? "${S.of(context).every} ${intervalTime!.inDays} ${S.of(context).days}" : "${S.of(context).every}${intervalKm ?? 0} ${S.of(context).km}",
                       style: textTheme.black13W400,
                     ),
                   ],

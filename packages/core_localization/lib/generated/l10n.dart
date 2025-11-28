@@ -3778,6 +3778,11 @@ class S {
       args: [],
     );
   }
+
+  /// `Every`
+  String get every {
+    return Intl.message('Every', name: 'every', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

@@ -442,7 +442,7 @@
 "interval": "Interval (km)",
 "last_service_date": "Last service date",
 "attention": "Attention",
-"no_such_service": "No_such_service"
-
+"no_such_service": "No_such_service",
+"every": "Every"
 
 }

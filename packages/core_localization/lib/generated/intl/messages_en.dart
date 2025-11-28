@@ -163,6 +163,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "event_invisible": MessageLookupByLibrary.simpleMessage(
       "Event will be invisible",
     ),
+    "every": MessageLookupByLibrary.simpleMessage("Every"),
     "export": MessageLookupByLibrary.simpleMessage("Export"),
     "export_history": MessageLookupByLibrary.simpleMessage("Export history"),
     "extract_tokens": MessageLookupByLibrary.simpleMessage("Extract tokens"),

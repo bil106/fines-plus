@@ -165,6 +165,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "event_invisible": MessageLookupByLibrary.simpleMessage(
       "Подія буде невидимою",
     ),
+    "every": MessageLookupByLibrary.simpleMessage("Кожні"),
     "export": MessageLookupByLibrary.simpleMessage("Експорт"),
     "export_history": MessageLookupByLibrary.simpleMessage("Експорт історії"),
     "extract_tokens": MessageLookupByLibrary.simpleMessage("Видобути токени"),
