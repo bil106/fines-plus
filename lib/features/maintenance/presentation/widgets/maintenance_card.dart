@@ -1,9 +1,14 @@
+import 'package:auto_route/auto_route.dart';
+import 'package:core_cubit/cubit/purchase/purchase_cubit.dart';
+import 'package:core_data/core_data.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_borders.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
+import 'package:fines_plus/features/schedule/presentation/cubit/schedule_cubit.dart';
 import 'package:fines_plus/features/settings/presentation/cubit/settings_cubit.dart';
+import 'package:fines_plus/router/app_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -44,6 +49,9 @@ class MaintenanceCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final settingsCubit = context.watch<SettingsCubit>();
+    final scheduleCubit = context.watch<ScheduleCubit>();
+    final purchaseCubit = context.watch<PurchaseCubit>();
+    final remoteConfigService = context.watch<RemoteConfigService>();
     final unit = settingsCubit.state.unit;
 
     double convert(int? value) {
@@ -66,14 +74,29 @@ class MaintenanceCard extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(category, style: textTheme.black16bold.copyWith(fontWeight: FontWeight.bold)),
+                      Text(
+                        _translateLabel(category, context),
+                        style: textTheme.black16bold.copyWith(fontWeight: FontWeight.bold),
+                      ),
                       const SizedBox(height: 4),
                       Text(description, style: textTheme.black16bold),
                     ],
                   ),
                 ),
 
-                Icon(Icons.settings, size: 20, color: AppColors.neutreGrey),
+                IconButton(
+                  icon: Icon(Icons.settings, size: 20, color: AppColors.neutreGrey),
+                  onPressed: () {
+                    context.router.push(
+                      SettingsRoute(
+                        remoteConfigService: remoteConfigService,
+                        scheduleCubit: scheduleCubit,
+                        purchaseCubit: purchaseCubit,
+                        onBack: () => context.router.pop(),
+                      ),
+                    );
+                  },
+                ),
               ],
             ),
 
@@ -147,7 +170,12 @@ class MaintenanceCard extends StatelessWidget {
                       "${S.of(context).periodicity} ${convert(intervalKm).toStringAsFixed(0)} $unit",
                       style: textTheme.black13W400,
                     ),
-                
+                    Text(
+                      intervalTime != null
+                          ? "${S.of(context).every} ${intervalTime!.inDays} ${S.of(context).days}"
+                          : "${S.of(context).every}${intervalKm ?? 0} ${S.of(context).km}",
+                      style: textTheme.black13W400,
+                    ),
                   ],
                 ),
               ],
@@ -169,5 +197,28 @@ class MaintenanceCard extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+String _translateLabel(String key, BuildContext context) {
+  switch (key) {
+    case 'Oil':
+      return S.of(context).oil_icon;
+    case 'Coolant':
+      return S.of(context).coolant_icon;
+    case 'Service':
+      return S.of(context).service_icon;
+    case 'Repair':
+      return S.of(context).repair_icon;
+    case 'Battery':
+      return S.of(context).battery;
+    case 'Tuning':
+      return S.of(context).tuning;
+    case 'Tires':
+      return S.of(context).tires_icon;
+    case 'Insurance':
+      return S.of(context).insurance;
+    default:
+      return key;
   }
 }
