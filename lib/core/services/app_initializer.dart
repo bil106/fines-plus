@@ -27,6 +27,7 @@ import 'package:fines_plus/features/reminders/data/datasources/reminder_local_da
 import 'package:fines_plus/features/reminders/data/datasources/reminder_remote_data_source.dart';
 import 'package:fines_plus/features/reminders/data/models/reminder_model.dart';
 import 'package:fines_plus/features/reminders/data/repository/reminder_repository.dart';
+import 'package:fines_plus/features/reminders/presentation/cubit/reminder_cubit.dart';
 import 'package:fines_plus/features/schedule/data/repository/schedule_repository.dart';
 import 'package:fines_plus/features/schedule/presentation/cubit/schedule_cubit.dart';
 import 'package:fines_plus/features/settings/presentation/cubit/settings_cubit.dart';
@@ -73,6 +74,7 @@ class AppInitializer {
   late final AnalyticsCubit analyticsCubit;
   late final QuickActionsCubit quickActionsCubit;
   late final SettingsCubit settingsCubit;
+  late final ReminderCubit reminderCubit;
   late final AdditionalOptionsCubit additionalOptionsCubit;
   late final RemoteConfigService remoteConfigService;
   late final CurrencyService currencyService;
@@ -188,6 +190,7 @@ class AppInitializer {
     currencyService = CurrencyService();
     await currencyService.init();
     referralCubit = ReferralCubit(appLinks, prefs);
+    
 
     carCubit = CarCubit(local: carInfoLocalDataSource, repo: carInfoRepository);
 
@@ -249,7 +252,7 @@ class AppInitializer {
       remoteDataSource: ReminderRemoteDataSourceImpl(FirebaseFirestore.instance),
     );
     final pushHelper = PushHelper(flutterLocalNotificationsPlugin);
-
+reminderCubit = ReminderCubit(repository: reminderRepository, pushHelper: pushHelper, carNumber: '', userId: '', carCubit: carCubit);
     return AppInitResult(
       config: config,
       carInfoRepository: carInfoRepository,
@@ -264,6 +267,7 @@ class AppInitializer {
       fuelStationCubit: fuelStationCubit,
       maintenanceCubit: maintenanceCubit,
       statisticsCubit: statisticsCubit,
+      reminderCubit:reminderCubit,
       scheduleCubit: scheduleCubit,
       carCubit: carCubit,
       analyticsCubit: analyticsCubit,
@@ -356,6 +360,7 @@ class AppInitResult {
   final CarCubit carCubit;
   final AnalyticsCubit analyticsCubit;
   final SettingsCubit settingsCubit;
+  final ReminderCubit reminderCubit;
   final SubscriptionCubit subscriptionCubit;
   final QuickActionsCubit quickActionsCubit;
   final AdditionalOptionsCubit additionalOptionsCubit;
@@ -386,6 +391,7 @@ class AppInitResult {
     required this.carCubit,
     required this.analyticsCubit,
     required this.settingsCubit,
+    required this.reminderCubit,
     required this.subscriptionCubit,
     required this.quickActionsCubit,
     required this.additionalOptionsCubit,

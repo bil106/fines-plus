@@ -25,6 +25,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "access_basic": MessageLookupByLibrary.simpleMessage(
       "Доступ до основних функцій",
     ),
+    "action": MessageLookupByLibrary.simpleMessage("Дія"),
     "add_cars": MessageLookupByLibrary.simpleMessage("Додати авто"),
     "add_mileage": MessageLookupByLibrary.simpleMessage("Додати пробіг"),
     "add_new_photo": MessageLookupByLibrary.simpleMessage("Додати нове фото"),
@@ -259,6 +260,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "large_login": MessageLookupByLibrary.simpleMessage("УВІЙТИ"),
     "large_sign_up": MessageLookupByLibrary.simpleMessage("ЗАРЕЄСТРУВАТИСЯ"),
     "last_event": MessageLookupByLibrary.simpleMessage("Остання подія"),
+    "last_insurance_date": MessageLookupByLibrary.simpleMessage(
+      "Дата останнього страхування",
+    ),
     "last_service_date": MessageLookupByLibrary.simpleMessage(
       "Дата останнього обслуговування",
     ),
@@ -300,6 +304,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "next": MessageLookupByLibrary.simpleMessage("Далі"),
     "no_ads": MessageLookupByLibrary.simpleMessage("Без реклами"),
+    "no_expenses": MessageLookupByLibrary.simpleMessage(
+      "Поки що немає даних щодо витрат",
+    ),
     "no_fines": MessageLookupByLibrary.simpleMessage("На вас немає штрафів"),
     "no_name": MessageLookupByLibrary.simpleMessage("Без назви"),
     "no_plan_selected": MessageLookupByLibrary.simpleMessage("План не обрано"),

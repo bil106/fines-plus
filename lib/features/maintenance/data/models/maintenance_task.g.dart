@@ -20,6 +20,7 @@ MaintenanceTask _$MaintenanceTaskFromJson(Map<String, dynamic> json) =>
           ? null
           : Duration(microseconds: (json['intervalTime'] as num).toInt()),
       comment: json['comment'] as String?,
+      isInsurance: json['isInsurance'] as bool? ?? false,
     );
 
 Map<String, dynamic> _$MaintenanceTaskToJson(MaintenanceTask instance) =>
@@ -32,4 +33,5 @@ Map<String, dynamic> _$MaintenanceTaskToJson(MaintenanceTask instance) =>
       'intervalKm': instance.intervalKm,
       'intervalTime': instance.intervalTime?.inMicroseconds,
       'comment': instance.comment,
+      'isInsurance': instance.isInsurance,
     };

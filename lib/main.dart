@@ -16,6 +16,7 @@ import 'package:fines_plus/features/maintenance/presentation/cubit/additional_op
 import 'package:fines_plus/features/maintenance/presentation/cubit/fuel_station_cubit.dart';
 import 'package:fines_plus/features/maintenance/presentation/cubit/maintenance_cubit.dart';
 import 'package:fines_plus/features/registration/presentation/cubit/registration_cubit.dart';
+import 'package:fines_plus/features/reminders/presentation/cubit/reminder_cubit.dart';
 import 'package:fines_plus/features/schedule/data/repository/schedule_repository.dart';
 import 'package:fines_plus/features/schedule/presentation/cubit/schedule_cubit.dart';
 import 'package:fines_plus/features/settings/domain/services/settings_service.dart';
@@ -93,6 +94,7 @@ void main() {
               BlocProvider<StatisticsCubit>.value(value: result.statisticsCubit),
               BlocProvider<SubscriptionCubit>.value(value: result.subscriptionCubit),
               BlocProvider<SettingsCubit>.value(value: result.settingsCubit),
+              BlocProvider<ReminderCubit>.value(value: result.reminderCubit),
               BlocProvider<AnalyticsCubit>.value(value: result.analyticsCubit),
               BlocProvider<CarInfoCubit>.value(value: result.carInfoCubit),
               BlocProvider<AdditionalOptionsCubit>.value(value: result.additionalOptionsCubit),

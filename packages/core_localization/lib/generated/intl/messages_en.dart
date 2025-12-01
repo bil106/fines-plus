@@ -25,6 +25,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "access_basic": MessageLookupByLibrary.simpleMessage(
       "Access to basic features",
     ),
+    "action": MessageLookupByLibrary.simpleMessage("Action"),
     "add_cars": MessageLookupByLibrary.simpleMessage("Add a car"),
     "add_mileage": MessageLookupByLibrary.simpleMessage("Add mileage"),
     "add_new_photo": MessageLookupByLibrary.simpleMessage("Add new photo"),
@@ -260,6 +261,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "large_login": MessageLookupByLibrary.simpleMessage("LOG IN"),
     "large_sign_up": MessageLookupByLibrary.simpleMessage("SIGN UP"),
     "last_event": MessageLookupByLibrary.simpleMessage("Last event"),
+    "last_insurance_date": MessageLookupByLibrary.simpleMessage(
+      "Last insurance date",
+    ),
     "last_service_date": MessageLookupByLibrary.simpleMessage(
       "Last service date",
     ),
@@ -303,6 +307,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "next": MessageLookupByLibrary.simpleMessage("Next"),
     "no_ads": MessageLookupByLibrary.simpleMessage("No ads"),
+    "no_expenses": MessageLookupByLibrary.simpleMessage("No expense data yet"),
     "no_fines": MessageLookupByLibrary.simpleMessage(
       "There are no fines for you",
     ),

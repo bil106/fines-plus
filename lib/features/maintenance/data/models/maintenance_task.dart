@@ -12,6 +12,7 @@ class MaintenanceTask {
   final int? intervalKm;
   final Duration? intervalTime;
   final String? comment;
+  final bool isInsurance;
 
   MaintenanceTask({
     required this.description,
@@ -22,6 +23,7 @@ class MaintenanceTask {
     this.intervalKm,
     this.intervalTime,
     this.comment,
+    this.isInsurance = false,
   });
 
   factory MaintenanceTask.fromJson(Map<String, dynamic> json) => _$MaintenanceTaskFromJson(json);
@@ -37,6 +39,7 @@ class MaintenanceTask {
     int? intervalKm,
     Duration? intervalTime,
     String? comment,
+    bool? isInsurance,
   }) {
     return MaintenanceTask(
       description: description ?? this.description,
@@ -47,22 +50,22 @@ class MaintenanceTask {
       intervalKm: intervalKm ?? this.intervalKm,
       intervalTime: intervalTime ?? this.intervalTime,
       comment: comment ?? this.comment,
+      isInsurance: isInsurance ?? this.isInsurance,
     );
   }
 
-double getProgress() {
+  double getProgress() {
     if (intervalTime != null && lastServiceDate != null) {
       final now = DateTime.now();
       final totalDays = intervalTime!.inDays;
       final passedDays = now.difference(lastServiceDate!).inDays;
 
-      if (passedDays <= 0) return 0; 
+      if (passedDays <= 0) return 0;
       if (passedDays >= totalDays) return 1;
 
       return passedDays / totalDays;
     }
 
-   
     if (intervalKm != null && actualMileage != null) {
       final total = intervalKm!;
       final used = actualMileage! - lastMileage;
@@ -74,5 +77,4 @@ double getProgress() {
 
     return 0;
   }
-
 }

@@ -7,77 +7,40 @@ import 'package:fines_plus/features/settings/presentation/cubit/settings_cubit.d
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class MaintenanceCard extends StatelessWidget {
-  final String description;
-  final String category;
+class InsuranceCard extends StatelessWidget {
   final double progress;
   final String? priorExecution;
-  final int? lastMileage;
-  final int? actualMileage;
+
   final Duration? intervalTime;
-  final int? intervalKm;
+
   final VoidCallback? onPressed;
   final VoidCallback? onDelete;
-  final bool? isWarning;
 
-  final IconData? icon;
-  final Widget? iconWidget;
-
-  const MaintenanceCard({
+  const InsuranceCard({
     super.key,
-    required this.description,
-    required this.category,
     required this.progress,
     this.priorExecution,
-    this.lastMileage,
-    this.actualMileage,
-    this.intervalKm,
+
     this.intervalTime,
+
     this.onPressed,
     this.onDelete,
-    this.isWarning,
-    this.icon,
-    this.iconWidget,
   });
 
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    final settingsCubit = context.watch<SettingsCubit>();
-    final unit = settingsCubit.state.unit;
-
-    double convert(int? value) {
-      if (value == null) return 0;
-      return unit == 'mil' ? value * 0.621371 : value.toDouble();
-    }
+    context.watch<SettingsCubit>();
 
     return Card(
       elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: AppBorders.radiusLarge),
       child: Padding(
-        padding: const EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 2),
+        padding: const EdgeInsets.only(top: 8, left: 16, right: 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(category, style: textTheme.black16bold.copyWith(fontWeight: FontWeight.bold)),
-                      const SizedBox(height: 4),
-                      Text(description, style: textTheme.black16bold),
-                    ],
-                  ),
-                ),
-
-                Icon(Icons.settings, size: 20, color: AppColors.neutreGrey),
-              ],
-            ),
-
-            AppSpacers.verticalSmall,
+            Text(S.of(context).insurance, style: textTheme.black16bold.copyWith(fontWeight: FontWeight.bold)),
 
             Row(
               children: [
@@ -87,20 +50,8 @@ class MaintenanceCard extends StatelessWidget {
                     CircleAvatar(
                       radius: 28,
                       backgroundColor: AppColors.energyBlue50,
-                      child:
-                          iconWidget ??
-                          Icon(icon ?? Icons.build, color: icon != null ? AppColors.amber : AppColors.orange, size: 30),
+                      child: Icon(Icons.shield, color: AppColors.orange, size: 30),
                     ),
-                    if (isWarning != null)
-                      Positioned(
-                        bottom: 0,
-                        right: 0,
-                        child: CircleAvatar(
-                          radius: 10,
-                          backgroundColor: isWarning! ? AppColors.red : AppColors.green,
-                          child: Icon(isWarning! ? Icons.error : Icons.check, color: AppColors.neutreBlanc, size: 14),
-                        ),
-                      ),
                   ],
                 ),
                 AppSpacers.horizontalMedium,
@@ -124,35 +75,24 @@ class MaintenanceCard extends StatelessWidget {
               ],
             ),
 
+            const SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text("${S.of(context).previous}: ${priorExecution ?? "-"}", style: textTheme.black13W400),
-                    Text(
-                      "${S.of(context).mileage}: ${convert(lastMileage).toStringAsFixed(0)} $unit",
-                      style: textTheme.black13W400,
-                    ),
-                    Text(
-                      "${S.of(context).fact}: ${convert(actualMileage).toStringAsFixed(0)} $unit",
-                      style: textTheme.black13W400,
-                    ),
-                  ],
+                  children: [Text("${S.of(context).previous}: ${priorExecution ?? "-"}", style: textTheme.black13W400)],
                 ),
                 Column(
                   children: [
                     Text(
-                      "${S.of(context).periodicity} ${convert(intervalKm).toStringAsFixed(0)} $unit",
+                      "${S.of(context).every} ${intervalTime!.inDays} ${S.of(context).days}",
                       style: textTheme.black13W400,
                     ),
-                
                   ],
                 ),
               ],
             ),
-
             Row(
               children: [
                 Padding(

@@ -1,12 +1,12 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'package:core_data/core_data.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:fines_plus/features/expenses/data/models/service_record.dart';
 import 'package:fines_plus/features/home/presentation/cubit/quick_actions_cubit.dart';
 import 'package:fines_plus/features/home/presentation/cubit/quick_actions_state.dart';
-import 'package:fines_plus/features/maintenance/data/repository/schedule_firebase_repository.dart';
+import 'package:fines_plus/features/home/presentation/widgets/insurance_detail_sheet.dart';
 import 'package:fines_plus/features/schedule/presentation/widgets/action_detail_sheet.dart';
 import 'package:fines_plus/features/maintenance/presentation/widgets/maintenance_card.dart';
 import 'package:fines_plus/features/maintenance/data/models/maintenance_task.dart';
@@ -16,8 +16,8 @@ import 'package:fines_plus/features/reminders/presentation/cubit/reminder_cubit.
 import 'package:fines_plus/features/schedule/data/repository/schedule_repository.dart';
 import 'package:fines_plus/features/schedule/presentation/cubit/schedule_cubit.dart';
 import 'package:fines_plus/features/schedule/presentation/cubit/schedule_state.dart';
+import 'package:fines_plus/features/schedule/presentation/widgets/insurance_card.dart';
 import 'package:fines_plus/features/settings/presentation/cubit/settings_cubit.dart';
-import 'package:fines_plus/features/vehicle/presentation/cubit/car_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -50,12 +50,9 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
   @override
   void initState() {
     super.initState();
-
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _checkInitialAction();
-
-      final quickActionsCubit = context.read<QuickActionsCubit>();
-      quickActionsCubit.init();
+      context.read<QuickActionsCubit>().init();
     });
   }
 
@@ -64,7 +61,6 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     if (key == null) return;
 
     final maintenanceCubit = context.read<MaintenanceCubit>();
-
     ServiceRecord? matchingTask;
     try {
       matchingTask = maintenanceCubit.state.serviceRecords.firstWhere(
@@ -132,77 +128,55 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final scheduleCubit = context.read<ScheduleCubit>();
+    final reminderCubit = context.read<ReminderCubit>();
+
     return MultiBlocProvider(
       providers: [
-        BlocProvider(
-          create: (_) {
-            final maintenanceCubit = context.read<MaintenanceCubit>();
-            final carCubit = context.read<CarCubit>();
-            final firebaseRepo = ScheduleFirebaseRepository(FirebaseFirestore.instance);
-
-            final scheduleCubit = ScheduleCubit(
-              repository: widget.repository,
-              firebaseRepo: firebaseRepo,
-              maintenanceCubit: maintenanceCubit,
-              pushHelper: widget.pushHelper,
-              enabled: true,
-              userId: widget.userId,
-              carNumber: widget.carNumber,
-              carCubit: carCubit,
-            );
-
-            scheduleCubit.loadTasks();
-            return scheduleCubit;
-          },
-        ),
-        BlocProvider(
-          create: (_) => ReminderCubit(
-            repository: widget.reminderRepository,
-            pushHelper: widget.pushHelper,
-            carNumber: widget.carNumber,
-            userId: widget.userId,
-            carCubit: context.read<CarCubit>(),
-          ),
-        ),
+        BlocProvider.value(value: scheduleCubit),
+        BlocProvider.value(value: reminderCubit),
       ],
       child: BlocListener<QuickActionsCubit, QuickActionsState>(
         listener: (context, state) {
           final scheduleCubit = context.read<ScheduleCubit>();
           final reminderCubit = context.read<ReminderCubit>();
+          final settingsCubit = context.read<SettingsCubit>();
+          final unit = settingsCubit.state.unit;
 
-          state.createdTasks.forEach((labelKey, data) {
+          for (final data in state.createdTasks.values) {
             final alreadyExists = scheduleCubit.state.tasks.any(
-              (t) => t.description.toLowerCase() == (data['description'] ?? '').toLowerCase(),
+              (t) => t.description.toLowerCase() == ((data['description'] ?? '').toString().toLowerCase()),
             );
-            if (!alreadyExists) {
-              final settingsCubit = context.read<SettingsCubit>();
-              final unit = settingsCubit.state.unit;
 
-              final lastMileageKm = data["mileage"] ?? 0;
-              final intervalKm = data["intervalKm"] ?? 0;
-              final intervalKmValue = unit == 'mil' ? (intervalKm / 0.621371).round() : intervalKm;
+            if (alreadyExists) continue;
 
-              final selectedDate = data['date'] as DateTime?;
-              final newTask = MaintenanceTask(
-                description: data['description'] ?? S.of(context).no_name,
-                category: data['category'] ?? S.of(context).no_name,
-                lastServiceDate: selectedDate,
-                lastMileage: lastMileageKm,
-                actualMileage: getMaxMileage(newMileage: lastMileageKm),
-                intervalKm: intervalKmValue == 0 ? null : intervalKmValue,
-                intervalTime: data['byDate'] == true ? Duration(days: data['intervalDays'] ?? 180) : null,
-                comment: data['comment'] as String?,
-              );
+            final isInsurance = data['isInsurance'] == true;
 
-              scheduleCubit.addTask(newTask, reminderCubit: reminderCubit);
-            }
-          });
+            final lastMileageKm = data["mileage"] ?? 0;
+            final intervalKm = data["intervalKm"] ?? 0;
+            final intervalKmValue = unit == 'mil' ? (intervalKm / 0.621371).round() : intervalKm;
+
+            final selectedDate = data['date'] as DateTime?;
+
+            final newTask = MaintenanceTask(
+              description: isInsurance
+                  ? S.of(context).insurance
+                  : (data['description']?.toString() ?? S.of(context).no_name),
+              category: isInsurance ? S.of(context).insurance : (data['category']?.toString() ?? S.of(context).other),
+              lastServiceDate: selectedDate,
+              lastMileage: lastMileageKm,
+              actualMileage: getMaxMileage(newMileage: lastMileageKm),
+              intervalKm: intervalKmValue == 0 ? null : intervalKmValue,
+              intervalTime: data['byDate'] == true ? Duration(days: data['intervalDays'] ?? 365) : null,
+              comment: data['comment']?.toString(),
+              isInsurance: isInsurance,
+            );
+
+            scheduleCubit.addTask(newTask, reminderCubit: reminderCubit);
+          }
         },
         child: BlocBuilder<ScheduleCubit, ScheduleState>(
           builder: (context, state) {
-            final scheduleCubit = context.read<ScheduleCubit>();
-            final reminderCubit = context.read<ReminderCubit>();
-
             return Stack(
               children: [
                 state.loading
@@ -216,67 +190,98 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                         separatorBuilder: (_, __) => AppSpacers.verticalMedium,
                         itemBuilder: (context, index) {
                           final task = state.tasks[index];
-                          return MaintenanceCard(
-                            description: task.description,
-                            category: task.category,
-                            progress: task.getProgress(),
-                            priorExecution: task.lastServiceDate != null
-                                ? DateFormat('dd.MM.yyyy').format(task.lastServiceDate!)
-                                : null,
-                            lastMileage: task.lastMileage,
-                            actualMileage: getMaxMileage(newMileage: task.lastMileage),
-                            intervalKm: task.intervalKm,
-                            intervalTime: task.intervalTime,
-                            onPressed: () async {
-                              final result = await showModalBottomSheet<Map<String, dynamic>>(
-                                context: context,
-                                isScrollControlled: true,
-                                shape: const RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-                                ),
-                                builder: (_) => ActionDetailSheet(
-                                  description: task.description,
-                                  category: task.category,
-                                  lastServiceDate: task.lastServiceDate != null
-                                      ? DateFormat('dd.MM.yyyy').format(task.lastServiceDate!)
-                                      : null,
 
-                                  lastMileage: task.lastMileage,
-                                  actualMileage: getMaxMileage(newMileage: task.lastMileage),
-                                  intervalKm: task.intervalKm,
-                                  comment: task.comment,
-                                  byDate: task.intervalTime != null,
-                                  byMileage: task.intervalKm != null,
-                                ),
-                              );
+                          if (task.isInsurance) {
+                            return InsuranceCard(
+                              progress: task.getProgress(),
+                              priorExecution: task.lastServiceDate != null
+                                  ? DateFormat('dd.MM.yyyy').format(task.lastServiceDate!)
+                                  : null,
 
-                              if (result != null) {
-                                final last = result["mileage"] ?? task.lastMileage;
-                                final actual = getMaxMileage(newMileage: last);
+                              intervalTime: task.intervalTime,
+                              onPressed: () async {
+                                await showModalBottomSheet<Map<String, dynamic>>(
+                                  context: context,
+                                  isScrollControlled: true,
+                                  builder: (_) => InsuranceDetailSheet(
+                                    comment: task.comment,
+                                    onSave: (data) {
+                                      final updatedTask = task.copyWith(
+                                        description: data["description"]?.toString() ?? task.description,
+                                        lastServiceDate: data["date"] as DateTime?,
+                                        intervalTime: data["byDate"] == true
+                                            ? Duration(days: data["intervalDays"] ?? 0)
+                                            : null,
+                                        comment: data["comment"]?.toString(),
+                                      );
 
-                                final updatedTask = task.copyWith(
-                                  description: result["description"],
-                                  category: result["category"],
-                                  lastServiceDate: result["date"] as DateTime?,
-                                  lastMileage: last,
-                                  actualMileage: actual,
-                                  intervalKm: result["intervalKm"] ?? task.intervalKm,
-                                  intervalTime: result["byDate"] == true
-                                      ? Duration(days: (result["intervalDays"] ?? 0))
-                                      : null,
-
-                                  comment: result["comment"],
+                                      scheduleCubit.updateTask(index, updatedTask, reminderCubit: reminderCubit);
+                                    },
+                                  ),
+                                );
+                              },
+                              onDelete: () {
+                                scheduleCubit.removeTask(index, reminderCubit: reminderCubit);
+                              },
+                            );
+                          } else {
+                            return MaintenanceCard(
+                              description: task.description,
+                              category: task.category,
+                              progress: task.getProgress(),
+                              priorExecution: task.lastServiceDate != null
+                                  ? DateFormat('dd.MM.yyyy').format(task.lastServiceDate!)
+                                  : null,
+                              lastMileage: task.lastMileage,
+                              actualMileage: getMaxMileage(newMileage: task.lastMileage),
+                              intervalKm: task.intervalKm,
+                              intervalTime: task.intervalTime,
+                              onPressed: () async {
+                                final result = await showModalBottomSheet<Map<String, dynamic>>(
+                                  context: context,
+                                  isScrollControlled: true,
+                                  shape: const RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                                  ),
+                                  builder: (_) => ActionDetailSheet(
+                                    description: task.description,
+                                    category: task.category,
+                                    lastServiceDate: task.lastServiceDate != null
+                                        ? DateFormat('dd.MM.yyyy').format(task.lastServiceDate!)
+                                        : null,
+                                    lastMileage: task.lastMileage,
+                                    actualMileage: getMaxMileage(newMileage: task.lastMileage),
+                                    intervalKm: task.intervalKm,
+                                    comment: task.comment,
+                                    byDate: task.intervalTime != null,
+                                    byMileage: task.intervalKm != null,
+                                  ),
                                 );
 
-                                scheduleCubit.updateTask(index, updatedTask, reminderCubit: reminderCubit);
-                                context.read<QuickActionsCubit>().init();
-                              }
-                            },
-                            onDelete: () {
-                              scheduleCubit.removeTask(index);
-                              context.read<QuickActionsCubit>().onTaskDeleted(task.category);
-                            },
-                          );
+                                if (result != null) {
+                                  final updatedTask = task.copyWith(
+                                    description: result["description"],
+                                    category: result["category"],
+                                    lastServiceDate: result["date"] as DateTime?,
+                                    lastMileage: result["mileage"] ?? task.lastMileage,
+                                    actualMileage: getMaxMileage(newMileage: result["mileage"] ?? task.lastMileage),
+                                    intervalKm: result["intervalKm"] ?? task.intervalKm,
+                                    intervalTime: result["byDate"] == true
+                                        ? Duration(days: (result["intervalDays"] ?? 0))
+                                        : null,
+                                    comment: result["comment"],
+                                  );
+
+                                  scheduleCubit.updateTask(index, updatedTask, reminderCubit: reminderCubit);
+                                  context.read<QuickActionsCubit>().init();
+                                }
+                              },
+                              onDelete: () {
+                                scheduleCubit.removeTask(index, reminderCubit: reminderCubit);
+                                context.read<QuickActionsCubit>().onTaskDeleted(task.category);
+                              },
+                            );
+                          }
                         },
                       ),
                 Positioned(
@@ -284,47 +289,30 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                   right: 4,
                   child: FloatingActionButton(
                     onPressed: () async {
-                      final cubit = context.read<QuickActionsCubit>();
-                      final scheduleCubit = context.read<ScheduleCubit>();
-                      final reminderCubit = context.read<ReminderCubit>();
-
-                      final result = await showModalBottomSheet<Map<String, dynamic>>(
+                      await showModalBottomSheet<Map<String, dynamic>>(
                         context: context,
                         isScrollControlled: true,
                         shape: const RoundedRectangleBorder(
                           borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
                         ),
-                        builder: (_) => ActionDetailSheet(
-                          onSave: (data) async {
-                            final category = data['category'] as String? ?? S.of(context).no_name;
-                            await cubit.onTaskCreated(data, labelKey: category);
+                        builder: (_) => InsuranceDetailSheet(
+                          onSave: (data) {
+                            final newTask = MaintenanceTask(
+                              description: data["description"]?.toString() ?? S.of(context).insurance,
+                              category: S.of(context).insurance,
+                              lastServiceDate: data["date"] as DateTime?,
+                              lastMileage: 0,
+                              actualMileage: 0,
+                              intervalKm: 0,
+                              intervalTime: data["byDate"] == true ? Duration(days: data["intervalDays"] ?? 0) : null,
+                              comment: data["comment"]?.toString(),
+                              isInsurance: true,
+                            );
+
+                            scheduleCubit.addTask(newTask, reminderCubit: reminderCubit);
                           },
                         ),
                       );
-
-                      if (result != null) {
-                        final settingsCubit = context.read<SettingsCubit>();
-                        final unit = settingsCubit.state.unit;
-
-                        final lastMileageInput = result["mileage"] ?? 0;
-                        final intervalInput = result["intervalKm"] ?? 0;
-
-                        final lastMileageKm = unit == 'mil' ? (lastMileageInput / 0.621371).round() : lastMileageInput;
-                        final intervalKm = unit == 'mil' ? (intervalInput / 0.621371).round() : intervalInput;
-
-                        final newTask = MaintenanceTask(
-                          description: result["description"] ?? S.of(context).no_name,
-                          category: result["category"] ?? S.of(context).no_name,
-                          lastServiceDate: result["date"] as DateTime?,
-                          lastMileage: lastMileageKm,
-                          actualMileage: getMaxMileage(newMileage: lastMileageKm),
-                          intervalKm: intervalKm,
-                          intervalTime: result["byDate"] ? Duration(days: result["intervalDays"]) : null,
-                          comment: result["comment"],
-                        );
-
-                        scheduleCubit.addTask(newTask, reminderCubit: reminderCubit);
-                      }
                     },
                     child: const Icon(Icons.add),
                   ),

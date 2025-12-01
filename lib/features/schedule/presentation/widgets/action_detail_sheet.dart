@@ -49,6 +49,18 @@ class _ActionDetailSheetState extends State<ActionDetailSheet> {
   bool byMileage = true;
   String intervalUnit = "days";
   DateTime? selectedDate;
+  String? selectedCategory;
+
+final Map<String, String> items = {
+    "oil": S.current.oil_icon,
+    "coolant": S.current.coolant_icon,
+    "service": S.current.service,
+    "repair": S.current.repair_icon,
+    "battery": S.current.battery,
+    "tuning": S.current.tuning,
+    "tires": S.current.tires_icon,
+    "insurance": S.current.insurance,
+  };
 
   @override
   void initState() {
@@ -60,11 +72,12 @@ class _ActionDetailSheetState extends State<ActionDetailSheet> {
     mileageController = TextEditingController(text: widget.lastMileage?.toString());
     intervalKmController = TextEditingController(text: widget.intervalKm?.toString());
     intervalDaysController = TextEditingController();
-
     commentController = TextEditingController(text: widget.comment);
 
     byDate = widget.byDate;
     byMileage = widget.byMileage;
+
+    selectedCategory = widget.category;
 
     if (widget.lastServiceDate != null) {
       final parts = widget.lastServiceDate!.split('.');
@@ -106,23 +119,7 @@ class _ActionDetailSheetState extends State<ActionDetailSheet> {
 
             SizedBox(height: 16),
 
-            DropdownButtonFormField<String>(
-              decoration: InputDecoration(labelText: S.of(context).category, border: OutlineInputBorder()),
-              value: categoryController.text.isNotEmpty ? categoryController.text : null,
-              items: [
-                "Oil",
-                "Coolant",
-                "Service",
-                "Repair",
-                "Battery",
-                "Tuning",
-                "Tires",
-                "Insurance",
-              ].map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
-              onChanged: (v) => categoryController.text = v ?? "",
-            ),
 
-            AppSpacers.verticalMedium,
 
             Autocomplete<String>(
               optionsBuilder: (TextEditingValue value) {

@@ -2,6 +2,7 @@ import 'package:core_localization/generated/l10n.dart';
 import 'package:fines_plus/features/home/presentation/cubit/quick_actions_cubit.dart';
 import 'package:fines_plus/features/home/presentation/cubit/quick_actions_state.dart';
 import 'package:fines_plus/features/home/presentation/widgets/action_item.dart';
+import 'package:fines_plus/features/home/presentation/widgets/insurance_detail_sheet.dart';
 import 'package:fines_plus/features/schedule/presentation/widgets/action_detail_sheet.dart';
 import 'package:fines_plus/router/home_screen_wrapper.dart';
 import 'package:flutter/material.dart';
@@ -26,7 +27,6 @@ class QuickActionsPanel extends StatelessWidget {
           ),
           itemBuilder: (context, index) {
             final action = state.actions[index];
-
             final isActive = state.activeCategories.contains(action.labelKey);
 
             return ActionItem(
@@ -38,23 +38,41 @@ class QuickActionsPanel extends StatelessWidget {
                 final labelKey = action.labelKey;
                 final wrapperState = context.findAncestorStateOfType<HomeScreenWrapperState>();
 
-                await showModalBottomSheet<Map<String, dynamic>>(
+                final result = await showModalBottomSheet<Map<String, dynamic>>(
                   context: context,
                   isScrollControlled: true,
-                  builder: (ctx) => ActionDetailSheet(
-                    description: _translateLabel(labelKey, context),
-                    category: labelKey,
-                    byDate: false,
-                    byMileage: true,
-                  ),
-                ).then((result) async {
-                  if (result == null) return;
+                  builder: (ctx) {
+                    if (action.labelKey == "Insurance") {
+                      return const InsuranceDetailSheet();
+                    } else {
+                      return ActionDetailSheet(
+                        description: _translateLabel(action.labelKey, context),
+                        category: action.labelKey,
+                        byDate: false,
+                        byMileage: true,
+                      );
+                    }
+                  },
+                );
 
-                  final quick = context.read<QuickActionsCubit>();
+                if (result == null) return;
+
+                final quick = context.read<QuickActionsCubit>();
+
+                if (labelKey == "Insurance") {
+                  await quick.onTaskCreated({
+                    'description': S.of(context).insurance,
+                    'isInsurance': true,
+                    'date': result['date'] ?? DateTime.now(),
+                    'byDate': result['byDate'] ?? true,
+                    'intervalDays': result['intervalDays'] ?? 365,
+                    'comment': result['comment'] ?? '',
+                  }, labelKey: labelKey);
+                } else {
                   await quick.onTaskCreated(result, labelKey: labelKey);
+                }
 
-                  wrapperState?.openAnalyticsTab(2);
-                });
+                wrapperState?.openAnalyticsTab(2);
               },
             );
           },

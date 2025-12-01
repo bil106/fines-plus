@@ -3764,6 +3764,16 @@ class S {
     );
   }
 
+  /// `Last insurance date`
+  String get last_insurance_date {
+    return Intl.message(
+      'Last insurance date',
+      name: 'last_insurance_date',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Attention`
   String get attention {
     return Intl.message('Attention', name: 'attention', desc: '', args: []);
@@ -3782,6 +3792,21 @@ class S {
   /// `Every`
   String get every {
     return Intl.message('Every', name: 'every', desc: '', args: []);
+  }
+
+  /// `Action`
+  String get action {
+    return Intl.message('Action', name: 'action', desc: '', args: []);
+  }
+
+  /// `No expense data yet`
+  String get no_expenses {
+    return Intl.message(
+      'No expense data yet',
+      name: 'no_expenses',
+      desc: '',
+      args: [],
+    );
   }
 }
 
