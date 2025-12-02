@@ -31,26 +31,31 @@ class LastEventCardAction extends StatelessWidget {
       child: _buildCard(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+           
           children: [
             _buildHeader(context, textTheme),
-            const SizedBox(height: 4),
-            Container(height: 1, width: double.infinity, color: Colors.grey[300]),
-            const SizedBox(height: 4),
+            const Divider(height: 4, thickness: 1),
             _buildContent(textTheme, context),
-            Transform.translate(
-              offset: const Offset(0, -5),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 0),
               child: Center(
                 child: TextButton(
                   onPressed: onOpenEvents,
                   style: TextButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 0),
                     minimumSize: Size.zero,
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   ),
                   child: Text(
                     S.of(context).open_events,
-                    style: textTheme.bodyLarge?.copyWith(color: AppColors.darkBlue, fontWeight: FontWeight.bold),
+                    style: textTheme.bodyLarge?.copyWith(
+                      fontSize: 14, 
+                      color: AppColors.darkBlue,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
+                )
+
               ),
             ),
           ],
@@ -81,32 +86,44 @@ class LastEventCardAction extends StatelessWidget {
             padding: const EdgeInsets.only(left: 4.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Text(event!.description, style: textTheme.black18W400),
                 if (event!.mileage != null)
-                  Padding(
-                    padding: const EdgeInsets.only(left: 49.0, top: 4),
-                    child: Text(
-                      "${event!.mileage!.toStringAsFixed(0)} ${settingsCubit.state.unit}",
-                      style: textTheme.bodyMedium?.copyWith(color: Colors.black54),
-                    ),
+                  Row(
+                    children: [
+                          Padding(
+                        padding: const EdgeInsets.only(left: 9.0, top: 0),
+                        child: StreamBuilder<double>(
+                          stream: CurrencyStream(settingsCubit).convertedAmountStream(event!),
+                          initialData: event!.amountOriginal ?? event!.amountValue,
+                          builder: (context, snapshot) {
+                            final convertedValue = snapshot.data ?? 0;
+                            final displayCurrency = settingsCubit.getCurrencyLabel(
+                              context,
+                              settingsCubit.state.currency,
+                            );
+                            return Text(
+                              "${convertedValue.toStringAsFixed(0)} $displayCurrency",
+                              style: textTheme.titleLarge?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.blueAccent,
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 49.0, top: 0),
+                        child: Text(
+                          "${event!.mileage!.toStringAsFixed(0)} ${settingsCubit.state.unit}",
+                          style: textTheme.bodyMedium?.copyWith(color: Colors.black54),
+                        ),
+                      ),
+                    
+                    ],
                   ),
-            Padding(
-                  padding: const EdgeInsets.only(left: 49.0, top: 2),
-                  child: StreamBuilder<double>(
-                    stream: CurrencyStream(settingsCubit).convertedAmountStream(event!),
-                    initialData: event!.amountOriginal ?? event!.amountValue,
-                    builder: (context, snapshot) {
-                      final convertedValue = snapshot.data ?? 0;
-                      final displayCurrency = settingsCubit.getCurrencyLabel(context, settingsCubit.state.currency);
-                      return Text(
-                        "${convertedValue.toStringAsFixed(0)} $displayCurrency",
-                        style: textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold, color: AppColors.blueAccent),
-                      );
-                    },
-                  ),
-                ),
-
+              
               ],
             ),
           ),
@@ -116,13 +133,12 @@ class LastEventCardAction extends StatelessWidget {
   }
 
   static Widget _buildCard({required Widget child}) {
-    return Card(
-      elevation: 2,
-      shadowColor: Colors.black26,
-      color: Colors.grey[100],
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-      child: Padding(padding: const EdgeInsets.only(left: 12, right: 12, top: 4, bottom: 1), child: child),
+    return  Card(
+        elevation: 2,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        child: Padding(padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12), child: child),
+      
+
     );
   }
 }
-

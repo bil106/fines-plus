@@ -101,7 +101,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     }
   }
 
-Future<void> _signInWithGoogle(BuildContext context) async {
+  Future<void> _signInWithGoogle(BuildContext context) async {
     try {
       final googleUser = await GoogleSignIn().signIn();
       if (googleUser == null) return;
@@ -115,14 +115,13 @@ Future<void> _signInWithGoogle(BuildContext context) async {
 
       await FirebaseAuth.instance.signInWithCredential(credential);
 
-      await _onSocialLoginSuccess(context); 
+      await _onSocialLoginSuccess(context);
     } catch (e) {
       if (kDebugMode) {
         print("Google login error: $e");
       }
     }
   }
-
 
   Future<void> _signInWithFacebook(BuildContext context) async {
     try {
@@ -138,7 +137,7 @@ Future<void> _signInWithGoogle(BuildContext context) async {
         final credential = FacebookAuthProvider.credential(accessToken.tokenString);
 
         await FirebaseAuth.instance.signInWithCredential(credential);
-await _onSocialLoginSuccess(context);
+        await _onSocialLoginSuccess(context);
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(S.of(context).facebook_login_successful)));
       } else if (result.status == LoginStatus.cancelled) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(S.of(context).facebook_login_cancelled)));
@@ -165,7 +164,7 @@ await _onSocialLoginSuccess(context);
       ).credential(idToken: credential.identityToken, accessToken: credential.authorizationCode);
 
       await FirebaseAuth.instance.signInWithCredential(oauthCredential);
-await _onSocialLoginSuccess(context);
+      await _onSocialLoginSuccess(context);
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Sign in with Apple successful'), backgroundColor: AppColors.blue700),
       );
@@ -174,7 +173,8 @@ await _onSocialLoginSuccess(context);
       debugPrint('Apple login error: $e');
     }
   }
-Future<void> _onSocialLoginSuccess(BuildContext context) async {
+
+  Future<void> _onSocialLoginSuccess(BuildContext context) async {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) return;
 
@@ -191,11 +191,10 @@ Future<void> _onSocialLoginSuccess(BuildContext context) async {
       });
     }
 
-  
     final hasSubscription = await context.read<RegistrationCubit>().checkSubscription();
 
     if (hasSubscription) {
-      context.router.replaceAll([ HomeRouteWrapper(initialPage: HomePage.home)]);
+      context.router.replaceAll([HomeRouteWrapper(initialPage: HomePage.home)]);
     } else {
       context.router.replaceAll([SubscriptionRoute(debugMode: true)]);
     }
@@ -214,9 +213,9 @@ Future<void> _onSocialLoginSuccess(BuildContext context) async {
     final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
-      backgroundColor: AppColors.grey50,
+      backgroundColor: AppColors.energyBlue50,
       appBar: AppBar(
-        backgroundColor: AppColors.grey50,
+        backgroundColor: AppColors.energyBlue50,
         elevation: 0,
         leading: BackButton(color: AppColors.blue700, onPressed: widget.onBack),
       ),
@@ -370,7 +369,6 @@ Future<void> _onSocialLoginSuccess(BuildContext context) async {
                           IconButton(
                             icon: Image.asset('assets/icons/google_logo.png', height: 30),
                             onPressed: () => _signInWithGoogle(context),
-
                           ),
                           AppSpacers.horizontalMedium,
                           IconButton(

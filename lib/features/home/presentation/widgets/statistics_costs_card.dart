@@ -34,7 +34,6 @@ class StatisticsCostsCard extends StatelessWidget {
             children: [
               Text(presenter.loc.costsStatTitle, style: Theme.of(context).textTheme.titleMedium),
               const Divider(height: 16, thickness: 1),
-              const SizedBox(height: 8),
 
               Row(
                 children: [

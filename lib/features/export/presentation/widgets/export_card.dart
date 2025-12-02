@@ -18,9 +18,11 @@ class ExportCard extends StatelessWidget {
       child: GestureDetector(
         onTap: onTap,
         child: Container(
+          
           height: 180,
           margin: const EdgeInsets.symmetric(horizontal: 6),
           decoration: BoxDecoration(
+            color: AppColors.blueGrey25,
             border: Border.all(color: AppColors.neutreGreyLight, width: 1.5),
             borderRadius: BorderRadius.circular(16),
           ),

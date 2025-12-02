@@ -39,7 +39,9 @@ class SettingsCubit extends Cubit<SettingsState> {
   double convertFromUAH(double amountUAH) {
     return currencyService.convert(amountUAH, state.currency, fromCurrency: "UAH");
   }
-
+double convertToUAH(double amount) {
+    return currencyService.convert(amount, "UAH", fromCurrency: state.currency);
+  }
   Future<void> setLocale(Locale locale) async {
     await _prefs.setString('localeCode', locale.languageCode);
     emit(state.copyWith(locale: locale));
@@ -67,4 +69,7 @@ class SettingsCubit extends Cubit<SettingsState> {
         return currency;
     }
   }
+
+
+
 }

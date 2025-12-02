@@ -54,9 +54,9 @@ class _RemindersView extends StatelessWidget {
     final cubit = context.read<ReminderCubit>();
 
     return Scaffold(
-      backgroundColor: AppColors.grey50,
+      backgroundColor: AppColors.energyBlue50,
       appBar: AppBar(
-        backgroundColor: AppColors.grey50,
+        backgroundColor: AppColors.energyBlue50,
         leading: BackButton(color: AppColors.blue700, onPressed: onBack ?? () => Navigator.pop(context)),
       ),
       body: SafeArea(
@@ -152,7 +152,7 @@ class _EmptyReminders extends StatelessWidget {
             child: Container(
               width: 150,
               height: 150,
-              decoration: const BoxDecoration(shape: BoxShape.circle, color: AppColors.energyBlue),
+              decoration:  BoxDecoration(shape: BoxShape.circle, color: AppColors.blueGrey25),
               child: const Icon(Icons.check, color: AppColors.neutreBlanc, size: 120),
             ),
           ),

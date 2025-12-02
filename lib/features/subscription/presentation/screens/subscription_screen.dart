@@ -34,7 +34,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     {"title": "1 місяць", "price": "429,99 грн. в мес."},
     {"title": "3 дні безплатно,далі", "price": "підписатися за 899,99 грн. в рік"},
   ];
-Future<void> _onPlanSelected(int index) async {
+  Future<void> _onPlanSelected(int index) async {
     setState(() => _selectedIndex = index);
 
     final prefs = await SharedPreferences.getInstance();
@@ -43,12 +43,12 @@ Future<void> _onPlanSelected(int index) async {
 
     final isTrial = index == 2;
     if (isTrial) {
-    if (user == null) {
+      if (user == null) {
         // First launch - send to enter the car number, like the other plans
         context.router.push(CarInfoRoute());
         return;
       }
-     
+
       final now = DateTime.now();
       final trialEnd = now.add(const Duration(days: 7));
 
@@ -67,10 +67,8 @@ Future<void> _onPlanSelected(int index) async {
         "createdAt": FieldValue.serverTimestamp(),
       });
 
-  
       await prefs.setInt('trial_end_timestamp', trialEnd.millisecondsSinceEpoch);
 
-     
       final wrapperState = context.findAncestorStateOfType<HomeScreenWrapperState>();
       if (wrapperState != null) {
         wrapperState.openPage(HomePage.home);
@@ -81,7 +79,6 @@ Future<void> _onPlanSelected(int index) async {
       return;
     }
 
-  
     if (carNumber.isEmpty) {
       context.router.push(CarInfoRoute());
       return;
@@ -92,7 +89,6 @@ Future<void> _onPlanSelected(int index) async {
       return;
     }
 
- 
     final plan = plans[index];
     final priceString = plan["price"]!;
     final priceDouble = double.tryParse(priceString.replaceAll(RegExp(r'[^0-9,]'), '').replaceAll(',', '.')) ?? 0.0;
@@ -107,7 +103,6 @@ Future<void> _onPlanSelected(int index) async {
 
     await prefs.setInt('subscription_end_timestamp', subscriptionEnd.millisecondsSinceEpoch);
 
-   
     final purchaseService = PurchaseService();
     await purchaseService.recordPurchase(
       purchaseId: 'tx_${user.uid}_${carNumber}_${DateTime.now().millisecondsSinceEpoch}',
@@ -116,7 +111,6 @@ Future<void> _onPlanSelected(int index) async {
       months: months,
     );
 
-   
     final wrapper = context.findAncestorStateOfType<HomeScreenWrapperState>();
     if (wrapper != null) {
       wrapper.openPage(HomePage.carInfo);
@@ -125,16 +119,15 @@ Future<void> _onPlanSelected(int index) async {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     return BlocListener<SubscriptionCubit, SubscriptionState>(
       listener: (context, state) async {},
       child: Scaffold(
-        backgroundColor: AppColors.grey50,
+        backgroundColor: AppColors.energyBlue50,
         appBar: AppBar(
-          backgroundColor: AppColors.grey50,
+          backgroundColor: AppColors.energyBlue50,
           elevation: 0,
           leading: BackButton(color: AppColors.blue700, onPressed: widget.onBack),
           title: Text(S.of(context).try_premium, style: textTheme.headlineMedium),

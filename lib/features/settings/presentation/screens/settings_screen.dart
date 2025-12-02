@@ -66,8 +66,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    
-
     return Scaffold(
       backgroundColor: AppColors.energyBlue50,
       appBar: AppBar(
@@ -86,7 +84,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-             
               Card(
                 color: AppColors.neutreBlanc,
                 shape: RoundedRectangleBorder(borderRadius: AppBorders.radius22),
@@ -100,9 +97,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         finesCheck,
                         (v) => _onSwitchChanged("finesCheck", v),
                       ),
-                      Divider(thickness: 2, color: AppColors.grey50),
+                      Divider(thickness: 2, color: AppColors.energyBlue50),
                       _buildSettingRow(S.of(context).reminder, reminders, (v) => _onSwitchChanged("reminders", v)),
-                      Divider(thickness: 2, color: AppColors.grey50),
+                      Divider(thickness: 2, color: AppColors.energyBlue50),
                       _buildSettingRow(
                         S.of(context).push_notifications,
                         pushNotifications,
@@ -115,29 +112,29 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
               const SizedBox(height: 30),
 
-          BlocBuilder<SettingsCubit, SettingsState>(
-  builder: (context, state) {
-    return Card(
-      color: AppColors.neutreBlanc,
-      shape: RoundedRectangleBorder(borderRadius: AppBorders.radius22),
-      elevation: 3,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-        child: Column(
-          children: [
-            _buildDropdownRow<String>(
-              context,
-              icon: Icons.straighten,
-              title: S.of(context).units,
-              value: state.unit,
-              items: const [
-                DropdownMenuItem(value: 'km', child: Text('km')),
-                DropdownMenuItem(value: 'mil', child: Text('mil')),
-              ],
-              onChanged: (v) => context.read<SettingsCubit>().setUnit(v!),
-            ),
+              BlocBuilder<SettingsCubit, SettingsState>(
+                builder: (context, state) {
+                  return Card(
+                    color: AppColors.neutreBlanc,
+                    shape: RoundedRectangleBorder(borderRadius: AppBorders.radius22),
+                    elevation: 3,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+                      child: Column(
+                        children: [
+                          _buildDropdownRow<String>(
+                            context,
+                            icon: Icons.straighten,
+                            title: S.of(context).units,
+                            value: state.unit,
+                            items: const [
+                              DropdownMenuItem(value: 'km', child: Text('km')),
+                              DropdownMenuItem(value: 'mil', child: Text('mil')),
+                            ],
+                            onChanged: (v) => context.read<SettingsCubit>().setUnit(v!),
+                          ),
 
-            Divider(thickness: 1.5, color: AppColors.grey50),
+                          Divider(thickness: 1.5, color: AppColors.energyBlue50),
 
                           _buildDropdownRow<String>(
                             context,
@@ -151,39 +148,45 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             onChanged: (v) => context.read<SettingsCubit>().setFuelConsumptionUnit(v!),
                           ),
 
-            Divider(thickness: 1.5, color: AppColors.grey50),
-            _buildDropdownRow<String>(
-              context,
-              icon: Icons.currency_exchange,
-              title: S.of(context).currency,
-              value: state.currency,
-              items: const [
-                DropdownMenuItem(value: 'UAH', child: Text('UAH')),
-                DropdownMenuItem(value: 'USD', child: Text('USD')),
-                DropdownMenuItem(value: 'EUR', child: Text('EUR')),
-              ],
-              onChanged: (v) => context.read<SettingsCubit>().setCurrency(v!),
-            ),
-            Divider(thickness: 1.5, color: AppColors.grey50),
-            _buildDropdownRow<Locale>(
-              context,
-              icon: Icons.language,
-              title: S.of(context).language,
-              value: state.locale,
-              items: const [
-                DropdownMenuItem(value: Locale('uk'), child: Text('Українська')),
-                DropdownMenuItem(value: Locale('en'), child: Text('English')),
-              ],
-              onChanged: (v) => context.read<SettingsCubit>().setLocale(v!),
-            ),
-          ],
+                          Divider(thickness: 1.5, color: AppColors.energyBlue50),
+                          _buildDropdownRow<String>(
+                            context,
+                            icon: Icons.currency_exchange,
+                            title: S.of(context).currency,
+                            value: state.currency,
+                            items: const [
+                              DropdownMenuItem(value: 'UAH', child: Text('UAH')),
+                              DropdownMenuItem(value: 'USD', child: Text('USD')),
+                              DropdownMenuItem(value: 'EUR', child: Text('EUR')),
+                            ],
+                            onChanged: (v) => context.read<SettingsCubit>().setCurrency(v!),
+                          ),
+                          Divider(thickness: 1.5, color: AppColors.energyBlue50),
+                          _buildDropdownRow<Locale>(
+                            context,
+                            icon: Icons.language,
+                            title: S.of(context).language,
+                            value: state.locale,
+                            items: const [
+                              DropdownMenuItem(value: Locale('uk'), child: Text('Українська')),
+                              DropdownMenuItem(value: Locale('en'), child: Text('English')),
+                            ],
+                            onChanged: (v) => context.read<SettingsCubit>().setLocale(v!),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );
-  },
-)
- ])))); }
-Widget _buildSettingRow(String title, bool value, ValueChanged<bool> onChanged) {
+  }
+
+  Widget _buildSettingRow(String title, bool value, ValueChanged<bool> onChanged) {
     final textTheme = Theme.of(context).textTheme;
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -199,7 +202,7 @@ Widget _buildSettingRow(String title, bool value, ValueChanged<bool> onChanged) 
     );
   }
 
-Widget _buildDropdownRow<T>(
+  Widget _buildDropdownRow<T>(
     BuildContext context, {
     required IconData icon,
     required String title,
@@ -245,6 +248,4 @@ Widget _buildDropdownRow<T>(
       ),
     );
   }
-
-
 }

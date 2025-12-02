@@ -7,23 +7,19 @@ import 'package:fines_plus/features/export/data/repository/export_repository.dar
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-
 class ExportCubit extends Cubit<void> {
   final ExportRepositoryImpl exportRepository;
   final ExportHistoryPdf exportPdf;
   final ExportHistoryCsv exportCsv;
 
-  ExportCubit({
-    required this.exportRepository,
-    required this.exportPdf,
-    required this.exportCsv,
-  }) : super(null);
+  ExportCubit({required this.exportRepository, required this.exportPdf, required this.exportCsv}) : super(null);
 
   Future<File> exportPdfFile(String carNumber, List<EventModel> history) async {
     final carHistoryList = exportRepository.convertEventsToCarHistory(history);
     final pdfBytes = await exportPdf.generateBytes(carNumber, carHistoryList);
     final dir = await getTemporaryDirectory();
-    final file = File('${dir.path}/$carNumber-history.pdf');
+    final safeCarNumber = carNumber.isEmpty ? "car" : carNumber;
+    final file = File('${dir.path}/$safeCarNumber-history.pdf');
     return file.writeAsBytes(pdfBytes);
   }
 

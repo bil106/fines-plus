@@ -3,7 +3,6 @@ import 'package:core_cubit/cubit/purchase/purchase_cubit.dart';
 import 'package:core_data/core_data.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
-import 'package:design_system/constants/app_borders.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
 import 'package:fines_plus/features/schedule/presentation/cubit/schedule_cubit.dart';
@@ -60,8 +59,8 @@ class MaintenanceCard extends StatelessWidget {
     }
 
     return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: AppBorders.radiusLarge),
+     elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
         padding: const EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 2),
         child: Column(

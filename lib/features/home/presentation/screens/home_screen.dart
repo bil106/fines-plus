@@ -70,41 +70,47 @@ Future<void> _loadLatestExpense() async {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.energyBlue50,
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: AppColors.energyBlue50,
-        centerTitle: true,
-        title: BlocBuilder<CarCubit, CarState>(
-          builder: (context, state) {
-            final carNumber = state.carNumber.isNotEmpty ? state.carNumber : "Ford Fusion 2016";
-            return Text(
-              carNumber,
-              style: const TextStyle(color: Colors.black87, fontWeight: FontWeight.w600),
-            );
-          },
-        ),
-        leading: IconButton(
-          icon: const Icon(Icons.settings, color: AppColors.grey700),
-          onPressed: () {
-            final homeState = context.findAncestorStateOfType<HomeScreenWrapperState>();
-            if (homeState != null) {
-              homeState.openPage(HomePage.settings);
-            }
-          },
-        ),
-
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.directions_car, color: AppColors.grey700),
-            onPressed: () {
-              final wrapperState = context.findAncestorStateOfType<HomeScreenWrapperState>();
-              wrapperState?.openPage(HomePage.carInfo);
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(38),
+        child: AppBar(
+          elevation: 0,
+          backgroundColor: AppColors.energyBlue50,
+          centerTitle: true,
+          title: BlocBuilder<CarCubit, CarState>(
+            builder: (context, state) {
+              final carNumber = state.carNumber.isNotEmpty ? state.carNumber : "Ford Fusion 2016";
+              return Text(
+                carNumber,
+                style: const TextStyle(color: Colors.black87, fontWeight: FontWeight.w600),
+              );
             },
           ),
-        ],
+          leading: IconButton(
+            icon: const Icon(Icons.settings, color: AppColors.grey700),
+            onPressed: () {
+              final homeState = context.findAncestorStateOfType<HomeScreenWrapperState>();
+              if (homeState != null) {
+                homeState.openPage(HomePage.settings);
+              }
+            },
+          ),
+        
+          actions: [
+            Padding(
+              padding: const EdgeInsets.only(right:  12.0),
+              child: IconButton(
+                icon: const Icon(Icons.directions_car,size: 28, color: AppColors.grey700),
+                onPressed: () {
+                  final wrapperState = context.findAncestorStateOfType<HomeScreenWrapperState>();
+                  wrapperState?.openPage(HomePage.carInfo);
+                },
+              ),
+            ),
+          ],
+        ),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.only(left: 12, right: 12, top: 6, bottom: 8),
+        padding: const EdgeInsets.only(left: 12, right: 12, top: 6, bottom: 4),
         child: Column(
           children: [
             BlocBuilder<StatisticsCubit, StatisticsState>(
@@ -126,9 +132,9 @@ Future<void> _loadLatestExpense() async {
                 return MainStatsCard(stats: stats);
               },
             ),
-            AppSpacers.verticalXSmall,
+           AppSpacers.verticalXSmall,
             const QuickActionsPanel(),
-
+            AppSpacers.verticalXSmall,
             if (isLoading)
               const Center(child: CircularProgressIndicator())
             else

@@ -66,11 +66,11 @@ class _FineCheckScreenState extends State<FineCheckScreen> {
         value: SystemUiOverlayStyle.dark,
         child: Scaffold(
           appBar: AppBar(
-            backgroundColor: AppColors.grey50,
+            backgroundColor: AppColors.energyBlue50,
             leading: BackButton(color: AppColors.blue700, onPressed: widget.onBack ?? () {}),
           ),
           resizeToAvoidBottomInset: true,
-          backgroundColor: AppColors.grey50,
+          backgroundColor: AppColors.energyBlue50,
           body: SafeArea(
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),

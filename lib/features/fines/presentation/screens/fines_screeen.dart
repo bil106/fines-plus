@@ -47,9 +47,9 @@ class _FinesScreenState extends State<FinesScreen> {
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.dark,
       child: Scaffold(
-        backgroundColor: AppColors.grey50,
+        backgroundColor: AppColors.energyBlue50,
         appBar: AppBar(
-          backgroundColor: AppColors.grey50,
+          backgroundColor: AppColors.energyBlue50,
           leading: BackButton(color: AppColors.blue700, onPressed: widget.onBack ?? () {}),
           elevation: 0,
         ),
@@ -96,7 +96,7 @@ class _FinesScreenState extends State<FinesScreen> {
                   Container(
                     width: 200,
                     height: 200,
-                    decoration: BoxDecoration(color: AppColors.energyBlue25, borderRadius: BorderRadius.circular(50)),
+                    decoration: BoxDecoration(color: AppColors.blueGrey25, borderRadius: BorderRadius.circular(50)),
                     alignment: Alignment.center,
                     child: Image.asset('assets/icons/logo_app.png'),
                   ),

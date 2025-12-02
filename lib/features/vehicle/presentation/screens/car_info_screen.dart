@@ -107,10 +107,10 @@ class _CarInfoViewState extends State<_CarInfoView> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: AppColors.grey50,
+        backgroundColor: AppColors.energyBlue50,
         leading: BackButton(color: AppColors.blue700, onPressed: widget.onBack ?? () => Navigator.pop(context)),
       ),
-      backgroundColor: AppColors.grey50,
+      backgroundColor: AppColors.energyBlue50,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),

@@ -177,9 +177,9 @@ class AnalyticsScreenViewState extends State<_AnalyticsScreenView> with SingleTi
     return DefaultTabController(
       length: 3,
       child: Scaffold(
-        backgroundColor: AppColors.grey50,
+        backgroundColor: AppColors.energyBlue50,
         appBar: AppBar(
-          backgroundColor: AppColors.grey50,
+          backgroundColor: AppColors.energyBlue50,
           leading: BackButton(color: AppColors.blue700, onPressed: widget.onBack ?? () {}),
         ),
         body: BlocBuilder<AnalyticsCubit, AnalyticsState>(
@@ -213,7 +213,7 @@ class AnalyticsScreenViewState extends State<_AnalyticsScreenView> with SingleTi
                     indicatorColor: AppColors.blue700,
                     labelColor: AppColors.blue700,
                     unselectedLabelColor: AppColors.neutreGrey,
-                
+
                     controller: _tabController,
                     tabs: [
                       Tab(text: S.of(context).statistics),
@@ -221,11 +221,9 @@ class AnalyticsScreenViewState extends State<_AnalyticsScreenView> with SingleTi
                       Tab(text: S.of(context).schedule),
                     ],
                   ),
-          Expanded(
+                  Expanded(
                     child: ScrollConfiguration(
-                      behavior: ScrollConfiguration.of(context).copyWith(
-                        scrollbars: false, 
-                      ),
+                      behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
                       child: TabBarView(
                         controller: _tabController,
                         children: [

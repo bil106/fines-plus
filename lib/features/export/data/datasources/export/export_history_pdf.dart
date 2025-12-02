@@ -24,10 +24,15 @@ class ExportHistoryPdf {
       }
 
       if (parts.length >= 2) {
-        final year = int.tryParse(parts[0]) ?? 0;
-        final month = int.tryParse(parts[1]) ?? 1;
-        final date = DateTime(year, month, 1);
-        final monthKey = DateFormat.yMMMM('uk').format(date);
+      
+        DateTime parsed;
+
+        try {
+          parsed = DateTime.parse(h.date); 
+        } catch (_) {
+          parsed = DateFormat('dd.MM.yyyy').parse(h.date); 
+        }
+       final monthKey = DateFormat.yMMMM('uk').format(DateTime(parsed.year, parsed.month));
         groupedByMonth.putIfAbsent(monthKey, () => []).add(h);
       } else {
         groupedByMonth.putIfAbsent(h.date, () => []).add(h);

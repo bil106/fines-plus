@@ -25,7 +25,9 @@ class HistoryScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => HistoryCubit(repository: HistoryRepository(FirebaseFirestore.instance), carCubit: context.read<CarCubit>())..loadHistory(carNumber),
+      create: (_) =>
+          HistoryCubit(repository: HistoryRepository(FirebaseFirestore.instance), carCubit: context.read<CarCubit>())
+            ..loadHistory(carNumber),
       child: _HistoryView(carNumber: carNumber),
     );
   }
@@ -41,9 +43,9 @@ class _HistoryView extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
-      backgroundColor: AppColors.grey50,
+      backgroundColor: AppColors.energyBlue50,
       appBar: AppBar(
-        backgroundColor: AppColors.grey50,
+        backgroundColor: AppColors.energyBlue50,
         leading: BackButton(
           color: AppColors.black,
           onPressed: () {

@@ -2,11 +2,12 @@ import 'package:auto_route/auto_route.dart';
 
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
+import 'package:design_system/constants/app_borders.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
 import 'package:fines_plus/core/extensions/date_picker_card.dart';
 import 'package:fines_plus/core/extensions/service_list.dart';
-import 'package:fines_plus/core/helpers/format_currency.dart';
+import 'package:fines_plus/features/maintenance/presentation/widgets/cost_summary.dart';
 import 'package:fines_plus/features/maintenance/presentation/widgets/mileage_card.dart';
 import 'package:fines_plus/env/env.dart';
 import 'package:fines_plus/features/expenses/data/models/tuning_record.dart';
@@ -31,17 +32,34 @@ class TuningScreen extends StatefulWidget {
 
 class _TuningScreenState extends State<TuningScreen> {
   final List<TextEditingController> tuningControllers = [TextEditingController()];
+
   final TextEditingController costController = TextEditingController();
+
   final TextEditingController mileageController = TextEditingController();
+
   Map<String, dynamic>? _bestStation;
   DateTime? selectedDate;
 
-  Map<int, double> selectedPricesUah = {};
+  final List<double> servicePricesUah = [0.0];
+
+  double manualAmountUah = 0.0;
 
   @override
   void initState() {
     super.initState();
+
+    if (servicePricesUah.isEmpty) servicePricesUah.add(0.0);
     _initLocationAndService();
+  }
+
+  @override
+  void dispose() {
+    for (final c in tuningControllers) {
+      c.dispose();
+    }
+    costController.dispose();
+    mileageController.dispose();
+    super.dispose();
   }
 
   Future<void> _initLocationAndService() async {
@@ -75,52 +93,23 @@ class _TuningScreenState extends State<TuningScreen> {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-
-    final settings = context.watch<SettingsCubit>();
-    final currency = settings.state.currency;
-    final currencyService = settings.currencyService;
-
-    selectedPricesUah.values.fold(0.0, (sum, val) => sum + val);
+    final settingsCubit = context.watch<SettingsCubit>();
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: const SystemUiOverlayStyle(statusBarColor: AppColors.grey50, statusBarIconBrightness: Brightness.dark),
+      value: const SystemUiOverlayStyle(
+        statusBarColor: AppColors.energyBlue50,
+        statusBarIconBrightness: Brightness.dark,
+      ),
       child: Scaffold(
-        backgroundColor: AppColors.grey50,
+        backgroundColor: AppColors.energyBlue50,
         appBar: AppBar(
-          backgroundColor: AppColors.grey50,
+          backgroundColor: AppColors.energyBlue50,
           elevation: 0,
           leading: BackButton(color: AppColors.blue700, onPressed: widget.onBack),
           actions: [
             IconButton(
               icon: const Icon(Icons.check, color: AppColors.blue700, size: 50),
-              onPressed: () {
-                if (selectedDate == null || tuningControllers.every((c) => c.text.isEmpty)) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(backgroundColor: AppColors.blue700, content: Text(S.of(context).select_service)),
-                  );
-                  return;
-                }
-
-                final mileage = int.tryParse(mileageController.text) ?? 0;
-
-                final List<TuningRecord> records = tuningControllers.where((c) => c.text.isNotEmpty).map((c) {
-                  final selectedTuning = ServiceList.tuningItems.firstWhere(
-                    (item) => item.name == c.text,
-                    orElse: () => ServiceItem(name: c.text, priceUSD: 0),
-                  );
-
-                  final costUah = currencyService.convert(selectedTuning.priceUSD, "UAH", fromCurrency: "USD");
-
-                  return TuningRecord(
-                    tuningName: selectedTuning.name,
-                    cost: costUah,
-                    date: selectedDate!,
-                    mileage: mileage, currency: 'UAH',
-                  );
-                }).toList();
-
-                Navigator.pop(context, records);
-              },
+              onPressed: _saveTuningRecords,
             ),
           ],
         ),
@@ -130,126 +119,13 @@ class _TuningScreenState extends State<TuningScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(S.of(context).tuning, style: textTheme.title),
-              Row(
-                children: [
-                  _bestStation == null
-                      ? AppLoaders.medium
-                      : GestureDetector(
-                          onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (_) => ServiceMapScreen(
-                                  focusPosition: LatLng(_bestStation!['lat'], _bestStation!['lng']),
-                                  focusName: _bestStation!['name'],
-                                ),
-                              ),
-                            );
-                          },
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              const Icon(Icons.location_on, color: AppColors.energyBlue, size: 40),
-                              AppSpacers.horizontalSmallMedium,
-                              SizedBox(
-                                width: 180,
-                                child: Text(
-                                  _bestStation!['name'] ?? S.of(context).service_station,
-                                  style: textTheme.bodyMedium,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                  const Spacer(),
-                  IconButton(
-                    icon: Image.asset('assets/icons/map.png', width: 40, height: 40),
-                    onPressed: () {
-                      Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ServiceMapScreen()));
-                    },
-                  ),
-                ],
-              ),
+              _buildBestStationRow(textTheme),
               const Divider(),
-              Row(
-                children: [
-                  Expanded(
-                    child: DatePickerCard(
-                      selectedDate: selectedDate,
-                      onDateSelected: (date) => setState(() => selectedDate = date),
-                    ),
-                  ),
-                  AppSpacers.horizontalMediumLarge,
-                  Expanded(
-                    child: MileageCard(textTheme: textTheme, controller: mileageController),
-                  ),
-                ],
-              ),
+              _buildDateAndMileageRow(textTheme),
               AppSpacers.verticalMedium,
               Text(S.of(context).selecting_service, style: textTheme.subtitleText),
               AppSpacers.verticalMedium,
-              Column(
-                children: List.generate(tuningControllers.length, (index) {
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 1),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Autocomplete<String>(
-                            optionsBuilder: (TextEditingValue value) {
-                              if (value.text.isEmpty) return ServiceList.tuningItems.map((e) => e.name);
-                              return ServiceList.tuningItems
-                                  .map((e) => e.name)
-                                  .where((option) => option.toLowerCase().startsWith(value.text.toLowerCase()));
-                            },
-                            onSelected: (val) {
-                              tuningControllers[index].text = val;
-                              final selectedItem = ServiceList.tuningItems.firstWhere(
-                                (item) => item.name == val,
-                                orElse: () => ServiceItem(name: val, priceUSD: 0),
-                              );
-
-                              selectedPricesUah[index] = currencyService.convert(
-                                selectedItem.priceUSD,
-                                "UAH",
-                                fromCurrency: "USD",
-                              );
-
-                              double total = selectedPricesUah.values.fold(0, (a, b) => a + b);
-                              costController.text = total.toStringAsFixed(0);
-
-                              setState(() {});
-                            },
-                            fieldViewBuilder: (context, controller, focusNode, onFieldSubmitted) {
-                              tuningControllers[index] = controller;
-                              return TextField(
-                                controller: controller,
-                                focusNode: focusNode,
-                                decoration: InputDecoration(
-                                  hintText: S.of(context).select_service,
-                                  border: const OutlineInputBorder(),
-                                  prefixIcon: const Icon(Icons.build, color: AppColors.blueAccent),
-                                  suffixIcon: IconButton(
-                                    icon: const Icon(Icons.delete, color: AppColors.red),
-                                    onPressed: () {
-                                      setState(() {
-                                        tuningControllers.removeAt(index);
-                                        selectedPricesUah.remove(index);
-                                        double total = selectedPricesUah.values.fold(0, (a, b) => a + b);
-                                        costController.text = total.toStringAsFixed(0);
-                                      });
-                                    },
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                }),
-              ),
+              _buildTuningFields(textTheme, settingsCubit),
               Center(
                 child: IconButton(
                   icon: const CircleAvatar(
@@ -259,64 +135,239 @@ class _TuningScreenState extends State<TuningScreen> {
                   onPressed: () {
                     setState(() {
                       tuningControllers.add(TextEditingController());
+
+                      servicePricesUah.add(0.0);
                     });
                   },
                 ),
               ),
               AppSpacers.verticalMediumLarge,
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  border: Border.all(color: AppColors.neutreGrey),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        const Icon(Icons.attach_money, color: AppColors.blueAccent),
-                        AppSpacers.horizontalSmallMedium,
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(S.of(context).sum),
-                            Text(
-                              selectedPricesUah.isEmpty
-                                  ? '0 $currency'
-                                  : "${formatCurrency(selectedPricesUah.values.last, context, fromCurrency: 'UAH')} $currency",
-                              style: textTheme.titleMedium,
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        const Icon(Icons.attach_money, color: AppColors.blueAccent),
-                        AppSpacers.horizontalSmallMedium,
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(S.of(context).total_amount),
-                            Text(
-                              costController.text.isEmpty
-                                  ? '0 $currency'
-                                  : "${formatCurrency(double.tryParse(costController.text) ?? 0, context, fromCurrency: 'UAH')} $currency",
-                              style: textTheme.titleMedium,
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+
+              CostSummary(
+                servicePricesUah: servicePricesUah,
+                manualAmountUah: manualAmountUah,
+                onManualUahChanged: (uah) {
+                  setState(() {
+                    manualAmountUah = uah;
+                  });
+                },
+                convertFromUAH: (uah) {
+                  return settingsCubit.convertFromUAH(uah);
+                },
+                convertToUAH: (enteredInDisplayCurrency) {
+                  return settingsCubit.convertToUAH(enteredInDisplayCurrency);
+                },
+                currencyLabel: settingsCubit.getCurrencyLabel(context, settingsCubit.state.currency),
               ),
             ],
           ),
         ),
       ),
     );
+  }
+
+  Widget _buildBestStationRow(TextTheme textTheme) {
+    return Row(
+      children: [
+        _bestStation == null
+            ? AppLoaders.medium
+            : GestureDetector(
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => ServiceMapScreen(
+                        focusPosition: LatLng(_bestStation!['lat'], _bestStation!['lng']),
+                        focusName: _bestStation!['name'],
+                      ),
+                    ),
+                  );
+                },
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.location_on, color: AppColors.energyBlue, size: 40),
+                    AppSpacers.horizontalSmallMedium,
+                    SizedBox(
+                      width: 180,
+                      child: Text(
+                        _bestStation!['name'] ?? S.of(context).service_station,
+                        style: textTheme.bodyMedium,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+        const Spacer(),
+        IconButton(
+          icon: Image.asset('assets/icons/map.png', width: 40, height: 40),
+          onPressed: () {
+            Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ServiceMapScreen()));
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDateAndMileageRow(TextTheme textTheme) {
+    return Row(
+      children: [
+        Expanded(
+          child: DatePickerCard(
+            selectedDate: selectedDate,
+            onDateSelected: (date) => setState(() => selectedDate = date),
+          ),
+        ),
+        AppSpacers.horizontalMediumLarge,
+        Expanded(
+          child: MileageCard(textTheme: textTheme, controller: mileageController),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTuningFields(TextTheme textTheme, SettingsCubit settings) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: AppColors.neutreBlanc,
+        borderRadius: AppBorders.radiusLarge,
+        border: Border.all(color: AppColors.grey300, width: 2),
+      ),
+      child: Column(
+        children: List.generate(tuningControllers.length, (index) {
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 1),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Autocomplete<String>(
+                    optionsBuilder: (value) {
+                      if (value.text.isEmpty) return ServiceList.tuningItems.map((e) => e.name);
+                      return ServiceList.tuningItems
+                          .map((e) => e.name)
+                          .where((option) => option.toLowerCase().startsWith(value.text.toLowerCase()));
+                    },
+                    onSelected: (val) {
+                      tuningControllers[index].text = val;
+                      final selectedItem = ServiceList.tuningItems.firstWhere(
+                        (item) => item.name == val,
+                        orElse: () => ServiceItem(name: val, priceUSD: 0),
+                      );
+
+                      final converted = settings.currencyService.convert(
+                        selectedItem.priceUSD,
+                        "UAH",
+                        fromCurrency: "USD",
+                      );
+
+                      setState(() {
+                        if (index >= servicePricesUah.length) {
+                          while (servicePricesUah.length <= index) {
+                            servicePricesUah.add(0.0);
+                          }
+                        }
+                        servicePricesUah[index] = converted;
+
+                        final total = (servicePricesUah.fold<double>(0.0, (a, b) => a + b)) + manualAmountUah;
+                        costController.text = total.toStringAsFixed(0);
+                      });
+                    },
+                    fieldViewBuilder: (context, controller, focusNode, onFieldSubmitted) {
+                      tuningControllers[index] = controller;
+                      return TextField(
+                        controller: controller,
+                        focusNode: focusNode,
+                        decoration: InputDecoration(
+                          hintText: S.of(context).select_service,
+                          border: InputBorder.none,
+                          focusedBorder: InputBorder.none,
+                          prefixIcon: const Icon(Icons.build, color: AppColors.blueAccent),
+                          suffixIcon: IconButton(
+                            icon: const Icon(Icons.delete, color: AppColors.red),
+                            onPressed: () {
+                              setState(() {
+                                tuningControllers.removeAt(index);
+                                if (index < servicePricesUah.length) {
+                                  servicePricesUah.removeAt(index);
+                                }
+
+                                final total = (servicePricesUah.fold<double>(0.0, (a, b) => a + b)) + manualAmountUah;
+                                costController.text = total.toStringAsFixed(0);
+                              });
+                            },
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          );
+        }),
+      ),
+    );
+  }
+
+  void _saveTuningRecords() {
+    if (selectedDate == null || tuningControllers.every((c) => c.text.isEmpty)) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(backgroundColor: AppColors.blue700, content: Text(S.of(context).select_service)));
+      return;
+    }
+
+    final mileage = int.tryParse(mileageController.text) ?? 0;
+
+    final records = <TuningRecord>[];
+
+    for (int i = 0; i < tuningControllers.length; i++) {
+      final name = tuningControllers[i].text.trim();
+      if (name.isEmpty) continue;
+
+      final selectedTuning = ServiceList.tuningItems.firstWhere(
+        (item) => item.name == name,
+        orElse: () => ServiceItem(name: name, priceUSD: 0),
+      );
+
+      final costUah = (i < servicePricesUah.length) ? servicePricesUah[i] : 0.0;
+
+      records.add(
+        TuningRecord(
+          tuningName: selectedTuning.name,
+          cost: costUah,
+          date: selectedDate!,
+          mileage: mileage,
+          currency: 'UAH',
+        ),
+      );
+    }
+
+    if (manualAmountUah > 0) {
+      bool assigned = false;
+      for (int i = 0; i < records.length; i++) {
+        if ((records[i].cost == 0 || records[i].cost == 0.0) && records[i].tuningName.trim().isNotEmpty) {
+          records[i] = TuningRecord(
+            tuningName: records[i].tuningName,
+            cost: records[i].cost + manualAmountUah,
+            date: records[i].date,
+            mileage: records[i].mileage,
+            currency: records[i].currency,
+          );
+          assigned = true;
+          break;
+        }
+      }
+
+      if (!assigned) {
+        records.add(
+          TuningRecord(tuningName: "", cost: manualAmountUah, date: selectedDate!, mileage: mileage, currency: 'UAH'),
+        );
+      }
+    }
+
+    Navigator.pop(context, records);
   }
 }
 

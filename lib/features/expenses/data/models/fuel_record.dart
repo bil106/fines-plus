@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:intl/intl.dart';
 import 'expense.dart'; 
@@ -57,13 +58,32 @@ class FuelRecord {
     );
   }
 
-  static DateTime _fromJsonDate(String date) {
-    try {
-      return DateFormat('dd.MM.yyyy').parse(date);
-    } catch (_) {
-      return DateTime.tryParse(date) ?? DateTime.now();
+static DateTime _fromJsonDate(dynamic raw) {
+    if (raw is Timestamp) {
+      return raw.toDate();
     }
+
+    if (raw is int) {
+      return DateTime.fromMillisecondsSinceEpoch(raw);
+    }
+
+    if (raw is String) {
+      try {
+        return DateTime.parse(raw);
+      } catch (_) {
+        try {
+          return DateFormat('dd.MM.yyyy').parse(raw);
+        } catch (_) {
+          return DateTime.now();
+        }
+      }
+    }
+
+    return DateTime.now();
   }
 
-  static String _toJsonDate(DateTime date) => DateFormat('dd.MM.yyyy').format(date);
+
+ static dynamic _toJsonDate(DateTime date) => Timestamp.fromDate(date);
+
+
 }

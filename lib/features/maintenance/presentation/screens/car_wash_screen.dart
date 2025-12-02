@@ -1,4 +1,3 @@
-
 import 'package:auto_route/auto_route.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
@@ -75,9 +74,9 @@ class _CarWashScreenState extends State<CarWashScreen> {
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(statusBarColor: AppColors.grey50, statusBarIconBrightness: Brightness.dark),
       child: Scaffold(
-        backgroundColor: AppColors.grey50,
+        backgroundColor: AppColors.energyBlue50,
         appBar: AppBar(
-          backgroundColor: AppColors.grey50,
+          backgroundColor: AppColors.energyBlue50,
           elevation: 0,
           leading: BackButton(color: AppColors.blue700, onPressed: widget.onBack),
           actions: [
@@ -176,7 +175,6 @@ class _CarWashScreenState extends State<CarWashScreen> {
     final mileage = int.tryParse(mileageController.text) ?? 0;
     final cost = double.tryParse(costController.text) ?? 0;
 
-  
     final userId = 'default_user';
 
     final record = CarWashRecord(date: selectedDate!, mileage: mileage, amount: cost, userId: userId);
@@ -200,4 +198,3 @@ class _CarWashScreenState extends State<CarWashScreen> {
     return highRated.first;
   }
 }
-

@@ -22,7 +22,7 @@ class ExpenseStatsCard extends StatelessWidget {
     return Card(
       shape: RoundedRectangleBorder(borderRadius: AppBorders.radiusLarge),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -74,7 +74,7 @@ class ExpenseStatsCard extends StatelessWidget {
                 ),
               ),
             ),
-           AppSpacers.verticalMedium,
+          AppSpacers.verticalSmallMedium,
 
           GridView.count(
               shrinkWrap: true,

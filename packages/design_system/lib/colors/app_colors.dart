@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart' show Color;
+import 'package:flutter/material.dart' show Color, Colors;
 
 abstract final class AppColors {
   static const darkBlue = Color(0xff092A5E);
@@ -10,13 +10,15 @@ abstract final class AppColors {
   static const blueSky = Color(0xff70CBF4);
   static const blueAccent = Color(0xff448AFF);
   static const blue700 = Color(0xFF1976D2);
+  static final blueGrey08 = Colors.blueGrey.withOpacity(0.08);
+  static final blueGrey25 = Colors.blueGrey.withOpacity(0.25);
 
   static const cl = Color(0xffE30613);
   static const red = Color(0xffD40E14);
   static const redAccent = Color(0xFFFF5252);
   static const amber = Color(0xFFFFC107);
-   static const lightRed = Color(0xFFF78A8A);
-   static const purpleRed = Color(0xFF7D2AE8);
+  static const lightRed = Color(0xFFF78A8A);
+  static const purpleRed = Color(0xFF7D2AE8);
   static const darkRed = Color(0xFFBE040A);
 
   static const cm = Color(0xff00A5B6);

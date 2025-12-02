@@ -97,9 +97,9 @@ class _MaintenanceScreenView extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
-      backgroundColor: AppColors.grey50,
+      backgroundColor: AppColors.energyBlue50,
       appBar: AppBar(
-        backgroundColor: AppColors.grey50,
+        backgroundColor: AppColors.energyBlue50,
         leading: BackButton(color: AppColors.blue700, onPressed: onBack ?? () {}),
         actions: const [DeleteExpensesButton()],
       ),
@@ -117,10 +117,9 @@ class _MaintenanceScreenView extends StatelessWidget {
                   children: [
                     Text(S.of(context).tech_service, style: textTheme.title),
                     AppSpacers.verticalMedium,
-                   Expanded(
+                    Expanded(
                       child: Builder(
                         builder: (_) {
-                       
                           final allRecords = <Map<String, dynamic>>[];
 
                           allRecords.addAll(
@@ -147,7 +146,6 @@ class _MaintenanceScreenView extends StatelessWidget {
 
                           allRecords.sort((a, b) => (b['mileage'] ?? 0).compareTo(a['mileage'] ?? 0));
 
-                       
                           return ListView(
                             children: allRecords.map<Widget>((item) {
                               switch (item['type']) {
@@ -265,6 +263,10 @@ class _MaintenanceScreenView extends StatelessWidget {
                     icon: const Icon(Icons.local_gas_station, color: AppColors.energyBlue),
                     onTap: () async {
                       cubit.closeMenu();
+                      if (onFuelUp != null) {
+                        onFuelUp!();
+                        return;
+                      }
                       final record = await context.router.push<FuelRecord>(FuelUpRoute());
                       if (record != null) {
                         cubit.addFuelRecord(record);

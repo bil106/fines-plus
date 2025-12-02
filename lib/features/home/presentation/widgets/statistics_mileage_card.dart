@@ -23,10 +23,9 @@ class StatisticsMileageCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(S.of(context).mileage_stat, style: textTheme.titleMedium),
-              Container(height: 1, width: double.infinity, color: Colors.grey[300]),
-              const SizedBox(height: 8),
+              const Divider(height: 16, thickness: 1),
 
-              _buildRow(presenter,context),
+              _buildRow(presenter, context),
             ],
           ),
         );
@@ -34,7 +33,7 @@ class StatisticsMileageCard extends StatelessWidget {
     );
   }
 
-Widget _buildRow(StatisticsMileagePresenter presenter, BuildContext context) {
+  Widget _buildRow(StatisticsMileagePresenter presenter, BuildContext context) {
     final settingsCubit = context.watch<SettingsCubit>();
     final unitStream = UnitStream(settingsCubit);
 
@@ -44,7 +43,7 @@ Widget _buildRow(StatisticsMileagePresenter presenter, BuildContext context) {
         Image.asset('assets/icons/steeringWheel.png', width: 36, height: 36, color: Colors.grey),
         const SizedBox(width: 8),
 
-StreamBuilder<double>(
+        StreamBuilder<double>(
           stream: unitStream.unitValueStream(presenter.mileageThisMonth.toDouble()),
           initialData: unitStream.convert(presenter.mileageThisMonth.toDouble()),
           builder: (context, snapshot) {
@@ -63,8 +62,6 @@ StreamBuilder<double>(
             );
           },
         ),
-
-
 
         const Spacer(),
 
@@ -87,8 +84,6 @@ StreamBuilder<double>(
   static Widget _buildCard({required Widget child}) {
     return Card(
       elevation: 2,
-      shadowColor: Colors.black26,
-      color: Colors.grey[100],
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12), child: child),
     );

@@ -4,7 +4,6 @@ import 'package:auto_route/auto_route.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:core_utils/share_helpers.dart';
 import 'package:design_system/colors/app_colors.dart';
-import 'package:design_system/constants/app_borders.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
 import 'package:fines_plus/core/extensions/ad_banner_widget.dart';
@@ -51,9 +50,9 @@ class _ExportScreenView extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
-      backgroundColor: AppColors.grey50,
+      backgroundColor: AppColors.energyBlue50,
       appBar: AppBar(
-        backgroundColor: AppColors.grey50,
+        backgroundColor: AppColors.energyBlue50,
         leading: BackButton(color: AppColors.blue700, onPressed: onBack),
       ),
       body: Padding(
@@ -63,21 +62,7 @@ class _ExportScreenView extends StatelessWidget {
           children: [
             Text(S.of(context).export_history, style: textTheme.title),
             AppSpacers.verticalXXLarge,
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
-              decoration: BoxDecoration(
-                border: Border.all(color: AppColors.grey300),
-                borderRadius: AppBorders.radiusLarge,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(carNumber, style: textTheme.historyText),
-                  const Icon(Icons.arrow_forward_ios, size: 16),
-                ],
-              ),
-            ),
-            AppSpacers.verticalLargeXL,
+
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [

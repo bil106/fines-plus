@@ -6,6 +6,7 @@ import 'package:core_localization/generated/l10n.dart';
 import 'package:csv/csv.dart';
 import 'package:fines_plus/features/analytics/data/models/car_history_model.dart';
 import 'package:fines_plus/features/analytics/data/models/event_model.dart';
+import 'package:intl/intl.dart';
 import 'package:pdf/widgets.dart' as pw;
 
 abstract class ExportRepository {
@@ -32,12 +33,13 @@ class ExportRepositoryImpl implements ExportRepository {
         typeDetail = e.title;
       }
 
-      return CarHistory(
+    return CarHistory(
         type: typeDetail,
-        date: e.date.toString(),
+        date: DateFormat('yyyy-MM-dd').format(e.date),
         mileage: mileageValue,
         cost: costValue.roundToDouble(),
       );
+
     }).toList();
   }
 

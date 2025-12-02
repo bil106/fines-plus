@@ -66,7 +66,7 @@ class _StatisticsScreenView extends StatelessWidget {
                     children: [
                       Text(S.of(context).mileage_statistics, style: textTheme.black16bold),
                       const Divider(color: AppColors.neutreGrey),
-                      AppSpacers.verticalMedium,
+                      AppSpacers.verticalSmall,
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -128,7 +128,7 @@ class _StatisticsScreenView extends StatelessWidget {
                           ),
                         ],
                       ),
-                      AppSpacers.verticalMedium,
+                      AppSpacers.verticalSmall,
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -143,7 +143,7 @@ class _StatisticsScreenView extends StatelessWidget {
                   ),
                 ),
               ),
-              AppSpacers.verticalMedium,
+              AppSpacers.verticalSmall,
 
               ExpenseStatsCard(
                 stats: state.expenseStats,

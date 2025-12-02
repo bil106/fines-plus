@@ -87,29 +87,65 @@ class RegistrationCubit extends Cubit<RegistrationState> {
   }
 
   Future<bool> checkSubscription() async {
-    final uid = FirebaseAuth.instance.currentUser?.uid;
+    final uid = auth.currentUser?.uid;
     if (uid == null) return false;
 
-    final doc = await FirebaseFirestore.instance.collection("users").doc(uid).get();
+    try {
+      final doc = await FirebaseFirestore.instance.collection("users").doc(uid).get();
 
-    if (!doc.exists) return false;
+      if (!doc.exists) return false;
 
-    final data = doc.data()!;
+      final data = doc.data() ?? <String, dynamic>{};
 
-    final isSubscribed = data["isSubscribed"] ?? false;
-    final end = data["subscriptionEndDate"];
-    if (isSubscribed && end != null) {
-      final endDate = DateTime.fromMillisecondsSinceEpoch(end);
-      if (DateTime.now().isBefore(endDate)) return true;
+      final isSubscribed = data["isSubscribed"] ?? false;
+      final endRaw = data["subscriptionEndDate"];
+      if (isSubscribed && endRaw != null) {
+        final endDate = _parseFirestoreDate(endRaw);
+        if (DateTime.now().isBefore(endDate)) return true;
+      }
+
+      final isTrial = data["isTrial"] ?? false;
+      final trialRaw = data["trialEndDate"];
+      if (isTrial && trialRaw != null) {
+        final tEnd = _parseFirestoreDate(trialRaw);
+        if (DateTime.now().isBefore(tEnd)) return true;
+      }
+
+      return false;
+    } catch (_) {
+   
+      return false;
     }
-
-    final isTrial = data["isTrial"] ?? false;
-    final trialEnd = data["trialEndDate"];
-    if (isTrial && trialEnd != null) {
-      final tEnd = DateTime.fromMillisecondsSinceEpoch(trialEnd);
-      if (DateTime.now().isBefore(tEnd)) return true;
-    }
-
-    return false;
   }
+  DateTime _parseFirestoreDate(dynamic raw) {
+    if (raw is Timestamp) {
+      return raw.toDate();
+    }
+
+    if (raw is int) {
+    
+      try {
+        return DateTime.fromMillisecondsSinceEpoch(raw);
+      } catch (_) {}
+    }
+
+    if (raw is String) {
+      final parsed = DateTime.tryParse(raw);
+      if (parsed != null) return parsed;
+
+   
+      try {
+        final parts = raw.split('.');
+        if (parts.length >= 3) {
+          final day = int.tryParse(parts[0]) ?? 1;
+          final month = int.tryParse(parts[1]) ?? 1;
+          final year = int.tryParse(parts[2]) ?? DateTime.now().year;
+          return DateTime(year, month, day);
+        }
+      } catch (_) {}
+    }
+
+    return DateTime.now(); 
+  }
+
 }

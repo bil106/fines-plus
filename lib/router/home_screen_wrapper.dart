@@ -124,10 +124,12 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
       HomePage.export: 10,
       HomePage.registration: 11,
       HomePage.subscription: 12,
-      HomePage.fuel: 13,
-      HomePage.service: 14,
-      HomePage.tuning: 15,
-      HomePage.carWash: 16,
+      HomePage.carWash: 13,
+      HomePage.tuning: 14,
+      HomePage.fuel: 15,
+      HomePage.service: 16,
+      
+     
       HomePage.schedule: 17,
       HomePage.fuelMap: 18,
       HomePage.carWashMap: 19,
@@ -325,10 +327,10 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
                   context.router.root.replaceAll([HomeRouteWrapper(initialPage: HomePage.home)]);
                 },
               ),
-              FuelUpScreen(key: const ValueKey('fuel'), onBack: () => openPage(HomePage.maintenance)),
-              CarWashScreen(key: const ValueKey('car-wash'), onBack: () => openPage(HomePage.maintenance)),
-              ServiceScreen(key: const ValueKey('service'), onBack: () => openPage(HomePage.maintenance)),
               TuningScreen(key: const ValueKey('tuning'), onBack: () => openPage(HomePage.maintenance)),
+              ServiceScreen(key: const ValueKey('service'), onBack: () => openPage(HomePage.maintenance)),
+              CarWashScreen(key: const ValueKey('car-wash'), onBack: () => openPage(HomePage.maintenance)),
+              FuelUpScreen(key: const ValueKey('fuel'), onBack: () => openPage(HomePage.maintenance)),
 
               Builder(
                 key: const ValueKey('schedule_screen'),
@@ -367,37 +369,40 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
             ],
           ),
           bottomNavigationBar: _isMainTab(_currentIndex)
-              ? BottomNavigationBar(
-                  backgroundColor: AppColors.energyBlue50,
-                  currentIndex: _bottomNavIndexFor(_currentIndex),
-                  onTap: (i) {
-                    final page = [HomePage.home, HomePage.fines, HomePage.reminders][i];
-                    openPage(page);
-                  },
-                  items: [
-                    BottomNavigationBarItem(
-                      icon: Icon(
-                        Icons.home,
-                        color: _bottomNavIndexFor(_currentIndex) == 0 ? AppColors.blue700 : AppColors.grey700,
+              ? SizedBox(
+                height: 58,
+                child: BottomNavigationBar(
+                    backgroundColor: AppColors.energyBlue50,
+                    currentIndex: _bottomNavIndexFor(_currentIndex),
+                    onTap: (i) {
+                      final page = [HomePage.home, HomePage.fines, HomePage.reminders][i];
+                      openPage(page);
+                    },
+                    items: [
+                      BottomNavigationBarItem(
+                        icon: Icon(
+                          Icons.home,
+                          color: _bottomNavIndexFor(_currentIndex) == 0 ? AppColors.blue700 : AppColors.grey700,
+                        ),
+                        label: S.of(context).home,
                       ),
-                      label: S.of(context).home,
-                    ),
-                    BottomNavigationBarItem(
-                      icon: Icon(
-                        Icons.receipt,
-                        color: _bottomNavIndexFor(_currentIndex) == 1 ? AppColors.blue700 : AppColors.grey700,
+                      BottomNavigationBarItem(
+                        icon: Icon(
+                          Icons.receipt,
+                          color: _bottomNavIndexFor(_currentIndex) == 1 ? AppColors.blue700 : AppColors.grey700,
+                        ),
+                        label: S.of(context).fines,
                       ),
-                      label: S.of(context).fines,
-                    ),
-                    BottomNavigationBarItem(
-                      icon: Icon(
-                        Icons.support,
-                        color: _bottomNavIndexFor(_currentIndex) == 2 ? AppColors.blue700 : AppColors.grey700,
+                      BottomNavigationBarItem(
+                        icon: Icon(
+                          Icons.support,
+                          color: _bottomNavIndexFor(_currentIndex) == 2 ? AppColors.blue700 : AppColors.grey700,
+                        ),
+                        label: S.of(context).reminder,
                       ),
-                      label: S.of(context).reminder,
-                    ),
-                  ],
-                )
+                    ],
+                  ),
+              )
               : null,
         ),
       ),
@@ -411,6 +416,11 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
         index == _pageIndexMap[HomePage.addCar] ||
         index == _pageIndexMap[HomePage.analytics] ||
         index == _pageIndexMap[HomePage.schedule] ||
+        index == _pageIndexMap[HomePage.maintenance] ||
+        index == _pageIndexMap[HomePage.tuning] ||
+        index == _pageIndexMap[HomePage.service] ||        
+        index == _pageIndexMap[HomePage.carWash] ||
+        index == _pageIndexMap[HomePage.fuel] ||      
         index == _pageIndexMap[HomePage.settings];
   }
 

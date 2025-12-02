@@ -1,5 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:core_localization/generated/l10n.dart';
+import 'package:design_system/colors/app_colors.dart';
+import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
 import 'package:fines_plus/core/extensions/ad_banner_widget.dart';
 import 'package:fines_plus/core/extensions/date_picker_card.dart';
@@ -119,13 +121,13 @@ class _FuelUpScreenState extends State<FuelUpScreen> {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-final settingsCubit = context.watch<SettingsCubit>();
+    final settingsCubit = context.watch<SettingsCubit>();
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(statusBarColor: Colors.white, statusBarIconBrightness: Brightness.dark),
       child: Scaffold(
-        backgroundColor: Colors.grey[50],
+        backgroundColor: AppColors.energyBlue50,
         appBar: AppBar(
-          backgroundColor: Colors.grey[50],
+          backgroundColor: AppColors.energyBlue50,
           elevation: 0,
           leading: BackButton(color: Colors.blue.shade700, onPressed: widget.onBack),
           actions: [
@@ -149,7 +151,7 @@ final settingsCubit = context.watch<SettingsCubit>();
                   volume: volume,
                   cost: totalCost,
                   date: selectedDate!,
-                  mileage: mileage, 
+                  mileage: mileage,
                   currency: settingsCubit.state.currency,
                 );
 
@@ -163,7 +165,7 @@ final settingsCubit = context.watch<SettingsCubit>();
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(S.of(context).fuel_up, style: textTheme.headlineMedium),
+              Text(S.of(context).fuel_up, style: textTheme.title),
 
               Row(
                 children: [
@@ -187,7 +189,7 @@ final settingsCubit = context.watch<SettingsCubit>();
                                 width: 180,
                                 child: Text(
                                   _bestStation!.name,
-                                  style: textTheme.bodySmall,
+                                  style: textTheme.black14bold,
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ),
@@ -204,7 +206,7 @@ final settingsCubit = context.watch<SettingsCubit>();
                 ],
               ),
 
-              const SizedBox(height: 16),
+             AppSpacers.verticalXSmall,
 
               Row(
                 children: [
@@ -214,16 +216,16 @@ final settingsCubit = context.watch<SettingsCubit>();
                       onDateSelected: (date) => setState(() => selectedDate = date),
                     ),
                   ),
-                  const SizedBox(width: 16),
+                 AppSpacers.horizontalLarge,
                   Expanded(
                     child: MileageCard(textTheme: textTheme, controller: mileageController),
                   ),
                 ],
               ),
 
-              const SizedBox(height: 16),
+                 AppSpacers.verticalXSmall,
               Text(S.of(context).fuel, style: textTheme.subtitleText),
-              const SizedBox(height: 12),
+                AppSpacers.verticalXSmall,
 
               FuelChoiceChips(
                 fuels: fuelPrices.keys.toList(),
@@ -236,7 +238,7 @@ final settingsCubit = context.watch<SettingsCubit>();
                 },
               ),
 
-              const SizedBox(height: 24),
+                AppSpacers.verticalMediumLarge,
               FuelInputCard(
                 fuel: selectedFuel,
                 volumeController: volumeController,
@@ -244,10 +246,10 @@ final settingsCubit = context.watch<SettingsCubit>();
                 onPriceChanged: _onPriceChanged,
               ),
 
-              const SizedBox(height: 24),
+              AppSpacers.verticalMediumLarge,
               FuelAmountCard(volumeController: volumeController, priceController: priceController),
 
-              const SizedBox(height: 40),
+               AppSpacers.verticalXLarge,
               const AdBannerWidget(),
             ],
           ),

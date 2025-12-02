@@ -48,12 +48,12 @@ class StatsRingsPainter extends CustomPainter {
       ..strokeCap = StrokeCap.round;
 
     final leftCenter = Offset(center.dx - radius - 35, center.dy);
-    final leftRect = Rect.fromCircle(center: leftCenter, radius: 52);
+    final leftRect = Rect.fromCircle(center: leftCenter, radius: 49);
     canvas.drawArc(leftRect, math.pi / 1.45, math.pi, false, smallBg);
     canvas.drawArc(leftRect, math.pi / 1.45, math.pi * costPerKmPercent, false, smallActive);
 
     final rightCenter = Offset(center.dx + radius + 35, center.dy);
-    final rightRect = Rect.fromCircle(center: rightCenter, radius: 52);
+    final rightRect = Rect.fromCircle(center: rightCenter, radius: 49);
     canvas.drawArc(rightRect, -math.pi / 1.45, math.pi, false, smallBg);
     canvas.drawArc(rightRect, -math.pi / 1.45, math.pi * fuelPercent, false, smallActive);
   }
