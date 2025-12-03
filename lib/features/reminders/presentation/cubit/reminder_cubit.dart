@@ -1,126 +1,75 @@
 import 'dart:async';
 
-import 'package:fines_plus/features/maintenance/data/models/maintenance_task.dart';
 import 'package:fines_plus/features/reminders/data/models/reminder_model.dart';
 import 'package:fines_plus/features/reminders/data/repository/reminder_repository.dart';
-import 'package:fines_plus/features/vehicle/presentation/cubit/car_cubit.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:core_data/core_data.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+
 
 part 'reminder_state.dart';
 
 class ReminderCubit extends Cubit<ReminderState> {
   final ReminderRepository repository;
-  final PushHelper pushHelper;
+  final String carNumber;
   final String userId;
+  final PushHelper pushHelper;
 
-  String carNumber;
-
-  late final StreamSubscription carSubscription;
-
-  ReminderCubit({
-    required this.repository,
-    required this.pushHelper,
-    required this.carNumber,
-    required this.userId,
-    required CarCubit carCubit,
-  }) : super(ReminderState.initial()) {
-    carSubscription = carCubit.stream.listen((state) {
-      if (carNumber != state.carNumber) {
-        carNumber = state.carNumber;
-        load();
-      }
-    });
+  ReminderCubit({required this.repository, required this.carNumber, required this.userId, required this.pushHelper})
+    : super(ReminderState.initial()) {
     load();
   }
 
-  @override
-  Future<void> close() {
-    carSubscription.cancel();
-    return super.close();
-  }
-
   Future<void> load() async {
-    if (isClosed) return;
-    emit(state.copyWith(isLoading: true, errorMessage: null));
+    emit(state.copyWith(isLoading: true));
     try {
       final reminders = await repository.getAll(carNumber);
-      if (!isClosed) emit(state.copyWith(reminders: reminders, isLoading: false));
+      emit(state.copyWith(reminders: reminders, isLoading: false));
+      debugPrint('getAll() found ${reminders.length} reminders for carNumber: $carNumber');
     } catch (e) {
-      if (!isClosed) emit(state.copyWith(isLoading: false, errorMessage: 'Loading error: $e'));
+      emit(state.copyWith(isLoading: false, errorMessage: e.toString()));
     }
   }
 
-  Future<void> addReminder(ReminderModel reminder) async {
-    emit(state.copyWith(isLoading: true, errorMessage: null));
-    try {
-      await repository.add(carNumber, reminder);
+ Future<void> addReminder(ReminderModel reminder) async {
+    final updated = [...state.reminders, reminder];
+    await repository.add(carNumber, reminder);
+    emit(state.copyWith(reminders: updated));
 
-      final prefs = await SharedPreferences.getInstance();
-      final remindersEnabled = prefs.getBool("reminders") ?? true;
-      final pushEnabled = prefs.getBool("pushNotifications") ?? true;
-
-      if (remindersEnabled && pushEnabled) {
-        await pushHelper.scheduleNotification(
-          id: reminder.id.hashCode,
-          title: reminder.title,
-          body: reminder.description,
-          dateTime: reminder.dateTime,
-        );
-      }
-
-      await load();
-    } catch (e) {
-      emit(state.copyWith(isLoading: false, errorMessage: 'Adding error: $e'));
-    }
-  }
-
-  Future<void> updateReminder(ReminderModel reminder) async {
-    emit(state.copyWith(isLoading: true, errorMessage: null));
-    try {
-      await repository.update(carNumber, reminder);
-
-      await pushHelper.cancelNotification(reminder.id.hashCode);
-
-      final prefs = await SharedPreferences.getInstance();
-      final remindersEnabled = prefs.getBool("reminders") ?? true;
-      final pushEnabled = prefs.getBool("pushNotifications") ?? true;
-
-      if (remindersEnabled && pushEnabled) {
-        await pushHelper.scheduleNotification(
-          id: reminder.id.hashCode,
-          title: reminder.title,
-          body: reminder.description,
-          dateTime: reminder.dateTime,
-        );
-      }
-
-      await load();
-    } catch (e) {
-      emit(state.copyWith(isLoading: false, errorMessage: 'Update error: $e'));
-    }
-  }
-
-  Future<void> deleteReminder(String id) async {
-    emit(state.copyWith(isLoading: true, errorMessage: null));
-    try {
-      await repository.delete(carNumber, id);
-      await load();
-    } catch (e) {
-      emit(state.copyWith(isLoading: false, errorMessage: 'Delete error: $e'));
-    }
-  }
-
-  Future<void> addReminderFromTask(MaintenanceTask task) async {
-    final reminder = ReminderModel(
-      title: task.description,
-      dateTime: task.lastServiceDate ?? DateTime.now(),
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
-      description: '',
-      userId: userId,
+  
+    pushHelper.scheduleNotification(
+      id: reminder.id.hashCode, 
+      title: reminder.title,
+      body: reminder.description,
+      dateTime: reminder.dateTime.toLocal(), 
     );
 
-    await addReminder(reminder);
+    debugPrint('Notification scheduled for ${reminder.dateTime} with id ${reminder.id}');
+  }
+
+
+ Future<void> updateReminder(ReminderModel reminder) async {
+    final updated = state.reminders.map((e) => e.id == reminder.id ? reminder : e).toList();
+    await repository.update(carNumber, reminder);
+    emit(state.copyWith(reminders: updated));
+
+   
+    pushHelper.scheduleNotification(
+      id: reminder.id.hashCode, 
+      title: reminder.title,
+      body: reminder.description,
+      dateTime: reminder.dateTime.toLocal(),
+    );
+
+    debugPrint('Notification updated for ${reminder.dateTime} with id ${reminder.id}');
+  }
+
+
+  Future<void> deleteReminder(String reminderId) async {
+    final updated = state.reminders.where((e) => e.id != reminderId).toList();
+    await repository.delete(carNumber, reminderId);
+    emit(state.copyWith(reminders: updated));
   }
 }
+
+

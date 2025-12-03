@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fines_plus/features/reminders/data/datasources/reminder_local_data_source.dart';
 import 'package:fines_plus/features/reminders/data/datasources/reminder_remote_data_source.dart';
 import 'package:fines_plus/features/reminders/data/models/reminder_model.dart';
+import 'package:flutter/material.dart';
 
 
 
@@ -27,11 +28,13 @@ class ReminderRepository {
     await docRef.set(reminder.toJson());
   }
 
-  Future<List<ReminderModel>> getAll(String carNumber) async {
+Future<List<ReminderModel>> getAll(String carNumber) async {
     final snapshot = await FirebaseFirestore.instance.collection('reminders').doc(carNumber).collection('items').get();
+    debugPrint('getAll() found ${snapshot.docs.length} reminders for carNumber: $carNumber');
 
     return snapshot.docs.map((doc) => ReminderModel.fromJson(doc.data())).toList();
   }
+
 
 
   Future<void> delete(String carNumber, String id) async {

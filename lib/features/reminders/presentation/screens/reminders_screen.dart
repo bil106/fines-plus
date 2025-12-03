@@ -30,19 +30,22 @@ class RemindersScreen extends StatelessWidget {
           return const Center(child: CircularProgressIndicator());
         }
 
+        // BlocProvider вынесен выше списка, UI не меняется
         return BlocProvider(
           create: (_) => ReminderCubit(
             repository: context.read<ReminderRepository>(),
             carNumber: carNumber,
             userId: userId,
-            pushHelper: context.read<PushHelper>(), carCubit: context.read<CarCubit>(),
-          ),
+            pushHelper: context.read<PushHelper>(),
+          
+          )..load(), // сразу загружаем локальные/удаленные напоминания
           child: _RemindersView(onBack),
         );
       },
     );
   }
 }
+
 
 class _RemindersView extends StatelessWidget {
   final VoidCallback? onBack;
@@ -51,7 +54,6 @@ class _RemindersView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    final cubit = context.read<ReminderCubit>();
 
     return Scaffold(
       backgroundColor: AppColors.energyBlue50,
@@ -62,12 +64,14 @@ class _RemindersView extends StatelessWidget {
       body: SafeArea(
         child: BlocBuilder<ReminderCubit, ReminderState>(
           builder: (context, state) {
+            final cubit = context.read<ReminderCubit>();
+
             if (state.isLoading) {
               return const Center(child: CircularProgressIndicator());
             }
 
             if (state.reminders.isEmpty) {
-              return const _EmptyReminders();
+              return _EmptyReminders(); // убрал const
             }
 
             return ListView.separated(
@@ -122,6 +126,7 @@ class _RemindersView extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
+          final cubit = context.read<ReminderCubit>();
           showDialog(
             context: context,
             barrierColor: AppColors.transparent,
@@ -133,6 +138,8 @@ class _RemindersView extends StatelessWidget {
     );
   }
 }
+
+
 
 class _EmptyReminders extends StatelessWidget {
   const _EmptyReminders();

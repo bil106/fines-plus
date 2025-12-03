@@ -252,7 +252,7 @@ class AppInitializer {
       remoteDataSource: ReminderRemoteDataSourceImpl(FirebaseFirestore.instance),
     );
     final pushHelper = PushHelper(flutterLocalNotificationsPlugin);
-reminderCubit = ReminderCubit(repository: reminderRepository, pushHelper: pushHelper, carNumber: '', userId: '', carCubit: carCubit);
+reminderCubit = ReminderCubit(repository: reminderRepository, pushHelper: pushHelper, carNumber: '', userId: '', );
     return AppInitResult(
       config: config,
       carInfoRepository: carInfoRepository,

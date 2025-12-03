@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fines_plus/features/reminders/data/models/reminder_model.dart';
+import 'package:flutter/material.dart';
 
 abstract class ReminderRemoteDataSource {
   Future<List<ReminderModel>> getReminders(String carNumber);
@@ -16,7 +17,7 @@ class ReminderRemoteDataSourceImpl implements ReminderRemoteDataSource {
   @override
   Future<List<ReminderModel>> getReminders(String carNumber) async {
     final snapshot = await firestore.collection('reminders').doc(carNumber).collection('items').get();
-
+debugPrint('Snapshot docs count: ${snapshot.docs.length}');
     return snapshot.docs.map((doc) {
       final data = doc.data();
       return ReminderModel.fromJson({...data, 'id': doc.id});
