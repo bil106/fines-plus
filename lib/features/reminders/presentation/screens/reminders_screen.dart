@@ -1,9 +1,9 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:core_data/core_data.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
+import 'package:fines_plus/core/helpers/push_helper.dart';
 import 'package:fines_plus/features/reminders/presentation/widgets/reminder_dialog.dart';
 import 'package:fines_plus/features/reminders/data/repository/reminder_repository.dart';
 import 'package:fines_plus/features/reminders/presentation/cubit/reminder_cubit.dart';
@@ -14,12 +14,17 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
 @RoutePage()
-class RemindersScreen extends StatelessWidget {
+class RemindersScreen extends StatefulWidget {
   final String userId;
   final VoidCallback? onBack;
 
   const RemindersScreen({super.key, required this.userId, this.onBack});
 
+  @override
+  State<RemindersScreen> createState() => _RemindersScreenState();
+}
+
+class _RemindersScreenState extends State<RemindersScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<CarCubit, CarState>(
@@ -30,22 +35,19 @@ class RemindersScreen extends StatelessWidget {
           return const Center(child: CircularProgressIndicator());
         }
 
-        // BlocProvider вынесен выше списка, UI не меняется
         return BlocProvider(
           create: (_) => ReminderCubit(
             repository: context.read<ReminderRepository>(),
             carNumber: carNumber,
-            userId: userId,
+            userId: widget.userId,
             pushHelper: context.read<PushHelper>(),
-          
-          )..load(), // сразу загружаем локальные/удаленные напоминания
-          child: _RemindersView(onBack),
+          )..load(),
+          child: _RemindersView(widget.onBack),
         );
       },
     );
   }
 }
-
 
 class _RemindersView extends StatelessWidget {
   final VoidCallback? onBack;
@@ -71,7 +73,7 @@ class _RemindersView extends StatelessWidget {
             }
 
             if (state.reminders.isEmpty) {
-              return _EmptyReminders(); // убрал const
+              return _EmptyReminders();
             }
 
             return ListView.separated(
@@ -139,8 +141,6 @@ class _RemindersView extends StatelessWidget {
   }
 }
 
-
-
 class _EmptyReminders extends StatelessWidget {
   const _EmptyReminders();
 
@@ -159,7 +159,7 @@ class _EmptyReminders extends StatelessWidget {
             child: Container(
               width: 150,
               height: 150,
-              decoration:  BoxDecoration(shape: BoxShape.circle, color: AppColors.blueGrey25),
+              decoration: BoxDecoration(shape: BoxShape.circle, color: AppColors.blueGrey25),
               child: const Icon(Icons.check, color: AppColors.neutreBlanc, size: 120),
             ),
           ),

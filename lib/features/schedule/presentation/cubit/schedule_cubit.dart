@@ -1,12 +1,12 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:fines_plus/core/helpers/push_helper.dart';
 import 'package:fines_plus/features/maintenance/data/models/maintenance_task.dart';
 import 'package:fines_plus/features/maintenance/data/repository/schedule_firebase_repository.dart';
 import 'package:fines_plus/features/maintenance/presentation/cubit/maintenance_cubit.dart';
 import 'package:fines_plus/features/schedule/data/repository/schedule_repository.dart';
 import 'package:fines_plus/features/schedule/presentation/cubit/schedule_state.dart';
-import 'package:core_data/core_data.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:fines_plus/features/reminders/data/models/reminder_model.dart';
 import 'package:fines_plus/features/reminders/presentation/cubit/reminder_cubit.dart';
@@ -56,7 +56,7 @@ class ScheduleCubit extends Cubit<ScheduleState> {
     emit(state.copyWith(tasks: updatedTasks));
 
     await repository.saveTasks(carNumber, updatedTasks);
-
+    await firebaseRepo.saveTask(carNumber, task);
     await _checkTask(task, reminderCubit);
   }
 
@@ -66,7 +66,7 @@ class ScheduleCubit extends Cubit<ScheduleState> {
       updatedTasks[index] = task;
       emit(state.copyWith(tasks: updatedTasks));
       await repository.saveTasks(carNumber, updatedTasks);
-
+      await firebaseRepo.updateTask(carNumber, task);
       await _checkTask(task, reminderCubit);
     }
   }
@@ -100,9 +100,18 @@ class ScheduleCubit extends Cubit<ScheduleState> {
   }
 
   Future<void> removeTask(int index, {ReminderCubit? reminderCubit}) async {
+    if (index < 0 || index >= state.tasks.length) return;
+
+    final removed = state.tasks[index];
+
     final updatedTasks = List<MaintenanceTask>.from(state.tasks)..removeAt(index);
     emit(state.copyWith(tasks: updatedTasks));
+
     await repository.saveTasks(carNumber, updatedTasks);
+
+    await firebaseRepo.deleteTask(carNumber, removed);
+
+    if (reminderCubit != null) {}
   }
 
   String _generateDescription(String title) {

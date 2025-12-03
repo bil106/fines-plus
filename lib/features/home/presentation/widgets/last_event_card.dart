@@ -31,7 +31,7 @@ class LastEventCardAction extends StatelessWidget {
       child: _buildCard(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-           
+
           children: [
             _buildHeader(context, textTheme),
             const Divider(height: 4, thickness: 1),
@@ -49,13 +49,12 @@ class LastEventCardAction extends StatelessWidget {
                   child: Text(
                     S.of(context).open_events,
                     style: textTheme.bodyLarge?.copyWith(
-                      fontSize: 14, 
+                      fontSize: 14,
                       color: AppColors.darkBlue,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                )
-
+                ),
               ),
             ),
           ],
@@ -92,7 +91,7 @@ class LastEventCardAction extends StatelessWidget {
                 if (event!.mileage != null)
                   Row(
                     children: [
-                          Padding(
+                      Padding(
                         padding: const EdgeInsets.only(left: 9.0, top: 0),
                         child: StreamBuilder<double>(
                           stream: CurrencyStream(settingsCubit).convertedAmountStream(event!),
@@ -120,10 +119,8 @@ class LastEventCardAction extends StatelessWidget {
                           style: textTheme.bodyMedium?.copyWith(color: Colors.black54),
                         ),
                       ),
-                    
                     ],
                   ),
-              
               ],
             ),
           ),
@@ -133,12 +130,10 @@ class LastEventCardAction extends StatelessWidget {
   }
 
   static Widget _buildCard({required Widget child}) {
-    return  Card(
-        elevation: 2,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        child: Padding(padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12), child: child),
-      
-
+    return Card(
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Padding(padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12), child: child),
     );
   }
 }

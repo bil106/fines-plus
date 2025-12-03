@@ -4,6 +4,7 @@ part 'maintenance_task.g.dart';
 
 @JsonSerializable(explicitToJson: true)
 class MaintenanceTask {
+  final String? id;
   final String description;
   final String category;
   final DateTime? lastServiceDate;
@@ -15,6 +16,7 @@ class MaintenanceTask {
   final bool isInsurance;
 
   MaintenanceTask({
+    this.id,
     required this.description,
     required this.category,
     this.lastServiceDate,
@@ -31,6 +33,7 @@ class MaintenanceTask {
   Map<String, dynamic> toJson() => _$MaintenanceTaskToJson(this);
 
   MaintenanceTask copyWith({
+    String? id,
     String? description,
     String? category,
     DateTime? lastServiceDate,
@@ -42,6 +45,7 @@ class MaintenanceTask {
     bool? isInsurance,
   }) {
     return MaintenanceTask(
+      id: id ?? this.id,
       description: description ?? this.description,
       category: category ?? this.category,
       lastServiceDate: lastServiceDate ?? this.lastServiceDate,

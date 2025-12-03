@@ -8,6 +8,7 @@ part of 'maintenance_task.dart';
 
 MaintenanceTask _$MaintenanceTaskFromJson(Map<String, dynamic> json) =>
     MaintenanceTask(
+      id: json['id'] as String?,
       description: json['description'] as String,
       category: json['category'] as String,
       lastServiceDate: json['lastServiceDate'] == null
@@ -25,6 +26,7 @@ MaintenanceTask _$MaintenanceTaskFromJson(Map<String, dynamic> json) =>
 
 Map<String, dynamic> _$MaintenanceTaskToJson(MaintenanceTask instance) =>
     <String, dynamic>{
+      'id': instance.id,
       'description': instance.description,
       'category': instance.category,
       'lastServiceDate': instance.lastServiceDate?.toIso8601String(),

@@ -11,7 +11,7 @@ FuelRecord _$FuelRecordFromJson(Map<String, dynamic> json) => FuelRecord(
   fuelType: json['fuelType'] as String,
   volume: (json['volume'] as num).toDouble(),
   cost: (json['cost'] as num).toDouble(),
-  date: FuelRecord._fromJsonDate(json['date'] as String),
+  date: FuelRecord._fromJsonDate(json['date']),
   mileage: (json['mileage'] as num).toInt(),
   currency: json['currency'] as String,
 );

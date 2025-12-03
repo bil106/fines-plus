@@ -38,10 +38,9 @@ class _HomeScreenState extends State<HomeScreen> {
     _loadLatestExpense();
   }
 
-Future<void> _loadLatestExpense() async {
+  Future<void> _loadLatestExpense() async {
     final repo = ExpenseRepository(FirebaseFirestore.instance);
     final carNumber = context.read<CarCubit>().state.carNumber;
-
 
     final allExpenses = await repo.getExpensesOnce(carNumber: carNumber);
 
@@ -53,10 +52,8 @@ Future<void> _loadLatestExpense() async {
       return;
     }
 
-   
     final allEvents = allExpenses.map((e) => LastEventUiModel.fromExpense(e)).toList();
 
-  
     final latestByMileage = allEvents.reduce((a, b) => (a.mileage ?? 0) > (b.mileage ?? 0) ? a : b);
 
     setState(() {
@@ -65,13 +62,12 @@ Future<void> _loadLatestExpense() async {
     });
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.energyBlue50,
       appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(38),
+        preferredSize: const Size.fromHeight(45),
         child: AppBar(
           elevation: 0,
           backgroundColor: AppColors.energyBlue50,
@@ -94,12 +90,12 @@ Future<void> _loadLatestExpense() async {
               }
             },
           ),
-        
+
           actions: [
             Padding(
-              padding: const EdgeInsets.only(right:  12.0),
+              padding: const EdgeInsets.only(right: 12.0),
               child: IconButton(
-                icon: const Icon(Icons.directions_car,size: 28, color: AppColors.grey700),
+                icon: const Icon(Icons.directions_car, size: 28, color: AppColors.grey700),
                 onPressed: () {
                   final wrapperState = context.findAncestorStateOfType<HomeScreenWrapperState>();
                   wrapperState?.openPage(HomePage.carInfo);
@@ -132,7 +128,7 @@ Future<void> _loadLatestExpense() async {
                 return MainStatsCard(stats: stats);
               },
             ),
-           AppSpacers.verticalXSmall,
+            AppSpacers.verticalXSmall,
             const QuickActionsPanel(),
             AppSpacers.verticalXSmall,
             if (isLoading)

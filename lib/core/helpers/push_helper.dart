@@ -1,4 +1,4 @@
-import 'package:core_localization/generated/l10n.dart';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
@@ -46,6 +46,9 @@ class PushHelper {
       iOS: iosDetails,
     );
 
+    debugPrint('Notification "$title" scheduled in ${delay.inSeconds} seconds');
+
+   
     Future.delayed(delay, () async {
       await _notificationsPlugin.show(
         id,
@@ -56,51 +59,7 @@ class PushHelper {
       );
       debugPrint('Notification "$title" shown at ${DateTime.now()}');
     });
-
-    debugPrint('Notification "$title" scheduled in ${delay.inSeconds} seconds');
-  }
-  Future<void> cancelNotification(int id) async {
-  
-    await _notificationsPlugin.cancel(id);
-  }
-
-}
-
-extension PushHelperResource on PushHelper {
-  Future<void> showResourceNotification({
-    required int id,
-    required String title,
-    required String body,
-  }) async {
-    final androidDetails = AndroidNotificationDetails(
-      'resource_channel',
-      'Resource usage',
-      channelDescription: S.current.notifications_resource,
-      importance: Importance.max,
-      priority: Priority.high,
-      playSound: true,
-      icon: 'ic_stat_logo',
-      sound: const RawResourceAndroidNotificationSound('notify'),
-    );
-
-    final iosDetails = DarwinNotificationDetails(
-      presentAlert: true,
-      presentBadge: true,
-      presentSound: true,
-    );
-
-    final notificationDetails = NotificationDetails(
-      android: androidDetails,
-      iOS: iosDetails,
-    );
-
-    await _notificationsPlugin.show(
-      id,
-      title,
-      body,
-      notificationDetails,
-    );
-
-    debugPrint(' Resource notification "$title" sent immediately');
   }
 }
+
+

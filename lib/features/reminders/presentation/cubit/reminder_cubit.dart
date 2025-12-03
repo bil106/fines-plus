@@ -1,11 +1,10 @@
 import 'dart:async';
 
+import 'package:fines_plus/core/helpers/push_helper.dart';
 import 'package:fines_plus/features/reminders/data/models/reminder_model.dart';
 import 'package:fines_plus/features/reminders/data/repository/reminder_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:core_data/core_data.dart';
-
 
 part 'reminder_state.dart';
 
@@ -21,41 +20,35 @@ class ReminderCubit extends Cubit<ReminderState> {
   }
 
   Future<void> load() async {
-    emit(state.copyWith(isLoading: true));
-    try {
-      final reminders = await repository.getAll(carNumber);
-      emit(state.copyWith(reminders: reminders, isLoading: false));
-      debugPrint('getAll() found ${reminders.length} reminders for carNumber: $carNumber');
-    } catch (e) {
-      emit(state.copyWith(isLoading: false, errorMessage: e.toString()));
-    }
+    if (!isClosed) emit(state.copyWith(isLoading: true));
+
+    final reminders = await repository.getAll(carNumber);
+
+    if (!isClosed) emit(state.copyWith(isLoading: false, reminders: reminders));
   }
 
- Future<void> addReminder(ReminderModel reminder) async {
+  Future<void> addReminder(ReminderModel reminder) async {
     final updated = [...state.reminders, reminder];
     await repository.add(carNumber, reminder);
     emit(state.copyWith(reminders: updated));
 
-  
     pushHelper.scheduleNotification(
-      id: reminder.id.hashCode, 
+      id: reminder.id.hashCode,
       title: reminder.title,
       body: reminder.description,
-      dateTime: reminder.dateTime.toLocal(), 
+      dateTime: reminder.dateTime.toLocal(),
     );
 
     debugPrint('Notification scheduled for ${reminder.dateTime} with id ${reminder.id}');
   }
 
-
- Future<void> updateReminder(ReminderModel reminder) async {
+  Future<void> updateReminder(ReminderModel reminder) async {
     final updated = state.reminders.map((e) => e.id == reminder.id ? reminder : e).toList();
     await repository.update(carNumber, reminder);
     emit(state.copyWith(reminders: updated));
 
-   
     pushHelper.scheduleNotification(
-      id: reminder.id.hashCode, 
+      id: reminder.id.hashCode,
       title: reminder.title,
       body: reminder.description,
       dateTime: reminder.dateTime.toLocal(),
@@ -64,12 +57,9 @@ class ReminderCubit extends Cubit<ReminderState> {
     debugPrint('Notification updated for ${reminder.dateTime} with id ${reminder.id}');
   }
 
-
   Future<void> deleteReminder(String reminderId) async {
     final updated = state.reminders.where((e) => e.id != reminderId).toList();
     await repository.delete(carNumber, reminderId);
     emit(state.copyWith(reminders: updated));
   }
 }
-
-

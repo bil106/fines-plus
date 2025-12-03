@@ -83,7 +83,7 @@ static DateTime _fromJsonDate(dynamic raw) {
   }
 
 
- static dynamic _toJsonDate(DateTime date) => Timestamp.fromDate(date);
+  static dynamic _toJsonDate(DateTime date) => date.toIso8601String();
 
 
 }

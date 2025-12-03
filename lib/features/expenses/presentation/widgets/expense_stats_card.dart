@@ -40,11 +40,10 @@ class ExpenseStatsCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(stats.monthLabel, style: textTheme.black14bold),
-                       Text(
+                        Text(
                           "${context.read<SettingsCubit>().convertFromUAH(stats.total).toStringAsFixed(0)} ${context.read<SettingsCubit>().getCurrencyLabel(context, context.read<SettingsCubit>().state.currency)}",
                           style: textTheme.black20bold,
                         ),
-
                       ],
                     ),
                   ],
@@ -59,7 +58,7 @@ class ExpenseStatsCard extends StatelessWidget {
                 PieChartData(
                   sectionsSpace: 0.5,
                   centerSpaceRadius: 40,
-             sections: stats.categoryTotals.entries.map((e) {
+                  sections: stats.categoryTotals.entries.map((e) {
                     final convertedValue = context.read<SettingsCubit>().convertFromUAH(e.value);
                     return PieChartSectionData(
                       value: convertedValue,
@@ -70,17 +69,16 @@ class ExpenseStatsCard extends StatelessWidget {
                       borderSide: const BorderSide(color: AppColors.neutreBlanc, width: 1),
                     );
                   }).toList(),
-
                 ),
               ),
             ),
-          AppSpacers.verticalSmallMedium,
+            AppSpacers.verticalSmallMedium,
 
-          GridView.count(
+            GridView.count(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
-              crossAxisCount: 3, 
-              childAspectRatio: 4, 
+              crossAxisCount: 3,
+              childAspectRatio: 4,
               mainAxisSpacing: 6,
               crossAxisSpacing: 8,
               children: ExpenseCategory.values.map((cat) {
@@ -88,18 +86,15 @@ class ExpenseStatsCard extends StatelessWidget {
               }).toList(),
             ),
 
-
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-              TextButton(
+                TextButton(
                   onPressed: () {
                     if (onMaintenance != null) onMaintenance!();
                   },
                   child: Text(S.current.open_statistics),
                 ),
-
-
               ],
             ),
           ],
@@ -128,8 +123,7 @@ class ExpenseStatsCard extends StatelessWidget {
           end: Alignment.bottomRight,
           colors: [AppColors.energyBlue25, AppColors.darkBlue],
         );
-          case ExpenseCategory.carWash:
-        
+      case ExpenseCategory.carWash:
         return const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -139,7 +133,7 @@ class ExpenseStatsCard extends StatelessWidget {
         return const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [AppColors.grey50,AppColors.grey700],
+          colors: [AppColors.grey50, AppColors.grey700],
         );
     }
   }
@@ -152,8 +146,7 @@ class ExpenseStatsCard extends StatelessWidget {
         return S.current.service;
       case ExpenseCategory.tuning:
         return S.current.tuning;
-         case ExpenseCategory.carWash:
-      
+      case ExpenseCategory.carWash:
         return S.current.car_wash;
       case ExpenseCategory.other:
         return S.current.other;
