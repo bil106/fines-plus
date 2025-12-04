@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:core_localization/generated/l10n.dart';
-import 'package:fines_plus/env/env.dart';
+import '../../../../../env/env.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';

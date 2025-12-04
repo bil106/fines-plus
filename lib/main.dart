@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:core_cubit/cubit/purchase/purchase_cubit.dart';
 import 'package:core_cubit/cubit/referral/referral_cubit.dart';
 import 'package:fines_plus/core/extensions/currency_service.dart';
-import 'package:fines_plus/env/env.dart';
+import '../env/env.dart';
 import 'package:fines_plus/features/analytics/presentation/cubit/analytics_cubit.dart';
 import 'package:fines_plus/features/expenses/data/repository/expense_repository.dart';
 import 'package:fines_plus/features/expenses/presentation/cubit/expenses_cubit.dart';
@@ -52,10 +52,10 @@ void main() {
   runZonedGuarded<Future<void>>(
     () async {
       WidgetsFlutterBinding.ensureInitialized();
-
-       await dotenv.load();
+await dotenv.load(fileName: 'assets/config/.env');
+    
       await Firebase.initializeApp();
-
+     
       FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
       RequestConfiguration configuration = RequestConfiguration(testDeviceIds: Env.testDeviceIdList);
       MobileAds.instance.updateRequestConfiguration(configuration);

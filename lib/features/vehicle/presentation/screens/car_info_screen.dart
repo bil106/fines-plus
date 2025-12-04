@@ -6,7 +6,7 @@ import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
 import 'package:fines_plus/core/extensions/ad_banner_widget.dart';
 import 'package:fines_plus/core/extensions/unauthorized_dialog.dart';
-import 'package:fines_plus/env/env.dart';
+import '../../../../../env/env.dart';
 import 'package:fines_plus/features/vehicle/presentation/cubit/car_cubit.dart';
 import 'package:fines_plus/router/app_router.dart';
 import 'package:firebase_auth/firebase_auth.dart';

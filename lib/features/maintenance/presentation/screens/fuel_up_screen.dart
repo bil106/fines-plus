@@ -12,7 +12,7 @@ import 'package:fines_plus/features/expenses/presentation/widgets/fuel_input_car
 import 'package:fines_plus/features/maintenance/data/models/gas_station.dart';
 import 'package:fines_plus/features/maintenance/domain/gas_station_service.dart';
 import 'package:fines_plus/features/maintenance/presentation/widgets/mileage_card.dart';
-import 'package:fines_plus/env/env.dart';
+import '../../../../../env/env.dart';
 import 'package:fines_plus/features/expenses/data/models/fuel_record.dart';
 import 'package:fines_plus/features/maintenance/presentation/screens/fuel_map_screen.dart';
 import 'package:fines_plus/features/settings/presentation/cubit/settings_cubit.dart';

@@ -1,6 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:core_localization/generated/l10n.dart';
-import 'package:fines_plus/env/env.dart';
+import '../../../../../env/env.dart';
 
 import 'package:fines_plus/features/maintenance/domain/gas_station_service.dart';
 import 'package:flutter/foundation.dart';

@@ -7,7 +7,7 @@ import 'package:fines_plus/core/extensions/ad_banner_widget.dart';
 import 'package:fines_plus/features/maintenance/presentation/widgets/cost_input_card.dart';
 import 'package:fines_plus/core/extensions/date_picker_card.dart';
 import 'package:fines_plus/features/maintenance/presentation/widgets/mileage_card.dart';
-import 'package:fines_plus/env/env.dart';
+import '../../../../../env/env.dart';
 import 'package:fines_plus/features/expenses/data/models/car_wash_record.dart';
 import 'package:fines_plus/features/maintenance/presentation/screens/car_wash_map_screen.dart';
 import 'package:fines_plus/router/app_router.dart';

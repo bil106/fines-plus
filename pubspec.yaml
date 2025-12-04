@@ -144,6 +144,7 @@ flutter:
     - assets/icons/finance.png
     - assets/icons/coin_stack.png
     - assets/icons/steeringWheel.png
+    - assets/config/.env
    
     
 flutter_icons:

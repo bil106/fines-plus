@@ -7,11 +7,16 @@ class ScheduleFirebaseRepository {
   ScheduleFirebaseRepository(this.firestore);
 
 CollectionReference<Map<String, dynamic>> _tasksCollection(String carNumber) {
+    if (carNumber.isEmpty) {
+      throw ArgumentError('carNumber cannot be empty');
+    }
     return FirebaseFirestore.instance.collection('reminders').doc(carNumber).collection('items');
   }
 
+
   Future<void> addTask(String carNumber, MaintenanceTask task) async {
     await _tasksCollection(carNumber).doc(task.id).set(task.toJson());
+
   }
 
 Future<List<MaintenanceTask>> loadTasks(String carNumber) async {

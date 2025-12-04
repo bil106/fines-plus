@@ -11,6 +11,7 @@ import 'package:design_system/theme/app_theme.dart';
 import 'package:fines_plus/core/extensions/ad_banner_widget.dart';
 import 'package:fines_plus/core/extensions/unauthorized_dialog.dart';
 import 'package:fines_plus/env/env.dart';
+
 import 'package:fines_plus/features/vehicle/presentation/cubit/car_info_cubit.dart';
 import 'package:fines_plus/features/vehicle/presentation/cubit/car_info_state.dart';
 import 'package:fines_plus/router/home_screen_wrapper.dart';

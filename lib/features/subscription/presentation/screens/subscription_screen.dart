@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:core_services/services/purchase_service.dart';
 import 'package:design_system/theme/app_theme.dart';
-import 'package:fines_plus/env/env.dart';
+import '../../../../../env/env.dart';
 import 'package:fines_plus/features/subscription/presentation/cubit/subscription_cubit.dart';
 import 'package:fines_plus/features/vehicle/presentation/cubit/car_info_cubit.dart';
 import 'package:fines_plus/router/app_router.dart';
