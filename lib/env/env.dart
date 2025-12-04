@@ -12,7 +12,7 @@ class Env {
 
   static const mapApiKey = String.fromEnvironment(
     'MAP_API_KEY',
-    defaultValue: 'AIzaSyD8El-2EaU3iDuHLre3_Mz218iU-l1sr48',
+    defaultValue: 'AIzaSyAaRnJCwVQOOVt56K5mBvfuxP2XAVdNAiM',
   );
 
   static const expId = String.fromEnvironment('EXP_ID', defaultValue: '61629');
