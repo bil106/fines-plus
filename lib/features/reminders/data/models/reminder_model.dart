@@ -12,6 +12,7 @@ class ReminderModel extends Equatable {
   @JsonKey(fromJson: _fromTimestamp, toJson: _toTimestamp)
   final DateTime dateTime;
   final bool isCompleted;
+  @JsonKey(defaultValue: '')
   final String userId;
 
   const ReminderModel({

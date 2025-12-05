@@ -12,7 +12,7 @@ ReminderModel _$ReminderModelFromJson(Map<String, dynamic> json) =>
       title: json['title'] as String,
       description: json['description'] as String,
       dateTime: ReminderModel._fromTimestamp(json['dateTime']),
-      userId: json['userId'] as String,
+      userId: json['userId'] as String? ?? '',
       isCompleted: json['isCompleted'] as bool? ?? false,
     );
 

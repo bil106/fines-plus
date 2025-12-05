@@ -23,7 +23,9 @@ class ReminderRepository {
 
     final newReminder = reminder.copyWith(id: docId);
 
-    await collectionRef.doc(docId).set(newReminder.toJson());
+   final fixed = newReminder.copyWith(userId: newReminder.userId.isNotEmpty ? newReminder.userId : carNumber);
+
+    await collectionRef.doc(docId).set(fixed.toJson());
 
     debugPrint("Reminder SAVED → $docId");
   }
@@ -45,7 +47,9 @@ class ReminderRepository {
         .collection('items')
         .doc(reminder.id);
 
-    await docRef.set(reminder.toJson(), SetOptions(merge: true));
+    final fixed = reminder.copyWith(userId: reminder.userId.isNotEmpty ? reminder.userId : carNumber);
+
+    await docRef.set(fixed.toJson(), SetOptions(merge: true));
 
 
   }
@@ -63,7 +67,7 @@ Future<List<ReminderModel>> getAll(String carNumber) async {
       final data = doc.data();
 
       try {
-     
+     data['userId'] ??= carNumber;
         data['title'] ??= S.current.no_name;
         data['description'] ??= '';
 
