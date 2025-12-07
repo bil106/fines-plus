@@ -142,12 +142,15 @@ class _InsuranceDetailSheetState extends State<InsuranceDetailSheet> {
                     "byDate": byDate,
                     "isInsurance": true,
                   };
-                  if (widget.onSave != null) widget.onSave!(result);
+
+                  // Закрываем и возвращаем результат
                   Navigator.pop(context, result);
                 },
                 child: Text(S.of(context).save),
-              ),
-            ),
+              )
+
+            )
+
           ],
         ),
       ),

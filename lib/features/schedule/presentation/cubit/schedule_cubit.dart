@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:fines_plus/core/helpers/push_helper.dart';
+import 'package:fines_plus/features/home/presentation/cubit/quick_actions_cubit.dart';
 import 'package:fines_plus/features/maintenance/data/models/maintenance_task.dart';
 import 'package:fines_plus/features/maintenance/data/repository/schedule_firebase_repository.dart';
 import 'package:fines_plus/features/maintenance/presentation/cubit/maintenance_cubit.dart';
@@ -42,7 +43,9 @@ class ScheduleCubit extends Cubit<ScheduleState> {
       }
     });
 
-    loadTasks();
+     if (carNumber.isNotEmpty) {
+      loadTasks();
+    }
   }
 
   Future<void> loadTasks() async {
@@ -51,16 +54,54 @@ class ScheduleCubit extends Cubit<ScheduleState> {
     emit(state.copyWith(tasks: tasks, loading: false));
   }
 
-  void addTask(MaintenanceTask task, {ReminderCubit? reminderCubit}) async {
-    final updatedTasks = List<MaintenanceTask>.from(state.tasks)..add(task);
+Future<void> addTask(MaintenanceTask task, {ReminderCubit? reminderCubit}) async {
+    if (carNumber.isEmpty) return;
+
+    // --- Guard: если задача с тем же id уже в списке — не добавляем
+    if (task.id != null && state.tasks.any((t) => t.id != null && t.id == task.id)) {
+      debugPrint("⚠️ Task with same id already exists, skipping add");
+      return;
+    }
+
+    // --- Guard: если задача с тем же описанием и тем же типом (insurance flag) уже есть — не добавляем
+    if (state.tasks.any((t) => t.description == task.description && t.isInsurance == task.isInsurance)) {
+      debugPrint("⚠️ Similar task already exists, skipping add");
+      return;
+    }
+   
+    var updatedTasks = List<MaintenanceTask>.from(state.tasks)..add(task);
     emit(state.copyWith(tasks: updatedTasks));
 
-    await repository.saveTasks(carNumber, updatedTasks);
-    await firebaseRepo.saveTask(carNumber, task);
-    await _checkTask(task, reminderCubit);
+    try {
+     
+      final savedTask = await firebaseRepo.saveTask(carNumber, task);
+
+     
+      updatedTasks = List<MaintenanceTask>.from(state.tasks)
+        ..removeWhere(
+          (t) =>
+              (t.id == null || t.id!.isEmpty) && t.description == task.description && t.isInsurance == task.isInsurance,
+        )
+        ..add(savedTask);
+
+    
+      await repository.saveTasks(carNumber, updatedTasks);
+      emit(state.copyWith(tasks: updatedTasks));
+      await _checkTask(savedTask, reminderCubit);
+    } catch (e, st) {
+      debugPrint('❌ addTask failed: $e\n$st');
+    
+      await loadTasks();
+    }
   }
 
+
+
   Future<void> updateTask(int index, MaintenanceTask task, {ReminderCubit? reminderCubit}) async {
+   if (carNumber.isEmpty) {
+      debugPrint("❌ updateTask called with empty carNumber");
+      return;
+    }
     final updatedTasks = List<MaintenanceTask>.from(state.tasks);
     if (index >= 0 && index < updatedTasks.length) {
       updatedTasks[index] = task;
@@ -99,20 +140,31 @@ class ScheduleCubit extends Cubit<ScheduleState> {
     }
   }
 
-  Future<void> removeTask(int index, {ReminderCubit? reminderCubit}) async {
+Future<void> removeTask(int index, {ReminderCubit? reminderCubit, QuickActionsCubit? quickActionsCubit}) async {
+    if (carNumber.isEmpty) return;
     if (index < 0 || index >= state.tasks.length) return;
 
-    final removed = state.tasks[index];
+    final removedTask = state.tasks[index];
+    debugPrint('removeTask called index=$index id=${removedTask.id} category=${removedTask.category}');
 
     final updatedTasks = List<MaintenanceTask>.from(state.tasks)..removeAt(index);
-    emit(state.copyWith(tasks: updatedTasks));
 
-    await repository.saveTasks(carNumber, updatedTasks);
+    emit(state.copyWith(tasks: updatedTasks, tasksRemoved: [removedTask]));
 
-    await firebaseRepo.deleteTask(carNumber, removed);
+    await Future.wait([
+      repository.saveTasks(carNumber, updatedTasks),
+      firebaseRepo.deleteTask(carNumber, removedTask),
+       if (reminderCubit != null) reminderCubit.deleteReminder(removedTask.id?.toString() ?? ""),
+    ]);
 
-    if (reminderCubit != null) {}
+   
+ 
   }
+
+
+
+
+
 
   String _generateDescription(String title) {
     final lower = title.toLowerCase();
@@ -145,4 +197,6 @@ class ScheduleCubit extends Cubit<ScheduleState> {
     _carSub.cancel();
     return super.close();
   }
+
+
 }

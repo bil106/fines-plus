@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class QuickActionsCubit extends Cubit<QuickActionsState> {
   final TasksRepository tasksRepository;
   final SharedPreferences prefs;
+
   QuickActionsCubit(this.tasksRepository, this.prefs)
     : super(
         QuickActionsState(
@@ -30,38 +31,88 @@ class QuickActionsCubit extends Cubit<QuickActionsState> {
     emit(state.copyWith(hasOilTask: hasOil));
   }
 
+
   Future<void> onTaskCreated(Map<String, dynamic> data, {required String labelKey}) async {
+    final key = labelKey.toLowerCase(); 
     final updatedActive = List<String>.from(state.activeCategories);
-    if (!updatedActive.contains(labelKey)) updatedActive.add(labelKey);
+    if (!updatedActive.contains(key)) updatedActive.add(key);
 
-    final updatedTasks = Map<String, Map<String, dynamic>>.from(state.createdTasks);
-    updatedTasks[labelKey] = data;
+    final updatedTasks = Map<String, List<Map<String, dynamic>>>.from(state.createdTasks);
+    updatedTasks[key] = List<Map<String, dynamic>>.from(updatedTasks[key] ?? []);
+    updatedTasks[key]!.add(data);
 
-    await tasksRepository.createTask(labelKey.toLowerCase());
+    await tasksRepository.createTask(key);
 
     emit(
       state.copyWith(
         activeCategories: updatedActive,
         createdTasks: updatedTasks,
-        hasOilTask: labelKey.toLowerCase() == 'oil' ? true : state.hasOilTask,
+        hasOilTask: key == 'oil' ? true : state.hasOilTask,
       ),
     );
     await prefs.setStringList('activeCategories', updatedActive);
   }
 
-  void clearCreatedTask(String labelKey) {
-    final updatedTasks = Map<String, Map<String, dynamic>>.from(state.createdTasks);
-    updatedTasks.remove(labelKey);
 
-    final updatedActive = List<String>.from(state.activeCategories)..remove(labelKey);
+
+  void clearCreatedTask(String labelKey) {
+    final key = labelKey.toLowerCase();
+    final updatedTasks = Map<String, List<Map<String, dynamic>>>.from(state.createdTasks);
+    updatedTasks.remove(key);
+
+    final updatedActive = List<String>.from(state.activeCategories)..remove(key);
     emit(state.copyWith(createdTasks: updatedTasks, activeCategories: updatedActive));
   }
 
+
+
   Future<void> onTaskDeleted(String labelKey) async {
-    await tasksRepository.removeTask(labelKey.toLowerCase());
-    clearCreatedTask(labelKey);
-    if (labelKey.toLowerCase() == 'oil') {
-      emit(state.copyWith(hasOilTask: false));
+    final key = labelKey.toLowerCase();
+    final updatedTasks = Map<String, List<Map<String, dynamic>>>.from(state.createdTasks);
+    updatedTasks.remove(key);
+
+    await tasksRepository.removeTask(key);
+
+    final updatedActive = List<String>.from(state.activeCategories)..remove(key);
+
+    emit(state.copyWith(createdTasks: updatedTasks, activeCategories: updatedActive));
+
+    await prefs.setStringList('activeCategories', updatedActive);
+  }
+
+
+
+  Future<void> syncWithRepository() async {
+    final updated = <String>[];
+
+    for (final action in state.actions) {
+      final key = action.labelKey.toLowerCase();
+      final hasTask = await tasksRepository.hasTaskOfType(key);
+      if (hasTask) updated.add(key); 
+    }
+
+    emit(state.copyWith(activeCategories: updated));
+    await prefs.setStringList('activeCategories', updated);
+  }
+
+
+  void onExternalTaskDeleted(String labelKey) {
+    final updatedActive = List<String>.from(state.activeCategories)..remove(labelKey);
+
+    final updatedTasks = Map<String, List<Map<String, dynamic>>>.from(state.createdTasks);
+    updatedTasks.remove(labelKey);
+
+    emit(state.copyWith(activeCategories: updatedActive, createdTasks: updatedTasks));
+
+    prefs.setStringList('activeCategories', updatedActive);
+  }
+  void markTaskDeleted(String labelKey) {
+    if (state.createdTasks.containsKey(labelKey)) {
+      for (var task in state.createdTasks[labelKey]!) {
+        task['deleted'] = true;
+      }
+      emit(state.copyWith(createdTasks: state.createdTasks));
     }
   }
+
 }

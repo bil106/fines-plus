@@ -5,7 +5,7 @@ class QuickActionsState {
   final int selectedIndex;
   final bool hasOilTask;
 
-  final Map<String, Map<String, dynamic>> createdTasks;
+  final Map<String, List<Map<String, dynamic>>> createdTasks;
 
   final List<String> activeCategories;
 
@@ -21,7 +21,7 @@ class QuickActionsState {
     List<ActionItemModel>? actions,
     int? selectedIndex,
     bool? hasOilTask,
-    Map<String, Map<String, dynamic>>? createdTasks,
+    Map<String, List<Map<String, dynamic>>>? createdTasks,
     List<String>? activeCategories,
   }) {
     return QuickActionsState(

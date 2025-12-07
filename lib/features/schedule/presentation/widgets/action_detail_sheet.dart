@@ -2,7 +2,9 @@ import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:fines_plus/core/extensions/service_list.dart';
+import 'package:fines_plus/features/home/presentation/cubit/quick_actions_cubit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ActionDetailSheet extends StatefulWidget {
   final void Function(Map<String, dynamic>)? onSave;
@@ -51,7 +53,7 @@ class _ActionDetailSheetState extends State<ActionDetailSheet> {
   DateTime? selectedDate;
   String? selectedCategory;
 
-final Map<String, String> items = {
+  final Map<String, String> items = {
     "oil": S.current.oil_icon,
     "coolant": S.current.coolant_icon,
     "service": S.current.service,
@@ -118,8 +120,6 @@ final Map<String, String> items = {
             ),
 
             SizedBox(height: 16),
-
-
 
             Autocomplete<String>(
               optionsBuilder: (TextEditingValue value) {
@@ -230,7 +230,7 @@ final Map<String, String> items = {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () {
+                onPressed: () async {
                   final intervalTime = _buildIntervalFromUI();
 
                   final result = {
@@ -244,8 +244,17 @@ final Map<String, String> items = {
                     "byDate": byDate,
                     "byMileage": byMileage,
                   };
-
-                  if (widget.onSave != null) widget.onSave!(result);
+                  final quick = context.read<QuickActionsCubit>();
+                  await quick.onTaskCreated({
+                    'description': S.of(context).insurance,
+                    'category': 'insurance', 
+                    'isInsurance': true,
+                    'date': selectedDate?.toIso8601String(),
+                    'intervalDays': intervalTime?.inDays,
+                    'comment': commentController.text,
+                    'byDate': byDate,
+                  }, labelKey: "Insurance");
+                   if (widget.onSave != null) widget.onSave!(result);
 
                   Navigator.pop(context, result);
                 },

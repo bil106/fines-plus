@@ -28,16 +28,22 @@ Future<List<MaintenanceTask>> loadTasks(String carNumber) async {
     }).toList();
   }
 
-Future<void> saveTask(String carNumber, MaintenanceTask task) async {
+
+
+ Future<MaintenanceTask> saveTask(String carNumber, MaintenanceTask task) async {
     final collection = _tasksCollection(carNumber);
-    if (task.id == null) {
+    if (task.id == null || task.id!.isEmpty) {
       final ref = collection.doc();
       final newTask = task.copyWith(id: ref.id);
       await ref.set(newTask.toJson());
+      return newTask;
     } else {
       await collection.doc(task.id).set(task.toJson(), SetOptions(merge: true));
+      return task;
     }
   }
+
+
 
 
 Future<void> updateTask(String carNumber, MaintenanceTask task) async {

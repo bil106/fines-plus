@@ -27,7 +27,7 @@ class QuickActionsPanel extends StatelessWidget {
           ),
           itemBuilder: (context, index) {
             final action = state.actions[index];
-            final isActive = state.activeCategories.contains(action.labelKey);
+            final isActive = state.activeCategories.contains(action.labelKey.toLowerCase());
 
             return ActionItem(
               icon: action.icon,
@@ -62,6 +62,7 @@ class QuickActionsPanel extends StatelessWidget {
                 if (labelKey == "Insurance") {
                   await quick.onTaskCreated({
                     'description': S.of(context).insurance,
+                    'category': labelKey.toLowerCase(),
                     'isInsurance': true,
                     'date': result['date'] ?? DateTime.now(),
                     'byDate': result['byDate'] ?? true,
@@ -69,7 +70,7 @@ class QuickActionsPanel extends StatelessWidget {
                     'comment': result['comment'] ?? '',
                   }, labelKey: labelKey);
                 } else {
-                  await quick.onTaskCreated(result, labelKey: labelKey);
+                   await quick.onTaskCreated(result, labelKey: labelKey);
                 }
 
                 wrapperState?.openAnalyticsTab(2);

@@ -37,6 +37,7 @@ class TasksRepository {
     await Future.delayed(const Duration(milliseconds: 200));
     _existingTasks.remove(type);
     await _saveTasks();
+    
   }
 }
 
