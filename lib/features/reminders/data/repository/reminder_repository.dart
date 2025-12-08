@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:core_localization/generated/l10n.dart';
 import 'package:fines_plus/features/reminders/data/datasources/reminder_local_data_source.dart';
 import 'package:fines_plus/features/reminders/data/datasources/reminder_remote_data_source.dart';
 import 'package:fines_plus/features/reminders/data/models/reminder_model.dart';
@@ -13,7 +12,6 @@ class ReminderRepository {
 
   Future<void> add(String carNumber, ReminderModel reminder) async {
     if (carNumber.isEmpty) {
-
       return;
     }
 
@@ -23,7 +21,7 @@ class ReminderRepository {
 
     final newReminder = reminder.copyWith(id: docId);
 
-   final fixed = newReminder.copyWith(userId: newReminder.userId.isNotEmpty ? newReminder.userId : carNumber);
+    final fixed = newReminder.copyWith(userId: newReminder.userId.isNotEmpty ? newReminder.userId : carNumber);
 
     await collectionRef.doc(docId).set(fixed.toJson());
 
@@ -32,12 +30,10 @@ class ReminderRepository {
 
   Future<void> update(String carNumber, ReminderModel reminder) async {
     if (carNumber.isEmpty) {
-     
       return;
     }
 
     if (reminder.id.isEmpty) {
-    
       return;
     }
 
@@ -50,16 +46,12 @@ class ReminderRepository {
     final fixed = reminder.copyWith(userId: reminder.userId.isNotEmpty ? reminder.userId : carNumber);
 
     await docRef.set(fixed.toJson(), SetOptions(merge: true));
-
-
   }
 
-Future<List<ReminderModel>> getAll(String carNumber) async {
+  Future<List<ReminderModel>> getAll(String carNumber) async {
     if (carNumber.isEmpty) return [];
 
     final snapshot = await FirebaseFirestore.instance.collection('reminders').doc(carNumber).collection('items').get();
-
-   
 
     final reminders = <ReminderModel>[];
 
@@ -67,8 +59,12 @@ Future<List<ReminderModel>> getAll(String carNumber) async {
       final data = doc.data();
 
       try {
-     data['userId'] ??= carNumber;
-        data['title'] ??= S.current.no_name;
+        if (data['title'] == null || (data['title'] as String).trim().isEmpty) {
+          debugPrint('Skipped invalid reminder (no title) → ${doc.id}');
+          continue;
+        }
+
+        data['userId'] ??= carNumber;
         data['description'] ??= '';
 
         reminders.add(ReminderModel.fromJson(data));
@@ -81,22 +77,19 @@ Future<List<ReminderModel>> getAll(String carNumber) async {
     return reminders;
   }
 
-
-
-
   Future<void> delete(String carNumber, String id) async {
     if (carNumber.isEmpty) {
-      debugPrint("❌ ReminderRepository.delete(): carNumber is EMPTY");
+      debugPrint(" ReminderRepository.delete(): carNumber is EMPTY");
       return;
     }
 
     if (id.isEmpty) {
-      debugPrint("❌ ReminderRepository.delete(): id is EMPTY");
+      debugPrint(" ReminderRepository.delete(): id is EMPTY");
       return;
     }
 
     await remoteDataSource.deleteReminder(carNumber, id);
 
-    debugPrint("✔ Reminder DELETED → $id");
+    debugPrint(" Reminder DELETED → $id");
   }
 }

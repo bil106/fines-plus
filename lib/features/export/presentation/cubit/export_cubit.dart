@@ -23,11 +23,15 @@ class ExportCubit extends Cubit<void> {
     return file.writeAsBytes(pdfBytes);
   }
 
-  Future<File> exportCsvFile(String carNumber, List<EventModel> history) async {
+Future<File> exportCsvFile(String carNumber, List<EventModel> history) async {
     final carHistoryList = exportRepository.convertEventsToCarHistory(history);
     final csvBytes = await exportCsv.generateBytes(carNumber, carHistoryList);
     final dir = await getTemporaryDirectory();
-    final file = File('${dir.path}/$carNumber-history.csv');
+
+    final safeCarNumber = carNumber.isEmpty ? "car" : carNumber;
+
+    final file = File('${dir.path}/$safeCarNumber-history.csv');
     return file.writeAsBytes(csvBytes);
   }
+
 }

@@ -74,7 +74,7 @@ class _ExportScreenView extends StatelessWidget {
                 ExportCard(
                   icon: Icons.table_chart,
                   label: S.of(context).csv,
-                  onTap: () => ShareHelpers.shareCsv(context, carNumber, history),
+                  onTap: () => ShareHelpers.shareCsv(context,history),
                 ),
               ],
             ),

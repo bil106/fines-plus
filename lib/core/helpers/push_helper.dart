@@ -17,8 +17,9 @@ class PushHelper {
     final now = DateTime.now();
     final delay = dateTime.difference(now);
 
+
     if (delay.isNegative) {
-      debugPrint('⏱ Notification time is in the past, skipping.');
+      debugPrint(' Notification time is in the past, skipping.');
       return;
     }
 

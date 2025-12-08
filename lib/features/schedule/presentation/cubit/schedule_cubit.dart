@@ -92,7 +92,6 @@ class ScheduleCubit extends Cubit<ScheduleState> {
 
   Future<void> updateTask(int index, MaintenanceTask task, {ReminderCubit? reminderCubit}) async {
     if (carNumber.isEmpty) {
-   
       return;
     }
     final updatedTasks = List<MaintenanceTask>.from(state.tasks);
@@ -109,7 +108,7 @@ class ScheduleCubit extends Cubit<ScheduleState> {
     final progress = task.getProgress();
     debugPrint("Checking progress for ${task.description}: ${(progress * 100).toStringAsFixed(1)}%");
 
-    if (reminderCubit != null && progress >= 0.9) {
+    if (reminderCubit != null && task.description.trim().isNotEmpty && progress >= 0.9) {
       final reminder = ReminderModel(
         id: const Uuid().v4(),
         title: "${S.current.reminder}: ${task.description}",
@@ -118,18 +117,9 @@ class ScheduleCubit extends Cubit<ScheduleState> {
         isCompleted: false,
         userId: userId,
       );
+
       await reminderCubit.addReminder(reminder);
       debugPrint("Reminder created for ${task.description}");
-    }
-
-    if (progress >= 0.9) {
-      await pushHelper.scheduleNotification(
-        id: task.description.hashCode,
-        title: S.current.resource_out,
-        body: '${task.description} ${S.current.reached_usage}',
-        dateTime: DateTime.now().add(const Duration(seconds: 5)),
-      );
-      debugPrint("Notification scheduled for ${task.description}");
     }
   }
 

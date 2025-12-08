@@ -31,8 +31,7 @@ dependencies:
     path: packages/design_system 
   google_maps_flutter: ^2.13.1
   geolocator: ^14.0.2
-
-
+  excel: ^4.0.6
   flutter_bloc: ^9.1.1
   flutter_localizations:
     sdk: flutter
@@ -76,7 +75,7 @@ dependencies:
   flutter_web_auth_2: ^4.1.0
   flutter_svg: ^2.2.1
   flutter_launcher_icons: ^0.14.4
-  flutter_native_splash: ^2.4.6
+  flutter_native_splash: ^2.4.4
   file_picker: ^10.3.3
   equatable: ^2.0.7
   get_it: ^8.2.0

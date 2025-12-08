@@ -7,8 +7,6 @@ import 'package:csv/csv.dart';
 import 'package:fines_plus/features/analytics/data/models/car_history_model.dart';
 import 'package:intl/intl.dart';
 
-
-
 class ExportHistoryCsv {
   Future<Uint8List> generateBytes(String carNumber, List<CarHistory> history) async {
     final totalCost = history.fold<double>(0, (sum, h) => sum + h.cost);
@@ -45,12 +43,10 @@ class ExportHistoryCsv {
 
     rows.add(['', '', S.current.total, totalCost.toStringAsFixed(0)]);
 
- 
     final csvString = const ListToCsvConverter(fieldDelimiter: ';').convert(rows);
 
-   
     final bytes = utf8.encode(csvString);
-    final bom = [0xEF, 0xBB, 0xBF]; 
+    final bom = [0xEF, 0xBB, 0xBF];
     return Uint8List.fromList([...bom, ...bytes]);
   }
 }
