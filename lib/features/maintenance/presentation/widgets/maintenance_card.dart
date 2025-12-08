@@ -73,10 +73,10 @@ class MaintenanceCard extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        _translateLabel(category, context),
-                        style: textTheme.black16bold.copyWith(fontWeight: FontWeight.bold),
-                      ),
+                      // Text(
+                      //   _translateLabel(category, context),
+                      //   style: textTheme.black16bold.copyWith(fontWeight: FontWeight.bold),
+                      // ),
                       const SizedBox(height: 4),
                       Text(description, style: textTheme.black16bold),
                     ],

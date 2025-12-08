@@ -129,7 +129,7 @@ class _InsuranceDetailSheetState extends State<InsuranceDetailSheet> {
               decoration: InputDecoration(labelText: S.of(context).comment, border: OutlineInputBorder()),
             ),
             const SizedBox(height: 24),
-            SizedBox(
+           SizedBox(
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
@@ -143,13 +143,12 @@ class _InsuranceDetailSheetState extends State<InsuranceDetailSheet> {
                     "isInsurance": true,
                   };
 
-                  // Закрываем и возвращаем результат
+                  if (widget.onSave != null) widget.onSave!(result);
                   Navigator.pop(context, result);
                 },
                 child: Text(S.of(context).save),
-              )
-
-            )
+              ),
+            ),
 
           ],
         ),

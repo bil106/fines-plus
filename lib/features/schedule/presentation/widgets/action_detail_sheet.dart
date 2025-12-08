@@ -227,10 +227,10 @@ class _ActionDetailSheetState extends State<ActionDetailSheet> {
 
             AppSpacers.verticalLargeXL,
 
-            SizedBox(
+         SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () async {
+                onPressed: () {
                   final intervalTime = _buildIntervalFromUI();
 
                   final result = {
@@ -244,23 +244,14 @@ class _ActionDetailSheetState extends State<ActionDetailSheet> {
                     "byDate": byDate,
                     "byMileage": byMileage,
                   };
-                  final quick = context.read<QuickActionsCubit>();
-                  await quick.onTaskCreated({
-                    'description': S.of(context).insurance,
-                    'category': 'insurance', 
-                    'isInsurance': true,
-                    'date': selectedDate?.toIso8601String(),
-                    'intervalDays': intervalTime?.inDays,
-                    'comment': commentController.text,
-                    'byDate': byDate,
-                  }, labelKey: "Insurance");
-                   if (widget.onSave != null) widget.onSave!(result);
+
+                  if (widget.onSave != null) widget.onSave!(result);
 
                   Navigator.pop(context, result);
                 },
                 child: Text(S.of(context).save),
               ),
-            ),
+            )
           ],
         ),
       ),
