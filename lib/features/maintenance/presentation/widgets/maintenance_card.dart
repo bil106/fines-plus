@@ -59,7 +59,7 @@ class MaintenanceCard extends StatelessWidget {
     }
 
     return Card(
-     elevation: 2,
+      elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
         padding: const EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 2),
@@ -73,10 +73,6 @@ class MaintenanceCard extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Text(
-                      //   _translateLabel(category, context),
-                      //   style: textTheme.black16bold.copyWith(fontWeight: FontWeight.bold),
-                      // ),
                       const SizedBox(height: 4),
                       Text(description, style: textTheme.black16bold),
                     ],
@@ -196,28 +192,5 @@ class MaintenanceCard extends StatelessWidget {
         ),
       ),
     );
-  }
-}
-
-String _translateLabel(String key, BuildContext context) {
-  switch (key) {
-    case 'Oil':
-      return S.of(context).oil_icon;
-    case 'Coolant':
-      return S.of(context).coolant_icon;
-    case 'Service':
-      return S.of(context).service_icon;
-    case 'Repair':
-      return S.of(context).repair_icon;
-    case 'Battery':
-      return S.of(context).battery;
-    case 'Tuning':
-      return S.of(context).tuning;
-    case 'Tires':
-      return S.of(context).tires_icon;
-    case 'Insurance':
-      return S.of(context).insurance;
-    default:
-      return key;
   }
 }

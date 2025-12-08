@@ -2,9 +2,7 @@ import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:fines_plus/core/extensions/service_list.dart';
-import 'package:fines_plus/features/home/presentation/cubit/quick_actions_cubit.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ActionDetailSheet extends StatefulWidget {
   final void Function(Map<String, dynamic>)? onSave;
@@ -42,9 +40,7 @@ class _ActionDetailSheetState extends State<ActionDetailSheet> {
   late TextEditingController dateController;
   late TextEditingController mileageController;
   late TextEditingController intervalKmController;
-
   late TextEditingController intervalDaysController;
-
   late TextEditingController commentController;
 
   bool byDate = false;
@@ -227,7 +223,7 @@ class _ActionDetailSheetState extends State<ActionDetailSheet> {
 
             AppSpacers.verticalLargeXL,
 
-         SizedBox(
+            SizedBox(
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
@@ -251,7 +247,7 @@ class _ActionDetailSheetState extends State<ActionDetailSheet> {
                 },
                 child: Text(S.of(context).save),
               ),
-            )
+            ),
           ],
         ),
       ),

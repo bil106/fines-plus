@@ -85,13 +85,12 @@ class InsuranceCard extends StatelessWidget {
                 ),
                 Column(
                   children: [
-                   Text(
+                    Text(
                       intervalTime != null
                           ? "${S.of(context).every} ${intervalTime!.inDays} ${S.of(context).days}"
                           : "-",
                       style: textTheme.black13W400,
-                    )
-
+                    ),
                   ],
                 ),
               ],

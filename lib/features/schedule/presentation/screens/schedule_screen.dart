@@ -107,7 +107,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
 
   void addEvent(MaintenanceTask task) {
     if (scheduleCubit == null || scheduleCubit!.carNumber.isEmpty) {
-      debugPrint('❌ addTask called with empty carNumber');
+      debugPrint('addTask called with empty carNumber');
       return;
     }
     scheduleCubit!.addTask(task, reminderCubit: reminderCubit);
@@ -185,7 +185,8 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     ];
     return allMileages.isEmpty ? 0 : allMileages.reduce((a, b) => a > b ? a : b);
   }
-DateTime? _parseDate(dynamic value) {
+
+  DateTime? _parseDate(dynamic value) {
     if (value == null) return null;
     if (value is DateTime) return value;
     if (value is String && value.isNotEmpty) {
@@ -201,6 +202,7 @@ DateTime? _parseDate(dynamic value) {
     }
     return null;
   }
+
   void _handleQuickActions(QuickActionsState state) {
     if (scheduleCubit == null || reminderCubit == null || scheduleCubit!.carNumber.isEmpty) return;
 
@@ -228,7 +230,6 @@ DateTime? _parseDate(dynamic value) {
         final lastMileageKm = data["mileage"] ?? 0;
         final intervalKm = data["intervalKm"] ?? 0;
         final intervalKmValue = unit == 'mil' ? (intervalKm / 0.621371).round() : intervalKm;
-      
 
         final key = entry.key;
         final newTask = MaintenanceTask(
@@ -236,7 +237,7 @@ DateTime? _parseDate(dynamic value) {
               ? S.of(context).insurance
               : (data['description']?.toString() ?? S.of(context).no_name),
           category: isInsurance ? 'insurance' : (data['category']?.toString().toLowerCase() ?? key),
-          lastServiceDate:  _parseDate(data['date']),
+          lastServiceDate: _parseDate(data['date']),
           lastMileage: lastMileageKm,
           actualMileage: getMaxMileage(newMileage: lastMileageKm),
           intervalKm: intervalKmValue == 0 ? null : intervalKmValue,
@@ -310,13 +311,12 @@ DateTime? _parseDate(dynamic value) {
                                       : null,
                                   intervalTime: task.intervalTime,
                                   onPressed: () async {
-                                    final index = scheduleCubit!.state.tasks.indexOf(task); // индекс для update
                                     await showModalBottomSheet<Map<String, dynamic>>(
                                       context: context,
                                       isScrollControlled: true,
                                       builder: (_) => InsuranceDetailSheet(
                                         comment: task.comment,
-                                    onSave: (data) {
+                                        onSave: (data) {
                                           final parsedDate = _parseDate(data['date']);
                                           final updatedTask = task.copyWith(
                                             lastServiceDate: parsedDate,
@@ -330,8 +330,6 @@ DateTime? _parseDate(dynamic value) {
                                             scheduleCubit!.updateTask(index, updatedTask, reminderCubit: reminderCubit);
                                           }
                                         },
-
-
                                       ),
                                     );
                                   },
@@ -342,7 +340,6 @@ DateTime? _parseDate(dynamic value) {
                                     }
                                   },
                                 )
-
                               : MaintenanceCard(
                                   description: task.description,
                                   category: task.category,

@@ -43,7 +43,7 @@ class ScheduleCubit extends Cubit<ScheduleState> {
       }
     });
 
-     if (carNumber.isNotEmpty) {
+    if (carNumber.isNotEmpty) {
       loadTasks();
     }
   }
@@ -54,29 +54,25 @@ class ScheduleCubit extends Cubit<ScheduleState> {
     emit(state.copyWith(tasks: tasks, loading: false));
   }
 
-Future<void> addTask(MaintenanceTask task, {ReminderCubit? reminderCubit}) async {
+  Future<void> addTask(MaintenanceTask task, {ReminderCubit? reminderCubit}) async {
     if (carNumber.isEmpty) return;
 
-    // --- Guard: если задача с тем же id уже в списке — не добавляем
     if (task.id != null && state.tasks.any((t) => t.id != null && t.id == task.id)) {
-      debugPrint("⚠️ Task with same id already exists, skipping add");
+      debugPrint("Task with same id already exists, skipping add");
       return;
     }
 
-    // --- Guard: если задача с тем же описанием и тем же типом (insurance flag) уже есть — не добавляем
     if (state.tasks.any((t) => t.description == task.description && t.isInsurance == task.isInsurance)) {
-      debugPrint("⚠️ Similar task already exists, skipping add");
+      debugPrint("Similar task already exists, skipping add");
       return;
     }
-   
+
     var updatedTasks = List<MaintenanceTask>.from(state.tasks)..add(task);
     emit(state.copyWith(tasks: updatedTasks));
 
     try {
-     
       final savedTask = await firebaseRepo.saveTask(carNumber, task);
 
-     
       updatedTasks = List<MaintenanceTask>.from(state.tasks)
         ..removeWhere(
           (t) =>
@@ -84,22 +80,19 @@ Future<void> addTask(MaintenanceTask task, {ReminderCubit? reminderCubit}) async
         )
         ..add(savedTask);
 
-    
       await repository.saveTasks(carNumber, updatedTasks);
       emit(state.copyWith(tasks: updatedTasks));
       await _checkTask(savedTask, reminderCubit);
     } catch (e, st) {
-      debugPrint('❌ addTask failed: $e\n$st');
-    
+      debugPrint('addTask failed: $e\n$st');
+
       await loadTasks();
     }
   }
 
-
-
   Future<void> updateTask(int index, MaintenanceTask task, {ReminderCubit? reminderCubit}) async {
-   if (carNumber.isEmpty) {
-      debugPrint("❌ updateTask called with empty carNumber");
+    if (carNumber.isEmpty) {
+   
       return;
     }
     final updatedTasks = List<MaintenanceTask>.from(state.tasks);
@@ -114,7 +107,7 @@ Future<void> addTask(MaintenanceTask task, {ReminderCubit? reminderCubit}) async
 
   Future<void> _checkTask(MaintenanceTask task, ReminderCubit? reminderCubit) async {
     final progress = task.getProgress();
-    debugPrint("🔍 Checking progress for ${task.description}: ${(progress * 100).toStringAsFixed(1)}%");
+    debugPrint("Checking progress for ${task.description}: ${(progress * 100).toStringAsFixed(1)}%");
 
     if (reminderCubit != null && progress >= 0.9) {
       final reminder = ReminderModel(
@@ -140,7 +133,7 @@ Future<void> addTask(MaintenanceTask task, {ReminderCubit? reminderCubit}) async
     }
   }
 
-Future<void> removeTask(int index, {ReminderCubit? reminderCubit, QuickActionsCubit? quickActionsCubit}) async {
+  Future<void> removeTask(int index, {ReminderCubit? reminderCubit, QuickActionsCubit? quickActionsCubit}) async {
     if (carNumber.isEmpty) return;
     if (index < 0 || index >= state.tasks.length) return;
 
@@ -154,17 +147,9 @@ Future<void> removeTask(int index, {ReminderCubit? reminderCubit, QuickActionsCu
     await Future.wait([
       repository.saveTasks(carNumber, updatedTasks),
       firebaseRepo.deleteTask(carNumber, removedTask),
-       if (reminderCubit != null) reminderCubit.deleteReminder(removedTask.id?.toString() ?? ""),
+      if (reminderCubit != null) reminderCubit.deleteReminder(removedTask.id?.toString() ?? ""),
     ]);
-
-   
- 
   }
-
-
-
-
-
 
   String _generateDescription(String title) {
     final lower = title.toLowerCase();
@@ -197,6 +182,4 @@ Future<void> removeTask(int index, {ReminderCubit? reminderCubit, QuickActionsCu
     _carSub.cancel();
     return super.close();
   }
-
-
 }

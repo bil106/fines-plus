@@ -129,7 +129,7 @@ class _InsuranceDetailSheetState extends State<InsuranceDetailSheet> {
               decoration: InputDecoration(labelText: S.of(context).comment, border: OutlineInputBorder()),
             ),
             const SizedBox(height: 24),
-           SizedBox(
+            SizedBox(
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
@@ -149,7 +149,6 @@ class _InsuranceDetailSheetState extends State<InsuranceDetailSheet> {
                 child: Text(S.of(context).save),
               ),
             ),
-
           ],
         ),
       ),

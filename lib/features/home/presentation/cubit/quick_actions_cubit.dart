@@ -31,9 +31,8 @@ class QuickActionsCubit extends Cubit<QuickActionsState> {
     emit(state.copyWith(hasOilTask: hasOil));
   }
 
-
   Future<void> onTaskCreated(Map<String, dynamic> data, {required String labelKey}) async {
-    final key = labelKey.toLowerCase(); 
+    final key = labelKey.toLowerCase();
     final updatedActive = List<String>.from(state.activeCategories);
     if (!updatedActive.contains(key)) updatedActive.add(key);
 
@@ -53,8 +52,6 @@ class QuickActionsCubit extends Cubit<QuickActionsState> {
     await prefs.setStringList('activeCategories', updatedActive);
   }
 
-
-
   void clearCreatedTask(String labelKey) {
     final key = labelKey.toLowerCase();
     final updatedTasks = Map<String, List<Map<String, dynamic>>>.from(state.createdTasks);
@@ -63,8 +60,6 @@ class QuickActionsCubit extends Cubit<QuickActionsState> {
     final updatedActive = List<String>.from(state.activeCategories)..remove(key);
     emit(state.copyWith(createdTasks: updatedTasks, activeCategories: updatedActive));
   }
-
-
 
   Future<void> onTaskDeleted(String labelKey) async {
     final key = labelKey.toLowerCase();
@@ -80,21 +75,18 @@ class QuickActionsCubit extends Cubit<QuickActionsState> {
     await prefs.setStringList('activeCategories', updatedActive);
   }
 
-
-
   Future<void> syncWithRepository() async {
     final updated = <String>[];
 
     for (final action in state.actions) {
       final key = action.labelKey.toLowerCase();
       final hasTask = await tasksRepository.hasTaskOfType(key);
-      if (hasTask) updated.add(key); 
+      if (hasTask) updated.add(key);
     }
 
     emit(state.copyWith(activeCategories: updated));
     await prefs.setStringList('activeCategories', updated);
   }
-
 
   void onExternalTaskDeleted(String labelKey) {
     final updatedActive = List<String>.from(state.activeCategories)..remove(labelKey);
@@ -106,6 +98,7 @@ class QuickActionsCubit extends Cubit<QuickActionsState> {
 
     prefs.setStringList('activeCategories', updatedActive);
   }
+
   void markTaskDeleted(String labelKey) {
     if (state.createdTasks.containsKey(labelKey)) {
       for (var task in state.createdTasks[labelKey]!) {
@@ -114,5 +107,4 @@ class QuickActionsCubit extends Cubit<QuickActionsState> {
       emit(state.copyWith(createdTasks: state.createdTasks));
     }
   }
-
 }

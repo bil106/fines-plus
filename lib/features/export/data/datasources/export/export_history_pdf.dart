@@ -60,6 +60,12 @@ class ExportHistoryPdf {
                     entry.value.fold<double>(0, (sum, h) => sum + h.cost).toStringAsFixed(0)
                   ],
                 ],
+                 columnWidths: {
+                  0: pw.FlexColumnWidth(3), 
+                  1: pw.FlexColumnWidth(2), 
+                  2: pw.FlexColumnWidth(2), 
+                  3: pw.FlexColumnWidth(1), 
+                },
                 cellStyle: pw.TextStyle(font: font),
                 headerStyle: pw.TextStyle(font: font, fontWeight: pw.FontWeight.bold),
               ),

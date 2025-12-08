@@ -6,31 +6,27 @@ class ScheduleFirebaseRepository {
 
   ScheduleFirebaseRepository(this.firestore);
 
-CollectionReference<Map<String, dynamic>> _tasksCollection(String carNumber) {
+  CollectionReference<Map<String, dynamic>> _tasksCollection(String carNumber) {
     if (carNumber.isEmpty) {
       throw ArgumentError('carNumber cannot be empty');
     }
     return FirebaseFirestore.instance.collection('reminders').doc(carNumber).collection('items');
   }
 
-
   Future<void> addTask(String carNumber, MaintenanceTask task) async {
     await _tasksCollection(carNumber).doc(task.id).set(task.toJson());
-
   }
 
-Future<List<MaintenanceTask>> loadTasks(String carNumber) async {
+  Future<List<MaintenanceTask>> loadTasks(String carNumber) async {
     final snapshot = await _tasksCollection(carNumber).get();
     return snapshot.docs.map((doc) {
       final data = Map<String, dynamic>.from(doc.data());
-      data['id'] = doc.id; 
+      data['id'] = doc.id;
       return MaintenanceTask.fromJson(data);
     }).toList();
   }
 
-
-
- Future<MaintenanceTask> saveTask(String carNumber, MaintenanceTask task) async {
+  Future<MaintenanceTask> saveTask(String carNumber, MaintenanceTask task) async {
     final collection = _tasksCollection(carNumber);
     if (task.id == null || task.id!.isEmpty) {
       final ref = collection.doc();
@@ -43,10 +39,7 @@ Future<List<MaintenanceTask>> loadTasks(String carNumber) async {
     }
   }
 
-
-
-
-Future<void> updateTask(String carNumber, MaintenanceTask task) async {
+  Future<void> updateTask(String carNumber, MaintenanceTask task) async {
     if (task.id == null) return;
 
     await _tasksCollection(carNumber).doc(task.id).set(task.toJson(), SetOptions(merge: true));
