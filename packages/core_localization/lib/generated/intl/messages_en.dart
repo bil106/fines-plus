@@ -216,6 +216,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "get_notified": MessageLookupByLibrary.simpleMessage(
       "Get notified and pay on time",
     ),
+    "get_plan": MessageLookupByLibrary.simpleMessage("Get My Plan"),
     "good": MessageLookupByLibrary.simpleMessage("Good"),
     "google_login": MessageLookupByLibrary.simpleMessage(
       "Google login successful",
@@ -284,6 +285,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "min_char": MessageLookupByLibrary.simpleMessage("Minimum 6 characters"),
     "miss": MessageLookupByLibrary.simpleMessage("Skip"),
+    "money_back": MessageLookupByLibrary.simpleMessage(
+      "30-day money back guarantee!",
+    ),
     "month": MessageLookupByLibrary.simpleMessage("Month"),
     "month_apr": MessageLookupByLibrary.simpleMessage("Apr"),
     "month_aug": MessageLookupByLibrary.simpleMessage("Aug"),
@@ -298,6 +302,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "month_oct": MessageLookupByLibrary.simpleMessage("Oct"),
     "month_sep": MessageLookupByLibrary.simpleMessage("Sep"),
     "months": MessageLookupByLibrary.simpleMessage("Months"),
+    "most_popular": MessageLookupByLibrary.simpleMessage("MOST POPULAR"),
     "my_position": MessageLookupByLibrary.simpleMessage("You are here"),
     "name": MessageLookupByLibrary.simpleMessage("Name"),
     "new_reminder": MessageLookupByLibrary.simpleMessage("New reminder"),
@@ -354,6 +359,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Minimum 6 characters",
     ),
     "pay": MessageLookupByLibrary.simpleMessage("Pay"),
+    "pay_safe": MessageLookupByLibrary.simpleMessage("Safe and secure payment"),
     "pdf": MessageLookupByLibrary.simpleMessage("PDF"),
     "per_month": MessageLookupByLibrary.simpleMessage("per month"),
     "period": MessageLookupByLibrary.simpleMessage("average/year"),
@@ -939,6 +945,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "terms_of_use": MessageLookupByLibrary.simpleMessage("Terms of Use"),
     "test_subscription": MessageLookupByLibrary.simpleMessage(
       "Test subscription for",
+    ),
+    "text_automatically_renew": MessageLookupByLibrary.simpleMessage(
+      "Your subscription will automatically renew at the full price at the end of the chosen term. You can cancel anytime.",
     ),
     "tires": MessageLookupByLibrary.simpleMessage("tire"),
     "tires_icon": MessageLookupByLibrary.simpleMessage("Tires"),

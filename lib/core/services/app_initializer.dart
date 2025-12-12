@@ -33,11 +33,7 @@ import 'package:fines_plus/features/schedule/data/repository/schedule_repository
 import 'package:fines_plus/features/schedule/presentation/cubit/schedule_cubit.dart';
 import 'package:fines_plus/features/settings/presentation/cubit/settings_cubit.dart';
 import 'package:fines_plus/features/statistics/presentation/cubit/statistics_cubit.dart';
-import 'package:fines_plus/features/subscription/data/datasources/load_user_subscription_usecase.dart';
-import 'package:fines_plus/features/subscription/data/datasources/save_trial_info_usecase.dart';
 import 'package:fines_plus/features/subscription/data/repository/subscription_repository_impl.dart';
-import 'package:fines_plus/features/subscription/domain/usecases/buy_subscription.dart';
-import 'package:fines_plus/features/subscription/domain/usecases/get_available_plans.dart';
 import 'package:fines_plus/features/subscription/presentation/cubit/subscription_cubit.dart';
 import 'package:fines_plus/features/vehicle/data/datasources/car_info_local_data_source.dart';
 import 'package:fines_plus/features/vehicle/data/datasources/car_info_remote_data_source.dart';
@@ -216,17 +212,10 @@ class AppInitializer {
       FirebaseFirestore.instance,
     );
 
-    final getPlansUseCase = GetAvailablePlansUseCase(subscriptionRepository);
-    final buySubscriptionUseCase = BuySubscriptionUseCase(subscriptionRepository);
 
-    final loadUserSubscriptionUseCase = LoadUserSubscriptionUseCase(subscriptionRepository);
-    final saveTrialInfoUseCase = SaveTrialInfoUseCase(subscriptionRepository);
 
     subscriptionCubit = SubscriptionCubit(
-      getPlansUseCase,
-      buySubscriptionUseCase,
-      loadUserSubscriptionUseCase,
-      saveTrialInfoUseCase,
+     subscriptionRepository
     );
     additionalOptionsCubit = AdditionalOptionsCubit(
       extractTokensUseCase: extractTokensUseCase,

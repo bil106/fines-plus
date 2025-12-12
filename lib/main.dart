@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:core_cubit/cubit/purchase/purchase_cubit.dart';
 import 'package:core_cubit/cubit/referral/referral_cubit.dart';
 import 'package:fines_plus/core/extensions/currency_service.dart';
+import 'package:fines_plus/features/subscription/data/repository/subscription_repository_impl.dart';
 import '../env/env.dart';
 import 'package:fines_plus/features/analytics/presentation/cubit/analytics_cubit.dart';
 import 'package:fines_plus/features/expenses/data/repository/expense_repository.dart';
@@ -22,7 +23,6 @@ import 'package:fines_plus/features/schedule/presentation/cubit/schedule_cubit.d
 import 'package:fines_plus/features/settings/domain/services/settings_service.dart';
 import 'package:fines_plus/features/settings/presentation/cubit/settings_cubit.dart';
 import 'package:fines_plus/features/statistics/presentation/cubit/statistics_cubit.dart';
-import 'package:fines_plus/features/subscription/data/repository/subscription_repository.dart';
 import 'package:fines_plus/features/subscription/presentation/cubit/subscription_cubit.dart';
 import 'package:fines_plus/features/vehicle/presentation/cubit/car_cubit.dart';
 import 'package:fines_plus/features/vehicle/presentation/cubit/car_info_cubit.dart';
@@ -84,7 +84,7 @@ await dotenv.load(fileName: 'assets/config/.env');
             RepositoryProvider<IMaintenanceRepository>.value(value: repository),
             RepositoryProvider<ScheduleRepository>(create: (_) => ScheduleRepository()),
             RepositoryProvider.value(value: result.remoteConfigService),
-            RepositoryProvider<ISubscriptionRepository>.value(value: result.subscriptionRepository),
+            RepositoryProvider<SubscriptionRepositoryImpl>.value(value: result.subscriptionRepository),
           ],
           child: MultiBlocProvider(
             providers: [

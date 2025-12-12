@@ -214,6 +214,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "get_notified": MessageLookupByLibrary.simpleMessage(
       "Отримуйте сповіщення і оплачуйте вчасно",
     ),
+    "get_plan": MessageLookupByLibrary.simpleMessage("Отримати Мій План"),
     "good": MessageLookupByLibrary.simpleMessage("Добре"),
     "google_login": MessageLookupByLibrary.simpleMessage(
       "Вхід через Google успішний",
@@ -281,6 +282,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "min_char": MessageLookupByLibrary.simpleMessage("Мінімум 6 символів"),
     "miss": MessageLookupByLibrary.simpleMessage("Пропустити"),
+    "money_back": MessageLookupByLibrary.simpleMessage(
+      "30-денна гарантія повернення грошей!",
+    ),
     "month": MessageLookupByLibrary.simpleMessage("Місяць"),
     "month_apr": MessageLookupByLibrary.simpleMessage("Квіт"),
     "month_aug": MessageLookupByLibrary.simpleMessage("Серп"),
@@ -295,6 +299,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "month_oct": MessageLookupByLibrary.simpleMessage("Жовт"),
     "month_sep": MessageLookupByLibrary.simpleMessage("Верес"),
     "months": MessageLookupByLibrary.simpleMessage("Місяці"),
+    "most_popular": MessageLookupByLibrary.simpleMessage("НАЙПОПУЛЯРНІШІ"),
     "my_position": MessageLookupByLibrary.simpleMessage("Ви тут"),
     "name": MessageLookupByLibrary.simpleMessage("Назва"),
     "new_reminder": MessageLookupByLibrary.simpleMessage("Нове нагадування"),
@@ -359,6 +364,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Мінімум 6 символів",
     ),
     "pay": MessageLookupByLibrary.simpleMessage("Сплатити"),
+    "pay_safe": MessageLookupByLibrary.simpleMessage(
+      "Безпечна та надійна оплата",
+    ),
     "pdf": MessageLookupByLibrary.simpleMessage("PDF"),
     "per_month": MessageLookupByLibrary.simpleMessage("за місяць"),
     "period": MessageLookupByLibrary.simpleMessage("середнє/рік"),
@@ -920,6 +928,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "terms_of_use": MessageLookupByLibrary.simpleMessage("Умови використання"),
     "test_subscription": MessageLookupByLibrary.simpleMessage(
       "Тестова передплата на",
+    ),
+    "text_automatically_renew": MessageLookupByLibrary.simpleMessage(
+      "Ваша підписка автоматично поновиться за повною ціною після закінчення вибраного терміну. ​​Ви можете скасувати її будь-коли.",
     ),
     "tires": MessageLookupByLibrary.simpleMessage("шина"),
     "tires_icon": MessageLookupByLibrary.simpleMessage("Шини"),

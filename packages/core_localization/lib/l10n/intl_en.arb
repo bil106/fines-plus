@@ -446,6 +446,11 @@
 "no_such_service": "No_such_service",
 "every": "Every",
 "action": "Action",
-"no_expenses": "No expense data yet"
+"no_expenses": "No expense data yet",
+"get_plan": "Get My Plan",
+"money_back": "30-day money back guarantee!",
+"pay_safe": "Safe and secure payment",
+"most_popular": "MOST POPULAR",
+"text_automatically_renew": "Your subscription will automatically renew at the full price at the end of the chosen term. You can cancel anytime."
 
 }

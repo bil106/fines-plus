@@ -3808,6 +3808,51 @@ class S {
       args: [],
     );
   }
+
+  /// `Get My Plan`
+  String get get_plan {
+    return Intl.message('Get My Plan', name: 'get_plan', desc: '', args: []);
+  }
+
+  /// `30-day money back guarantee!`
+  String get money_back {
+    return Intl.message(
+      '30-day money back guarantee!',
+      name: 'money_back',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Safe and secure payment`
+  String get pay_safe {
+    return Intl.message(
+      'Safe and secure payment',
+      name: 'pay_safe',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `MOST POPULAR`
+  String get most_popular {
+    return Intl.message(
+      'MOST POPULAR',
+      name: 'most_popular',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Your subscription will automatically renew at the full price at the end of the chosen term. You can cancel anytime.`
+  String get text_automatically_renew {
+    return Intl.message(
+      'Your subscription will automatically renew at the full price at the end of the chosen term. You can cancel anytime.',
+      name: 'text_automatically_renew',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

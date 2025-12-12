@@ -7,6 +7,7 @@ import 'package:design_system/constants/app_borders.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:fines_plus/features/registration/presentation/cubit/registration_cubit.dart';
 import 'package:fines_plus/features/registration/presentation/cubit/registration_state.dart';
+import 'package:fines_plus/features/subscription/data/models/subscription_status.dart';
 import 'package:fines_plus/features/subscription/presentation/cubit/subscription_cubit.dart';
 import 'package:fines_plus/router/app_router.dart';
 import 'package:fines_plus/router/home_screen_wrapper.dart';
@@ -71,15 +72,17 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     if (isValid != _isFormValid) setState(() => _isFormValid = isValid);
   }
 
-  Future<void> _onSubmit(BuildContext context) async {
+Future<void> _onSubmit(BuildContext context) async {
     if (!(_formKey.currentState?.validate() ?? false)) return;
 
     final cubit = context.read<RegistrationCubit>();
     final email = emailController.text.trim();
     final password = passwordController.text.trim();
 
+    
     await cubit.saveCredentials(email, password);
 
+   
     await cubit.register(email, password);
 
     final user = FirebaseAuth.instance.currentUser;
@@ -89,15 +92,41 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     }
 
     try {
-      await context.read<SubscriptionCubit>().finishPurchase(user.uid);
+      // Getting Cubit subscriptions
+      final subCubit = context.read<SubscriptionCubit>();
 
-      final subState = context.read<SubscriptionCubit>().state;
-      if (subState is SubscriptionBought) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(S.of(context).plan_activated)));
-        Navigator.of(context).pop();
+   
+      await subCubit.load(user.uid);
+
+      final subState = subCubit.state;
+      if (subState is SubscriptionLoaded) {
+        if (subState.userSubscription.status == SubscriptionStatus.none ||
+            subState.userSubscription.status == SubscriptionStatus.trial) {
+          //If the user is not yet subscribed or is in a trial, purchase the selected plan.
+          if (subCubit.selectedPlan == null) {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(S.of(context).no_plan_selected)));
+            return;
+          }
+
+          await subCubit.purchase(user.uid);
+
+          final newState = subCubit.state;
+          if (newState is SubscriptionBought) {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(S.of(context).plan_activated)));
+            Navigator.of(context).pop();
+          } else if (newState is SubscriptionError) {
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text("${S.of(context).subscription_failed}: ${newState.message}")));
+          }
+        } else if (subState.userSubscription.status == SubscriptionStatus.subscribed) {
+          // The user is already subscribed
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(S.of(context).already_planned)));
+          Navigator.of(context).pop();
+        }
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${S.of(context).subscription_failed}:$e")));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${S.of(context).subscription_failed}: $e")));
     }
   }
 

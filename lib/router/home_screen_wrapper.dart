@@ -27,6 +27,7 @@ import 'package:fines_plus/features/reminders/data/repository/reminder_repositor
 import 'package:fines_plus/features/reminders/presentation/screens/reminders_screen.dart';
 import 'package:fines_plus/features/schedule/data/repository/schedule_repository.dart';
 import 'package:fines_plus/features/schedule/presentation/cubit/schedule_cubit.dart';
+import 'package:fines_plus/features/subscription/presentation/cubit/subscription_cubit.dart';
 import 'package:fines_plus/features/vehicle/data/repository/car_info_repository.dart';
 import 'package:fines_plus/features/vehicle/presentation/cubit/car_cubit.dart';
 import 'package:fines_plus/features/vehicle/presentation/cubit/car_info_cubit.dart';
@@ -44,13 +45,10 @@ import 'package:fines_plus/features/maintenance/presentation/screens/maintenance
 import 'package:fines_plus/features/maintenance/presentation/screens/tuning_screen.dart';
 import 'package:fines_plus/features/subscription/presentation/screens/subscription_screen.dart';
 import 'package:fines_plus/router/app_router.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 enum HomePage {
@@ -313,20 +311,28 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
                 carNumber: _carNumber!,
                 onBack: () => openPage(HomePage.analytics),
               ),
-              BlocProvider(
-                create: (_) => RegistrationCubit(auth: FirebaseAuth.instance, storage: const FlutterSecureStorage()),
+             MultiBlocProvider(
+                providers: [
+                  BlocProvider.value(value: context.read<RegistrationCubit>()),
+                  BlocProvider.value(value: context.read<SubscriptionCubit>()),
+                ],
                 child: RegistrationScreen(key: const ValueKey('registration'), onBack: () => openPage(HomePage.home)),
               ),
-              SubscriptionScreen(
-                onBack: () async {
-                  await Future.delayed(const Duration(milliseconds: 150));
-                  final wrapperState = context.findAncestorStateOfType<HomeScreenWrapperState>();
-                  if (wrapperState != null) {
-                    wrapperState.openPage(HomePage.home);
-                    return;
-                  }
-                  context.router.root.replaceAll([HomeRouteWrapper(initialPage: HomePage.home)]);
-                },
+
+         
+              BlocProvider.value(
+                value: context.read<SubscriptionCubit>(),
+                child: SubscriptionScreen(
+                  onBack: () async {
+                    await Future.delayed(const Duration(milliseconds: 150));
+                    final wrapperState = context.findAncestorStateOfType<HomeScreenWrapperState>();
+                    if (wrapperState != null) {
+                      wrapperState.openPage(HomePage.home);
+                      return;
+                    }
+                    context.router.root.replaceAll([HomeRouteWrapper(initialPage: HomePage.home)]);
+                  },
+                ),
               ),
               TuningScreen(key: const ValueKey('tuning'), onBack: () => openPage(HomePage.maintenance)),
               ServiceScreen(key: const ValueKey('service'), onBack: () => openPage(HomePage.maintenance)),

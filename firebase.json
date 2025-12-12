@@ -17,17 +17,6 @@
       "firebase.json",
       "**/.*",
       "**/node_modules/**"
-    ],
-    "rewrites": [
-      {
-        "source": "/register.html",
-        "dynamicLinks": true
-      },
-      {
-        "source": "/addCar.html",
-        "dynamicLinks": true
-      }
     ]
   }
-
 }

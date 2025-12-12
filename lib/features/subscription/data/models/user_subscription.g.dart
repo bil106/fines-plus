@@ -9,20 +9,23 @@ part of 'user_subscription.dart';
 UserSubscription _$UserSubscriptionFromJson(Map<String, dynamic> json) =>
     UserSubscription(
       status: $enumDecode(_$SubscriptionStatusEnumMap, json['status']),
-      trialInfo: json['trialInfo'] == null
+      subscriptionEndDate: json['subscriptionEndDate'] == null
           ? null
-          : TrialInfo.fromJson(json['trialInfo'] as Map<String, dynamic>),
+          : DateTime.parse(json['subscriptionEndDate'] as String),
+      trialEndsAt: json['trialEndsAt'] == null
+          ? null
+          : DateTime.parse(json['trialEndsAt'] as String),
     );
 
 Map<String, dynamic> _$UserSubscriptionToJson(UserSubscription instance) =>
     <String, dynamic>{
       'status': _$SubscriptionStatusEnumMap[instance.status]!,
-      'trialInfo': instance.trialInfo,
+      'subscriptionEndDate': instance.subscriptionEndDate?.toIso8601String(),
+      'trialEndsAt': instance.trialEndsAt?.toIso8601String(),
     };
 
 const _$SubscriptionStatusEnumMap = {
   SubscriptionStatus.none: 'none',
-  SubscriptionStatus.trialActive: 'trialActive',
-  SubscriptionStatus.trialEnded: 'trialEnded',
   SubscriptionStatus.subscribed: 'subscribed',
+  SubscriptionStatus.trial: 'trial',
 };

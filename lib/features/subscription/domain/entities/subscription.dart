@@ -20,5 +20,5 @@ class SubscriptionPlan {
     required this.features,
   });
 
-  bool get isTrial => title.contains("3 дні безплатно");
+ bool get isTrial => id == 'sub_3_months';
 }

@@ -1,5 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'trial_info.dart';
+
 import 'subscription_status.dart';
 
 part 'user_subscription.g.dart';
@@ -7,9 +7,10 @@ part 'user_subscription.g.dart';
 @JsonSerializable()
 class UserSubscription {
   final SubscriptionStatus status;
-  final TrialInfo? trialInfo;
+  final DateTime? subscriptionEndDate;
+  final DateTime? trialEndsAt;
 
-  UserSubscription({required this.status, this.trialInfo});
+  UserSubscription({required this.status, this.subscriptionEndDate, this.trialEndsAt});
 
   factory UserSubscription.fromJson(Map<String, dynamic> json) => _$UserSubscriptionFromJson(json);
 

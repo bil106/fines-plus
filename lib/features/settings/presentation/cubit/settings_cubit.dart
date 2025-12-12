@@ -43,7 +43,7 @@ double convertToUAH(double amount) {
     return currencyService.convert(amount, "UAH", fromCurrency: state.currency);
   }
   Future<void> setLocale(Locale locale) async {
-    await _prefs.setString('localeCode', locale.languageCode);
+    await _prefs.setString('locale', locale.languageCode);
     emit(state.copyWith(locale: locale));
   }
 
