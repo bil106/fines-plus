@@ -1,7 +1,9 @@
 import 'package:design_system/colors/app_colors.dart';
+import 'package:design_system/theme/app_theme.dart';
 import 'package:fines_plus/features/analytics/presentation/widgets/time_line_item.dart';
 import 'package:fines_plus/features/analytics/data/models/event_model.dart';
 import 'package:fines_plus/features/settings/presentation/cubit/settings_cubit.dart';
+import 'package:fines_plus/features/vehicle/presentation/cubit/car_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -14,6 +16,17 @@ class HistoryTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final settingsCubit = context.watch<SettingsCubit>();
+    final hasCar = context.watch<CarCubit>().state.carNumber.isNotEmpty;
+
+    if (!hasCar || events.isEmpty) {
+      return  Center(
+        child: Text(
+          'Поки немає історії',
+          style: Theme.of(context).textTheme.black16bold)
+        
+      );
+    }
+
     final grouped = groupEventsByMonth(events, settingsCubit.state.locale);
     final userCurrency = settingsCubit.state.currency;
 
@@ -31,9 +44,13 @@ class HistoryTab extends StatelessWidget {
                     children: [
                       Text(
                         entry.key,
-                        style: Theme.of(
-                          context,
-                        ).textTheme.titleMedium?.copyWith(color: AppColors.blueAccent, fontWeight: FontWeight.bold),
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleMedium
+                            ?.copyWith(
+                              color: AppColors.blueAccent,
+                              fontWeight: FontWeight.bold,
+                            ),
                       ),
                       const Divider(color: AppColors.neutreGrey),
                     ],
@@ -41,15 +58,19 @@ class HistoryTab extends StatelessWidget {
                 ),
               ),
               ...entry.value.map((event) {
-                final convertedAmount = settingsCubit.convertFromUAH(event.amount);
-                settingsCubit.getCurrencyLabel(context, userCurrency);
+                final convertedAmount =
+                    settingsCubit.convertFromUAH(event.amount);
+                final currencyLabel = settingsCubit.getCurrencyLabel(
+                  context,
+                  userCurrency,
+                );
 
-                final currencyLabel = settingsCubit.getCurrencyLabel(context, userCurrency);
                 return TimelineItem(
                   icon: event.icon,
                   iconColor: event.iconColor,
                   customIcon: event.customIcon,
-                  date: DateFormat('dd.MM.yyyy').format(event.date),
+                  date:
+                      DateFormat('dd.MM.yyyy').format(event.date),
                   title: event.title,
                   subtitle: '',
                   amount: convertedAmount,
@@ -63,6 +84,8 @@ class HistoryTab extends StatelessWidget {
       ),
     );
   }
+}
+
 
 Map<String, List<EventModel>> groupEventsByMonth(List<EventModel> events, Locale locale) {
     final outputFormat = DateFormat('MMMM yyyy', locale.languageCode);
@@ -90,4 +113,4 @@ Map<String, List<EventModel>> groupEventsByMonth(List<EventModel> events, Locale
     return grouped;
   }
 
-}
+

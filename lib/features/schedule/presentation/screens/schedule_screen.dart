@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:core_localization/generated/l10n.dart';
+import 'package:design_system/theme/app_theme.dart';
 import 'package:fines_plus/core/helpers/push_helper.dart';
 import 'package:fines_plus/features/expenses/data/models/service_record.dart';
 import 'package:fines_plus/features/home/presentation/cubit/quick_actions_cubit.dart';
@@ -253,10 +254,16 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (scheduleCubit == null || reminderCubit == null || scheduleCubit!.carNumber.isEmpty) {
+     final hasCar = context.watch<CarCubit>().state.carNumber.isNotEmpty;
+   
+
+      if (!hasCar ) {
+      return Center(child: Text('Розкладу поки немає', style: Theme.of(context).textTheme.black16bold));
+    }
+  
+    if (scheduleCubit == null || reminderCubit == null) {
       return const Center(child: CircularProgressIndicator());
     }
-
     return MultiBlocProvider(
       providers: [
         BlocProvider.value(value: scheduleCubit!),

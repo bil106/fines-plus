@@ -4,6 +4,7 @@ import 'package:fines_plus/features/home/presentation/cubit/quick_actions_state.
 import 'package:fines_plus/features/home/presentation/widgets/action_item.dart';
 import 'package:fines_plus/features/home/presentation/widgets/insurance_detail_sheet.dart';
 import 'package:fines_plus/features/schedule/presentation/widgets/action_detail_sheet.dart';
+import 'package:fines_plus/features/vehicle/presentation/cubit/car_cubit.dart';
 import 'package:fines_plus/router/home_screen_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -13,6 +14,7 @@ class QuickActionsPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+     final hasCar = context.watch<CarCubit>().state.carNumber.isNotEmpty;
     return BlocBuilder<QuickActionsCubit, QuickActionsState>(
       builder: (context, state) {
         return GridView.builder(
@@ -27,14 +29,18 @@ class QuickActionsPanel extends StatelessWidget {
           ),
           itemBuilder: (context, index) {
             final action = state.actions[index];
-            final isActive = state.activeCategories.contains(action.labelKey.toLowerCase());
+           final isActive = hasCar && state.activeCategories.contains(action.labelKey.toLowerCase());
 
-            return ActionItem(
+
+    return ActionItem(
               icon: action.icon,
               label: _translateLabel(action.labelKey, context),
               isSelected: isActive,
               labelKey: action.labelKey,
-              onTap: () async {
+          onTap: () async {
+                final carNumber = context.read<CarCubit>().state.carNumber;
+                if (carNumber.isEmpty) return; 
+
                 final labelKey = action.labelKey;
                 final wrapperState = context.findAncestorStateOfType<HomeScreenWrapperState>();
 
@@ -60,21 +66,26 @@ class QuickActionsPanel extends StatelessWidget {
                 final quick = context.read<QuickActionsCubit>();
 
                 if (labelKey == "Insurance") {
-                  await quick.onTaskCreated({
-                    'description': S.of(context).insurance,
-                    'category': labelKey.toLowerCase(),
-                    'isInsurance': true,
-                    'date': result['date'] ?? DateTime.now(),
-                    'byDate': result['byDate'] ?? true,
-                    'intervalDays': result['intervalDays'] ?? 365,
-                    'comment': result['comment'] ?? '',
-                  }, labelKey: labelKey);
+                  await quick.onTaskCreated(
+                    {
+                      'description': S.of(context).insurance,
+                      'category': labelKey.toLowerCase(),
+                      'isInsurance': true,
+                      'date': result['date'] ?? DateTime.now(),
+                      'byDate': result['byDate'] ?? true,
+                      'intervalDays': result['intervalDays'] ?? 365,
+                      'comment': result['comment'] ?? '',
+                    },
+                    labelKey: labelKey,
+                    carNumber: carNumber,
+                  );
                 } else {
-                   await quick.onTaskCreated(result, labelKey: labelKey);
+                  await quick.onTaskCreated(result, labelKey: labelKey, carNumber: carNumber);
                 }
 
                 wrapperState?.openAnalyticsTab(2);
-              },
+              }
+
             );
           },
         );

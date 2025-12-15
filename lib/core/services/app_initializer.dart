@@ -180,14 +180,18 @@ class AppInitializer {
     final analyticsRepository = AnalyticsRepository(firestore: FirebaseFirestore.instance);
     final tasksRepository = TasksRepository();
 
-    final carInfoLocalDataSource = CarInfoLocalDataSource(sharedPrefsManager);
-    final carInfoRepository = CarInfoRepository(carInfoLocalDataSource, CarInfoRemoteDataSource());
+    final carInfoLocalDataSource = CarInfoLocalDataSource(
+      sharedPrefsManager,
 
-    quickActionsCubit = QuickActionsCubit(tasksRepository,prefs);
+      FirebaseFirestore.instance,
+      FirebaseAuth.instance,
+    );
+    final carInfoRepository = CarInfoRepository(carInfoLocalDataSource, CarInfoRemoteDataSource(FirebaseFirestore.instance, FirebaseAuth.instance));
+
+    quickActionsCubit = QuickActionsCubit(tasksRepository, prefs);
     currencyService = CurrencyService();
     await currencyService.init();
     referralCubit = ReferralCubit(appLinks, prefs);
-    
 
     carCubit = CarCubit(local: carInfoLocalDataSource, repo: carInfoRepository);
 
@@ -212,11 +216,7 @@ class AppInitializer {
       FirebaseFirestore.instance,
     );
 
-
-
-    subscriptionCubit = SubscriptionCubit(
-     subscriptionRepository
-    );
+    subscriptionCubit = SubscriptionCubit(subscriptionRepository);
     additionalOptionsCubit = AdditionalOptionsCubit(
       extractTokensUseCase: extractTokensUseCase,
       tokensRepository: tokensRepository,
@@ -242,7 +242,7 @@ class AppInitializer {
       remoteDataSource: ReminderRemoteDataSourceImpl(FirebaseFirestore.instance),
     );
     final pushHelper = PushHelper(flutterLocalNotificationsPlugin);
-reminderCubit = ReminderCubit(repository: reminderRepository, pushHelper: pushHelper, carNumber: '', userId: '', );
+    reminderCubit = ReminderCubit(repository: reminderRepository, pushHelper: pushHelper, carNumber: '', userId: '');
     return AppInitResult(
       config: config,
       carInfoRepository: carInfoRepository,
@@ -257,7 +257,7 @@ reminderCubit = ReminderCubit(repository: reminderRepository, pushHelper: pushHe
       fuelStationCubit: fuelStationCubit,
       maintenanceCubit: maintenanceCubit,
       statisticsCubit: statisticsCubit,
-      reminderCubit:reminderCubit,
+      reminderCubit: reminderCubit,
       scheduleCubit: scheduleCubit,
       carCubit: carCubit,
       analyticsCubit: analyticsCubit,

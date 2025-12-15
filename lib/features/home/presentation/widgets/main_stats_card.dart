@@ -8,6 +8,7 @@ import 'package:fines_plus/features/home/presentation/widgets/stat_value.dart';
 import 'package:fines_plus/features/home/presentation/widgets/stats_rings_painter.dart';
 import 'package:fines_plus/features/settings/presentation/cubit/settings_cubit.dart';
 import 'package:fines_plus/features/settings/presentation/cubit/unit_stream.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -20,6 +21,7 @@ class MainStatsCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
 
+
     final currencyService = context.read<CurrencyService>();
     final settingsCubit = context.watch<SettingsCubit>();
     final selectedCurrency = settingsCubit.state.currency;
@@ -29,6 +31,7 @@ class MainStatsCard extends StatelessWidget {
     final costPerKmConverted = currencyService.convert(stats.costPerKm, selectedCurrency, fromCurrency: "UAH");
 
     final unitStream = UnitStream(settingsCubit);
+    
     return Card(
    elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),

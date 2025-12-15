@@ -205,4 +205,17 @@ String _monthName(int month) {
 
     return avgPer100km;
   }
+
+void clearStats() {
+    emit(
+      StatisticsState(
+        loading: false,
+        lastOdometer: 0,
+        currentMonthMileage: 0,
+        averageFuelConsumption: 0,
+        expenseStats: MonthlyExpenseStats.initial(), averageMileage: 0.0, previousExpenseStats: MonthlyExpenseStats.initial(), fuelRecords: [], previousMonthMileage: 0.0
+      ),
+    );
+  }
+
 }

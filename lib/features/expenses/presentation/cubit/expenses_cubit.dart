@@ -44,6 +44,12 @@ Future<void> add(String carNumber, String techPassport, Expense expense) async {
   Future<void> delete(String carNumber, String techPassport, String id) async {
     await repository.deleteExpense(carNumber: carNumber,  expenseId: id);
   }
+void clearExpensesForCar() {
+    _sub?.cancel();
+    _sub = null;
+    emit(ExpensesState(loading: false, items: [], error: null));
+    debugPrint("ExpensesCubit unsubscribed and cleared items");
+  }
 
   @override
   Future<void> close() {

@@ -6,6 +6,11 @@ import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
 import 'package:fines_plus/core/extensions/ad_banner_widget.dart';
 import 'package:fines_plus/core/extensions/unauthorized_dialog.dart';
+import 'package:fines_plus/features/analytics/presentation/cubit/analytics_cubit.dart';
+import 'package:fines_plus/features/expenses/presentation/cubit/expenses_cubit.dart';
+import 'package:fines_plus/features/history/presentation/cubit/history_cubit.dart';
+import 'package:fines_plus/features/statistics/presentation/cubit/statistics_cubit.dart';
+import 'package:fines_plus/features/vehicle/presentation/cubit/car_info_cubit.dart';
 import '../../../../../env/env.dart';
 import 'package:fines_plus/features/vehicle/presentation/cubit/car_cubit.dart';
 import 'package:fines_plus/router/app_router.dart';
@@ -100,6 +105,51 @@ class _CarInfoViewState extends State<_CarInfoView> {
       ),
     );
   }
+void _showDeleteDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: Text("delete_cars_title"),
+        content: Text("delete_cars_confirm"),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context), child: Text(S.of(context).cancel)),
+          TextButton(
+            onPressed: () async {
+              Navigator.pop(context);
+              await _deleteCars();
+            },
+            child: Text("delete", style: const TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+  }
+
+Future<void> _deleteCars() async {
+  final user = FirebaseAuth.instance.currentUser;
+
+  if (user == null) {
+    _handleUnauthorized();
+    return;
+  }
+
+  context.read<StatisticsCubit>().clearStats();
+    context.read<AnalyticsCubit>().clear();
+    context.read<ExpensesCubit>().delete('','','');
+  context.read<AnalyticsCubit>().clear();
+  context.read<HistoryCubit>().clear();
+
+ await context.read<CarInfoCubit>().deleteCurrentCar();
+
+  _carNumberController.clear();
+  _techPassportController.clear();
+
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(content: Text("cars_deleted_success")),
+  );
+}
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -191,12 +241,21 @@ class _CarInfoViewState extends State<_CarInfoView> {
                       ),
                       child: Text(S.of(context).search, style: textTheme.buttonText),
                     ),
+                    
                   ),
                   if (_showRecaptcha)
                     SizedBox(
                       height: 500,
                       child: RecaptchaV2(apiKey: Env.recaptchaSiteKey, onVerifiedSuccessfully: _onRecaptchaVerified),
                     ),
+                    TextButton(
+  onPressed: () => _showDeleteDialog(context),
+  child: Text(
+  "Delete my car",
+    style: textTheme.bodyMedium?.copyWith(color: Colors.red),
+  ),
+),
+
                 ],
               ),
               AppSpacers.verticalLargeXL,

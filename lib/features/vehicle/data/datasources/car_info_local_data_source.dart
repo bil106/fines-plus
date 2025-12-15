@@ -1,12 +1,15 @@
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:core_data/core_data.dart';
 import 'package:fines_plus/features/vehicle/data/models/car_info_model.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 
 class CarInfoLocalDataSource {
-  CarInfoLocalDataSource(this.prefs);
-
+  CarInfoLocalDataSource(this.prefs,this.firestore, this.auth);
+  final FirebaseFirestore firestore;
+  final FirebaseAuth auth;
   final SharedPrefsManager prefs;
 
   static const _carKey = 'car_number';
@@ -62,4 +65,13 @@ class CarInfoLocalDataSource {
       debugPrint("Saved tech passport split (via saveTechPassport): series=$series, number=$number");
     }
   }
+Future<void> clearCarInfo() async {
+    await prefs.remove(_carKey);
+    await prefs.remove(_techKey);
+    await prefs.remove(_seriesKey);
+    await prefs.remove(_numberKey);
+
+    debugPrint("🧹 Local car info cleared");
+  }
+
 }

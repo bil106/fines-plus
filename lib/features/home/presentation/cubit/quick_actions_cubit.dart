@@ -31,8 +31,13 @@ class QuickActionsCubit extends Cubit<QuickActionsState> {
     emit(state.copyWith(hasOilTask: hasOil));
   }
 
-  Future<void> onTaskCreated(Map<String, dynamic> data, {required String labelKey}) async {
+Future<void> onTaskCreated(Map<String, dynamic> data, {required String labelKey, required String carNumber}) async {
+    if (carNumber.isEmpty) return;
+
     final key = labelKey.toLowerCase();
+
+    await tasksRepository.createTask(key, carNumber: carNumber);
+
     final updatedActive = List<String>.from(state.activeCategories);
     if (!updatedActive.contains(key)) updatedActive.add(key);
 
@@ -40,17 +45,10 @@ class QuickActionsCubit extends Cubit<QuickActionsState> {
     updatedTasks[key] = List<Map<String, dynamic>>.from(updatedTasks[key] ?? []);
     updatedTasks[key]!.add(data);
 
-    await tasksRepository.createTask(key);
-
-    emit(
-      state.copyWith(
-        activeCategories: updatedActive,
-        createdTasks: updatedTasks,
-        hasOilTask: key == 'oil' ? true : state.hasOilTask,
-      ),
-    );
+    emit(state.copyWith(activeCategories: updatedActive, createdTasks: updatedTasks));
     await prefs.setStringList('activeCategories', updatedActive);
   }
+
 
   void clearCreatedTask(String labelKey) {
     final key = labelKey.toLowerCase();
@@ -106,5 +104,8 @@ class QuickActionsCubit extends Cubit<QuickActionsState> {
       }
       emit(state.copyWith(createdTasks: state.createdTasks));
     }
+  }
+  void clearAllActive() {
+    emit(state.copyWith(activeCategories: [], createdTasks: {}));
   }
 }

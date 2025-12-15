@@ -74,7 +74,7 @@ class _HomeScreenState extends State<HomeScreen> {
           centerTitle: true,
           title: BlocBuilder<CarCubit, CarState>(
             builder: (context, state) {
-              final carNumber = state.carNumber.isNotEmpty ? state.carNumber : "Ford Fusion 2016";
+              final carNumber = state.carNumber.isNotEmpty ? state.carNumber : "Input you car number ->";
               return Text(
                 carNumber,
                 style: const TextStyle(color: Colors.black87, fontWeight: FontWeight.w600),
@@ -111,25 +111,33 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             BlocBuilder<StatisticsCubit, StatisticsState>(
               builder: (context, state) {
-                if (state.loading) return const CircularProgressIndicator();
+                if (state.loading) {
+                  return const CircularProgressIndicator();
+                }
 
-                final lastOdometer = state.lastOdometer;
-                final totalCost = state.expenseStats.total;
-                final monthMileage = state.currentMonthMileage;
-                final avgFuel = state.averageFuelConsumption;
+                final hasCar = context.watch<CarCubit>().state.carNumber.isNotEmpty;
 
-                final stats = MainStats(
-                  totalCost: totalCost,
-                  monthMileage: monthMileage,
-                  averageFuelConsumption: avgFuel,
-                  lastOdometer: lastOdometer,
-                );
+                final stats = hasCar
+                    ? MainStats(
+                        totalCost: state.expenseStats.total,
+                        monthMileage: state.currentMonthMileage,
+                        averageFuelConsumption: state.averageFuelConsumption,
+                        lastOdometer: state.lastOdometer,
+                      )
+                    : const MainStats(totalCost: 0, monthMileage: 0, averageFuelConsumption: 0, lastOdometer: 0);
 
                 return MainStatsCard(stats: stats);
               },
             ),
+
             AppSpacers.verticalXSmall,
-            const QuickActionsPanel(),
+            BlocListener<CarCubit, CarState>(
+              listenWhen: (prev, curr) => prev.carNumber.isNotEmpty && curr.carNumber.isEmpty,
+              listener: (context, state) {
+                context.read<QuickActionsCubit>().clearAllActive();
+              },
+              child: const QuickActionsPanel(),
+            ),
             AppSpacers.verticalXSmall,
             if (isLoading)
               const Center(child: CircularProgressIndicator())

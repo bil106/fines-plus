@@ -120,6 +120,13 @@ class HistoryCubit extends Cubit<HistoryState> {
     }
   }
 
+  void clear() {
+    _historySubscription?.cancel();
+    _historySubscription = null;
+    emit(HistoryInitial());
+  }
+
+
   @override
   Future<void> close() {
     _carSubscription?.cancel();

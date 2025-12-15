@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:core_repository/user_not_signed_in_exception.dart';
 import 'package:fines_plus/core/services/carplates_service.dart';
+import 'package:fines_plus/features/analytics/presentation/cubit/analytics_cubit.dart';
+import 'package:fines_plus/features/expenses/presentation/cubit/expenses_cubit.dart';
 import 'package:fines_plus/features/export/data/repository/injector.dart';
 import 'package:fines_plus/features/history/presentation/cubit/history_cubit.dart';
 import 'package:fines_plus/features/maintenance/presentation/cubit/maintenance_cubit.dart';
@@ -180,5 +182,38 @@ class CarInfoCubit extends Cubit<CarInfoState> {
       emit(state.copyWith(status: CarInfoErrorStatus('Failed to load car details: $e')));
     }
   }
+Future<void> deleteCurrentCar() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    final carNumber = state.carNumber;
+    if (carNumber.isEmpty) return;
+
+   
+    try {
+      final analyticsCubit = getIt<AnalyticsCubit>();
+      analyticsCubit.stopListeningToCar(); 
+    } catch (_) {}
+
+    try {
+      final expensesCubit = getIt<ExpensesCubit>();
+      expensesCubit.clearExpensesForCar();
+    } catch (_) {}
+
+    emit(state.copyWith(status: CarInfoLoadingStatus()));
+
+  
+    try {
+  
+      await _repo.deleteCar(carNumber);
+
+ 
+      emit(const CarInfoState());
+    } catch (e) {
+      emit(state.copyWith(status: CarInfoErrorStatus(e.toString())));
+    }
+  }
+
+
 }
 

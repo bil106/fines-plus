@@ -58,6 +58,16 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
     emit(state.copyWith(selectedDate: date));
     _reloadForCar(car);
   }
+   StreamSubscription? _sub;
+    void clear() {
+    _sub?.cancel();
+    _sub = null;
+    emit(AnalyticsState.initial());
+  }
+void stopListeningToCar() {
+    _carSub.cancel();
+    debugPrint("AnalyticsCubit unsubscribed from car changes");
+  }
 
   @override
   Future<void> close() {

@@ -3,7 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class TasksRepository {
   static const _key = 'existing_tasks';
   final List<String> _existingTasks = [];
-
+final Map<String, List<String>> _tasksByCar = {};
   TasksRepository() {
     _loadTasks();
   }
@@ -25,10 +25,11 @@ class TasksRepository {
     return _existingTasks.contains(type);
   }
 
-  Future<void> createTask(String type) async {
+  Future<void> createTask(String type, {required String carNumber}) async {
     await Future.delayed(const Duration(milliseconds: 200));
-    if (!_existingTasks.contains(type)) {
-      _existingTasks.add(type);
+    final tasks = _tasksByCar.putIfAbsent(carNumber, () => []);
+    if (!tasks.contains(type)) {
+      tasks.add(type);
       await _saveTasks();
     }
   }
