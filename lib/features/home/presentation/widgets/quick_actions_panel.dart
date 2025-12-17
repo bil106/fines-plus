@@ -14,9 +14,13 @@ class QuickActionsPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-     final hasCar = context.watch<CarCubit>().state.carNumber.isNotEmpty;
+    final carNumber = context.watch<CarCubit>().state.carNumber;
+    final hasCar = carNumber.isNotEmpty;
+
     return BlocBuilder<QuickActionsCubit, QuickActionsState>(
       builder: (context, state) {
+      
+
         return GridView.builder(
           shrinkWrap: true,
           itemCount: state.actions.length,
@@ -29,17 +33,18 @@ class QuickActionsPanel extends StatelessWidget {
           ),
           itemBuilder: (context, index) {
             final action = state.actions[index];
-           final isActive = hasCar && state.activeCategories.contains(action.labelKey.toLowerCase());
+          final isActive =
+                hasCar && state.activeCategories.map((e) => e.toLowerCase()).contains(action.labelKey.toLowerCase());
 
 
-    return ActionItem(
+
+            return ActionItem(
               icon: action.icon,
               label: _translateLabel(action.labelKey, context),
               isSelected: isActive,
               labelKey: action.labelKey,
-          onTap: () async {
-                final carNumber = context.read<CarCubit>().state.carNumber;
-                if (carNumber.isEmpty) return; 
+              onTap: () async {
+                if (carNumber.isEmpty) return;
 
                 final labelKey = action.labelKey;
                 final wrapperState = context.findAncestorStateOfType<HomeScreenWrapperState>();
@@ -48,12 +53,12 @@ class QuickActionsPanel extends StatelessWidget {
                   context: context,
                   isScrollControlled: true,
                   builder: (ctx) {
-                    if (action.labelKey == "Insurance") {
+                    if (labelKey == "Insurance") {
                       return const InsuranceDetailSheet();
                     } else {
                       return ActionDetailSheet(
-                        description: _translateLabel(action.labelKey, context),
-                        category: action.labelKey,
+                        description: _translateLabel(labelKey, context),
+                        category: labelKey,
                         byDate: false,
                         byMileage: true,
                       );
@@ -84,8 +89,7 @@ class QuickActionsPanel extends StatelessWidget {
                 }
 
                 wrapperState?.openAnalyticsTab(2);
-              }
-
+              },
             );
           },
         );

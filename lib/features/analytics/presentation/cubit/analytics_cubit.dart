@@ -17,12 +17,19 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
   bool _isClosed = false;
 
   AnalyticsCubit({required this.repository, required this.carCubit}) : super(AnalyticsState.initial()) {
-    _carSub = carCubit.stream.listen((carState) {
-      debugPrint("🚗 Car changed to: ${carState.carNumber}");
-      if (carState.carNumber.isNotEmpty && !_isClosed) {
-        _reloadForCar(carState.carNumber);
-      }
+ _carSub = carCubit.stream.listen((carState) {
+      final carNumber = carState.carNumber;
+
+      if (_isClosed) return;
+
+  
+      final isValidCar = RegExp(r'^[А-ЯЇІЄҐ]{2}\d{4}[А-ЯЇІЄҐ]{2}$').hasMatch(carNumber);
+
+      if (!isValidCar) return;
+
+      _reloadForCar(carNumber);
     });
+
   }
 
   Future<void> _reloadForCar(String carNumber) async {
@@ -75,6 +82,17 @@ void stopListeningToCar() {
     _carSub.cancel();
     return super.close();
   }
+  Future<void> loadForCurrentCar() async {
+    if (_isClosed) return;
+
+    final carNumber = carCubit.state.carNumber;
+
+    final isValid = RegExp(r'^[А-ЯЇІЄҐ]{2}\d{4}[А-ЯЇІЄҐ]{2}$').hasMatch(carNumber);
+    if (!isValid) return;
+
+    await _reloadForCar(carNumber);
+  }
+
 }
 
 

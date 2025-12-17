@@ -8,10 +8,16 @@ class ExpenseRepository {
   final FirebaseFirestore firestore;
 
   ExpenseRepository(this.firestore);
-
+void _assertCarNumber(String carNumber) {
+    if (carNumber.isEmpty) {
+      throw StateError('ExpenseRepository: carNumber is empty');
+    }
+  }
   CollectionReference _expensesCollection(String carNumber) {
+    _assertCarNumber(carNumber);
     return firestore.collection('cars').doc(carNumber).collection('expenses');
   }
+
 
   Future<DocumentReference> addExpense({required String carNumber, required Expense expense}) async {
     final col = _expensesCollection(carNumber);
@@ -25,42 +31,54 @@ class ExpenseRepository {
     return docRef;
   }
 
-  Stream<List<Expense>> watchExpenses({required String carNumber, int limit = 1000}) {
-    final col = _expensesCollection(carNumber);
-    return col.orderBy('date', descending: true).limit(limit).snapshots().map((snap) {
-      return snap.docs.map((d) => Expense.fromFirestore(d.data() as Map<String, dynamic>, id: d.id)).toList();
-    });
-  }
+   Stream<List<Expense>> watchExpenses({required String carNumber, int limit = 1000}) {
+    if (carNumber.isEmpty) {
+      return const Stream.empty();
+    }
 
-  Future<List<Expense>> getExpensesOnce({required String carNumber, int limit = 1000}) async {
+    final col = _expensesCollection(carNumber);
+    return col
+        .orderBy('date', descending: true)
+        .limit(limit)
+        .snapshots()
+        .map(
+          (snap) => snap.docs.map((d) => Expense.fromFirestore(d.data() as Map<String, dynamic>, id: d.id)).toList(),
+        );
+  }
+   Future<List<Expense>> getExpensesOnce({required String carNumber, int limit = 1000}) async {
+    if (carNumber.isEmpty) return [];
+
     final col = _expensesCollection(carNumber);
     final snap = await col.orderBy('date', descending: true).limit(limit).get();
+
     return snap.docs.map((d) => Expense.fromFirestore(d.data() as Map<String, dynamic>, id: d.id)).toList();
   }
-
   Future<void> updateExpense({
     required String carNumber,
     required String expenseId,
     required Map<String, dynamic> updatedFields,
   }) async {
+    if (carNumber.isEmpty) return;
+
     final col = _expensesCollection(carNumber);
     updatedFields['updatedAt'] = FieldValue.serverTimestamp();
     await col.doc(expenseId).update(updatedFields);
   }
 
   Future<void> deleteExpense({required String carNumber, required String expenseId}) async {
+    if (carNumber.isEmpty) return;
+
     final col = _expensesCollection(carNumber);
     await col.doc(expenseId).delete();
   }
 
   Future<void> deleteAllExpenses({required String carNumber}) async {
+    if (carNumber.isEmpty) return;
+
     final col = _expensesCollection(carNumber);
     final query = await col.get();
 
-    if (query.docs.isEmpty) {
-      debugPrint(' There is no data to delete for this vehicle $carNumber');
-      return;
-    }
+    if (query.docs.isEmpty) return;
 
     final batch = firestore.batch();
     for (var doc in query.docs) {
@@ -68,18 +86,15 @@ class ExpenseRepository {
     }
 
     await batch.commit();
-    debugPrint(' All expenses removed for the car $carNumber');
   }
 
-  Future<void> deleteExpensesByCategory({required String carNumber, required String category}) async {
-    final col = _expensesCollection(carNumber);
+Future<void> deleteExpensesByCategory({required String carNumber, required String category}) async {
+    if (carNumber.isEmpty) return;
 
+    final col = _expensesCollection(carNumber);
     final query = await col.where('category', isEqualTo: category).get();
 
-    if (query.docs.isEmpty) {
-      debugPrint(' There is no data to delete for this category. "$category" for the car $carNumber');
-      return;
-    }
+    if (query.docs.isEmpty) return;
 
     final batch = firestore.batch();
     for (var doc in query.docs) {
@@ -87,13 +102,16 @@ class ExpenseRepository {
     }
 
     await batch.commit();
-    debugPrint(' All expenses of the category "$category" removed for the machine $carNumber');
   }
 
   Future<Expense?> getLatestExpense({required String carNumber}) async {
+    if (carNumber.isEmpty) return null;
+
     final col = _expensesCollection(carNumber);
     final snap = await col.orderBy('date', descending: true).limit(1).get();
+
     if (snap.docs.isEmpty) return null;
+
     final doc = snap.docs.first;
     return Expense.fromFirestore(doc.data() as Map<String, dynamic>, id: doc.id);
   }

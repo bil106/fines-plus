@@ -451,6 +451,14 @@
 "money_back": "30-day money back guarantee!",
 "pay_safe": "Safe and secure payment",
 "most_popular": "MOST POPULAR",
+"input_number": "Input you car number ->",
+"no_schedule": "No schedule yet",
+"no_story": "No story yet",
+"view_all_events": "View all events",
+"delete_car_number": "Delete car number",
+"cars_deleted_success": "Car deleted successfully",
+"delete_cars_confirm": "Confirm car deletion",
+"delete": "Delete",
 "text_automatically_renew": "Your subscription will automatically renew at the full price at the end of the chosen term. You can cancel anytime."
 
 }

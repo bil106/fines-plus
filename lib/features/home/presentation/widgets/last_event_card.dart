@@ -4,6 +4,7 @@ import 'package:design_system/theme/app_theme.dart';
 import 'package:fines_plus/features/home/domain/entities/last_event_ui_model.dart';
 import 'package:fines_plus/features/settings/presentation/cubit/currency_stream.dart';
 import 'package:fines_plus/features/settings/presentation/cubit/settings_cubit.dart';
+import 'package:fines_plus/features/vehicle/presentation/cubit/car_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -18,7 +19,8 @@ class LastEventCardAction extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
 
-    if (event == null) {
+    final carNumber = context.watch<CarCubit>().state.carNumber;
+    if (carNumber.isEmpty || event == null) {
       return _buildCard(
         child: Center(
           child: Text(S.of(context).no_recent_events, style: textTheme.bodyMedium?.copyWith(color: Colors.black54)),
@@ -31,7 +33,6 @@ class LastEventCardAction extends StatelessWidget {
       child: _buildCard(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-
           children: [
             _buildHeader(context, textTheme),
             const Divider(height: 4, thickness: 1),
@@ -41,19 +42,8 @@ class LastEventCardAction extends StatelessWidget {
               child: Center(
                 child: TextButton(
                   onPressed: onOpenEvents,
-                  style: TextButton.styleFrom(
-                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 0),
-                    minimumSize: Size.zero,
-                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  ),
-                  child: Text(
-                    S.of(context).open_events,
-                    style: textTheme.bodyLarge?.copyWith(
-                      fontSize: 14,
-                      color: AppColors.darkBlue,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                  style: TextButton.styleFrom(),
+                  child: Text(S.of(context).view_all_events),
                 ),
               ),
             ),

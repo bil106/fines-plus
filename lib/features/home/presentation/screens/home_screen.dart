@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:fines_plus/features/expenses/data/repository/expense_repository.dart';
@@ -34,6 +35,8 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    final carNumber = context.read<CarCubit>().state.carNumber;
+    context.read<QuickActionsCubit>().syncActiveCategories(carNumber);
     context.read<QuickActionsCubit>().init();
     _loadLatestExpense();
   }
@@ -74,7 +77,7 @@ class _HomeScreenState extends State<HomeScreen> {
           centerTitle: true,
           title: BlocBuilder<CarCubit, CarState>(
             builder: (context, state) {
-              final carNumber = state.carNumber.isNotEmpty ? state.carNumber : "Input you car number ->";
+              final carNumber = state.carNumber.isNotEmpty ? state.carNumber : S.of(context).input_number;
               return Text(
                 carNumber,
                 style: const TextStyle(color: Colors.black87, fontWeight: FontWeight.w600),
@@ -134,22 +137,44 @@ class _HomeScreenState extends State<HomeScreen> {
             BlocListener<CarCubit, CarState>(
               listenWhen: (prev, curr) => prev.carNumber.isNotEmpty && curr.carNumber.isEmpty,
               listener: (context, state) {
-                context.read<QuickActionsCubit>().clearAllActive();
+                if (state.carNumber.isEmpty) {
+                  setState(() {
+                    latestExpense = null;
+                    isLoading = false;
+                  });
+                  context.read<StatisticsCubit>().clearStats();
+                  context.read<QuickActionsCubit>().clearAllActive();
+                  return;
+                }
+
+                context.read<QuickActionsCubit>().syncActiveCategories(state.carNumber);
+                _loadLatestExpense();
               },
               child: const QuickActionsPanel(),
             ),
             AppSpacers.verticalXSmall,
-            if (isLoading)
-              const Center(child: CircularProgressIndicator())
-            else
-              LastEventCardAction(
-                event: latestExpense,
-                onTap: () {},
-                onOpenEvents: () {
-                  final wrapperState = context.findAncestorStateOfType<HomeScreenWrapperState>();
-                  wrapperState?.openPage(HomePage.maintenance);
-                },
-              ),
+
+            Builder(
+              builder: (context) {
+                final carNumber = context.watch<CarCubit>().state.carNumber;
+                if (carNumber.isEmpty) {
+                  return LastEventCardAction(event: null, onTap: null, onOpenEvents: null);
+                }
+
+                if (isLoading) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                return LastEventCardAction(
+                  event: latestExpense,
+                  onTap: () {},
+                  onOpenEvents: () {
+                    final wrapperState = context.findAncestorStateOfType<HomeScreenWrapperState>();
+                    wrapperState?.openPage(HomePage.maintenance);
+                  },
+                );
+              },
+            ),
 
             StatisticsMileageCard(),
 

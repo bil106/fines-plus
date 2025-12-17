@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:fines_plus/features/analytics/data/models/analytics_model.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:fl_chart/fl_chart.dart';
 
@@ -26,26 +27,31 @@ class AnalyticsRepository implements IAnalyticsRepository {
 
   @override
   Future<FuelData> getFuelData(String carNumber) async {
+    if (carNumber.isEmpty) {
+      return FuelData(liters: 0, amount: 0);
+    }
+
     final doc = await firestore.collection('cars').doc(carNumber).get();
     if (!doc.exists) return FuelData(liters: 0, amount: 0);
 
     final data = doc.data()!;
-    return FuelData(
-      liters: (data['fuelLiters'] ?? 0).toDouble(),
-      amount: (data['fuelAmount'] ?? 0).toDouble(),
-    );
+    return FuelData(liters: (data['fuelLiters'] ?? 0).toDouble(), amount: (data['fuelAmount'] ?? 0).toDouble());
   }
 
   @override
   Future<int> getMileage(String carNumber) async {
+    if (carNumber.isEmpty) return 0;
+
     final doc = await firestore.collection('cars').doc(carNumber).get();
     if (!doc.exists) return 0;
-    final data = doc.data()!;
-    return (data['mileage'] ?? 0) as int;
+
+    return (doc.data()!['mileage'] ?? 0) as int;
   }
 
   @override
   Future<List<PieChartSectionData>> getChartData(String carNumber) async {
+    if (carNumber.isEmpty) return [];
+
     final doc = await firestore.collection('cars').doc(carNumber).get();
     if (!doc.exists) return [];
 
@@ -54,12 +60,7 @@ class AnalyticsRepository implements IAnalyticsRepository {
     final double bluePercent = (data['bluePercent'] ?? 0).toDouble();
 
     return [
-      PieChartSectionData(
-        value: greenPercent,
-        color: AppColors.green,
-        title: "${greenPercent.toInt()}%",
-        radius: 80,
-      ),
+      PieChartSectionData(value: greenPercent, color: AppColors.green, title: "${greenPercent.toInt()}%", radius: 80),
       PieChartSectionData(
         value: bluePercent,
         color: AppColors.energyBlue,
@@ -69,10 +70,20 @@ class AnalyticsRepository implements IAnalyticsRepository {
     ];
   }
 
- Future<AnalyticsData> getAnalytics(DateTime date, String carNumber) async {
+Future<AnalyticsData> getAnalytics(DateTime date, String carNumber) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      return AnalyticsData(fuelLiters: 0, fuelCost: 0, mileage: 0);
+    }
+
+    final isValidCar = RegExp(r'^[А-ЯЇІЄҐ]{2}\d{4}[А-ЯЇІЄҐ]{2}$').hasMatch(carNumber);
+    if (!isValidCar) {
+      return AnalyticsData(fuelLiters: 0, fuelCost: 0, mileage: 0);
+    }
+
     final doc = await firestore
         .collection('analytics')
-        .doc(carNumber) 
+        .doc(carNumber)
         .collection('months')
         .doc("${date.year}-${date.month}")
         .get();

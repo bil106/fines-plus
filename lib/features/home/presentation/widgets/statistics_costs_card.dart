@@ -16,31 +16,47 @@ class StatisticsCostsCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final hasCar = context.watch<CarCubit>().state.carNumber.isNotEmpty;
 
-
     return BlocBuilder<StatisticsCubit, StatisticsState>(
       builder: (context, state) {
         if (!hasCar) {
-    
           final zeroAmount = "0";
           final currency = context.watch<SettingsCubit>().state.currency;
 
+          final presenter = StatisticsCostsPresenter(
+            state: state,
+            loc: FlutterStatsLocalization(S.of(context)),
+            currency: currency,
+            currencyService: context.read<CurrencyService>(),
+          );
           return _buildCard(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text("costsStatTitle", style: Theme.of(context).textTheme.titleMedium),
+                Text(S.of(context).costs_stat, style: Theme.of(context).textTheme.titleMedium),
                 const Divider(height: 16, thickness: 1),
                 Row(
                   children: [
                     Image.asset('assets/icons/coin_stack.png', width: 36, height: 36, color: Colors.grey),
                     const SizedBox(width: 12),
-                    _buildAmount(label: "currentMonth", amount: zeroAmount, currency: currency, color: Colors.blueAccent, fontSize: 22),
+                    _buildAmount(
+                      label: presenter.currentMonthLabel,
+                      amount: zeroAmount,
+                      currency: currency,
+                      color: Colors.blueAccent,
+                      fontSize: 22,
+                    ),
                     const Spacer(),
                     Row(
                       children: [
                         Icon(Icons.arrow_upward, color: Colors.grey, size: 20),
                         const SizedBox(width: 4),
-                        _buildAmount(label: "previousMonth", amount: zeroAmount, currency: currency, color: Colors.grey, fontSize: 18),
+                        _buildAmount(
+                          label: presenter.previousMonthLabel,
+                          amount: zeroAmount,
+                          currency: currency,
+                          color: Colors.grey,
+                          fontSize: 18,
+                        ),
                       ],
                     ),
                   ],
@@ -50,7 +66,6 @@ class StatisticsCostsCard extends StatelessWidget {
           );
         }
 
-      
         final currency = context.watch<SettingsCubit>().state.currency;
         final presenter = StatisticsCostsPresenter(
           state: state,
@@ -72,13 +87,25 @@ class StatisticsCostsCard extends StatelessWidget {
                 children: [
                   Image.asset('assets/icons/coin_stack.png', width: 36, height: 36, color: Colors.grey),
                   const SizedBox(width: 12),
-                  _buildAmount(label: presenter.currentMonthLabel, amount: presenter.currentFormatted, currency: currency, color: Colors.blueAccent, fontSize: 22),
+                  _buildAmount(
+                    label: presenter.currentMonthLabel,
+                    amount: presenter.currentFormatted,
+                    currency: currency,
+                    color: Colors.blueAccent,
+                    fontSize: 22,
+                  ),
                   const Spacer(),
                   Row(
                     children: [
                       Icon(arrowIcon, color: arrowColor, size: 20),
                       const SizedBox(width: 4),
-                      _buildAmount(label: presenter.previousMonthLabel, amount: presenter.previousFormatted, currency: currency, color: arrowColor, fontSize: 18),
+                      _buildAmount(
+                        label: presenter.previousMonthLabel,
+                        amount: presenter.previousFormatted,
+                        currency: currency,
+                        color: arrowColor,
+                        fontSize: 18,
+                      ),
                     ],
                   ),
                 ],
@@ -89,7 +116,6 @@ class StatisticsCostsCard extends StatelessWidget {
       },
     );
   }
-  
 
   Widget _buildAmount({
     required String label,

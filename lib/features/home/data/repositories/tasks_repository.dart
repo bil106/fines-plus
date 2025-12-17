@@ -34,9 +34,27 @@ final Map<String, List<String>> _tasksByCar = {};
     }
   }
 
-  Future<void> removeTask(String type) async {
+Future<void> removeTask(String type, {required String carNumber}) async {
     await Future.delayed(const Duration(milliseconds: 200));
-    _existingTasks.remove(type);
-    await _saveTasks();
+
+    final tasks = _tasksByCar[carNumber] ?? [];
+    tasks.remove(type.toLowerCase());
+
+
+    _tasksByCar[carNumber] = tasks;
+
+ 
+    _existingTasks.remove(type.toLowerCase());
+
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setStringList(_key, _existingTasks);
+  }
+
+
+
+    Future<bool> hasActiveTask({required String carNumber, required String category}) async {
+    await Future.delayed(const Duration(milliseconds: 200));
+    final tasks = _tasksByCar[carNumber] ?? [];
+    return tasks.contains(category.toLowerCase());
   }
 }

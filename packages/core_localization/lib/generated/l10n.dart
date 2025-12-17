@@ -3844,6 +3844,76 @@ class S {
     );
   }
 
+  /// `Input you car number ->`
+  String get input_number {
+    return Intl.message(
+      'Input you car number ->',
+      name: 'input_number',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No schedule yet`
+  String get no_schedule {
+    return Intl.message(
+      'No schedule yet',
+      name: 'no_schedule',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No story yet`
+  String get no_story {
+    return Intl.message('No story yet', name: 'no_story', desc: '', args: []);
+  }
+
+  /// `View all events`
+  String get view_all_events {
+    return Intl.message(
+      'View all events',
+      name: 'view_all_events',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Delete car number`
+  String get delete_car_number {
+    return Intl.message(
+      'Delete car number',
+      name: 'delete_car_number',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Car deleted successfully`
+  String get cars_deleted_success {
+    return Intl.message(
+      'Car deleted successfully',
+      name: 'cars_deleted_success',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Confirm car deletion`
+  String get delete_cars_confirm {
+    return Intl.message(
+      'Confirm car deletion',
+      name: 'delete_cars_confirm',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Delete`
+  String get delete {
+    return Intl.message('Delete', name: 'delete', desc: '', args: []);
+  }
+
   /// `Your subscription will automatically renew at the full price at the end of the chosen term. You can cancel anytime.`
   String get text_automatically_renew {
     return Intl.message(

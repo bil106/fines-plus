@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:fines_plus/features/expenses/data/models/expense.dart';
 import 'package:fines_plus/features/expenses/data/repository/expense_repository.dart';
 import 'package:fines_plus/features/expenses/presentation/cubit/expenses_state.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -49,6 +48,10 @@ void clearExpensesForCar() {
     _sub = null;
     emit(ExpensesState(loading: false, items: [], error: null));
     debugPrint("ExpensesCubit unsubscribed and cleared items");
+  }
+void loadExpensesForCar(String carNumber) {
+    if (carNumber.isEmpty) return;
+    watch(carNumber, '');
   }
 
   @override

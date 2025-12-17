@@ -75,6 +75,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "car_number": MessageLookupByLibrary.simpleMessage("Car number"),
     "car_wash": MessageLookupByLibrary.simpleMessage("Car wash"),
     "car_wash_nearby": MessageLookupByLibrary.simpleMessage("Car wash nearby"),
+    "cars_deleted_success": MessageLookupByLibrary.simpleMessage(
+      "Car deleted successfully",
+    ),
     "category": MessageLookupByLibrary.simpleMessage("Categories"),
     "category_removed": MessageLookupByLibrary.simpleMessage(
       "Category removed",
@@ -124,8 +127,15 @@ class MessageLookup extends MessageLookupByLibrary {
     "del_all_expenses": MessageLookupByLibrary.simpleMessage(
       "Delete ALL expenses",
     ),
+    "delete": MessageLookupByLibrary.simpleMessage("Delete"),
     "delete_all_expenses": MessageLookupByLibrary.simpleMessage(
       "Delete all expenses?",
+    ),
+    "delete_car_number": MessageLookupByLibrary.simpleMessage(
+      "Delete car number",
+    ),
+    "delete_cars_confirm": MessageLookupByLibrary.simpleMessage(
+      "Confirm car deletion",
     ),
     "delete_expense_history": MessageLookupByLibrary.simpleMessage(
       "Delete expense history",
@@ -243,6 +253,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "increased_download_limit": MessageLookupByLibrary.simpleMessage(
       "Increased download limit",
     ),
+    "input_number": MessageLookupByLibrary.simpleMessage(
+      "Input you car number ->",
+    ),
     "insurance": MessageLookupByLibrary.simpleMessage("Insurance"),
     "insurance_control": MessageLookupByLibrary.simpleMessage(
       "Insurance control",
@@ -325,6 +338,8 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "no_records": MessageLookupByLibrary.simpleMessage("No records"),
     "no_reminders": MessageLookupByLibrary.simpleMessage("No reminders"),
+    "no_schedule": MessageLookupByLibrary.simpleMessage("No schedule yet"),
+    "no_story": MessageLookupByLibrary.simpleMessage("No story yet"),
     "no_such_service": MessageLookupByLibrary.simpleMessage("No_such_service"),
     "no_tasks": MessageLookupByLibrary.simpleMessage("No tasks"),
     "no_tokens_yet": MessageLookupByLibrary.simpleMessage("No tokens yet"),
@@ -990,6 +1005,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "verification_history": MessageLookupByLibrary.simpleMessage(
       "Verification history",
     ),
+    "view_all_events": MessageLookupByLibrary.simpleMessage("View all events"),
     "write_viber": MessageLookupByLibrary.simpleMessage("Write to Viber"),
     "years": MessageLookupByLibrary.simpleMessage("Years"),
   };

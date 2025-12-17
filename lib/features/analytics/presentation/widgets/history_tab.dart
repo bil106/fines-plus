@@ -1,3 +1,4 @@
+import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/theme/app_theme.dart';
 import 'package:fines_plus/features/analytics/presentation/widgets/time_line_item.dart';
@@ -21,7 +22,7 @@ class HistoryTab extends StatelessWidget {
     if (!hasCar || events.isEmpty) {
       return  Center(
         child: Text(
-          'Поки немає історії',
+          S.of(context).no_story,
           style: Theme.of(context).textTheme.black16bold)
         
       );

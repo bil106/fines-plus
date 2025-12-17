@@ -26,9 +26,10 @@ class MainStatsCard extends StatelessWidget {
     final settingsCubit = context.watch<SettingsCubit>();
     final selectedCurrency = settingsCubit.state.currency;
 
-    final totalCostConverted = currencyService.convert(stats.totalCost, selectedCurrency, fromCurrency: "UAH");
+    final totalCostConverted = currencyService.convert(stats.totalCost, selectedCurrency, fromCurrency: S.of(context).grn);
 
-    final costPerKmConverted = currencyService.convert(stats.costPerKm, selectedCurrency, fromCurrency: "UAH");
+    final costPerKmConverted = currencyService.convert(stats.costPerKm, selectedCurrency, fromCurrency: S.of(context).grn,
+    );
 
     final unitStream = UnitStream(settingsCubit);
     
@@ -69,7 +70,7 @@ class MainStatsCard extends StatelessWidget {
                           initialData: unitStream.convert(stats.lastOdometer.toDouble()),
                           builder: (context, snapshot) {
                             final mileageValue = snapshot.data ?? stats.lastOdometer.toDouble();
-                            final unit = settingsCubit.state.unit == 'mil' ? 'mil' : 'km';
+                            final unit = settingsCubit.state.unit == 'mil' ? 'mil' : S.of(context).km;
 
                             return Text(
                               "${S.of(context).mileage} ${mileageValue.toStringAsFixed(0)} $unit",
@@ -106,7 +107,7 @@ AppSpacers.verticalXSmall,
                       stream: unitStream.fuelConsumptionStream(stats.averageFuelConsumption),
                       builder: (context, snapshot) {
                         final value = snapshot.data ?? stats.averageFuelConsumption;
-                        final unit = settingsCubit.state.unit == "km" ? "l/100km" : "mpg";
+                        final unit = settingsCubit.state.unit == S.of(context).km ? "${S.of(context).l}/100${S.of(context).km}" : "mpg";
 
                         return StatValue(value: value.toStringAsFixed(1), label: unit);
                       },

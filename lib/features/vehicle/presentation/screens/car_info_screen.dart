@@ -55,6 +55,9 @@ class _CarInfoViewState extends State<_CarInfoView> {
 
   bool get isFormValid =>
       _carReg.hasMatch(_carNumberController.text) && _techReg.hasMatch(_techPassportController.text);
+      
+       bool get hasCar => carCubit.state.carNumber.isNotEmpty;
+
 
   @override
   void initState() {
@@ -84,15 +87,25 @@ class _CarInfoViewState extends State<_CarInfoView> {
     super.dispose();
   }
 
-  void _onRecaptchaVerified(String token) async {
+void _onRecaptchaVerified(String token) async {
     setState(() => _showRecaptcha = false);
+
     await carCubit.checkFines(token);
+
+    final carNumber = carCubit.state.carNumber;
+    if (carNumber.isNotEmpty) {
+      context.read<AnalyticsCubit>().loadForCurrentCar();
+      context.read<ExpensesCubit>().loadExpensesForCar(carNumber);
+    }
 
     if (widget.onCheckFine != null) {
       final parts = carCubit.getTechPassportParts();
-      widget.onCheckFine!(carCubit.state.carNumber, parts['series']!, parts['number']!);
+      widget.onCheckFine!(carNumber, parts['series']!, parts['number']!);
     }
   }
+
+
+
 
   void _handleUnauthorized() {
     showDialog(
@@ -109,8 +122,8 @@ void _showDeleteDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        title: Text("delete_cars_title"),
-        content: Text("delete_cars_confirm"),
+        title: Text(S.of(context).delete_car_number),
+        content: Text(S.of(context).delete_cars_confirm),
         actions: [
           TextButton(onPressed: () => Navigator.pop(context), child: Text(S.of(context).cancel)),
           TextButton(
@@ -118,7 +131,7 @@ void _showDeleteDialog(BuildContext context) {
               Navigator.pop(context);
               await _deleteCars();
             },
-            child: Text("delete", style: const TextStyle(color: Colors.red)),
+            child: Text(S.of(context).delete, style: const TextStyle(color: Colors.red)),
           ),
         ],
       ),
@@ -145,11 +158,9 @@ Future<void> _deleteCars() async {
   _techPassportController.clear();
 
   ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(content: Text("cars_deleted_success")),
+    SnackBar(content: Text(S.of(context).cars_deleted_success)),
   );
 }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -248,13 +259,16 @@ Future<void> _deleteCars() async {
                       height: 500,
                       child: RecaptchaV2(apiKey: Env.recaptchaSiteKey, onVerifiedSuccessfully: _onRecaptchaVerified),
                     ),
-                    TextButton(
-  onPressed: () => _showDeleteDialog(context),
+                   TextButton(
+  onPressed: hasCar ? () => _showDeleteDialog(context) : null,
   child: Text(
-  "Delete my car",
-    style: textTheme.bodyMedium?.copyWith(color: Colors.red),
+    S.of(context).delete_car_number,
+    style: textTheme.bodyMedium?.copyWith(
+      color: hasCar ? Colors.red : Colors.grey,
+    ),
   ),
 ),
+
 
                 ],
               ),

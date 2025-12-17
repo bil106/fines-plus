@@ -75,6 +75,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "car_number": MessageLookupByLibrary.simpleMessage("Номер авто"),
     "car_wash": MessageLookupByLibrary.simpleMessage("Автомийка"),
     "car_wash_nearby": MessageLookupByLibrary.simpleMessage("Автомийка поруч"),
+    "cars_deleted_success": MessageLookupByLibrary.simpleMessage(
+      "Автомобіль успішно видалено",
+    ),
     "category": MessageLookupByLibrary.simpleMessage("Категорії"),
     "category_removed": MessageLookupByLibrary.simpleMessage(
       "Вилучено категорію",
@@ -124,8 +127,15 @@ class MessageLookup extends MessageLookupByLibrary {
     "del_all_expenses": MessageLookupByLibrary.simpleMessage(
       "Видалити ВСІ витрати",
     ),
+    "delete": MessageLookupByLibrary.simpleMessage("Видалити"),
     "delete_all_expenses": MessageLookupByLibrary.simpleMessage(
       "Видалити всі витрати?",
+    ),
+    "delete_car_number": MessageLookupByLibrary.simpleMessage(
+      "Видалити номер автомобіля",
+    ),
+    "delete_cars_confirm": MessageLookupByLibrary.simpleMessage(
+      "Підтвердити видалення автомобіля",
     ),
     "delete_expense_history": MessageLookupByLibrary.simpleMessage(
       "Видалити історію витрат",
@@ -243,6 +253,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "increased_download_limit": MessageLookupByLibrary.simpleMessage(
       "Збільшений ліміт завантаження",
     ),
+    "input_number": MessageLookupByLibrary.simpleMessage(
+      "Введіть номер вашого автомобіля ->",
+    ),
     "insurance": MessageLookupByLibrary.simpleMessage("Страхування"),
     "insurance_control": MessageLookupByLibrary.simpleMessage(
       "Контроль страховки",
@@ -320,6 +333,8 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "no_records": MessageLookupByLibrary.simpleMessage("Немає записів"),
     "no_reminders": MessageLookupByLibrary.simpleMessage("Немає нагадувань"),
+    "no_schedule": MessageLookupByLibrary.simpleMessage("Розкладу поки немає"),
+    "no_story": MessageLookupByLibrary.simpleMessage("Поки немає історії"),
     "no_such_service": MessageLookupByLibrary.simpleMessage(
       "Немає_такої_послуги",
     ),
@@ -976,6 +991,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "verif_date": MessageLookupByLibrary.simpleMessage("Дата перевірки:"),
     "verification_history": MessageLookupByLibrary.simpleMessage(
       "Історія перевірки",
+    ),
+    "view_all_events": MessageLookupByLibrary.simpleMessage(
+      "Переглянути всі події",
     ),
     "write_viber": MessageLookupByLibrary.simpleMessage("Написати у Viber"),
     "years": MessageLookupByLibrary.simpleMessage("Роки"),

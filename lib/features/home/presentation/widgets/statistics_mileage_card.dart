@@ -4,6 +4,7 @@ import 'package:fines_plus/features/settings/presentation/cubit/settings_cubit.d
 import 'package:fines_plus/features/settings/presentation/cubit/unit_stream.dart';
 import 'package:fines_plus/features/statistics/presentation/cubit/statistics_cubit.dart';
 import 'package:fines_plus/features/statistics/presentation/cubit/statistics_state.dart';
+import 'package:fines_plus/features/vehicle/presentation/cubit/car_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -36,7 +37,8 @@ class StatisticsMileageCard extends StatelessWidget {
   Widget _buildRow(StatisticsMileagePresenter presenter, BuildContext context) {
     final settingsCubit = context.watch<SettingsCubit>();
     final unitStream = UnitStream(settingsCubit);
-
+final carNumber = context.watch<CarCubit>().state.carNumber;
+    final hasCar = carNumber.isNotEmpty;
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -47,7 +49,10 @@ class StatisticsMileageCard extends StatelessWidget {
           stream: unitStream.unitValueStream(presenter.mileageThisMonth.toDouble()),
           initialData: unitStream.convert(presenter.mileageThisMonth.toDouble()),
           builder: (context, snapshot) {
-            final value = snapshot.data ?? presenter.mileageThisMonth.toDouble();
+           final value = hasCar
+                ? snapshot.data ?? presenter.mileageThisMonth.toDouble()
+                : 0; 
+
             final unit = settingsCubit.state.unit;
 
             return Column(

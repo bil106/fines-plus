@@ -7,12 +7,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_spacers.dart';
+import 'package:fines_plus/features/vehicle/presentation/cubit/car_cubit.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:fines_plus/core/extensions/ad_banner_widget.dart';
 import 'package:fines_plus/router/home_screen_wrapper.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 @RoutePage()
 class AddCarScreen extends StatefulWidget {
@@ -35,7 +37,8 @@ class _AddCarScreenState extends State<AddCarScreen> {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final user = _auth.currentUser;
-
+    final carNumber = context.watch<CarCubit>().state.carNumber;
+    final bool hasCar = carNumber.isNotEmpty;
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
         statusBarColor: AppColors.energyBlue50,
@@ -68,15 +71,27 @@ class _AddCarScreenState extends State<AddCarScreen> {
                         runSpacing: 14,
                         alignment: WrapAlignment.center,
                         children: [
-                        _buildMenuSquare(
-                            iconWidget: buildGradientSquare('assets/images/maintenance_bg.png', S.of(context).maintenance, textTheme),
-                            onTap: widget.onMaintenance,
+                          AbsorbPointer(
+                            absorbing: !hasCar,
+                            child: _buildMenuSquare(
+                              iconWidget: buildGradientSquare(
+                                'assets/images/maintenance_bg.png',
+                                S.of(context).maintenance,
+                                textTheme,
+                              ),
+                              onTap: widget.onMaintenance,
+                            ),
                           ),
-
-                          _buildMenuSquare(
-                            iconWidget: buildGradientSquare(
-                              'assets/images/analytics_bg.png', S.of(context).analitics, textTheme),
-                            onTap: widget.onAnalytics,
+                          AbsorbPointer(
+                            absorbing: !hasCar,
+                            child: _buildMenuSquare(
+                              iconWidget: buildGradientSquare(
+                                'assets/images/analytics_bg.png',
+                                S.of(context).analitics,
+                                textTheme,
+                              ),
+                              onTap: widget.onAnalytics,
+                            ),
                           ),
                         ],
                       ),
@@ -127,14 +142,13 @@ class _AddCarScreenState extends State<AddCarScreen> {
   }
 }
 
-
-
 Widget _buildMenuSquare({Widget? iconWidget, required VoidCallback? onTap}) {
   return GestureDetector(
     onTap: onTap,
     child: Column(children: [if (iconWidget != null) iconWidget, AppSpacers.verticalSmallMedium]),
   );
 }
+
 Widget buildGradientSquare(String assetImage, String text, TextTheme textTheme) {
   return Container(
     width: 165,
@@ -145,20 +159,19 @@ Widget buildGradientSquare(String assetImage, String text, TextTheme textTheme) 
       boxShadow: [BoxShadow(color: AppColors.blueGrey08, blurRadius: 10, offset: const Offset(0, 6))],
     ),
     child: Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        color: AppColors.blueGrey25, 
-      ),
-      child:  Padding(
-        padding: const EdgeInsets.only( left: 10.0),
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(20), color: AppColors.blueGrey25),
+      child: Padding(
+        padding: const EdgeInsets.only(left: 10.0),
         child: Text(
-            text,
-            textAlign: TextAlign.left,
-            style: textTheme.titleMedium?.copyWith(color: AppColors.neutreBlanc, fontWeight: FontWeight.bold, fontSize: 20),
+          text,
+          textAlign: TextAlign.left,
+          style: textTheme.titleMedium?.copyWith(
+            color: AppColors.neutreBlanc,
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
           ),
+        ),
       ),
-      ),
-    
+    ),
   );
 }
-

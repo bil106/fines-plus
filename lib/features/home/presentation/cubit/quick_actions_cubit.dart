@@ -59,19 +59,17 @@ Future<void> onTaskCreated(Map<String, dynamic> data, {required String labelKey,
     emit(state.copyWith(createdTasks: updatedTasks, activeCategories: updatedActive));
   }
 
-  Future<void> onTaskDeleted(String labelKey) async {
-    final key = labelKey.toLowerCase();
-    final updatedTasks = Map<String, List<Map<String, dynamic>>>.from(state.createdTasks);
-    updatedTasks.remove(key);
+Future<void> onTaskDeleted(String category) async {
+    final updatedCreatedTasks = Map.of(state.createdTasks);
+    updatedCreatedTasks.remove(category);
 
-    await tasksRepository.removeTask(key);
 
-    final updatedActive = List<String>.from(state.activeCategories)..remove(key);
+    final updatedActiveCategories = Set<String>.from(state.activeCategories);
+    updatedActiveCategories.remove(category.toLowerCase());
 
-    emit(state.copyWith(createdTasks: updatedTasks, activeCategories: updatedActive));
-
-    await prefs.setStringList('activeCategories', updatedActive);
+    emit(state.copyWith(createdTasks: updatedCreatedTasks, activeCategories: updatedActiveCategories.toList()));
   }
+
 
   Future<void> syncWithRepository() async {
     final updated = <String>[];
@@ -107,5 +105,47 @@ Future<void> onTaskCreated(Map<String, dynamic> data, {required String labelKey,
   }
   void clearAllActive() {
     emit(state.copyWith(activeCategories: [], createdTasks: {}));
+  }
+  Future<void> syncActiveCategories(String carNumber) async {
+    if (carNumber.isEmpty) return;
+
+    final activeCategories = <String>[];
+
+    for (final action in state.actions) {
+      final key = action.labelKey.toLowerCase();
+      final hasActive = await tasksRepository.hasActiveTask(carNumber: carNumber, category: key);
+
+      if (hasActive) {
+        activeCategories.add(key);
+      }
+    }
+
+    emit(state.copyWith(activeCategories: activeCategories));
+  }
+void removeCategoryLocally(String labelKey) {
+    final key = labelKey.toLowerCase();
+
+    final updatedTasks = Map<String, List<Map<String, dynamic>>>.from(state.createdTasks);
+    updatedTasks.remove(key);
+
+ 
+    final updatedActive = List<String>.from(state.activeCategories)..remove(key);
+
+  
+    emit(state.copyWith(createdTasks: updatedTasks, activeCategories: updatedActive));
+
+    prefs.setStringList('activeCategories', updatedActive);
+  }
+  
+  void activateCategory(String labelKey) {
+    final key = labelKey.toLowerCase();
+    if (!state.activeCategories.contains(key)) {
+      emit(state.copyWith(activeCategories: [...state.activeCategories, key]));
+    }
+  }
+
+  void deactivateCategory(String labelKey) {
+    final key = labelKey.toLowerCase();
+    emit(state.copyWith(activeCategories: state.activeCategories.where((e) => e != key).toList()));
   }
 }
