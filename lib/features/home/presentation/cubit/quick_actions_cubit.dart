@@ -148,4 +148,12 @@ void removeCategoryLocally(String labelKey) {
     final key = labelKey.toLowerCase();
     emit(state.copyWith(activeCategories: state.activeCategories.where((e) => e != key).toList()));
   }
+
+void updateActiveCategoriesFromTasks(List<String> categories) {
+    final uniqueCategories = categories.map((e) => e.toLowerCase()).toSet().toList();
+    emit(state.copyWith(activeCategories: uniqueCategories));
+
+    
+    prefs.setStringList('activeCategories', uniqueCategories);
+  }
 }

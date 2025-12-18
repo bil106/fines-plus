@@ -81,8 +81,12 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _checkInitialAction();
       final quick = context.read<QuickActionsCubit>();
+      final carNumber = widget.carNumber;
+      if (carNumber.isNotEmpty) {
+        quick.syncActiveCategories(carNumber); 
+      }
       quick.init();
-      quick.syncWithRepository();
+      // quick.syncWithRepository();
     });
   }
 
@@ -281,16 +285,24 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
             },
           ),
           BlocListener<ScheduleCubit, ScheduleState>(
-            listener: (context, state) async {
+          listener: (context, state) async {
+              final quick = context.read<QuickActionsCubit>();
+
+              // 1. СИНХРОНИЗАЦИЯ ПРИ ЗАГРУЗКЕ (решает вашу проблему)
+              // Если данные загружены и список задач не в состоянии loading
+              if (!state.loading) {
+                final currentCategories = state.tasks.map((t) => t.category.toLowerCase()).toList();
+                quick.updateActiveCategoriesFromTasks(currentCategories);
+              }
+
+              // 2. ОБРАБОТКА УДАЛЕНИЯ (ваш текущий код)
               if (state.tasksRemoved.isNotEmpty) {
                 debugPrint(
                   'ScheduleCubit emitted tasksRemoved: ${state.tasksRemoved.map((t) => "${t.id}:${t.category}")}',
                 );
 
-                final quick = context.read<QuickActionsCubit>();
                 for (var task in state.tasksRemoved) {
                   await quick.onTaskDeleted(task.category);
-
                   quick.clearCreatedTask(task.category);
                 }
                 quick.syncWithRepository();
