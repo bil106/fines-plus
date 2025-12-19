@@ -1,3 +1,5 @@
+// ignore_for_file: unnecessary_null_comparison
+
 import 'package:auto_route/auto_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:core_localization/generated/l10n.dart';
@@ -42,8 +44,28 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _loadLatestExpense() async {
+    setState(() {
+      isLoading = true;
+    });
+
     final repo = ExpenseRepository(FirebaseFirestore.instance);
-    final carNumber = context.read<CarCubit>().state.carNumber;
+    final carCubit = context.read<CarCubit>();
+
+    String? carNumber = carCubit.state.carNumber;
+    if (carNumber == null || carNumber.isEmpty) {
+      try {
+        final stateWithCarNumber = await carCubit.stream.firstWhere(
+          (state) => state.carNumber != null && state.carNumber.isNotEmpty,
+        );
+        carNumber = stateWithCarNumber.carNumber;
+      } catch (_) {
+        setState(() {
+          latestExpense = null;
+          isLoading = false;
+        });
+        return;
+      }
+    }
 
     final allExpenses = await repo.getExpensesOnce(carNumber: carNumber);
 

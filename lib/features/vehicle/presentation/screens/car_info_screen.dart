@@ -55,9 +55,8 @@ class _CarInfoViewState extends State<_CarInfoView> {
 
   bool get isFormValid =>
       _carReg.hasMatch(_carNumberController.text) && _techReg.hasMatch(_techPassportController.text);
-      
-       bool get hasCar => carCubit.state.carNumber.isNotEmpty;
 
+  bool get hasCar => carCubit.state.carNumber.isNotEmpty;
 
   @override
   void initState() {
@@ -87,7 +86,7 @@ class _CarInfoViewState extends State<_CarInfoView> {
     super.dispose();
   }
 
-void _onRecaptchaVerified(String token) async {
+  void _onRecaptchaVerified(String token) async {
     setState(() => _showRecaptcha = false);
 
     await carCubit.checkFines(token);
@@ -104,9 +103,6 @@ void _onRecaptchaVerified(String token) async {
     }
   }
 
-
-
-
   void _handleUnauthorized() {
     showDialog(
       context: context,
@@ -118,7 +114,8 @@ void _onRecaptchaVerified(String token) async {
       ),
     );
   }
-void _showDeleteDialog(BuildContext context) {
+
+  void _showDeleteDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
@@ -138,29 +135,34 @@ void _showDeleteDialog(BuildContext context) {
     );
   }
 
-Future<void> _deleteCars() async {
-  final user = FirebaseAuth.instance.currentUser;
+  Future<void> _deleteCars() async {
+    final user = FirebaseAuth.instance.currentUser;
 
-  if (user == null) {
-    _handleUnauthorized();
-    return;
-  }
+    if (user == null) {
+      _handleUnauthorized();
+      return;
+    }
 
-  context.read<StatisticsCubit>().clearStats();
+    context.read<StatisticsCubit>().clearStats();
+
+    context.read<AnalyticsCubit>().stopListeningToCar();
     context.read<AnalyticsCubit>().clear();
-    context.read<ExpensesCubit>().delete('','','');
-  context.read<AnalyticsCubit>().clear();
-  context.read<HistoryCubit>().clear();
+    
+    context.read<ExpensesCubit>().clearExpensesForCar();
+    context.read<HistoryCubit>().clear();
 
- await context.read<CarInfoCubit>().deleteCurrentCar();
+    await context.read<CarInfoCubit>().deleteCurrentCar();
 
-  _carNumberController.clear();
-  _techPassportController.clear();
+    _carNumberController.clear();
+    _techPassportController.clear();
 
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(content: Text(S.of(context).cars_deleted_success)),
-  );
-}
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(S.of(context).cars_deleted_success)));
+    if (!mounted) return;
+    if (carCubit.state.carNumber.isEmpty) {
+      context.router.replaceAll([const HomeRoute()]);
+      return;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -252,24 +254,19 @@ Future<void> _deleteCars() async {
                       ),
                       child: Text(S.of(context).search, style: textTheme.buttonText),
                     ),
-                    
                   ),
                   if (_showRecaptcha)
                     SizedBox(
                       height: 500,
                       child: RecaptchaV2(apiKey: Env.recaptchaSiteKey, onVerifiedSuccessfully: _onRecaptchaVerified),
                     ),
-                   TextButton(
-  onPressed: hasCar ? () => _showDeleteDialog(context) : null,
-  child: Text(
-    S.of(context).delete_car_number,
-    style: textTheme.bodyMedium?.copyWith(
-      color: hasCar ? Colors.red : Colors.grey,
-    ),
-  ),
-),
-
-
+                  TextButton(
+                    onPressed: hasCar ? () => _showDeleteDialog(context) : null,
+                    child: Text(
+                      S.of(context).delete_car_number,
+                      style: textTheme.bodyMedium?.copyWith(color: hasCar ? Colors.red : Colors.grey),
+                    ),
+                  ),
                 ],
               ),
               AppSpacers.verticalLargeXL,

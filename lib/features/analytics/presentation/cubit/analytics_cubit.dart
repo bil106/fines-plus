@@ -1,12 +1,9 @@
-
-
 import 'dart:async';
 
 import 'package:fines_plus/features/analytics/data/repository/analytics_repository.dart';
 import 'package:fines_plus/features/vehicle/presentation/cubit/car_cubit.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 
 part 'analytics_state.dart';
 
@@ -17,23 +14,21 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
   bool _isClosed = false;
 
   AnalyticsCubit({required this.repository, required this.carCubit}) : super(AnalyticsState.initial()) {
- _carSub = carCubit.stream.listen((carState) {
+    _carSub = carCubit.stream.listen((carState) {
       final carNumber = carState.carNumber;
 
       if (_isClosed) return;
 
-  
       final isValidCar = RegExp(r'^[А-ЯЇІЄҐ]{2}\d{4}[А-ЯЇІЄҐ]{2}$').hasMatch(carNumber);
 
       if (!isValidCar) return;
 
       _reloadForCar(carNumber);
     });
-
   }
 
   Future<void> _reloadForCar(String carNumber) async {
-    if (_isClosed) return; 
+    if (_isClosed || carNumber.isEmpty) return;
 
     try {
       emit(state.copyWith(status: AnalyticsStatus.loading));
@@ -41,7 +36,7 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
       final date = state.selectedDate ?? DateTime.now();
       final data = await repository.getAnalytics(date, carNumber);
 
-      if (_isClosed) return; 
+      if (_isClosed) return;
 
       emit(
         state.copyWith(
@@ -60,18 +55,21 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
   }
 
   void updateDate(DateTime date) {
-    if (_isClosed) return; 
+    if (_isClosed) return;
     final car = carCubit.state.carNumber;
     emit(state.copyWith(selectedDate: date));
     _reloadForCar(car);
   }
-   StreamSubscription? _sub;
-    void clear() {
+
+  StreamSubscription? _sub;
+  void clear() {
     _sub?.cancel();
     _sub = null;
     emit(AnalyticsState.initial());
   }
-void stopListeningToCar() {
+
+  void stopListeningToCar() {
+    if (_isClosed) return;
     _carSub.cancel();
     debugPrint("AnalyticsCubit unsubscribed from car changes");
   }
@@ -82,17 +80,15 @@ void stopListeningToCar() {
     _carSub.cancel();
     return super.close();
   }
+
   Future<void> loadForCurrentCar() async {
     if (_isClosed) return;
 
     final carNumber = carCubit.state.carNumber;
-
+    if (carNumber.isEmpty) return;
     final isValid = RegExp(r'^[А-ЯЇІЄҐ]{2}\d{4}[А-ЯЇІЄҐ]{2}$').hasMatch(carNumber);
     if (!isValid) return;
 
     await _reloadForCar(carNumber);
   }
-
 }
-
-

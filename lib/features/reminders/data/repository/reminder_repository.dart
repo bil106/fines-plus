@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fines_plus/features/reminders/data/datasources/reminder_local_data_source.dart';
 import 'package:fines_plus/features/reminders/data/datasources/reminder_remote_data_source.dart';
 import 'package:fines_plus/features/reminders/data/models/reminder_model.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class ReminderRepository {
@@ -48,34 +49,60 @@ class ReminderRepository {
     await docRef.set(fixed.toJson(), SetOptions(merge: true));
   }
 
-  Future<List<ReminderModel>> getAll(String carNumber) async {
-    if (carNumber.isEmpty) return [];
-
-    final snapshot = await FirebaseFirestore.instance.collection('reminders').doc(carNumber).collection('items').get();
-
-    final reminders = <ReminderModel>[];
-
-    for (final doc in snapshot.docs) {
-      final data = doc.data();
-
-      try {
-        if (data['title'] == null || (data['title'] as String).trim().isEmpty) {
-          debugPrint('Skipped invalid reminder (no title) → ${doc.id}');
-          continue;
-        }
-
-        data['userId'] ??= carNumber;
-        data['description'] ??= '';
-
-        reminders.add(ReminderModel.fromJson(data));
-      } catch (e, st) {
-        debugPrint('Failed to parse reminder: $e\n$st');
-        continue;
-      }
+ Future<List<ReminderModel>> getAll(String carNumber) async {
+    if (carNumber.isEmpty) {
+      debugPrint('ReminderRepository.getAll skipped — carNumber empty');
+      return [];
     }
 
-    return reminders;
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      debugPrint('ReminderRepository.getAll skipped — user not authorized');
+      return [];
+    }
+
+    try {
+      final snapshot = await FirebaseFirestore.instance
+          .collection('reminders')
+          .doc(carNumber)
+          .collection('items')
+          .get();
+
+      final reminders = <ReminderModel>[];
+
+      for (final doc in snapshot.docs) {
+        final data = doc.data();
+
+        try {
+          if ((data['title'] as String?)?.trim().isEmpty ?? true) {
+            debugPrint('Skipped invalid reminder (no title) → ${doc.id}');
+            continue;
+          }
+
+          data['userId'] ??= carNumber;
+          data['description'] ??= '';
+
+          reminders.add(ReminderModel.fromJson(data));
+        } catch (e, st) {
+          debugPrint('Failed to parse reminder ${doc.id}: $e\n$st');
+        }
+      }
+
+      return reminders;
+    } on FirebaseException catch (e, st) {
+      if (e.code == 'permission-denied') {
+        debugPrint('ReminderRepository.getAll permission denied for car=$carNumber (probably deleted)');
+        return [];
+      }
+
+      debugPrint('ReminderRepository.getAll Firebase error: $e\n$st');
+      return [];
+    } catch (e, st) {
+      debugPrint('ReminderRepository.getAll unknown error: $e\n$st');
+      return [];
+    }
   }
+
 
   Future<void> delete(String carNumber, String id) async {
     if (carNumber.isEmpty) {

@@ -15,9 +15,7 @@ class ReminderCubit extends Cubit<ReminderState> {
   final PushHelper pushHelper;
 
   ReminderCubit({required this.repository, required this.carNumber, required this.userId, required this.pushHelper})
-    : super(ReminderState.initial()) {
-    load();
-  }
+    : super(ReminderState.initial());
 
   Future<void> load() async {
     if (!isClosed) emit(state.copyWith(isLoading: true));

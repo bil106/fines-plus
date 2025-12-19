@@ -24,6 +24,7 @@ import 'package:fines_plus/features/registration/presentation/cubit/registration
 import 'package:fines_plus/features/reminders/data/datasources/reminder_local_data_source.dart';
 import 'package:fines_plus/features/reminders/data/datasources/reminder_remote_data_source.dart';
 import 'package:fines_plus/features/reminders/data/repository/reminder_repository.dart';
+import 'package:fines_plus/features/reminders/presentation/cubit/reminder_cubit.dart';
 import 'package:fines_plus/features/reminders/presentation/screens/reminders_screen.dart';
 import 'package:fines_plus/features/schedule/data/repository/schedule_repository.dart';
 import 'package:fines_plus/features/schedule/presentation/cubit/schedule_cubit.dart';
@@ -258,7 +259,26 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
                 onAnalytics: () => openPage(HomePage.analytics),
               ),
               FinesScreen(key: const ValueKey('fines_screen'), onBack: () => openPage(HomePage.home)),
-              RemindersScreen(key: const ValueKey('reminders'), onBack: () => openPage(HomePage.home), userId: ''),
+             BlocProvider(
+                key: ValueKey(carNumber),
+                create: (_) {
+                  final cubit = ReminderCubit(
+                    repository: context.read<ReminderRepository>(),
+                    carNumber: carNumber,
+                    userId:'',
+                    pushHelper: context.read<PushHelper>(),
+                  );
+
+                  cubit.load();
+                  return cubit;
+                },
+                child: RemindersScreen(
+                  key: ValueKey('reminders_$carNumber'),
+                  onBack: () => openPage(HomePage.home),
+                  userId: '',
+                ),
+              ),
+
               BlocProvider.value(
                 value: analyticsCubit,
                 child: AnalyticsScreen(
