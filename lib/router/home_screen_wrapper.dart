@@ -111,8 +111,9 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
     );
    _pageIndexMap = {
   HomePage.home: 0,
-  HomePage.carInfo: 1, 
-  HomePage.addCar: 2,
+  HomePage.addCar: 1,
+  HomePage.carInfo: 2, 
+  
   HomePage.fines: 3,
   HomePage.reminders: 4,
  
@@ -254,6 +255,13 @@ final bool hasCar = carState.carNumber.isNotEmpty;
                 value: context.read<QuickActionsCubit>(),
                 child: HomeScreen(key: const ValueKey('home')),
               ),
+                   AddCarScreen(
+                key: const ValueKey('add_car_screen'),
+                onOpenCarInfo: () => openPage(HomePage.carInfo),
+                onFineCheck: () => openPage(HomePage.fines),
+                onMaintenance: () => openPage(HomePage.maintenance),
+                onAnalytics: () => openPage(HomePage.analytics),
+              ),
               BlocProvider(
                 create: (_) => ExpensesCubit(repository: ExpenseRepository(FirebaseFirestore.instance)),
                 child: CarInfoScreen(
@@ -265,13 +273,7 @@ final bool hasCar = carState.carNumber.isNotEmpty;
                   },
                 ),
               ),
-              AddCarScreen(
-                key: const ValueKey('add_car_screen'),
-                onOpenCarInfo: () => openPage(HomePage.carInfo),
-                onFineCheck: () => openPage(HomePage.fines),
-                onMaintenance: () => openPage(HomePage.maintenance),
-                onAnalytics: () => openPage(HomePage.analytics),
-              ),
+         
               FinesScreen(key: const ValueKey('fines_screen'), onBack: () => openPage(HomePage.home)),
              BlocProvider(
                 key: ValueKey(carNumber),
