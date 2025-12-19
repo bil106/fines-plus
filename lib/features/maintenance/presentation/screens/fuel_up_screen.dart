@@ -123,21 +123,24 @@ class _FuelUpScreenState extends State<FuelUpScreen> {
     final textTheme = Theme.of(context).textTheme;
     final settingsCubit = context.watch<SettingsCubit>();
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: const SystemUiOverlayStyle(statusBarColor: Colors.white, statusBarIconBrightness: Brightness.dark),
+      value: const SystemUiOverlayStyle(
+        statusBarColor: AppColors.neutreBlanc,
+        statusBarIconBrightness: Brightness.dark,
+      ),
       child: Scaffold(
         backgroundColor: AppColors.energyBlue50,
         appBar: AppBar(
           backgroundColor: AppColors.energyBlue50,
           elevation: 0,
-          leading: BackButton(color: Colors.blue.shade700, onPressed: widget.onBack),
+          leading: BackButton(color: AppColors.blue700, onPressed: widget.onBack),
           actions: [
             IconButton(
               icon: const Icon(Icons.check, color: Colors.blue, size: 50),
               onPressed: () {
                 if (selectedDate == null || volumeController.text.isEmpty || mileageController.text.isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(backgroundColor: Colors.blue.shade700, content: Text(S.of(context).fill_date)),
-                  );
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(SnackBar(backgroundColor: AppColors.blue700, content: Text(S.of(context).fill_date)));
                   return;
                 }
 
@@ -183,7 +186,7 @@ class _FuelUpScreenState extends State<FuelUpScreen> {
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              const Icon(Icons.location_on, color: Colors.blueAccent, size: 40),
+                              const Icon(Icons.location_on, color: AppColors.blueAccent, size: 40),
                               const SizedBox(width: 8),
                               SizedBox(
                                 width: 180,
@@ -206,7 +209,7 @@ class _FuelUpScreenState extends State<FuelUpScreen> {
                 ],
               ),
 
-             AppSpacers.verticalXSmall,
+              AppSpacers.verticalXSmall,
 
               Row(
                 children: [
@@ -216,16 +219,16 @@ class _FuelUpScreenState extends State<FuelUpScreen> {
                       onDateSelected: (date) => setState(() => selectedDate = date),
                     ),
                   ),
-                 AppSpacers.horizontalLarge,
+                  AppSpacers.horizontalLarge,
                   Expanded(
                     child: MileageCard(textTheme: textTheme, controller: mileageController),
                   ),
                 ],
               ),
 
-                 AppSpacers.verticalXSmall,
+              AppSpacers.verticalXSmall,
               Text(S.of(context).fuel, style: textTheme.subtitleText),
-                AppSpacers.verticalXSmall,
+              AppSpacers.verticalXSmall,
 
               FuelChoiceChips(
                 fuels: fuelPrices.keys.toList(),
@@ -238,7 +241,7 @@ class _FuelUpScreenState extends State<FuelUpScreen> {
                 },
               ),
 
-                AppSpacers.verticalMediumLarge,
+              AppSpacers.verticalMediumLarge,
               FuelInputCard(
                 fuel: selectedFuel,
                 volumeController: volumeController,
@@ -249,7 +252,7 @@ class _FuelUpScreenState extends State<FuelUpScreen> {
               AppSpacers.verticalMediumLarge,
               FuelAmountCard(volumeController: volumeController, priceController: priceController),
 
-               AppSpacers.verticalXLarge,
+              AppSpacers.verticalXLarge,
               const AdBannerWidget(),
             ],
           ),

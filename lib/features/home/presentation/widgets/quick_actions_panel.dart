@@ -19,8 +19,6 @@ class QuickActionsPanel extends StatelessWidget {
 
     return BlocBuilder<QuickActionsCubit, QuickActionsState>(
       builder: (context, state) {
-      
-
         return GridView.builder(
           shrinkWrap: true,
           itemCount: state.actions.length,
@@ -33,10 +31,8 @@ class QuickActionsPanel extends StatelessWidget {
           ),
           itemBuilder: (context, index) {
             final action = state.actions[index];
-          final isActive =
+            final isActive =
                 hasCar && state.activeCategories.map((e) => e.toLowerCase()).contains(action.labelKey.toLowerCase());
-
-
 
             return ActionItem(
               icon: action.icon,

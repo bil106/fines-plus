@@ -462,7 +462,8 @@
    "delete": "Видалити",
    "view_all_events": "Переглянути всі події",
    "select_type_insurance": "Виберіть вид страховки",
-   "already_added": "Вже додано"
+   "already_added": "Вже додано",
+   "no_car_selected": "Автомобіль не вибрано"
  
    
 

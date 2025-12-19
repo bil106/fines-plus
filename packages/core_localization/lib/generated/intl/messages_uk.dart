@@ -323,6 +323,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "next": MessageLookupByLibrary.simpleMessage("Далі"),
     "no_ads": MessageLookupByLibrary.simpleMessage("Без реклами"),
+    "no_car_selected": MessageLookupByLibrary.simpleMessage(
+      "Автомобіль не вибрано",
+    ),
     "no_expenses": MessageLookupByLibrary.simpleMessage(
       "Поки що немає даних щодо витрат",
     ),

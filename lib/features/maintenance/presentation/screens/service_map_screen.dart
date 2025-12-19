@@ -144,7 +144,7 @@ Future<List<Map<String, dynamic>>> fetchNearbyServices(LatLng location, String a
   final response = await http.get(Uri.parse(url));
 
   if (kDebugMode) {
-    print("🔎 API Response (${response.statusCode}): ${response.body}");
+    print("API Response (${response.statusCode}): ${response.body}");
   }
 
   if (response.statusCode == 200) {

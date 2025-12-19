@@ -71,33 +71,42 @@ class AnalyticsRepository implements IAnalyticsRepository {
   }
 
 Future<AnalyticsData> getAnalytics(DateTime date, String carNumber) async {
-    final user = FirebaseAuth.instance.currentUser;
-    if (user == null) {
-      return AnalyticsData(fuelLiters: 0, fuelCost: 0, mileage: 0);
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) {
+        return AnalyticsData.empty();
+      }
+
+      final isValidCar = RegExp(r'^[А-ЯЇІЄҐ]{2}\d{4}[А-ЯЇІЄҐ]{2}$').hasMatch(carNumber);
+      if (!isValidCar) {
+        return AnalyticsData.empty();
+      }
+
+      final doc = await firestore
+          .collection('analytics')
+          .doc(carNumber)
+          .collection('months')
+          .doc('${date.year}-${date.month}')
+          .get();
+
+      if (!doc.exists) {
+        return AnalyticsData.empty();
+      }
+
+      final data = doc.data()!;
+      return AnalyticsData(
+        fuelLiters: (data['fuelLiters'] ?? 0).toDouble(),
+        fuelCost: (data['fuelCost'] ?? 0).toDouble(),
+        mileage: (data['mileage'] ?? 0).toInt(),
+      );
+    } on FirebaseException catch (e) {
+      if (e.code == 'unavailable') {
+        // нет интернета / DNS / Firestore недоступен
+        return AnalyticsData.empty();
+      }
+      rethrow;
     }
-
-    final isValidCar = RegExp(r'^[А-ЯЇІЄҐ]{2}\d{4}[А-ЯЇІЄҐ]{2}$').hasMatch(carNumber);
-    if (!isValidCar) {
-      return AnalyticsData(fuelLiters: 0, fuelCost: 0, mileage: 0);
-    }
-
-    final doc = await firestore
-        .collection('analytics')
-        .doc(carNumber)
-        .collection('months')
-        .doc("${date.year}-${date.month}")
-        .get();
-
-    if (!doc.exists) {
-      return AnalyticsData(fuelLiters: 0, fuelCost: 0, mileage: 0);
-    }
-
-    final data = doc.data()!;
-    return AnalyticsData(
-      fuelLiters: data['fuelLiters'] ?? 0,
-      fuelCost: data['fuelCost'] ?? 0,
-      mileage: data['mileage'] ?? 0,
-    );
   }
+
 
 }

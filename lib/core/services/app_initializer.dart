@@ -118,7 +118,7 @@ class AppInitializer {
     final requiredVersion = remoteConfigService.minSupportedVersion;
     bool isUpdateRequired = _isVersionLower(currentVersion, requiredVersion);
     if (isUpdateRequired) {
-      debugPrint("⚠️ App version $currentVersion is lower than required $requiredVersion");
+      debugPrint("App version $currentVersion is lower than required $requiredVersion");
     }
 
     tz.initializeTimeZones();
@@ -163,7 +163,7 @@ class AppInitializer {
 
     await FirebaseMessaging.instance.requestPermission();
     final token = await FirebaseMessaging.instance.getToken();
-    if (token != null) debugPrint(" FCM Registration Token: $token");
+    if (token != null) debugPrint("FCM Registration Token: $token");
 
     const flavor = String.fromEnvironment('FLAVOR', defaultValue: 'autolux');
     final config = await loadAppConfig(flavor);
@@ -284,13 +284,13 @@ extension ReminderScheduling on AppInitializer {
     final pushEnabled = prefs.getBool("pushNotifications") ?? true;
 
     if (!(remindersEnabled && pushEnabled)) {
-      debugPrint(" Notifications disabled in settings, skip scheduling");
+      debugPrint("Notifications disabled in settings, skip scheduling");
       return;
     }
 
     final now = DateTime.now();
     if (reminder.dateTime.isBefore(now)) {
-      debugPrint(' Reminder ${reminder.id} time is in the past, skipping.');
+      debugPrint('Reminder ${reminder.id} time is in the past, skipping.');
       return;
     }
 
@@ -298,7 +298,7 @@ extension ReminderScheduling on AppInitializer {
     _scheduledReminderIds[reminder.id] = notificationId;
 
     final delay = reminder.dateTime.difference(now);
-    debugPrint(' Reminder ${reminder.id} scheduled in $delay');
+    debugPrint('Reminder ${reminder.id} scheduled in $delay');
 
     Future.delayed(delay, () async {
       const String soundFileName = 'notify';

@@ -49,7 +49,7 @@ class RemoteConfigService {
   }
   String get minSupportedVersion {
     final val = _remoteConfig.getString('min_supported_version');
-    debugPrint("🔹 minSupportedVersion = $val");
+    debugPrint("minSupportedVersion = $val");
     return val.isNotEmpty ? val : '1.0.1';
   }
 

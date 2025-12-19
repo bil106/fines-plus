@@ -69,10 +69,10 @@ Future<void> deleteCar(String carNumber) async {
    try {
       await carRef.delete();
     } catch (e) {
-      debugPrint("❌ Firestore delete failed: $e");
+      debugPrint("Firestore delete failed: $e");
     }
 
-    debugPrint("✅ Car $carNumber fully deleted");
+    debugPrint("Car $carNumber fully deleted");
   }
 
 

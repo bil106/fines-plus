@@ -19,15 +19,15 @@ class FuelChoiceChips extends StatelessWidget {
           label: Text(
             fuel.name.toUpperCase(),
             style: TextStyle(
-              color: isSelected ? Colors.white : AppColors.black87, 
+              color: isSelected ? AppColors.neutreBlanc : AppColors.black87,
               fontWeight: FontWeight.bold,
             ),
           ),
           selected: isSelected,
-          selectedColor: AppColors.blue700, 
-          backgroundColor: AppColors.grey300, 
+          selectedColor: AppColors.blue700,
+          backgroundColor: AppColors.grey300,
           onSelected: (_) => onSelected(fuel),
-          checkmarkColor: Colors.white,
+          checkmarkColor: AppColors.neutreBlanc,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         );
       }).toList(),

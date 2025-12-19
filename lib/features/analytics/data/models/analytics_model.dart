@@ -13,4 +13,6 @@ class AnalyticsData {
   factory AnalyticsData.fromJson(Map<String, dynamic> json) => _$AnalyticsDataFromJson(json);
 
   Map<String, dynamic> toJson() => _$AnalyticsDataToJson(this);
+  
+  factory AnalyticsData.empty() =>  AnalyticsData(fuelLiters: 0, fuelCost: 0, mileage: 0);
 }

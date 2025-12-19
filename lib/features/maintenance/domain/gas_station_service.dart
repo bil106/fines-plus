@@ -18,7 +18,7 @@ class GasStationService {
 
     final response = await http.get(Uri.parse(url));
 
-    if (kDebugMode) print("🔎 API Response (${response.statusCode}): ${response.body}");
+    if (kDebugMode) print(" API Response (${response.statusCode}): ${response.body}");
 
     if (response.statusCode != 200) {
       throw Exception("Failed to load gas stations");
@@ -28,7 +28,7 @@ class GasStationService {
 
     if (data['status'] != 'OK') {
       if (kDebugMode) {
-        print("❌ Error from Google API: ${data['status']} — ${data['error_message']}");
+        print(" Error from Google API: ${data['status']} — ${data['error_message']}");
       }
       return [];
     }

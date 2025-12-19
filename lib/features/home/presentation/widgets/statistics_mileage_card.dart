@@ -43,7 +43,7 @@ final carNumber = context.watch<CarCubit>().state.carNumber;
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Image.asset('assets/icons/steeringWheel.png', width: 36, height: 36, color: Colors.grey),
-        const SizedBox(width: 8),
+        const SizedBox(width: 18),
 
         StreamBuilder<double>(
           stream: unitStream.unitValueStream(presenter.mileageThisMonth.toDouble()),

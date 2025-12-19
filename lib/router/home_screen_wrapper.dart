@@ -1,3 +1,5 @@
+// ignore_for_file: unused_field
+
 import 'package:auto_route/auto_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:core_cubit/cubit/purchase/purchase_cubit.dart';
@@ -12,7 +14,7 @@ import 'package:fines_plus/features/analytics/presentation/screens/analytics_scr
 import 'package:fines_plus/features/expenses/data/repository/expense_repository.dart';
 import 'package:fines_plus/features/expenses/presentation/cubit/expenses_cubit.dart';
 import 'package:fines_plus/features/export/presentation/screens/export_screen.dart';
-import 'package:fines_plus/features/fines/presentation/screens/fine_check_screen.dart';
+
 import 'package:fines_plus/features/fines/presentation/screens/fines_screeen.dart';
 import 'package:fines_plus/features/history/domain/history_repository.dart';
 import 'package:fines_plus/features/history/presentation/cubit/history_cubit.dart';
@@ -58,7 +60,6 @@ enum HomePage {
   reminders,
   analytics,
   carInfo,
-  fineCheck,
   settings,
   history,
   maintenance,
@@ -109,30 +110,29 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
       repository: AnalyticsRepository(firestore: FirebaseFirestore.instance),
       carCubit: context.read<CarCubit>(),
     );
-   _pageIndexMap = {
-  HomePage.home: 0,
-  HomePage.addCar: 1,
-  HomePage.carInfo: 2, 
-  
-  HomePage.fines: 3,
-  HomePage.reminders: 4,
- 
-  HomePage.analytics: 5,
-  HomePage.fineCheck: 6,
-  HomePage.settings: 7,
-  HomePage.history: 8,
-  HomePage.maintenance: 9,
-  HomePage.export: 10,
-  HomePage.registration: 11,
-  HomePage.subscription: 12,
-  HomePage.carWash: 13,
-  HomePage.tuning: 14,
-  HomePage.fuel: 15,
-  HomePage.service: 16,
-  HomePage.schedule: 17,
-  HomePage.fuelMap: 18,
-  HomePage.carWashMap: 19,
-};
+    _pageIndexMap = {
+      HomePage.home: 0,
+      HomePage.addCar: 1,
+      HomePage.carInfo: 2,
+
+      HomePage.fines: 3,
+      HomePage.reminders: 4,
+
+      HomePage.analytics: 5,
+      HomePage.settings: 6,
+      HomePage.history: 7,
+      HomePage.maintenance: 8,
+      HomePage.export: 9,
+      HomePage.registration: 10,
+      HomePage.subscription: 11,
+      HomePage.carWash: 12,
+      HomePage.tuning: 13,
+      HomePage.fuel: 14,
+      HomePage.service: 15,
+      HomePage.schedule: 16,
+      HomePage.fuelMap: 17,
+      HomePage.carWashMap: 18,
+    };
     _currentIndex = _pageIndexMap[HomePage.home]!;
     debugPrint('HomeScreenWrapper: initial computed _currentIndex = $_currentIndex');
     _pageController = PageController(initialPage: _currentIndex);
@@ -176,13 +176,12 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
     });
   }
 
-void openPage(HomePage page) {
+  void openPage(HomePage page) {
     final carState = context.read<CarCubit>().state;
     final bool hasCar = carState.carNumber.isNotEmpty;
 
     final index = _pageIndexMap[page] ?? 0;
 
-   
     if (!hasCar && index > 4) {
       debugPrint("Add a car to open this page");
       return;
@@ -212,7 +211,7 @@ void openPage(HomePage page) {
   Widget build(BuildContext context) {
     final carState = context.watch<CarCubit>().state;
     final carNumber = carState.carNumber;
-final bool hasCar = carState.carNumber.isNotEmpty;
+    final bool hasCar = carState.carNumber.isNotEmpty;
     if (_carNumber == null) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
@@ -255,7 +254,7 @@ final bool hasCar = carState.carNumber.isNotEmpty;
                 value: context.read<QuickActionsCubit>(),
                 child: HomeScreen(key: const ValueKey('home')),
               ),
-                   AddCarScreen(
+              AddCarScreen(
                 key: const ValueKey('add_car_screen'),
                 onOpenCarInfo: () => openPage(HomePage.carInfo),
                 onFineCheck: () => openPage(HomePage.fines),
@@ -273,15 +272,15 @@ final bool hasCar = carState.carNumber.isNotEmpty;
                   },
                 ),
               ),
-         
+
               FinesScreen(key: const ValueKey('fines_screen'), onBack: () => openPage(HomePage.home)),
-             BlocProvider(
+              BlocProvider(
                 key: ValueKey(carNumber),
                 create: (_) {
                   final cubit = ReminderCubit(
                     repository: context.read<ReminderRepository>(),
                     carNumber: carNumber,
-                    userId:'',
+                    userId: '',
                     pushHelper: context.read<PushHelper>(),
                   );
 
@@ -294,119 +293,118 @@ final bool hasCar = carState.carNumber.isNotEmpty;
                   userId: '',
                 ),
               ),
-           
 
-if (hasCar) ...[
-              BlocProvider.value(
-                value: analyticsCubit,
-                child: AnalyticsScreen(
-                  key: const ValueKey('analytics'),
-                  carNumber: carNumber,
-                  onBack: () => openPage(HomePage.home),
-                  initialTabIndex: _analyticsTabIndex,
-                ),
-              ),
-           
-              FineCheckScreen(
-                key: const ValueKey('fine_check_screen'),
-                carNumber: _carNumber!,
-                docSeries: _docSeries ?? '',
-                docNumber: _docNumber ?? '',
-                onBack: () => openPage(HomePage.home),
-              ),
-              SettingsScreen(
-                key: const ValueKey('settings_screen'),
-                onBack: () => openPage(HomePage.home),
-                remoteConfigService: context.read<RemoteConfigService>(),
-                scheduleCubit: context.read<ScheduleCubit>(),
-                purchaseCubit: context.read<PurchaseCubit>(),
-              ),
-              HistoryScreen(key: const ValueKey('history_screen'), carNumber: carNumber),
-              Builder(
-                key: const ValueKey('maintenance_screen'),
-                builder: (_) {
-                  return MaintenanceScreen(
-                    onFuelUp: () => openPage(HomePage.fuel),
-                    onService: () => openPage(HomePage.service),
-                    onTuning: () => openPage(HomePage.tuning),
+              if (hasCar) ...[
+                BlocProvider.value(
+                  value: analyticsCubit,
+                  child: AnalyticsScreen(
+                    key: const ValueKey('analytics'),
+                    carNumber: carNumber,
                     onBack: () => openPage(HomePage.home),
-                  );
-                },
-              ),
-              ExportScreen(
-                key: const ValueKey('export'),
-                history: exportHistory,
-                carNumber: _carNumber!,
-                onBack: () => openPage(HomePage.analytics),
-              ),
-             MultiBlocProvider(
-                providers: [
-                  BlocProvider.value(value: context.read<RegistrationCubit>()),
-                  BlocProvider.value(value: context.read<SubscriptionCubit>()),
-                ],
-                child: RegistrationScreen(key: const ValueKey('registration'), onBack: () => openPage(HomePage.home)),
-              ),
+                    initialTabIndex: _analyticsTabIndex,
+                  ),
+                ),
 
-         
-              BlocProvider.value(
-                value: context.read<SubscriptionCubit>(),
-                child: SubscriptionScreen(
-                  onBack: () async {
-                    await Future.delayed(const Duration(milliseconds: 150));
-                    final wrapperState = context.findAncestorStateOfType<HomeScreenWrapperState>();
-                    if (wrapperState != null) {
-                      wrapperState.openPage(HomePage.home);
-                      return;
-                    }
-                    context.router.root.replaceAll([HomeRouteWrapper(initialPage: HomePage.home)]);
+                // FineCheckScreen(
+                //   key: const ValueKey('fine_check_screen'),
+                //   carNumber: _carNumber!,
+                //   docSeries: _docSeries ?? '',
+                //   docNumber: _docNumber ?? '',
+                //   onBack: () => openPage(HomePage.home),
+                // ),
+                SettingsScreen(
+                  key: const ValueKey('settings_screen'),
+                  onBack: () => openPage(HomePage.home),
+                  remoteConfigService: context.read<RemoteConfigService>(),
+                  scheduleCubit: context.read<ScheduleCubit>(),
+                  purchaseCubit: context.read<PurchaseCubit>(),
+                ),
+                HistoryScreen(key: const ValueKey('history_screen'), carNumber: carNumber),
+                Builder(
+                  key: const ValueKey('maintenance_screen'),
+                  builder: (_) {
+                    return MaintenanceScreen(
+                      onFuelUp: () => openPage(HomePage.fuel),
+                      onService: () => openPage(HomePage.service),
+                      onTuning: () => openPage(HomePage.tuning),
+                      onBack: () => openPage(HomePage.home),
+                    );
                   },
                 ),
-              ),
-              TuningScreen(key: const ValueKey('tuning'), onBack: () => openPage(HomePage.maintenance)),
-              ServiceScreen(key: const ValueKey('service'), onBack: () => openPage(HomePage.maintenance)),
-              CarWashScreen(key: const ValueKey('car-wash'), onBack: () => openPage(HomePage.maintenance)),
-              FuelUpScreen(key: const ValueKey('fuel'), onBack: () => openPage(HomePage.maintenance)),
+                ExportScreen(
+                  key: const ValueKey('export'),
+                  history: exportHistory,
+                  carNumber: _carNumber!,
+                  onBack: () => openPage(HomePage.analytics),
+                ),
+                MultiBlocProvider(
+                  providers: [
+                    BlocProvider.value(value: context.read<RegistrationCubit>()),
+                    BlocProvider.value(value: context.read<SubscriptionCubit>()),
+                  ],
+                  child: RegistrationScreen(key: const ValueKey('registration'), onBack: () => openPage(HomePage.home)),
+                ),
 
-              Builder(
-                key: const ValueKey('schedule_screen'),
-                builder: (context) {
-                  return FutureBuilder<SharedPreferences>(
-                    future: SharedPreferences.getInstance(),
-                    builder: (context, snapshot) {
-                      if (!snapshot.hasData) {
-                        return const Center(child: CircularProgressIndicator());
+                BlocProvider.value(
+                  value: context.read<SubscriptionCubit>(),
+                  child: SubscriptionScreen(
+                    onBack: () async {
+                      await Future.delayed(const Duration(milliseconds: 150));
+                      final wrapperState = context.findAncestorStateOfType<HomeScreenWrapperState>();
+                      if (wrapperState != null) {
+                        wrapperState.openPage(HomePage.home);
+                        return;
                       }
-
-                      final prefs = snapshot.data!;
-                      final localDataSource = ReminderLocalDataSourceImpl(SharedPrefsManager(prefs));
-                      final remoteDataSource = ReminderRemoteDataSourceImpl(FirebaseFirestore.instance);
-
-                      final reminderRepository = ReminderRepository(
-                        localDataSource: localDataSource,
-                        remoteDataSource: remoteDataSource,
-                      );
-
-                      final scheduleRepository = ScheduleRepository();
-
-                      return ScheduleScreen(
-                        repository: scheduleRepository,
-                        reminderRepository: reminderRepository,
-                        pushHelper: PushHelper(FlutterLocalNotificationsPlugin()),
-                        carNumber: carNumber,
-                        userId: '',
-                      );
+                      context.router.root.replaceAll([HomeRouteWrapper(initialPage: HomePage.home)]);
                     },
-                  );
-                },
-              ),
-              FuelMapScreen(key: const ValueKey('fuel-map')),
-              CarWashMapScreen(key: const ValueKey('car-wash-map')),
+                  ),
+                ),
+                TuningScreen(key: const ValueKey('tuning'), onBack: () => openPage(HomePage.maintenance)),
+                ServiceScreen(key: const ValueKey('service'), onBack: () => openPage(HomePage.maintenance)),
+                CarWashScreen(key: const ValueKey('car-wash'), onBack: () => openPage(HomePage.maintenance)),
+                FuelUpScreen(key: const ValueKey('fuel'), onBack: () => openPage(HomePage.maintenance)),
+
+                Builder(
+                  key: const ValueKey('schedule_screen'),
+                  builder: (context) {
+                    return FutureBuilder<SharedPreferences>(
+                      future: SharedPreferences.getInstance(),
+                      builder: (context, snapshot) {
+                        if (!snapshot.hasData) {
+                          return const Center(child: CircularProgressIndicator());
+                        }
+
+                        final prefs = snapshot.data!;
+                        final localDataSource = ReminderLocalDataSourceImpl(SharedPrefsManager(prefs));
+                        final remoteDataSource = ReminderRemoteDataSourceImpl(FirebaseFirestore.instance);
+
+                        final reminderRepository = ReminderRepository(
+                          localDataSource: localDataSource,
+                          remoteDataSource: remoteDataSource,
+                        );
+
+                        final scheduleRepository = ScheduleRepository();
+
+                        return ScheduleScreen(
+                          repository: scheduleRepository,
+                          reminderRepository: reminderRepository,
+                          pushHelper: PushHelper(FlutterLocalNotificationsPlugin()),
+                          carNumber: carNumber,
+                          userId: '',
+                        );
+                      },
+                    );
+                  },
+                ),
+                FuelMapScreen(key: const ValueKey('fuel-map')),
+                CarWashMapScreen(key: const ValueKey('car-wash-map')),
+              ],
             ],
-          ]),
+          ),
           bottomNavigationBar: _isMainTab(_currentIndex)
               ? SizedBox(
-                height: 58,
-                child: BottomNavigationBar(
+                  height: 58,
+                  child: BottomNavigationBar(
                     backgroundColor: AppColors.energyBlue50,
                     currentIndex: _bottomNavIndexFor(_currentIndex),
                     onTap: (i) {
@@ -437,7 +435,7 @@ if (hasCar) ...[
                       ),
                     ],
                   ),
-              )
+                )
               : null,
         ),
       ),
@@ -453,9 +451,9 @@ if (hasCar) ...[
         index == _pageIndexMap[HomePage.schedule] ||
         index == _pageIndexMap[HomePage.maintenance] ||
         index == _pageIndexMap[HomePage.tuning] ||
-        index == _pageIndexMap[HomePage.service] ||        
+        index == _pageIndexMap[HomePage.service] ||
         index == _pageIndexMap[HomePage.carWash] ||
-        index == _pageIndexMap[HomePage.fuel] ||      
+        index == _pageIndexMap[HomePage.fuel] ||
         index == _pageIndexMap[HomePage.settings];
   }
 

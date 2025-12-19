@@ -101,7 +101,7 @@ class _MyAppState extends State<MyApp> {
       } catch (_) {}
     }
 
-    debugPrint('🔍 Active subscription or trial: $hasActiveSub');
+    debugPrint('Active subscription or trial: $hasActiveSub');
 
     if (mounted) {
       setState(() {

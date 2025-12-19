@@ -27,28 +27,24 @@ void _loadBanner() {
     if (_bannerAd != null || _isLoading) return;
     _isLoading = true;
 
-    debugPrint("🚀 Starting to load banner...");
-
     final banner = BannerAd(
       adUnitId: AdHelper.bannerAdUnitId,
       size: widget.size,
       request: const AdRequest(),
       listener: BannerAdListener(
         onAdLoaded: (ad) {
-          debugPrint("✅ Banner uploaded successfully!");
           setState(() {
             _bannerAd = ad as BannerAd;
             _isLoading = false;
           });
         },
         onAdFailedToLoad: (ad, error) {
-          debugPrint("❌ Error loading banner: $error");
           ad.dispose();
           _isLoading = false;
         },
-        onAdOpened: (_) => debugPrint("📢 The banner was opened by the user"),
-        onAdClosed: (_) => debugPrint("📪 The banner is closed"),
-        onAdImpression: (_) => debugPrint("👁 The banner is shown to the user"),
+        onAdOpened: (_) => debugPrint("The banner was opened by the user"),
+        onAdClosed: (_) => debugPrint("The banner is closed"),
+        onAdImpression: (_) => debugPrint("The banner is shown to the user"),
       ),
     );
 
@@ -81,13 +77,13 @@ void _loadBanner() {
 
      
         if (snapshot.data == true) {
-          debugPrint("🚫 User with active subscription - ads hidden");
+          debugPrint("User with active subscription - ads hidden");
           return const SizedBox.shrink();
         }
 
     
         if (_bannerAd == null) {
-          debugPrint("ℹ️Advertisement not loaded yet");
+          debugPrint("Advertisement not loaded yet");
           return const SizedBox.shrink();
         }
 

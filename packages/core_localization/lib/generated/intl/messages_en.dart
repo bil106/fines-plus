@@ -326,6 +326,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "next": MessageLookupByLibrary.simpleMessage("Next"),
     "no_ads": MessageLookupByLibrary.simpleMessage("No ads"),
+    "no_car_selected": MessageLookupByLibrary.simpleMessage("No car selected"),
     "no_expenses": MessageLookupByLibrary.simpleMessage("No expense data yet"),
     "no_fines": MessageLookupByLibrary.simpleMessage(
       "There are no fines for you",

@@ -52,10 +52,10 @@ void main() {
   runZonedGuarded<Future<void>>(
     () async {
       WidgetsFlutterBinding.ensureInitialized();
-await dotenv.load(fileName: 'assets/config/.env');
-    
+      await dotenv.load(fileName: 'assets/config/.env');
+
       await Firebase.initializeApp();
-     
+
       FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
       RequestConfiguration configuration = RequestConfiguration(testDeviceIds: Env.testDeviceIdList);
       MobileAds.instance.updateRequestConfiguration(configuration);

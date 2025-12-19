@@ -174,7 +174,7 @@ class _MaintenanceScreenView extends StatelessWidget {
               ),
               if (state.isLoading)
                 Container(
-                  color: Colors.black.withOpacity(0.3),
+                  color: AppColors.black.withOpacity(0.3),
                   child: const Center(child: CircularProgressIndicator()),
                 ),
               if (state.isMenuOpen)

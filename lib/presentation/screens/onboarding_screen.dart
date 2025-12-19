@@ -1,6 +1,8 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
+import 'package:design_system/constants/app_spacers.dart';
+import 'package:design_system/theme/app_theme.dart';
 import 'package:fines_plus/features/subscription/presentation/screens/subscription_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -25,28 +27,29 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     String buttonText = (pageIndex == 0)
         ? S.of(context).next
         : (pageIndex <= 2 ? S.of(context).good : S.of(context).of_course);
-
+    final textTheme = Theme.of(context).textTheme;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const SizedBox(height: 60),
+            AppSpacers.verticalXMassive,
             Image.asset(imagePath, width: 260, height: 260),
-            const SizedBox(height: 60),
+           AppSpacers.verticalXMassive,
             Text(
               title,
               textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w600, color: Colors.black),
+              style:textTheme.black28W400
+             
             ),
-            const SizedBox(height: 12),
+           AppSpacers.verticalMedium,
             Text(
               subtitle,
               textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 18, color: Colors.black54),
+              style: textTheme.black54fs18,
             ),
-            const SizedBox(height: 40),
+            AppSpacers.verticalHuge,
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
@@ -60,7 +63,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     pageController.nextPage(duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
                   }
                 },
-                child: Text(buttonText, style: const TextStyle(fontSize: 18, color: Colors.white)),
+                child: Text(buttonText, style: textTheme.white18W400)
               ),
             ),
           ],
@@ -71,7 +74,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   Widget _buildSubscriptionPage() {
     return SubscriptionScreen(
-     
       onBack: () {
         pageController.previousPage(duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
       },
@@ -96,6 +98,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(20),

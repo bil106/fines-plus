@@ -35,7 +35,7 @@ class FinesServer {
         }
 
         if (kDebugMode) {
-          print('🔹 Request: carNumber=$carNumber, docSeries=$docSeries, docNumber=$docNumber');
+          print('Request: carNumber=$carNumber, docSeries=$docSeries, docNumber=$docNumber');
         }
 
         final html = await fetchFines(
@@ -64,7 +64,7 @@ class FinesServer {
 
     _server = await io.serve(handler, InternetAddress.loopbackIPv4, 3000);
     if (kDebugMode) {
-      print('🚀 FinesServer running on http://${_server!.address.host}:${_server!.port}');
+      print('FinesServer running on http://${_server!.address.host}:${_server!.port}');
     }
   }
 
@@ -95,7 +95,7 @@ Future<String> fetchFines({
     body: {"plate": plate, "document": document, "g-recaptcha-response": captchaToken},
   );
 
-  if (kDebugMode) print("🔹 POST Status: ${postResponse.statusCode}");
+  if (kDebugMode) print("POST Status: ${postResponse.statusCode}");
 
   String subUrl = postResponse.headers['location'] ?? '';
   if (!subUrl.startsWith('http') && subUrl.isNotEmpty) {
@@ -120,7 +120,6 @@ List<Map<String, dynamic>> parseFinesHtml(String html) {
   if (html.isEmpty) return [];
 
   final document = parse(html);
-
 
   final rows = document.querySelectorAll('table.fines-table tbody tr');
 

@@ -54,7 +54,7 @@ class _FuelMapScreenState extends State<FuelMapScreen> {
 
       await _loadGasStations(current);
     } catch (e) {
-      if (kDebugMode) print("❌ Error getting location: $e");
+      if (kDebugMode) print("Error getting location: $e");
     }
   }
 
@@ -105,14 +105,14 @@ class _FuelMapScreenState extends State<FuelMapScreen> {
         }
       });
     } catch (e) {
-      if (kDebugMode) print("❌ Error loading gas stations: $e");
+      if (kDebugMode) print("Error loading gas stations: $e");
     }
   }
 
   Future<void> _checkLocationPermission() async {
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
-      if (kDebugMode) print("⚠️ Geolocation is disabled");
+      if (kDebugMode) print("Geolocation is disabled");
       return;
     }
 
@@ -120,13 +120,13 @@ class _FuelMapScreenState extends State<FuelMapScreen> {
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
-        if (kDebugMode) print("🚫 Permission denied");
+        if (kDebugMode) print("Permission denied");
         return;
       }
     }
 
     if (permission == LocationPermission.deniedForever) {
-      if (kDebugMode) print("⛔ Permission permanently denied");
+      if (kDebugMode) print("Permission permanently denied");
       return;
     }
   }

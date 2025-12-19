@@ -58,12 +58,10 @@ class ScheduleCubit extends Cubit<ScheduleState> {
     if (carNumber.isEmpty) return;
 
     if (task.id != null && state.tasks.any((t) => t.id != null && t.id == task.id)) {
-      debugPrint("Task with same id already exists, skipping add");
       return;
     }
 
     if (state.tasks.any((t) => t.description == task.description && t.isInsurance == task.isInsurance)) {
-      debugPrint("Similar task already exists, skipping add");
       return;
     }
 

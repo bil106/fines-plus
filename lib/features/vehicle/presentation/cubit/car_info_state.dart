@@ -30,13 +30,15 @@ class CarInfoErrorStatus extends CarInfoStatus {
   @override
   List<Object?> get props => [message];
 }
+
 class CarInfoUnauthorizedStatus extends CarInfoStatus {}
+
 class CarInfoState extends Equatable {
   final String carNumber;
   final String techPassport;
   final CarInfoStatus status;
   final bool hasCheckedFines;
-  final CarInfoModel? carDetails; 
+  final CarInfoModel? carDetails;
 
   const CarInfoState({
     this.carNumber = '',

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:core_localization/generated/l10n.dart';
+import 'package:design_system/constants/app_spacers.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -19,15 +20,15 @@ class UpdateRequiredScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Image.asset('assets/icons/logo_app.png'),
-              const SizedBox(height: 24),
+               AppSpacers.verticalLargeXL,
               Text(
                 S.of(context).new_version,
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 16),
+              AppSpacers.verticalMediumLarge,
               Text(S.of(context).please_update, textAlign: TextAlign.center),
-              const SizedBox(height: 24),
+              AppSpacers.verticalLargeXL,
             ElevatedButton(
                 onPressed: () async {
                   const playStoreUrl =

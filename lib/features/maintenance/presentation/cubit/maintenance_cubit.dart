@@ -18,24 +18,18 @@ import 'maintenance_state.dart';
 import 'dart:async';
 import 'package:bloc/bloc.dart';
 
-
-
-
 class MaintenanceCubit extends Cubit<MaintenanceState> {
   final ExpenseRepository expenseRepository;
   final CarInfoLocalDataSource localDataSource;
-  final CarCubit carCubit; 
-  late final StreamSubscription _carSub; 
+  final CarCubit carCubit;
+  late final StreamSubscription _carSub;
 
   MaintenanceCubit({required this.expenseRepository, required this.localDataSource, required this.carCubit})
     : super(const MaintenanceState()) {
-    // subscribe before initial load so we don't miss initial car emit
     _carSub = carCubit.stream.listen((carState) {
-      final newCarNumber = carState.carNumber; 
+      final newCarNumber = carState.carNumber;
       _onCarChanged(newCarNumber);
     });
-
-    // initial load
     init();
   }
 
@@ -152,7 +146,6 @@ class MaintenanceCubit extends Cubit<MaintenanceState> {
       final fuelRecords = <FuelRecord>[];
       final tuningRecords = <TuningRecord>[];
       final carWashRecords = <CarWashRecord>[];
-     
 
       for (final exp in expenses) {
         switch (exp.category) {
@@ -163,7 +156,7 @@ class MaintenanceCubit extends Cubit<MaintenanceState> {
             fuelRecords.add(FuelRecord.fromExpense(exp, currency: ''));
             break;
           case ExpenseCategory.tuning:
-            tuningRecords.add(TuningRecord.fromExpense(exp,));
+            tuningRecords.add(TuningRecord.fromExpense(exp));
             break;
           case ExpenseCategory.carWash:
             carWashRecords.add(CarWashRecord.fromExpense(exp));
@@ -592,7 +585,6 @@ class MaintenanceCubit extends Cubit<MaintenanceState> {
     return super.close();
   }
 }
-
 
 extension MileageCalculations on MaintenanceCubit {
   Map<String, int> getMonthlyMileage() {

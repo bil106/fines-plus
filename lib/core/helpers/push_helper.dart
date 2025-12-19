@@ -19,7 +19,6 @@ class PushHelper {
 
 
     if (delay.isNegative) {
-      debugPrint(' Notification time is in the past, skipping.');
       return;
     }
 

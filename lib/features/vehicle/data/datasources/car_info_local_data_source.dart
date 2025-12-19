@@ -42,7 +42,7 @@ class CarInfoLocalDataSource {
     final series = prefs.getString(_seriesKey) ?? '';
     final number = prefs.getString(_numberKey) ?? '';
 
-    debugPrint("📥 Loaded car info: number=$car, tech=$tech, series=$series, num=$number");
+    debugPrint("Loaded car info: number=$car, tech=$tech, series=$series, num=$number");
 
     return CarInfoModel(
       carNumber: car,
@@ -71,7 +71,7 @@ Future<void> clearCarInfo() async {
     await prefs.remove(_seriesKey);
     await prefs.remove(_numberKey);
 
-    debugPrint("🧹 Local car info cleared");
+    
   }
 
 }

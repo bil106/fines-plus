@@ -89,15 +89,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
             children: [
               Padding(
                 padding: const EdgeInsets.only(left: 50),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    // _buildFeatureRow('assets/icons/no_ad.svg', S.of(context).no_ads, isSvg: true),
-                    // _buildFeatureRow(Icons.cloud_upload, S.of(context).increased_download_limit),
-                    // _buildFeatureRow(Icons.analytics, S.of(context).analitics),
-                    // _buildFeatureRow(Icons.search, S.of(context).search_fines),
-                  ],
-                ),
+                child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: []),
               ),
               AppSpacers.verticalMedium,
 
@@ -122,7 +114,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                     end: Alignment.bottomRight,
                                   )
                                 : null,
-                            color: isSelected ? null : Colors.white,
+                            color: isSelected ? null : AppColors.neutreBlanc,
                             borderRadius: BorderRadius.circular(20),
                             boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 6, offset: const Offset(0, 3))],
                           ),
@@ -138,7 +130,11 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                   ),
                                   child: Text(
                                     S.of(context).most_popular,
-                                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12),
+                                    style: TextStyle(
+                                      color: AppColors.neutreBlanc,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 12,
+                                    ),
                                   ),
                                 ),
 
@@ -149,7 +145,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                   style: TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w600,
-                                    color: isSelected ? Colors.white : AppColors.blue700,
+                                    color: isSelected ? AppColors.neutreBlanc : AppColors.blue700,
                                   ),
                                 ),
 
@@ -161,7 +157,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                     plan["title"],
                                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
                                       fontWeight: FontWeight.bold,
-                                      color: isSelected ? Colors.white : AppColors.blue700,
+                                      color: isSelected ? AppColors.neutreBlanc : AppColors.blue700,
                                     ),
                                   ),
                                   Column(
@@ -172,7 +168,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                         style: TextStyle(
                                           fontSize: 20,
                                           fontWeight: FontWeight.bold,
-                                          color: isSelected ? Colors.white : AppColors.blue700,
+                                          color: isSelected ? AppColors.neutreBlanc : AppColors.blue700,
                                         ),
                                       ),
                                       Text(
@@ -200,7 +196,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 16),
-                          backgroundColor: Colors.orange,
+                          backgroundColor: AppColors.orange,
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                         ),
                         onPressed: _buySelectedPlan,
@@ -217,7 +213,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.check_circle, color: Colors.green),
+                        Icon(Icons.check_circle, color: AppColors.green),
                         SizedBox(width: 6),
                         Text(S.of(context).money_back, style: TextStyle(fontWeight: FontWeight.bold)),
                       ],
@@ -230,7 +226,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                       child: Text(
                         S.of(context).text_automatically_renew,
                         textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 13, color: Colors.grey.shade700),
+                        style: TextStyle(fontSize: 13, color: AppColors.grey700),
                       ),
                     ),
 
@@ -239,7 +235,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.lock, color: Colors.green),
+                        Icon(Icons.lock, color: AppColors.green),
                         SizedBox(width: 6),
                         Text(S.of(context).pay_safe, style: TextStyle(fontWeight: FontWeight.w600)),
                       ],
@@ -255,24 +251,4 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
       ),
     );
   }
-
-  // Widget _buildFeatureRow(dynamic iconOrPath, String text, {bool isSvg = false}) {
-  //   return Padding(
-  //     padding: const EdgeInsets.symmetric(vertical: 4),
-  //     child: Row(
-  //       children: [
-  //         isSvg
-  //             ? SvgPicture.asset(
-  //                 iconOrPath,
-  //                 width: 28,
-  //                 height: 28,
-  //                 colorFilter: const ColorFilter.mode(AppColors.blue700, BlendMode.srcIn),
-  //               )
-  //             : Icon(iconOrPath, color: AppColors.blue700),
-  //         AppSpacers.verticalSmallMedium,
-  //         Text(text, style: Theme.of(context).textTheme.bodyLarge),
-  //       ],
-  //     ),
-  //   );
-  // }
 }

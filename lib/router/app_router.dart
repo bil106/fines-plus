@@ -6,7 +6,7 @@ import 'package:fines_plus/core/helpers/push_helper.dart';
 import 'package:fines_plus/features/analytics/data/models/event_model.dart';
 import 'package:fines_plus/features/analytics/presentation/screens/analytics_screen.dart';
 import 'package:fines_plus/features/export/presentation/screens/export_screen.dart';
-import 'package:fines_plus/features/fines/presentation/screens/fine_check_screen.dart';
+
 import 'package:fines_plus/features/fines/presentation/screens/fines_screeen.dart';
 import 'package:fines_plus/features/history/presentation/screens/history_screen.dart';
 import 'package:fines_plus/features/home/presentation/screens/home_screen.dart';
@@ -66,7 +66,6 @@ class AppRouter extends RootStackRouter {
     AutoRoute(page: OnboardingRoute.page, path: '/onboarding'),
 
     AutoRoute(page: CarInfoRoute.page, path: '/car-info'),
-    AutoRoute(page: FineCheckRoute.page, path: '/fine_check'),
     AutoRoute(page: SettingsRoute.page, path: '/settings'),
     AutoRoute(page: ExportRoute.page, path: '/export'),
     AutoRoute(page: FuelMapRoute.page, path: '/fuel-map'),

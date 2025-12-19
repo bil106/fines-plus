@@ -92,10 +92,8 @@ Future<void> _onSubmit(BuildContext context) async {
     }
 
     try {
-      // Getting Cubit subscriptions
       final subCubit = context.read<SubscriptionCubit>();
 
-   
       await subCubit.load(user.uid);
 
       final subState = subCubit.state;

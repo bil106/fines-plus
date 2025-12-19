@@ -82,7 +82,7 @@ class LastEventCardAction extends StatelessWidget {
                   Row(
                     children: [
                       Padding(
-                        padding: const EdgeInsets.only(left: 9.0, top: 0),
+                        padding: const EdgeInsets.only(left: 2.0, top: 0),
                         child: StreamBuilder<double>(
                           stream: CurrencyStream(settingsCubit).convertedAmountStream(event!),
                           initialData: event!.amountOriginal ?? event!.amountValue,
@@ -103,10 +103,10 @@ class LastEventCardAction extends StatelessWidget {
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(left: 49.0, top: 0),
+                        padding: const EdgeInsets.only(left: 89.0, top: 0),
                         child: Text(
                           "${event!.mileage!.toStringAsFixed(0)} ${settingsCubit.state.unit}",
-                          style: textTheme.bodyMedium?.copyWith(color: Colors.black54),
+                          style: textTheme.black8718W400,
                         ),
                       ),
                     ],

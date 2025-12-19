@@ -49,7 +49,7 @@ class ReminderRepository {
     await docRef.set(fixed.toJson(), SetOptions(merge: true));
   }
 
- Future<List<ReminderModel>> getAll(String carNumber) async {
+  Future<List<ReminderModel>> getAll(String carNumber) async {
     if (carNumber.isEmpty) {
       debugPrint('ReminderRepository.getAll skipped — carNumber empty');
       return [];
@@ -102,7 +102,6 @@ class ReminderRepository {
       return [];
     }
   }
-
 
   Future<void> delete(String carNumber, String id) async {
     if (carNumber.isEmpty) {

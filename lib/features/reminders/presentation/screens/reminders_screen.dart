@@ -31,8 +31,8 @@ class _RemindersScreenState extends State<RemindersScreen> {
       builder: (context, carState) {
         final carNumber = carState.carNumber;
 
-         if (carNumber.isEmpty) {
-          return const Center(child: Text('No car selected'));
+        if (carNumber.isEmpty) {
+          return  Center(child: Text(S.of(context).no_car_selected));
         }
 
         return BlocProvider(

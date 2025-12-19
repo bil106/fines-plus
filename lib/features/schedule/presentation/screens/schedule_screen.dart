@@ -86,7 +86,6 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
         quick.syncActiveCategories(carNumber);
       }
       quick.init();
-      // quick.syncWithRepository();
     });
   }
 
@@ -114,7 +113,6 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
 
   void addEvent(MaintenanceTask task) {
     if (scheduleCubit == null || scheduleCubit!.carNumber.isEmpty) {
-      debugPrint('addTask called with empty carNumber');
       return;
     }
 
@@ -357,14 +355,11 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                                     final quick = context.read<QuickActionsCubit>();
                                     final tasksRepository = context.read<TasksRepository>();
                                     final carNumber = context.read<CarCubit>().state.carNumber;
-
                                     final indexToRemove = scheduleCubit!.state.tasks.indexOf(task);
                                     if (indexToRemove != -1) {
                                       await scheduleCubit!.removeTask(indexToRemove, reminderCubit: reminderCubit);
                                     }
-
                                     quick.deactivateCategory(task.category.toLowerCase());
-
                                     unawaited(
                                       tasksRepository.removeTask(task.category.toLowerCase(), carNumber: carNumber),
                                     );

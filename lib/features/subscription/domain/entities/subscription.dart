@@ -20,5 +20,5 @@ class SubscriptionPlan {
     required this.features,
   });
 
- bool get isTrial => id == 'sub_3_months';
+  bool get isTrial => id == 'sub_3_months';
 }

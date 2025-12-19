@@ -147,7 +147,7 @@ class _CarInfoViewState extends State<_CarInfoView> {
 
     context.read<AnalyticsCubit>().stopListeningToCar();
     context.read<AnalyticsCubit>().clear();
-    
+
     context.read<ExpensesCubit>().clearExpensesForCar();
     context.read<HistoryCubit>().clear();
 
@@ -264,7 +264,7 @@ class _CarInfoViewState extends State<_CarInfoView> {
                     onPressed: hasCar ? () => _showDeleteDialog(context) : null,
                     child: Text(
                       S.of(context).delete_car_number,
-                      style: textTheme.bodyMedium?.copyWith(color: hasCar ? Colors.red : Colors.grey),
+                      style: textTheme.bodyMedium?.copyWith(color: hasCar ? AppColors.red : AppColors.neutreGrey),
                     ),
                   ),
                 ],

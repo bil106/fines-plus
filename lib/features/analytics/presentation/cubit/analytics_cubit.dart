@@ -71,7 +71,6 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
   void stopListeningToCar() {
     if (_isClosed) return;
     _carSub.cancel();
-    debugPrint("AnalyticsCubit unsubscribed from car changes");
   }
 
   @override

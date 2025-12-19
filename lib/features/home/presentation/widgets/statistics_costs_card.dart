@@ -1,4 +1,6 @@
 import 'package:core_localization/generated/l10n.dart';
+import 'package:design_system/colors/app_colors.dart';
+import 'package:design_system/constants/app_spacers.dart';
 import 'package:fines_plus/core/extensions/currency_service.dart';
 import 'package:fines_plus/core/helpers/statistics_costs_presenter.dart';
 import 'package:fines_plus/features/home/presentation/localization/flutter_stats_localization.dart';
@@ -37,24 +39,24 @@ class StatisticsCostsCard extends StatelessWidget {
                 Row(
                   children: [
                     Image.asset('assets/icons/coin_stack.png', width: 36, height: 36, color: Colors.grey),
-                    const SizedBox(width: 12),
+                    AppSpacers.horizontalMedium,
                     _buildAmount(
                       label: presenter.currentMonthLabel,
                       amount: zeroAmount,
                       currency: currency,
-                      color: Colors.blueAccent,
+                      color: AppColors.blueAccent,
                       fontSize: 22,
                     ),
                     const Spacer(),
                     Row(
                       children: [
-                        Icon(Icons.arrow_upward, color: Colors.grey, size: 20),
-                        const SizedBox(width: 4),
+                        Icon(Icons.arrow_upward, color: AppColors.neutreGrey, size: 20),
+                        AppSpacers.horizontalSmall,
                         _buildAmount(
                           label: presenter.previousMonthLabel,
                           amount: zeroAmount,
                           currency: currency,
-                          color: Colors.grey,
+                          color: AppColors.neutreGrey,
                           fontSize: 18,
                         ),
                       ],
@@ -74,7 +76,7 @@ class StatisticsCostsCard extends StatelessWidget {
           currencyService: context.read<CurrencyService>(),
         );
 
-        final arrowColor = presenter.increased ? Colors.redAccent : Colors.green;
+        final arrowColor = presenter.increased ? AppColors.redAccent : AppColors.green;
         final arrowIcon = presenter.increased ? Icons.arrow_upward : Icons.arrow_downward;
 
         return _buildCard(
@@ -86,7 +88,7 @@ class StatisticsCostsCard extends StatelessWidget {
               Row(
                 children: [
                   Image.asset('assets/icons/coin_stack.png', width: 36, height: 36, color: Colors.grey),
-                  const SizedBox(width: 12),
+                 AppSpacers.horizontalMedium,
                   _buildAmount(
                     label: presenter.currentMonthLabel,
                     amount: presenter.currentFormatted,
@@ -97,14 +99,14 @@ class StatisticsCostsCard extends StatelessWidget {
                   const Spacer(),
                   Row(
                     children: [
-                      Icon(arrowIcon, color: arrowColor, size: 20),
-                      const SizedBox(width: 4),
+                      Icon(arrowIcon, color: arrowColor, size: 22),
+                     AppSpacers.horizontalSmall,
                       _buildAmount(
                         label: presenter.previousMonthLabel,
                         amount: presenter.previousFormatted,
                         currency: currency,
                         color: arrowColor,
-                        fontSize: 18,
+                        fontSize: 20,
                       ),
                     ],
                   ),
@@ -140,7 +142,7 @@ class StatisticsCostsCard extends StatelessWidget {
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       elevation: 2,
-      child: Padding(padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12), child: child),
+      child: Padding(padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 14), child: child),
     );
   }
 }

@@ -29,23 +29,15 @@ class CarInfoCubit extends Cubit<CarInfoState> {
   static final carReg = RegExp(r'^[А-ЯЇІЄҐ]{2}\d{4}[А-ЯЇІЄҐ]{2}$');
   static final techReg = RegExp(r'^[А-ЯІЇЄҐ]{3}\d{6}$');
 
- 
   Future<void> loadSavedCarInfo() async {
     final m = await _repo.getCarInfo();
-    emit(
-      state.copyWith(
-        carNumber: m.carNumber,
-        techPassport: m.techPassport,
-        carDetails: null, 
-      ),
-    );
+    emit(state.copyWith(carNumber: m.carNumber, techPassport: m.techPassport, carDetails: null));
 
     if (m.carNumber.isNotEmpty) {
       await _saveCarToFirestore(m);
     }
   }
 
- 
   Future<void> _saveCarToFirestore(CarInfoModel m) async {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) return;
@@ -59,7 +51,6 @@ class CarInfoCubit extends Cubit<CarInfoState> {
     await FirebaseFirestore.instance.collection("cars").doc(m.carNumber).set(data, SetOptions(merge: true));
   }
 
-  
   Future<void> setCarNumber(String value) async {
     final carNumber = value.trim().replaceAll(RegExp(r'[^А-ЯЇІЄҐ0-9]'), '');
     final user = FirebaseAuth.instance.currentUser;
@@ -67,10 +58,9 @@ class CarInfoCubit extends Cubit<CarInfoState> {
 
     final m = CarInfoModel(carNumber: carNumber, techPassport: state.techPassport, ownerId: ownerId);
 
- await _repo.saveCarInfo(m);
+    await _repo.saveCarInfo(m);
     emit(state.copyWith(carNumber: carNumber));
     await _saveCarToFirestore(m);
-
 
     try {
       final carCubit = getIt<CarCubit>();
@@ -78,10 +68,8 @@ class CarInfoCubit extends Cubit<CarInfoState> {
     } catch (e) {
       debugPrint("CarCubit not found: $e");
     }
-
   }
 
-  
   Future<void> setTechPassport(String value) async {
     final techPassport = value.trim().toUpperCase();
     final user = FirebaseAuth.instance.currentUser;
@@ -101,7 +89,6 @@ class CarInfoCubit extends Cubit<CarInfoState> {
     }
   }
 
- 
   bool get isFormValid => carReg.hasMatch(state.carNumber) && techReg.hasMatch(state.techPassport);
 
   String? validate() {
@@ -120,7 +107,6 @@ class CarInfoCubit extends Cubit<CarInfoState> {
     return {'series': '', 'number': ''};
   }
 
- 
   Future<void> checkFinesWithCaptcha(String captchaToken) async {
     final prefs = await SharedPreferences.getInstance();
     final finesEnabled = prefs.getBool("finesCheck") ?? true;
@@ -164,7 +150,6 @@ class CarInfoCubit extends Cubit<CarInfoState> {
     }
   }
 
-  
   Future<void> loadCarDetailsFromApi() async {
     if (state.carNumber.isEmpty) return;
 
@@ -172,27 +157,22 @@ class CarInfoCubit extends Cubit<CarInfoState> {
 
     try {
       final carData = await CarPlatesService().fetchCarInfo(state.carNumber);
-      emit(
-        state.copyWith(
-          status: CarInfoLoadedStatus([]),
-          carDetails: carData, 
-        ),
-      );
+      emit(state.copyWith(status: CarInfoLoadedStatus([]), carDetails: carData));
     } catch (e) {
       emit(state.copyWith(status: CarInfoErrorStatus('Failed to load car details: $e')));
     }
   }
-Future<void> deleteCurrentCar() async {
+
+  Future<void> deleteCurrentCar() async {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) return;
 
     final carNumber = state.carNumber;
     if (carNumber.isEmpty) return;
 
-   
     try {
       final analyticsCubit = getIt<AnalyticsCubit>();
-      analyticsCubit.stopListeningToCar(); 
+      analyticsCubit.stopListeningToCar();
     } catch (_) {}
 
     try {
@@ -202,18 +182,12 @@ Future<void> deleteCurrentCar() async {
 
     emit(state.copyWith(status: CarInfoLoadingStatus()));
 
-  
     try {
-  
       await _repo.deleteCar(carNumber);
 
- 
       emit(const CarInfoState());
     } catch (e) {
       emit(state.copyWith(status: CarInfoErrorStatus(e.toString())));
     }
   }
-
-
 }
-

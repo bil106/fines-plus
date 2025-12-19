@@ -31,7 +31,7 @@ class QuickActionsCubit extends Cubit<QuickActionsState> {
     emit(state.copyWith(hasOilTask: hasOil));
   }
 
-Future<void> onTaskCreated(Map<String, dynamic> data, {required String labelKey, required String carNumber}) async {
+  Future<void> onTaskCreated(Map<String, dynamic> data, {required String labelKey, required String carNumber}) async {
     if (carNumber.isEmpty) return;
 
     final key = labelKey.toLowerCase();
@@ -49,7 +49,6 @@ Future<void> onTaskCreated(Map<String, dynamic> data, {required String labelKey,
     await prefs.setStringList('activeCategories', updatedActive);
   }
 
-
   void clearCreatedTask(String labelKey) {
     final key = labelKey.toLowerCase();
     final updatedTasks = Map<String, List<Map<String, dynamic>>>.from(state.createdTasks);
@@ -59,17 +58,15 @@ Future<void> onTaskCreated(Map<String, dynamic> data, {required String labelKey,
     emit(state.copyWith(createdTasks: updatedTasks, activeCategories: updatedActive));
   }
 
-Future<void> onTaskDeleted(String category) async {
+  Future<void> onTaskDeleted(String category) async {
     final updatedCreatedTasks = Map.of(state.createdTasks);
     updatedCreatedTasks.remove(category);
-
 
     final updatedActiveCategories = Set<String>.from(state.activeCategories);
     updatedActiveCategories.remove(category.toLowerCase());
 
     emit(state.copyWith(createdTasks: updatedCreatedTasks, activeCategories: updatedActiveCategories.toList()));
   }
-
 
   Future<void> syncWithRepository() async {
     final updated = <String>[];
@@ -103,9 +100,11 @@ Future<void> onTaskDeleted(String category) async {
       emit(state.copyWith(createdTasks: state.createdTasks));
     }
   }
+
   void clearAllActive() {
     emit(state.copyWith(activeCategories: [], createdTasks: {}));
   }
+
   Future<void> syncActiveCategories(String carNumber) async {
     if (carNumber.isEmpty) return;
 
@@ -122,21 +121,20 @@ Future<void> onTaskDeleted(String category) async {
 
     emit(state.copyWith(activeCategories: activeCategories));
   }
-void removeCategoryLocally(String labelKey) {
+
+  void removeCategoryLocally(String labelKey) {
     final key = labelKey.toLowerCase();
 
     final updatedTasks = Map<String, List<Map<String, dynamic>>>.from(state.createdTasks);
     updatedTasks.remove(key);
 
- 
     final updatedActive = List<String>.from(state.activeCategories)..remove(key);
 
-  
     emit(state.copyWith(createdTasks: updatedTasks, activeCategories: updatedActive));
 
     prefs.setStringList('activeCategories', updatedActive);
   }
-  
+
   void activateCategory(String labelKey) {
     final key = labelKey.toLowerCase();
     if (!state.activeCategories.contains(key)) {
@@ -149,11 +147,10 @@ void removeCategoryLocally(String labelKey) {
     emit(state.copyWith(activeCategories: state.activeCategories.where((e) => e != key).toList()));
   }
 
-void updateActiveCategoriesFromTasks(List<String> categories) {
+  void updateActiveCategoriesFromTasks(List<String> categories) {
     final uniqueCategories = categories.map((e) => e.toLowerCase()).toSet().toList();
     emit(state.copyWith(activeCategories: uniqueCategories));
 
-    
     prefs.setStringList('activeCategories', uniqueCategories);
   }
 }

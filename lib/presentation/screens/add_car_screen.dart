@@ -123,7 +123,7 @@ class _AddCarScreenState extends State<AddCarScreen> {
                               child: Text(
                                 S.of(context).subscription,
                                 style: textTheme.titleMedium?.copyWith(
-                                  color: Colors.white,
+                                  color: AppColors.neutreBlanc,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),

@@ -461,6 +461,7 @@
 "delete": "Delete",
 "select_type_insurance": "Select insurance type",
 "already_added": "Already added",
+"no_car_selected": "No car selected",
 "text_automatically_renew": "Your subscription will automatically renew at the full price at the end of the chosen term. You can cancel anytime."
 
 }

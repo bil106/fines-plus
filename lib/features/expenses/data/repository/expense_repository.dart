@@ -8,16 +8,16 @@ class ExpenseRepository {
   final FirebaseFirestore firestore;
 
   ExpenseRepository(this.firestore);
-void _assertCarNumber(String carNumber) {
+  void _assertCarNumber(String carNumber) {
     if (carNumber.isEmpty) {
       throw StateError('ExpenseRepository: carNumber is empty');
     }
   }
+
   CollectionReference _expensesCollection(String carNumber) {
     _assertCarNumber(carNumber);
     return firestore.collection('cars').doc(carNumber).collection('expenses');
   }
-
 
   Future<DocumentReference> addExpense({required String carNumber, required Expense expense}) async {
     final col = _expensesCollection(carNumber);
@@ -31,7 +31,7 @@ void _assertCarNumber(String carNumber) {
     return docRef;
   }
 
-   Stream<List<Expense>> watchExpenses({required String carNumber, int limit = 1000}) {
+  Stream<List<Expense>> watchExpenses({required String carNumber, int limit = 1000}) {
     if (carNumber.isEmpty) {
       return const Stream.empty();
     }
@@ -45,7 +45,8 @@ void _assertCarNumber(String carNumber) {
           (snap) => snap.docs.map((d) => Expense.fromFirestore(d.data() as Map<String, dynamic>, id: d.id)).toList(),
         );
   }
-   Future<List<Expense>> getExpensesOnce({required String carNumber, int limit = 1000}) async {
+
+  Future<List<Expense>> getExpensesOnce({required String carNumber, int limit = 1000}) async {
     if (carNumber.isEmpty) return [];
 
     final col = _expensesCollection(carNumber);
@@ -53,6 +54,7 @@ void _assertCarNumber(String carNumber) {
 
     return snap.docs.map((d) => Expense.fromFirestore(d.data() as Map<String, dynamic>, id: d.id)).toList();
   }
+
   Future<void> updateExpense({
     required String carNumber,
     required String expenseId,
@@ -88,7 +90,7 @@ void _assertCarNumber(String carNumber) {
     await batch.commit();
   }
 
-Future<void> deleteExpensesByCategory({required String carNumber, required String category}) async {
+  Future<void> deleteExpensesByCategory({required String carNumber, required String category}) async {
     if (carNumber.isEmpty) return;
 
     final col = _expensesCollection(carNumber);

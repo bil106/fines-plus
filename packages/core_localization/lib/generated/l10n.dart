@@ -3934,6 +3934,16 @@ class S {
     );
   }
 
+  /// `No car selected`
+  String get no_car_selected {
+    return Intl.message(
+      'No car selected',
+      name: 'no_car_selected',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Your subscription will automatically renew at the full price at the end of the chosen term. You can cancel anytime.`
   String get text_automatically_renew {
     return Intl.message(

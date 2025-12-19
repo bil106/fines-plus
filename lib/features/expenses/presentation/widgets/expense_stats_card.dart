@@ -65,7 +65,11 @@ class ExpenseStatsCard extends StatelessWidget {
                       radius: 50,
                       gradient: _gradientForCategory(e.key),
                       title: convertedValue.toStringAsFixed(0),
-                      titleStyle: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white),
+                      titleStyle: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.neutreBlanc,
+                      ),
                       borderSide: const BorderSide(color: AppColors.neutreBlanc, width: 1),
                     );
                   }).toList(),

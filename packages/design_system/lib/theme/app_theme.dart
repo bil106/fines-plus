@@ -171,6 +171,11 @@ extension AppTextTheme on TextTheme {
         fontWeight: FontWeight.w400,
         fontSize: 18,
       );
+  TextStyle get black54fs18 => const TextStyle(
+        color: Colors.black54,
+        fontWeight: FontWeight.w400,
+        fontSize: 18,
+      );
   TextStyle get black13W400 => const TextStyle(
         color: AppColors.black,
         fontWeight: FontWeight.w400,
@@ -246,6 +251,7 @@ extension AppTextTheme on TextTheme {
         fontWeight: FontWeight.w400,
         fontSize: 28,
       );
+
   TextStyle get black30bold => const TextStyle(
         color: AppColors.black,
         fontWeight: FontWeight.bold,
