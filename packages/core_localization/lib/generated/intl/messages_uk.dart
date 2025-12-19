@@ -40,6 +40,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "all_exp_hist_deleted": MessageLookupByLibrary.simpleMessage(
       "Вилучено всю історію витрат",
     ),
+    "already_added": MessageLookupByLibrary.simpleMessage("Вже додано"),
     "already_have_account": MessageLookupByLibrary.simpleMessage(
       "Вже маєте обліковий запис? Увійти",
     ),
@@ -434,6 +435,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "select_plan": MessageLookupByLibrary.simpleMessage("Виберіть план"),
     "select_service": MessageLookupByLibrary.simpleMessage(
       "Виберіть дату і хоча б один сервіс",
+    ),
+    "select_type_insurance": MessageLookupByLibrary.simpleMessage(
+      "Виберіть вид страховки",
     ),
     "selected": MessageLookupByLibrary.simpleMessage("Вибрано"),
     "selected_service_station": MessageLookupByLibrary.simpleMessage(

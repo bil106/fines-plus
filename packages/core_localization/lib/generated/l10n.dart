@@ -3914,6 +3914,26 @@ class S {
     return Intl.message('Delete', name: 'delete', desc: '', args: []);
   }
 
+  /// `Select insurance type`
+  String get select_type_insurance {
+    return Intl.message(
+      'Select insurance type',
+      name: 'select_type_insurance',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Already added`
+  String get already_added {
+    return Intl.message(
+      'Already added',
+      name: 'already_added',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Your subscription will automatically renew at the full price at the end of the chosen term. You can cancel anytime.`
   String get text_automatically_renew {
     return Intl.message(

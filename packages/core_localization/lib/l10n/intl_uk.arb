@@ -460,7 +460,9 @@
    "cars_deleted_success": "Автомобіль успішно видалено",
    "delete_cars_confirm": "Підтвердити видалення автомобіля",
    "delete": "Видалити",
-   "view_all_events": "Переглянути всі події"
+   "view_all_events": "Переглянути всі події",
+   "select_type_insurance": "Виберіть вид страховки",
+   "already_added": "Вже додано"
  
    
 

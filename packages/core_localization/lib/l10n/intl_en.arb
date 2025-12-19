@@ -459,6 +459,8 @@
 "cars_deleted_success": "Car deleted successfully",
 "delete_cars_confirm": "Confirm car deletion",
 "delete": "Delete",
+"select_type_insurance": "Select insurance type",
+"already_added": "Already added",
 "text_automatically_renew": "Your subscription will automatically renew at the full price at the end of the chosen term. You can cancel anytime."
 
 }

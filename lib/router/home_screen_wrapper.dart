@@ -19,7 +19,6 @@ import 'package:fines_plus/features/history/presentation/cubit/history_cubit.dar
 import 'package:fines_plus/features/history/presentation/screens/history_screen.dart';
 import 'package:fines_plus/features/home/presentation/cubit/quick_actions_cubit.dart';
 import 'package:fines_plus/features/home/presentation/screens/home_screen.dart';
-import 'package:fines_plus/features/maintenance/presentation/cubit/maintenance_cubit.dart';
 import 'package:fines_plus/features/registration/presentation/cubit/registration_cubit.dart';
 import 'package:fines_plus/features/reminders/data/datasources/reminder_local_data_source.dart';
 import 'package:fines_plus/features/reminders/data/datasources/reminder_remote_data_source.dart';
@@ -110,30 +109,29 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
       repository: AnalyticsRepository(firestore: FirebaseFirestore.instance),
       carCubit: context.read<CarCubit>(),
     );
-    _pageIndexMap = {
-      HomePage.home: 0,
-      HomePage.addCar: 1,
-      HomePage.fines: 2,
-      HomePage.reminders: 3,
-      HomePage.analytics: 4,
-      HomePage.carInfo: 5,
-      HomePage.fineCheck: 6,
-      HomePage.settings: 7,
-      HomePage.history: 8,
-      HomePage.maintenance: 9,
-      HomePage.export: 10,
-      HomePage.registration: 11,
-      HomePage.subscription: 12,
-      HomePage.carWash: 13,
-      HomePage.tuning: 14,
-      HomePage.fuel: 15,
-      HomePage.service: 16,
-      
-     
-      HomePage.schedule: 17,
-      HomePage.fuelMap: 18,
-      HomePage.carWashMap: 19,
-    };
+   _pageIndexMap = {
+  HomePage.home: 0,
+  HomePage.carInfo: 1, 
+  HomePage.addCar: 2,
+  HomePage.fines: 3,
+  HomePage.reminders: 4,
+ 
+  HomePage.analytics: 5,
+  HomePage.fineCheck: 6,
+  HomePage.settings: 7,
+  HomePage.history: 8,
+  HomePage.maintenance: 9,
+  HomePage.export: 10,
+  HomePage.registration: 11,
+  HomePage.subscription: 12,
+  HomePage.carWash: 13,
+  HomePage.tuning: 14,
+  HomePage.fuel: 15,
+  HomePage.service: 16,
+  HomePage.schedule: 17,
+  HomePage.fuelMap: 18,
+  HomePage.carWashMap: 19,
+};
     _currentIndex = _pageIndexMap[HomePage.home]!;
     debugPrint('HomeScreenWrapper: initial computed _currentIndex = $_currentIndex');
     _pageController = PageController(initialPage: _currentIndex);
@@ -177,14 +175,20 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
     });
   }
 
-  void openPage(HomePage page) {
+void openPage(HomePage page) {
+    final carState = context.read<CarCubit>().state;
+    final bool hasCar = carState.carNumber.isNotEmpty;
+
     final index = _pageIndexMap[page] ?? 0;
+
+   
+    if (!hasCar && index > 4) {
+      debugPrint("Add a car to open this page");
+      return;
+    }
+
     _pageController.animateToPage(index, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
     setState(() => _currentIndex = index);
-
-    if (page == HomePage.maintenance) {
-      context.read<MaintenanceCubit>().closeMenu();
-    }
   }
 
   void openAnalyticsTab(int tabIndex) {
@@ -207,7 +211,7 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
   Widget build(BuildContext context) {
     final carState = context.watch<CarCubit>().state;
     final carNumber = carState.carNumber;
-
+final bool hasCar = carState.carNumber.isNotEmpty;
     if (_carNumber == null) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
@@ -242,7 +246,7 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
           backgroundColor: AppColors.grey50,
           body: PageView(
             controller: _pageController,
-            physics: const BouncingScrollPhysics(),
+            physics: hasCar ? const BouncingScrollPhysics() : const NeverScrollableScrollPhysics(),
 
             onPageChanged: (index) => setState(() => _currentIndex = index),
             children: [
@@ -250,7 +254,17 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
                 value: context.read<QuickActionsCubit>(),
                 child: HomeScreen(key: const ValueKey('home')),
               ),
-
+              BlocProvider(
+                create: (_) => ExpensesCubit(repository: ExpenseRepository(FirebaseFirestore.instance)),
+                child: CarInfoScreen(
+                  key: const ValueKey('car_info_screen'),
+                  onBack: () => openPage(HomePage.home),
+                  onCheckFine: (carNumber, series, number) {
+                    _saveCarInfo(carNumber, series, number);
+                    openPage(HomePage.history);
+                  },
+                ),
+              ),
               AddCarScreen(
                 key: const ValueKey('add_car_screen'),
                 onOpenCarInfo: () => openPage(HomePage.carInfo),
@@ -278,7 +292,9 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
                   userId: '',
                 ),
               ),
+           
 
+if (hasCar) ...[
               BlocProvider.value(
                 value: analyticsCubit,
                 child: AnalyticsScreen(
@@ -288,17 +304,7 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
                   initialTabIndex: _analyticsTabIndex,
                 ),
               ),
-              BlocProvider(
-                create: (_) => ExpensesCubit(repository: ExpenseRepository(FirebaseFirestore.instance)),
-                child: CarInfoScreen(
-                  key: const ValueKey('car_info_screen'),
-                  onBack: () => openPage(HomePage.home),
-                  onCheckFine: (carNumber, series, number) {
-                    _saveCarInfo(carNumber, series, number);
-                    openPage(HomePage.history);
-                  },
-                ),
-              ),
+           
               FineCheckScreen(
                 key: const ValueKey('fine_check_screen'),
                 carNumber: _carNumber!,
@@ -394,7 +400,7 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
               FuelMapScreen(key: const ValueKey('fuel-map')),
               CarWashMapScreen(key: const ValueKey('car-wash-map')),
             ],
-          ),
+          ]),
           bottomNavigationBar: _isMainTab(_currentIndex)
               ? SizedBox(
                 height: 58,

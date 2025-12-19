@@ -83,7 +83,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
       final quick = context.read<QuickActionsCubit>();
       final carNumber = widget.carNumber;
       if (carNumber.isNotEmpty) {
-        quick.syncActiveCategories(carNumber); 
+        quick.syncActiveCategories(carNumber);
       }
       quick.init();
       // quick.syncWithRepository();
@@ -285,17 +285,14 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
             },
           ),
           BlocListener<ScheduleCubit, ScheduleState>(
-          listener: (context, state) async {
+            listener: (context, state) async {
               final quick = context.read<QuickActionsCubit>();
 
-              // 1. СИНХРОНИЗАЦИЯ ПРИ ЗАГРУЗКЕ (решает вашу проблему)
-              // Если данные загружены и список задач не в состоянии loading
               if (!state.loading) {
                 final currentCategories = state.tasks.map((t) => t.category.toLowerCase()).toList();
                 quick.updateActiveCategoriesFromTasks(currentCategories);
               }
 
-              // 2. ОБРАБОТКА УДАЛЕНИЯ (ваш текущий код)
               if (state.tasksRemoved.isNotEmpty) {
                 debugPrint(
                   'ScheduleCubit emitted tasksRemoved: ${state.tasksRemoved.map((t) => "${t.id}:${t.category}")}',
@@ -356,7 +353,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                                       ),
                                     );
                                   },
-                              onDelete: () async {
+                                  onDelete: () async {
                                     final quick = context.read<QuickActionsCubit>();
                                     final tasksRepository = context.read<TasksRepository>();
                                     final carNumber = context.read<CarCubit>().state.carNumber;
@@ -366,16 +363,12 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                                       await scheduleCubit!.removeTask(indexToRemove, reminderCubit: reminderCubit);
                                     }
 
-                               
                                     quick.deactivateCategory(task.category.toLowerCase());
 
-                                  
                                     unawaited(
                                       tasksRepository.removeTask(task.category.toLowerCase(), carNumber: carNumber),
                                     );
                                   },
-
-
                                 )
                               : MaintenanceCard(
                                   description: task.description,
@@ -431,13 +424,10 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                                     final tasksRepository = context.read<TasksRepository>();
                                     final labelKey = task.category;
 
-                              
                                     scheduleCubit!.removeTask(index, reminderCubit: reminderCubit);
 
-                                  
                                     quick.deactivateCategory(labelKey);
 
-                                  
                                     unawaited(
                                       tasksRepository.removeTask(
                                         labelKey,

@@ -1,3 +1,4 @@
+import 'package:core_localization/generated/l10n.dart';
 import 'package:flutter/material.dart';
 
 
@@ -31,7 +32,7 @@ class InsuranceTypePickerSheet extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Выберите вид страховки', style: Theme.of(context).textTheme.titleLarge),
+            Text(S.of(context).select_type_insurance, style: Theme.of(context).textTheme.titleLarge),
             const SizedBox(height: 12),
             ..._types.map((type) {
               final disabled = disabledTypes.contains(type.key);
@@ -39,7 +40,7 @@ class InsuranceTypePickerSheet extends StatelessWidget {
               return ListTile(
                 leading: Icon(type.icon, color: disabled ? Colors.grey : null),
                 title: Text(type.title),
-                subtitle: disabled ? const Text('Уже добавлена') : null,
+                subtitle: disabled ?  Text(S.of(context).already_added) : null,
                 enabled: !disabled,
                 onTap: disabled
                     ? null
@@ -49,7 +50,7 @@ class InsuranceTypePickerSheet extends StatelessWidget {
               );
             }),
             const SizedBox(height: 8),
-            TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('Отмена')),
+            TextButton(onPressed: () => Navigator.of(context).pop(), child:Text(S.of(context).cancel)),
           ],
         ),
       ),

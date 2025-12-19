@@ -40,6 +40,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "all_exp_hist_deleted": MessageLookupByLibrary.simpleMessage(
       "All expense history deleted",
     ),
+    "already_added": MessageLookupByLibrary.simpleMessage("Already added"),
     "already_have_account": MessageLookupByLibrary.simpleMessage(
       "Already have an account? Sign in",
     ),
@@ -423,6 +424,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "select_plan": MessageLookupByLibrary.simpleMessage("Select plan"),
     "select_service": MessageLookupByLibrary.simpleMessage(
       "Select a date and at least one service",
+    ),
+    "select_type_insurance": MessageLookupByLibrary.simpleMessage(
+      "Select insurance type",
     ),
     "selected": MessageLookupByLibrary.simpleMessage("Selected"),
     "selected_service_station": MessageLookupByLibrary.simpleMessage(

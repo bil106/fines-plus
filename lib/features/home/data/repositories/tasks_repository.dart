@@ -46,12 +46,10 @@ class TasksRepository {
   }
 
   Future<bool> hasActiveTask({required String carNumber, required String category}) async {
-    // Ждем загрузки, если она еще идет (или убедитесь, что await _loadTasks в main)
     final tasks = _tasksByCar[carNumber] ?? [];
     return tasks.contains(category.toLowerCase());
   }
 
-  // Для совместимости с вашим init в Cubit
   Future<bool> hasTaskOfType(String type) async {
     return _tasksByCar.values.any((list) => list.contains(type.toLowerCase()));
   }
