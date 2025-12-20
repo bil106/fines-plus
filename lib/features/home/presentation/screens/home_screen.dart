@@ -43,7 +43,9 @@ class _HomeScreenState extends State<HomeScreen> {
     _loadLatestExpense();
   }
 
-  Future<void> _loadLatestExpense() async {
+Future<void> _loadLatestExpense() async {
+    if (!mounted) return;
+
     setState(() {
       isLoading = true;
     });
@@ -52,13 +54,19 @@ class _HomeScreenState extends State<HomeScreen> {
     final carCubit = context.read<CarCubit>();
 
     String? carNumber = carCubit.state.carNumber;
+
     if (carNumber == null || carNumber.isEmpty) {
       try {
         final stateWithCarNumber = await carCubit.stream.firstWhere(
           (state) => state.carNumber != null && state.carNumber.isNotEmpty,
         );
+
+        if (!mounted) return;
+
         carNumber = stateWithCarNumber.carNumber;
       } catch (_) {
+        if (!mounted) return;
+
         setState(() {
           latestExpense = null;
           isLoading = false;
@@ -68,7 +76,7 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
     final allExpenses = await repo.getExpensesOnce(carNumber: carNumber);
-
+    if (!mounted) return;
     if (allExpenses.isEmpty) {
       setState(() {
         latestExpense = null;

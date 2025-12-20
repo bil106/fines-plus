@@ -40,7 +40,7 @@ class _CarWashScreenState extends State<CarWashScreen> {
     _initLocationAndCarWash();
   }
 
-  Future<void> _initLocationAndCarWash() async {
+Future<void> _initLocationAndCarWash() async {
     Location location = Location();
 
     bool serviceEnabled = await location.serviceEnabled();
@@ -57,15 +57,22 @@ class _CarWashScreenState extends State<CarWashScreen> {
 
     try {
       final locationData = await location.getLocation();
-      LatLng current = LatLng(locationData.latitude!, locationData.longitude!);
+      final current = LatLng(locationData.latitude!, locationData.longitude!);
+
+      if (!mounted) return;
 
       final bestCarWash = await fetchBestNearbyCarWash(current, Env.mapApiKey);
 
+      if (!mounted) return;
+
       setState(() => _bestCarWash = bestCarWash);
     } catch (e) {
-      if (kDebugMode) print("Error getting car wash: $e");
+      if (kDebugMode) {
+        print("Error getting car wash: $e");
+      }
     }
   }
+
 
   @override
   Widget build(BuildContext context) {

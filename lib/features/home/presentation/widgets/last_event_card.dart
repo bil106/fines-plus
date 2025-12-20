@@ -103,7 +103,7 @@ class LastEventCardAction extends StatelessWidget {
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(left: 89.0, top: 0),
+                        padding: const EdgeInsets.only(left: 69.0, top: 0),
                         child: Text(
                           "${event!.mileage!.toStringAsFixed(0)} ${settingsCubit.state.unit}",
                           style: textTheme.black8718W400,

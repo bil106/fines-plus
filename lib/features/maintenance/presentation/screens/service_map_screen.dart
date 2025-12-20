@@ -26,7 +26,12 @@ class _ServiceMapScreenState extends State<ServiceMapScreen> {
   @override
   void initState() {
     super.initState();
-    _checkLocationPermission().then((_) => _getCurrentLocation());
+  _init();
+  }
+  Future<void> _init() async {
+    await _checkLocationPermission();
+    if (!mounted) return;
+    await _getCurrentLocation();
   }
   @override
   void dispose() {
@@ -36,6 +41,7 @@ class _ServiceMapScreenState extends State<ServiceMapScreen> {
   Future<void> _getCurrentLocation() async {
     try {
       final position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+      if (!mounted) return;
       final current = LatLng(position.latitude, position.longitude);
 
       setState(() {
@@ -56,6 +62,7 @@ class _ServiceMapScreenState extends State<ServiceMapScreen> {
 
      
       final services = await fetchNearbyServices(current, _apiKey);
+      if (!mounted) return;
       setState(() {
         for (int i = 0; i < services.length; i++) {
           final service = services[i];

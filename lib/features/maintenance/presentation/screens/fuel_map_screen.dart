@@ -8,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 
-
 @RoutePage()
 class FuelMapScreen extends StatefulWidget {
   final LatLng? focusPosition;
@@ -37,7 +36,7 @@ class _FuelMapScreenState extends State<FuelMapScreen> {
     try {
       final position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
       final current = LatLng(position.latitude, position.longitude);
-
+      if (!mounted) return;
       setState(() {
         _currentPosition = current;
         _markers.add(
@@ -53,6 +52,7 @@ class _FuelMapScreenState extends State<FuelMapScreen> {
       _mapController?.animateCamera(CameraUpdate.newLatLngZoom(current, 14));
 
       await _loadGasStations(current);
+      if (!mounted) return;
     } catch (e) {
       if (kDebugMode) print("Error getting location: $e");
     }
@@ -61,7 +61,7 @@ class _FuelMapScreenState extends State<FuelMapScreen> {
   Future<void> _loadGasStations(LatLng current) async {
     try {
       final stations = await _gasService.fetchNearbyGasStations(current);
-
+      if (!mounted) return;
       setState(() {
         for (int i = 0; i < stations.length; i++) {
           final station = stations[i];
@@ -78,7 +78,7 @@ class _FuelMapScreenState extends State<FuelMapScreen> {
 
           _markers.add(
             Marker(
-              markerId: MarkerId('gas_$i'), 
+              markerId: MarkerId('gas_$i'),
               position: LatLng(station.lat, station.lng),
               icon: BitmapDescriptor.defaultMarkerWithHue(hue),
               infoWindow: InfoWindow(
@@ -90,7 +90,6 @@ class _FuelMapScreenState extends State<FuelMapScreen> {
           );
         }
 
-     
         if (widget.focusPosition != null) {
           _markers.add(
             Marker(

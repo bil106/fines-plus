@@ -31,6 +31,7 @@ class ServiceScreen extends StatefulWidget {
 
 class _ServiceScreenState extends State<ServiceScreen> {
   final List<TextEditingController> serviceControllers = [TextEditingController()];
+  final List<FocusNode> serviceFocusNodes = [FocusNode()];
   final TextEditingController costController = TextEditingController();
   final TextEditingController mileageController = TextEditingController();
 
@@ -50,6 +51,9 @@ class _ServiceScreenState extends State<ServiceScreen> {
   void dispose() {
     for (final c in serviceControllers) {
       c.dispose();
+    }
+    for (final f in serviceFocusNodes) {
+      f.dispose();
     }
     costController.dispose();
     mileageController.dispose();
@@ -76,6 +80,7 @@ class _ServiceScreenState extends State<ServiceScreen> {
       final current = LatLng(locationData.latitude!, locationData.longitude!);
 
       final bestStation = await fetchBestNearbyService(current, Env.mapApiKey);
+      if (!mounted) return;
       setState(() => _bestStation = bestStation);
     } catch (e) {
       if (kDebugMode) print("Error getting position: $e");
@@ -127,6 +132,7 @@ class _ServiceScreenState extends State<ServiceScreen> {
                   onPressed: () {
                     setState(() {
                       serviceControllers.add(TextEditingController());
+                      serviceFocusNodes.add(FocusNode());
                       servicePricesUah.add(0.0);
                     });
                   },
@@ -228,6 +234,9 @@ class _ServiceScreenState extends State<ServiceScreen> {
               children: [
                 Expanded(
                   child: Autocomplete<String>(
+                    textEditingController: serviceControllers[index],
+                    focusNode: serviceFocusNodes[index],
+
                     optionsBuilder: (value) {
                       if (value.text.isEmpty) return ServiceList.names;
                       return ServiceList.names.where(
@@ -235,7 +244,6 @@ class _ServiceScreenState extends State<ServiceScreen> {
                       );
                     },
                     onSelected: (val) {
-                      serviceControllers[index].text = val;
                       final selectedItem = ServiceList.serviceItems.firstWhere(
                         (item) => item.name == val,
                         orElse: () => ServiceItem(name: val, priceUSD: 0),
@@ -252,7 +260,6 @@ class _ServiceScreenState extends State<ServiceScreen> {
                       });
                     },
                     fieldViewBuilder: (context, controller, focusNode, onFieldSubmitted) {
-                      serviceControllers[index] = controller;
                       return TextField(
                         controller: controller,
                         focusNode: focusNode,
@@ -260,13 +267,18 @@ class _ServiceScreenState extends State<ServiceScreen> {
                           hintText: S.of(context).select_a_service,
                           border: InputBorder.none,
                           focusedBorder: InputBorder.none,
-                          prefixIcon: Icon(Icons.build, color: AppColors.blueAccent),
+                          prefixIcon: const Icon(Icons.build, color: AppColors.blueAccent),
                           suffixIcon: IconButton(
-                            icon: Icon(Icons.delete, color: AppColors.red),
+                            icon: const Icon(Icons.delete, color: AppColors.red),
                             onPressed: () {
                               setState(() {
-                                serviceControllers.removeAt(index);
+                                final removedC = serviceControllers.removeAt(index);
+                                final removedF = serviceFocusNodes.removeAt(index);
+                                removedC.dispose();
+                                removedF.dispose();
+
                                 servicePricesUah.removeAt(index);
+
                                 final total = servicePricesUah.fold<double>(0.0, (a, b) => a + b) + manualAmountUah;
                                 costController.text = total.toStringAsFixed(0);
                               });

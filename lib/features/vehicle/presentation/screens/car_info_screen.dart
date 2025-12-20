@@ -87,6 +87,7 @@ class _CarInfoViewState extends State<_CarInfoView> {
   }
 
   void _onRecaptchaVerified(String token) async {
+    if (!mounted) return;
     setState(() => _showRecaptcha = false);
 
     await carCubit.checkFines(token);

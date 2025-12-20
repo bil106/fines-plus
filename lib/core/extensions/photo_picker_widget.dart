@@ -93,22 +93,29 @@ class _PhotoPickerWidgetState extends State<PhotoPickerWidget> {
     );
   }
 
-  Future<void> _pickImage(ImageSource source) async {
+Future<void> _pickImage(ImageSource source) async {
     try {
       final picker = ImagePicker();
+
       if (source == ImageSource.camera) {
         final photo = await picker.pickImage(source: ImageSource.camera);
         if (photo != null) {
+          if (!mounted) return;
           setState(() => selectedPhotos.add(File(photo.path)));
         }
       } else {
         final pickedFiles = await picker.pickMultiImage();
         if (pickedFiles.isNotEmpty) {
+          if (!mounted) return;
           setState(() => selectedPhotos.addAll(pickedFiles.map((e) => File(e.path))));
         }
       }
     } catch (e) {
-      if (kDebugMode) print('${S.of(context).error_photo} $e');
+      if (!mounted) return;
+      if (kDebugMode) {
+        print('${S.of(context).error_photo} $e');
+      }
     }
   }
+
 }

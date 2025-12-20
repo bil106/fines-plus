@@ -45,6 +45,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Future<void> _loadOldSettings() async {
     final prefs = await SharedPreferences.getInstance();
+    if (!mounted) return;
     setState(() {
       finesCheck = prefs.getBool("finesCheck") ?? true;
       reminders = prefs.getBool("reminders") ?? widget.remoteConfigService.isRemindersEnabled;
@@ -56,7 +57,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(key, value);
     if (key == "reminders") widget.scheduleCubit.enabled = value;
-
+if (!mounted) return;
     setState(() {
       if (key == "finesCheck") finesCheck = value;
       if (key == "reminders") reminders = value;

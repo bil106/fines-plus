@@ -87,11 +87,14 @@ class _FuelUpScreenState extends State<FuelUpScreen> {
     }
 
     try {
-      final locationData = await location.getLocation();
+     final locationData = await location.getLocation();
+      if (!mounted) return; 
       final current = LatLng(locationData.latitude!, locationData.longitude!);
 
       final bestStation = await _fetchBestNearbyGasStation(current);
+      if (!mounted) return; 
       setState(() => _bestStation = bestStation);
+
     } catch (e) {
       if (kDebugMode) print("Error getting position: $e");
     }

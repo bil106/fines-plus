@@ -34,6 +34,7 @@ class _CarWashMapScreenState extends State<CarWashMapScreen> {
   Future<void> _getCurrentLocation() async {
     try {
       final position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+      if (!mounted) return;
       final current = LatLng(position.latitude, position.longitude);
 
       setState(() {
@@ -52,8 +53,9 @@ class _CarWashMapScreenState extends State<CarWashMapScreen> {
         _mapController!.animateCamera(CameraUpdate.newLatLngZoom(current, 14));
       }
 
-      
       final carWashes = await fetchNearbyCarWashes(current, _apiKey);
+
+      if (!mounted) return;
       setState(() {
         for (int i = 0; i < carWashes.length; i++) {
           final wash = carWashes[i];
@@ -147,7 +149,6 @@ class _CarWashMapScreenState extends State<CarWashMapScreen> {
     );
   }
 }
-
 
 Future<List<Map<String, dynamic>>> fetchNearbyCarWashes(LatLng location, String apiKey) async {
   final url =

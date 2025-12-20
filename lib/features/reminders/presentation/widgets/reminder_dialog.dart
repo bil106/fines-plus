@@ -91,6 +91,7 @@ class _ReminderDialogState extends State<ReminderDialog> {
                           initialTime: TimeOfDay.fromDateTime(selectedDateTime),
                         );
                         if (time != null) {
+                          if (!mounted) return;
                           setState(() {
                             selectedDateTime = DateTime(date.year, date.month, date.day, time.hour, time.minute);
                           });

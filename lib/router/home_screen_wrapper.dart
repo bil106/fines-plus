@@ -144,6 +144,7 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
 
   Future<void> _loadCarNumber() async {
     final prefs = await SharedPreferences.getInstance();
+    if (!mounted) return;
     setState(() {
       _carNumber = prefs.getString('carNumber') ?? '';
       _docSeries = prefs.getString('docSeries') ?? '';
@@ -155,10 +156,12 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
     if (hasSubscription) {
       final index = _pageIndexMap[HomePage.home] ?? 0;
       _pageController.jumpToPage(index);
+      if (!mounted) return;
       setState(() => _currentIndex = index);
     } else {
       final index = _pageIndexMap[HomePage.home] ?? 0;
       _pageController.jumpToPage(index);
+      if (!mounted) return;
       setState(() => _currentIndex = index);
     }
   }
@@ -168,7 +171,7 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
     await prefs.setString('carNumber', carNumber);
     await prefs.setString('docSeries', series);
     await prefs.setString('docNumber', number);
-
+if (!mounted) return;
     setState(() {
       _carNumber = carNumber;
       _docSeries = series;
@@ -188,6 +191,7 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
     }
 
     _pageController.animateToPage(index, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+   
     setState(() => _currentIndex = index);
   }
 

@@ -32,7 +32,7 @@ class TuningScreen extends StatefulWidget {
 
 class _TuningScreenState extends State<TuningScreen> {
   final List<TextEditingController> tuningControllers = [TextEditingController()];
-
+  final List<FocusNode> tuningFocusNodes = [FocusNode()];
   final TextEditingController costController = TextEditingController();
 
   final TextEditingController mileageController = TextEditingController();
@@ -57,6 +57,9 @@ class _TuningScreenState extends State<TuningScreen> {
     for (final c in tuningControllers) {
       c.dispose();
     }
+    for (final f in tuningFocusNodes) {
+      f.dispose();
+    }
     costController.dispose();
     mileageController.dispose();
     super.dispose();
@@ -79,9 +82,11 @@ class _TuningScreenState extends State<TuningScreen> {
 
     try {
       LocationData locationData = await location.getLocation();
+      if (!mounted) return;
       LatLng current = LatLng(locationData.latitude!, locationData.longitude!);
 
       final bestStation = await fetchBestNearbyService(current, Env.mapApiKey);
+      if (!mounted) return;
       setState(() {
         _bestStation = bestStation;
       });
@@ -135,7 +140,7 @@ class _TuningScreenState extends State<TuningScreen> {
                   onPressed: () {
                     setState(() {
                       tuningControllers.add(TextEditingController());
-
+                      tuningFocusNodes.add(FocusNode());
                       servicePricesUah.add(0.0);
                     });
                   },
@@ -242,6 +247,8 @@ class _TuningScreenState extends State<TuningScreen> {
               children: [
                 Expanded(
                   child: Autocomplete<String>(
+                    textEditingController: tuningControllers[index],
+                    focusNode: tuningFocusNodes[index],
                     optionsBuilder: (value) {
                       if (value.text.isEmpty) return ServiceList.tuningItems.map((e) => e.name);
                       return ServiceList.tuningItems
@@ -249,7 +256,6 @@ class _TuningScreenState extends State<TuningScreen> {
                           .where((option) => option.toLowerCase().startsWith(value.text.toLowerCase()));
                     },
                     onSelected: (val) {
-                      tuningControllers[index].text = val;
                       final selectedItem = ServiceList.tuningItems.firstWhere(
                         (item) => item.name == val,
                         orElse: () => ServiceItem(name: val, priceUSD: 0),
@@ -274,7 +280,6 @@ class _TuningScreenState extends State<TuningScreen> {
                       });
                     },
                     fieldViewBuilder: (context, controller, focusNode, onFieldSubmitted) {
-                      tuningControllers[index] = controller;
                       return TextField(
                         controller: controller,
                         focusNode: focusNode,
@@ -287,7 +292,12 @@ class _TuningScreenState extends State<TuningScreen> {
                             icon: const Icon(Icons.delete, color: AppColors.red),
                             onPressed: () {
                               setState(() {
-                                tuningControllers.removeAt(index);
+                                final removedController = tuningControllers.removeAt(index);
+                                final removedFocusNode = tuningFocusNodes.removeAt(index);
+
+                                removedController.dispose();
+                                removedFocusNode.dispose();
+
                                 if (index < servicePricesUah.length) {
                                   servicePricesUah.removeAt(index);
                                 }
