@@ -15,7 +15,7 @@ class Expense {
   final String currency;
   final DateTime? createdAt;
   final DateTime? updatedAt;
-  final String userId;
+  final String ownerId;
   final String? carNumber;
   final double? fuelVolume;
   
@@ -25,7 +25,7 @@ class Expense {
     required this.date,
     required this.amount,
     required this.category,
-    required this.userId,
+    required this.ownerId,
     this.mileage,
     this.comment,
     this.currency = 'UAH',
@@ -47,7 +47,7 @@ class Expense {
       'currency': currency,
       'createdAt': createdAt != null ? Timestamp.fromDate(createdAt!) : FieldValue.serverTimestamp(),
       'updatedAt': FieldValue.serverTimestamp(),
-      'userId': userId,
+      'userId': ownerId,
       'carNumber': carNumber,
       'fuelVolume': fuelVolume,
     };
@@ -91,7 +91,7 @@ class Expense {
       currency: (json['currency'] as String?) ?? 'UAH',
       createdAt: created,
       updatedAt: updated,
-      userId: (json['userId'] is String) ? json['userId'] as String : '',
+      ownerId: (json['ownerId'] is String) ? json['ownerId'] as String : '',
       carNumber: json['carNumber'] as String?,
       fuelVolume: (json['fuelVolume'] is num)
           ? (json['fuelVolume'] as num).toDouble()

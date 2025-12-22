@@ -71,7 +71,7 @@ class CarWashRecord extends BaseRecord {
       amount: expense.amount.toDouble(),
       date: expense.date,
       mileage: expense.mileage ?? 0,
-      userId: expense.userId,
+      userId: expense.ownerId,
       comment: expense.comment,
       currency: expense.currency, 
       carNumber: expense.carNumber,
@@ -80,7 +80,7 @@ class CarWashRecord extends BaseRecord {
   }
 
   @override
-  Expense toExpense(String userId) {
+  Expense toExpense(String ownerId) {
     return Expense(
       id: id,
       date: date,
@@ -88,7 +88,7 @@ class CarWashRecord extends BaseRecord {
       category: ExpenseCategory.carWash,
       mileage: mileage,
       comment: comment ?? "Car Wash",
-      userId: userId,
+      ownerId: ownerId,
       currency: currency?.isNotEmpty == true ? currency! : "UAH",
       carNumber: carNumber,
     );

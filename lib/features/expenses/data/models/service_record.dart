@@ -48,7 +48,7 @@ class ServiceRecord {
   }
 
  
-  Expense toExpense(String userId) {
+  Expense toExpense(String ownerId) {
     DateTime parsedDate;
     try {
       parsedDate = DateFormat('dd.MM.yyyy').parse(date);
@@ -62,7 +62,7 @@ class ServiceRecord {
       amount: cost.round(),
       category: ExpenseCategory.service,
       mileage: mileage,
-      userId: userId,
+      ownerId: ownerId,
       comment: serviceName,
       currency: currency, 
     );

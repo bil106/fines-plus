@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fines_plus/features/expenses/data/models/expense.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter/foundation.dart';
@@ -19,14 +20,18 @@ class ExpenseRepository {
     return firestore.collection('cars').doc(carNumber).collection('expenses');
   }
 
-  Future<DocumentReference> addExpense({required String carNumber, required Expense expense}) async {
+Future<DocumentReference> addExpense({required String carNumber, required Expense expense}) async {
     final col = _expensesCollection(carNumber);
-    final docRef = await col.add(expense.toFirestore());
+
+    final data = expense.toFirestore();
+    data['ownerId'] = FirebaseAuth.instance.currentUser!.uid; 
+
+    final docRef = await col.add(data);
 
     debugPrint('Expense saved to Firestore:');
     debugPrint('Car: $carNumber');
     debugPrint('Expense ID: ${docRef.id}');
-    debugPrint('Data: ${expense.toFirestore()}');
+    debugPrint('Data: $data');
 
     return docRef;
   }
@@ -121,4 +126,13 @@ Future<List<Expense>> getExpensesOnce({required String carNumber, int limit = 10
     final doc = snap.docs.first;
     return Expense.fromFirestore(doc.data() as Map<String, dynamic>, id: doc.id);
   }
+
+Future<void> ensureCarDocument(String carNumber) async {
+    final carDocRef = firestore.collection('cars').doc(carNumber);
+    await carDocRef.set({
+      'ownerId': FirebaseAuth.instance.currentUser!.uid,
+      'createdAt': FieldValue.serverTimestamp(),
+    }, SetOptions(merge: true)); 
+  }
+
 }

@@ -558,7 +558,7 @@ class MaintenanceCubit extends Cubit<MaintenanceState> {
         state.copyWith(serviceRecords: [], tuningRecords: [], fuelRecords: [], carWashRecords: [], isLoading: false),
       );
 
-      debugPrint("🧹All expenses removed for ${car.carNumber}");
+      debugPrint("All expenses removed for ${car.carNumber}");
     } catch (e, st) {
       debugPrint("deleteAllExpenses error: $e\n$st");
       emit(state.copyWith(isLoading: false));

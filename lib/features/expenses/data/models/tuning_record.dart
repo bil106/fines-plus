@@ -40,14 +40,14 @@ class TuningRecord {
   }
 
 
-  Expense toExpense(String userId) => Expense(
+  Expense toExpense(String ownerId) => Expense(
     id: id,
     date: date,
     amount: cost.round(),
     category: ExpenseCategory.tuning,
     mileage: mileage,
     comment: tuningName,
-    userId: userId,
+    ownerId: ownerId,
     currency: currency, 
   );
 }

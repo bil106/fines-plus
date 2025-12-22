@@ -46,14 +46,14 @@ class FuelRecord {
     );
   }
 
-  Expense toExpense(String userId) {
+  Expense toExpense(String ownerId) {
     return Expense(
       date: date,
       amount: cost.round(),
       category: ExpenseCategory.fuel,
       mileage: mileage,
       comment: fuelType,
-      userId: userId,
+      ownerId: ownerId,
       fuelVolume: volume,
     );
   }

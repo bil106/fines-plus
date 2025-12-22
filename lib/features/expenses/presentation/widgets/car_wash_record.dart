@@ -27,14 +27,14 @@ final String currency;
   );
 
 
-  Expense toExpense(String userId) {
+  Expense toExpense(String ownerId) {
     return Expense(
       date: date,
       amount: amount,
       mileage: mileage,
       comment: comment,
       category: ExpenseCategory.carWash, 
-      userId: userId,
+      ownerId: ownerId,
       currency: currency, 
     );
   }

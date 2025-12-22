@@ -11,7 +11,7 @@ Expense _$ExpenseFromJson(Map<String, dynamic> json) => Expense(
   date: DateTime.parse(json['date'] as String),
   amount: (json['amount'] as num).toInt(),
   category: $enumDecode(_$ExpenseCategoryEnumMap, json['category']),
-  userId: json['userId'] as String,
+  ownerId: json['ownerId'] as String,
   mileage: (json['mileage'] as num?)?.toInt(),
   comment: json['comment'] as String?,
   currency: json['currency'] as String? ?? 'UAH',
@@ -35,7 +35,7 @@ Map<String, dynamic> _$ExpenseToJson(Expense instance) => <String, dynamic>{
   'currency': instance.currency,
   'createdAt': instance.createdAt?.toIso8601String(),
   'updatedAt': instance.updatedAt?.toIso8601String(),
-  'userId': instance.userId,
+  'ownerId': instance.ownerId,
   'carNumber': instance.carNumber,
   'fuelVolume': instance.fuelVolume,
 };
