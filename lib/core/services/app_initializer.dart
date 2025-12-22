@@ -162,13 +162,27 @@ class AppInitializer {
     }
 
     await FirebaseMessaging.instance.requestPermission();
-    final token = await FirebaseMessaging.instance.getToken();
-    if (token != null) debugPrint("FCM Registration Token: $token");
+
+    final prefs = await SharedPreferences.getInstance();
+    String? fcmToken = prefs.getString('fcm_token');
+
+    if (fcmToken == null) {
+      try {
+        fcmToken = await FirebaseMessaging.instance.getToken();
+        if (fcmToken != null) {
+          await prefs.setString('fcm_token', fcmToken);
+          debugPrint("FCM Registration Token: $fcmToken");
+        }
+      } catch (e, st) {
+        debugPrint("Failed to get FCM token: $e\n$st");
+      }
+    } else {
+      debugPrint("Using cached FCM Token: $fcmToken");
+    }
 
     const flavor = String.fromEnvironment('FLAVOR', defaultValue: 'autolux');
     final config = await loadAppConfig(flavor);
 
-    final prefs = await SharedPreferences.getInstance();
     final storage = FlutterSecureStorage();
     final sharedPrefsManager = SharedPrefsManager(prefs);
     final appLinks = AppLinks();
@@ -182,11 +196,13 @@ class AppInitializer {
 
     final carInfoLocalDataSource = CarInfoLocalDataSource(
       sharedPrefsManager,
-
       FirebaseFirestore.instance,
       FirebaseAuth.instance,
     );
-    final carInfoRepository = CarInfoRepository(carInfoLocalDataSource, CarInfoRemoteDataSource(FirebaseFirestore.instance, FirebaseAuth.instance));
+    final carInfoRepository = CarInfoRepository(
+      carInfoLocalDataSource,
+      CarInfoRemoteDataSource(FirebaseFirestore.instance, FirebaseAuth.instance),
+    );
 
     quickActionsCubit = QuickActionsCubit(tasksRepository, prefs);
     currencyService = CurrencyService();
@@ -194,7 +210,6 @@ class AppInitializer {
     referralCubit = ReferralCubit(appLinks, prefs);
 
     carCubit = CarCubit(local: carInfoLocalDataSource, repo: carInfoRepository);
-
     historyCubit = HistoryCubit(repository: historyRepository, carCubit: carCubit);
     analyticsCubit = AnalyticsCubit(repository: analyticsRepository, carCubit: carCubit);
     carInfoCubit = CarInfoCubit(carInfoRepository, historyCubit);
@@ -243,6 +258,7 @@ class AppInitializer {
     );
     final pushHelper = PushHelper(flutterLocalNotificationsPlugin);
     reminderCubit = ReminderCubit(repository: reminderRepository, pushHelper: pushHelper, carNumber: '', userId: '');
+
     return AppInitResult(
       config: config,
       carInfoRepository: carInfoRepository,

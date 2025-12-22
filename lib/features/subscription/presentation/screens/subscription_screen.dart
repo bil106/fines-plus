@@ -80,7 +80,8 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         appBar: AppBar(
           backgroundColor: AppColors.energyBlue50,
           elevation: 0,
-          leading: BackButton(color: AppColors.blue700, onPressed: widget.onBack),
+       
+
           title: Text(S.of(context).subscription, style: textTheme.headlineMedium),
         ),
         body: Padding(
