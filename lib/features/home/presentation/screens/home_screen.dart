@@ -15,6 +15,7 @@ import 'package:fines_plus/features/statistics/presentation/cubit/statistics_sta
 import 'package:fines_plus/features/vehicle/presentation/cubit/car_cubit.dart';
 import 'package:fines_plus/features/vehicle/presentation/cubit/car_state.dart';
 import 'package:fines_plus/router/home_screen_wrapper.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../widgets/main_stats_card.dart';
@@ -43,7 +44,7 @@ class _HomeScreenState extends State<HomeScreen> {
     _loadLatestExpense();
   }
 
-  Future<void> _loadLatestExpense() async {
+Future<void> _loadLatestExpense() async {
     if (!mounted) return;
 
     setState(() {
@@ -53,7 +54,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final repo = ExpenseRepository(FirebaseFirestore.instance);
     final carCubit = context.read<CarCubit>();
 
-    String? carNumber = carCubit.state.carNumber;
+    final carNumber = carCubit.state.carNumber;
 
     if (carNumber == null || carNumber.isEmpty) {
       setState(() {
@@ -63,7 +64,19 @@ class _HomeScreenState extends State<HomeScreen> {
       return;
     }
 
+    final currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser == null) {
+      debugPrint('User not signed in, skipping ensureCarDocument');
+      setState(() {
+        latestExpense = null;
+        isLoading = false;
+      });
+      return;
+    }
+
+   
     await repo.ensureCarDocument(carNumber);
+
     final allExpenses = await repo.getExpensesOnce(carNumber: carNumber);
     if (!mounted) return;
 
@@ -77,13 +90,16 @@ class _HomeScreenState extends State<HomeScreen> {
 
     final allEvents = allExpenses.map((e) => LastEventUiModel.fromExpense(e)).toList();
 
+   
     final latestByMileage = allEvents.reduce((a, b) => (a.mileage ?? 0) > (b.mileage ?? 0) ? a : b);
 
+    if (!mounted) return;
     setState(() {
       latestExpense = latestByMileage;
       isLoading = false;
     });
   }
+
 
   @override
   Widget build(BuildContext context) {

@@ -11,7 +11,6 @@ import 'package:fines_plus/features/subscription/data/models/subscription_status
 import 'package:fines_plus/features/subscription/presentation/cubit/subscription_cubit.dart';
 import 'package:fines_plus/router/app_router.dart';
 import 'package:fines_plus/router/home_screen_wrapper.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -33,11 +32,18 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   final _formKey = GlobalKey<FormState>();
   late TextEditingController emailController;
   late TextEditingController passwordController;
+final GoogleSignIn _googleSignIn = GoogleSignIn.instance;
+HomeScreenWrapperState? _wrapperState;
+
+
   Timer? _emailCheckTimer;
 
   @override
   void initState() {
     super.initState();
+   _googleSignIn.initialize(
+      serverClientId: '201100655892-ocbfb9gl3j1ad5ma9t6n6pove9dom2n4.apps.googleusercontent.com',
+    );
     emailController = TextEditingController();
     passwordController = TextEditingController();
 
@@ -127,28 +133,26 @@ Future<void> _onSubmit(BuildContext context) async {
     }
 
   }
-
-  Future<void> _signInWithGoogle(BuildContext context) async {
+Future<void> _signInWithGoogle(BuildContext context) async {
     try {
-      final googleUser = await GoogleSignIn().signIn();
-      if (googleUser == null) return;
+     final googleUser = await _googleSignIn.authenticate();
 
-      final googleAuth = await googleUser.authentication;
+      final googleAuth = googleUser.authentication;
 
       final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
+        idToken: googleAuth.idToken, 
+        
       );
 
       await FirebaseAuth.instance.signInWithCredential(credential);
-
       await _onSocialLoginSuccess(context);
-    } catch (e) {
-      if (kDebugMode) {
-        print("Google login error: $e");
-      }
+
+    } catch (e, s) {
+      debugPrint('Google sign-in error: $e');
+      debugPrint('$s');
     }
   }
+
 
   Future<void> _signInWithFacebook(BuildContext context) async {
     try {
@@ -226,7 +230,11 @@ Future<void> _onSubmit(BuildContext context) async {
       context.router.replaceAll([SubscriptionRoute(debugMode: true)]);
     }
   }
-
+@override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _wrapperState ??= context.findAncestorStateOfType<HomeScreenWrapperState>();
+  }
   @override
   void dispose() {
     _emailCheckTimer?.cancel();
@@ -287,17 +295,18 @@ Future<void> _onSubmit(BuildContext context) async {
                       context.router.replaceAll([
                         SubscriptionRoute(
                           debugMode: true,
-                          onBack: () async {
+                        onBack: () async {
                             await Future.delayed(const Duration(milliseconds: 150));
 
-                            final wrapperState = context.findAncestorStateOfType<HomeScreenWrapperState>();
-                            if (wrapperState != null) {
-                              wrapperState.openPage(HomePage.home);
+                            if (_wrapperState != null) {
+                              _wrapperState!.openPage(HomePage.home);
                               return;
                             }
 
+                            if (!mounted) return;
                             context.router.root.replaceAll([HomeRouteWrapper(initialPage: HomePage.subscription)]);
                           },
+
                         ),
                       ]);
                     }

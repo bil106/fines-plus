@@ -101,15 +101,7 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
   @override
   void initState() {
     super.initState();
-    debugPrint('HomeScreenWrapper: widget.initialPage = ${widget.initialPage}');
-    _loadCarNumber();
-
-    historyCubit = HistoryCubit(repository: context.read<HistoryRepository>(), carCubit: context.read<CarCubit>());
-    carInfoCubit = CarInfoCubit(context.read<CarInfoRepository>(), historyCubit);
-    analyticsCubit = AnalyticsCubit(
-      repository: AnalyticsRepository(firestore: FirebaseFirestore.instance),
-      carCubit: context.read<CarCubit>(),
-    );
+ 
     _pageIndexMap = {
       HomePage.home: 0,
       HomePage.addCar: 1,
@@ -133,9 +125,20 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
       HomePage.fuelMap: 17,
       HomePage.carWashMap: 18,
     };
+    
     _currentIndex = _pageIndexMap[HomePage.home]!;
     debugPrint('HomeScreenWrapper: initial computed _currentIndex = $_currentIndex');
     _pageController = PageController(initialPage: _currentIndex);
+    
+    debugPrint('HomeScreenWrapper: widget.initialPage = ${widget.initialPage}');
+    _loadCarNumber();
+
+    historyCubit = HistoryCubit(repository: context.read<HistoryRepository>(), carCubit: context.read<CarCubit>());
+    carInfoCubit = CarInfoCubit(context.read<CarInfoRepository>(), historyCubit);
+    analyticsCubit = AnalyticsCubit(
+      repository: AnalyticsRepository(firestore: FirebaseFirestore.instance),
+      carCubit: context.read<CarCubit>(),
+    );
   }
 
   void refreshUserData() {

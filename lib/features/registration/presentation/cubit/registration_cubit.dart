@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:fines_plus/features/registration/presentation/cubit/registration_state.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
@@ -71,15 +72,26 @@ class RegistrationCubit extends Cubit<RegistrationState> {
     }
   }
 
-  Future<void> saveCredentials(String email, String password) async {
-    await storage.write(key: 'savedEmail', value: email);
-    await storage.write(key: 'savedPassword', value: password);
+ Future<void> saveCredentials(String email, String password) async {
+    try {
+      await storage.write(key: 'savedEmail', value: email);
+      await storage.write(key: 'savedPassword', value: password);
+    } catch (e) {
+      debugPrint('Failed to save credentials to secure storage: $e');
+    }
   }
 
-  Future<Map<String, String>> loadCredentials() async {
-    final email = await storage.read(key: 'savedEmail') ?? '';
-    final password = await storage.read(key: 'savedPassword') ?? '';
-    return {'email': email, 'password': password};
+Future<Map<String, String>> loadCredentials() async {
+    try {
+      final email = await storage.read(key: 'savedEmail') ?? '';
+      final password = await storage.read(key: 'savedPassword') ?? '';
+      return {'email': email, 'password': password};
+    } catch (e) {
+   
+      debugPrint('Failed to read credentials from secure storage: $e');
+      await storage.deleteAll();
+      return {'email': '', 'password': ''};
+    }
   }
 
   void toggleLoginMode() {

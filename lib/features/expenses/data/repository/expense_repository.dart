@@ -127,12 +127,25 @@ Future<List<Expense>> getExpensesOnce({required String carNumber, int limit = 10
     return Expense.fromFirestore(doc.data() as Map<String, dynamic>, id: doc.id);
   }
 
-Future<void> ensureCarDocument(String carNumber) async {
+Future<void> ensureCarDocument(String? carNumber) async {
+    if (carNumber == null || carNumber.isEmpty) {
+      debugPrint('ensureCarDocument skipped: carNumber is null or empty');
+      return;
+    }
+
+    final currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser == null) {
+      debugPrint('ensureCarDocument skipped: user is not signed in');
+      return;
+    }
+
     final carDocRef = firestore.collection('cars').doc(carNumber);
+
     await carDocRef.set({
-      'ownerId': FirebaseAuth.instance.currentUser!.uid,
+      'ownerId': currentUser.uid,
       'createdAt': FieldValue.serverTimestamp(),
-    }, SetOptions(merge: true)); 
+    }, SetOptions(merge: true));
   }
+
 
 }

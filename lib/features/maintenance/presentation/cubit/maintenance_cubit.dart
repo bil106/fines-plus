@@ -40,19 +40,19 @@ class MaintenanceCubit extends Cubit<MaintenanceState> {
     emit(state.copyWith(isLoading: false));
   }
 
-  // Called when car changes; clears UI and loads data for new car
+  
   Future<void> _onCarChanged(String newCarNumber) async {
     try {
-      // If same as current local stored car, avoid double reload
+      
       final local = await localDataSource.getCarInfo();
       if (local.carNumber == newCarNumber && state.serviceRecords.isNotEmpty) {
-        // nothing to do — already loaded for this car
+        
         return;
       }
 
       emit(state.copyWith(isLoading: true));
-      clearAllRecords(); // clear UI lists
-      await syncExpensesFromFirestore(); // will use localDataSource.getCarInfo() internally
+      clearAllRecords();
+      await syncExpensesFromFirestore(); 
     } catch (e, st) {
       debugPrint('MaintenanceCubit _onCarChanged error: $e\n$st');
     } finally {
@@ -320,15 +320,24 @@ class MaintenanceCubit extends Cubit<MaintenanceState> {
     }
   }
 
-  Future<void> addCarWashRecord(CarWashRecord record) async {
+ Future<void> addCarWashRecord(CarWashRecord record) async {
     final updated = List<CarWashRecord>.from(state.carWashRecords)..add(record);
     emit(state.copyWith(carWashRecords: updated));
     await saveCarWashRecords();
 
     final car = await localDataSource.getCarInfo();
-    final userId = FirebaseAuth.instance.currentUser!.uid;
+    if (car.carNumber.isEmpty) {
+      debugPrint("Cannot save CarWashRecord: carNumber is empty");
+      return;
+    }
 
-    final expense = record.toExpense(userId);
+    final currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser == null) {
+      debugPrint("Cannot save CarWashRecord: user not signed in");
+      return;
+    }
+
+    final expense = record.toExpense(currentUser.uid);
 
     try {
       await expenseRepository.addExpense(carNumber: car.carNumber, expense: expense);
