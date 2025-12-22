@@ -114,8 +114,7 @@ class _FinesScreenState extends State<FinesScreen> {
                           final isLoading = state.status is CarInfoLoadingStatus;
                           final isFormValid =
                               hasCar &&
-                              FinesScreen._carReg.hasMatch(state.carNumber) &&
-                              FinesScreen._techReg.hasMatch(state.techPassport);
+                              FinesScreen._carReg.hasMatch(state.carNumber);
                           final user = FirebaseAuth.instance.currentUser;
 
                           return Column(

@@ -203,4 +203,6 @@ class CarInfoCubit extends Cubit<CarInfoState> {
       emit(state.copyWith(status: CarInfoErrorStatus(e.toString())));
     }
   }
+
+
 }
