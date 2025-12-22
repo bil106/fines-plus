@@ -9,68 +9,89 @@ import 'package:shelf_router/shelf_router.dart';
 import 'package:flutter/foundation.dart';
 
 class FinesServer {
+  FinesServer._();
+  static final FinesServer instance = FinesServer._();
+
   HttpServer? _server;
+  bool _starting = false;
 
   Future<void> start() async {
-    if (_server != null) return;
+    if (!kDebugMode) return;
 
-    final router = Router();
+    if (_server != null || _starting) return;
 
-    router.get('/', (Request req) => Response.ok('Server is running'));
+    _starting = true;
 
-    router.post('/api/fines', (Request req) async {
-      try {
-        final body = await req.readAsString();
-        final data = jsonDecode(body);
+    try {
+      final router = Router();
 
-        String carNumber = (data['carNumber'] ?? '').toString();
-        String docSeries = (data['docSeries'] ?? '').toString();
-        String docNumber = (data['docNumber'] ?? '').toString();
-        String captchaToken = (data['captchaToken'] ?? 'default-token').toString();
-        String cookies = (data['cookies'] ?? '').toString();
+      router.get('/', (Request req) => Response.ok('Server is running'));
 
-        if (docSeries.length > 3 && docNumber.isEmpty) {
-          docNumber = docSeries.substring(3);
-          docSeries = docSeries.substring(0, 3);
+      router.post('/api/fines', (Request req) async {
+        try {
+          final body = await req.readAsString();
+          final data = jsonDecode(body);
+
+          String carNumber = (data['carNumber'] ?? '').toString();
+          String docSeries = (data['docSeries'] ?? '').toString();
+          String docNumber = (data['docNumber'] ?? '').toString();
+          String captchaToken = (data['captchaToken'] ?? 'default-token').toString();
+          String cookies = (data['cookies'] ?? '').toString();
+
+          if (docSeries.length > 3 && docNumber.isEmpty) {
+            docNumber = docSeries.substring(3);
+            docSeries = docSeries.substring(0, 3);
+          }
+
+          if (kDebugMode) {
+            debugPrint('Request: carNumber=$carNumber, docSeries=$docSeries, docNumber=$docNumber');
+          }
+
+          final html = await fetchFines(
+            plate: carNumber,
+            document: "$docSeries$docNumber",
+            captchaToken: captchaToken,
+            cookies: cookies,
+          );
+
+          final fines = parseFinesHtml(html);
+
+          return Response.ok(jsonEncode({'fines': fines}), headers: {'Content-Type': 'application/json'});
+        } catch (e, st) {
+          if (kDebugMode) {
+            debugPrint('API error: $e');
+            debugPrintStack(stackTrace: st);
+          }
+          return Response.internalServerError(
+            body: jsonEncode({'error': e.toString()}),
+            headers: {'Content-Type': 'application/json'},
+          );
         }
+      });
 
-        if (kDebugMode) {
-          print('Request: carNumber=$carNumber, docSeries=$docSeries, docNumber=$docNumber');
-        }
+      final handler = const Pipeline().addMiddleware(logRequests()).addHandler(router.call);
 
-        final html = await fetchFines(
-          plate: carNumber,
-          document: "$docSeries$docNumber",
-          captchaToken: captchaToken,
-          cookies: cookies,
-        );
+      _server = await io.serve(handler, InternetAddress.loopbackIPv4, 3000);
 
-        final fines = parseFinesHtml(html);
-
-        return Response.ok(jsonEncode({"fines": fines}), headers: {'Content-Type': 'application/json'});
-      } catch (e, stack) {
-        if (kDebugMode) {
-          print("Error: $e");
-          print(stack);
-        }
-        return Response.internalServerError(
-          body: jsonEncode({"error": e.toString()}),
-          headers: {'Content-Type': 'application/json'},
-        );
+      if (kDebugMode) {
+        debugPrint('FinesServer running on http://127.0.0.1:3000');
       }
-    });
+    } catch (e, st) {
+      _starting = false;
 
-    final handler = const Pipeline().addMiddleware(logRequests()).addHandler(router.call);
+      if (kDebugMode) {
+        debugPrint('Failed to start FinesServer: $e');
+        debugPrintStack(stackTrace: st);
+      }
 
-    _server = await io.serve(handler, InternetAddress.loopbackIPv4, 3000);
-    if (kDebugMode) {
-      print('FinesServer running on http://${_server!.address.host}:${_server!.port}');
+      rethrow;
     }
   }
 
   Future<void> stop() async {
     await _server?.close(force: true);
     _server = null;
+    _starting = false;
   }
 }
 
