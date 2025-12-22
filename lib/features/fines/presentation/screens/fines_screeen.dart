@@ -11,9 +11,11 @@ import 'package:design_system/theme/app_theme.dart';
 import 'package:fines_plus/core/extensions/ad_banner_widget.dart';
 import 'package:fines_plus/core/extensions/unauthorized_dialog.dart';
 import 'package:fines_plus/env/env.dart';
+import 'package:fines_plus/features/vehicle/presentation/cubit/car_cubit.dart';
 
 import 'package:fines_plus/features/vehicle/presentation/cubit/car_info_cubit.dart';
 import 'package:fines_plus/features/vehicle/presentation/cubit/car_info_state.dart';
+import 'package:fines_plus/features/vehicle/presentation/cubit/car_state.dart';
 import 'package:fines_plus/router/home_screen_wrapper.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -103,73 +105,80 @@ class _FinesScreenState extends State<FinesScreen> {
                   ),
                   AppSpacers.verticalMassive,
 
-                  BlocBuilder<CarInfoCubit, CarInfoState>(
-                    builder: (context, state) {
-                      final isLoading = state.status is CarInfoLoadingStatus;
-                      final isFormValid =
-                          FinesScreen._carReg.hasMatch(state.carNumber) &&
-                          FinesScreen._techReg.hasMatch(state.techPassport);
-                      final user = FirebaseAuth.instance.currentUser;
+                  BlocBuilder<CarCubit, CarState>(
+                    builder: (context, carState) {
+                      final hasCar = carState.carNumber.isNotEmpty;
 
-                      return Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          SizedBox(
-                            width: double.infinity,
-                            height: 65,
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: AppColors.blue700,
-                                shape: RoundedRectangleBorder(borderRadius: AppBorders.radius16),
-                              ),
-                              onPressed: isFormValid && !isLoading
-                                  ? () async {
-                                      final prefs = await SharedPreferences.getInstance();
-                                      final finesEnabled = prefs.getBool("finesCheck") ?? true;
+                      return BlocBuilder<CarInfoCubit, CarInfoState>(
+                        builder: (context, state) {
+                          final isLoading = state.status is CarInfoLoadingStatus;
+                          final isFormValid =
+                              hasCar &&
+                              FinesScreen._carReg.hasMatch(state.carNumber) &&
+                              FinesScreen._techReg.hasMatch(state.techPassport);
+                          final user = FirebaseAuth.instance.currentUser;
 
-                                      if (!finesEnabled) {
-                                        ScaffoldMessenger.of(
-                                          context,
-                                        ).showSnackBar(SnackBar(content: Text(S.of(context).fine_checking_disabled)));
-                                        return;
-                                      }
+                          return Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              SizedBox(
+                                width: double.infinity,
+                                height: 65,
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: AppColors.blue700,
+                                    shape: RoundedRectangleBorder(borderRadius: AppBorders.radius16),
+                                  ),
+                                  onPressed: isFormValid && !isLoading
+                                      ? () async {
+                                          final prefs = await SharedPreferences.getInstance();
+                                          final finesEnabled = prefs.getBool("finesCheck") ?? true;
 
-                                      if (user == null) {
-                                        showDialog(
-                                          context: context,
-                                          builder: (_) => UnauthorizedDialog(
-                                            onLogin: () {
-                                              final homeState = context
-                                                  .findAncestorStateOfType<HomeScreenWrapperState>();
-                                              homeState?.openPage(HomePage.registration);
-                                            },
-                                          ),
-                                        );
-                                      } else {
-                                        setState(() => _showRecaptcha = true);
-                                      }
-                                    }
-                                  : null,
-                              child: isLoading
-                                  ? const CircularProgressIndicator(color: AppColors.neutreBlanc)
-                                  : Text(S.of(context).check_fines, style: textTheme.whiteNormal),
-                            ),
-                          ),
-                          if (_showRecaptcha)
-                            Padding(
-                              padding: const EdgeInsets.only(top: 16),
-                              child: ConstrainedBox(
-                                constraints: BoxConstraints(maxHeight: mediaHeight * 0.6),
-                                child: RecaptchaV2(
-                                  apiKey: Env.recaptchaSiteKey,
-                                  onVerifiedSuccessfully: (token) {
-                                    setState(() => _showRecaptcha = false);
-                                    carInfoCubit.checkFinesWithCaptcha(token);
-                                  },
+                                          if (!finesEnabled) {
+                                            ScaffoldMessenger.of(context).showSnackBar(
+                                              SnackBar(content: Text(S.of(context).fine_checking_disabled)),
+                                            );
+                                            return;
+                                          }
+
+                                          if (user == null) {
+                                            showDialog(
+                                              context: context,
+                                              builder: (_) => UnauthorizedDialog(
+                                                onLogin: () {
+                                                  final homeState = context
+                                                      .findAncestorStateOfType<HomeScreenWrapperState>();
+                                                  homeState?.openPage(HomePage.registration);
+                                                },
+                                              ),
+                                            );
+                                          } else {
+                                            setState(() => _showRecaptcha = true);
+                                          }
+                                        }
+                                      : null,
+                                  child: isLoading
+                                      ? const CircularProgressIndicator(color: AppColors.neutreBlanc)
+                                      : Text(S.of(context).check_fines, style: textTheme.whiteNormal),
                                 ),
                               ),
-                            ),
-                        ],
+                              if (_showRecaptcha)
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 16),
+                                  child: ConstrainedBox(
+                                    constraints: BoxConstraints(maxHeight: mediaHeight * 0.6),
+                                    child: RecaptchaV2(
+                                      apiKey: Env.recaptchaSiteKey,
+                                      onVerifiedSuccessfully: (token) {
+                                        setState(() => _showRecaptcha = false);
+                                        carInfoCubit.checkFinesWithCaptcha(token);
+                                      },
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          );
+                        },
                       );
                     },
                   ),

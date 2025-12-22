@@ -46,13 +46,17 @@ class ExpenseRepository {
         );
   }
 
-  Future<List<Expense>> getExpensesOnce({required String carNumber, int limit = 1000}) async {
+Future<List<Expense>> getExpensesOnce({required String carNumber, int limit = 1000}) async {
     if (carNumber.isEmpty) return [];
 
-    final col = _expensesCollection(carNumber);
-    final snap = await col.orderBy('date', descending: true).limit(limit).get();
-
-    return snap.docs.map((d) => Expense.fromFirestore(d.data() as Map<String, dynamic>, id: d.id)).toList();
+    try {
+      final col = _expensesCollection(carNumber);
+      final snap = await col.orderBy('date', descending: true).limit(limit).get();
+      return snap.docs.map((d) => Expense.fromFirestore(d.data() as Map<String, dynamic>, id: d.id)).toList();
+    } catch (e) {
+      debugPrint('Firestore Error: $e'); 
+      return []; 
+    }
   }
 
   Future<void> updateExpense({

@@ -101,7 +101,7 @@ Future<AnalyticsData> getAnalytics(DateTime date, String carNumber) async {
       );
     } on FirebaseException catch (e) {
       if (e.code == 'unavailable') {
-        // нет интернета / DNS / Firestore недоступен
+    
         return AnalyticsData.empty();
       }
       rethrow;

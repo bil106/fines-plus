@@ -39,6 +39,7 @@ class CarInfoCubit extends Cubit<CarInfoState> {
   }
 
   Future<void> _saveCarToFirestore(CarInfoModel m) async {
+    if (m.carNumber.isEmpty || !carReg.hasMatch(m.carNumber)) return;
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) return;
 
@@ -51,23 +52,35 @@ class CarInfoCubit extends Cubit<CarInfoState> {
     await FirebaseFirestore.instance.collection("cars").doc(m.carNumber).set(data, SetOptions(merge: true));
   }
 
-  Future<void> setCarNumber(String value) async {
+ Future<void> setCarNumber(String value) async {
+   
     final carNumber = value.trim().replaceAll(RegExp(r'[^А-ЯЇІЄҐ0-9]'), '');
+
+    
+    emit(state.copyWith(carNumber: carNumber));
+
+    
+    if (!carReg.hasMatch(carNumber)) {
+      return;
+    }
+
+  
     final user = FirebaseAuth.instance.currentUser;
     final ownerId = user?.uid ?? '';
-
     final m = CarInfoModel(carNumber: carNumber, techPassport: state.techPassport, ownerId: ownerId);
 
-    await _repo.saveCarInfo(m);
-    emit(state.copyWith(carNumber: carNumber));
+  
     await _saveCarToFirestore(m);
 
+    
     try {
       final carCubit = getIt<CarCubit>();
       await carCubit.changeCar(carNumber);
     } catch (e) {
       debugPrint("CarCubit not found: $e");
     }
+
+    await _repo.saveCarInfo(m); 
   }
 
   Future<void> setTechPassport(String value) async {

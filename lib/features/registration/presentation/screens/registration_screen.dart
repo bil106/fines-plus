@@ -91,7 +91,7 @@ Future<void> _onSubmit(BuildContext context) async {
       return;
     }
 
-    try {
+  try {
       final subCubit = context.read<SubscriptionCubit>();
 
       await subCubit.load(user.uid);
@@ -100,8 +100,8 @@ Future<void> _onSubmit(BuildContext context) async {
       if (subState is SubscriptionLoaded) {
         if (subState.userSubscription.status == SubscriptionStatus.none ||
             subState.userSubscription.status == SubscriptionStatus.trial) {
-          //If the user is not yet subscribed or is in a trial, purchase the selected plan.
           if (subCubit.selectedPlan == null) {
+            if (!mounted) return;
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(S.of(context).no_plan_selected)));
             return;
           }
@@ -110,22 +110,22 @@ Future<void> _onSubmit(BuildContext context) async {
 
           final newState = subCubit.state;
           if (newState is SubscriptionBought) {
+            if (!mounted) return;
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(S.of(context).plan_activated)));
             Navigator.of(context).pop();
           } else if (newState is SubscriptionError) {
+            if (!mounted) return;
             ScaffoldMessenger.of(
               context,
             ).showSnackBar(SnackBar(content: Text("${S.of(context).subscription_failed}: ${newState.message}")));
           }
-        } else if (subState.userSubscription.status == SubscriptionStatus.subscribed) {
-          // The user is already subscribed
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(S.of(context).already_planned)));
-          Navigator.of(context).pop();
         }
       }
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${S.of(context).subscription_failed}: $e")));
     }
+
   }
 
   Future<void> _signInWithGoogle(BuildContext context) async {
