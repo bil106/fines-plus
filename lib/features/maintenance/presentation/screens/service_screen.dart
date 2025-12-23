@@ -267,6 +267,8 @@ class _ServiceScreenState extends State<ServiceScreen> {
                           hintText: S.of(context).select_a_service,
                           border: InputBorder.none,
                           focusedBorder: InputBorder.none,
+
+                          contentPadding: const EdgeInsets.only(top: 12),
                           prefixIcon: const Icon(Icons.build, color: AppColors.blueAccent),
                           suffixIcon: IconButton(
                             icon: const Icon(Icons.delete, color: AppColors.red),

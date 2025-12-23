@@ -23,7 +23,9 @@ class UnitStream {
     return settingsCubit.stream.map((state) => convertFuel(lPer100km)).distinct();
   }
 
-  double convertFuel(double lPer100km) {
-    return settingsCubit.state.unit == 'km' ? lPer100km : 235.214 / lPer100km;
+double convertFuel(double lPer100km) {
+    return settingsCubit.state.fuelConsumptionUnit == 'l/100km' ? lPer100km : 235.214 / lPer100km;
   }
+
+
 }

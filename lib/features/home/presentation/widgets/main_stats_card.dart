@@ -21,20 +21,26 @@ class MainStatsCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
 
-
     final currencyService = context.read<CurrencyService>();
     final settingsCubit = context.watch<SettingsCubit>();
     final selectedCurrency = settingsCubit.state.currency;
 
-    final totalCostConverted = currencyService.convert(stats.totalCost, selectedCurrency, fromCurrency: S.of(context).grn);
+    final totalCostConverted = currencyService.convert(
+      stats.totalCost,
+      selectedCurrency,
+      fromCurrency: S.of(context).grn,
+    );
 
-    final costPerKmConverted = currencyService.convert(stats.costPerKm, selectedCurrency, fromCurrency: S.of(context).grn,
+    final costPerKmConverted = currencyService.convert(
+      stats.costPerKm,
+      selectedCurrency,
+      fromCurrency: S.of(context).grn,
     );
 
     final unitStream = UnitStream(settingsCubit);
-    
+
     return Card(
-   elevation: 2,
+      elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
         padding: const EdgeInsets.fromLTRB(20, 10, 20, 4),
@@ -84,7 +90,7 @@ class MainStatsCard extends StatelessWidget {
                 ),
               ),
             ),
-AppSpacers.verticalXSmall,
+            AppSpacers.verticalXSmall,
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -107,9 +113,11 @@ AppSpacers.verticalXSmall,
                       stream: unitStream.fuelConsumptionStream(stats.averageFuelConsumption),
                       builder: (context, snapshot) {
                         final value = snapshot.data ?? stats.averageFuelConsumption;
-                        final unit = settingsCubit.state.unit == S.of(context).km ? "${S.of(context).l}/100${S.of(context).km}" : "mpg";
+                        final fuelUnit = settingsCubit.state.fuelConsumptionUnit;
 
-                        return StatValue(value: value.toStringAsFixed(1), label: unit);
+                        final unitLabel = fuelUnit == 'l/100km' ? "l/100${S.of(context).km}" : "mpg";
+
+                        return StatValue(value: value.toStringAsFixed(1), label: unitLabel);
                       },
                     ),
                   ],
