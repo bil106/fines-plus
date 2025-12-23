@@ -69,10 +69,13 @@ class _CarInfoViewState extends State<_CarInfoView> {
     _carNumberController.text = carCubit.state.carNumber;
     _techPassportController.text = carCubit.state.techPassport;
 
-    _carNumberController.addListener(() {
-      carCubit.changeCar(_carNumberController.text);
-      setState(() {});
+   _carNumberController.addListener(() {
+      final newNumber = _carNumberController.text;
+      carCubit.changeCar(newNumber); 
+      context.read<CarInfoCubit>().setCarNumber(newNumber); 
+      setState(() {}); 
     });
+
     _techPassportController.addListener(() {
       carCubit.setTechPassport(_techPassportController.text);
       setState(() {});

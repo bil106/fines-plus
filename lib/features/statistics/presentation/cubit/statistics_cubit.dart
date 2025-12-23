@@ -150,9 +150,22 @@ class StatisticsCubit extends Cubit<StatisticsState> {
     return (avgPer100km.isFinite && !avgPer100km.isNaN) ? avgPer100km : 0.0;
   }
 
-  void clearStats() {
-    emit(StatisticsState.initial());
+void clearStats() {
+    emit(
+      state.copyWith(
+        loading: false,
+        currentMonthMileage: 0,
+        averageMileage: 0,
+        previousMonthMileage: 0,
+        lastOdometer: 0,
+        expenseStats: MonthlyExpenseStats.empty(),
+        previousExpenseStats: MonthlyExpenseStats.empty(),
+        fuelRecords: const [],
+        averageFuelConsumption: 0.0,
+      ),
+    );
   }
+
 
   @override
   Future<void> close() {

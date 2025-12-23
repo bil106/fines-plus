@@ -45,7 +45,6 @@ class _FinesScreenState extends State<FinesScreen> {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final carInfoCubit = context.read<CarInfoCubit>();
-    final mediaHeight = MediaQuery.of(context).size.height;
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.dark,
@@ -107,15 +106,13 @@ class _FinesScreenState extends State<FinesScreen> {
 
                   BlocBuilder<CarCubit, CarState>(
                     builder: (context, carState) {
-                      final hasCar = carState.carNumber.isNotEmpty;
-
                       return BlocBuilder<CarInfoCubit, CarInfoState>(
                         builder: (context, state) {
+                          final carNumber = state.carNumber;
                           final isLoading = state.status is CarInfoLoadingStatus;
-                          final isFormValid =
-                              hasCar &&
-                              FinesScreen._carReg.hasMatch(state.carNumber);
-                          final user = FirebaseAuth.instance.currentUser;
+
+                          final isCarNumberValid = carNumber.isNotEmpty && FinesScreen._carReg.hasMatch(carNumber);
+                          final isFormValid = isCarNumberValid && !isLoading;
 
                           return Column(
                             mainAxisSize: MainAxisSize.min,
@@ -128,7 +125,7 @@ class _FinesScreenState extends State<FinesScreen> {
                                     backgroundColor: AppColors.blue700,
                                     shape: RoundedRectangleBorder(borderRadius: AppBorders.radius16),
                                   ),
-                                  onPressed: isFormValid && !isLoading
+                                  onPressed: isFormValid
                                       ? () async {
                                           final prefs = await SharedPreferences.getInstance();
                                           final finesEnabled = prefs.getBool("finesCheck") ?? true;
@@ -140,6 +137,7 @@ class _FinesScreenState extends State<FinesScreen> {
                                             return;
                                           }
 
+                                          final user = FirebaseAuth.instance.currentUser;
                                           if (user == null) {
                                             showDialog(
                                               context: context,
@@ -151,21 +149,22 @@ class _FinesScreenState extends State<FinesScreen> {
                                                 },
                                               ),
                                             );
-                                          } else {
-                                            setState(() => _showRecaptcha = true);
+                                            return;
                                           }
+
+                                          setState(() => _showRecaptcha = true);
                                         }
                                       : null,
                                   child: isLoading
                                       ? const CircularProgressIndicator(color: AppColors.neutreBlanc)
-                                      : Text(S.of(context).check_fines, style: textTheme.whiteNormal),
+                                      : Text(S.of(context).check_fines, style: Theme.of(context).textTheme.whiteNormal),
                                 ),
                               ),
                               if (_showRecaptcha)
                                 Padding(
                                   padding: const EdgeInsets.only(top: 16),
                                   child: ConstrainedBox(
-                                    constraints: BoxConstraints(maxHeight: mediaHeight * 0.6),
+                                    constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.6),
                                     child: RecaptchaV2(
                                       apiKey: Env.recaptchaSiteKey,
                                       onVerifiedSuccessfully: (token) {

@@ -150,7 +150,7 @@ Future<void> _loadLatestExpense() async {
           children: [
             BlocBuilder<StatisticsCubit, StatisticsState>(
               builder: (context, state) {
-                if (state.loading) {
+             if (state.loading && context.watch<CarCubit>().state.carNumber.isNotEmpty) {
                   return const CircularProgressIndicator();
                 }
 

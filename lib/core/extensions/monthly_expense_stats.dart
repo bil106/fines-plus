@@ -26,7 +26,19 @@ factory MonthlyExpenseStats.initial() {
         ExpenseCategory.carWash: 0.0,
         ExpenseCategory.other: 0.0,
       },);}
-
+  factory MonthlyExpenseStats.empty() {
+    return MonthlyExpenseStats(
+      monthLabel: '',
+      total: 0.0,
+      categoryTotals: {
+        ExpenseCategory.fuel: 0.0,
+        ExpenseCategory.service: 0.0,
+        ExpenseCategory.tuning: 0.0,
+        ExpenseCategory.carWash: 0.0,
+        ExpenseCategory.other: 0.0,
+      },
+    );
+  }
 
 }
 
