@@ -13,7 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:fines_plus/core/extensions/ad_banner_widget.dart';
-import 'package:fines_plus/router/home_screen_wrapper.dart';
+import 'package:fines_plus/app/router/home_screen_wrapper.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 @RoutePage()

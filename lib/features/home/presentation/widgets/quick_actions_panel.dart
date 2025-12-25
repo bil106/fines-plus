@@ -5,7 +5,7 @@ import 'package:fines_plus/features/home/presentation/widgets/action_item.dart';
 import 'package:fines_plus/features/home/presentation/widgets/insurance_detail_sheet.dart';
 import 'package:fines_plus/features/schedule/presentation/widgets/action_detail_sheet.dart';
 import 'package:fines_plus/features/vehicle/presentation/cubit/car_cubit.dart';
-import 'package:fines_plus/router/home_screen_wrapper.dart';
+import 'package:fines_plus/app/router/home_screen_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -53,7 +53,7 @@ class QuickActionsPanel extends StatelessWidget {
                       return const InsuranceDetailSheet();
                     } else {
                       return ActionDetailSheet(
-                        description: _translateLabel(labelKey, context),
+                        description: _translateLabel(labelKey, ctx),
                         category: labelKey,
                         byDate: false,
                         byMileage: true,
@@ -69,7 +69,7 @@ class QuickActionsPanel extends StatelessWidget {
                 if (labelKey == "Insurance") {
                   await quick.onTaskCreated(
                     {
-                      'description': S.of(context).insurance,
+                      'description': S.maybeOf(context)?.insurance ?? labelKey,
                       'category': labelKey.toLowerCase(),
                       'isInsurance': true,
                       'date': result['date'] ?? DateTime.now(),

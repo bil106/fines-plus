@@ -1,14 +1,17 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/constants/app_spacers.dart';
+import 'package:design_system/theme/app_theme.dart';
+import 'package:fines_plus/env/env.dart';
 import 'package:fines_plus/features/subscription/data/repository/subscription_repository_impl.dart';
 import 'package:fines_plus/features/subscription/domain/entities/subscription.dart';
 import 'package:fines_plus/features/subscription/presentation/cubit/subscription_cubit.dart';
-import 'package:fines_plus/router/app_router.dart';
+import 'package:fines_plus/app/router/app_router.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 @RoutePage()
 class SubscriptionScreen extends StatefulWidget {
@@ -80,7 +83,6 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         appBar: AppBar(
           backgroundColor: AppColors.energyBlue50,
           elevation: 0,
-       
 
           title: Text(S.of(context).subscription, style: textTheme.headlineMedium),
         ),
@@ -241,8 +243,38 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                         Text(S.of(context).pay_safe, style: TextStyle(fontWeight: FontWeight.w600)),
                       ],
                     ),
-
                     AppSpacers.verticalLarge,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () => launchUrl(Uri.parse(Env.termsUrl)),
+                            child: Text(
+                              S.of(context).terms_of_use,
+                              style: textTheme.black16bold.copyWith(color: AppColors.blue700),
+                              maxLines: 2,
+                              softWrap: true,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Flexible(
+                          child: GestureDetector(
+                            onTap: _openPrivacy,
+                            child: Text(
+                              S.of(context).privacy_policy,
+                              style: textTheme.black16bold.copyWith(color: AppColors.blue700),
+                              maxLines: 2,
+                              softWrap: true,
+                              textAlign: TextAlign.right,
+                            ),
+                          ),
+                        ),
+
+                        AppSpacers.verticalLarge,
+                      ],
+                    ),
                   ],
                 ),
               ),
@@ -251,5 +283,12 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> _openPrivacy() async {
+    final url = Uri.parse(Env.privacyPolicyUrl);
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url, mode: LaunchMode.externalApplication);
+    }
   }
 }

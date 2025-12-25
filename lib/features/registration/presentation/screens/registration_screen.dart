@@ -9,8 +9,8 @@ import 'package:fines_plus/features/registration/presentation/cubit/registration
 import 'package:fines_plus/features/registration/presentation/cubit/registration_state.dart';
 import 'package:fines_plus/features/subscription/data/models/subscription_status.dart';
 import 'package:fines_plus/features/subscription/presentation/cubit/subscription_cubit.dart';
-import 'package:fines_plus/router/app_router.dart';
-import 'package:fines_plus/router/home_screen_wrapper.dart';
+import 'package:fines_plus/app/router/app_router.dart';
+import 'package:fines_plus/app/router/home_screen_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';

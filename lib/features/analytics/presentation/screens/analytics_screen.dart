@@ -21,7 +21,7 @@ import 'package:fines_plus/features/schedule/presentation/screens/schedule_scree
 import 'package:fines_plus/features/settings/presentation/cubit/settings_cubit.dart';
 import 'package:fines_plus/features/statistics/presentation/screens/statistics_screen.dart';
 import 'package:fines_plus/features/vehicle/presentation/cubit/car_cubit.dart';
-import 'package:fines_plus/router/home_screen_wrapper.dart';
+import 'package:fines_plus/app/router/home_screen_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';

@@ -13,7 +13,7 @@ import 'package:fines_plus/features/statistics/presentation/cubit/statistics_cub
 import 'package:fines_plus/features/vehicle/presentation/cubit/car_info_cubit.dart';
 import '../../../../../env/env.dart';
 import 'package:fines_plus/features/vehicle/presentation/cubit/car_cubit.dart';
-import 'package:fines_plus/router/app_router.dart';
+import 'package:fines_plus/app/router/app_router.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:core_utils/formatters/vehicle_formatters.dart';
@@ -48,7 +48,7 @@ class _CarInfoViewState extends State<_CarInfoView> {
   late final TextEditingController _techPassportController;
   bool _showRecaptcha = false;
 
-  late final CarCubit carCubit;
+  CarCubit? carCubit;
 
   final _carReg = RegExp(r'^[А-ЯЇІЄҐ]{2}\d{4}[А-ЯЇІЄҐ]{2}$');
   final _techReg = RegExp(r'^[А-ЯІЇЄҐ]{3}\d{6}$');
@@ -56,7 +56,7 @@ class _CarInfoViewState extends State<_CarInfoView> {
   bool get isFormValid =>
       _carReg.hasMatch(_carNumberController.text) && _techReg.hasMatch(_techPassportController.text);
 
-  bool get hasCar => carCubit.state.carNumber.isNotEmpty;
+  bool get hasCar => carCubit?.state.carNumber.isNotEmpty ?? false;
 
   @override
   void initState() {
@@ -66,18 +66,18 @@ class _CarInfoViewState extends State<_CarInfoView> {
 
     carCubit = context.read<CarCubit>();
 
-    _carNumberController.text = carCubit.state.carNumber;
-    _techPassportController.text = carCubit.state.techPassport;
+    _carNumberController.text = carCubit?.state.carNumber ?? '';
+    _techPassportController.text = carCubit?.state.techPassport ?? '';
 
-   _carNumberController.addListener(() {
+    _carNumberController.addListener(() {
       final newNumber = _carNumberController.text;
-      carCubit.changeCar(newNumber); 
-      context.read<CarInfoCubit>().setCarNumber(newNumber); 
-      setState(() {}); 
+      carCubit?.changeCar(newNumber);
+      context.read<CarInfoCubit>().setCarNumber(newNumber);
+      setState(() {});
     });
 
     _techPassportController.addListener(() {
-      carCubit.setTechPassport(_techPassportController.text);
+      carCubit?.setTechPassport(_techPassportController.text);
       setState(() {});
     });
   }
@@ -93,16 +93,19 @@ class _CarInfoViewState extends State<_CarInfoView> {
     if (!mounted) return;
     setState(() => _showRecaptcha = false);
 
-    await carCubit.checkFines(token);
+    final cubit = carCubit;
+    if (cubit == null) return;
 
-    final carNumber = carCubit.state.carNumber;
+    await cubit.checkFines(token);
+
+    final carNumber = cubit.state.carNumber;
     if (carNumber.isNotEmpty) {
       context.read<AnalyticsCubit>().loadForCurrentCar();
       context.read<ExpensesCubit>().loadExpensesForCar(carNumber);
     }
 
     if (widget.onCheckFine != null) {
-      final parts = carCubit.getTechPassportParts();
+      final parts = cubit.getTechPassportParts();
       widget.onCheckFine!(carNumber, parts['series']!, parts['number']!);
     }
   }
@@ -140,6 +143,7 @@ class _CarInfoViewState extends State<_CarInfoView> {
   }
 
   Future<void> _deleteCars() async {
+    final cubit = carCubit;
     final user = FirebaseAuth.instance.currentUser;
 
     if (user == null) {
@@ -148,10 +152,8 @@ class _CarInfoViewState extends State<_CarInfoView> {
     }
 
     context.read<StatisticsCubit>().clearStats();
-
     context.read<AnalyticsCubit>().stopListeningToCar();
     context.read<AnalyticsCubit>().clear();
-
     context.read<ExpensesCubit>().clearExpensesForCar();
     context.read<HistoryCubit>().clear();
 
@@ -161,10 +163,11 @@ class _CarInfoViewState extends State<_CarInfoView> {
     _techPassportController.clear();
 
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(S.of(context).cars_deleted_success)));
+
     if (!mounted) return;
-    if (carCubit.state.carNumber.isEmpty) {
+
+    if (cubit == null || cubit.state.carNumber.isEmpty) {
       context.router.replaceAll([const HomeRoute()]);
-      return;
     }
   }
 

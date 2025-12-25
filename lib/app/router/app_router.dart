@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:core_cubit/cubit/purchase/purchase_cubit.dart';
 import 'package:core_data/core_data.dart';
+import 'package:fines_plus/app/startup/splash_screen.dart';
 import 'package:fines_plus/core/helpers/push_helper.dart';
 import 'package:fines_plus/features/analytics/data/models/event_model.dart';
 import 'package:fines_plus/features/analytics/presentation/screens/analytics_screen.dart';
@@ -29,7 +30,7 @@ import 'package:fines_plus/features/maintenance/presentation/screens/maintenance
 import 'package:fines_plus/features/maintenance/presentation/screens/tuning_screen.dart';
 import 'package:fines_plus/features/subscription/presentation/screens/subscription_screen.dart';
 import 'package:fines_plus/presentation/screens/update_required_screen.dart';
-import 'package:fines_plus/router/home_screen_wrapper.dart';
+import 'package:fines_plus/app/router/home_screen_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -43,9 +44,12 @@ class AppRouter extends RootStackRouter {
 
   @override
   List<AutoRoute> get routes => [
+    AutoRoute(page: SplashRoute.page, path: '/', initial: true),
+
+  
     AutoRoute(
       page: HomeRouteWrapper.page,
-      path: '/',
+      path: '/home-wrapper',
       children: [
         AutoRoute(page: HomeRoute.page, path: 'home', initial: true),
         AutoRoute(page: AddCarRoute.page, path: 'add-car'),
@@ -64,7 +68,6 @@ class AppRouter extends RootStackRouter {
 
     
     AutoRoute(page: OnboardingRoute.page, path: '/onboarding'),
-
     AutoRoute(page: CarInfoRoute.page, path: '/car-info'),
     AutoRoute(page: SettingsRoute.page, path: '/settings'),
     AutoRoute(page: ExportRoute.page, path: '/export'),
@@ -76,8 +79,6 @@ class AppRouter extends RootStackRouter {
     AutoRoute(page: UpdateRequiredRoute.page, path: '/update'),
     AutoRoute(page: SubscriptionRoute.page, path: '/subscription'),
     AutoRoute(page: RegistrationRoute.page, path: '/registration'),
-   
-
-  
   ];
 }
+

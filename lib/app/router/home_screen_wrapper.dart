@@ -46,7 +46,8 @@ import 'package:fines_plus/features/settings/presentation/screens/settings_scree
 import 'package:fines_plus/features/maintenance/presentation/screens/maintenance_screen.dart';
 import 'package:fines_plus/features/maintenance/presentation/screens/tuning_screen.dart';
 import 'package:fines_plus/features/subscription/presentation/screens/subscription_screen.dart';
-import 'package:fines_plus/router/app_router.dart';
+import 'package:fines_plus/app/router/app_router.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -131,7 +132,17 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
     _pageController = PageController(initialPage: _currentIndex);
     
     debugPrint('HomeScreenWrapper: widget.initialPage = ${widget.initialPage}');
-    _loadCarNumber();
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final carNumber = context.read<CarCubit>().state.carNumber;
+      final user = FirebaseAuth.instance.currentUser;
+
+      if (user == null || carNumber.isEmpty) {
+        context.router.replaceAll([const OnboardingRoute()]);
+        return;
+      }
+
+      _loadCarNumber();
+    });
 
     historyCubit = HistoryCubit(repository: context.read<HistoryRepository>(), carCubit: context.read<CarCubit>());
     carInfoCubit = CarInfoCubit(context.read<CarInfoRepository>(), historyCubit);
@@ -145,28 +156,30 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
     setState(() {});
   }
 
-  Future<void> _loadCarNumber() async {
+ Future<void> _loadCarNumber() async {
     final prefs = await SharedPreferences.getInstance();
     if (!mounted) return;
+
     setState(() {
       _carNumber = prefs.getString('carNumber') ?? '';
       _docSeries = prefs.getString('docSeries') ?? '';
       _docNumber = prefs.getString('docNumber') ?? '';
     });
 
+   
     final hasSubscription = await context.read<RegistrationCubit>().checkSubscription();
+    if (!mounted) return;
 
-    if (hasSubscription) {
-      final index = _pageIndexMap[HomePage.home] ?? 0;
+
+    final targetPage = hasSubscription ? HomePage.home : HomePage.subscription;
+    final index = _pageIndexMap[targetPage] ?? 0;
+
+   
+    if (_pageController.hasClients) {
       _pageController.jumpToPage(index);
-      if (!mounted) return;
-      setState(() => _currentIndex = index);
-    } else {
-      final index = _pageIndexMap[HomePage.home] ?? 0;
-      _pageController.jumpToPage(index);
-      if (!mounted) return;
-      setState(() => _currentIndex = index);
     }
+
+    setState(() => _currentIndex = index);
   }
 
   void _saveCarInfo(String carNumber, String series, String number) async {
@@ -312,13 +325,6 @@ if (!mounted) return;
                   ),
                 ),
 
-                // FineCheckScreen(
-                //   key: const ValueKey('fine_check_screen'),
-                //   carNumber: _carNumber!,
-                //   docSeries: _docSeries ?? '',
-                //   docNumber: _docNumber ?? '',
-                //   onBack: () => openPage(HomePage.home),
-                // ),
                 SettingsScreen(
                   key: const ValueKey('settings_screen'),
                   onBack: () => openPage(HomePage.home),

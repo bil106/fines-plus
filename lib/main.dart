@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:core_cubit/cubit/purchase/purchase_cubit.dart';
 import 'package:core_cubit/cubit/referral/referral_cubit.dart';
+import 'package:fines_plus/app/app.dart';
 import 'package:fines_plus/core/extensions/currency_service.dart';
 import 'package:fines_plus/features/subscription/data/repository/subscription_repository_impl.dart';
 import '../env/env.dart';
@@ -34,7 +35,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:fines_plus/my_app.dart';
 import 'package:fines_plus/core/services/app_initializer.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -120,7 +120,7 @@ void main() {
             child: MyApp(
               config: result.config,
               flutterLocalNotificationsPlugin: result.flutterLocalNotificationsPlugin,
-              isUpdateRequired: result.isUpdateRequired,
+        
             ),
           ),
         ),
