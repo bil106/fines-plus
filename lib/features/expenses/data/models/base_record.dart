@@ -5,7 +5,7 @@ abstract class BaseRecord {
   final DateTime date;
   final double amount;
   final ExpenseCategory category;
-  final String userId;
+  final String ownerId;
   final int? mileage;
   final String? comment;
   final String? currency;
@@ -16,7 +16,7 @@ abstract class BaseRecord {
     required this.date,
     required this.amount,
     required this.category,
-    required this.userId,
+    required this.ownerId,
     this.mileage,
     this.comment,
     this.currency,
@@ -24,9 +24,7 @@ abstract class BaseRecord {
     this.isSynced = false,
   });
 
- 
   Map<String, dynamic> toJson();
 
- 
-  Expense toExpense(String userId);
+  Expense toExpense(String ownerId);
 }

@@ -2,7 +2,6 @@
 
 import 'package:auto_route/auto_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:core_cubit/cubit/purchase/purchase_cubit.dart';
 import 'package:core_data/core_data.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
@@ -29,6 +28,7 @@ import 'package:fines_plus/features/reminders/presentation/cubit/reminder_cubit.
 import 'package:fines_plus/features/reminders/presentation/screens/reminders_screen.dart';
 import 'package:fines_plus/features/schedule/data/repository/schedule_repository.dart';
 import 'package:fines_plus/features/schedule/presentation/cubit/schedule_cubit.dart';
+import 'package:fines_plus/features/subscription/presentation/cubit/purchase/purchase_cubit.dart';
 import 'package:fines_plus/features/subscription/presentation/cubit/subscription_cubit.dart';
 import 'package:fines_plus/features/vehicle/data/repository/car_info_repository.dart';
 import 'package:fines_plus/features/vehicle/presentation/cubit/car_cubit.dart';
@@ -102,7 +102,7 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
   @override
   void initState() {
     super.initState();
- 
+
     _pageIndexMap = {
       HomePage.home: 0,
       HomePage.addCar: 1,
@@ -126,13 +126,13 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
       HomePage.fuelMap: 17,
       HomePage.carWashMap: 18,
     };
-    
+
     _currentIndex = _pageIndexMap[HomePage.home]!;
     debugPrint('HomeScreenWrapper: initial computed _currentIndex = $_currentIndex');
     _pageController = PageController(initialPage: _currentIndex);
-    
+
     debugPrint('HomeScreenWrapper: widget.initialPage = ${widget.initialPage}');
-      WidgetsBinding.instance.addPostFrameCallback((_) async {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       final carNumber = context.read<CarCubit>().state.carNumber;
       final user = FirebaseAuth.instance.currentUser;
 
@@ -156,7 +156,7 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
     setState(() {});
   }
 
- Future<void> _loadCarNumber() async {
+  Future<void> _loadCarNumber() async {
     final prefs = await SharedPreferences.getInstance();
     if (!mounted) return;
 
@@ -166,15 +166,12 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
       _docNumber = prefs.getString('docNumber') ?? '';
     });
 
-   
     final hasSubscription = await context.read<RegistrationCubit>().checkSubscription();
     if (!mounted) return;
-
 
     final targetPage = hasSubscription ? HomePage.home : HomePage.subscription;
     final index = _pageIndexMap[targetPage] ?? 0;
 
-   
     if (_pageController.hasClients) {
       _pageController.jumpToPage(index);
     }
@@ -187,7 +184,7 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
     await prefs.setString('carNumber', carNumber);
     await prefs.setString('docSeries', series);
     await prefs.setString('docNumber', number);
-if (!mounted) return;
+    if (!mounted) return;
     setState(() {
       _carNumber = carNumber;
       _docSeries = series;
@@ -207,7 +204,7 @@ if (!mounted) return;
     }
 
     _pageController.animateToPage(index, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
-   
+
     setState(() => _currentIndex = index);
   }
 
@@ -293,14 +290,21 @@ if (!mounted) return;
                 ),
               ),
 
-              FinesScreen(key: const ValueKey('fines_screen'), onBack: () => openPage(HomePage.home)),
+              FinesScreen(
+                key: const ValueKey('fines_screen'),
+                onBack: () => openPage(HomePage.home),
+                onFineCheck: (carNumber, series, number) {
+                  _saveCarInfo(carNumber, series, number);
+                  openPage(HomePage.history);
+                },
+              ),
               BlocProvider(
                 key: ValueKey(carNumber),
                 create: (_) {
                   final cubit = ReminderCubit(
                     repository: context.read<ReminderRepository>(),
                     carNumber: carNumber,
-                    userId: '',
+                    ownerId: '',
                     pushHelper: context.read<PushHelper>(),
                   );
 
@@ -310,7 +314,7 @@ if (!mounted) return;
                 child: RemindersScreen(
                   key: ValueKey('reminders_$carNumber'),
                   onBack: () => openPage(HomePage.home),
-                  userId: '',
+                  ownerId: '',
                 ),
               ),
 
@@ -362,7 +366,14 @@ if (!mounted) return;
                   value: context.read<SubscriptionCubit>(),
                   child: SubscriptionScreen(
                     onBack: () async {
-                      await Future.delayed(const Duration(milliseconds: 150));
+                      final wrapperState = context.findAncestorStateOfType<HomeScreenWrapperState>();
+                      if (wrapperState != null) {
+                        wrapperState.openPage(HomePage.home);
+                        return;
+                      }
+                      context.router.root.replaceAll([HomeRouteWrapper(initialPage: HomePage.home)]);
+                    },
+                    onPurchaseSuccess: () {
                       final wrapperState = context.findAncestorStateOfType<HomeScreenWrapperState>();
                       if (wrapperState != null) {
                         wrapperState.openPage(HomePage.home);
@@ -372,6 +383,7 @@ if (!mounted) return;
                     },
                   ),
                 ),
+
                 TuningScreen(key: const ValueKey('tuning'), onBack: () => openPage(HomePage.maintenance)),
                 ServiceScreen(key: const ValueKey('service'), onBack: () => openPage(HomePage.maintenance)),
                 CarWashScreen(key: const ValueKey('car-wash'), onBack: () => openPage(HomePage.maintenance)),
@@ -403,7 +415,7 @@ if (!mounted) return;
                           reminderRepository: reminderRepository,
                           pushHelper: PushHelper(FlutterLocalNotificationsPlugin()),
                           carNumber: carNumber,
-                          userId: '',
+                          ownerId: '',
                         );
                       },
                     );

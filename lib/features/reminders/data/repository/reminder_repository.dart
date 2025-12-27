@@ -22,7 +22,7 @@ class ReminderRepository {
 
     final newReminder = reminder.copyWith(id: docId);
 
-    final fixed = newReminder.copyWith(userId: newReminder.userId.isNotEmpty ? newReminder.userId : carNumber);
+    final fixed = newReminder.copyWith(ownerId: newReminder.ownerId.isNotEmpty ? newReminder.ownerId : carNumber);
 
     await collectionRef.doc(docId).set(fixed.toJson());
 
@@ -44,7 +44,7 @@ class ReminderRepository {
         .collection('items')
         .doc(reminder.id);
 
-    final fixed = reminder.copyWith(userId: reminder.userId.isNotEmpty ? reminder.userId : carNumber);
+    final fixed = reminder.copyWith(ownerId: reminder.ownerId.isNotEmpty ? reminder.ownerId : carNumber);
 
     await docRef.set(fixed.toJson(), SetOptions(merge: true));
   }
@@ -79,7 +79,7 @@ class ReminderRepository {
             continue;
           }
 
-          data['userId'] ??= carNumber;
+          data['ownerId'] ??= carNumber;
           data['description'] ??= '';
 
           reminders.add(ReminderModel.fromJson(data));

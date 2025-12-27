@@ -89,7 +89,7 @@ class _CarInfoViewState extends State<_CarInfoView> {
     super.dispose();
   }
 
-  void _onRecaptchaVerified(String token) async {
+void _onRecaptchaVerified(String token) async {
     if (!mounted) return;
     setState(() => _showRecaptcha = false);
 
@@ -100,15 +100,14 @@ class _CarInfoViewState extends State<_CarInfoView> {
 
     final carNumber = cubit.state.carNumber;
     if (carNumber.isNotEmpty) {
-      context.read<AnalyticsCubit>().loadForCurrentCar();
-      context.read<ExpensesCubit>().loadExpensesForCar(carNumber);
-    }
-
-    if (widget.onCheckFine != null) {
+      
       final parts = cubit.getTechPassportParts();
-      widget.onCheckFine!(carNumber, parts['series']!, parts['number']!);
+      if (widget.onCheckFine != null) {
+        widget.onCheckFine!(carNumber, parts['series']!, parts['number']!);
+      }
     }
   }
+
 
   void _handleUnauthorized() {
     showDialog(

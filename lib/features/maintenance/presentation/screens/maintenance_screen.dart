@@ -208,7 +208,7 @@ class _MaintenanceScreenView extends StatelessWidget {
                           reminderRepository: reminderRepository,
                           pushHelper: PushHelper(FlutterLocalNotificationsPlugin()),
                           carNumber: '',
-                          userId: '',
+                          ownerId: '',
                         ),
                       );
                     },

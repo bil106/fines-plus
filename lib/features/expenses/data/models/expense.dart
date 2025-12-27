@@ -37,7 +37,7 @@ class Expense {
   });
 
   /// Firestore-specific serialization
-  Map<String, dynamic> toFirestore() {
+Map<String, dynamic> toFirestore({bool isNew = false}) {
     return {
       'date': Timestamp.fromDate(date),
       'amount': amount,
@@ -45,13 +45,14 @@ class Expense {
       'mileage': mileage,
       'comment': comment,
       'currency': currency,
-      'createdAt': createdAt != null ? Timestamp.fromDate(createdAt!) : FieldValue.serverTimestamp(),
-      'updatedAt': FieldValue.serverTimestamp(),
-      'userId': ownerId,
+      'ownerId': ownerId,
       'carNumber': carNumber,
       'fuelVolume': fuelVolume,
+      if (isNew) 'createdAt': FieldValue.serverTimestamp(),
+      'updatedAt': FieldValue.serverTimestamp(),
     };
   }
+
 
   /// Firestore-specific factory
   factory Expense.fromFirestore(Map<String, dynamic> json, {String? id}) {

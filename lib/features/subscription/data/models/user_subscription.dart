@@ -10,7 +10,12 @@ class UserSubscription {
   final DateTime? subscriptionEndDate;
   final DateTime? trialEndsAt;
 
-  UserSubscription({required this.status, this.subscriptionEndDate, this.trialEndsAt});
+  const UserSubscription({required this.status, this.subscriptionEndDate, this.trialEndsAt});
+
+
+  factory UserSubscription.empty() {
+    return const UserSubscription(status: SubscriptionStatus.none, subscriptionEndDate: null, trialEndsAt: null);
+  }
 
   factory UserSubscription.fromJson(Map<String, dynamic> json) => _$UserSubscriptionFromJson(json);
 

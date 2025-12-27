@@ -20,7 +20,7 @@ Future<void> addToHistory({
 
     final docRef = firestore.collection('fines_history').doc();
     final data = {
-      'userId': user.uid,
+      'userId': user.uid, 
       'carNumber': carNumber.trim().toUpperCase(),
       'docSeries': docSeries,
       'docNumber': docNumber,
@@ -33,18 +33,19 @@ Future<void> addToHistory({
   }
 
 
-  Stream<List<FineHistory>> getHistory(String carNumber) {
+Stream<List<FineHistory>> getHistory(String carNumber) {
     final user = FirebaseAuth.instance.currentUser;
-    if (user == null) throw Exception("User is not signed in");
+    if (user == null) throw UserNotSignedInException();
 
     return firestore
         .collection('fines_history')
-        .where('userId', isEqualTo: user.uid)
+        .where('userId', isEqualTo: user.uid) 
         .where('carNumber', isEqualTo: carNumber.trim().toUpperCase())
         .orderBy('checkedAt', descending: true)
         .snapshots()
-        .map((snapshot) => snapshot.docs.map((doc) => FineHistory.fromJson(doc.id, doc.data())).toList());
+        .map((snap) => snap.docs.map((d) => FineHistory.fromJson(d.id, d.data())).toList());
   }
+
 
   Future<void> deleteAll(String carNumber) async {
     final user = FirebaseAuth.instance.currentUser;
@@ -52,7 +53,7 @@ Future<void> addToHistory({
 
     final snapshot = await firestore
         .collection('fines_history')
-        .where('userId', isEqualTo: user.uid)
+        .where('ownerId', isEqualTo: user.uid)
         .where('carNumber', isEqualTo: carNumber.trim().toUpperCase())
         .get();
 

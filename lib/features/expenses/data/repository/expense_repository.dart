@@ -54,15 +54,32 @@ Future<DocumentReference> addExpense({required String carNumber, required Expens
 Future<List<Expense>> getExpensesOnce({required String carNumber, int limit = 1000}) async {
     if (carNumber.isEmpty) return [];
 
+    final carDoc = await firestore.collection('cars').doc(carNumber).get();
+
+    if (!carDoc.exists) {
+      debugPrint('Car doc does not exist yet, skipping expenses load');
+      return [];
+    }
+
     try {
       final col = _expensesCollection(carNumber);
       final snap = await col.orderBy('date', descending: true).limit(limit).get();
-      return snap.docs.map((d) => Expense.fromFirestore(d.data() as Map<String, dynamic>, id: d.id)).toList();
+
+      return snap.docs.map((d) {
+        final data = d.data();
+        if (data is! Map<String, dynamic>) {
+          throw StateError('Invalid Firestore data for expense ${d.id}');
+        }
+        return Expense.fromFirestore(data, id: d.id);
+      }).toList();
+
+
     } catch (e) {
-      debugPrint('Firestore Error: $e'); 
-      return []; 
+      debugPrint('Firestore Error: $e');
+      return [];
     }
   }
+
 
   Future<void> updateExpense({
     required String carNumber,
@@ -127,24 +144,20 @@ Future<List<Expense>> getExpensesOnce({required String carNumber, int limit = 10
     return Expense.fromFirestore(doc.data() as Map<String, dynamic>, id: doc.id);
   }
 
-Future<void> ensureCarDocument(String? carNumber) async {
-    if (carNumber == null || carNumber.isEmpty) {
-      debugPrint('ensureCarDocument skipped: carNumber is null or empty');
-      return;
+Future<void> ensureCarDocument(String carNumber) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    final docRef = firestore.collection('cars').doc(carNumber);
+    final snapshot = await docRef.get();
+
+    if (!snapshot.exists) {
+      // CREATE
+      await docRef.set({'ownerId': user.uid, 'carNumber': carNumber, 'createdAt': FieldValue.serverTimestamp()});
+    } else {
+      // UPDATE
+      await docRef.update({'updatedAt': FieldValue.serverTimestamp()});
     }
-
-    final currentUser = FirebaseAuth.instance.currentUser;
-    if (currentUser == null) {
-      debugPrint('ensureCarDocument skipped: user is not signed in');
-      return;
-    }
-
-    final carDocRef = firestore.collection('cars').doc(carNumber);
-
-    await carDocRef.set({
-      'ownerId': currentUser.uid,
-      'createdAt': FieldValue.serverTimestamp(),
-    }, SetOptions(merge: true));
   }
 
 

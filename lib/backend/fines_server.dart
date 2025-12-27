@@ -16,10 +16,7 @@ class FinesServer {
   bool _starting = false;
 
   Future<void> start() async {
-    if (!kDebugMode) return;
-
     if (_server != null || _starting) return;
-
     _starting = true;
 
     try {
@@ -35,16 +32,12 @@ class FinesServer {
           String carNumber = (data['carNumber'] ?? '').toString();
           String docSeries = (data['docSeries'] ?? '').toString();
           String docNumber = (data['docNumber'] ?? '').toString();
-          String captchaToken = (data['captchaToken'] ?? 'default-token').toString();
+          String captchaToken = (data['captchaToken'] ?? '').toString();
           String cookies = (data['cookies'] ?? '').toString();
 
           if (docSeries.length > 3 && docNumber.isEmpty) {
             docNumber = docSeries.substring(3);
             docSeries = docSeries.substring(0, 3);
-          }
-
-          if (kDebugMode) {
-            debugPrint('Request: carNumber=$carNumber, docSeries=$docSeries, docNumber=$docNumber');
           }
 
           final html = await fetchFines(
@@ -57,36 +50,31 @@ class FinesServer {
           final fines = parseFinesHtml(html);
 
           return Response.ok(jsonEncode({'fines': fines}), headers: {'Content-Type': 'application/json'});
-        } catch (e, st) {
-          if (kDebugMode) {
-            debugPrint('API error: $e');
-            debugPrintStack(stackTrace: st);
-          }
-          return Response.internalServerError(
-            body: jsonEncode({'error': e.toString()}),
-            headers: {'Content-Type': 'application/json'},
-          );
+        } catch (e) {
+          return Response.internalServerError(body: jsonEncode({'error': e.toString()}));
         }
       });
 
       final handler = const Pipeline().addMiddleware(logRequests()).addHandler(router.call);
 
-      _server = await io.serve(handler, InternetAddress.loopbackIPv4, 3000);
+     
+      final port = int.parse(Platform.environment['PORT'] ?? '8080');
+
+      _server = await io.serve(
+        handler,
+        InternetAddress.anyIPv4,
+        port,
+      );
 
       if (kDebugMode) {
-        debugPrint('FinesServer running on http://127.0.0.1:3000');
+        print('FinesServer running on port $port');
       }
-    } catch (e, st) {
+    } catch (e) {
       _starting = false;
-
-      if (kDebugMode) {
-        debugPrint('Failed to start FinesServer: $e');
-        debugPrintStack(stackTrace: st);
-      }
-
       rethrow;
     }
   }
+
 
   Future<void> stop() async {
     await _server?.close(force: true);
@@ -159,4 +147,32 @@ List<Map<String, dynamic>> parseFinesHtml(String html) {
   }
 
   return fines;
+}
+Future<List<Map<String, dynamic>>> fetchFinesFromServer({
+  required String carNumber,
+  required String docSeries,
+  required String docNumber,
+  required String captchaToken,
+  required String cookies,
+}) async {
+  final url = Uri.parse('https://my-fines-service-201100655892.europe-west1.run.app/api/fines');
+
+  final response = await http.post(
+    url,
+    headers: {'Content-Type': 'application/json'},
+    body: jsonEncode({
+      'carNumber': carNumber,
+      'docSeries': docSeries,
+      'docNumber': docNumber,
+      'captchaToken': captchaToken,
+      'cookies': cookies,
+    }),
+  );
+
+  if (response.statusCode == 200) {
+    final data = jsonDecode(response.body) as Map<String, dynamic>;
+    return List<Map<String, dynamic>>.from(data['fines'] ?? []);
+  } else {
+    throw Exception('Ошибка сервера: ${response.statusCode}');
+  }
 }

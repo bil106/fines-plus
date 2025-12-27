@@ -1,26 +1,68 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:fines_plus/features/subscription/data/models/subscription_status.dart';
 import 'package:fines_plus/features/subscription/data/models/user_subscription.dart';
 import 'package:fines_plus/features/subscription/data/repository/subscription_repository.dart';
-import 'package:flutter/foundation.dart';
+import 'package:fines_plus/features/subscription/presentation/cubit/purchase/purchase_event.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../domain/entities/subscription.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-class SubscriptionRepositoryImpl implements ISubscriptionRepository {
+class SubscriptionRepository implements ISubscriptionRepository {
   final InAppPurchase iap;
   final FirebaseAuth auth;
   final FirebaseFirestore firestore;
+
+  final _controller = StreamController<PurchaseEvent>.broadcast();
+
+  @override
+  Stream<PurchaseEvent> get events => _controller.stream;
+
   StreamSubscription<List<PurchaseDetails>>? _purchaseSub;
 
-  SubscriptionRepositoryImpl(this.iap, this.auth, this.firestore) {
+  SubscriptionRepository(this.iap, this.auth, this.firestore) {
     _purchaseSub = iap.purchaseStream.listen(
       _onPurchaseUpdated,
-      onDone: () => _purchaseSub?.cancel(),
-      onError: (e) => debugPrint('Purchase stream error: $e'),
+      onError: (e) => _controller.add(PurchaseEvent.error(e.toString())),
     );
+  }
+
+  @override
+  Future<void> startPurchase(SubscriptionPlan plan) async {
+    if (!await iap.isAvailable()) {
+      throw Exception('Billing not available');
+    }
+
+    final response = await iap.queryProductDetails({plan.id});
+    if (response.productDetails.isEmpty) {
+      throw Exception('Product not found');
+    }
+
+    await iap.buyNonConsumable(purchaseParam: PurchaseParam(productDetails: response.productDetails.first));
+  }
+
+  @override
+  Future<List<SubscriptionPlan>> getAvailablePlans() async {
+    final snapshot = await firestore.collection('subscription_plans').get();
+    return snapshot.docs.map((doc) => SubscriptionPlan.fromJson(doc.data())).toList();
+  }
+
+  @override
+  Future<UserSubscription> loadUserSubscription(String ownerId) async {
+    final doc = await firestore.collection('users').doc(ownerId).get();
+    if (!doc.exists) {
+      return UserSubscription.empty();
+    }
+    return UserSubscription.fromJson(doc.data()!);
+  }
+
+  @override
+  Future<void> buySubscription(String ownerId, SubscriptionPlan plan) async {
+    if (auth.currentUser?.uid != ownerId) {
+      throw Exception("User mismatch");
+    }
+    await startPurchase(plan);
   }
 
   Future<void> _onPurchaseUpdated(List<PurchaseDetails> purchases) async {
@@ -29,98 +71,52 @@ class SubscriptionRepositoryImpl implements ISubscriptionRepository {
 
     for (final p in purchases) {
       try {
-        if (p.status == PurchaseStatus.pending) {
-          debugPrint('Purchase pending: ${p.productID}');
-        }  else if (p.status == PurchaseStatus.purchased || p.status == PurchaseStatus.restored) {
+        switch (p.status) {
+          case PurchaseStatus.error:
+            _controller.add(PurchaseEvent.error(p.error?.message ?? 'Purchase error'));
+            break;
 
+          case PurchaseStatus.purchased:
+          case PurchaseStatus.restored:
+            await _handleSuccess(p, user.uid);
+            _controller.add(PurchaseEvent.success());
+            break;
 
-  final productResponse = await iap.queryProductDetails({p.productID});
-  if (productResponse.productDetails.isEmpty) continue;
-  final product = productResponse.productDetails.first;
-
-  final price = double.tryParse(product.price.replaceAll(RegExp('[^0-9.]'), '')) ?? 0;
-  final currency = product.currencyCode;
-
- 
-  final now = DateTime.now();
-  final months = p.productID == 'sub_quarter' ? 3 : 12;
-  final endDate = DateTime(now.year, now.month + months, now.day);
-  final trialEndDate = now.add(const Duration(days: 7));
-
-  await firestore.collection('users').doc(user.uid).set({
-    'isSubscribed': true,
-    'subscriptionEndDate': endDate,
-    'trialEndsAt': trialEndDate,
-  }, SetOptions(merge: true));
-
-  await firestore.collection('purchases').doc(p.purchaseID).set({
-    'uid': user.uid,
-    'amount': price,
-    'currency': currency,
-    'months': months,
-    'source': 'play',
-    'subscriptionEndDate': endDate,
-    'trialEndsAt': trialEndDate,
-    'createdAt': FieldValue.serverTimestamp(),
-  });
-
-  if (p.pendingCompletePurchase) {
-    await iap.completePurchase(p);
-  } else {
-    await iap.completePurchase(p);
-  }
-
-
-        } else if (p.status == PurchaseStatus.error) {
-          debugPrint('Purchase error for ${p.productID}: ${p.error}');
+          default:
+            break;
         }
-      } catch (e, st) {
-        debugPrint('Error processing purchase ${p.productID}: $e\n$st');
+      } catch (e) {
+        _controller.add(PurchaseEvent.error(e.toString()));
       }
     }
   }
 
-  @override
-  Future<List<SubscriptionPlan>> getAvailablePlans() async {
-    if (!await iap.isAvailable()) return [];
-    const ids = {'sub_quarter', 'yearly_2549'};
-    final response = await iap.queryProductDetails(ids);
-    return response.productDetails.map((p) {
-      final price = double.tryParse(p.price.replaceAll(RegExp('[^0-9.]'), '')) ?? 0;
-      final months = p.id == 'sub_quarter' ? 3 : 12;
-      return SubscriptionPlan(id: p.id, title: p.title, price: price, months: months, features: []);
-    }).toList();
-  }
-
-  @override
-  Future<void> buySubscription(String userId, SubscriptionPlan plan) async {
-    final response = await iap.queryProductDetails({plan.id});
-    if (response.productDetails.isEmpty) throw Exception("Product not found");
+  Future<void> _handleSuccess(PurchaseDetails p, String uid) async {
+    final response = await iap.queryProductDetails({p.productID});
+    if (response.productDetails.isEmpty) return;
     final product = response.productDetails.first;
-    final purchaseParam = PurchaseParam(productDetails: product);
-    await iap.buyNonConsumable(purchaseParam: purchaseParam);
-  }
-
-  @override
-  Future<UserSubscription> loadUserSubscription(String userId) async {
-    final doc = await firestore.collection('users').doc(userId).get();
-    if (!doc.exists) return UserSubscription(status: SubscriptionStatus.none);
-
-    final data = doc.data()!;
-    final isSubscribed = data['isSubscribed'] == true;
-    final endDate = (data['subscriptionEndDate'] as Timestamp?)?.toDate();
-    final trialEnd = (data['trialEndsAt'] as Timestamp?)?.toDate();
-
-    SubscriptionStatus status;
-    if (!isSubscribed || endDate == null || endDate.isBefore(DateTime.now())) {
-      status = SubscriptionStatus.none;
-    } else if (trialEnd != null && trialEnd.isAfter(DateTime.now())) {
-      status = SubscriptionStatus.trial;
-    } else {
-      status = SubscriptionStatus.subscribed;
+    final price = double.tryParse(product.price.replaceAll(RegExp('[^0-9.]'), '')) ?? 0;
+    final months = p.productID == 'sub_quarter' ? 3 : 12;
+    final now = DateTime.now();
+    final endDate = DateTime(now.year, now.month + months, now.day);
+    await firestore.collection('users').doc(uid).set({
+      'isSubscribed': true,
+      'subscriptionEndDate': endDate,
+    }, SetOptions(merge: true));
+    await firestore.collection('purchases').doc(p.purchaseID).set({
+      'uid': uid,
+      'amount': price,
+      'currency': product.currencyCode,
+      'months': months,
+      'source': 'play',
+      'createdAt': FieldValue.serverTimestamp(),
+      'subscriptionEndDate': endDate,
+    });
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('subscription_end_timestamp', endDate.millisecondsSinceEpoch);
+    if (p.pendingCompletePurchase) {
+      await iap.completePurchase(p);
     }
-
-    return UserSubscription(status: status, subscriptionEndDate: endDate, trialEndsAt: trialEnd);
   }
 
   @override
@@ -128,8 +124,8 @@ class SubscriptionRepositoryImpl implements ISubscriptionRepository {
     await iap.restorePurchases();
   }
 
-  Future<void> dispose() async {
-    await _purchaseSub?.cancel();
-    _purchaseSub = null;
+  void dispose() {
+    _purchaseSub?.cancel();
+    _controller.close();
   }
 }

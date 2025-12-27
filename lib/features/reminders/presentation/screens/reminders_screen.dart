@@ -15,10 +15,10 @@ import 'package:intl/intl.dart';
 
 @RoutePage()
 class RemindersScreen extends StatefulWidget {
-  final String userId;
+  final String ownerId;
   final VoidCallback? onBack;
 
-  const RemindersScreen({super.key, required this.userId, this.onBack});
+  const RemindersScreen({super.key, required this.ownerId, this.onBack});
 
   @override
   State<RemindersScreen> createState() => _RemindersScreenState();
@@ -32,14 +32,14 @@ class _RemindersScreenState extends State<RemindersScreen> {
         final carNumber = carState.carNumber;
 
         if (carNumber.isEmpty) {
-          return  Center(child: Text(S.of(context).no_car_selected));
+          return Center(child: Text(S.of(context).no_car_selected));
         }
 
         return BlocProvider(
           create: (_) => ReminderCubit(
             repository: context.read<ReminderRepository>(),
             carNumber: carNumber,
-            userId: widget.userId,
+            ownerId: widget.ownerId,
             pushHelper: context.read<PushHelper>(),
           )..load(),
           child: _RemindersView(widget.onBack),

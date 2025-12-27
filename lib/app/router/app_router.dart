@@ -1,6 +1,5 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:core_cubit/cubit/purchase/purchase_cubit.dart';
 import 'package:core_data/core_data.dart';
 import 'package:fines_plus/app/startup/splash_screen.dart';
 import 'package:fines_plus/core/helpers/push_helper.dart';
@@ -15,6 +14,7 @@ import 'package:fines_plus/features/reminders/data/repository/reminder_repositor
 import 'package:fines_plus/features/reminders/presentation/screens/reminders_screen.dart';
 import 'package:fines_plus/features/schedule/data/repository/schedule_repository.dart';
 import 'package:fines_plus/features/schedule/presentation/cubit/schedule_cubit.dart';
+import 'package:fines_plus/features/subscription/presentation/cubit/purchase/purchase_cubit.dart';
 import 'package:fines_plus/features/vehicle/presentation/screens/car_info_screen.dart';
 import 'package:fines_plus/presentation/screens/add_car_screen.dart';
 import 'package:fines_plus/features/maintenance/presentation/screens/car_wash_map_screen.dart';

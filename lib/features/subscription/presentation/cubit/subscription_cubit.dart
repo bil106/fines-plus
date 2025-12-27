@@ -3,7 +3,6 @@ import 'package:fines_plus/features/subscription/data/repository/subscription_re
 import 'package:fines_plus/features/subscription/domain/entities/subscription.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-
 part 'subscription_state.dart';
 
 class SubscriptionCubit extends Cubit<SubscriptionState> {
@@ -12,11 +11,11 @@ class SubscriptionCubit extends Cubit<SubscriptionState> {
 
   SubscriptionCubit(this.repository) : super(SubscriptionInitial());
 
-  Future<void> load(String userId) async {
+  Future<void> load(String ownerId) async {
     emit(SubscriptionLoading());
     try {
       final plans = await repository.getAvailablePlans();
-      final userSub = await repository.loadUserSubscription(userId);
+      final userSub = await repository.loadUserSubscription(ownerId);
       emit(SubscriptionLoaded(plans, userSub));
     } catch (e) {
       emit(SubscriptionError("Failed to load subscription info"));
@@ -28,15 +27,15 @@ class SubscriptionCubit extends Cubit<SubscriptionState> {
     emit(SubscriptionPlanSelected(plan));
   }
 
-  Future<void> purchase(String userId) async {
+  Future<void> purchase(String ownerId) async {
     if (selectedPlan == null) {
       emit(SubscriptionError("No plan selected"));
       return;
     }
     emit(SubscriptionBuying());
     try {
-      await repository.buySubscription(userId, selectedPlan!);
-      await load(userId);
+      await repository.buySubscription(ownerId, selectedPlan!);
+      await load(ownerId);
       emit(SubscriptionBought());
       selectedPlan = null;
     } catch (e) {

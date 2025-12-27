@@ -40,19 +40,16 @@ class MaintenanceCubit extends Cubit<MaintenanceState> {
     emit(state.copyWith(isLoading: false));
   }
 
-  
   Future<void> _onCarChanged(String newCarNumber) async {
     try {
-      
       final local = await localDataSource.getCarInfo();
       if (local.carNumber == newCarNumber && state.serviceRecords.isNotEmpty) {
-        
         return;
       }
 
       emit(state.copyWith(isLoading: true));
       clearAllRecords();
-      await syncExpensesFromFirestore(); 
+      await syncExpensesFromFirestore();
     } catch (e, st) {
       debugPrint('MaintenanceCubit _onCarChanged error: $e\n$st');
     } finally {
@@ -64,7 +61,7 @@ class MaintenanceCubit extends Cubit<MaintenanceState> {
     required T record,
     required String prefsKey,
     required ExpenseCategory category,
-    required Expense Function(String userId) mapper,
+    required Expense Function(String ownerId) mapper,
   }) async {
     final currentList = state.getListByType<T>();
     final updatedList = List<T>.from(currentList);
@@ -77,9 +74,9 @@ class MaintenanceCubit extends Cubit<MaintenanceState> {
       await _saveRecordsToPrefs(prefsKey, updatedList);
 
       final car = await localDataSource.getCarInfo();
-      final userId = FirebaseAuth.instance.currentUser!.uid;
+      final ownerId = FirebaseAuth.instance.currentUser!.uid;
       try {
-        await expenseRepository.addExpense(carNumber: car.carNumber, expense: mapper(userId));
+        await expenseRepository.addExpense(carNumber: car.carNumber, expense: mapper(ownerId));
         debugPrint("${category.name} record saved to Firestore");
       } catch (e) {
         debugPrint("Failed to save ${category.name} record: $e");
@@ -252,7 +249,7 @@ class MaintenanceCubit extends Cubit<MaintenanceState> {
     required String prefsKey,
     required List<T> currentList,
     required ExpenseCategory category,
-    required Expense Function(String userId) mapper,
+    required Expense Function(String ownerId) mapper,
   }) async {
     final updated = List<T>.from(currentList)..add(record);
     if (T == ServiceRecord) {
@@ -268,9 +265,9 @@ class MaintenanceCubit extends Cubit<MaintenanceState> {
     await _saveRecordsToPrefs(prefsKey, updated);
 
     final car = await localDataSource.getCarInfo();
-    final userId = FirebaseAuth.instance.currentUser!.uid;
+    final ownerId = FirebaseAuth.instance.currentUser!.uid;
     try {
-      await expenseRepository.addExpense(carNumber: car.carNumber, expense: mapper(userId));
+      await expenseRepository.addExpense(carNumber: car.carNumber, expense: mapper(ownerId));
       debugPrint("${category.name} record saved to Firestore");
     } catch (e) {
       debugPrint("Failed to save ${category.name} record: $e");
@@ -289,10 +286,10 @@ class MaintenanceCubit extends Cubit<MaintenanceState> {
     await saveRecords();
 
     final car = await localDataSource.getCarInfo();
-    final userId = FirebaseAuth.instance.currentUser!.uid;
+    final ownerId = FirebaseAuth.instance.currentUser!.uid;
 
     for (final record in records) {
-      final expense = record.toExpense(userId);
+      final expense = record.toExpense(ownerId);
       try {
         await expenseRepository.addExpense(carNumber: car.carNumber, expense: expense);
         debugPrint("Service record saved to Firestore");
@@ -308,9 +305,9 @@ class MaintenanceCubit extends Cubit<MaintenanceState> {
     await saveFuelRecords();
 
     final car = await localDataSource.getCarInfo();
-    final userId = FirebaseAuth.instance.currentUser!.uid;
+    final ownerId = FirebaseAuth.instance.currentUser!.uid;
 
-    final expense = record.toExpense(userId);
+    final expense = record.toExpense(ownerId);
 
     try {
       await expenseRepository.addExpense(carNumber: car.carNumber, expense: expense);
@@ -320,7 +317,7 @@ class MaintenanceCubit extends Cubit<MaintenanceState> {
     }
   }
 
- Future<void> addCarWashRecord(CarWashRecord record) async {
+  Future<void> addCarWashRecord(CarWashRecord record) async {
     final updated = List<CarWashRecord>.from(state.carWashRecords)..add(record);
     emit(state.copyWith(carWashRecords: updated));
     await saveCarWashRecords();
@@ -353,9 +350,9 @@ class MaintenanceCubit extends Cubit<MaintenanceState> {
     await saveServiceRecords();
 
     final car = await localDataSource.getCarInfo();
-    final userId = FirebaseAuth.instance.currentUser!.uid;
+    final ownerId = FirebaseAuth.instance.currentUser!.uid;
 
-    final expense = record.toExpense(userId);
+    final expense = record.toExpense(ownerId);
 
     try {
       await expenseRepository.addExpense(carNumber: car.carNumber, expense: expense);
@@ -371,10 +368,10 @@ class MaintenanceCubit extends Cubit<MaintenanceState> {
     await _saveRecordsToPrefs('tuning_records', updated);
 
     final car = await localDataSource.getCarInfo();
-    final userId = FirebaseAuth.instance.currentUser!.uid;
+    final ownerId = FirebaseAuth.instance.currentUser!.uid;
 
     for (final record in records) {
-      final expense = record.toExpense(userId);
+      final expense = record.toExpense(ownerId);
       try {
         await expenseRepository.addExpense(carNumber: car.carNumber, expense: expense);
       } catch (e) {
@@ -679,13 +676,13 @@ extension MileageCalculations on MaintenanceCubit {
   Future<void> _saveAllToFirestore<T>(
     List<T> records,
     ExpenseCategory category,
-    Expense Function(T record, String userId) mapper,
+    Expense Function(T record, String ownerId) mapper,
   ) async {
     final car = await localDataSource.getCarInfo();
-    final userId = FirebaseAuth.instance.currentUser!.uid;
+    final ownerId = FirebaseAuth.instance.currentUser!.uid;
     for (var r in records) {
       try {
-        await expenseRepository.addExpense(carNumber: car.carNumber, expense: mapper(r, userId));
+        await expenseRepository.addExpense(carNumber: car.carNumber, expense: mapper(r, ownerId));
       } catch (e) {
         debugPrint("Failed to save ${category.name} record: $e");
       }

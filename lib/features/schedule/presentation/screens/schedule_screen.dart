@@ -35,7 +35,7 @@ class ScheduleScreen extends StatefulWidget {
   final ReminderRepository reminderRepository;
   final PushHelper pushHelper;
   final String carNumber;
-  final String userId;
+  final String ownerId;
   final String? initialActionKey;
 
   const ScheduleScreen({
@@ -44,7 +44,7 @@ class ScheduleScreen extends StatefulWidget {
     required this.reminderRepository,
     required this.pushHelper,
     required this.carNumber,
-    required this.userId,
+    required this.ownerId,
     this.initialActionKey,
   });
 
@@ -66,14 +66,14 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     firebaseRepo = ScheduleFirebaseRepository(FirebaseFirestore.instance);
 
     if (widget.carNumber.isNotEmpty) {
-      _initCubits(widget.carNumber, widget.userId);
+      _initCubits(widget.carNumber, widget.ownerId);
     }
 
     final carCubit = context.read<CarCubit>();
     carCubit.stream.listen((carState) {
       final newCar = carState.carNumber;
       if (newCar.isNotEmpty && scheduleCubit?.carNumber != newCar) {
-        _initCubits(newCar, widget.userId);
+        _initCubits(newCar, widget.ownerId);
         setState(() {});
       }
     });
@@ -89,7 +89,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     });
   }
 
-  void _initCubits(String carNumber, String userId) {
+  void _initCubits(String carNumber, String ownerId) {
     if (scheduleCubit != null) return;
 
     scheduleCubit = ScheduleCubit(
@@ -98,7 +98,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
       maintenanceCubit: context.read<MaintenanceCubit>(),
       pushHelper: pushHelper,
       enabled: true,
-      userId: userId,
+      ownerId: ownerId,
       carNumber: carNumber,
       carCubit: context.read<CarCubit>(),
     );
@@ -106,7 +106,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     reminderCubit = ReminderCubit(
       repository: widget.reminderRepository,
       carNumber: carNumber,
-      userId: userId,
+      ownerId: ownerId,
       pushHelper: pushHelper,
     );
   }

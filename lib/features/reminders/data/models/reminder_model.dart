@@ -13,14 +13,14 @@ class ReminderModel extends Equatable {
   final DateTime dateTime;
   final bool isCompleted;
   @JsonKey(defaultValue: '')
-  final String userId;
+  final String ownerId;
 
   const ReminderModel({
     required this.id,
     required this.title,
     required this.description,
     required this.dateTime,
-    required this.userId,
+    required this.ownerId,
     this.isCompleted = false,
   });
 
@@ -30,14 +30,14 @@ class ReminderModel extends Equatable {
     String? description,
     DateTime? dateTime,
     bool? isCompleted,
-    String? userId,
+    String? ownerId,
   }) {
     return ReminderModel(
       id: id ?? this.id,
       title: title ?? this.title,
       description: description ?? this.description,
       dateTime: dateTime ?? this.dateTime,
-      userId: userId ?? this.userId,
+      ownerId: ownerId ?? this.ownerId,
       isCompleted: isCompleted ?? this.isCompleted,
     );
   }
@@ -47,8 +47,7 @@ class ReminderModel extends Equatable {
   Map<String, dynamic> toJson() => _$ReminderModelToJson(this);
 
   @override
-  List<Object?> get props => [id, title, description, dateTime, isCompleted, userId];
-
+  List<Object?> get props => [id, title, description, dateTime, isCompleted, ownerId];
 
   static DateTime _fromTimestamp(dynamic timestamp) {
     if (timestamp is Timestamp) {

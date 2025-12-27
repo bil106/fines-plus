@@ -3,11 +3,8 @@
 import 'dart:io';
 import 'package:app_links/app_links.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:core_cubit/cubit/purchase/purchase_cubit.dart';
 import 'package:core_cubit/cubit/referral/referral_cubit.dart';
 import 'package:core_data/core_data.dart';
-import 'package:core_services/services/purchase_service.dart';
-import 'package:fines_plus/backend/fines_server.dart';
 import 'package:fines_plus/core/extensions/currency_service.dart';
 import 'package:fines_plus/core/helpers/push_helper.dart';
 import 'package:fines_plus/features/analytics/data/repository/analytics_repository.dart';
@@ -33,7 +30,9 @@ import 'package:fines_plus/features/schedule/data/repository/schedule_repository
 import 'package:fines_plus/features/schedule/presentation/cubit/schedule_cubit.dart';
 import 'package:fines_plus/features/settings/presentation/cubit/settings_cubit.dart';
 import 'package:fines_plus/features/statistics/presentation/cubit/statistics_cubit.dart';
+import 'package:fines_plus/features/subscription/data/repository/subscription_repository.dart';
 import 'package:fines_plus/features/subscription/data/repository/subscription_repository_impl.dart';
+import 'package:fines_plus/features/subscription/presentation/cubit/purchase/purchase_cubit.dart';
 import 'package:fines_plus/features/subscription/presentation/cubit/subscription_cubit.dart';
 import 'package:fines_plus/features/vehicle/data/datasources/car_info_local_data_source.dart';
 import 'package:fines_plus/features/vehicle/data/datasources/car_info_remote_data_source.dart';
@@ -76,10 +75,9 @@ class AppInitializer {
   late final RemoteConfigService remoteConfigService;
   late final CurrencyService currencyService;
   final Map<String, int> _scheduledReminderIds = {};
-  late final SubscriptionRepositoryImpl subscriptionRepository;
   late final HistoryRepository historyRepository;
   late final AnalyticsRepository analyticsRepository;
-
+  late final ISubscriptionRepository subscriptionRepository;
   Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
     await Firebase.initializeApp();
     debugPrint("Background message: ${message.messageId}");
@@ -104,9 +102,9 @@ class AppInitializer {
 
   Future<AppInitResult> init() async {
     WidgetsFlutterBinding.ensureInitialized();
-  if (kDebugMode) {
-      await FinesServer.instance.start();
-    }
+    // if (kDebugMode) {
+    //     await FinesServer.instance.start();
+    //   }
 
     remoteConfigService = await RemoteConfigService.init();
     debugPrint(
@@ -215,7 +213,6 @@ class AppInitializer {
     carInfoCubit = CarInfoCubit(carInfoRepository, historyCubit);
     carCubit.setHistoryCubit(historyCubit);
 
-    purchaseCubit = PurchaseCubit(PurchaseService(), enabled: remoteConfigService.isPurchaseEnabled);
     maintenanceCubit = MaintenanceCubit(
       expenseRepository: expenseRepository,
       localDataSource: carInfoLocalDataSource,
@@ -224,14 +221,14 @@ class AppInitializer {
     fuelStationCubit = FuelStationCubit();
     statisticsCubit = StatisticsCubit(maintenanceCubit);
     settingsCubit = SettingsCubit(currencyService: currencyService);
-
-    subscriptionRepository = SubscriptionRepositoryImpl(
+    subscriptionRepository = SubscriptionRepository(
       InAppPurchase.instance,
       FirebaseAuth.instance,
       FirebaseFirestore.instance,
     );
 
-    subscriptionCubit = SubscriptionCubit(subscriptionRepository);
+    purchaseCubit = PurchaseCubit(subscriptionRepository, enabled: remoteConfigService.isPurchaseEnabled);
+    final subscriptionCubit = SubscriptionCubit(subscriptionRepository);
     additionalOptionsCubit = AdditionalOptionsCubit(
       extractTokensUseCase: extractTokensUseCase,
       tokensRepository: tokensRepository,
@@ -242,7 +239,7 @@ class AppInitializer {
       maintenanceCubit: maintenanceCubit,
       pushHelper: PushHelper(flutterLocalNotificationsPlugin),
       enabled: remoteConfigService.isRemindersEnabled,
-      userId: '',
+      ownerId: '',
       carNumber: '',
       carCubit: carCubit,
       firebaseRepo: firebaseRepository,
@@ -257,7 +254,7 @@ class AppInitializer {
       remoteDataSource: ReminderRemoteDataSourceImpl(FirebaseFirestore.instance),
     );
     final pushHelper = PushHelper(flutterLocalNotificationsPlugin);
-    reminderCubit = ReminderCubit(repository: reminderRepository, pushHelper: pushHelper, carNumber: '', userId: '');
+    reminderCubit = ReminderCubit(repository: reminderRepository, pushHelper: pushHelper, carNumber: '', ownerId: '');
 
     return AppInitResult(
       config: config,
@@ -373,7 +370,7 @@ class AppInitResult {
   final RemoteConfigService remoteConfigService;
   final ExpenseRepository expenseRepository;
   final bool isUpdateRequired;
-  final SubscriptionRepositoryImpl subscriptionRepository;
+  final ISubscriptionRepository subscriptionRepository;
   final ScheduleFirebaseRepository firebaseRepository;
   final AnalyticsRepository analyticsRepository;
   final TasksRepository tasksRepository;

@@ -11,10 +11,10 @@ part 'reminder_state.dart';
 class ReminderCubit extends Cubit<ReminderState> {
   final ReminderRepository repository;
   final String carNumber;
-  final String userId;
+  final String ownerId;
   final PushHelper pushHelper;
 
-  ReminderCubit({required this.repository, required this.carNumber, required this.userId, required this.pushHelper})
+  ReminderCubit({required this.repository, required this.carNumber, required this.ownerId, required this.pushHelper})
     : super(ReminderState.initial());
 
   Future<void> load() async {

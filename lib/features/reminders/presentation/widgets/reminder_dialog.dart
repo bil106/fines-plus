@@ -1,5 +1,3 @@
-
-
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_spacers.dart';
@@ -8,8 +6,6 @@ import 'package:fines_plus/features/reminders/data/models/reminder_model.dart';
 import 'package:fines_plus/features/reminders/presentation/cubit/reminder_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-
-
 
 class ReminderDialog extends StatefulWidget {
   final ReminderModel? reminder;
@@ -122,7 +118,7 @@ class _ReminderDialogState extends State<ReminderDialog> {
               description: descriptionController.text.trim().isEmpty ? 'Push check' : descriptionController.text.trim(),
               dateTime: selectedDateTime,
               isCompleted: widget.reminder?.isCompleted ?? false,
-              userId: cubit.userId, 
+              ownerId: cubit.ownerId,
             );
 
             try {
@@ -135,7 +131,6 @@ class _ReminderDialogState extends State<ReminderDialog> {
               if (!mounted) return;
               Navigator.pop(context);
 
-              
               widget.onSaved?.call();
 
               debugPrint('Reminder saved and scheduled: ${newReminder.id}');

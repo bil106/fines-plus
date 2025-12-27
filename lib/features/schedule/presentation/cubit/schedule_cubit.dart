@@ -20,7 +20,7 @@ class ScheduleCubit extends Cubit<ScheduleState> {
   final ScheduleFirebaseRepository firebaseRepo;
   final MaintenanceCubit maintenanceCubit;
   final PushHelper pushHelper;
-  final String userId;
+  final String ownerId;
   String carNumber;
   final CarCubit carCubit;
   late final StreamSubscription _carSub;
@@ -32,7 +32,7 @@ class ScheduleCubit extends Cubit<ScheduleState> {
     required this.maintenanceCubit,
     required this.pushHelper,
     required this.enabled,
-    required this.userId,
+    required this.ownerId,
     required this.carNumber,
     required this.carCubit,
   }) : super(ScheduleState(tasks: [], loading: true)) {
@@ -113,7 +113,7 @@ class ScheduleCubit extends Cubit<ScheduleState> {
         description: _generateDescription(task.description),
         dateTime: DateTime.now().add(const Duration(seconds: 5)),
         isCompleted: false,
-        userId: userId,
+        ownerId: ownerId,
       );
 
       await reminderCubit.addReminder(reminder);
@@ -159,7 +159,7 @@ class ScheduleCubit extends Cubit<ScheduleState> {
       dateTime: task.lastServiceDate ?? DateTime.now(),
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       description: '',
-      userId: userId,
+      ownerId: ownerId,
     );
 
     await reminderCubit?.addReminder(reminder);

@@ -9,7 +9,11 @@ class CarInfoRemoteDataSource {
   final String baseUrl;
   final FirebaseFirestore firestore;
   final FirebaseAuth auth;
-  CarInfoRemoteDataSource(this.firestore, this.auth, {this.baseUrl = "http://localhost:3000/api"});
+  CarInfoRemoteDataSource(
+    this.firestore,
+    this.auth, {
+    this.baseUrl = "https://my-fines-service-201100655892.europe-west1.run.app",
+  });
 
   Future<List<Map<String, dynamic>>> checkFines({
     required String carNumber,
@@ -17,7 +21,7 @@ class CarInfoRemoteDataSource {
     required String docNumber,
     required String captchaToken,
   }) async {
-    final url = Uri.parse('$baseUrl/fines');
+    final url = Uri.parse('$baseUrl/api/fines');
 
     final response = await http.post(
       url,

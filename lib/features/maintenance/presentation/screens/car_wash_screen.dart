@@ -40,7 +40,7 @@ class _CarWashScreenState extends State<CarWashScreen> {
     _initLocationAndCarWash();
   }
 
-Future<void> _initLocationAndCarWash() async {
+  Future<void> _initLocationAndCarWash() async {
     Location location = Location();
 
     bool serviceEnabled = await location.serviceEnabled();
@@ -72,7 +72,6 @@ Future<void> _initLocationAndCarWash() async {
       }
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -182,9 +181,9 @@ Future<void> _initLocationAndCarWash() async {
     final mileage = int.tryParse(mileageController.text) ?? 0;
     final cost = double.tryParse(costController.text) ?? 0;
 
-    final userId = 'default_user';
+    final ownerId = 'default_user';
 
-    final record = CarWashRecord(date: selectedDate!, mileage: mileage, amount: cost, userId: userId);
+    final record = CarWashRecord(date: selectedDate!, mileage: mileage, amount: cost, ownerId: ownerId);
 
     context.router.pop(record);
   }

@@ -2,11 +2,13 @@ import 'package:auto_route/auto_route.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
+import 'package:fines_plus/app/router/home_screen_wrapper.dart';
 import 'package:fines_plus/env/env.dart';
-import 'package:fines_plus/features/subscription/data/repository/subscription_repository_impl.dart';
 import 'package:fines_plus/features/subscription/domain/entities/subscription.dart';
-import 'package:fines_plus/features/subscription/presentation/cubit/subscription_cubit.dart';
+
 import 'package:fines_plus/app/router/app_router.dart';
+import 'package:fines_plus/features/subscription/presentation/cubit/purchase/purchase_cubit.dart';
+import 'package:fines_plus/features/subscription/presentation/cubit/purchase/purchase_state.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:design_system/colors/app_colors.dart';
@@ -56,13 +58,18 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   Future<void> _buySelectedPlan() async {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) {
+      // Если нет пользователя — редирект на CarInfo или Onboarding
+      final wrapperState = context.findAncestorStateOfType<HomeScreenWrapperState>();
+      if (wrapperState != null) {
+        wrapperState.openPage(HomePage.addCar);
+        return;
+      }
       context.router.push(CarInfoRoute());
       return;
     }
 
     final planData = plans[_selectedIndex];
-
-    final subscriptionPlan = SubscriptionPlan(
+    final plan = SubscriptionPlan(
       id: planData["productId"],
       title: planData["title"],
       price: planData["price"],
@@ -70,14 +77,40 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
       features: [],
     );
 
-    await context.read<SubscriptionRepositoryImpl>().buySubscription(user.uid, subscriptionPlan);
+    context.read<PurchaseCubit>().buy(plan);
+  }
+
+  void _handlePurchaseSuccess() {
+   
+    if (widget.onPurchaseSuccess != null) {
+      widget.onPurchaseSuccess!.call();
+      return;
+    }
+
+    
+    final wrapperState = context.findAncestorStateOfType<HomeScreenWrapperState>();
+    if (wrapperState != null) {
+      wrapperState.openPage(HomePage.home);
+      return;
+    }
+
+  
+    context.router.replaceAll([HomeRouteWrapper(initialPage: HomePage.home)]);
   }
 
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    return BlocListener<SubscriptionCubit, SubscriptionState>(
-      listener: (context, state) async {},
+    return BlocListener<PurchaseCubit, PurchaseState>(
+      listener: (context, state) {
+        if (state is PurchaseSuccess) {
+          _handlePurchaseSuccess();
+        }
+
+        if (state is PurchaseError) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message)));
+        }
+      },
       child: Scaffold(
         backgroundColor: AppColors.energyBlue50,
         appBar: AppBar(
@@ -194,22 +227,34 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
 
                     AppSpacers.verticalLarge,
 
-                    SizedBox(
+                SizedBox(
                       width: double.infinity,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          backgroundColor: AppColors.orange,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                        ),
-                        onPressed: _buySelectedPlan,
+                      child: BlocBuilder<PurchaseCubit, PurchaseState>(
+                        builder: (context, state) {
+                          final loading = state is PurchaseInProgress;
 
-                        child: Text(
-                          S.of(context).get_plan,
-                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                        ),
+                          return ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                              backgroundColor: AppColors.orange,
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                            ),
+                            onPressed: loading ? null : _buySelectedPlan,
+                            child: loading
+                                ? const SizedBox(
+                                    height: 22,
+                                    width: 22,
+                                    child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                                  )
+                                : Text(
+                                    S.of(context).get_plan,
+                                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                  ),
+                          );
+                        },
                       ),
                     ),
+
 
                     AppSpacers.verticalLarge,
 

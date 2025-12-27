@@ -1,11 +1,11 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:core_cubit/cubit/purchase/purchase_cubit.dart';
 import 'package:core_cubit/cubit/referral/referral_cubit.dart';
 import 'package:fines_plus/app/app.dart';
 import 'package:fines_plus/core/extensions/currency_service.dart';
-import 'package:fines_plus/features/subscription/data/repository/subscription_repository_impl.dart';
+import 'package:fines_plus/features/subscription/data/repository/subscription_repository.dart';
+import 'package:fines_plus/features/subscription/presentation/cubit/purchase/purchase_cubit.dart';
 import '../env/env.dart';
 import 'package:fines_plus/features/analytics/presentation/cubit/analytics_cubit.dart';
 import 'package:fines_plus/features/expenses/data/repository/expense_repository.dart';
@@ -84,7 +84,7 @@ void main() {
             RepositoryProvider<IMaintenanceRepository>.value(value: repository),
             RepositoryProvider<ScheduleRepository>(create: (_) => ScheduleRepository()),
             RepositoryProvider.value(value: result.remoteConfigService),
-            RepositoryProvider<SubscriptionRepositoryImpl>.value(value: result.subscriptionRepository),
+            RepositoryProvider<ISubscriptionRepository>.value(value: result.subscriptionRepository),
           ],
           child: MultiBlocProvider(
             providers: [
@@ -109,7 +109,7 @@ void main() {
                   maintenanceCubit: result.maintenanceCubit,
                   pushHelper: result.pushHelper,
                   enabled: true,
-                  userId: '',
+                  ownerId: '',
                   firebaseRepo: firebaseRepository,
                   carNumber: '',
                   carCubit: context.read<CarCubit>(),
@@ -120,7 +120,6 @@ void main() {
             child: MyApp(
               config: result.config,
               flutterLocalNotificationsPlugin: result.flutterLocalNotificationsPlugin,
-        
             ),
           ),
         ),

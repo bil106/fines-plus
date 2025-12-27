@@ -2,12 +2,11 @@ import 'package:fines_plus/features/subscription/data/repository/subscription_re
 
 import '../entities/subscription.dart';
 
-
 class BuySubscriptionUseCase {
   final ISubscriptionRepository repository;
   BuySubscriptionUseCase(this.repository);
 
-  Future<void> call(String userId, SubscriptionPlan plan) {
-    return repository.buySubscription(userId, plan);
+  Future<void> call(String ownerId, SubscriptionPlan plan) {
+    return repository.buySubscription(ownerId, plan);
   }
 }

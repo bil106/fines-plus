@@ -875,12 +875,12 @@ class RegistrationRouteArgs {
 class RemindersRoute extends PageRouteInfo<RemindersRouteArgs> {
   RemindersRoute({
     Key? key,
-    required String userId,
+    required String ownerId,
     VoidCallback? onBack,
     List<PageRouteInfo>? children,
   }) : super(
          RemindersRoute.name,
-         args: RemindersRouteArgs(key: key, userId: userId, onBack: onBack),
+         args: RemindersRouteArgs(key: key, ownerId: ownerId, onBack: onBack),
          initialChildren: children,
        );
 
@@ -892,7 +892,7 @@ class RemindersRoute extends PageRouteInfo<RemindersRouteArgs> {
       final args = data.argsAs<RemindersRouteArgs>();
       return RemindersScreen(
         key: args.key,
-        userId: args.userId,
+        ownerId: args.ownerId,
         onBack: args.onBack,
       );
     },
@@ -900,28 +900,28 @@ class RemindersRoute extends PageRouteInfo<RemindersRouteArgs> {
 }
 
 class RemindersRouteArgs {
-  const RemindersRouteArgs({this.key, required this.userId, this.onBack});
+  const RemindersRouteArgs({this.key, required this.ownerId, this.onBack});
 
   final Key? key;
 
-  final String userId;
+  final String ownerId;
 
   final VoidCallback? onBack;
 
   @override
   String toString() {
-    return 'RemindersRouteArgs{key: $key, userId: $userId, onBack: $onBack}';
+    return 'RemindersRouteArgs{key: $key, ownerId: $ownerId, onBack: $onBack}';
   }
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
     if (other is! RemindersRouteArgs) return false;
-    return key == other.key && userId == other.userId && onBack == other.onBack;
+    return key == other.key && ownerId == other.ownerId && onBack == other.onBack;
   }
 
   @override
-  int get hashCode => key.hashCode ^ userId.hashCode ^ onBack.hashCode;
+  int get hashCode => key.hashCode ^ ownerId.hashCode ^ onBack.hashCode;
 }
 
 /// generated route for
@@ -933,7 +933,7 @@ class ScheduleRoute extends PageRouteInfo<ScheduleRouteArgs> {
     required ReminderRepository reminderRepository,
     required PushHelper pushHelper,
     required String carNumber,
-    required String userId,
+    required String ownerId,
     String? initialActionKey,
     List<PageRouteInfo>? children,
   }) : super(
@@ -944,7 +944,7 @@ class ScheduleRoute extends PageRouteInfo<ScheduleRouteArgs> {
            reminderRepository: reminderRepository,
            pushHelper: pushHelper,
            carNumber: carNumber,
-           userId: userId,
+           ownerId: ownerId,
            initialActionKey: initialActionKey,
          ),
          initialChildren: children,
@@ -962,7 +962,7 @@ class ScheduleRoute extends PageRouteInfo<ScheduleRouteArgs> {
         reminderRepository: args.reminderRepository,
         pushHelper: args.pushHelper,
         carNumber: args.carNumber,
-        userId: args.userId,
+        ownerId: args.ownerId,
         initialActionKey: args.initialActionKey,
       );
     },
@@ -976,7 +976,7 @@ class ScheduleRouteArgs {
     required this.reminderRepository,
     required this.pushHelper,
     required this.carNumber,
-    required this.userId,
+    required this.ownerId,
     this.initialActionKey,
   });
 
@@ -990,13 +990,13 @@ class ScheduleRouteArgs {
 
   final String carNumber;
 
-  final String userId;
+  final String ownerId;
 
   final String? initialActionKey;
 
   @override
   String toString() {
-    return 'ScheduleRouteArgs{key: $key, repository: $repository, reminderRepository: $reminderRepository, pushHelper: $pushHelper, carNumber: $carNumber, userId: $userId, initialActionKey: $initialActionKey}';
+    return 'ScheduleRouteArgs{key: $key, repository: $repository, reminderRepository: $reminderRepository, pushHelper: $pushHelper, carNumber: $carNumber, ownerId: $ownerId, initialActionKey: $initialActionKey}';
   }
 
   @override
@@ -1008,7 +1008,7 @@ class ScheduleRouteArgs {
         reminderRepository == other.reminderRepository &&
         pushHelper == other.pushHelper &&
         carNumber == other.carNumber &&
-        userId == other.userId &&
+        ownerId == other.ownerId &&
         initialActionKey == other.initialActionKey;
   }
 
@@ -1019,7 +1019,7 @@ class ScheduleRouteArgs {
       reminderRepository.hashCode ^
       pushHelper.hashCode ^
       carNumber.hashCode ^
-      userId.hashCode ^
+      ownerId.hashCode ^
       initialActionKey.hashCode;
 }
 
