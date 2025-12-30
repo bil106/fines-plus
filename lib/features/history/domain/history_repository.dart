@@ -19,13 +19,13 @@ Future<void> addToHistory({
     if (user == null) throw UserNotSignedInException();
 
     final docRef = firestore.collection('fines_history').doc();
-    final data = {
-      'userId': user.uid, 
+  final data = {
+      'userId': user.uid,
       'carNumber': carNumber.trim().toUpperCase(),
       'docSeries': docSeries,
       'docNumber': docNumber,
       'fines': fines,
-      'checkedAt': FieldValue.serverTimestamp(),
+      'checkedAt': Timestamp.now(),
     };
 
     await docRef.set(data);
@@ -53,7 +53,7 @@ Stream<List<FineHistory>> getHistory(String carNumber) {
 
     final snapshot = await firestore
         .collection('fines_history')
-        .where('ownerId', isEqualTo: user.uid)
+        .where('userId', isEqualTo: user.uid)
         .where('carNumber', isEqualTo: carNumber.trim().toUpperCase())
         .get();
 

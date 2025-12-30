@@ -38,19 +38,32 @@ class CarInfoCubit extends Cubit<CarInfoState> {
     }
   }
 
-  Future<void> _saveCarToFirestore(CarInfoModel m) async {
+Future<void> _saveCarToFirestore(CarInfoModel m) async {
     if (m.carNumber.isEmpty || !carReg.hasMatch(m.carNumber)) return;
+
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) return;
 
-    final token = await FirebaseMessaging.instance.getToken();
+    try {
+      final ref = FirebaseFirestore.instance.collection("users").doc(user.uid).collection("cars").doc(m.carNumber);
 
-    final data = {"ownerId": user.uid, "techPassport": m.techPassport, "updatedAt": FieldValue.serverTimestamp()};
+      final token = await FirebaseMessaging.instance.getToken();
 
-    if (token != null) data["fcmToken"] = token;
+      final data = <String, dynamic>{"techPassport": m.techPassport, "updatedAt": FieldValue.serverTimestamp()};
 
-    await FirebaseFirestore.instance.collection("cars").doc(m.carNumber).set(data, SetOptions(merge: true));
+      if (token != null) data["fcmToken"] = token;
+
+      await ref.set(data, SetOptions(merge: true));
+    } on FirebaseException catch (e) {
+  
+      debugPrint('Firestore error: ${e.code}');
+    } catch (e) {
+      debugPrint('Unexpected error: $e');
+    }
   }
+
+
+
 
  Future<void> setCarNumber(String value) async {
    

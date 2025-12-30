@@ -66,9 +66,11 @@ buildTypes {
 
 dependencies {
     implementation(platform("com.google.firebase:firebase-bom:34.1.0"))
-    implementation(platform("com.google.firebase:firebase-dynamic-links:21.1.0"))
-    implementation(platform("com.google.firebase:firebase-crashlytics-ndk"))
-    implementation(platform("com.google.firebase:firebase-analytics"))
+    implementation("com.google.firebase:firebase-dynamic-links:21.1.0")
+    implementation("com.google.firebase:firebase-crashlytics-ndk")
+    implementation("com.google.firebase:firebase-analytics")
+    implementation("com.android.billingclient:billing:6.2.1")
+
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
 }
 

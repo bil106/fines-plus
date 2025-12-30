@@ -4,6 +4,7 @@ import 'package:fines_plus/features/analytics/data/models/analytics_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter/foundation.dart';
 
 abstract class IAnalyticsRepository {
   Future<FuelData> getFuelData(String carNumber);
@@ -25,14 +26,23 @@ class AnalyticsRepository implements IAnalyticsRepository {
 
   AnalyticsRepository({required this.firestore});
 
+ 
+  Future<DocumentSnapshot<Map<String, dynamic>>?> _getCarDoc(String carNumber) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null || carNumber.isEmpty) return null;
+
+    try {
+      return await firestore.collection('users').doc(user.uid).collection('cars').doc(carNumber).get();
+    } catch (e) {
+      debugPrint('Firestore Error fetching car doc: $e');
+      return null;
+    }
+  }
+
   @override
   Future<FuelData> getFuelData(String carNumber) async {
-    if (carNumber.isEmpty) {
-      return FuelData(liters: 0, amount: 0);
-    }
-
-    final doc = await firestore.collection('cars').doc(carNumber).get();
-    if (!doc.exists) return FuelData(liters: 0, amount: 0);
+    final doc = await _getCarDoc(carNumber);
+    if (doc == null || !doc.exists) return FuelData(liters: 0, amount: 0);
 
     final data = doc.data()!;
     return FuelData(liters: (data['fuelLiters'] ?? 0).toDouble(), amount: (data['fuelAmount'] ?? 0).toDouble());
@@ -40,24 +50,25 @@ class AnalyticsRepository implements IAnalyticsRepository {
 
   @override
   Future<int> getMileage(String carNumber) async {
-    if (carNumber.isEmpty) return 0;
-
-    final doc = await firestore.collection('cars').doc(carNumber).get();
-    if (!doc.exists) return 0;
+    final doc = await _getCarDoc(carNumber);
+    if (doc == null || !doc.exists) return 0;
 
     return (doc.data()!['mileage'] ?? 0) as int;
   }
 
   @override
   Future<List<PieChartSectionData>> getChartData(String carNumber) async {
-    if (carNumber.isEmpty) return [];
+    final doc = await _getCarDoc(carNumber);
 
-    final doc = await firestore.collection('cars').doc(carNumber).get();
-    if (!doc.exists) return [];
+   
+    if (doc == null || !doc.exists) return [];
 
     final data = doc.data()!;
     final double greenPercent = (data['greenPercent'] ?? 0).toDouble();
     final double bluePercent = (data['bluePercent'] ?? 0).toDouble();
+
+    
+    if ((greenPercent + bluePercent) <= 0) return [];
 
     return [
       PieChartSectionData(value: greenPercent, color: AppColors.green, title: "${greenPercent.toInt()}%", radius: 80),

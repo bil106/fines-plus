@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fines_plus/features/expenses/data/models/expense.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter/foundation.dart';
@@ -15,9 +16,16 @@ class ExpenseRepository {
     }
   }
 
+ DocumentReference _carDocRef(String carNumber) {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) throw StateError('User not logged in');
+    return firestore.collection('users').doc(user.uid).collection('cars').doc(carNumber);
+  }
+
   CollectionReference _expensesCollection(String carNumber) {
     _assertCarNumber(carNumber);
-    return firestore.collection('cars').doc(carNumber).collection('expenses');
+  
+    return _carDocRef(carNumber).collection('expenses');
   }
 
 Future<DocumentReference> addExpense({required String carNumber, required Expense expense}) async {
@@ -54,7 +62,7 @@ Future<DocumentReference> addExpense({required String carNumber, required Expens
 Future<List<Expense>> getExpensesOnce({required String carNumber, int limit = 1000}) async {
     if (carNumber.isEmpty) return [];
 
-    final carDoc = await firestore.collection('cars').doc(carNumber).get();
+    final carDoc = await _carDocRef(carNumber).get();
 
     if (!carDoc.exists) {
       debugPrint('Car doc does not exist yet, skipping expenses load');
@@ -146,19 +154,28 @@ Future<List<Expense>> getExpensesOnce({required String carNumber, int limit = 10
 
 Future<void> ensureCarDocument(String carNumber) async {
     final user = FirebaseAuth.instance.currentUser;
-    if (user == null) return;
+    if (user == null || carNumber.isEmpty) return;
 
-    final docRef = firestore.collection('cars').doc(carNumber);
-    final snapshot = await docRef.get();
+    final docRef = firestore.collection('users').doc(user.uid).collection('cars').doc(carNumber);
 
-    if (!snapshot.exists) {
-      // CREATE
-      await docRef.set({'ownerId': user.uid, 'carNumber': carNumber, 'createdAt': FieldValue.serverTimestamp()});
-    } else {
-      // UPDATE
-      await docRef.update({'updatedAt': FieldValue.serverTimestamp()});
+    try {
+      final snap = await docRef.get();
+
+      if (!snap.exists) {
+        await docRef.set({
+          'ownerId': user.uid,
+          'carNumber': carNumber,
+          'createdAt': FieldValue.serverTimestamp(),
+          'updatedAt': FieldValue.serverTimestamp(),
+        });
+      }
+    } on FirebaseException catch (e, s) {
+      FirebaseCrashlytics.instance.recordError(e, s);
     }
   }
+
+
+
 
 
 }
