@@ -2,7 +2,7 @@ name: fines_plus
 description: "A new Flutter project."
 
 publish_to: 'none' 
-version: 1.0.6+40
+version: 1.0.6+43
 
 environment:
   sdk: ^3.8.1
@@ -90,7 +90,7 @@ dependencies:
   percent_indicator: ^4.2.3
   flutter_dotenv: ^6.0.0
   in_app_purchase_android: ^0.4.0+8
-
+ 
      
 
 
@@ -100,7 +100,7 @@ dev_dependencies:
     sdk: flutter
   melos: ^3.0.0
   flutter_lints: ^5.0.0
-
+ 
 
   build_runner: ^2.4.0
   freezed: ^3.1.0
@@ -108,7 +108,7 @@ dev_dependencies:
 
   auto_route_generator: ^10.2.3
   envied_generator: ^1.1.1
-
+  
 
 flutter:
 
@@ -145,14 +145,12 @@ flutter:
     - assets/icons/coin_stack.png
     - assets/icons/steeringWheel.png
     - assets/config/.env
+    - assets/logo/fines_logo.png
    
-    
-flutter_icons:
-  android: true
-  ios: true
-  image_path: "assets/icons/logo_app.png"
+  
+  
 flutter_native_splash:
-  color: "#ffffff"
+  color: "#FFFFFF"
   image: assets/icons/logo_app.png
   android: true
   ios: true
@@ -161,3 +159,8 @@ flutter_native_splash:
 dependency_overrides:
   freezed: 3.1.1
   freezed_annotation: 3.1.1
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: assets/images/ic_launcher_foreground.png
+  adaptive_icon_background: "#FFFFFF"
