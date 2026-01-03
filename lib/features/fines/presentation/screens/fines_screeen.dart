@@ -98,9 +98,9 @@ class _FinesScreenState extends State<FinesScreen> {
                   Container(
                     width: 200,
                     height: 200,
-                    decoration: BoxDecoration(color: AppColors.blueGrey25, borderRadius: BorderRadius.circular(50)),
+                    decoration: BoxDecoration(color: AppColors.energyBlue50, borderRadius: BorderRadius.circular(50)),
                     alignment: Alignment.center,
-                    child: Image.asset('assets/icons/logo_app.png'),
+                    child: Image.asset('assets/icons/ic_launcher_foreground.png'),
                   ),
                   AppSpacers.verticalMassive,
 

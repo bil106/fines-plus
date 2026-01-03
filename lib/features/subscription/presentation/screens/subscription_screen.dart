@@ -10,6 +10,7 @@ import 'package:fines_plus/app/router/app_router.dart';
 import 'package:fines_plus/features/subscription/presentation/cubit/purchase/purchase_cubit.dart';
 import 'package:fines_plus/features/subscription/presentation/cubit/purchase/purchase_state.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -50,25 +51,42 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
       "hasTrial": true,
     },
   ];
+  @override
+  void initState() {
+    super.initState();
 
+    FirebaseCrashlytics.instance.setCustomKey('screen', 'SubscriptionScreen');
+  }
   Future<void> _onPlanSelected(int index) async {
     setState(() => _selectedIndex = index);
   }
 
   Future<void> _buySelectedPlan() async {
+     FirebaseCrashlytics.instance.log('buySelectedPlan tapped, selectedIndex=$_selectedIndex');
     final user = FirebaseAuth.instance.currentUser;
-    if (user == null) {
-      // Если нет пользователя — редирект на CarInfo или Onboarding
+  if (user == null) {
+      FirebaseCrashlytics.instance.log('user is null, redirecting');
+
       final wrapperState = context.findAncestorStateOfType<HomeScreenWrapperState>();
+
       if (wrapperState != null) {
+        FirebaseCrashlytics.instance.log('redirect via HomeScreenWrapper');
         wrapperState.openPage(HomePage.addCar);
         return;
       }
+
+      FirebaseCrashlytics.instance.log('redirect via router to CarInfo');
       context.router.push(CarInfoRoute());
       return;
     }
 
+
     final planData = plans[_selectedIndex];
+    FirebaseCrashlytics.instance.log(
+      'selected plan: '
+      'productId=${planData["productId"]}, '
+      'title=${planData["title"]}',
+    );
     final plan = SubscriptionPlan(
       id: planData["productId"],
       title: planData["title"],
@@ -76,27 +94,33 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
       months: planData["months"],
       features: [],
     );
-
+FirebaseCrashlytics.instance.log('calling PurchaseCubit.buy');
     context.read<PurchaseCubit>().buy(plan);
   }
 
-  void _handlePurchaseSuccess() {
-   
+void _handlePurchaseSuccess() {
+    if (!mounted) {
+      FirebaseCrashlytics.instance.log('PurchaseSuccess but widget not mounted');
+      return;
+    }
+
+    FirebaseCrashlytics.instance.log('Handling purchase success navigation');
+
     if (widget.onPurchaseSuccess != null) {
       widget.onPurchaseSuccess!.call();
       return;
     }
 
-    
     final wrapperState = context.findAncestorStateOfType<HomeScreenWrapperState>();
+
     if (wrapperState != null) {
       wrapperState.openPage(HomePage.home);
       return;
     }
 
-  
     context.router.replaceAll([HomeRouteWrapper(initialPage: HomePage.home)]);
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -104,10 +128,12 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     return BlocListener<PurchaseCubit, PurchaseState>(
       listener: (context, state) {
         if (state is PurchaseSuccess) {
+            FirebaseCrashlytics.instance.log('PurchaseSuccess received');
           _handlePurchaseSuccess();
         }
 
         if (state is PurchaseError) {
+            FirebaseCrashlytics.instance.log('PurchaseError: ${state.message}');
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message)));
         }
       },

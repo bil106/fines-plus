@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:fines_plus/features/subscription/data/repository/subscription_repository.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fines_plus/features/subscription/domain/entities/subscription.dart';
 import 'purchase_state.dart';
@@ -15,22 +16,31 @@ class PurchaseCubit extends Cubit<PurchaseState> {
   PurchaseCubit(this.repo, {this.enabled = true}) : super(PurchaseIdle()) {
     _sub = repo.events.listen(_handleEvent);
   }
-
-  Future<void> buy(SubscriptionPlan plan) async {
-    if (!enabled || _inProgress) return;
+Future<void> buy(SubscriptionPlan plan) async {
+    if (!enabled || _inProgress || isClosed) return;
 
     _inProgress = true;
     emit(PurchaseInProgress());
 
     try {
+      FirebaseCrashlytics.instance.log('PurchaseCubit.startPurchase: ${plan.id}');
+
       await repo.startPurchase(plan);
-    } catch (e) {
+    } catch (e, s) {
       _inProgress = false;
-      emit(PurchaseError(e.toString()));
+
+      FirebaseCrashlytics.instance.recordError(e, s);
+
+      if (!isClosed) {
+        emit(PurchaseError(e.toString()));
+      }
     }
   }
 
-  void _handleEvent(PurchaseEvent event) {
+
+ void _handleEvent(PurchaseEvent event) {
+    if (isClosed) return;
+
     _inProgress = false;
 
     if (event.type == PurchaseEventType.success) {
@@ -40,9 +50,12 @@ class PurchaseCubit extends Cubit<PurchaseState> {
     }
   }
 
-  @override
-  Future<void> close() {
-    _sub.cancel();
+
+ @override
+  Future<void> close() async {
+    FirebaseCrashlytics.instance.log('PurchaseCubit closed');
+    await _sub.cancel();
     return super.close();
   }
+
 }

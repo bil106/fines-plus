@@ -2,7 +2,7 @@ name: fines_plus
 description: "A new Flutter project."
 
 publish_to: 'none' 
-version: 1.0.6+43
+version: 1.0.6+45
 
 environment:
   sdk: ^3.8.1
@@ -144,8 +144,10 @@ flutter:
     - assets/icons/finance.png
     - assets/icons/coin_stack.png
     - assets/icons/steeringWheel.png
+    - assets/icons/ic_launcher_foreground.png
     - assets/config/.env
     - assets/logo/fines_logo.png
+    
    
   
   
