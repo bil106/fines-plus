@@ -228,7 +228,8 @@ class AppInitializer {
     );
 
     purchaseCubit = PurchaseCubit(subscriptionRepository, enabled: remoteConfigService.isPurchaseEnabled);
-    final subscriptionCubit = SubscriptionCubit(subscriptionRepository);
+    final subscriptionCubit = SubscriptionCubit( purchaseCubit: purchaseCubit, repository: subscriptionRepository,
+    );
     additionalOptionsCubit = AdditionalOptionsCubit(
       extractTokensUseCase: extractTokensUseCase,
       tokensRepository: tokensRepository,

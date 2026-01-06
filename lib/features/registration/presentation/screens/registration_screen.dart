@@ -112,7 +112,7 @@ Future<void> _onSubmit(BuildContext context) async {
             return;
           }
 
-          await subCubit.purchase(user.uid);
+          await subCubit.purchase();
 
           final newState = subCubit.state;
           if (newState is SubscriptionBought) {

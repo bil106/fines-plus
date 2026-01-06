@@ -1,15 +1,18 @@
 import 'package:fines_plus/features/subscription/data/models/user_subscription.dart';
 import 'package:fines_plus/features/subscription/data/repository/subscription_repository.dart';
 import 'package:fines_plus/features/subscription/domain/entities/subscription.dart';
+import 'package:fines_plus/features/subscription/presentation/cubit/purchase/purchase_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 part 'subscription_state.dart';
 
 class SubscriptionCubit extends Cubit<SubscriptionState> {
+  final PurchaseCubit purchaseCubit;
   final ISubscriptionRepository repository;
+
   SubscriptionPlan? selectedPlan;
 
-  SubscriptionCubit(this.repository) : super(SubscriptionInitial());
+  SubscriptionCubit({required this.purchaseCubit, required this.repository}) : super(SubscriptionInitial());
 
   Future<void> load(String ownerId) async {
     emit(SubscriptionLoading());
@@ -17,7 +20,7 @@ class SubscriptionCubit extends Cubit<SubscriptionState> {
       final plans = await repository.getAvailablePlans();
       final userSub = await repository.loadUserSubscription(ownerId);
       emit(SubscriptionLoaded(plans, userSub));
-    } catch (e) {
+    } catch (_) {
       emit(SubscriptionError("Failed to load subscription info"));
     }
   }
@@ -27,15 +30,16 @@ class SubscriptionCubit extends Cubit<SubscriptionState> {
     emit(SubscriptionPlanSelected(plan));
   }
 
-  Future<void> purchase(String ownerId) async {
+  Future<void> purchase() async {
     if (selectedPlan == null) {
       emit(SubscriptionError("No plan selected"));
       return;
     }
+
     emit(SubscriptionBuying());
+
     try {
-      await repository.buySubscription(ownerId, selectedPlan!);
-      await load(ownerId);
+      await purchaseCubit.buy(selectedPlan!);
       emit(SubscriptionBought());
       selectedPlan = null;
     } catch (e) {
@@ -48,8 +52,9 @@ class SubscriptionCubit extends Cubit<SubscriptionState> {
     try {
       await repository.restorePurchases();
       emit(SubscriptionBought());
-    } catch (e) {
+    } catch (_) {
       emit(SubscriptionError("Restore failed"));
     }
   }
 }
+

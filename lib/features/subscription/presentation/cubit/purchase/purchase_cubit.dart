@@ -49,6 +49,23 @@ Future<void> buy(SubscriptionPlan plan) async {
       emit(PurchaseError(event.message ?? 'Unknown error'));
     }
   }
+Future<void> restore() async {
+    if (!enabled || _inProgress || isClosed) return;
+
+    _inProgress = true;
+    emit(PurchaseInProgress());
+
+    try {
+      FirebaseCrashlytics.instance.log('PurchaseCubit.restorePurchases');
+      await repo.restorePurchases();
+    } catch (e, s) {
+      _inProgress = false;
+      FirebaseCrashlytics.instance.recordError(e, s);
+      if (!isClosed) {
+        emit(PurchaseError(e.toString()));
+      }
+    }
+  }
 
 
  @override

@@ -29,6 +29,7 @@ class SubscriptionScreen extends StatefulWidget {
 
 class _SubscriptionScreenState extends State<SubscriptionScreen> {
   int _selectedIndex = 0;
+  bool _navigated = false;
   final List<Map<String, dynamic>> plans = [
     {
       "title": "Quarterly Plan",
@@ -127,7 +128,8 @@ void _handlePurchaseSuccess() {
     final textTheme = Theme.of(context).textTheme;
     return BlocListener<PurchaseCubit, PurchaseState>(
       listener: (context, state) {
-        if (state is PurchaseSuccess) {
+        if (state is PurchaseSuccess && !_navigated) {
+          _navigated = true;
             FirebaseCrashlytics.instance.log('PurchaseSuccess received');
           _handlePurchaseSuccess();
         }
