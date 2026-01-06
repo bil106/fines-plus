@@ -29,7 +29,7 @@ class FinesApi {
       final data = jsonDecode(response.body) as Map<String, dynamic>;
       return List<Map<String, dynamic>>.from(data['fines'] ?? []);
     } else {
-      throw Exception('Ошибка сервера: ${response.statusCode}');
+      throw Exception('Server exception: ${response.statusCode}');
     }
   }
 }
