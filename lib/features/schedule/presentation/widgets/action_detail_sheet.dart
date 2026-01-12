@@ -103,7 +103,7 @@ class _ActionDetailSheetState extends State<ActionDetailSheet> {
     final textTheme = Theme.of(context).textTheme;
 
     return Padding(
-      padding: EdgeInsets.only(left: 16, right: 16, bottom: MediaQuery.of(context).viewInsets.bottom + 16),
+      padding: EdgeInsets.only(top: 20,  left: 16, right: 16, bottom: MediaQuery.of(context).viewInsets.bottom + 16),
       child: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -115,7 +115,6 @@ class _ActionDetailSheetState extends State<ActionDetailSheet> {
               ],
             ),
 
-            SizedBox(height: 16),
 
             Autocomplete<String>(
               optionsBuilder: (TextEditingValue value) {
@@ -204,20 +203,33 @@ class _ActionDetailSheetState extends State<ActionDetailSheet> {
             ),
 
             AppSpacers.verticalMedium,
-            Row(
+        Wrap(
+              spacing: 10,
+              runSpacing: 8,
+              crossAxisAlignment: WrapCrossAlignment.center,
               children: [
-                Checkbox(value: byDate, onChanged: (v) => setState(() => byDate = v ?? false)),
-                Text(S.of(context).by_date),
-                SizedBox(width: 24),
-                Checkbox(value: byMileage, onChanged: (v) => setState(() => byMileage = v ?? true)),
-                Text(S.of(context).by_mileage),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Checkbox(value: byDate, onChanged: (v) => setState(() => byDate = v ?? false)),
+                    Text(S.of(context).by_date, maxLines: 2, softWrap: true),
+                  ],
+                ),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Checkbox(value: byMileage, onChanged: (v) => setState(() => byMileage = v ?? true)),
+                    Text(S.of(context).by_mileage, maxLines: 2, softWrap: true),
+                  ],
+                ),
               ],
             ),
+
 
             AppSpacers.verticalMedium,
             TextField(
               controller: commentController,
-              maxLines: 3,
+              maxLines: 2,
               decoration: InputDecoration(labelText: S.of(context).comment, border: OutlineInputBorder()),
             ),
 

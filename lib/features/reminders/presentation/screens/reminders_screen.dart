@@ -77,13 +77,13 @@ class _RemindersView extends StatelessWidget {
             }
 
             return ListView.separated(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 40),
+              padding: const EdgeInsets.symmetric(horizontal: 1, vertical: 40),
               itemCount: state.reminders.length + 1,
               separatorBuilder: (_, __) => const Divider(color: AppColors.neutreGrey),
               itemBuilder: (context, index) {
                 if (index == 0) {
                   return Padding(
-                    padding: const EdgeInsets.only(bottom: 10),
+                    padding: const EdgeInsets.only(bottom: 10,left: 20),
                     child: Text(S.of(context).reminder, style: textTheme.title),
                   );
                 }
@@ -148,7 +148,7 @@ class _EmptyReminders extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+      padding: const EdgeInsets.symmetric(horizontal: 1, vertical: 40),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

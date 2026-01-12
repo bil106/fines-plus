@@ -214,21 +214,31 @@ void _handlePurchaseSuccess() {
                                 ),
 
                               AppSpacers.verticalMedium,
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                           Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
-                                    plan["title"],
-                                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                      fontWeight: FontWeight.bold,
-                                      color: isSelected ? AppColors.neutreBlanc : AppColors.blue700,
+                                
+                                  Expanded(
+                                    child: Text(
+                                      plan["title"],
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                        color: isSelected ? AppColors.neutreBlanc : AppColors.blue700,
+                                      ),
                                     ),
                                   ),
+                              const SizedBox(width: 12),
+
+                                  /// ПРАВАЯ ЧАСТЬ
                                   Column(
                                     crossAxisAlignment: CrossAxisAlignment.end,
                                     children: [
                                       Text(
                                         "\$${plan["pricePerDay"]} / day",
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
                                         style: TextStyle(
                                           fontSize: 20,
                                           fontWeight: FontWeight.bold,
@@ -237,6 +247,8 @@ void _handlePurchaseSuccess() {
                                       ),
                                       Text(
                                         "\$${plan["oldPrice"]}",
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
                                         style: TextStyle(
                                           fontSize: 14,
                                           decoration: TextDecoration.lineThrough,
@@ -286,12 +298,20 @@ void _handlePurchaseSuccess() {
 
                     AppSpacers.verticalLarge,
 
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                  Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Icon(Icons.check_circle, color: AppColors.green),
-                        SizedBox(width: 6),
-                        Text(S.of(context).money_back, style: TextStyle(fontWeight: FontWeight.bold)),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            S.of(context).money_back,
+                            maxLines: 2,
+                            softWrap: true,
+                            overflow: TextOverflow.visible,
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ),
                       ],
                     ),
 

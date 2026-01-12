@@ -35,15 +35,15 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 24),
           child: Column(
             children: [
-              SizedBox(height: isShort ? 10 : 60),
+              SizedBox(height: isShort ? 1 : 60),
 
               Image.asset(imagePath, width: isShort ? 150 : 260, height: isShort ? 150 : 260, fit: BoxFit.contain),
 
-              SizedBox(height: isShort ? 10 : 60),
+              SizedBox(height: isShort ? 1 : 60),
 
               Text(title, textAlign: TextAlign.center, style: textTheme.black28W400),
 
-              const SizedBox(height: 12),
+              
 
               Text(subtitle, textAlign: TextAlign.center, style: textTheme.black54fs18),
 
@@ -71,7 +71,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 ),
               ),
 
-              const SizedBox(height: 80),
+              const SizedBox(height:60),
             ],
           ),
         ),

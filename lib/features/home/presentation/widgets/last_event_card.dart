@@ -22,7 +22,7 @@ class LastEventCardAction extends StatelessWidget {
     final carCubit = context.watch<CarCubit?>();
     final carNumber = carCubit?.state.carNumber ?? '';
 
-    // Если нет машины или события, показываем placeholder
+ 
     if (carNumber.isEmpty || event == null) {
       return _buildCard(
         child: Center(

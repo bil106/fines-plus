@@ -142,45 +142,95 @@ class MaintenanceCard extends StatelessWidget {
               ],
             ),
 
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text("${S.of(context).previous}: ${priorExecution ?? "-"}", style: textTheme.black13W400),
-                    Text(
-                      "${S.of(context).mileage}: ${convert(lastMileage).toStringAsFixed(0)} $unit",
-                      style: textTheme.black13W400,
-                    ),
-                    Text(
-                      "${S.of(context).fact}: ${convert(actualMileage).toStringAsFixed(0)} $unit",
-                      style: textTheme.black13W400,
-                    ),
-                  ],
-                ),
-                Column(
-                  children: [
-                    Text(
-                      "${S.of(context).periodicity} ${convert(intervalKm).toStringAsFixed(0)} $unit",
-                      style: textTheme.black13W400,
-                    ),
-                    Text(
-                      intervalTime != null
-                          ? "${S.of(context).every} ${intervalTime!.inDays} ${S.of(context).days}"
-                          :  "${convert(intervalKm).toStringAsFixed(0)} $unit",
-                      style: textTheme.black13W400,
-                    ),
-                  ],
-                ),
-              ],
-            ),
+Row(
+  crossAxisAlignment: CrossAxisAlignment.start,
+  children: [
+    // Левая колонка
+    Expanded(
+      flex: 2,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Previous
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text("${S.of(context).previous}:", style: textTheme.black13W400),
+              const SizedBox(height: 2),
+              Text(priorExecution ?? "-", style: textTheme.black13W400),
+            ],
+          ),
+          const SizedBox(height: 4),
+
+          // Mileage
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text("${S.of(context).mileage}:", style: textTheme.black13W400),
+              const SizedBox(height: 2),
+              Text("${convert(lastMileage).toStringAsFixed(0)} $unit", style: textTheme.black13W400),
+            ],
+          ),
+          const SizedBox(height: 4),
+
+          // Fact
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text("${S.of(context).fact}:", style: textTheme.black13W400),
+              const SizedBox(height: 2),
+              Text("${convert(actualMileage).toStringAsFixed(0)} $unit", style: textTheme.black13W400),
+            ],
+          ),
+        ],
+      ),
+    ),
+
+    const SizedBox(width: 12),
+
+    // Правая колонка (Периодичность и время)
+    Expanded(
+      flex: 1,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(S.of(context).periodicity, style: textTheme.black13W400),
+              const SizedBox(height: 2),
+              Text("${convert(intervalKm).toStringAsFixed(0)} $unit", style: textTheme.black13W400),
+            ],
+          ),
+          const SizedBox(height: 4),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text("${S.of(context).every}:", style: textTheme.black13W400),
+              const SizedBox(height: 2),
+              Text(
+                intervalTime != null
+                    ? "${intervalTime!.inDays} ${S.of(context).days}"
+                    : "-",
+                style: textTheme.black13W400,
+              ),
+            ],
+          ),
+        ],
+      ),
+    ),
+  ],
+)
+,
+
 
             Row(
               children: [
-                Padding(
-                  padding: const EdgeInsets.only(left: 98.0, right: 30),
-                  child: TextButton(onPressed: onPressed, child: Text(S.of(context).configure_action)),
+                Expanded(
+                  child: TextButton(
+                    onPressed: onPressed,
+                    child: Text(S.of(context).configure_action, overflow: TextOverflow.ellipsis),
+                  ),
                 ),
                 IconButton(
                   icon: const Icon(Icons.delete, color: AppColors.red),

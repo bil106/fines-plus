@@ -62,7 +62,6 @@ class MainStatsCard extends StatelessWidget {
                   padding: EdgeInsets.only(top: 8.h),
                   child: LayoutBuilder(
                     builder: (context, constraints) {
-                      final maxTextHeight = constraints.maxHeight; // доступная высота
 
                       return Column(
                         mainAxisAlignment: MainAxisAlignment.center,

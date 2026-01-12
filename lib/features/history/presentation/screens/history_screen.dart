@@ -75,15 +75,19 @@ class _HistoryView extends StatelessWidget {
               return Column(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
                     child: Text(
                       '${S.of(context).total_fines} $totalFines',
                       style: textTheme.subtitleText.copyWith(fontWeight: FontWeight.bold, color: AppColors.red),
+                      textAlign: TextAlign.center,
+                      maxLines: 2,
+                      softWrap: true,
                     ),
                   ),
+
                   Expanded(
                     child: ListView.separated(
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                       itemCount: state.history.length,
                       separatorBuilder: (_, __) => const Divider(color: AppColors.neutreGrey),
                       itemBuilder: (context, index) {
@@ -109,9 +113,6 @@ class _HistoryView extends StatelessWidget {
                             onPressed: () async {
                               final cubit = context.read<HistoryCubit>();
                               await cubit.deleteSingle(item.id);
-                              // ScaffoldMessenger.of(context).showSnackBar(
-                              //   SnackBar(backgroundColor: AppColors.blue700, content: Text(S.of(context).item_removed)),
-                              // );
                             },
                           ),
                         );

@@ -11,51 +11,62 @@ class StatsRingsPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final center = Offset(size.width / 2, size.height / 1.15);
-    const mainStroke = 10.0;
-    const smallStroke = 6.0;
+ 
+    final double referenceSize = size.width;
 
-    final bgColor = AppColors.energyBlue25;
-    final activeColor = AppColors.blue700;
+   
+    final double mainRadius = referenceSize * 0.28;
+    final double smallRadius = referenceSize * 0.2;
+    final double sideOffset = referenceSize * 0.35; 
+
+
+    final double mainStroke = referenceSize * 0.027; 
+    final double smallStroke = referenceSize * 0.02; 
+
+   
+    final center = Offset(size.width / 2, size.height * 0.85);
 
     final bgPaint = Paint()
-      ..color = bgColor
+      ..color = AppColors.energyBlue25
       ..style = PaintingStyle.stroke
       ..strokeWidth = mainStroke
       ..strokeCap = StrokeCap.round;
 
     final activePaint = Paint()
-      ..color = activeColor
+      ..color = AppColors.blue700
       ..style = PaintingStyle.stroke
       ..strokeWidth = mainStroke
       ..strokeCap = StrokeCap.round;
 
-    final radius = size.width * 0.3;
-    final rect = Rect.fromCircle(center: center, radius: radius);
-    canvas.drawArc(rect, math.pi * 5 / 6, math.pi * 4 / 3, false, bgPaint);
-    canvas.drawArc(rect, math.pi * 5 / 6, math.pi * 4 / 3 * totalCostPercent, false, activePaint);
+
+    final mainRect = Rect.fromCircle(center: center, radius: mainRadius);
+    canvas.drawArc(mainRect, math.pi * 0.8, math.pi * 1.4, false, bgPaint);
+    canvas.drawArc(mainRect, math.pi * 0.8, math.pi * 1.4 * totalCostPercent.clamp(0.0, 1.0), false, activePaint);
+
 
     final smallBg = Paint()
-      ..color = bgColor
+      ..color = AppColors.energyBlue25
       ..style = PaintingStyle.stroke
       ..strokeWidth = smallStroke
       ..strokeCap = StrokeCap.round;
 
     final smallActive = Paint()
-      ..color = activeColor
+      ..color = AppColors.blue700
       ..style = PaintingStyle.stroke
       ..strokeWidth = smallStroke
       ..strokeCap = StrokeCap.round;
 
-    final leftCenter = Offset(center.dx - radius - 35, center.dy);
-    final leftRect = Rect.fromCircle(center: leftCenter, radius: 49);
-    canvas.drawArc(leftRect, math.pi / 1.45, math.pi, false, smallBg);
-    canvas.drawArc(leftRect, math.pi / 1.45, math.pi * costPerKmPercent, false, smallActive);
 
-    final rightCenter = Offset(center.dx + radius + 35, center.dy);
-    final rightRect = Rect.fromCircle(center: rightCenter, radius: 49);
-    canvas.drawArc(rightRect, -math.pi / 1.45, math.pi, false, smallBg);
-    canvas.drawArc(rightRect, -math.pi / 1.45, math.pi * fuelPercent, false, smallActive);
+    final leftCenter = Offset(center.dx - sideOffset, center.dy * 1.05); 
+    final leftRect = Rect.fromCircle(center: leftCenter, radius: smallRadius);
+    canvas.drawArc(leftRect, math.pi * 0.7, math.pi * 1.0, false, smallBg);
+    canvas.drawArc(leftRect, math.pi * 0.1, math.pi * 1.1 * costPerKmPercent.clamp(0.0, 1.0), false, smallActive);
+
+
+    final rightCenter = Offset(center.dx + sideOffset, center.dy * 1.05); 
+    final rightRect = Rect.fromCircle(center: rightCenter, radius: smallRadius);
+    canvas.drawArc(rightRect, -math.pi * 0.7, math.pi * 1.0, false, smallBg);
+    canvas.drawArc(rightRect,-math.pi * 0.1, math.pi * 1.1 * fuelPercent.clamp(0.0, 1.0), false, smallActive);
   }
 
   @override

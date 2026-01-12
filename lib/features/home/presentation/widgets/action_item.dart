@@ -21,7 +21,7 @@ class ActionItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final Color activeColor = AppColors.energyBlue;
-    final Color inactiveColor = Colors.grey.shade400;
+    final Color inactiveColor = AppColors.neutreGrey;
 
     return Material(
       elevation: 2,
@@ -39,19 +39,25 @@ class ActionItem extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 1, horizontal: 1), 
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(icon, size: 32, color: isSelected ? activeColor : inactiveColor),
-              const SizedBox(height: 1),
-              Text(
-                label,
-                style: theme.textTheme.bodySmall?.copyWith(
-                  fontWeight: FontWeight.w500,
-                  color: isSelected ? activeColor : Colors.black87,
+              Icon(icon, size: 28, color: isSelected ? activeColor : inactiveColor),
+              
+              Flexible(
+                child: Text(
+                  label,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.center,
+                  style: theme.textTheme.labelSmall?.copyWith(
+                    fontWeight: FontWeight.w500,
+                    color: isSelected ? activeColor : Colors.black87,
+                  ),
                 ),
-                textAlign: TextAlign.center,
               ),
             ],
-          ),
+          )
+
         ),
       ),
     );

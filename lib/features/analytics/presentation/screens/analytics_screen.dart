@@ -3,8 +3,6 @@ import 'dart:convert';
 import 'package:auto_route/auto_route.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
-import 'package:design_system/constants/app_borders.dart';
-import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
 import 'package:fines_plus/core/helpers/push_helper.dart';
 import 'package:fines_plus/features/analytics/presentation/widgets/history_tab.dart';
@@ -189,26 +187,32 @@ class AnalyticsScreenViewState extends State<_AnalyticsScreenView> with SingleTi
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    children: [
-                      Text(S.of(context).analitics, style: textTheme.title),
-                      AppSpacers.horizontalXXMassive,
-                      ElevatedButton.icon(
-                        onPressed: () {
-                          final homeState = context.findAncestorStateOfType<HomeScreenWrapperState>();
-                          if (homeState != null) {
-                            homeState.openPage(HomePage.export);
-                          }
-                        },
-                        label: Text(S.of(context).export, style: textTheme.white18W400),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.blue700,
-                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                          shape: RoundedRectangleBorder(borderRadius: AppBorders.radiusLarge),
-                        ),
-                      ),
-                    ],
-                  ),
+                 Row(
+  crossAxisAlignment: CrossAxisAlignment.center,
+  children: [
+    Expanded(
+      child: Text(
+        S.of(context).analitics,
+        style: textTheme.title,
+        maxLines: 2,
+        softWrap: true,
+      ),
+    ),
+    const SizedBox(width: 8),
+    ElevatedButton.icon(
+      onPressed: () {
+        final homeState = context.findAncestorStateOfType<HomeScreenWrapperState>();
+        homeState?.openPage(HomePage.export);
+      },
+      icon: const Icon(Icons.upload, size: 18),
+      label: Text(S.of(context).export),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: AppColors.blue700,
+      ),
+    ),
+  ],
+),
+
                   TabBar(
                     indicatorColor: AppColors.blue700,
                     labelColor: AppColors.blue700,

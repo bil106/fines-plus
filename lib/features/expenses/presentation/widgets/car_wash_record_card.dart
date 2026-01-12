@@ -11,6 +11,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class CarWashRecordCard extends StatelessWidget {
   final CarWashRecord record;
+
   const CarWashRecordCard({super.key, required this.record});
 
   @override
@@ -22,73 +23,107 @@ class CarWashRecordCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 12),
       shape: RoundedRectangleBorder(borderRadius: AppBorders.radiusLarge),
       child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Row(
+        padding: const EdgeInsets.all(6),
+        child: Column(
           children: [
-            Icon(Icons.local_car_wash, color: AppColors.energyBlue, size: 50),
-            const SizedBox(width: 12),
-            Column(
+            Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(children: [Text(S.of(context).car_wash, style: textTheme.historyText)]),
-                const SizedBox(height: 4),
-
-                Row(
-                  children: [
-                    Icon(Icons.attach_money, color: AppColors.green),
-                    const SizedBox(width: 8),
-                    Builder(
-                      builder: (context) {
-                        final settingsCubit = context.watch<SettingsCubit>();
-                        final targetCurrency = settingsCubit.state.currency;
-                        final amountBase = record.amount;
-                        final displayCurrency = settingsCubit.getCurrencyLabel(context, targetCurrency);
-                        final convertedCost = settingsCubit.currencyService.convert(
-                          amountBase,
-                          targetCurrency,
-                          fromCurrency: 'UAH',
-                        );
-                        return Text(
-                          "${convertedCost.toStringAsFixed(0)} $displayCurrency",
-                          style: textTheme.subtitleText,
-                        );
-                      },
-                    ),
-                  ],
+             
+                Padding(
+                  padding: const EdgeInsets.only(top: 12.0,left:20),
+                  child: Icon(Icons.local_car_wash, color: AppColors.energyBlue, size: 50),
                 ),
-                const SizedBox(height: 4),
-
-                Row(
-                  children: [
-                    Icon(Icons.calendar_month, color: AppColors.energyBlue),
-                    const SizedBox(width: 8),
-                    Text(DateFormatter.formatDate(record.date), style: textTheme.subtitleText),
-                    const SizedBox(width: 24),
-                    Icon(Icons.speed, color: AppColors.energyBlue),
-                    const SizedBox(width: 8),
-                    Builder(
+                const SizedBox(width: 50),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      
+                      Text(S.of(context).car_wash, style: textTheme.historyText, overflow: TextOverflow.ellipsis),
+                    
+            
+                    
+                      Row(
+                        children: [
+                          Icon(Icons.attach_money, color: AppColors.green, size: 20),
+                          const SizedBox(width: 8),
+                          Builder(
+                            builder: (context) {
+                              final settingsCubit = context.watch<SettingsCubit>();
+                              final targetCurrency = settingsCubit.state.currency;
+                              final amountBase = record.amount;
+                              final displayCurrency = settingsCubit.getCurrencyLabel(context, targetCurrency);
+                              final convertedCost = settingsCubit.currencyService.convert(
+                                amountBase,
+                                targetCurrency,
+                                fromCurrency: 'UAH',
+                              );
+                              return Flexible(
+                                child: Text(
+                                  "${convertedCost.toStringAsFixed(0)} $displayCurrency",
+                                  style: textTheme.subtitleText,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                 
+            
+                   
+                     
+                    ],
+                  ),
+                ),
+              ],
+            ),
+             Padding(
+               padding: const EdgeInsets.only(left: 12.0),
+               child: Row(
+                children: [
+                  Icon(Icons.calendar_month, color: AppColors.energyBlue, size: 20),
+                  const SizedBox(width: 2),
+                  Flexible(
+                    child: Text(
+                      DateFormatter.formatDate(record.date),
+                      style: textTheme.subtitleText,
+                      // overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Icon(Icons.speed, color: AppColors.energyBlue, size: 20),
+                  const SizedBox(width: 4),
+                  Flexible(
+                    child: Builder(
                       builder: (context) {
                         final settingsCubit = context.watch<SettingsCubit>();
                         final unitStream = UnitStream(settingsCubit);
-
+               
                         return StreamBuilder<double>(
                           stream: unitStream.unitValueStream(record.mileage.toDouble()),
                           initialData: unitStream.convert(record.mileage.toDouble()),
                           builder: (context, snapshot) {
                             final value = snapshot.data ?? record.mileage.toDouble();
                             final unit = settingsCubit.state.unit;
-                            return Text("${value.toStringAsFixed(0)} $unit", style: textTheme.subtitleText);
+                            return Text(
+                              "${value.toStringAsFixed(0)} $unit",
+                              style: textTheme.subtitleText,
+                              overflow: TextOverflow.ellipsis,
+                            );
                           },
                         );
                       },
                     ),
-                  ],
-                ),
-              ],
-            ),
+                  ),
+                ],
+                           ),
+             ),
           ],
         ),
       ),
     );
   }
 }
+
