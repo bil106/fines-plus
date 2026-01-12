@@ -1,7 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
-import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
 import 'package:fines_plus/features/subscription/presentation/screens/subscription_screen.dart';
 import 'package:flutter/material.dart';
@@ -24,49 +23,57 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     required String subtitle,
     required String imagePath,
   }) {
-    String buttonText = (pageIndex == 0)
-        ? S.of(context).next
-        : (pageIndex <= 2 ? S.of(context).good : S.of(context).of_course);
     final textTheme = Theme.of(context).textTheme;
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24),
-      child: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            AppSpacers.verticalXMassive,
-            Image.asset(imagePath, width: 260, height: 260),
-           AppSpacers.verticalXMassive,
-            Text(
-              title,
-              textAlign: TextAlign.center,
-              style:textTheme.black28W400
-             
-            ),
-           AppSpacers.verticalMedium,
-            Text(
-              subtitle,
-              textAlign: TextAlign.center,
-              style: textTheme.black54fs18,
-            ),
-            AppSpacers.verticalHuge,
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.blue700,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+    final size = MediaQuery.of(context).size;
+
+    final bool isShort = size.height < 600;
+
+    return SafeArea(
+      child: SingleChildScrollView(
+        physics: const ClampingScrollPhysics(),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          child: Column(
+            children: [
+              SizedBox(height: isShort ? 10 : 60),
+
+              Image.asset(imagePath, width: isShort ? 150 : 260, height: isShort ? 150 : 260, fit: BoxFit.contain),
+
+              SizedBox(height: isShort ? 10 : 60),
+
+              Text(title, textAlign: TextAlign.center, style: textTheme.black28W400),
+
+              const SizedBox(height: 12),
+
+              Text(subtitle, textAlign: TextAlign.center, style: textTheme.black54fs18),
+
+              SizedBox(height: isShort ? 20 : 100),
+
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.blue700,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+                  ),
+                  onPressed: () {
+                    if (pageIndex < 4) {
+                      pageController.nextPage(duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+                    }
+                  },
+                  child: Text(
+                    (pageIndex == 0)
+                        ? S.of(context).next
+                        : (pageIndex <= 2 ? S.of(context).good : S.of(context).of_course),
+                    style: textTheme.white18W400,
+                  ),
                 ),
-                onPressed: () {
-                  if (pageIndex < 4) {
-                    pageController.nextPage(duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
-                  }
-                },
-                child: Text(buttonText, style: textTheme.white18W400)
               ),
-            ),
-          ],
+
+              const SizedBox(height: 80),
+            ],
+          ),
         ),
       ),
     );
@@ -98,7 +105,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    
+    final isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(20),
@@ -137,7 +144,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               _buildSubscriptionPage(),
             ],
           ),
-          Positioned(bottom: 40, left: 0, right: 0, child: _buildDots()),
+          if (!isLandscape) Positioned(bottom: 40, left: 0, right: 0, child: _buildDots()),
         ],
       ),
     );

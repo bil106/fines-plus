@@ -115,6 +115,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "costs_stat": MessageLookupByLibrary.simpleMessage("Статистика витрат"),
     "create": MessageLookupByLibrary.simpleMessage("Створити"),
+    "create_account": MessageLookupByLibrary.simpleMessage(
+      "Для здійснення покупки потрібний обліковий запис Google Play. Будь ласка, увійдіть або створіть обліковий запис і спробуйте знову.",
+    ),
     "csv": MessageLookupByLibrary.simpleMessage("CSV"),
     "currency": MessageLookupByLibrary.simpleMessage("Валюта"),
     "date": MessageLookupByLibrary.simpleMessage("Дата"),
@@ -163,6 +166,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "enter_correct_registration_number": MessageLookupByLibrary.simpleMessage(
       "Введіть правильний номер техпаспорта",
+    ),
+    "enter_cyrillic_only": MessageLookupByLibrary.simpleMessage(
+      "Використовуйте кирилиці",
     ),
     "enter_email": MessageLookupByLibrary.simpleMessage("Введіть email"),
     "enter_liters": MessageLookupByLibrary.simpleMessage("Введіть літри"),
@@ -370,6 +376,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "oil_icon": MessageLookupByLibrary.simpleMessage("Олія"),
     "ok": MessageLookupByLibrary.simpleMessage("ОК"),
     "open_events": MessageLookupByLibrary.simpleMessage("Відкриті події"),
+    "open_google_play": MessageLookupByLibrary.simpleMessage(
+      "Відкрити Google Play",
+    ),
     "open_site": MessageLookupByLibrary.simpleMessage("Увійти у e-Drive"),
     "open_statistics": MessageLookupByLibrary.simpleMessage(
       "Відкрити статистику",
@@ -411,6 +420,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Політика конфіденційності",
     ),
     "publish": MessageLookupByLibrary.simpleMessage("Опублікувати"),
+    "purchase_not_available": MessageLookupByLibrary.simpleMessage(
+      "Купівля недоступна",
+    ),
     "push_notifications": MessageLookupByLibrary.simpleMessage(
       "Push-сповіщення",
     ),

@@ -3953,6 +3953,46 @@ class S {
       args: [],
     );
   }
+
+  /// `Use Cyrillic`
+  String get enter_cyrillic_only {
+    return Intl.message(
+      'Use Cyrillic',
+      name: 'enter_cyrillic_only',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Purchase not available`
+  String get purchase_not_available {
+    return Intl.message(
+      'Purchase not available',
+      name: 'purchase_not_available',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `A Google Play account is required to make a purchase. Please sign in or create an account and try again.`
+  String get create_account {
+    return Intl.message(
+      'A Google Play account is required to make a purchase. Please sign in or create an account and try again.',
+      name: 'create_account',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Open Google Play`
+  String get open_google_play {
+    return Intl.message(
+      'Open Google Play',
+      name: 'open_google_play',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

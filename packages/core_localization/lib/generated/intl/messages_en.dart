@@ -115,6 +115,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "cost_statistics": MessageLookupByLibrary.simpleMessage("Cost statistics"),
     "costs_stat": MessageLookupByLibrary.simpleMessage("Cost Statistics"),
     "create": MessageLookupByLibrary.simpleMessage("Create"),
+    "create_account": MessageLookupByLibrary.simpleMessage(
+      "A Google Play account is required to make a purchase. Please sign in or create an account and try again.",
+    ),
     "csv": MessageLookupByLibrary.simpleMessage("CSV"),
     "currency": MessageLookupByLibrary.simpleMessage("Currency"),
     "date": MessageLookupByLibrary.simpleMessage("Date"),
@@ -162,6 +165,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "enter_correct_registration_number": MessageLookupByLibrary.simpleMessage(
       "Enter the correct registration number",
     ),
+    "enter_cyrillic_only": MessageLookupByLibrary.simpleMessage("Use Cyrillic"),
     "enter_email": MessageLookupByLibrary.simpleMessage("Enter email"),
     "enter_liters": MessageLookupByLibrary.simpleMessage("Enter liters"),
     "enter_mileage": MessageLookupByLibrary.simpleMessage("Enter mileage"),
@@ -365,6 +369,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "oil_icon": MessageLookupByLibrary.simpleMessage("Oil"),
     "ok": MessageLookupByLibrary.simpleMessage("OK"),
     "open_events": MessageLookupByLibrary.simpleMessage("Open events"),
+    "open_google_play": MessageLookupByLibrary.simpleMessage(
+      "Open Google Play",
+    ),
     "open_site": MessageLookupByLibrary.simpleMessage("Open e-Drive"),
     "open_statistics": MessageLookupByLibrary.simpleMessage("Open statistics"),
     "or_sign_in_using": MessageLookupByLibrary.simpleMessage(
@@ -398,6 +405,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "price_liter": MessageLookupByLibrary.simpleMessage("Price per 1 liter:"),
     "privacy_policy": MessageLookupByLibrary.simpleMessage("Privacy Policy"),
     "publish": MessageLookupByLibrary.simpleMessage("Publish"),
+    "purchase_not_available": MessageLookupByLibrary.simpleMessage(
+      "Purchase not available",
+    ),
     "push_notifications": MessageLookupByLibrary.simpleMessage(
       "Push notifications",
     ),

@@ -16,41 +16,60 @@ class AdBannerWidget extends StatefulWidget {
 class _AdBannerWidgetState extends State<AdBannerWidget> {
   BannerAd? _bannerAd;
   bool _isLoading = false;
+  bool _isSubscribed = true;
+  bool _checkingSubscription = true;
 
   @override
   void initState() {
     super.initState();
-    _loadBanner();
+    _checkSubscriptionAndLoadAd();
   }
 
-void _loadBanner() {
+  Future<void> _checkSubscriptionAndLoadAd() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      if (mounted) setState(() => _checkingSubscription = false);
+      return;
+    }
+
+    final subscribed = await SubscriptionHelper.isUserSubscribed(user.uid);
+
+    if (!mounted) return;
+
+    setState(() {
+      _isSubscribed = subscribed;
+      _checkingSubscription = false;
+    });
+
+    if (!subscribed) {
+      _loadBanner();
+    }
+  }
+
+  void _loadBanner() {
     if (_bannerAd != null || _isLoading) return;
     _isLoading = true;
 
-    final banner = BannerAd(
+    _bannerAd = BannerAd(
       adUnitId: AdHelper.bannerAdUnitId,
       size: widget.size,
       request: const AdRequest(),
       listener: BannerAdListener(
         onAdLoaded: (ad) {
-          setState(() {
-            _bannerAd = ad as BannerAd;
-            _isLoading = false;
-          });
+          if (mounted) setState(() => _isLoading = false);
         },
         onAdFailedToLoad: (ad, error) {
           ad.dispose();
-          _isLoading = false;
+          if (mounted) {
+            setState(() {
+              _bannerAd = null;
+              _isLoading = false;
+            });
+          }
         },
-        onAdOpened: (_) => debugPrint("The banner was opened by the user"),
-        onAdClosed: (_) => debugPrint("The banner is closed"),
-        onAdImpression: (_) => debugPrint("The banner is shown to the user"),
       ),
-    );
-
-    banner.load();
+    )..load();
   }
-
 
   @override
   void dispose() {
@@ -60,43 +79,21 @@ void _loadBanner() {
 
   @override
   Widget build(BuildContext context) {
-    final user = FirebaseAuth.instance.currentUser;
-
-    if (user == null) {
-     
+    if (_checkingSubscription || _isSubscribed) {
       return const SizedBox.shrink();
     }
 
-    return FutureBuilder<bool>(
-      future: SubscriptionHelper.isUserSubscribed(user.uid),
-      builder: (context, snapshot) {
-    
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const SizedBox.shrink();
-        }
+    if (_bannerAd == null) {
+      return const SizedBox.shrink();
+    }
 
-     
-        if (snapshot.data == true) {
-          debugPrint("User with active subscription - ads hidden");
-          return const SizedBox.shrink();
-        }
-
-    
-        if (_bannerAd == null) {
-          debugPrint("Advertisement not loaded yet");
-          return const SizedBox.shrink();
-        }
-
-       
-        return Align(
-          alignment: Alignment.bottomCenter,
-          child: SizedBox(
-            width: _bannerAd!.size.width.toDouble(),
-            height: _bannerAd!.size.height.toDouble(),
-            child: AdWidget(ad: _bannerAd!),
-          ),
-        );
-      },
+    return Align(
+      alignment: Alignment.bottomCenter,
+      child: SizedBox(
+        width: _bannerAd!.size.width.toDouble(),
+        height: _bannerAd!.size.height.toDouble(),
+        child: AdWidget(ad: _bannerAd!),
+      ),
     );
   }
 }

@@ -52,11 +52,14 @@ class _CarInfoViewState extends State<_CarInfoView> {
 
   final _carReg = RegExp(r'^[А-ЯЇІЄҐ]{2}\d{4}[А-ЯЇІЄҐ]{2}$');
   final _techReg = RegExp(r'^[А-ЯІЇЄҐ]{3}\d{6}$');
+  final _latinLettersReg = RegExp(r'[A-Z]');
 
   bool get isFormValid =>
       _carReg.hasMatch(_carNumberController.text) && _techReg.hasMatch(_techPassportController.text);
 
   bool get hasCar => carCubit?.state.carNumber.isNotEmpty ?? false;
+  bool _carNumberHasLatin = false;
+  bool _techPassportHasLatin = false;
 
   @override
   void initState() {
@@ -70,14 +73,22 @@ class _CarInfoViewState extends State<_CarInfoView> {
     _techPassportController.text = carCubit?.state.techPassport ?? '';
 
     _carNumberController.addListener(() {
-      final newNumber = _carNumberController.text;
-      carCubit?.changeCar(newNumber);
-      context.read<CarInfoCubit>().setCarNumber(newNumber);
+      final text = _carNumberController.text;
+
+      _carNumberHasLatin = _latinLettersReg.hasMatch(text);
+
+      carCubit?.changeCar(text);
+      context.read<CarInfoCubit>().setCarNumber(text);
+
       setState(() {});
     });
 
     _techPassportController.addListener(() {
-      carCubit?.setTechPassport(_techPassportController.text);
+      final text = _techPassportController.text;
+
+      _techPassportHasLatin = _latinLettersReg.hasMatch(text);
+
+      carCubit?.setTechPassport(text);
       setState(() {});
     });
   }
@@ -89,7 +100,7 @@ class _CarInfoViewState extends State<_CarInfoView> {
     super.dispose();
   }
 
-void _onRecaptchaVerified(String token) async {
+  void _onRecaptchaVerified(String token) async {
     if (!mounted) return;
     setState(() => _showRecaptcha = false);
 
@@ -100,14 +111,12 @@ void _onRecaptchaVerified(String token) async {
 
     final carNumber = cubit.state.carNumber;
     if (carNumber.isNotEmpty) {
-      
       final parts = cubit.getTechPassportParts();
       if (widget.onCheckFine != null) {
         widget.onCheckFine!(carNumber, parts['series']!, parts['number']!);
       }
     }
   }
-
 
   void _handleUnauthorized() {
     showDialog(
@@ -173,22 +182,29 @@ void _onRecaptchaVerified(String token) async {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+   
 
     return Scaffold(
+      resizeToAvoidBottomInset: true,
+      backgroundColor: AppColors.energyBlue50,
+
       appBar: AppBar(
         backgroundColor: AppColors.energyBlue50,
         leading: BackButton(color: AppColors.blue700, onPressed: widget.onBack ?? () => Navigator.pop(context)),
       ),
-      backgroundColor: AppColors.energyBlue50,
+
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+
+         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              AppSpacers.verticalXLarge,
               Text(S.of(context).addition_cars, style: textTheme.title),
-              AppSpacers.verticalHuge,
+              AppSpacers.verticalLarge,
+
               Card(
                 color: AppColors.neutreBlanc,
                 shape: RoundedRectangleBorder(borderRadius: AppBorders.radius22),
@@ -203,9 +219,8 @@ void _onRecaptchaVerified(String token) async {
                       TextField(
                         controller: _carNumberController,
                         style: textTheme.black28W400,
-                        inputFormatters: [VehicleNumberFormatter(mapLatinToCyrillic: true)],
+                        inputFormatters: [VehicleNumberFormatter()],
                         textCapitalization: TextCapitalization.characters,
-                        keyboardType: TextInputType.text,
                         maxLength: 8,
                         decoration: InputDecoration(
                           hintText: S.of(context).hint_auto_num,
@@ -214,9 +229,12 @@ void _onRecaptchaVerified(String token) async {
                           filled: true,
                           fillColor: AppColors.grey50,
                           border: OutlineInputBorder(borderRadius: AppBorders.radius18, borderSide: BorderSide.none),
+                          errorText: _carNumberHasLatin ? S.of(context).enter_cyrillic_only : null,
                         ),
                       ),
+
                       AppSpacers.verticalLarge,
+
                       Text(S.of(context).reg_number, style: textTheme.carNumber),
                       AppSpacers.verticalSmall,
                       TextField(
@@ -231,50 +249,53 @@ void _onRecaptchaVerified(String token) async {
                           filled: true,
                           fillColor: AppColors.grey50,
                           border: OutlineInputBorder(borderRadius: AppBorders.radius18, borderSide: BorderSide.none),
+                          errorText: _techPassportHasLatin ? S.of(context).enter_cyrillic_only : null,
                         ),
                       ),
                     ],
                   ),
                 ),
               ),
+
               AppSpacers.verticalLargeXL,
-              Column(
-                children: [
-                  SizedBox(
-                    width: double.infinity,
-                    height: 65,
-                    child: ElevatedButton(
-                      onPressed: isFormValid
-                          ? () async {
-                              final user = FirebaseAuth.instance.currentUser;
-                              if (user == null) {
-                                _handleUnauthorized();
-                              } else {
-                                setState(() => _showRecaptcha = true);
-                              }
-                            }
-                          : null,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.blue700,
-                        shape: RoundedRectangleBorder(borderRadius: AppBorders.radius16),
-                      ),
-                      child: Text(S.of(context).search, style: textTheme.buttonText),
-                    ),
+
+              SizedBox(
+                width: double.infinity,
+                height: 65,
+                child: ElevatedButton(
+                  onPressed: isFormValid
+                      ? () async {
+                          final user = FirebaseAuth.instance.currentUser;
+                          if (user == null) {
+                            _handleUnauthorized();
+                          } else {
+                            setState(() => _showRecaptcha = true);
+                          }
+                        }
+                      : null,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.blue700,
+                    shape: RoundedRectangleBorder(borderRadius: AppBorders.radius16),
                   ),
-                  if (_showRecaptcha)
-                    SizedBox(
-                      height: 500,
-                      child: RecaptchaV2(apiKey: Env.recaptchaSiteKey, onVerifiedSuccessfully: _onRecaptchaVerified),
-                    ),
-                  TextButton(
-                    onPressed: hasCar ? () => _showDeleteDialog(context) : null,
-                    child: Text(
-                      S.of(context).delete_car_number,
-                      style: textTheme.bodyMedium?.copyWith(color: hasCar ? AppColors.red : AppColors.neutreGrey),
-                    ),
-                  ),
-                ],
+                  child: Text(S.of(context).search, style: textTheme.buttonText),
+                ),
               ),
+
+              if (_showRecaptcha)
+                SizedBox(
+                  height: 500,
+                  child: RecaptchaV2(apiKey: Env.recaptchaSiteKey, onVerifiedSuccessfully: _onRecaptchaVerified),
+                ),
+              Center(
+                child: TextButton(
+                  onPressed: hasCar ? () => _showDeleteDialog(context) : null,
+                  child: Text(
+                    S.of(context).delete_car_number,
+                    style: textTheme.bodyMedium?.copyWith(color: hasCar ? AppColors.red : AppColors.neutreGrey),
+                  ),
+                ),
+              ),
+
               AppSpacers.verticalLargeXL,
               const AdBannerWidget(),
             ],

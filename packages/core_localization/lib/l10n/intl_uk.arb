@@ -463,8 +463,11 @@
    "view_all_events": "Переглянути всі події",
    "select_type_insurance": "Виберіть вид страховки",
    "already_added": "Вже додано",
-   "no_car_selected": "Автомобіль не вибрано"
- 
+   "no_car_selected": "Автомобіль не вибрано",
+   "enter_cyrillic_only": "Використовуйте кирилиці",
+   "purchase_not_available": "Купівля недоступна",
+   "create_account": "Для здійснення покупки потрібний обліковий запис Google Play. Будь ласка, увійдіть або створіть обліковий запис і спробуйте знову.",
+   "open_google_play": "Відкрити Google Play"
    
 
 }

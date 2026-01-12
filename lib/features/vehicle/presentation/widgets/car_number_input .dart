@@ -44,7 +44,7 @@ class CarNumberInput extends StatelessWidget {
                     context.read<CarCubit>().changeCar(value);
                   },
                   style: textTheme.black28W400,
-                  inputFormatters: [VehicleNumberFormatter(mapLatinToCyrillic: true)],
+                  inputFormatters: [VehicleNumberFormatter()],
                   textCapitalization: TextCapitalization.characters,
                   keyboardType: TextInputType.text,
                   maxLength: 8,

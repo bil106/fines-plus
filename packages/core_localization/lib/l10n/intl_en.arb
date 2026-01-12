@@ -462,6 +462,10 @@
 "select_type_insurance": "Select insurance type",
 "already_added": "Already added",
 "no_car_selected": "No car selected",
-"text_automatically_renew": "Your subscription will automatically renew at the full price at the end of the chosen term. You can cancel anytime."
+"text_automatically_renew": "Your subscription will automatically renew at the full price at the end of the chosen term. You can cancel anytime.",
+"enter_cyrillic_only": "Use Cyrillic",
+"purchase_not_available": "Purchase not available",
+"create_account": "A Google Play account is required to make a purchase. Please sign in or create an account and try again.",
+"open_google_play": "Open Google Play"
 
 }

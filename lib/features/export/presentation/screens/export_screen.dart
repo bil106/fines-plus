@@ -55,33 +55,40 @@ class _ExportScreenView extends StatelessWidget {
         backgroundColor: AppColors.energyBlue50,
         leading: BackButton(color: AppColors.blue700, onPressed: onBack),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(18),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(S.of(context).export_history, style: textTheme.title),
-            AppSpacers.verticalXXLarge,
-
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                ExportCard(
-                  icon: Icons.picture_as_pdf,
-                  label: S.of(context).pdf,
-                  onTap: () => ShareHelpers.sharePdf(context, carNumber, history),
-                ),
-                ExportCard(
-                  icon: Icons.table_chart,
-                  label: S.of(context).csv,
-                  onTap: () => ShareHelpers.shareCsv(context,history),
-                ),
-              ],
+      body: SingleChildScrollView(
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 600),
+            child: Padding(
+              padding: const EdgeInsets.all(18),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(S.of(context).export_history, style: textTheme.title),
+                  AppSpacers.verticalXXLarge,
+            
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      ExportCard(
+                        icon: Icons.picture_as_pdf,
+                        label: S.of(context).pdf,
+                        onTap: () => ShareHelpers.sharePdf(context, carNumber, history),
+                      ),
+                      ExportCard(
+                        icon: Icons.table_chart,
+                        label: S.of(context).csv,
+                        onTap: () => ShareHelpers.shareCsv(context,history),
+                      ),
+                    ],
+                  ),
+            
+                  AppSpacers.verticalMaxMassive,
+                  const AdBannerWidget(),
+                ],
+              ),
             ),
-
-            AppSpacers.verticalMaxMassive,
-            const AdBannerWidget(),
-          ],
+          ),
         ),
       ),
     );

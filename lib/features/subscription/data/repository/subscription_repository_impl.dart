@@ -1,11 +1,15 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:core_localization/generated/l10n.dart';
+import 'package:fines_plus/env/env.dart';
 import 'package:fines_plus/features/subscription/data/models/user_subscription.dart';
 import 'package:fines_plus/features/subscription/data/repository/subscription_repository.dart';
 import 'package:fines_plus/features/subscription/presentation/cubit/purchase/purchase_event.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:flutter/material.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../domain/entities/subscription.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -13,6 +17,7 @@ class SubscriptionRepository implements ISubscriptionRepository {
   final InAppPurchase _iap;
   final FirebaseAuth _auth;
   final FirebaseFirestore _firestore;
+bool _purchaseInProgress = false;
 
   final _controller = StreamController<PurchaseEvent>.broadcast();
   StreamSubscription<List<PurchaseDetails>>? _purchaseSub;
@@ -32,26 +37,62 @@ class SubscriptionRepository implements ISubscriptionRepository {
 
   @override
   Stream<PurchaseEvent> get events => _controller.stream;
+  Future<void> _showBillingDialog(BuildContext context) async {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(S.of(context).purchase_not_available),
+        content: Text(S.of(context).create_account),
+        actions: [
+          TextButton(onPressed: () => Navigator.of(ctx).pop(), child: Text(S.of(context).close)),
+          TextButton(
+            onPressed: () async {
+              Navigator.of(ctx).pop();
+              final url = Env.googlePlayUrl;
+              if (await canLaunchUrl(Uri.parse(url))) {
+                await launchUrl(Uri.parse(url));
+              }
+            },
+            child: Text(S.of(context).open_google_play),
+          ),
+        ],
+      ),
+    );
+  }
 
-  @override
-  Future<void> startPurchase(SubscriptionPlan plan) async {
-    if (_disposed) return;
+@override
+  Future<void> startPurchase(SubscriptionPlan plan, {BuildContext? context}) async {
+    if (_disposed || _purchaseInProgress) return;
 
     final available = await _iap.isAvailable();
     if (!available) {
-      throw Exception('Billing not available');
+      if (context != null) {
+        await _showBillingDialog(context);
+        return;
+      }
+      throw Exception(S.current.create_account);
     }
 
-    final response = await _iap.queryProductDetails({plan.id});
-    if (response.productDetails.isEmpty) {
-      throw Exception('Product not found: ${plan.id}');
+    _purchaseInProgress = true;
+
+    try {
+      final response = await _iap.queryProductDetails({plan.id});
+      if (response.productDetails.isEmpty) {
+        throw Exception('Product not found: ${plan.id}');
+      }
+
+      final product = response.productDetails.first;
+      _products[product.id] = product;
+
+      await _iap.buyNonConsumable(purchaseParam: PurchaseParam(productDetails: product));
+    } catch (e, s) {
+      FirebaseCrashlytics.instance.recordError(e, s);
+      rethrow;
+    } finally {
+      _purchaseInProgress = false;
     }
-
-    final product = response.productDetails.first;
-    _products[product.id] = product;
-
-    await _iap.buyNonConsumable(purchaseParam: PurchaseParam(productDetails: product));
   }
+
 
   @override
   Future<void> restorePurchases() async {
@@ -118,14 +159,12 @@ class SubscriptionRepository implements ISubscriptionRepository {
 
   void dispose() {
     _disposed = true;
-    _purchaseSub?.cancel();
+    _purchaseSub?.cancel(); 
     _controller.close();
   }
-  
+
   @override
   Future<void> buySubscription(String ownerId, SubscriptionPlan plan) {
- 
     throw UnimplementedError();
   }
 }
-

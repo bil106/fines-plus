@@ -41,7 +41,10 @@ abstract final class AppSpacers {
   static const horizontalXXHuge = SizedBox(width: 100);
   static const horizontalXXGigantic = SizedBox(height: 175);
 }
-
+abstract final class AppSize {
+  static  double heightXXGigantic =  260.0;
+  static double widthXXGigantic = 260.0;
+}
 abstract final class AppLoaders {
   static const small = SizedBox(
     width: 24,

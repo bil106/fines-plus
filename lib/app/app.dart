@@ -15,6 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -143,36 +144,44 @@ class _MyAppState extends State<MyApp> {
       });
     }
   }
-  @override
+ @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
-        providers: [
-      BlocProvider(
-        create: (_) => RegistrationCubit(
-          auth: FirebaseAuth.instance,
-          storage: const FlutterSecureStorage(),
+      providers: [
+        BlocProvider(
+          create: (_) => RegistrationCubit(auth: FirebaseAuth.instance, storage: const FlutterSecureStorage()),
         ),
-      ),
-    ],
+      ],
       child: Provider<AppConfig>.value(
         value: widget.config,
         child: BlocBuilder<SettingsCubit, SettingsState>(
           builder: (context, state) {
-            return MaterialApp.router(
-              routerConfig: _router.config(),
-              locale: state.locale,
-              title: 'Fines+',
-              theme: ThemeConfig.createTheme(widget.config),
-              debugShowCheckedModeBanner: false,
-              localizationsDelegates: const [
-                S.delegate,
-                GlobalMaterialLocalizations.delegate,
-                GlobalWidgetsLocalizations.delegate,
-                GlobalCupertinoLocalizations.delegate,
-              ],
-              supportedLocales: S.delegate.supportedLocales,
+        
+            return ScreenUtilInit(
+              designSize: const Size(360, 690), 
+              minTextAdapt: true,
+              splitScreenMode: true,
+              builder: (context, child) {
+                return MaterialApp.router(
+                  routerConfig: _router.config(),
+                  locale: state.locale,
+                  title: 'Fines+',
+                  theme: ThemeConfig.createTheme(widget.config),
+                  debugShowCheckedModeBanner: false,
+                  localizationsDelegates: const [
+                    S.delegate,
+                    GlobalMaterialLocalizations.delegate,
+                    GlobalWidgetsLocalizations.delegate,
+                    GlobalCupertinoLocalizations.delegate,
+                  ],
+                  supportedLocales: S.delegate.supportedLocales,
+                  builder: (context, child) {
+                    
+                    return child!;
+                  },
+                );
+              },
             );
-            
           },
         ),
       ),

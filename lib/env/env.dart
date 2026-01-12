@@ -14,6 +14,7 @@ class Env {
   static String get edriveUrl => dotenv.env['EDRIVE_URL'] ?? '';
   static String get privacyPolicyUrl => dotenv.env['PRIVACY_POLICY_URL'] ?? '';
   static String get termsUrl => dotenv.env['TERMS_URL'] ?? '';
+  static String get googlePlayUrl => 'https://play.google.com/store';
 
   static List<String> get testDeviceIdList {
     final ids = dotenv.env['TEST_DEVICE_IDS'] ?? '';

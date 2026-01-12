@@ -427,41 +427,21 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
             ],
           ),
           bottomNavigationBar: _isMainTab(_currentIndex)
-              ? SizedBox(
-                  height: 58,
-                  child: BottomNavigationBar(
-                    backgroundColor: AppColors.energyBlue50,
-                    currentIndex: _bottomNavIndexFor(_currentIndex),
-                    onTap: (i) {
-                      final page = [HomePage.home, HomePage.fines, HomePage.reminders][i];
-                      openPage(page);
-                    },
-                    items: [
-                      BottomNavigationBarItem(
-                        icon: Icon(
-                          Icons.home,
-                          color: _bottomNavIndexFor(_currentIndex) == 0 ? AppColors.blue700 : AppColors.grey700,
-                        ),
-                        label: S.of(context).home,
-                      ),
-                      BottomNavigationBarItem(
-                        icon: Icon(
-                          Icons.receipt,
-                          color: _bottomNavIndexFor(_currentIndex) == 1 ? AppColors.blue700 : AppColors.grey700,
-                        ),
-                        label: S.of(context).fines,
-                      ),
-                      BottomNavigationBarItem(
-                        icon: Icon(
-                          Icons.support,
-                          color: _bottomNavIndexFor(_currentIndex) == 2 ? AppColors.blue700 : AppColors.grey700,
-                        ),
-                        label: S.of(context).reminder,
-                      ),
-                    ],
-                  ),
+              ? BottomNavigationBar(
+                  backgroundColor: AppColors.energyBlue50,
+                  currentIndex: _bottomNavIndexFor(_currentIndex),
+                  onTap: (i) {
+                    final page = [HomePage.home, HomePage.fines, HomePage.reminders][i];
+                    openPage(page);
+                  },
+                  items:  [
+                    BottomNavigationBarItem(icon: Icon(Icons.home), label: S.of(context).home),
+                    BottomNavigationBarItem(icon: Icon(Icons.receipt), label: S.of(context).fines),
+                    BottomNavigationBarItem(icon: Icon(Icons.support), label: S.of(context).reminder),
+                  ],
                 )
               : null,
+
         ),
       ),
     );

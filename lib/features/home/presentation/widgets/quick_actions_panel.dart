@@ -14,11 +14,19 @@ class QuickActionsPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final carNumber = context.watch<CarCubit>().state.carNumber;
+    final carCubit = context.watch<CarCubit?>();
+    final carNumber = carCubit?.state.carNumber ?? '';
     final hasCar = carNumber.isNotEmpty;
+
+    final quickActionsCubit = context.read<QuickActionsCubit?>();
+    if (quickActionsCubit == null) return const SizedBox.shrink();
 
     return BlocBuilder<QuickActionsCubit, QuickActionsState>(
       builder: (context, state) {
+        if (state.actions.isEmpty) {
+          return const SizedBox.shrink();
+        }
+
         return GridView.builder(
           shrinkWrap: true,
           itemCount: state.actions.length,
@@ -31,6 +39,7 @@ class QuickActionsPanel extends StatelessWidget {
           ),
           itemBuilder: (context, index) {
             final action = state.actions[index];
+
             final isActive =
                 hasCar && state.activeCategories.map((e) => e.toLowerCase()).contains(action.labelKey.toLowerCase());
 
@@ -40,7 +49,7 @@ class QuickActionsPanel extends StatelessWidget {
               isSelected: isActive,
               labelKey: action.labelKey,
               onTap: () async {
-                if (carNumber.isEmpty) return;
+                if (!hasCar) return;
 
                 final labelKey = action.labelKey;
                 final wrapperState = context.findAncestorStateOfType<HomeScreenWrapperState>();
@@ -64,10 +73,8 @@ class QuickActionsPanel extends StatelessWidget {
 
                 if (result == null) return;
 
-                final quick = context.read<QuickActionsCubit>();
-
                 if (labelKey == "Insurance") {
-                  await quick.onTaskCreated(
+                  await quickActionsCubit.onTaskCreated(
                     {
                       'description': S.maybeOf(context)?.insurance ?? labelKey,
                       'category': labelKey.toLowerCase(),
@@ -81,7 +88,7 @@ class QuickActionsPanel extends StatelessWidget {
                     carNumber: carNumber,
                   );
                 } else {
-                  await quick.onTaskCreated(result, labelKey: labelKey, carNumber: carNumber);
+                  await quickActionsCubit.onTaskCreated(result, labelKey: labelKey, carNumber: carNumber);
                 }
 
                 wrapperState?.openAnalyticsTab(2);

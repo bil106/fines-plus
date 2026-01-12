@@ -145,7 +145,11 @@ Future<void> _loadLatestExpense() async {
         ),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.only(left: 12, right: 12, top: 6, bottom: 4),
+         child: Center(
+    child: ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: 400),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         child: Column(
           children: [
             BlocBuilder<StatisticsCubit, StatisticsState>(
@@ -216,8 +220,8 @@ Future<void> _loadLatestExpense() async {
 
             StatisticsCostsCard(),
           ],
-        ),
+        ),)
       ),
-    );
+    )));
   }
 }
