@@ -9,6 +9,7 @@ import 'package:fines_plus/features/registration/presentation/cubit/registration
 import 'package:fines_plus/features/settings/presentation/cubit/settings_cubit.dart';
 import 'package:fines_plus/features/settings/presentation/cubit/settings_state.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -21,12 +22,11 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:auto_route/auto_route.dart';
 
-
 class MyApp extends StatefulWidget {
   final AppConfig config;
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 
-  const MyApp({super.key, required this.config, required this.flutterLocalNotificationsPlugin,});
+  const MyApp({super.key, required this.config, required this.flutterLocalNotificationsPlugin});
 
   @override
   State<MyApp> createState() => _MyAppState();
@@ -46,6 +46,7 @@ class _MyAppState extends State<MyApp> {
     _initDynamicLinks();
     _initAppLinks();
   }
+
   void _setupPushNotifications() {
     FirebaseMessaging.onMessage.listen((message) async {
       final notification = message.notification;
@@ -74,8 +75,7 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
-
-    Future<void> _initDynamicLinks() async {
+  Future<void> _initDynamicLinks() async {
     try {
       FirebaseDynamicLinks.instance.onLink.listen(
         (data) {
@@ -96,8 +96,8 @@ class _MyAppState extends State<MyApp> {
     }
   }
 
-
-   void _handleDeepLink(Uri link) async {
+  void _handleDeepLink(Uri link) async {
+    await FirebaseCrashlytics.instance.log("Handling DeepLink: ${link.toString()}");
     final partnerId = link.queryParameters['partnerId'];
     if (partnerId != null && partnerId.isNotEmpty) {
       final sp = await SharedPreferences.getInstance();
@@ -112,8 +112,7 @@ class _MyAppState extends State<MyApp> {
     }
   }
 
-
-    void _initAppLinks() async {
+  void _initAppLinks() async {
     _appLinksSub = _appLinks.uriLinkStream.listen(
       (uri) {
         _routeFromAppLink(uri);
@@ -130,6 +129,7 @@ class _MyAppState extends State<MyApp> {
       debugPrint("Error getting initial app link: $e");
     }
   }
+
   void _routeFromAppLink(Uri uri) {
     final car = uri.queryParameters['car'];
     final isAddCar = uri.path.contains("addCar");
@@ -144,7 +144,8 @@ class _MyAppState extends State<MyApp> {
       });
     }
   }
- @override
+
+  @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
@@ -156,9 +157,8 @@ class _MyAppState extends State<MyApp> {
         value: widget.config,
         child: BlocBuilder<SettingsCubit, SettingsState>(
           builder: (context, state) {
-        
             return ScreenUtilInit(
-              designSize: const Size(360, 690), 
+              designSize: const Size(360, 690),
               minTextAdapt: true,
               splitScreenMode: true,
               builder: (context, child) {
@@ -176,7 +176,6 @@ class _MyAppState extends State<MyApp> {
                   ],
                   supportedLocales: S.delegate.supportedLocales,
                   builder: (context, child) {
-                    
                     return child!;
                   },
                 );

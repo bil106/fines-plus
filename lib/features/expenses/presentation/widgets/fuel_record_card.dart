@@ -18,13 +18,10 @@ class FuelRecordCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final settingsCubit = context.watch<SettingsCubit>();
-    final unitStream = UnitStream(settingsCubit);
-
 
     final currencyService = context.read<CurrencyService>();
     final targetCurrency = settingsCubit.state.currency;
 
- 
     final convertedCost = currencyService.convert(record.cost, targetCurrency, fromCurrency: 'UAH');
     final displayCurrency = settingsCubit.getCurrencyLabel(context, targetCurrency);
 
@@ -34,52 +31,75 @@ class FuelRecordCard extends StatelessWidget {
       shape: RoundedRectangleBorder(borderRadius: AppBorders.radiusLarge),
       child: Padding(
         padding: const EdgeInsets.all(12),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Column(
           children: [
-            Icon(Icons.local_gas_station, color: AppColors.redAccent, size: 50),
-            AppSpacers.horizontalSmallMedium,
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text("${record.fuelType} / ${record.volume.toInt()}L", style: textTheme.historyText),
-                  AppSpacers.verticalXSmall,
-
-              
-                  Row(
-                    children: [
-                      Icon(Icons.attach_money, color: AppColors.green),
-                      AppSpacers.horizontalSmallMedium,
-                      Text("${convertedCost.toStringAsFixed(0)} $displayCurrency", style: textTheme.subtitleText),
-                    ],
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(Icons.local_gas_station, color: AppColors.redAccent, size: 50),
+                AppSpacers.horizontalSmallMedium,
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        FittedBox(
+                          fit: BoxFit.scaleDown,
+                          alignment: Alignment.centerLeft,
+                          child: Text("${record.fuelType} / ${record.volume.toInt()}L", style: textTheme.historyText),
+                        ),
+                        AppSpacers.verticalXSmall,
+                        Row(
+                          children: [
+                            Icon(Icons.attach_money, color: AppColors.green),
+                            AppSpacers.horizontalSmallMedium,
+                            Text("${convertedCost.toStringAsFixed(0)} $displayCurrency", style: textTheme.subtitleText),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
+                ),
+              ],
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 12.0),
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerLeft,
+                child: Row(
+                  children: [
+                    Icon(Icons.calendar_month, color: AppColors.energyBlue, size: 20),
+                    const SizedBox(width: 2),
 
-                  AppSpacers.verticalXSmall,
+                    Text(DateFormatter.formatDate(record.date), style: textTheme.subtitleText),
 
-              
-                  Row(
-                    children: [
-                      Icon(Icons.calendar_month, color: AppColors.energyBlue),
-                      AppSpacers.horizontalSmallMedium,
-                      Text(DateFormatter.formatDate(record.date), style: textTheme.subtitleText),
-                      AppSpacers.horizontalXLarge,
-                      Icon(Icons.speed, color: AppColors.energyBlue),
-                      AppSpacers.horizontalSmallMedium,
+                    const SizedBox(width: 10),
+                    Icon(Icons.speed, color: AppColors.energyBlue, size: 20),
+                    const SizedBox(width: 4),
+                    Builder(
+                      builder: (context) {
+                        final settingsCubit = context.watch<SettingsCubit>();
+                        final unitStream = UnitStream(settingsCubit);
 
-                     
-                      StreamBuilder<double>(
-                        stream: unitStream.unitValueStream(record.mileage.toDouble()),
-                        initialData: unitStream.convert(record.mileage.toDouble()),
-                        builder: (context, snapshot) {
-                          final mileageValue = snapshot.data ?? record.mileage.toDouble();
-                          final unit = settingsCubit.state.unit;
-                          return Text("${mileageValue.toStringAsFixed(0)} $unit", style: textTheme.subtitleText);
-                        },
-                      ),
-                    ],
-                  ),
-                ],
+                        return StreamBuilder<double>(
+                          stream: unitStream.unitValueStream(record.mileage.toDouble()),
+                          initialData: unitStream.convert(record.mileage.toDouble()),
+                          builder: (context, snapshot) {
+                            final value = snapshot.data ?? record.mileage.toDouble();
+                            final unit = settingsCubit.state.unit;
+                            return Text(
+                              "${value.toStringAsFixed(0)} $unit",
+                              style: textTheme.subtitleText,
+                              overflow: TextOverflow.ellipsis,
+                            );
+                          },
+                        );
+                      },
+                    ),
+                  ],
+                ),
               ),
             ),
           ],

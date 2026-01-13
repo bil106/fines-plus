@@ -102,9 +102,6 @@ class AppInitializer {
 
   Future<AppInitResult> init() async {
     WidgetsFlutterBinding.ensureInitialized();
-    // if (kDebugMode) {
-    //     await FinesServer.instance.start();
-    //   }
 
     remoteConfigService = await RemoteConfigService.init();
     debugPrint(

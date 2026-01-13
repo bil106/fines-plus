@@ -44,7 +44,7 @@ class _HomeScreenState extends State<HomeScreen> {
     _loadLatestExpense();
   }
 
-Future<void> _loadLatestExpense() async {
+  Future<void> _loadLatestExpense() async {
     if (!mounted) return;
 
     setState(() {
@@ -74,7 +74,6 @@ Future<void> _loadLatestExpense() async {
       return;
     }
 
-   
     await repo.ensureCarDocument(carNumber);
 
     final allExpenses = await repo.getExpensesOnce(carNumber: carNumber);
@@ -90,7 +89,6 @@ Future<void> _loadLatestExpense() async {
 
     final allEvents = allExpenses.map((e) => LastEventUiModel.fromExpense(e)).toList();
 
-   
     final latestByMileage = allEvents.reduce((a, b) => (a.mileage ?? 0) > (b.mileage ?? 0) ? a : b);
 
     if (!mounted) return;
@@ -99,7 +97,6 @@ Future<void> _loadLatestExpense() async {
       isLoading = false;
     });
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -145,83 +142,86 @@ Future<void> _loadLatestExpense() async {
         ),
       ),
       body: SingleChildScrollView(
-         child: Center(
-    child: ConstrainedBox(
-      constraints: const BoxConstraints(maxWidth: 400),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-        child: Column(
-          children: [
-            BlocBuilder<StatisticsCubit, StatisticsState>(
-              builder: (context, state) {
-             if (state.loading && context.watch<CarCubit>().state.carNumber.isNotEmpty) {
-                  return const CircularProgressIndicator();
-                }
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 400),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              child: Column(
+                children: [
+                  BlocBuilder<StatisticsCubit, StatisticsState>(
+                    builder: (context, state) {
+                      if (state.loading && context.watch<CarCubit>().state.carNumber.isNotEmpty) {
+                        return const CircularProgressIndicator();
+                      }
 
-                final hasCar = context.watch<CarCubit>().state.carNumber.isNotEmpty;
+                      final hasCar = context.watch<CarCubit>().state.carNumber.isNotEmpty;
 
-                final stats = hasCar
-                    ? MainStats(
-                        totalCost: state.expenseStats.total,
-                        monthMileage: state.currentMonthMileage,
-                        averageFuelConsumption: state.averageFuelConsumption,
-                        lastOdometer: state.lastOdometer,
-                      )
-                    : const MainStats(totalCost: 0, monthMileage: 0, averageFuelConsumption: 0, lastOdometer: 0);
+                      final stats = hasCar
+                          ? MainStats(
+                              totalCost: state.expenseStats.total,
+                              monthMileage: state.currentMonthMileage,
+                              averageFuelConsumption: state.averageFuelConsumption,
+                              lastOdometer: state.lastOdometer,
+                            )
+                          : const MainStats(totalCost: 0, monthMileage: 0, averageFuelConsumption: 0, lastOdometer: 0);
 
-                return MainStatsCard(stats: stats);
-              },
+                      return MainStatsCard(stats: stats);
+                    },
+                  ),
+
+                  AppSpacers.verticalXSmall,
+                  BlocListener<CarCubit, CarState>(
+                    listenWhen: (prev, curr) => prev.carNumber.isNotEmpty && curr.carNumber.isEmpty,
+                    listener: (context, state) {
+                      if (state.carNumber.isEmpty) {
+                        setState(() {
+                          latestExpense = null;
+                          isLoading = false;
+                        });
+                        context.read<StatisticsCubit>().clearStats();
+                        context.read<QuickActionsCubit>().clearAllActive();
+                        return;
+                      }
+
+                      context.read<QuickActionsCubit>().syncActiveCategories(state.carNumber);
+                      _loadLatestExpense();
+                    },
+                    child: const QuickActionsPanel(),
+                  ),
+                  AppSpacers.verticalXSmall,
+
+                  Builder(
+                    builder: (context) {
+                      final carNumber = context.watch<CarCubit>().state.carNumber;
+                      if (carNumber.isEmpty) {
+                        return LastEventCardAction(event: null, onTap: null, onOpenEvents: null);
+                      }
+
+                      if (isLoading) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+
+                      return LastEventCardAction(
+                        event: latestExpense,
+                        onTap: () {},
+                        onOpenEvents: () {
+                          final wrapperState = context.findAncestorStateOfType<HomeScreenWrapperState>();
+                          wrapperState?.openPage(HomePage.maintenance);
+                        },
+                      );
+                    },
+                  ),
+
+                  StatisticsMileageCard(),
+
+                  StatisticsCostsCard(),
+                ],
+              ),
             ),
-
-            AppSpacers.verticalXSmall,
-            BlocListener<CarCubit, CarState>(
-              listenWhen: (prev, curr) => prev.carNumber.isNotEmpty && curr.carNumber.isEmpty,
-              listener: (context, state) {
-                if (state.carNumber.isEmpty) {
-                  setState(() {
-                    latestExpense = null;
-                    isLoading = false;
-                  });
-                  context.read<StatisticsCubit>().clearStats();
-                  context.read<QuickActionsCubit>().clearAllActive();
-                  return;
-                }
-
-                context.read<QuickActionsCubit>().syncActiveCategories(state.carNumber);
-                _loadLatestExpense();
-              },
-              child: const QuickActionsPanel(),
-            ),
-            AppSpacers.verticalXSmall,
-
-            Builder(
-              builder: (context) {
-                final carNumber = context.watch<CarCubit>().state.carNumber;
-                if (carNumber.isEmpty) {
-                  return LastEventCardAction(event: null, onTap: null, onOpenEvents: null);
-                }
-
-                if (isLoading) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-
-                return LastEventCardAction(
-                  event: latestExpense,
-                  onTap: () {},
-                  onOpenEvents: () {
-                    final wrapperState = context.findAncestorStateOfType<HomeScreenWrapperState>();
-                    wrapperState?.openPage(HomePage.maintenance);
-                  },
-                );
-              },
-            ),
-
-            StatisticsMileageCard(),
-
-            StatisticsCostsCard(),
-          ],
-        ),)
+          ),
+        ),
       ),
-    )));
+    );
   }
 }

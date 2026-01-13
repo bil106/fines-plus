@@ -2,7 +2,6 @@ import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
-import 'package:fines_plus/core/extensions/info_card.dart';
 import 'package:flutter/material.dart';
 
 class DatePickerCard extends StatelessWidget {

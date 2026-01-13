@@ -5,7 +5,6 @@ import 'package:design_system/theme/app_theme.dart';
 import 'package:fines_plus/app/router/home_screen_wrapper.dart';
 import 'package:fines_plus/env/env.dart';
 import 'package:fines_plus/features/subscription/domain/entities/subscription.dart';
-
 import 'package:fines_plus/app/router/app_router.dart';
 import 'package:fines_plus/features/subscription/presentation/cubit/purchase/purchase_cubit.dart';
 import 'package:fines_plus/features/subscription/presentation/cubit/purchase/purchase_state.dart';
@@ -58,14 +57,15 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
 
     FirebaseCrashlytics.instance.setCustomKey('screen', 'SubscriptionScreen');
   }
+
   Future<void> _onPlanSelected(int index) async {
     setState(() => _selectedIndex = index);
   }
 
   Future<void> _buySelectedPlan() async {
-     FirebaseCrashlytics.instance.log('buySelectedPlan tapped, selectedIndex=$_selectedIndex');
+    FirebaseCrashlytics.instance.log('buySelectedPlan tapped, selectedIndex=$_selectedIndex');
     final user = FirebaseAuth.instance.currentUser;
-  if (user == null) {
+    if (user == null) {
       FirebaseCrashlytics.instance.log('user is null, redirecting');
 
       final wrapperState = context.findAncestorStateOfType<HomeScreenWrapperState>();
@@ -81,7 +81,6 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
       return;
     }
 
-
     final planData = plans[_selectedIndex];
     FirebaseCrashlytics.instance.log(
       'selected plan: '
@@ -95,11 +94,11 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
       months: planData["months"],
       features: [],
     );
-FirebaseCrashlytics.instance.log('calling PurchaseCubit.buy');
+    FirebaseCrashlytics.instance.log('calling PurchaseCubit.buy');
     context.read<PurchaseCubit>().buy(plan);
   }
 
-void _handlePurchaseSuccess() {
+  void _handlePurchaseSuccess() {
     if (!mounted) {
       FirebaseCrashlytics.instance.log('PurchaseSuccess but widget not mounted');
       return;
@@ -122,7 +121,6 @@ void _handlePurchaseSuccess() {
     context.router.replaceAll([HomeRouteWrapper(initialPage: HomePage.home)]);
   }
 
-
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
@@ -130,12 +128,12 @@ void _handlePurchaseSuccess() {
       listener: (context, state) {
         if (state is PurchaseSuccess && !_navigated) {
           _navigated = true;
-            FirebaseCrashlytics.instance.log('PurchaseSuccess received');
+          FirebaseCrashlytics.instance.log('PurchaseSuccess received');
           _handlePurchaseSuccess();
         }
 
         if (state is PurchaseError) {
-            FirebaseCrashlytics.instance.log('PurchaseError: ${state.message}');
+          FirebaseCrashlytics.instance.log('PurchaseError: ${state.message}');
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message)));
         }
       },
@@ -214,10 +212,9 @@ void _handlePurchaseSuccess() {
                                 ),
 
                               AppSpacers.verticalMedium,
-                           Row(
+                              Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                
                                   Expanded(
                                     child: Text(
                                       plan["title"],
@@ -229,9 +226,8 @@ void _handlePurchaseSuccess() {
                                       ),
                                     ),
                                   ),
-                              const SizedBox(width: 12),
+                                  const SizedBox(width: 12),
 
-                                  /// ПРАВАЯ ЧАСТЬ
                                   Column(
                                     crossAxisAlignment: CrossAxisAlignment.end,
                                     children: [
@@ -267,7 +263,7 @@ void _handlePurchaseSuccess() {
 
                     AppSpacers.verticalLarge,
 
-                SizedBox(
+                    SizedBox(
                       width: double.infinity,
                       child: BlocBuilder<PurchaseCubit, PurchaseState>(
                         builder: (context, state) {
@@ -295,10 +291,9 @@ void _handlePurchaseSuccess() {
                       ),
                     ),
 
-
                     AppSpacers.verticalLarge,
 
-                  Row(
+                    Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Icon(Icons.check_circle, color: AppColors.green),

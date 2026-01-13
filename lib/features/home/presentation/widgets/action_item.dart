@@ -26,7 +26,7 @@ class ActionItem extends StatelessWidget {
     return Material(
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      color: AppColors.neutreGrey100, 
+      color: AppColors.neutreGrey100,
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
         onTap: onTap,
@@ -36,28 +36,32 @@ class ActionItem extends StatelessWidget {
             borderRadius: BorderRadius.circular(16),
             border: Border.all(color: isSelected ? activeColor : Colors.transparent, width: 2),
           ),
-          padding: const EdgeInsets.symmetric(vertical: 1, horizontal: 1), 
+          padding: const EdgeInsets.symmetric(vertical: 1, horizontal: 1),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
             children: [
               Icon(icon, size: 28, color: isSelected ? activeColor : inactiveColor),
-              
+
               Flexible(
-                child: Text(
-                  label,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  textAlign: TextAlign.center,
-                  style: theme.textTheme.labelSmall?.copyWith(
-                    fontWeight: FontWeight.w500,
-                    color: isSelected ? activeColor : Colors.black87,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.center,
+                    child: Text(
+                      label,
+                      textAlign: TextAlign.center,
+                      style: theme.textTheme.labelSmall?.copyWith(
+                        fontWeight: FontWeight.w500,
+                        color: isSelected ? activeColor : Colors.black87,
+                      ),
+                    ),
                   ),
                 ),
               ),
             ],
-          )
-
+          ),
         ),
       ),
     );

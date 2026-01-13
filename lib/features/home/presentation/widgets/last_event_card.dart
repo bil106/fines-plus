@@ -22,7 +22,6 @@ class LastEventCardAction extends StatelessWidget {
     final carCubit = context.watch<CarCubit?>();
     final carNumber = carCubit?.state.carNumber ?? '';
 
- 
     if (carNumber.isEmpty || event == null) {
       return _buildCard(
         child: Center(
@@ -95,11 +94,12 @@ class LastEventCardAction extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
               ),
               SizedBox(height: 6.h),
-              Row(
-                children: [
-                
-                  Expanded(
-                    child: StreamBuilder<double>(
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerLeft,
+                child: Row(
+                  children: [
+                    StreamBuilder<double>(
                       stream: CurrencyStream(settingsCubit).convertedAmountStream(event!),
                       initialData: amountOriginal ?? amountValue,
                       builder: (context, snapshot) {
@@ -111,16 +111,16 @@ class LastEventCardAction extends StatelessWidget {
                             fontWeight: FontWeight.bold,
                             color: AppColors.blueAccent,
                           ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
                         );
                       },
                     ),
-                  ),
-              
-                  if (mileage != null)
-                    Text("${mileage.toStringAsFixed(0)} ${settingsCubit.state.unit}", style: textTheme.black8718W400),
-                ],
+
+                    if (mileage != null) ...[
+                      const SizedBox(width: 12),
+                      Text("${mileage.toStringAsFixed(0)} ${settingsCubit.state.unit}", style: textTheme.black8718W400),
+                    ],
+                  ],
+                ),
               ),
             ],
           ),

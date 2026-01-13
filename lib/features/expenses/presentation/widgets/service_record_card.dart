@@ -29,66 +29,79 @@ class ServiceRecordCard extends StatelessWidget {
       shape: RoundedRectangleBorder(borderRadius: AppBorders.radiusLarge),
       child: Padding(
         padding: const EdgeInsets.all(12),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Column(
           children: [
-            Icon(Icons.build, size: 50, color: AppColors.blue700),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(record.serviceName, style: textTheme.historyText),
-                  AppSpacers.verticalXSmall,
-                  Row(
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(Icons.build, size: 50, color: AppColors.blue700),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Icon(Icons.attach_money, color: AppColors.green),
-                      AppSpacers.horizontalSmallMedium,
-                      Text("${convertedCost.toStringAsFixed(0)} $symbol", style: textTheme.subtitleText),
-                    ],
-                  ),
-                  AppSpacers.verticalXSmall,
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Flexible(
-                        child: Row(
-                          children: [
-                            Icon(Icons.calendar_month, color: AppColors.energyBlue),
-                            AppSpacers.horizontalSmallMedium,
-                            Flexible(
-                              child: Text(record.date, style: textTheme.subtitleText, overflow: TextOverflow.ellipsis),
-                            ),
-                          ],
-                        ),
+                      Text(
+                        record.serviceName,
+                        style: textTheme.historyText,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        softWrap: true,
                       ),
-                      Flexible(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Icon(Icons.speed, color: AppColors.energyBlue),
-                            AppSpacers.horizontalSmallMedium,
-                            Flexible(
-                              child: StreamBuilder<double>(
-                                stream: UnitStream(settingsCubit).unitValueStream(record.mileage.toDouble()),
-                                initialData: UnitStream(settingsCubit).convert(record.mileage.toDouble()),
-                                builder: (context, snapshot) {
-                                  final value = snapshot.data ?? record.mileage.toDouble();
-                                  final unit = settingsCubit.state.unit == 'mil' ? 'mil' : 'km';
-                                  return Text(
-                                    "${value.toStringAsFixed(0)} $unit",
-                                    style: textTheme.subtitleText,
-                                    overflow: TextOverflow.ellipsis,
-                                  );
-                                },
-                              ),
+                      AppSpacers.verticalXSmall,
+                      Row(
+                        children: [
+                          const Icon(Icons.attach_money, color: AppColors.green),
+                          AppSpacers.horizontalSmallMedium,
+                          Expanded(
+                            child: Text(
+                              "${convertedCost.toStringAsFixed(0)} $symbol",
+                              style: textTheme.subtitleText,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
-                ],
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 8),
+
+            Padding(
+              padding: const EdgeInsets.only(left: 12.0),
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerLeft,
+                child: Row(
+                  children: [
+                    Icon(Icons.calendar_month, color: AppColors.energyBlue, size: 20),
+                    const SizedBox(width: 2),
+
+                    Text(record.date, style: textTheme.subtitleText),
+
+                    const SizedBox(width: 10),
+                    Icon(Icons.speed, color: AppColors.energyBlue, size: 20),
+                    const SizedBox(width: 4),
+
+                    Builder(
+                      builder: (context) {
+                        final unitStream = UnitStream(settingsCubit);
+                        return StreamBuilder<double>(
+                          stream: unitStream.unitValueStream(record.mileage.toDouble()),
+                          initialData: unitStream.convert(record.mileage.toDouble()),
+                          builder: (context, snapshot) {
+                            final value = snapshot.data ?? record.mileage.toDouble();
+                            final unit = settingsCubit.state.unit;
+                            return Text("${value.toStringAsFixed(0)} $unit", style: textTheme.subtitleText);
+                          },
+                        );
+                      },
+                    ),
+                  ],
+                ),
               ),
             ),
           ],

@@ -13,8 +13,8 @@ class StatValue extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text(value, style: textTheme.blue28W400),
-        const SizedBox(height: 2),
+        Text(value, style: textTheme.blue20W400),
+        
         Text(label, style: textTheme.hintAnalitText),
       ],
     );

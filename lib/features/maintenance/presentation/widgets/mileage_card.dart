@@ -37,9 +37,9 @@ class _MileageCardState extends State<MileageCard> {
   Widget build(BuildContext context) {
     return Card(
       color: AppColors.neutreBlanc,
-      margin: const EdgeInsets.symmetric(vertical: 8),
+      margin: const EdgeInsets.symmetric(vertical: 6),
       child: Padding(
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.symmetric(horizontal: 8,vertical: 12),
         child: Row(
           children: [
             const Icon(Icons.speed, size: 24),
@@ -50,14 +50,13 @@ class _MileageCardState extends State<MileageCard> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Заголовок "Пробег"
                   FittedBox(
                     fit: BoxFit.scaleDown,
                     alignment: Alignment.centerLeft,
                     child: Text(S.of(context).mileage, style: widget.textTheme.subtitleText.copyWith(fontSize: 14)),
                   ),
                   AppSpacers.verticalXSmall,
-                  // TextField для ввода пробега
+                
                   TextField(
                     controller: widget.controller,
                     focusNode: _focusNode,
@@ -65,13 +64,13 @@ class _MileageCardState extends State<MileageCard> {
                     inputFormatters: [FilteringTextInputFormatter.digitsOnly, MileageInputFormatter(max: 1000000)],
                     decoration: InputDecoration(
                       hintText: S.of(context).enter_mileage,
-                      hintStyle: widget.textTheme.hintText.copyWith(fontSize: 16),
+                      hintStyle: widget.textTheme.hintText.copyWith(fontSize: 14),
                       border: InputBorder.none,
                       isDense: true,
                       contentPadding: EdgeInsets.zero,
                       focusedBorder: InputBorder.none,
-                      suffixText: S.of(context).km,
-                      suffixStyle: widget.textTheme.hintText.copyWith(fontSize: 16),
+                      // suffixText: S.of(context).km,
+                      // suffixStyle: widget.textTheme.hintText.copyWith(fontSize: 16),
                     ),
                     style: widget.textTheme.historyText.copyWith(fontSize: 16),
                   ),

@@ -145,13 +145,12 @@ class MaintenanceCard extends StatelessWidget {
 Row(
   crossAxisAlignment: CrossAxisAlignment.start,
   children: [
-    // Левая колонка
     Expanded(
       flex: 2,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Previous
+      
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -162,7 +161,7 @@ Row(
           ),
           const SizedBox(height: 4),
 
-          // Mileage
+        
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -173,7 +172,7 @@ Row(
           ),
           const SizedBox(height: 4),
 
-          // Fact
+     
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -188,7 +187,6 @@ Row(
 
     const SizedBox(width: 12),
 
-    // Правая колонка (Периодичность и время)
     Expanded(
       flex: 1,
       child: Column(

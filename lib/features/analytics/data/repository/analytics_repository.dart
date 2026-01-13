@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:fines_plus/features/analytics/data/models/analytics_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/foundation.dart';
 

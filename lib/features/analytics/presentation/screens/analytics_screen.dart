@@ -187,31 +187,24 @@ class AnalyticsScreenViewState extends State<_AnalyticsScreenView> with SingleTi
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                 Row(
-  crossAxisAlignment: CrossAxisAlignment.center,
-  children: [
-    Expanded(
-      child: Text(
-        S.of(context).analitics,
-        style: textTheme.title,
-        maxLines: 2,
-        softWrap: true,
-      ),
-    ),
-    const SizedBox(width: 8),
-    ElevatedButton.icon(
-      onPressed: () {
-        final homeState = context.findAncestorStateOfType<HomeScreenWrapperState>();
-        homeState?.openPage(HomePage.export);
-      },
-      icon: const Icon(Icons.upload, size: 18),
-      label: Text(S.of(context).export),
-      style: ElevatedButton.styleFrom(
-        backgroundColor: AppColors.blue700,
-      ),
-    ),
-  ],
-),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: Text(S.of(context).analitics, style: textTheme.title, maxLines: 2, softWrap: true),
+                      ),
+                      const SizedBox(width: 8),
+                      ElevatedButton.icon(
+                        onPressed: () {
+                          final homeState = context.findAncestorStateOfType<HomeScreenWrapperState>();
+                          homeState?.openPage(HomePage.export);
+                        },
+                        icon: const Icon(Icons.upload, size: 18),
+                        label: Text(S.of(context).export),
+                        style: ElevatedButton.styleFrom(backgroundColor: AppColors.blue700),
+                      ),
+                    ],
+                  ),
 
                   TabBar(
                     indicatorColor: AppColors.blue700,

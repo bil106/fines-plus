@@ -119,7 +119,7 @@ class _TuningScreenState extends State<TuningScreen> {
           ],
         ),
         body: SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(12),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -285,6 +285,7 @@ class _TuningScreenState extends State<TuningScreen> {
                         focusNode: focusNode,
                         decoration: InputDecoration(
                           hintText: S.of(context).select_service,
+                          hintStyle: textTheme.hintText.copyWith(fontSize: 16),
                           border: InputBorder.none,
                           focusedBorder: InputBorder.none,
                           contentPadding: const EdgeInsets.only(top: 12),

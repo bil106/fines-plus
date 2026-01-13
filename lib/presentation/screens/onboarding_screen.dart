@@ -43,8 +43,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
               Text(title, textAlign: TextAlign.center, style: textTheme.black28W400),
 
-              
-
               Text(subtitle, textAlign: TextAlign.center, style: textTheme.black54fs18),
 
               SizedBox(height: isShort ? 20 : 100),
@@ -71,7 +69,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 ),
               ),
 
-              const SizedBox(height:60),
+              const SizedBox(height: 60),
             ],
           ),
         ),

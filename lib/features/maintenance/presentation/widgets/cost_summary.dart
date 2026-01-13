@@ -4,6 +4,7 @@ import 'package:design_system/constants/app_borders.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class CostSummary extends StatefulWidget {
   final List<double> servicePricesUah;
@@ -74,7 +75,7 @@ class _CostSummaryState extends State<CostSummary> {
     final formattedTotal = displayTotal.toStringAsFixed(0);
 
     return Container(
-   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
         color: AppColors.neutreBlanc,
         borderRadius: AppBorders.radiusLarge,
@@ -87,50 +88,74 @@ class _CostSummaryState extends State<CostSummary> {
               children: [
                 const Icon(Icons.attach_money, color: AppColors.blueAccent),
                 AppSpacers.horizontalSmallMedium,
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(S.of(context).sum),
-                    SizedBox(
-                      width: 120,
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: TextField(
-                              controller: _controller,
-                              focusNode: _focusNode,
-                              keyboardType: TextInputType.number,
-                              decoration: const InputDecoration(
-                                focusedBorder: InputBorder.none,
-                                isDense: true,
-                                contentPadding: EdgeInsets.symmetric(vertical: 1, horizontal: 8),
-                                border: InputBorder.none,
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      FittedBox(fit: BoxFit.scaleDown, child: Text(S.of(context).sum)),
+                      ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 150),
+
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          alignment: Alignment.centerLeft,
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              SizedBox(
+                                width: 100,
+                                child: TextField(
+                                  controller: _controller,
+                                  focusNode: _focusNode,
+                                  keyboardType: TextInputType.number,
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.digitsOnly,
+
+                                    TextInputFormatter.withFunction((oldValue, newValue) {
+                                      if (newValue.text.isEmpty) return newValue;
+
+                                      final n = double.tryParse(newValue.text);
+                                      if (n == null) return oldValue;
+
+                                      return n <= 1000000 ? newValue : oldValue;
+                                    }),
+                                  ],
+                                  decoration: const InputDecoration(
+                                    focusedBorder: InputBorder.none,
+                                    isDense: true,
+                                    contentPadding: EdgeInsets.symmetric(vertical: 1, horizontal: 8),
+                                    border: InputBorder.none,
+                                  ),
+                                  style: textTheme.black16,
+                                  onChanged: (val) {
+                                    final entered = double.tryParse(val) ?? 0.0;
+                                    final manualUah = widget.convertToUAH(entered);
+                                    widget.onManualUahChanged(manualUah);
+                                  },
+                                ),
                               ),
-                              style: textTheme.black16,
-                              onChanged: (val) {
-                                final entered = double.tryParse(val) ?? 0.0;
-                                // convert from display currency (USD/EUR/UAH) to UAH
-                                final manualUah = widget.convertToUAH(entered);
-                                widget.onManualUahChanged(manualUah);
-                              },
-                            ),
+                              const SizedBox(width: 4),
+
+                              Text(widget.currencyLabel, style: textTheme.black16),
+                            ],
                           ),
-                          const SizedBox(width: 8),
-                          Text(widget.currencyLabel, style: textTheme.black16),
-                        ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ],
             ),
           ),
-          AppSpacers.horizontalXMassive,
+
           Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Text(S.of(context).total_amount),
-              Text("$formattedTotal ${widget.currencyLabel}", style: textTheme.titleMedium),
+              FittedBox(fit: BoxFit.scaleDown, child: Text(S.of(context).total_amount)),
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text("$formattedTotal ${widget.currencyLabel}", style: textTheme.black16),
+              ),
             ],
           ),
         ],

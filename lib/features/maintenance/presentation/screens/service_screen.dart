@@ -265,6 +265,7 @@ class _ServiceScreenState extends State<ServiceScreen> {
                         focusNode: focusNode,
                         decoration: InputDecoration(
                           hintText: S.of(context).select_a_service,
+                          hintStyle: textTheme.hintText.copyWith(fontSize: 16),
                           border: InputBorder.none,
                           focusedBorder: InputBorder.none,
 

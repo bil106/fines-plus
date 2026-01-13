@@ -29,9 +29,8 @@ class CarWashRecordCard extends StatelessWidget {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-             
                 Padding(
-                  padding: const EdgeInsets.only(top: 12.0,left:20),
+                  padding: const EdgeInsets.only( left: 10),
                   child: Icon(Icons.local_car_wash, color: AppColors.energyBlue, size: 50),
                 ),
                 const SizedBox(width: 50),
@@ -39,14 +38,11 @@ class CarWashRecordCard extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      
                       Text(S.of(context).car_wash, style: textTheme.historyText, overflow: TextOverflow.ellipsis),
-                    
-            
-                    
+
                       Row(
                         children: [
-                          Icon(Icons.attach_money, color: AppColors.green, size: 20),
+                          Icon(Icons.attach_money, color: AppColors.green, ),
                           const SizedBox(width: 8),
                           Builder(
                             builder: (context) {
@@ -70,37 +66,31 @@ class CarWashRecordCard extends StatelessWidget {
                           ),
                         ],
                       ),
-                 
-            
-                   
-                     
                     ],
                   ),
                 ),
               ],
             ),
-             Padding(
-               padding: const EdgeInsets.only(left: 12.0),
-               child: Row(
-                children: [
-                  Icon(Icons.calendar_month, color: AppColors.energyBlue, size: 20),
-                  const SizedBox(width: 2),
-                  Flexible(
-                    child: Text(
-                      DateFormatter.formatDate(record.date),
-                      style: textTheme.subtitleText,
-                      // overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Icon(Icons.speed, color: AppColors.energyBlue, size: 20),
-                  const SizedBox(width: 4),
-                  Flexible(
-                    child: Builder(
+            Padding(
+              padding: const EdgeInsets.only(left: 12.0),
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerLeft,
+                child: Row(
+                  children: [
+                    Icon(Icons.calendar_month, color: AppColors.energyBlue, size: 20),
+                    const SizedBox(width: 2),
+
+                    Text(DateFormatter.formatDate(record.date), style: textTheme.subtitleText),
+
+                    const SizedBox(width: 10),
+                    Icon(Icons.speed, color: AppColors.energyBlue, size: 20),
+                    const SizedBox(width: 4),
+                    Builder(
                       builder: (context) {
                         final settingsCubit = context.watch<SettingsCubit>();
                         final unitStream = UnitStream(settingsCubit);
-               
+
                         return StreamBuilder<double>(
                           stream: unitStream.unitValueStream(record.mileage.toDouble()),
                           initialData: unitStream.convert(record.mileage.toDouble()),
@@ -116,14 +106,13 @@ class CarWashRecordCard extends StatelessWidget {
                         );
                       },
                     ),
-                  ),
-                ],
-                           ),
-             ),
+                  ],
+                ),
+              ),
+            ),
           ],
         ),
       ),
     );
   }
 }
-

@@ -8,7 +8,6 @@ import 'package:fines_plus/features/statistics/presentation/cubit/statistics_sta
 import 'package:fines_plus/features/vehicle/presentation/cubit/car_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class StatisticsMileageCard extends StatelessWidget {
   const StatisticsMileageCard({super.key});
@@ -16,20 +15,62 @@ class StatisticsMileageCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+    final hasCar = context.watch<CarCubit>().state.carNumber.isNotEmpty;
+    final settingsCubit = context.watch<SettingsCubit>();
+    final unitStream = UnitStream(settingsCubit);
 
     return BlocBuilder<StatisticsCubit, StatisticsState>(
       builder: (context, state) {
         final presenter = StatisticsMileagePresenter(state);
+        final unit = settingsCubit.state.unit;
 
         return _buildCard(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(S.of(context).mileage_stat, style: textTheme.titleMedium),
-              SizedBox(height: 8.h),
-              Divider(height: 1.h),
-              SizedBox(height: 8.h),
-              _buildRow(presenter, context),
+              const Divider(height: 16),
+
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Image.asset('assets/icons/steeringWheel.png', width: 36, height: 36, color: Colors.grey),
+                  const SizedBox(width: 12),
+
+                  Expanded(
+                    child: StreamBuilder<double>(
+                      stream: unitStream.unitValueStream(presenter.mileageThisMonth.toDouble()),
+                      initialData: unitStream.convert(presenter.mileageThisMonth.toDouble()),
+                      builder: (context, snapshot) {
+                        final value = hasCar ? snapshot.data ?? 0.0 : 0.0;
+                        return _AmountBlock(
+                          label: "${presenter.monthLabel} ${DateTime.now().year}",
+                          amount: value.toStringAsFixed(0),
+                          unit: unit,
+                          color: AppColors.blueAccent,
+                          valueStyle: textTheme.titleLarge,
+                        );
+                      },
+                    ),
+                  ),
+
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      presenter.arrowIcon,
+                      const SizedBox(width: 6),
+                      _AmountBlock(
+                        label: S.current.per_month,
+                        amount: "${presenter.changePercent.abs()}%",
+                        unit: "",
+                        color: presenter.changeColor,
+                        valueStyle: textTheme.titleMedium,
+                        alignEnd: true,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ],
           ),
         );
@@ -37,83 +78,54 @@ class StatisticsMileageCard extends StatelessWidget {
     );
   }
 
-  Widget _buildRow(StatisticsMileagePresenter presenter, BuildContext context) {
-    final settingsCubit = context.watch<SettingsCubit>();
-    final unitStream = UnitStream(settingsCubit);
-    final carNumber = context.watch<CarCubit>().state.carNumber;
-    final hasCar = carNumber.isNotEmpty;
-    final textTheme = Theme.of(context).textTheme;
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Image.asset('assets/icons/steeringWheel.png', width: 36.w, height: 36.w, color: Colors.grey),
-
-        SizedBox(width: 12.w),
-
-    
-        Expanded(
-          child: StreamBuilder<double>(
-            stream: unitStream.unitValueStream(presenter.mileageThisMonth.toDouble()),
-            initialData: unitStream.convert(presenter.mileageThisMonth.toDouble()),
-            builder: (context, snapshot) {
-              final value = hasCar ? snapshot.data ?? presenter.mileageThisMonth.toDouble() : 0;
-
-              final unit = settingsCubit.state.unit;
-
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "${presenter.monthLabel} ${DateTime.now().year}",
-                    style: textTheme.bodyMedium?.copyWith(color: Colors.black54),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  Text(
-                    "${value.toStringAsFixed(0)} $unit",
-                    style: TextStyle(color: AppColors.blueAccent, fontWeight: FontWeight.bold, fontSize: 22.sp),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
-              );
-            },
-          ),
-        ),
-
-        SizedBox(width: 12.w),
-
-        
-        Row(
-          children: [
-            presenter.arrowIcon,
-            SizedBox(width: 4.w),
-            Column(
-              children: [
-                Text(
-                  "${presenter.changePercent.abs()}%",
-                  style: TextStyle(color: presenter.changeColor, fontSize: 18.sp, fontWeight: FontWeight.w600),
-                ),
-                Text(
-                  S.current.per_month,
-                  style: TextStyle(color: presenter.changeColor, fontSize: 14.sp),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  static Widget _buildCard({required Widget child}) {
+  Widget _buildCard({required Widget child}) {
     return Card(
       elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
-      child: Padding(
-        padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 12.w),
-        child: child,
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Padding(padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 14), child: child),
+    );
+  }
+}
+
+class _AmountBlock extends StatelessWidget {
+  final String label;
+  final String amount;
+  final String unit;
+  final Color color;
+  final TextStyle? valueStyle;
+  final bool alignEnd;
+
+  const _AmountBlock({
+    required this.label,
+    required this.amount,
+    required this.unit,
+    required this.color,
+    this.valueStyle,
+    this.alignEnd = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: alignEnd ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          label,
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.black54),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+
+        FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text(
+            "$amount $unit".trim(),
+            maxLines: 1,
+            style: valueStyle?.copyWith(color: color, fontWeight: FontWeight.bold),
+          ),
+        ),
+      ],
     );
   }
 }
