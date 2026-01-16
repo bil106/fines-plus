@@ -467,7 +467,8 @@
    "enter_cyrillic_only": "Використовуйте кирилиці",
    "purchase_not_available": "Купівля недоступна",
    "create_account": "Для здійснення покупки потрібний обліковий запис Google Play. Будь ласка, увійдіть або створіть обліковий запис і спробуйте знову.",
-   "open_google_play": "Відкрити Google Play"
+   "open_google_play": "Відкрити Google Play",
+   "open_driver_page": "Перехід на сторінку DriverTop"
    
 
 }

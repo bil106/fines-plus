@@ -108,14 +108,17 @@ class _HomeScreenState extends State<HomeScreen> {
           elevation: 0,
           backgroundColor: AppColors.energyBlue50,
           centerTitle: true,
-          title: BlocBuilder<CarCubit, CarState>(
-            builder: (context, state) {
-              final carNumber = state.carNumber.isNotEmpty ? state.carNumber : S.of(context).input_number;
-              return Text(
-                carNumber,
-                style: const TextStyle(color: Colors.black87, fontWeight: FontWeight.w600),
-              );
-            },
+          title: Padding(
+            padding: const EdgeInsets.only(top: 18.0),
+            child: BlocBuilder<CarCubit, CarState>(
+              builder: (context, state) {
+                final carNumber = state.carNumber.isNotEmpty ? state.carNumber : S.of(context).input_number;
+                return Text(
+                  carNumber,
+                  style: const TextStyle(color: Colors.black87, fontWeight: FontWeight.w600),
+                );
+              },
+            ),
           ),
           leading: IconButton(
             icon: const Icon(Icons.settings, color: AppColors.grey700),

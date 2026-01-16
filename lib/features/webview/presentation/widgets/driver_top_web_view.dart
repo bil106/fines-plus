@@ -1,7 +1,8 @@
 import 'package:core/config/app_urls.dart';
 import 'package:fines_plus/features/webview/data/datasource/webview_form_injector.dart';
 import 'package:flutter/material.dart';
-import 'package:webview_flutter/webview_flutter.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+
 
 class DriverTopWebView extends StatefulWidget {
   final String comment;
@@ -15,35 +16,31 @@ class DriverTopWebView extends StatefulWidget {
 }
 
 class _DriverTopWebViewState extends State<DriverTopWebView> {
-  late final WebViewController _controller;
-
-  @override
-  void initState() {
-    super.initState();
-
-    _controller = WebViewController()
-      ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setNavigationDelegate(
-        NavigationDelegate(
-          onPageFinished: (url) async {
-            final js = WebViewFormInjector.buildFillAndSubmitJs({
-              'comment': widget.comment,
-              'offRoad': widget.offRoad.toString(),
-              'invisible': widget.invisible.toString(),
-            });
-
-            await _controller.runJavaScript(js);
-          },
-        ),
-      )
-      ..loadRequest(Uri.parse(AppUrls.exps));
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Publish')),
-      body: WebViewWidget(controller: _controller),
+      appBar: AppBar(title: const Text('Publish')),
+      body: InAppWebView(
+        initialUrlRequest: URLRequest(url: WebUri(AppUrls.exps)),
+        onWebViewCreated: (controller) {
+        },
+        onLoadStop: (controller, url) async {
+          final js = WebViewFormInjector.buildFillAndSubmitJs({
+            'comment': widget.comment,
+            'offRoad': widget.offRoad.toString(),
+            'invisible': widget.invisible.toString(),
+          });
+
+          if (!mounted) return;
+          await controller.evaluateJavascript(source: js);
+        },
+      ),
     );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 }

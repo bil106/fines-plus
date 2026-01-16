@@ -1,8 +1,14 @@
 import 'package:core_localization/generated/l10n.dart';
+import 'package:core_utils/formatters/mileageInput_formatter.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_spacers.dart';
+import 'package:design_system/theme/app_theme.dart';
 import 'package:fines_plus/core/extensions/service_list.dart';
+import 'package:fines_plus/features/maintenance/presentation/cubit/additional_options_cubit.dart';
+import 'package:fines_plus/features/maintenance/presentation/widgets/additional_options_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ActionDetailSheet extends StatefulWidget {
   final void Function(Map<String, dynamic>)? onSave;
@@ -45,6 +51,7 @@ class _ActionDetailSheetState extends State<ActionDetailSheet> {
 
   bool byDate = false;
   bool byMileage = true;
+  bool _showAdditionalOptions = false;
   String intervalUnit = "days";
   DateTime? selectedDate;
   String? selectedCategory;
@@ -103,7 +110,7 @@ class _ActionDetailSheetState extends State<ActionDetailSheet> {
     final textTheme = Theme.of(context).textTheme;
 
     return Padding(
-      padding: EdgeInsets.only(top: 20,  left: 16, right: 16, bottom: MediaQuery.of(context).viewInsets.bottom + 16),
+      padding: EdgeInsets.only(top: 12, left: 16, right: 16, bottom: MediaQuery.of(context).viewInsets.bottom + 16),
       child: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -114,7 +121,6 @@ class _ActionDetailSheetState extends State<ActionDetailSheet> {
                 IconButton(icon: Icon(Icons.close), onPressed: () => Navigator.pop(context)),
               ],
             ),
-
 
             Autocomplete<String>(
               optionsBuilder: (TextEditingValue value) {
@@ -137,7 +143,7 @@ class _ActionDetailSheetState extends State<ActionDetailSheet> {
                 );
               },
             ),
-            AppSpacers.verticalMedium,
+            AppSpacers.verticalSmall,
 
             TextField(
               controller: dateController,
@@ -162,27 +168,31 @@ class _ActionDetailSheetState extends State<ActionDetailSheet> {
               ),
             ),
 
-            AppSpacers.verticalMedium,
+            AppSpacers.verticalSmall,
 
             TextField(
               controller: mileageController,
               keyboardType: TextInputType.number,
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly, MileageInputFormatter(max: 10000000)],
               decoration: InputDecoration(labelText: S.of(context).mileage, border: OutlineInputBorder()),
             ),
-            AppSpacers.verticalMedium,
+
+            AppSpacers.verticalSmall,
             TextField(
               controller: intervalKmController,
               keyboardType: TextInputType.number,
+               inputFormatters: [FilteringTextInputFormatter.digitsOnly, MileageInputFormatter(max: 10000000)],
               decoration: InputDecoration(labelText: S.of(context).interval, border: OutlineInputBorder()),
             ),
 
-            AppSpacers.verticalMedium,
+            AppSpacers.verticalSmall,
             Row(
               children: [
                 Expanded(
                   child: TextField(
                     controller: intervalDaysController,
                     keyboardType: TextInputType.number,
+                     inputFormatters: [FilteringTextInputFormatter.digitsOnly, MileageInputFormatter(max: 365)],
                     decoration: InputDecoration(
                       labelText: S.of(context).interval_by_date,
                       border: OutlineInputBorder(),
@@ -202,9 +212,8 @@ class _ActionDetailSheetState extends State<ActionDetailSheet> {
               ],
             ),
 
-            AppSpacers.verticalMedium,
-        Wrap(
-              spacing: 10,
+            Wrap(
+              spacing: 12,
               runSpacing: 8,
               crossAxisAlignment: WrapCrossAlignment.center,
               children: [
@@ -225,15 +234,31 @@ class _ActionDetailSheetState extends State<ActionDetailSheet> {
               ],
             ),
 
-
-            AppSpacers.verticalMedium,
             TextField(
               controller: commentController,
               maxLines: 2,
               decoration: InputDecoration(labelText: S.of(context).comment, border: OutlineInputBorder()),
+            ),          
+
+            TextButton(
+              onPressed: () {
+                setState(() => _showAdditionalOptions = !_showAdditionalOptions);
+              },
+              child: Text(
+                S.of(context).additional_options,
+                style: textTheme.blue20W400.copyWith(color: Theme.of(context).colorScheme.primary),
+              ),
             ),
 
-            AppSpacers.verticalLargeXL,
+            AnimatedSwitcher(
+              duration: const Duration(milliseconds: 300),
+              child: _showAdditionalOptions
+                  ? Padding(
+                      padding: const EdgeInsets.only(top: 8),
+                      child: AdditionalOptionsWidget(cubit: context.read<AdditionalOptionsCubit>()),
+                    )
+                  : const SizedBox.shrink(),
+            ),
 
             SizedBox(
               width: double.infinity,

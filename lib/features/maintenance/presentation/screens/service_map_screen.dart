@@ -23,21 +23,26 @@ class _ServiceMapScreenState extends State<ServiceMapScreen> {
   final Set<Marker> _markers = {};
   final String _apiKey = Env.mapApiKey;
 
-  @override
+@override
   void initState() {
     super.initState();
-  _init();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _init();
+    });
   }
+
+
   Future<void> _init() async {
     await _checkLocationPermission();
     if (!mounted) return;
     await _getCurrentLocation();
   }
-  @override
+@override
   void dispose() {
-    _mapController?.dispose(); 
+    _mapController = null;
     super.dispose();
   }
+
   Future<void> _getCurrentLocation() async {
     try {
       final position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);

@@ -41,10 +41,17 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 late final AppInitializer appInitializer;
 
+@pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp();
-  if (kDebugMode) {
-    print("BG Message: ${message.messageId}");
+  try {
+    WidgetsFlutterBinding.ensureInitialized();
+    await Firebase.initializeApp();
+
+    if (kDebugMode) {
+      debugPrint("BG Message: ${message.messageId}");
+    }
+  } catch (e, s) {
+    FirebaseCrashlytics.instance.recordError(e, s, fatal: true);
   }
 }
 
@@ -52,6 +59,11 @@ void main() {
   runZonedGuarded<Future<void>>(
     () async {
       WidgetsFlutterBinding.ensureInitialized();
+      FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+      await dotenv.load(fileName: 'assets/config/.env');
+
+      await Firebase.initializeApp();
 
       FlutterError.onError = (FlutterErrorDetails details) {
         FlutterError.presentError(details);
@@ -62,16 +74,9 @@ void main() {
         FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
         return true;
       };
-
-      await dotenv.load(fileName: 'assets/config/.env');
-
-      await Firebase.initializeApp();
-
-      FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
       RequestConfiguration configuration = RequestConfiguration(testDeviceIds: Env.testDeviceIdList);
       MobileAds.instance.updateRequestConfiguration(configuration);
       await MobileAds.instance.initialize();
-      FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
       appInitializer = AppInitializer();
       final result = await appInitializer.init();

@@ -375,6 +375,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "oil": MessageLookupByLibrary.simpleMessage("масло"),
     "oil_icon": MessageLookupByLibrary.simpleMessage("Олія"),
     "ok": MessageLookupByLibrary.simpleMessage("ОК"),
+    "open_driver_page": MessageLookupByLibrary.simpleMessage(
+      "Перехід на сторінку DriverTop",
+    ),
     "open_events": MessageLookupByLibrary.simpleMessage("Відкриті події"),
     "open_google_play": MessageLookupByLibrary.simpleMessage(
       "Відкрити Google Play",

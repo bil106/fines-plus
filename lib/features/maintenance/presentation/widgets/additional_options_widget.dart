@@ -52,7 +52,7 @@ class _AdditionalOptionsWidgetState extends State<AdditionalOptionsWidget> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(S.of(context).additional_options, style: textTheme.titleMedium),
+                  Text(S.of(context).open_driver_page, style: textTheme.titleMedium),
                   Icon(showOptions ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down),
                 ],
               ),

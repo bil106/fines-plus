@@ -466,6 +466,7 @@
 "enter_cyrillic_only": "Use Cyrillic",
 "purchase_not_available": "Purchase not available",
 "create_account": "A Google Play account is required to make a purchase. Please sign in or create an account and try again.",
-"open_google_play": "Open Google Play"
+"open_google_play": "Open Google Play",
+"open_driver_page": "Go to DriverTop page"
 
 }

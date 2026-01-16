@@ -3993,6 +3993,16 @@ class S {
       args: [],
     );
   }
+
+  /// `Go to DriverTop page`
+  String get open_driver_page {
+    return Intl.message(
+      'Go to DriverTop page',
+      name: 'open_driver_page',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {
