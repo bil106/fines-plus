@@ -60,6 +60,13 @@ class _CarInfoViewState extends State<_CarInfoView> {
   bool get hasCar => carCubit?.state.carNumber.isNotEmpty ?? false;
   bool _carNumberHasLatin = false;
   bool _techPassportHasLatin = false;
+  void _safeSetState(VoidCallback fn) {
+    if (!mounted) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      setState(fn);
+    });
+  }
 
   @override
   void initState() {
@@ -74,22 +81,27 @@ class _CarInfoViewState extends State<_CarInfoView> {
 
     _carNumberController.addListener(() {
       final text = _carNumberController.text;
+      final hasLatin = _latinLettersReg.hasMatch(text);
 
-      _carNumberHasLatin = _latinLettersReg.hasMatch(text);
+      if (_carNumberHasLatin != hasLatin) {
+        _carNumberHasLatin = hasLatin;
+        _safeSetState(() {});
+      }
 
       carCubit?.changeCar(text);
       context.read<CarInfoCubit>().setCarNumber(text);
-
-      setState(() {});
     });
 
     _techPassportController.addListener(() {
       final text = _techPassportController.text;
+      final hasLatin = _latinLettersReg.hasMatch(text);
 
-      _techPassportHasLatin = _latinLettersReg.hasMatch(text);
+      if (_techPassportHasLatin != hasLatin) {
+        _techPassportHasLatin = hasLatin;
+        _safeSetState(() {});
+      }
 
       carCubit?.setTechPassport(text);
-      setState(() {});
     });
   }
 
@@ -102,7 +114,7 @@ class _CarInfoViewState extends State<_CarInfoView> {
 
   void _onRecaptchaVerified(String token) async {
     if (!mounted) return;
-    setState(() => _showRecaptcha = false);
+    _safeSetState(() => _showRecaptcha = false);
 
     final cubit = carCubit;
     if (cubit == null) return;
@@ -182,7 +194,6 @@ class _CarInfoViewState extends State<_CarInfoView> {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-   
 
     return Scaffold(
       resizeToAvoidBottomInset: true,
@@ -194,111 +205,114 @@ class _CarInfoViewState extends State<_CarInfoView> {
       ),
 
       body: SafeArea(
-        child: SingleChildScrollView(
-          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+        child: ScrollConfiguration(
+          behavior: const ScrollBehavior().copyWith(overscroll: false),
+          child: SingleChildScrollView(
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
 
-         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(S.of(context).addition_cars, style: textTheme.title),
+                AppSpacers.verticalLarge,
 
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(S.of(context).addition_cars, style: textTheme.title),
-              AppSpacers.verticalLarge,
-
-              Card(
-                color: AppColors.neutreBlanc,
-                shape: RoundedRectangleBorder(borderRadius: AppBorders.radius22),
-                elevation: 4,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 25, horizontal: 20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(S.of(context).car_number, style: textTheme.carNumber),
-                      AppSpacers.verticalSmall,
-                      TextField(
-                        controller: _carNumberController,
-                        style: textTheme.black28W400,
-                        inputFormatters: [VehicleNumberFormatter()],
-                        textCapitalization: TextCapitalization.characters,
-                        maxLength: 8,
-                        decoration: InputDecoration(
-                          hintText: S.of(context).hint_auto_num,
-                          hintStyle: textTheme.hintText,
-                          counterText: '',
-                          filled: true,
-                          fillColor: AppColors.grey50,
-                          border: OutlineInputBorder(borderRadius: AppBorders.radius18, borderSide: BorderSide.none),
-                          errorText: _carNumberHasLatin ? S.of(context).enter_cyrillic_only : null,
+                Card(
+                  color: AppColors.neutreBlanc,
+                  shape: RoundedRectangleBorder(borderRadius: AppBorders.radius22),
+                  elevation: 4,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 25, horizontal: 20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(S.of(context).car_number, style: textTheme.carNumber),
+                        AppSpacers.verticalSmall,
+                        TextField(
+                          controller: _carNumberController,
+                          style: textTheme.black28W400,
+                          inputFormatters: [VehicleNumberFormatter()],
+                          textCapitalization: TextCapitalization.characters,
+                          maxLength: 8,
+                          decoration: InputDecoration(
+                            hintText: S.of(context).hint_auto_num,
+                            hintStyle: textTheme.hintText,
+                            counterText: '',
+                            filled: true,
+                            fillColor: AppColors.grey50,
+                            border: OutlineInputBorder(borderRadius: AppBorders.radius18, borderSide: BorderSide.none),
+                            errorText: _carNumberHasLatin ? S.of(context).enter_cyrillic_only : null,
+                          ),
                         ),
-                      ),
 
-                      AppSpacers.verticalLarge,
+                        AppSpacers.verticalLarge,
 
-                      Text(S.of(context).reg_number, style: textTheme.carNumber),
-                      AppSpacers.verticalSmall,
-                      TextField(
-                        controller: _techPassportController,
-                        style: textTheme.black28W400,
-                        inputFormatters: [TechPassportFormatter()],
-                        maxLength: 9,
-                        decoration: InputDecoration(
-                          hintText: S.of(context).hint_tech_data_num,
-                          hintStyle: textTheme.hintText,
-                          counterText: '',
-                          filled: true,
-                          fillColor: AppColors.grey50,
-                          border: OutlineInputBorder(borderRadius: AppBorders.radius18, borderSide: BorderSide.none),
-                          errorText: _techPassportHasLatin ? S.of(context).enter_cyrillic_only : null,
+                        Text(S.of(context).reg_number, style: textTheme.carNumber),
+                        AppSpacers.verticalSmall,
+                        TextField(
+                          controller: _techPassportController,
+                          style: textTheme.black28W400,
+                          inputFormatters: [TechPassportFormatter()],
+                          maxLength: 9,
+                          decoration: InputDecoration(
+                            hintText: S.of(context).hint_tech_data_num,
+                            hintStyle: textTheme.hintText,
+                            counterText: '',
+                            filled: true,
+                            fillColor: AppColors.grey50,
+                            border: OutlineInputBorder(borderRadius: AppBorders.radius18, borderSide: BorderSide.none),
+                            errorText: _techPassportHasLatin ? S.of(context).enter_cyrillic_only : null,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
-              ),
 
-              AppSpacers.verticalLargeXL,
+                AppSpacers.verticalLargeXL,
 
-              SizedBox(
-                width: double.infinity,
-                height: 65,
-                child: ElevatedButton(
-                  onPressed: isFormValid
-                      ? () async {
-                          final user = FirebaseAuth.instance.currentUser;
-                          if (user == null) {
-                            _handleUnauthorized();
-                          } else {
-                            setState(() => _showRecaptcha = true);
-                          }
-                        }
-                      : null,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.blue700,
-                    shape: RoundedRectangleBorder(borderRadius: AppBorders.radius16),
-                  ),
-                  child: Text(S.of(context).search, style: textTheme.buttonText),
-                ),
-              ),
-
-              if (_showRecaptcha)
                 SizedBox(
-                  height: 500,
-                  child: RecaptchaV2(apiKey: Env.recaptchaSiteKey, onVerifiedSuccessfully: _onRecaptchaVerified),
-                ),
-              Center(
-                child: TextButton(
-                  onPressed: hasCar ? () => _showDeleteDialog(context) : null,
-                  child: Text(
-                    S.of(context).delete_car_number,
-                    style: textTheme.bodyMedium?.copyWith(color: hasCar ? AppColors.red : AppColors.neutreGrey),
+                  width: double.infinity,
+                  height: 65,
+                  child: ElevatedButton(
+                    onPressed: isFormValid
+                        ? () async {
+                            final user = FirebaseAuth.instance.currentUser;
+                            if (user == null) {
+                              _handleUnauthorized();
+                            } else {
+                              if (!mounted) return;
+                              _safeSetState(() => _showRecaptcha = true);
+                            }
+                          }
+                        : null,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.blue700,
+                      shape: RoundedRectangleBorder(borderRadius: AppBorders.radius16),
+                    ),
+                    child: Text(S.of(context).search, style: textTheme.buttonText),
                   ),
                 ),
-              ),
 
-              AppSpacers.verticalLargeXL,
-              const AdBannerWidget(),
-            ],
+                if (_showRecaptcha)
+                  SizedBox(
+                    height: 500,
+                    child: RecaptchaV2(apiKey: Env.recaptchaSiteKey, onVerifiedSuccessfully: _onRecaptchaVerified),
+                  ),
+                Center(
+                  child: TextButton(
+                    onPressed: hasCar ? () => _showDeleteDialog(context) : null,
+                    child: Text(
+                      S.of(context).delete_car_number,
+                      style: textTheme.bodyMedium?.copyWith(color: hasCar ? AppColors.red : AppColors.neutreGrey),
+                    ),
+                  ),
+                ),
+
+                AppSpacers.verticalLargeXL,
+                const AdBannerWidget(),
+              ],
+            ),
           ),
         ),
       ),
