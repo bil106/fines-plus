@@ -50,8 +50,28 @@ class ScheduleCubit extends Cubit<ScheduleState> {
 
   Future<void> loadTasks() async {
     emit(state.copyWith(loading: true));
-    final tasks = await repository.loadTasks(carNumber);
-    emit(state.copyWith(tasks: tasks, loading: false));
+
+    try {
+      await firebaseRepo.migrateLegacyIfNeeded(carNumber);
+      var tasks = await firebaseRepo.loadTasks(carNumber);
+
+      if (tasks.isEmpty) {
+        final localTasks = await repository.loadTasks(carNumber);
+        if (localTasks.isNotEmpty) {
+          for (final task in localTasks) {
+            await firebaseRepo.saveTask(carNumber, task);
+          }
+          tasks = await firebaseRepo.loadTasks(carNumber);
+        }
+      }
+
+      await repository.saveTasks(carNumber, tasks);
+      emit(state.copyWith(tasks: tasks, loading: false));
+    } catch (e, st) {
+      debugPrint('loadTasks from Firestore failed, falling back to local cache: $e\n$st');
+      final localTasks = await repository.loadTasks(carNumber);
+      emit(state.copyWith(tasks: localTasks, loading: false));
+    }
   }
 
   Future<void> addTask(MaintenanceTask task, {ReminderCubit? reminderCubit}) async {
@@ -83,8 +103,14 @@ class ScheduleCubit extends Cubit<ScheduleState> {
       await _checkTask(savedTask, reminderCubit);
     } catch (e, st) {
       debugPrint('addTask failed: $e\n$st');
-
-      await loadTasks();
+      // Revert the optimistic update — task was not persisted
+      final revertedTasks = List<MaintenanceTask>.from(state.tasks)
+        ..removeWhere((t) =>
+            (t.id == null || t.id!.isEmpty) &&
+            t.description == task.description &&
+            t.isInsurance == task.isInsurance);
+      await repository.saveTasks(carNumber, revertedTasks);
+      emit(state.copyWith(tasks: revertedTasks));
     }
   }
 
@@ -106,18 +132,30 @@ class ScheduleCubit extends Cubit<ScheduleState> {
     final progress = task.getProgress();
     debugPrint("Checking progress for ${task.description}: ${(progress * 100).toStringAsFixed(1)}%");
 
-    if (reminderCubit != null && task.description.trim().isNotEmpty && progress >= 0.9) {
-      final reminder = ReminderModel(
-        id: const Uuid().v4(),
-        title: "${S.current.reminder}: ${task.description}",
-        description: _generateDescription(task.description),
-        dateTime: DateTime.now().add(const Duration(seconds: 5)),
-        isCompleted: false,
-        ownerId: ownerId,
-      );
+    if (task.description.trim().isNotEmpty && progress >= 0.9) {
+      if (reminderCubit != null) {
+        final reminder = ReminderModel(
+          id: const Uuid().v4(),
+          title: "${S.current.reminder}: ${task.description}",
+          description: _generateDescription(task.description),
+          dateTime: DateTime.now().add(const Duration(seconds: 5)),
+          isCompleted: false,
+          ownerId: ownerId,
+        );
+        await reminderCubit.addReminder(reminder);
+        debugPrint("Reminder created for ${task.description}");
+      }
 
-      await reminderCubit.addReminder(reminder);
-      debugPrint("Reminder created for ${task.description}");
+      final notifId = task.id.hashCode.abs() % 100000;
+      final body = progress >= 1.0
+          ? '${S.current.reminder}: ${task.description}'
+          : S.current.maintenance_due_body(task.description);
+      await pushHelper.showNow(
+        id: notifId,
+        title: S.current.maintenance_due_title,
+        body: body,
+        isMaintenance: true,
+      );
     }
   }
 
@@ -147,8 +185,14 @@ class ScheduleCubit extends Cubit<ScheduleState> {
     return "${S.current.not_forget_task}: $title";
   }
 
+  static final _carReg = RegExp(r'^[А-ЯЇІЄҐ]{2}\d{4}[А-ЯЇІЄҐ]{2}$');
+
   Future<void> onCarChanged(String newCar) async {
     carNumber = newCar;
+    if (!_carReg.hasMatch(newCar)) {
+      emit(state.copyWith(tasks: [], loading: false));
+      return;
+    }
     emit(state.copyWith(tasks: [], loading: true));
     await loadTasks();
   }

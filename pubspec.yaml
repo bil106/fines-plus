@@ -2,7 +2,7 @@ name: fines_plus
 description: "A new Flutter project."
 
 publish_to: 'none' 
-version: 1.0.6+67
+version: 1.0.7+87
 
 environment:
   sdk: ^3.8.1
@@ -79,8 +79,8 @@ dependencies:
   equatable: ^2.0.7
   get_it: ^8.2.0
   bloc: ^9.0.1
-  in_app_purchase: ^3.2.3
-  in_app_purchase_android: ^0.4.0+8
+  in_app_purchase: ^3.3.0
+  in_app_purchase_android: ^0.5.3
   flutter_facebook_auth: ^7.1.2
   sign_in_with_apple: ^7.0.1
   freezed_annotation: ^3.1.0
@@ -90,6 +90,7 @@ dependencies:
   percent_indicator: ^4.2.3
   flutter_dotenv: ^6.0.0
   flutter_screenutil: ^5.9.3
+
  
  
      
@@ -113,6 +114,8 @@ dev_dependencies:
 
 flutter:
 
+  config:
+    enable-swift-package-manager: false
 
   uses-material-design: true
   
@@ -154,7 +157,7 @@ flutter:
   
 flutter_native_splash:
   color: "#FFFFFF"
-  image: assets/icons/logo_app.png
+  image: assets/logo/fines_logo.png
   android: true
   ios: true
   android_gravity: center
@@ -165,5 +168,6 @@ dependency_overrides:
 flutter_launcher_icons:
   android: true
   ios: true
-  image_path: assets/images/ic_launcher_foreground.png
+  image_path: assets/logo/fines_logo.png
   adaptive_icon_background: "#FFFFFF"
+  remove_alpha_ios: true

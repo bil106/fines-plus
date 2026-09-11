@@ -61,6 +61,14 @@ class AnalyticsScreenViewState extends State<_AnalyticsScreenView> with SingleTi
   }
 
   @override
+  void didUpdateWidget(covariant _AnalyticsScreenView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.initialTabIndex != widget.initialTabIndex && _tabController.index != widget.initialTabIndex) {
+      _tabController.animateTo(widget.initialTabIndex);
+    }
+  }
+
+  @override
   void dispose() {
     _tabController.dispose();
     super.dispose();

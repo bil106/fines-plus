@@ -10,9 +10,11 @@ import 'package:fines_plus/features/subscription/presentation/cubit/purchase/pur
 import 'package:fines_plus/features/subscription/presentation/cubit/purchase/purchase_state.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 @RoutePage()
@@ -29,33 +31,93 @@ class SubscriptionScreen extends StatefulWidget {
 class _SubscriptionScreenState extends State<SubscriptionScreen> {
   int _selectedIndex = 0;
   bool _navigated = false;
+  bool _productsLoading = true;
+  bool _productsUnavailable = false;
+  final Map<String, ProductDetails> _productDetails = {};
+
   final List<Map<String, dynamic>> plans = [
     {
-      "title": "Quarterly Plan",
+      "titleKey": "quarterly_plan",
       "productId": "sub_quarter",
       "price": 20.0,
-      "pricePerDay": "0.22",
-      "oldPrice": "1.11",
+      "periodKey": "period_3_months",
       "months": 3,
       "popular": false,
       "hasTrial": true,
     },
     {
-      "title": "Yearly Plan",
+      "titleKey": "yearly_plan",
       "productId": "yearly_2549",
       "price": 50.0,
-      "pricePerDay": "0.14",
-      "oldPrice": "1.00",
+      "periodKey": "period_year",
       "months": 12,
       "popular": true,
       "hasTrial": true,
     },
   ];
+
   @override
   void initState() {
     super.initState();
-
     FirebaseCrashlytics.instance.setCustomKey('screen', 'SubscriptionScreen');
+    _loadProductPrices();
+  }
+
+  Future<void> _loadProductPrices() async {
+    try {
+      final ids = plans.map((p) => p["productId"] as String).toSet();
+      final response = await InAppPurchase.instance.queryProductDetails(ids);
+      if (response.notFoundIDs.isNotEmpty) {
+        FirebaseCrashlytics.instance.log('Products not found: ${response.notFoundIDs}');
+      }
+      if (!mounted) return;
+      setState(() {
+        for (final p in response.productDetails) {
+          _productDetails[p.id] = p;
+        }
+        _productsLoading = false;
+        _productsUnavailable = response.productDetails.isEmpty;
+      });
+    } catch (e, s) {
+      FirebaseCrashlytics.instance.recordError(e, s, reason: 'loadProductPrices failed');
+      if (!mounted) return;
+      setState(() {
+        _productsLoading = false;
+        _productsUnavailable = true;
+      });
+    }
+  }
+
+  String _localizedTitle(BuildContext context, String key) {
+    final s = S.of(context);
+    switch (key) {
+      case 'quarterly_plan':
+        return s.quarterly_plan;
+      case 'yearly_plan':
+        return s.yearly_plan;
+      default:
+        return key;
+    }
+  }
+
+  String _localizedPeriod(BuildContext context, String key) {
+    final s = S.of(context);
+    switch (key) {
+      case 'period_3_months':
+        return s.period_3_months;
+      case 'period_year':
+        return s.period_year;
+      default:
+        return key;
+    }
+  }
+
+  String _trialDisclosureText(BuildContext context) {
+    final plan = plans[_selectedIndex];
+    final store = _productDetails[plan["productId"] as String];
+    final price = store?.price ?? S.of(context).store_unavailable;
+    final period = _localizedPeriod(context, plan["periodKey"] as String);
+    return S.of(context).trial_disclosure_detailed(price, period);
   }
 
   Future<void> _onPlanSelected(int index) async {
@@ -66,18 +128,8 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     FirebaseCrashlytics.instance.log('buySelectedPlan tapped, selectedIndex=$_selectedIndex');
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) {
-      FirebaseCrashlytics.instance.log('user is null, redirecting');
-
-      final wrapperState = context.findAncestorStateOfType<HomeScreenWrapperState>();
-
-      if (wrapperState != null) {
-        FirebaseCrashlytics.instance.log('redirect via HomeScreenWrapper');
-        wrapperState.openPage(HomePage.addCar);
-        return;
-      }
-
-      FirebaseCrashlytics.instance.log('redirect via router to CarInfo');
-      context.router.push(CarInfoRoute());
+      FirebaseCrashlytics.instance.log('user is null, redirecting to registration');
+      context.router.push(RegistrationRoute());
       return;
     }
 
@@ -85,11 +137,11 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     FirebaseCrashlytics.instance.log(
       'selected plan: '
       'productId=${planData["productId"]}, '
-      'title=${planData["title"]}',
+      'titleKey=${planData["titleKey"]}',
     );
     final plan = SubscriptionPlan(
       id: planData["productId"],
-      title: planData["title"],
+      title: planData["titleKey"],
       price: planData["price"],
       months: planData["months"],
       features: [],
@@ -121,6 +173,10 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     context.router.replaceAll([HomeRouteWrapper(initialPage: HomePage.home)]);
   }
 
+  void _continueWithoutSubscription() {
+    context.router.root.replaceAll([HomeRouteWrapper(initialPage: HomePage.home)]);
+  }
+
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
@@ -134,7 +190,10 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
 
         if (state is PurchaseError) {
           FirebaseCrashlytics.instance.log('PurchaseError: ${state.message}');
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message)));
+          final display = state.message == 'store_unavailable'
+              ? S.of(context).store_unavailable
+              : S.of(context).subscription_error;
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(display)));
         }
       },
       child: Scaffold(
@@ -203,7 +262,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                               AppSpacers.verticalMedium,
                               if (plan["hasTrial"])
                                 Text(
-                                  "7-day free trial",
+                                  S.of(context).free_trial_7_days,
                                   style: TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w600,
@@ -217,7 +276,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                 children: [
                                   Expanded(
                                     child: Text(
-                                      plan["title"],
+                                      _localizedTitle(context, plan["titleKey"] as String),
                                       maxLines: 2,
                                       overflow: TextOverflow.ellipsis,
                                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
@@ -228,31 +287,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                   ),
                                   const SizedBox(width: 12),
 
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    children: [
-                                      Text(
-                                        "\$${plan["pricePerDay"]} / day",
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold,
-                                          color: isSelected ? AppColors.neutreBlanc : AppColors.blue700,
-                                        ),
-                                      ),
-                                      Text(
-                                        "\$${plan["oldPrice"]}",
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          decoration: TextDecoration.lineThrough,
-                                          color: isSelected ? Colors.white70 : Colors.grey.shade600,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
+                                  _buildPriceColumn(context, plan, isSelected),
                                 ],
                               ),
                             ],
@@ -261,6 +296,25 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                       );
                     }),
 
+                    if (kDebugMode) ...[
+                      AppSpacers.verticalLarge,
+                      SizedBox(
+                        width: double.infinity,
+                        child: OutlinedButton(
+                          onPressed: _continueWithoutSubscription,
+                          style: OutlinedButton.styleFrom(
+                            side: BorderSide(color: AppColors.blue700),
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                          ),
+                          child: Text(
+                            'Continue without subscription',
+                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.blue700),
+                          ),
+                        ),
+                      ),
+                    ],
+
                     AppSpacers.verticalLarge,
 
                     SizedBox(
@@ -268,26 +322,49 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                       child: BlocBuilder<PurchaseCubit, PurchaseState>(
                         builder: (context, state) {
                           final loading = state is PurchaseInProgress;
+                          final disabled = loading || _productsLoading || _productsUnavailable;
 
                           return ElevatedButton(
                             style: ElevatedButton.styleFrom(
                               padding: const EdgeInsets.symmetric(vertical: 16),
                               backgroundColor: AppColors.orange,
+                              disabledBackgroundColor: AppColors.orange.withOpacity(0.5),
                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                             ),
-                            onPressed: loading ? null : _buySelectedPlan,
-                            child: loading
+                            onPressed: disabled ? null : _buySelectedPlan,
+                            child: loading || _productsLoading
                                 ? const SizedBox(
                                     height: 22,
                                     width: 22,
                                     child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
                                   )
                                 : Text(
-                                    S.of(context).get_plan,
+                                    _productsUnavailable ? S.of(context).store_unavailable : S.of(context).get_plan,
                                     style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                                   ),
                           );
                         },
+                      ),
+                    ),
+
+                    if (_productsUnavailable && !_productsLoading)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8),
+                        child: Text(
+                          S.of(context).store_unavailable,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(fontSize: 13, color: Colors.red),
+                        ),
+                      ),
+
+                    AppSpacers.verticalLarge,
+
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      child: Text(
+                        _trialDisclosureText(context),
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 12, color: AppColors.grey700),
                       ),
                     ),
 
@@ -337,7 +414,14 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                       children: [
                         Expanded(
                           child: GestureDetector(
-                            onTap: () => launchUrl(Uri.parse(Env.termsUrl)),
+                            onTap: () async {
+                              try {
+                                await launchUrl(
+                                  Uri.parse(Env.termsUrl),
+                                  mode: LaunchMode.externalApplication,
+                                );
+                              } catch (_) {}
+                            },
                             child: Text(
                               S.of(context).terms_of_use,
                               style: textTheme.black16bold.copyWith(color: AppColors.blue700),
@@ -373,10 +457,60 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     );
   }
 
-  Future<void> _openPrivacy() async {
-    final url = Uri.parse(Env.privacyPolicyUrl);
-    if (await canLaunchUrl(url)) {
-      await launchUrl(url, mode: LaunchMode.externalApplication);
+  Widget _buildPriceColumn(BuildContext context, Map<String, dynamic> plan, bool isSelected) {
+    final productId = plan["productId"] as String;
+    final store = _productDetails[productId];
+    final foreground = isSelected ? AppColors.neutreBlanc : AppColors.blue700;
+    final secondary = isSelected ? Colors.white70 : Colors.grey.shade600;
+
+    final String totalPrice;
+    final String perDay;
+
+    if (store != null) {
+      totalPrice = store.price;
+      final days = (plan["months"] as int) * 30;
+      final perDayAmount = store.rawPrice / days;
+      perDay = "${store.currencySymbol}${perDayAmount.toStringAsFixed(2)} ${S.of(context).per_day_suffix}";
+    } else if (_productsLoading) {
+      totalPrice = "…";
+      perDay = "";
+    } else {
+      totalPrice = "—";
+      perDay = "";
     }
+
+    final period = _localizedPeriod(context, plan["periodKey"] as String);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        Text(
+          totalPrice,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: foreground),
+        ),
+        Text(
+          "/ $period",
+          maxLines: 1,
+          style: TextStyle(fontSize: 12, color: foreground),
+        ),
+        const SizedBox(height: 2),
+        Text(
+          perDay,
+          maxLines: 1,
+          style: TextStyle(fontSize: 12, color: secondary),
+        ),
+      ],
+    );
+  }
+
+  Future<void> _openPrivacy() async {
+    try {
+      await launchUrl(
+        Uri.parse(Env.privacyPolicyUrl),
+        mode: LaunchMode.externalApplication,
+      );
+    } catch (_) {}
   }
 }

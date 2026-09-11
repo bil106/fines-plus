@@ -96,6 +96,14 @@ class HistoryCubit extends Cubit<HistoryState> {
     }
   }
 
+  Future<void> markFineAsPaid(String historyDocId, String fineId, bool isPaid) async {
+    try {
+      await repository.markFineAsPaid(historyDocId, fineId, isPaid);
+    } catch (e, st) {
+      debugPrint('HistoryCubit markFineAsPaid error: $e\n$st');
+    }
+  }
+
   Future<void> deleteSingle(String id) async {
     try {
       await repository.deleteSingle(id);

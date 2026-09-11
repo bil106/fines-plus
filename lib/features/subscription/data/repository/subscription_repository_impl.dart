@@ -26,13 +26,23 @@ bool _purchaseInProgress = false;
   bool _disposed = false;
 
   SubscriptionRepository(this._iap, this._auth, this._firestore) {
-    _purchaseSub = _iap.purchaseStream.listen(
-      _onPurchaseUpdated,
-      onError: (e, s) {
-        FirebaseCrashlytics.instance.recordError(e, s);
-        _safeAdd(PurchaseEvent.error(e.toString()));
-      },
-    );
+    _initPurchaseListener();
+  }
+
+  Future<void> _initPurchaseListener() async {
+    try {
+      final available = await _iap.isAvailable().timeout(const Duration(seconds: 5));
+      if (!available || _disposed) return;
+      _purchaseSub = _iap.purchaseStream.listen(
+        _onPurchaseUpdated,
+        onError: (e, s) {
+          FirebaseCrashlytics.instance.recordError(e, s);
+          _safeAdd(PurchaseEvent.error(e.toString()));
+        },
+      );
+    } catch (_) {
+      // Billing not available on this device — skip purchase stream
+    }
   }
 
   @override
@@ -76,15 +86,30 @@ bool _purchaseInProgress = false;
     _purchaseInProgress = true;
 
     try {
+      // Re-check availability right before launching to catch cases where the
+      // billing client disconnected between the outer isAvailable() call and now.
+      final stillAvailable = await _iap.isAvailable();
+      if (!stillAvailable) {
+        throw Exception('Billing service disconnected');
+      }
+
       final response = await _iap.queryProductDetails({plan.id});
       if (response.productDetails.isEmpty) {
-        throw Exception('Product not found: ${plan.id}');
+        FirebaseCrashlytics.instance.log('Product not found: ${plan.id}, errors: ${response.error}');
+        _safeAdd(PurchaseEvent.error('store_unavailable'));
+        return;
       }
 
       final product = response.productDetails.first;
       _products[product.id] = product;
 
-      await _iap.buyNonConsumable(purchaseParam: PurchaseParam(productDetails: product));
+      final success = await _iap.buyNonConsumable(
+        purchaseParam: PurchaseParam(productDetails: product),
+      );
+      if (!success) {
+        FirebaseCrashlytics.instance.log('buyNonConsumable returned false for ${plan.id}');
+        _safeAdd(PurchaseEvent.error('launch_failed'));
+      }
     } catch (e, s) {
       FirebaseCrashlytics.instance.recordError(e, s);
       rethrow;
@@ -115,29 +140,59 @@ bool _purchaseInProgress = false;
   }
 
   Future<void> _onPurchaseUpdated(List<PurchaseDetails> purchases) async {
-    final user = _auth.currentUser;
-    if (user == null || _disposed) return;
+    if (_disposed) return;
 
     for (final p in purchases) {
       try {
+        FirebaseCrashlytics.instance.log('Purchase update: ${p.productID}, status: ${p.status}');
+
+        if (p.status == PurchaseStatus.pending) {
+          // Pending purchase blocks new billing flows — surface it as a soft error
+          // so the UI resets and the user can try again when payment clears.
+          FirebaseCrashlytics.instance.log('Purchase pending: ${p.productID}');
+          _safeAdd(PurchaseEvent.error('pending'));
+          continue;
+        }
+
         if (p.status == PurchaseStatus.error) {
           _safeAdd(PurchaseEvent.error(p.error?.message));
+          await _completePurchaseSafely(p);
+          continue;
+        }
+
+        if (p.status == PurchaseStatus.canceled) {
+          // Must emit an event so PurchaseCubit resets _inProgress and the
+          // buy button becomes tappable again.
+          _safeAdd(PurchaseEvent.error('canceled'));
+          await _completePurchaseSafely(p);
+          continue;
         }
 
         if (p.status == PurchaseStatus.purchased || p.status == PurchaseStatus.restored) {
-          await _handleSuccess(p, user.uid);
-          _safeAdd(PurchaseEvent.success());
+          final user = _auth.currentUser;
+          if (user != null) {
+            await _handleSuccess(p, user.uid);
+            _safeAdd(PurchaseEvent.success());
+          }
+          await _completePurchaseSafely(p);
         }
       } catch (e, s) {
         FirebaseCrashlytics.instance.recordError(e, s);
+        await _completePurchaseSafely(p);
       }
     }
   }
 
-  Future<void> _handleSuccess(PurchaseDetails p, String uid) async {
-    final product = _products[p.productID];
-    if (product == null) return;
+  Future<void> _completePurchaseSafely(PurchaseDetails p) async {
+    if (!p.pendingCompletePurchase) return;
+    try {
+      await _iap.completePurchase(p);
+    } catch (e, s) {
+      FirebaseCrashlytics.instance.recordError(e, s, reason: 'completePurchase failed');
+    }
+  }
 
+  Future<void> _handleSuccess(PurchaseDetails p, String uid) async {
     final months = p.productID == 'sub_quarter' ? 3 : 12;
     final endDate = DateTime.now().add(Duration(days: months * 30));
 
@@ -145,10 +200,6 @@ bool _purchaseInProgress = false;
       'isSubscribed': true,
       'subscriptionEndDate': endDate,
     }, SetOptions(merge: true));
-
-    if (p.pendingCompletePurchase) {
-      await _iap.completePurchase(p);
-    }
   }
 
   void _safeAdd(PurchaseEvent event) {
@@ -164,7 +215,7 @@ bool _purchaseInProgress = false;
   }
 
   @override
-  Future<void> buySubscription(String ownerId, SubscriptionPlan plan) {
-    throw UnimplementedError();
+  Future<void> buySubscription(String ownerId, SubscriptionPlan plan) async {
+    await startPurchase(plan);
   }
 }

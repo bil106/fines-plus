@@ -83,6 +83,7 @@ class StatisticsCubit extends Cubit<StatisticsState> {
       ExpenseCategory.fuel: 0,
       ExpenseCategory.service: 0,
       ExpenseCategory.tuning: 0,
+      ExpenseCategory.carWash: 0,
       ExpenseCategory.other: 0,
     };
 
@@ -90,7 +91,7 @@ class StatisticsCubit extends Cubit<StatisticsState> {
       ExpenseCategory.service: state.serviceRecords,
       ExpenseCategory.fuel: state.fuelRecords,
       ExpenseCategory.tuning: state.tuningRecords,
-      ExpenseCategory.other: state.carWashRecords,
+      ExpenseCategory.carWash: state.carWashRecords,
     };
 
     for (var entry in recordsMap.entries) {

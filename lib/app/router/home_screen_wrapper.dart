@@ -46,8 +46,12 @@ import 'package:fines_plus/features/settings/presentation/screens/settings_scree
 import 'package:fines_plus/features/maintenance/presentation/screens/maintenance_screen.dart';
 import 'package:fines_plus/features/maintenance/presentation/screens/tuning_screen.dart';
 import 'package:fines_plus/features/subscription/presentation/screens/subscription_screen.dart';
+import 'dart:io';
+
 import 'package:fines_plus/app/router/app_router.dart';
+import 'package:fines_plus/env/env.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -136,7 +140,7 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
       final carNumber = context.read<CarCubit>().state.carNumber;
       final user = FirebaseAuth.instance.currentUser;
 
-      if (user == null || carNumber.isEmpty) {
+      if (!kDebugMode && (user == null || carNumber.isEmpty)) {
         context.router.replaceAll([const OnboardingRoute()]);
         return;
       }
@@ -166,7 +170,7 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
       _docNumber = prefs.getString('docNumber') ?? '';
     });
 
-    final hasSubscription = await context.read<RegistrationCubit>().checkSubscription();
+    final hasSubscription = (kDebugMode || Env.iosBypassSubscription || Platform.isIOS) ? true : await context.read<RegistrationCubit>().checkSubscription();
     if (!mounted) return;
 
     final targetPage = hasSubscription ? HomePage.home : HomePage.subscription;
@@ -198,7 +202,11 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
 
     final index = _pageIndexMap[page] ?? 0;
 
-    if (!hasCar && index > 4) {
+    if (page == HomePage.analytics) {
+      _analyticsTabIndex = 0;
+    }
+
+    if (!kDebugMode && !hasCar && index > 4) {
       debugPrint("Add a car to open this page");
       return;
     }
@@ -263,7 +271,7 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
           backgroundColor: AppColors.grey50,
           body: PageView(
             controller: _pageController,
-            physics: hasCar ? const BouncingScrollPhysics() : const NeverScrollableScrollPhysics(),
+            physics: (kDebugMode || hasCar) ? const BouncingScrollPhysics() : const NeverScrollableScrollPhysics(),
 
             onPageChanged: (index) => setState(() => _currentIndex = index),
             children: [

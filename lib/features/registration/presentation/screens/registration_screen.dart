@@ -7,10 +7,10 @@ import 'package:design_system/constants/app_borders.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:fines_plus/features/registration/presentation/cubit/registration_cubit.dart';
 import 'package:fines_plus/features/registration/presentation/cubit/registration_state.dart';
-import 'package:fines_plus/features/subscription/data/models/subscription_status.dart';
 import 'package:fines_plus/features/subscription/presentation/cubit/subscription_cubit.dart';
 import 'package:fines_plus/app/router/app_router.dart';
 import 'package:fines_plus/app/router/home_screen_wrapper.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -34,6 +34,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   late TextEditingController passwordController;
 final GoogleSignIn _googleSignIn = GoogleSignIn.instance;
 HomeScreenWrapperState? _wrapperState;
+  bool _socialLoading = false;
+  late final Future<void> _googleSignInInit;
 
 
   Timer? _emailCheckTimer;
@@ -41,7 +43,7 @@ HomeScreenWrapperState? _wrapperState;
   @override
   void initState() {
     super.initState();
-   _googleSignIn.initialize(
+    _googleSignInInit = _googleSignIn.initialize(
       serverClientId: '201100655892-ocbfb9gl3j1ad5ma9t6n6pove9dom2n4.apps.googleusercontent.com',
     );
     emailController = TextEditingController();
@@ -85,76 +87,44 @@ Future<void> _onSubmit(BuildContext context) async {
     final email = emailController.text.trim();
     final password = passwordController.text.trim();
 
-    
     await cubit.saveCredentials(email, password);
-
-   
     await cubit.register(email, password);
-
-    final user = FirebaseAuth.instance.currentUser;
-    if (user == null) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(S.of(context).authorization_required)));
-      return;
-    }
-
-  try {
-      final subCubit = context.read<SubscriptionCubit>();
-
-      await subCubit.load(user.uid);
-
-      final subState = subCubit.state;
-      if (subState is SubscriptionLoaded) {
-        if (subState.userSubscription.status == SubscriptionStatus.none ||
-            subState.userSubscription.status == SubscriptionStatus.trial) {
-          if (subCubit.selectedPlan == null) {
-            if (!mounted) return;
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(S.of(context).no_plan_selected)));
-            return;
-          }
-
-          await subCubit.purchase();
-
-          final newState = subCubit.state;
-          if (newState is SubscriptionBought) {
-            if (!mounted) return;
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(S.of(context).plan_activated)));
-            Navigator.of(context).pop();
-          } else if (newState is SubscriptionError) {
-            if (!mounted) return;
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(SnackBar(content: Text("${S.of(context).subscription_failed}: ${newState.message}")));
-          }
-        }
-      }
-    } catch (e) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${S.of(context).subscription_failed}: $e")));
-    }
-
+    // Post-registration navigation (home vs subscription) is handled reactively
+    // by the BlocConsumer listener below once `state.isRegistered` becomes true.
   }
 Future<void> _signInWithGoogle(BuildContext context) async {
+    setState(() => _socialLoading = true);
     try {
-     final googleUser = await _googleSignIn.authenticate();
+      await _googleSignInInit;
+      final googleUser = await _googleSignIn.authenticate();
 
       final googleAuth = googleUser.authentication;
 
-      final credential = GoogleAuthProvider.credential(
-        idToken: googleAuth.idToken, 
-        
-      );
+      final credential = GoogleAuthProvider.credential(idToken: googleAuth.idToken);
 
       await FirebaseAuth.instance.signInWithCredential(credential);
+      if (!context.mounted) return;
       await _onSocialLoginSuccess(context);
-
+    } on GoogleSignInException catch (e) {
+      if (e.code == GoogleSignInExceptionCode.canceled) return;
+      debugPrint('Google sign-in error: $e');
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('${S.of(context).google_login_error}: ${e.description}')));
     } catch (e, s) {
       debugPrint('Google sign-in error: $e');
       debugPrint('$s');
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('${S.of(context).google_login_error}: $e')));
+    } finally {
+      if (mounted) setState(() => _socialLoading = false);
     }
   }
 
 
   Future<void> _signInWithFacebook(BuildContext context) async {
+    setState(() => _socialLoading = true);
     try {
       final result = await FacebookAuth.instance.login(permissions: ['email', 'public_profile']);
 
@@ -168,7 +138,9 @@ Future<void> _signInWithGoogle(BuildContext context) async {
         final credential = FacebookAuthProvider.credential(accessToken.tokenString);
 
         await FirebaseAuth.instance.signInWithCredential(credential);
+        if (!context.mounted) return;
         await _onSocialLoginSuccess(context);
+        if (!context.mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(S.of(context).facebook_login_successful)));
       } else if (result.status == LoginStatus.cancelled) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(S.of(context).facebook_login_cancelled)));
@@ -181,10 +153,13 @@ Future<void> _signInWithGoogle(BuildContext context) async {
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('${S.of(context).facebook_login_error}: $e')));
       debugPrint("error: $e");
+    } finally {
+      if (mounted) setState(() => _socialLoading = false);
     }
   }
 
   Future<void> _signInWithApple(BuildContext context) async {
+    setState(() => _socialLoading = true);
     try {
       final credential = await SignInWithApple.getAppleIDCredential(
         scopes: [AppleIDAuthorizationScopes.email, AppleIDAuthorizationScopes.fullName],
@@ -195,13 +170,17 @@ Future<void> _signInWithGoogle(BuildContext context) async {
       ).credential(idToken: credential.identityToken, accessToken: credential.authorizationCode);
 
       await FirebaseAuth.instance.signInWithCredential(oauthCredential);
+      if (!context.mounted) return;
       await _onSocialLoginSuccess(context);
+      if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Sign in with Apple successful'), backgroundColor: AppColors.blue700),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Apple login error: $e')));
       debugPrint('Apple login error: $e');
+    } finally {
+      if (mounted) setState(() => _socialLoading = false);
     }
   }
 
@@ -224,7 +203,7 @@ Future<void> _signInWithGoogle(BuildContext context) async {
 
     final hasSubscription = await context.read<RegistrationCubit>().checkSubscription();
 
-    if (hasSubscription) {
+    if (kDebugMode || hasSubscription) {
       context.router.replaceAll([HomeRouteWrapper(initialPage: HomePage.home)]);
     } else {
       context.router.replaceAll([SubscriptionRoute(debugMode: true)]);
@@ -272,12 +251,6 @@ Future<void> _signInWithGoogle(BuildContext context) async {
               key: _formKey,
               child: BlocConsumer<RegistrationCubit, RegistrationState>(
                 listener: (context, state) async {
-                  if (state.error != null) {
-                    ScaffoldMessenger.of(
-                      context,
-                    ).showSnackBar(SnackBar(content: Text(state.error!), backgroundColor: AppColors.blue700));
-                  }
-
                   if (state.isRegistered) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
@@ -289,7 +262,7 @@ Future<void> _signInWithGoogle(BuildContext context) async {
                     final regCubit = context.read<RegistrationCubit>();
                     final hasSubscription = await regCubit.checkSubscription();
 
-                    if (hasSubscription) {
+                    if (kDebugMode || hasSubscription) {
                       context.router.replaceAll([HomeRouteWrapper()]);
                     } else {
                       context.router.replaceAll([
@@ -349,6 +322,7 @@ Future<void> _signInWithGoogle(BuildContext context) async {
                         decoration: InputDecoration(
                           prefixIcon: const Icon(Icons.lock_outline),
                           labelText: S.of(context).password,
+                          errorText: state.error,
                           border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                         ),
                         validator: (v) {
@@ -399,7 +373,12 @@ Future<void> _signInWithGoogle(BuildContext context) async {
                       Text(S.of(context).or_sign_in_using, style: const TextStyle(color: Colors.grey)),
                       AppSpacers.verticalMediumLarge,
 
-                      Row(
+                      _socialLoading
+                          ? const Padding(
+                              padding: EdgeInsets.symmetric(vertical: 8),
+                              child: CircularProgressIndicator(),
+                            )
+                          : Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           IconButton(

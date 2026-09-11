@@ -20,6 +20,11 @@ typedef String MessageIfAbsent(String messageStr, List<dynamic> args);
 class MessageLookup extends MessageLookupByLibrary {
   String get localeName => 'uk';
 
+  static String m0(task) => "Час для: ${task}";
+
+  static String m1(price, period) =>
+      "7 днів безкоштовно, потім ${price} за ${period}. Скасувати можна в будь-який момент, не менш ніж за 24 години до закінчення пробного періоду, в налаштуваннях Google Play. Підписка автоматично поновлюється, якщо її не скасовано.";
+
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
     "access_basic": MessageLookupByLibrary.simpleMessage(
@@ -45,6 +50,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Вже маєте обліковий запис? Увійти",
     ),
     "already_planned": MessageLookupByLibrary.simpleMessage("вже заплановано"),
+    "amount": MessageLookupByLibrary.simpleMessage("Сума"),
     "amount_month": MessageLookupByLibrary.simpleMessage("Сума за місяць"),
     "analitics": MessageLookupByLibrary.simpleMessage("Аналітика"),
     "analytics": MessageLookupByLibrary.simpleMessage("Аналітика"),
@@ -83,6 +89,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "category_removed": MessageLookupByLibrary.simpleMessage(
       "Вилучено категорію",
     ),
+    "change_car_info": MessageLookupByLibrary.simpleMessage(
+      "Змінити дані авто",
+    ),
     "check_filter": MessageLookupByLibrary.simpleMessage(
       "Потрібно замінити фільтр",
     ),
@@ -90,6 +99,12 @@ class MessageLookup extends MessageLookupByLibrary {
       "Перевірка штрафу",
     ),
     "check_fines": MessageLookupByLibrary.simpleMessage("Перевірити штрафи"),
+    "check_fines_reminder_body": MessageLookupByLibrary.simpleMessage(
+      "Перевірте наявність нових штрафів ПДД",
+    ),
+    "check_fines_reminder_title": MessageLookupByLibrary.simpleMessage(
+      "Нагадування про штрафи",
+    ),
     "check_tires": MessageLookupByLibrary.simpleMessage("Пора перевірити шини"),
     "checking_fines": MessageLookupByLibrary.simpleMessage("Перевірка штрафів"),
     "choose_from_gallery": MessageLookupByLibrary.simpleMessage(
@@ -132,6 +147,13 @@ class MessageLookup extends MessageLookupByLibrary {
       "Видалити ВСІ витрати",
     ),
     "delete": MessageLookupByLibrary.simpleMessage("Видалити"),
+    "delete_account": MessageLookupByLibrary.simpleMessage("Видалити акаунт"),
+    "delete_account_confirmation": MessageLookupByLibrary.simpleMessage(
+      "Ви впевнені? Всі дані будуть видалені безповоротно.",
+    ),
+    "delete_account_success": MessageLookupByLibrary.simpleMessage(
+      "Акаунт видалено",
+    ),
     "delete_all_expenses": MessageLookupByLibrary.simpleMessage(
       "Видалити всі витрати?",
     ),
@@ -216,6 +238,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "fines_control": MessageLookupByLibrary.simpleMessage("Контроль штрафів"),
     "fines_length": MessageLookupByLibrary.simpleMessage("Штрафів:"),
     "free_experience": MessageLookupByLibrary.simpleMessage("Без реклами"),
+    "free_trial_7_days": MessageLookupByLibrary.simpleMessage(
+      "7 днів безкоштовно",
+    ),
     "fuel": MessageLookupByLibrary.simpleMessage("Паливо"),
     "fuel_ai92": MessageLookupByLibrary.simpleMessage("АІ-92"),
     "fuel_ai95": MessageLookupByLibrary.simpleMessage("АІ-95"),
@@ -288,10 +313,18 @@ class MessageLookup extends MessageLookupByLibrary {
       "Дата останнього обслуговування",
     ),
     "loaded": MessageLookupByLibrary.simpleMessage("Завантажено"),
+    "log_out": MessageLookupByLibrary.simpleMessage("Вийти з акаунту"),
+    "log_out_confirmation": MessageLookupByLibrary.simpleMessage(
+      "Ви впевнені, що хочете вийти з акаунту?",
+    ),
     "login": MessageLookupByLibrary.simpleMessage("Увійти"),
     "logo": MessageLookupByLibrary.simpleMessage("LOGO"),
     "maintenance": MessageLookupByLibrary.simpleMessage("TO"),
     "maintenance_control": MessageLookupByLibrary.simpleMessage("Контроль ТО"),
+    "maintenance_due_body": m0,
+    "maintenance_due_title": MessageLookupByLibrary.simpleMessage(
+      "Потрібне обслуговування",
+    ),
     "mileage": MessageLookupByLibrary.simpleMessage("Пробіг"),
     "mileage_stat": MessageLookupByLibrary.simpleMessage("Статистика пробігу"),
     "mileage_statistics": MessageLookupByLibrary.simpleMessage(
@@ -390,6 +423,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Або увійти за допомогою",
     ),
     "other": MessageLookupByLibrary.simpleMessage("Інше"),
+    "paid": MessageLookupByLibrary.simpleMessage("Оплачено"),
     "password": MessageLookupByLibrary.simpleMessage("Пароль"),
     "password_too_short": MessageLookupByLibrary.simpleMessage(
       "Мінімум 6 символів",
@@ -399,8 +433,11 @@ class MessageLookup extends MessageLookupByLibrary {
       "Безпечна та надійна оплата",
     ),
     "pdf": MessageLookupByLibrary.simpleMessage("PDF"),
+    "per_day_suffix": MessageLookupByLibrary.simpleMessage("/ день"),
     "per_month": MessageLookupByLibrary.simpleMessage("за місяць"),
     "period": MessageLookupByLibrary.simpleMessage("середнє/рік"),
+    "period_3_months": MessageLookupByLibrary.simpleMessage("3 місяці"),
+    "period_year": MessageLookupByLibrary.simpleMessage("рік"),
     "periodicity": MessageLookupByLibrary.simpleMessage("Періодичність:"),
     "phone": MessageLookupByLibrary.simpleMessage("Телефон"),
     "photo_selected": MessageLookupByLibrary.simpleMessage("Фото вибрано"),
@@ -429,6 +466,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "push_notifications": MessageLookupByLibrary.simpleMessage(
       "Push-сповіщення",
     ),
+    "quarterly_plan": MessageLookupByLibrary.simpleMessage("Квартальний план"),
     "reached_usage": MessageLookupByLibrary.simpleMessage(
       "досяг 90% використання",
     ),
@@ -988,6 +1026,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "track_costs": MessageLookupByLibrary.simpleMessage(
       "Стежте за витратами, пробігом та ефективністю",
     ),
+    "trial_disclosure_detailed": m1,
     "trial_expired": MessageLookupByLibrary.simpleMessage(
       "Пробний період минув",
     ),
@@ -1018,6 +1057,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Переглянути всі події",
     ),
     "write_viber": MessageLookupByLibrary.simpleMessage("Написати у Viber"),
+    "yearly_plan": MessageLookupByLibrary.simpleMessage("Річний план"),
     "years": MessageLookupByLibrary.simpleMessage("Роки"),
   };
 }

@@ -176,7 +176,7 @@ class _MyAppState extends State<MyApp> {
                   ],
                   supportedLocales: S.delegate.supportedLocales,
                   builder: (context, child) {
-                    return child!;
+                    return SafeArea(top: false, child: child!);
                   },
                 );
               },

@@ -9,6 +9,7 @@ import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_text_theme.dart';
 import 'package:design_system/theme/app_theme.dart';
 import 'package:fines_plus/core/extensions/ad_banner_widget.dart';
+import 'package:fines_plus/core/extensions/safe_prefs.dart';
 import 'package:fines_plus/core/extensions/unauthorized_dialog.dart';
 import 'package:fines_plus/env/env.dart';
 import 'package:fines_plus/features/vehicle/presentation/cubit/car_cubit.dart';
@@ -128,7 +129,7 @@ class _FinesScreenState extends State<FinesScreen> {
                                   onPressed: isFormValid
                                       ? () async {
                                           final prefs = await SharedPreferences.getInstance();
-                                          final finesEnabled = prefs.getBool("finesCheck") ?? true;
+                                          final finesEnabled = prefs.getBoolSafe("finesCheck", defaultValue: true);
 
                                           if (!finesEnabled) {
                                             ScaffoldMessenger.of(context).showSnackBar(

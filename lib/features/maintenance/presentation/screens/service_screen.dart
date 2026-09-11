@@ -18,7 +18,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:location/location.dart';
 
 @RoutePage()
 class ServiceScreen extends StatefulWidget {
@@ -30,12 +29,14 @@ class ServiceScreen extends StatefulWidget {
 }
 
 class _ServiceScreenState extends State<ServiceScreen> {
+  static const LatLng _fallbackPosition = LatLng(50.4501, 30.5234);
   final List<TextEditingController> serviceControllers = [TextEditingController()];
   final List<FocusNode> serviceFocusNodes = [FocusNode()];
   final TextEditingController costController = TextEditingController();
   final TextEditingController mileageController = TextEditingController();
 
   Map<String, dynamic>? _bestStation;
+  bool _isLoadingBestStation = true;
   DateTime? selectedDate;
 
   final List<double> servicePricesUah = [0.0];
@@ -61,30 +62,37 @@ class _ServiceScreenState extends State<ServiceScreen> {
   }
 
   Future<void> _initLocationAndService() async {
-    Location location = Location();
-
-    bool serviceEnabled = await location.serviceEnabled();
-    if (!serviceEnabled) {
-      serviceEnabled = await location.requestService();
-      if (!serviceEnabled) return;
-    }
-
-    PermissionStatus permissionGranted = await location.hasPermission();
-    if (permissionGranted == PermissionStatus.denied) {
-      permissionGranted = await location.requestPermission();
-      if (permissionGranted != PermissionStatus.granted) return;
-    }
-
     try {
-      final locationData = await location.getLocation();
-      final current = LatLng(locationData.latitude!, locationData.longitude!);
+      final serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      var permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+      }
 
-      final bestStation = await fetchBestNearbyService(current, Env.mapApiKey);
-      if (!mounted) return;
-      setState(() => _bestStation = bestStation);
+      if (!serviceEnabled ||
+          permission == LocationPermission.denied ||
+          permission == LocationPermission.deniedForever) {
+        if (kDebugMode) print('ServiceScreen: geolocation unavailable, using fallback position');
+        await _loadBestStationFrom(_fallbackPosition);
+        return;
+      }
+
+      final position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high)
+          .timeout(const Duration(seconds: 5));
+      await _loadBestStationFrom(LatLng(position.latitude, position.longitude));
     } catch (e) {
       if (kDebugMode) print("Error getting position: $e");
+      await _loadBestStationFrom(_fallbackPosition);
     }
+  }
+
+  Future<void> _loadBestStationFrom(LatLng current) async {
+    final bestStation = await fetchBestNearbyService(current, Env.mapApiKey);
+    if (!mounted) return;
+    setState(() {
+      _bestStation = bestStation;
+      _isLoadingBestStation = false;
+    });
   }
 
   @override
@@ -161,10 +169,11 @@ class _ServiceScreenState extends State<ServiceScreen> {
   Widget _buildBestStationRow(TextTheme textTheme) {
     return Row(
       children: [
-        _bestStation == null
+        _isLoadingBestStation
             ? AppLoaders.medium
             : GestureDetector(
                 onTap: () {
+                  if (_bestStation == null) return;
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (_) => ServiceMapScreen(
@@ -182,7 +191,7 @@ class _ServiceScreenState extends State<ServiceScreen> {
                     SizedBox(
                       width: 180,
                       child: Text(
-                        _bestStation!['name'] ?? S.of(context).service_station,
+                        _bestStation?['name'] ?? S.of(context).service_station,
                         style: textTheme.bodyMedium,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -194,7 +203,16 @@ class _ServiceScreenState extends State<ServiceScreen> {
         IconButton(
           icon: Image.asset('assets/icons/map.png', width: 40, height: 40),
           onPressed: () {
-            Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ServiceMapScreen()));
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (_) => _bestStation == null
+                    ? const ServiceMapScreen()
+                    : ServiceMapScreen(
+                        focusPosition: LatLng(_bestStation!['lat'], _bestStation!['lng']),
+                        focusName: _bestStation!['name'],
+                      ),
+              ),
+            );
           },
         ),
       ],

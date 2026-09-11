@@ -23,7 +23,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:location/location.dart';
 
 @RoutePage()
 class FuelUpScreen extends StatefulWidget {
@@ -35,6 +34,7 @@ class FuelUpScreen extends StatefulWidget {
 }
 
 class _FuelUpScreenState extends State<FuelUpScreen> {
+  static const LatLng _fallbackPosition = LatLng(50.4501, 30.5234);
   final TextEditingController volumeController = TextEditingController();
   final TextEditingController mileageController = TextEditingController();
   final TextEditingController priceController = TextEditingController();
@@ -42,6 +42,7 @@ class _FuelUpScreenState extends State<FuelUpScreen> {
   FuelType selectedFuel = FuelType.Ai95;
   DateTime? selectedDate;
   GasStation? _bestStation;
+  bool _isLoadingBestStation = true;
 
   late final GasStationService _gasService;
 
@@ -78,26 +79,40 @@ class _FuelUpScreenState extends State<FuelUpScreen> {
   }
 
   Future<void> _initLocationAndStation() async {
-    Location location = Location();
-
-    if (!await location.serviceEnabled() && !await location.requestService()) return;
-    if (await location.hasPermission() == PermissionStatus.denied &&
-        await location.requestPermission() != PermissionStatus.granted) {
-      return;
-    }
-
     try {
-     final locationData = await location.getLocation();
-      if (!mounted) return; 
-      final current = LatLng(locationData.latitude!, locationData.longitude!);
+      final serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      var permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+      }
 
-      final bestStation = await _fetchBestNearbyGasStation(current);
-      if (!mounted) return; 
-      setState(() => _bestStation = bestStation);
+      if (!serviceEnabled ||
+          permission == LocationPermission.denied ||
+          permission == LocationPermission.deniedForever) {
+        if (kDebugMode) {
+          print('FuelUpScreen: geolocation unavailable, using fallback position');
+        }
+        await _loadBestStationFrom(_fallbackPosition);
+        return;
+      }
 
+      final position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      ).timeout(const Duration(seconds: 5));
+      await _loadBestStationFrom(LatLng(position.latitude, position.longitude));
     } catch (e) {
       if (kDebugMode) print("Error getting position: $e");
+      await _loadBestStationFrom(_fallbackPosition);
     }
+  }
+
+  Future<void> _loadBestStationFrom(LatLng current) async {
+    final bestStation = await _fetchBestNearbyGasStation(current);
+    if (!mounted) return;
+    setState(() {
+      _bestStation = bestStation;
+      _isLoadingBestStation = false;
+    });
   }
 
   Future<GasStation?> _fetchBestNearbyGasStation(LatLng current) async {
@@ -175,10 +190,12 @@ class _FuelUpScreenState extends State<FuelUpScreen> {
 
               Row(
                 children: [
-                  _bestStation == null
-                      ? const SizedBox(width: 200, child: Center(child: CircularProgressIndicator()))
-                      : GestureDetector(
+                  if (_isLoadingBestStation)
+                    const SizedBox(width: 200, child: Center(child: CircularProgressIndicator()))
+                  else
+                    GestureDetector(
                           onTap: () {
+                            if (_bestStation == null) return;
                             context.router.push(
                               FuelMapRoute(
                                 focusPosition: LatLng(_bestStation!.lat, _bestStation!.lng),
@@ -194,7 +211,7 @@ class _FuelUpScreenState extends State<FuelUpScreen> {
                               SizedBox(
                                 width: 180,
                                 child: Text(
-                                  _bestStation!.name,
+                                  _bestStation?.name ?? 'Нет данных о ближайшей заправке',
                                   style: textTheme.black14bold,
                                   overflow: TextOverflow.ellipsis,
                                 ),
@@ -206,7 +223,16 @@ class _FuelUpScreenState extends State<FuelUpScreen> {
                   IconButton(
                     icon: Image.asset('assets/icons/map.png', width: 40, height: 40),
                     onPressed: () {
-                      Navigator.of(context).push(MaterialPageRoute(builder: (_) => const FuelMapScreen()));
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => _bestStation == null
+                              ? const FuelMapScreen()
+                              : FuelMapScreen(
+                                  focusPosition: LatLng(_bestStation!.lat, _bestStation!.lng),
+                                  focusName: _bestStation!.name,
+                                ),
+                        ),
+                      );
                     },
                   ),
                 ],

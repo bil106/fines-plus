@@ -1,11 +1,13 @@
 // ignore_for_file: depend_on_referenced_packages, unnecessary_import
 
+import 'dart:async';
 import 'dart:io';
 import 'package:app_links/app_links.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:core_cubit/cubit/referral/referral_cubit.dart';
 import 'package:core_data/core_data.dart';
 import 'package:fines_plus/core/extensions/currency_service.dart';
+import 'package:fines_plus/core/extensions/safe_prefs.dart';
 import 'package:fines_plus/core/helpers/push_helper.dart';
 import 'package:fines_plus/features/analytics/data/repository/analytics_repository.dart';
 import 'package:fines_plus/features/analytics/presentation/cubit/analytics_cubit.dart';
@@ -40,7 +42,7 @@ import 'package:fines_plus/features/vehicle/data/repository/car_info_repository.
 import 'package:fines_plus/features/vehicle/presentation/cubit/car_cubit.dart';
 import 'package:fines_plus/features/vehicle/presentation/cubit/car_info_cubit.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -78,11 +80,6 @@ class AppInitializer {
   late final HistoryRepository historyRepository;
   late final AnalyticsRepository analyticsRepository;
   late final ISubscriptionRepository subscriptionRepository;
-  Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-    await Firebase.initializeApp();
-    debugPrint("Background message: ${message.messageId}");
-  }
-
   bool _isVersionLower(String current, String required) {
     List<int> parse(String v) => v.split('.').map(int.parse).toList();
 
@@ -102,8 +99,10 @@ class AppInitializer {
 
   Future<AppInitResult> init() async {
     WidgetsFlutterBinding.ensureInitialized();
+    FirebaseCrashlytics.instance.log('AppInit: start');
 
     remoteConfigService = await RemoteConfigService.init();
+    FirebaseCrashlytics.instance.log('AppInit: RemoteConfig done');
     debugPrint(
       'Remote Config - remindersEnabled: ${remoteConfigService.isRemindersEnabled}, purchaseEnabled: ${remoteConfigService.isPurchaseEnabled}',
     );
@@ -116,11 +115,11 @@ class AppInitializer {
       debugPrint("App version $currentVersion is lower than required $requiredVersion");
     }
 
+    FirebaseCrashlytics.instance.log('AppInit: timezone');
     tz.initializeTimeZones();
     tz.setLocalLocation(tz.getLocation('Europe/Kiev'));
 
-    await Firebase.initializeApp();
-    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+    // Firebase уже инициализирован в main.dart
 
     const androidSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
     const iosSettings = DarwinInitializationSettings(
@@ -130,12 +129,14 @@ class AppInitializer {
     );
     const initSettings = InitializationSettings(android: androidSettings, iOS: iosSettings);
 
+    FirebaseCrashlytics.instance.log('AppInit: notifications init');
     await flutterLocalNotificationsPlugin.initialize(
       initSettings,
       onDidReceiveNotificationResponse: (details) {
         debugPrint('Notification tapped! Payload: ${details.payload}');
       },
     );
+    FirebaseCrashlytics.instance.log('AppInit: notifications done');
 
     if (Platform.isAndroid) {
       final androidImpl = flutterLocalNotificationsPlugin
@@ -156,21 +157,11 @@ class AppInitializer {
       }
     }
 
-    await FirebaseMessaging.instance.requestPermission();
-
     final prefs = await SharedPreferences.getInstance();
     String? fcmToken = prefs.getString('fcm_token');
 
     if (fcmToken == null) {
-      try {
-        fcmToken = await FirebaseMessaging.instance.getToken();
-        if (fcmToken != null) {
-          await prefs.setString('fcm_token', fcmToken);
-          debugPrint("FCM Registration Token: $fcmToken");
-        }
-      } catch (e, st) {
-        debugPrint("Failed to get FCM token: $e\n$st");
-      }
+      await _initFirebaseMessagingToken(prefs);
     } else {
       debugPrint("Using cached FCM Token: $fcmToken");
     }
@@ -187,7 +178,7 @@ class AppInitializer {
     final expenseRepository = ExpenseRepository(FirebaseFirestore.instance);
     final historyRepository = HistoryRepository(FirebaseFirestore.instance);
     final analyticsRepository = AnalyticsRepository(firestore: FirebaseFirestore.instance);
-    final tasksRepository = TasksRepository();
+    final tasksRepository = TasksRepository(FirebaseFirestore.instance);
 
     final carInfoLocalDataSource = CarInfoLocalDataSource(
       sharedPrefsManager,
@@ -201,7 +192,7 @@ class AppInitializer {
 
     quickActionsCubit = QuickActionsCubit(tasksRepository, prefs);
     currencyService = CurrencyService();
-    await currencyService.init();
+    unawaited(currencyService.init());
     referralCubit = ReferralCubit(appLinks, prefs);
 
     carCubit = CarCubit(local: carInfoLocalDataSource, repo: carInfoRepository);
@@ -218,11 +209,13 @@ class AppInitializer {
     fuelStationCubit = FuelStationCubit();
     statisticsCubit = StatisticsCubit(maintenanceCubit);
     settingsCubit = SettingsCubit(currencyService: currencyService);
+    FirebaseCrashlytics.instance.log('AppInit: creating SubscriptionRepository');
     subscriptionRepository = SubscriptionRepository(
       InAppPurchase.instance,
       FirebaseAuth.instance,
       FirebaseFirestore.instance,
     );
+    FirebaseCrashlytics.instance.log('AppInit: SubscriptionRepository done');
 
     purchaseCubit = PurchaseCubit(subscriptionRepository, enabled: remoteConfigService.isPurchaseEnabled);
     final subscriptionCubit = SubscriptionCubit( purchaseCubit: purchaseCubit, repository: subscriptionRepository,
@@ -245,7 +238,7 @@ class AppInitializer {
 
     registrationCubit = RegistrationCubit(storage: storage, auth: FirebaseAuth.instance);
 
-    await referralCubit.init();
+    unawaited(referralCubit.init());
 
     final reminderRepository = ReminderRepository(
       localDataSource: ReminderLocalDataSourceImpl(sharedPrefsManager),
@@ -253,6 +246,8 @@ class AppInitializer {
     );
     final pushHelper = PushHelper(flutterLocalNotificationsPlugin);
     reminderCubit = ReminderCubit(repository: reminderRepository, pushHelper: pushHelper, carNumber: '', ownerId: '');
+
+    await _maybeShowFinesCheckReminder(prefs, PushHelper(flutterLocalNotificationsPlugin));
 
     return AppInitResult(
       config: config,
@@ -286,13 +281,53 @@ class AppInitializer {
       currencyService: currencyService,
     );
   }
+
+  Future<void> _maybeShowFinesCheckReminder(SharedPreferences prefs, PushHelper pushHelper) async {
+    const key = 'last_fines_reminder_ms';
+    final lastMs = prefs.getInt(key) ?? 0;
+    final now = DateTime.now().millisecondsSinceEpoch;
+    const weekMs = 7 * 24 * 60 * 60 * 1000;
+
+    if (now - lastMs >= weekMs) {
+      // S.current недоступний до ініціалізації віджет-дерева — використовуємо фіксований рядок
+      await pushHelper.showNow(
+        id: 9000,
+        title: 'Нагадування про штрафи',
+        body: 'Перевірте наявність нових штрафів ПДД',
+      );
+      await prefs.setInt(key, now);
+      debugPrint('Weekly fines reminder shown');
+    }
+  }
+
+  Future<void> _initFirebaseMessagingToken(SharedPreferences prefs) async {
+    try {
+      await FirebaseMessaging.instance.requestPermission(alert: true, badge: true, sound: true);
+
+      if (Platform.isIOS) {
+        final apnsToken = await FirebaseMessaging.instance.getAPNSToken();
+        if (apnsToken == null) {
+          debugPrint('APNS token is not available yet, skipping FCM token init for now');
+          return;
+        }
+      }
+
+      final token = await FirebaseMessaging.instance.getToken();
+      if (token != null) {
+        await prefs.setString('fcm_token', token);
+        debugPrint('FCM Registration Token: $token');
+      }
+    } catch (e, st) {
+      debugPrint('Failed to get FCM token: $e\n$st');
+    }
+  }
 }
 
 extension ReminderScheduling on AppInitializer {
   Future<void> scheduleReminder(ReminderModel reminder) async {
     final prefs = await SharedPreferences.getInstance();
-    final remindersEnabled = prefs.getBool("reminders") ?? true;
-    final pushEnabled = prefs.getBool("pushNotifications") ?? true;
+    final remindersEnabled = prefs.getBoolSafe("reminders", defaultValue: true);
+    final pushEnabled = prefs.getBoolSafe("pushNotifications", defaultValue: true);
 
     if (!(remindersEnabled && pushEnabled)) {
       debugPrint("Notifications disabled in settings, skip scheduling");

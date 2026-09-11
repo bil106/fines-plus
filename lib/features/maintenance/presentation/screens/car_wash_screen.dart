@@ -16,7 +16,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:location/location.dart';
 
 @RoutePage()
 class CarWashScreen extends StatefulWidget {
@@ -28,11 +27,13 @@ class CarWashScreen extends StatefulWidget {
 }
 
 class _CarWashScreenState extends State<CarWashScreen> {
+  static const LatLng _fallbackPosition = LatLng(50.4501, 30.5234);
   final TextEditingController mileageController = TextEditingController();
   final TextEditingController costController = TextEditingController();
 
   DateTime? selectedDate;
   Map<String, dynamic>? _bestCarWash;
+  bool _isLoadingBestCarWash = true;
 
   @override
   void initState() {
@@ -41,36 +42,39 @@ class _CarWashScreenState extends State<CarWashScreen> {
   }
 
   Future<void> _initLocationAndCarWash() async {
-    Location location = Location();
-
-    bool serviceEnabled = await location.serviceEnabled();
-    if (!serviceEnabled) {
-      serviceEnabled = await location.requestService();
-      if (!serviceEnabled) return;
-    }
-
-    PermissionStatus permissionGranted = await location.hasPermission();
-    if (permissionGranted == PermissionStatus.denied) {
-      permissionGranted = await location.requestPermission();
-      if (permissionGranted != PermissionStatus.granted) return;
-    }
-
     try {
-      final locationData = await location.getLocation();
-      final current = LatLng(locationData.latitude!, locationData.longitude!);
+      final serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      var permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+      }
 
-      if (!mounted) return;
+      if (!serviceEnabled ||
+          permission == LocationPermission.denied ||
+          permission == LocationPermission.deniedForever) {
+        if (kDebugMode) print('CarWashScreen: geolocation unavailable, using fallback position');
+        await _loadBestCarWashFrom(_fallbackPosition);
+        return;
+      }
 
-      final bestCarWash = await fetchBestNearbyCarWash(current, Env.mapApiKey);
-
-      if (!mounted) return;
-
-      setState(() => _bestCarWash = bestCarWash);
+      final position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high)
+          .timeout(const Duration(seconds: 5));
+      await _loadBestCarWashFrom(LatLng(position.latitude, position.longitude));
     } catch (e) {
       if (kDebugMode) {
         print("Error getting car wash: $e");
       }
+      await _loadBestCarWashFrom(_fallbackPosition);
     }
+  }
+
+  Future<void> _loadBestCarWashFrom(LatLng current) async {
+    final bestCarWash = await fetchBestNearbyCarWash(current, Env.mapApiKey);
+    if (!mounted) return;
+    setState(() {
+      _bestCarWash = bestCarWash;
+      _isLoadingBestCarWash = false;
+    });
   }
 
   @override
@@ -102,10 +106,11 @@ class _CarWashScreenState extends State<CarWashScreen> {
 
               Row(
                 children: [
-                  _bestCarWash == null
+                  _isLoadingBestCarWash
                       ? AppLoaders.medium
                       : GestureDetector(
                           onTap: () {
+                            if (_bestCarWash == null) return;
                             context.router.push(
                               CarWashMapRoute(
                                 focusPosition: LatLng(_bestCarWash!['lat'], _bestCarWash!['lng']),
@@ -121,7 +126,7 @@ class _CarWashScreenState extends State<CarWashScreen> {
                               SizedBox(
                                 width: 180,
                                 child: Text(
-                                  _bestCarWash!['name'] ?? S.of(context).car_wash,
+                                  _bestCarWash?['name'] ?? S.of(context).car_wash,
                                   style: Theme.of(context).textTheme.bodyMedium,
                                   overflow: TextOverflow.ellipsis,
                                 ),
@@ -133,7 +138,16 @@ class _CarWashScreenState extends State<CarWashScreen> {
                   IconButton(
                     icon: Image.asset('assets/icons/map.png', width: 40, height: 40),
                     onPressed: () {
-                      Navigator.of(context).push(MaterialPageRoute(builder: (_) => const CarWashMapScreen()));
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => _bestCarWash == null
+                              ? const CarWashMapScreen()
+                              : CarWashMapScreen(
+                                  focusPosition: LatLng(_bestCarWash!['lat'], _bestCarWash!['lng']),
+                                  focusName: _bestCarWash!['name'],
+                                ),
+                        ),
+                      );
                     },
                   ),
                 ],

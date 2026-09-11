@@ -5,12 +5,19 @@ import 'package:core_data/core_data.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_borders.dart';
+import 'package:fines_plus/app/router/app_router.dart';
+import 'package:fines_plus/app/router/home_screen_wrapper.dart';
+import 'package:fines_plus/core/extensions/safe_prefs.dart';
+import 'package:fines_plus/features/registration/presentation/cubit/registration_cubit.dart';
+import 'package:fines_plus/features/registration/presentation/cubit/registration_state.dart';
 import 'package:fines_plus/features/schedule/presentation/cubit/schedule_cubit.dart';
 import 'package:fines_plus/features/settings/presentation/cubit/settings_cubit.dart';
 import 'package:fines_plus/features/settings/presentation/cubit/settings_state.dart';
 import 'package:fines_plus/features/subscription/presentation/cubit/purchase/purchase_cubit.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 @RoutePage()
@@ -47,9 +54,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final prefs = await SharedPreferences.getInstance();
     if (!mounted) return;
     setState(() {
-      finesCheck = prefs.getBool("finesCheck") ?? true;
-      reminders = prefs.getBool("reminders") ?? widget.remoteConfigService.isRemindersEnabled;
-      pushNotifications = prefs.getBool("pushNotifications") ?? true;
+      finesCheck = prefs.getBoolSafe("finesCheck", defaultValue: true);
+      reminders = prefs.getBoolSafe("reminders", defaultValue: widget.remoteConfigService.isRemindersEnabled);
+      pushNotifications = prefs.getBoolSafe("pushNotifications", defaultValue: true);
     });
   }
 
@@ -63,6 +70,63 @@ if (!mounted) return;
       if (key == "reminders") reminders = value;
       if (key == "pushNotifications") pushNotifications = value;
     });
+  }
+
+  void _changeCarInfo(BuildContext context) {
+    context.findAncestorStateOfType<HomeScreenWrapperState>()?.openPage(HomePage.carInfo);
+  }
+
+  Future<void> _confirmDeleteAccount(BuildContext context) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(S.of(context).delete_account),
+        content: Text(S.of(context).delete_account_confirmation),
+        actions: [
+          TextButton(onPressed: () => Navigator.of(ctx).pop(false), child: Text(S.of(context).cancel)),
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: Text(S.of(context).delete_account, style: const TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !context.mounted) return;
+
+    final registrationCubit = context.read<RegistrationCubit>();
+    await registrationCubit.deleteAccount();
+
+    if (!context.mounted) return;
+    final state = registrationCubit.state;
+    if (state.isDeleted) {
+      try { await GoogleSignIn.instance.signOut(); } catch (_) {}
+      context.router.root.replaceAll([RegistrationRoute()]);
+    } else if (state.error != null) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.error!)));
+    }
+  }
+
+  Future<void> _confirmLogout(BuildContext context) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(S.of(context).log_out),
+        content: Text(S.of(context).log_out_confirmation),
+        actions: [
+          TextButton(onPressed: () => Navigator.of(ctx).pop(false), child: Text(S.of(context).cancel)),
+          TextButton(onPressed: () => Navigator.of(ctx).pop(true), child: Text(S.of(context).log_out)),
+        ],
+      ),
+    );
+    if (confirmed != true) return;
+
+    try {
+      await GoogleSignIn.instance.signOut();
+    } catch (_) {}
+    await FirebaseAuth.instance.signOut();
+
+    if (!context.mounted) return;
+    context.router.root.replaceAll([RegistrationRoute()]);
   }
 
   @override
@@ -180,8 +244,77 @@ if (!mounted) return;
                   );
                 },
               ),
+
+              const SizedBox(height: 30),
+
+              Card(
+                color: AppColors.neutreBlanc,
+                shape: RoundedRectangleBorder(borderRadius: AppBorders.radius22),
+                elevation: 3,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                  child: Column(
+                    children: [
+                      _buildActionRow(
+                        icon: Icons.directions_car_outlined,
+                        title: S.of(context).change_car_info,
+                        onTap: () => _changeCarInfo(context),
+                      ),
+                      Divider(thickness: 2, color: AppColors.energyBlue50),
+                      _buildActionRow(
+                        icon: Icons.logout,
+                        title: S.of(context).log_out,
+                        color: AppColors.purpleRed,
+                        onTap: () => _confirmLogout(context),
+                      ),
+                      Divider(thickness: 2, color: AppColors.energyBlue50),
+                      BlocConsumer<RegistrationCubit, RegistrationState>(
+                        listenWhen: (prev, curr) => curr.isLoading != prev.isLoading,
+                        listener: (_, __) {},
+                        builder: (context, regState) {
+                          if (regState.isLoading) {
+                            return const Padding(
+                              padding: EdgeInsets.symmetric(vertical: 10),
+                              child: Center(child: CircularProgressIndicator()),
+                            );
+                          }
+                          return _buildActionRow(
+                            icon: Icons.delete_forever,
+                            title: S.of(context).delete_account,
+                            color: Colors.red.shade800,
+                            onTap: () => _confirmDeleteAccount(context),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildActionRow({
+    required IconData icon,
+    required String title,
+    required VoidCallback onTap,
+    Color? color,
+  }) {
+    final textTheme = Theme.of(context).textTheme;
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 10),
+        child: Row(
+          children: [
+            Icon(icon, color: color ?? AppColors.energyBlue),
+            const SizedBox(width: 12),
+            Expanded(child: Text(title, style: textTheme.titleLarge?.copyWith(color: color))),
+            Icon(Icons.chevron_right, color: AppColors.grey700),
+          ],
         ),
       ),
     );

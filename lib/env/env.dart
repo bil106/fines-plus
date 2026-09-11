@@ -20,4 +20,7 @@ class Env {
     final ids = dotenv.env['TEST_DEVICE_IDS'] ?? '';
     return ids.split(',').map((e) => e.trim()).where((e) => e.isNotEmpty).toList();
   }
+
+  static bool get iosBypassSubscription =>
+      dotenv.env['IOS_BYPASS_SUBSCRIPTION']?.toLowerCase() == 'true';
 }

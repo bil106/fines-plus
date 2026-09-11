@@ -4003,6 +4003,166 @@ class S {
       args: [],
     );
   }
+
+  /// `7-day free trial`
+  String get free_trial_7_days {
+    return Intl.message(
+      '7-day free trial',
+      name: 'free_trial_7_days',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Quarterly Plan`
+  String get quarterly_plan {
+    return Intl.message(
+      'Quarterly Plan',
+      name: 'quarterly_plan',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Yearly Plan`
+  String get yearly_plan {
+    return Intl.message('Yearly Plan', name: 'yearly_plan', desc: '', args: []);
+  }
+
+  /// `3 months`
+  String get period_3_months {
+    return Intl.message(
+      '3 months',
+      name: 'period_3_months',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `year`
+  String get period_year {
+    return Intl.message('year', name: 'period_year', desc: '', args: []);
+  }
+
+  /// `/ day`
+  String get per_day_suffix {
+    return Intl.message('/ day', name: 'per_day_suffix', desc: '', args: []);
+  }
+
+  /// `7-day free trial, then {price} per {period}. Cancel anytime, at least 24 hours before the trial ends, in Google Play Settings. Subscription renews automatically unless cancelled.`
+  String trial_disclosure_detailed(String price, String period) {
+    return Intl.message(
+      '7-day free trial, then $price per $period. Cancel anytime, at least 24 hours before the trial ends, in Google Play Settings. Subscription renews automatically unless cancelled.',
+      name: 'trial_disclosure_detailed',
+      desc: '',
+      args: [price, period],
+    );
+  }
+
+  /// `Log out`
+  String get log_out {
+    return Intl.message('Log out', name: 'log_out', desc: '', args: []);
+  }
+
+  /// `Are you sure you want to log out?`
+  String get log_out_confirmation {
+    return Intl.message(
+      'Are you sure you want to log out?',
+      name: 'log_out_confirmation',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Change vehicle info`
+  String get change_car_info {
+    return Intl.message(
+      'Change vehicle info',
+      name: 'change_car_info',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Paid`
+  String get paid {
+    return Intl.message('Paid', name: 'paid', desc: '', args: []);
+  }
+
+  /// `Amount`
+  String get amount {
+    return Intl.message('Amount', name: 'amount', desc: '', args: []);
+  }
+
+  /// `Delete account`
+  String get delete_account {
+    return Intl.message(
+      'Delete account',
+      name: 'delete_account',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Are you sure? All data will be permanently deleted.`
+  String get delete_account_confirmation {
+    return Intl.message(
+      'Are you sure? All data will be permanently deleted.',
+      name: 'delete_account_confirmation',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Account deleted`
+  String get delete_account_success {
+    return Intl.message(
+      'Account deleted',
+      name: 'delete_account_success',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Fines reminder`
+  String get check_fines_reminder_title {
+    return Intl.message(
+      'Fines reminder',
+      name: 'check_fines_reminder_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Check for new traffic fines`
+  String get check_fines_reminder_body {
+    return Intl.message(
+      'Check for new traffic fines',
+      name: 'check_fines_reminder_body',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Maintenance due`
+  String get maintenance_due_title {
+    return Intl.message(
+      'Maintenance due',
+      name: 'maintenance_due_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Time for: {task}`
+  String maintenance_due_body(String task) {
+    return Intl.message(
+      'Time for: $task',
+      name: 'maintenance_due_body',
+      desc: '',
+      args: [task],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

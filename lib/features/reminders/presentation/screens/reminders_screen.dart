@@ -61,7 +61,10 @@ class _RemindersView extends StatelessWidget {
       backgroundColor: AppColors.energyBlue50,
       appBar: AppBar(
         backgroundColor: AppColors.energyBlue50,
-        leading: BackButton(color: AppColors.blue700, onPressed: onBack ?? () => Navigator.pop(context)),
+        leading: BackButton(
+          color: AppColors.blue700,
+          onPressed: onBack ?? () => Navigator.pop(context),
+        ),
       ),
       body: SafeArea(
         child: BlocBuilder<ReminderCubit, ReminderState>(
@@ -79,11 +82,12 @@ class _RemindersView extends StatelessWidget {
             return ListView.separated(
               padding: const EdgeInsets.symmetric(horizontal: 1, vertical: 40),
               itemCount: state.reminders.length + 1,
-              separatorBuilder: (_, __) => const Divider(color: AppColors.neutreGrey),
+              separatorBuilder: (_, __) =>
+                  const Divider(color: AppColors.neutreGrey),
               itemBuilder: (context, index) {
                 if (index == 0) {
                   return Padding(
-                    padding: const EdgeInsets.only(bottom: 10,left: 20),
+                    padding: const EdgeInsets.only(bottom: 10, left: 20),
                     child: Text(S.of(context).reminder, style: textTheme.title),
                   );
                 }
@@ -94,13 +98,17 @@ class _RemindersView extends StatelessWidget {
                   leading: Checkbox(
                     value: reminder.isCompleted,
                     onChanged: (value) {
-                      cubit.updateReminder(reminder.copyWith(isCompleted: value ?? false));
+                      cubit.updateReminder(
+                        reminder.copyWith(isCompleted: value ?? false),
+                      );
                     },
                   ),
                   title: Text(
                     reminder.title,
                     style: TextStyle(
-                      decoration: reminder.isCompleted ? TextDecoration.lineThrough : TextDecoration.none,
+                      decoration: reminder.isCompleted
+                          ? TextDecoration.lineThrough
+                          : TextDecoration.none,
                       fontWeight: FontWeight.w500,
                       fontSize: 24,
                     ),
@@ -117,7 +125,11 @@ class _RemindersView extends StatelessWidget {
                     showDialog(
                       context: context,
                       barrierColor: AppColors.transparent,
-                      builder: (_) => ReminderDialog(cubit: cubit, reminder: reminder, onSaved: () => cubit.load()),
+                      builder: (_) => ReminderDialog(
+                        cubit: cubit,
+                        reminder: reminder,
+                        onSaved: () => cubit.load(),
+                      ),
                     );
                   },
                 );
@@ -132,7 +144,8 @@ class _RemindersView extends StatelessWidget {
           showDialog(
             context: context,
             barrierColor: AppColors.transparent,
-            builder: (_) => ReminderDialog(cubit: cubit, onSaved: () => cubit.load()),
+            builder: (_) =>
+                ReminderDialog(cubit: cubit, onSaved: () => cubit.load()),
           );
         },
         child: const Icon(Icons.add),
@@ -153,19 +166,33 @@ class _EmptyReminders extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           AppSpacers.verticalXLarge,
-          Text(S.of(context).reminder, style: textTheme.title),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Text(S.of(context).reminder, style: textTheme.title),
+          ),
           AppSpacers.verticalGigantic,
           Center(
             child: Container(
               width: 150,
               height: 150,
-              decoration: BoxDecoration(shape: BoxShape.circle, color: AppColors.blueGrey25),
-              child: const Icon(Icons.check, color: AppColors.neutreBlanc, size: 120),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: AppColors.blueGrey25,
+              ),
+              child: const Icon(
+                Icons.check,
+                color: AppColors.neutreBlanc,
+                size: 120,
+              ),
             ),
           ),
           AppSpacers.verticalLarge,
           Center(
-            child: Text(S.of(context).no_reminders, style: textTheme.noFinesText, textAlign: TextAlign.center),
+            child: Text(
+              S.of(context).no_reminders,
+              style: textTheme.noFinesText,
+              textAlign: TextAlign.center,
+            ),
           ),
         ],
       ),

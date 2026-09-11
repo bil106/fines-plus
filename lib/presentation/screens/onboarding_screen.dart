@@ -1,7 +1,11 @@
+import 'dart:io';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/theme/app_theme.dart';
+import 'package:fines_plus/app/router/app_router.dart';
+import 'package:fines_plus/app/router/home_screen_wrapper.dart';
 import 'package:fines_plus/features/subscription/presentation/screens/subscription_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -17,6 +21,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   final pageController = PageController();
   int currentPage = 0;
 
+  // Subscription page is only shown on Android
+  bool get _showSubscription => Platform.isAndroid;
+  int get _pageCount => _showSubscription ? 5 : 4;
+
   Widget _buildPage({
     required int pageIndex,
     required String title,
@@ -27,6 +35,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     final size = MediaQuery.of(context).size;
 
     final bool isShort = size.height < 600;
+    final bool isLastInfoPage = pageIndex == 3;
 
     return SafeArea(
       child: SingleChildScrollView(
@@ -56,8 +65,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
                   ),
                   onPressed: () {
-                    if (pageIndex < 4) {
-                      pageController.nextPage(duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+                    if (isLastInfoPage && !_showSubscription) {
+                      // iOS: last page goes straight to the app
+                      context.router.replaceAll([HomeRouteWrapper(initialPage: HomePage.home)]);
+                    } else if (pageIndex < _pageCount - 1) {
+                      pageController.nextPage(
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeInOut,
+                      );
                     }
                   },
                   child: Text(
@@ -88,7 +103,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   Widget _buildDots() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
-      children: List.generate(5, (index) {
+      children: List.generate(_pageCount, (index) {
         final bool isActive = index == currentPage;
         return AnimatedContainer(
           duration: const Duration(milliseconds: 250),
@@ -139,7 +154,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 subtitle: S.current.track_costs,
                 imagePath: "assets/images/analytics_bg.png",
               ),
-              _buildSubscriptionPage(),
+              if (_showSubscription) _buildSubscriptionPage(),
             ],
           ),
           if (!isLandscape) Positioned(bottom: 40, left: 0, right: 0, child: _buildDots()),

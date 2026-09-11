@@ -2,7 +2,6 @@
     xmlns:tools="http://schemas.android.com/tools">
     
    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
-   <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
    <uses-permission android:name="android.permission.INTERNET"/>
@@ -16,7 +15,8 @@
         android:label="fines_plus"
         android:icon="@mipmap/ic_launcher"
         android:usesCleartextTraffic="true"
-        tools:replace="android:label">
+        android:extractNativeLibs="false"
+        tools:replace="android:label,android:extractNativeLibs">
       <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

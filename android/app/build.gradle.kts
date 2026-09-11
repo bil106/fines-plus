@@ -11,7 +11,7 @@ plugins {
 
 
 val keystoreProperties = Properties()
-val keystorePropertiesFile = rootProject.file("key.properties")
+val keystorePropertiesFile = rootProject.file("../key.properties")
 if (keystorePropertiesFile.exists()) {
     keystoreProperties.load(FileInputStream(keystorePropertiesFile))
 }
@@ -19,7 +19,7 @@ if (keystorePropertiesFile.exists()) {
 android {
     namespace = "com.finesplus"
     compileSdk = 36
-    ndkVersion = "27.0.12077973"
+    ndkVersion = "28.2.13676358"
 
     defaultConfig {
         applicationId = "com.finesplus"
@@ -35,13 +35,13 @@ android {
     }
  
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
         isCoreLibraryDesugaringEnabled = true
     }
 
     kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = "17"
     }
     lint {
     checkReleaseBuilds = false
@@ -55,14 +55,21 @@ keystoreProperties.forEach { key, value ->
 
 signingConfigs {
     create("release") {
-        keyAlias = "upload"
-        keyPassword = "Test123"
-        storeFile = file("C:/Users/Igor/keys/my-release-key.jks")
-        storePassword = "Test123"
+        keyAlias = keystoreProperties.getProperty("keyAlias")
+        keyPassword = keystoreProperties.getProperty("keyPassword")
+        storeFile = rootProject.file("../" + keystoreProperties.getProperty("storeFile"))
+        storePassword = keystoreProperties.getProperty("storePassword")
     }
 }
 
 buildTypes {
+    getByName("debug") {
+        // Sign debug builds with the same upload key as release so its
+        // certificate fingerprint matches what's registered as an OAuth
+        // client in Firebase/Google Cloud — otherwise Google Sign-In hangs
+        // after account selection because the calling app is unrecognized.
+        signingConfig = signingConfigs.getByName("release")
+    }
     getByName("release") {
         signingConfig = signingConfigs.getByName("release")
         isMinifyEnabled = false
@@ -91,9 +98,10 @@ dependencies {
     implementation("com.google.firebase:firebase-dynamic-links:21.1.0")
     implementation("com.google.firebase:firebase-crashlytics-ndk")
     implementation("com.google.firebase:firebase-analytics")
-    implementation("com.android.billingclient:billing:6.2.1")
+    // billing client управляется плагином in_app_purchase_android
 
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
+    implementation("androidx.activity:activity-ktx:1.10.1")
 }
 
 flutter {

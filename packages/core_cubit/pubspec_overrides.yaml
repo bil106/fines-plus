@@ -1,8 +1,8 @@
 # melos_managed_dependency_overrides: core_localization,core_utils,fines_plus
 dependency_overrides:
   core_localization:
-    path: ..\\core_localization
+    path: ../core_localization
   core_utils:
-    path: ..\\core_utils
+    path: ../core_utils
   fines_plus:
-    path: ..\\..
+    path: ../..

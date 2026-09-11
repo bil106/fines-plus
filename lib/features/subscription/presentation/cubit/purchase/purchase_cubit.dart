@@ -45,6 +45,10 @@ Future<void> buy(SubscriptionPlan plan) async {
 
     if (event.type == PurchaseEventType.success) {
       emit(PurchaseSuccess());
+    } else if (event.message == 'canceled' || event.message == 'pending') {
+      // User dismissed dialog or payment is pending — silently return to Idle
+      // so the buy button becomes available again without showing an error.
+      emit(PurchaseIdle());
     } else {
       emit(PurchaseError(event.message ?? 'Unknown error'));
     }

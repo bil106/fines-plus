@@ -1,4 +1,5 @@
 import 'package:core_repository/user_not_signed_in_exception.dart';
+import 'package:fines_plus/core/extensions/safe_prefs.dart';
 import 'package:fines_plus/features/history/presentation/cubit/history_cubit.dart';
 import 'package:fines_plus/features/vehicle/data/datasources/car_info_local_data_source.dart';
 import 'package:fines_plus/features/vehicle/data/repository/car_info_repository.dart';
@@ -50,7 +51,7 @@ class CarCubit extends Cubit<CarState> {
 
   Future<void> checkFines(String captchaToken) async {
     final prefs = await SharedPreferences.getInstance();
-    final finesEnabled = prefs.getBool("finesCheck") ?? true;
+    final finesEnabled = prefs.getBoolSafe("finesCheck", defaultValue: true);
 
     if (!finesEnabled) {
       debugPrint("Fine checking disabled");

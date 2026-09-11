@@ -467,6 +467,36 @@
 "purchase_not_available": "Purchase not available",
 "create_account": "A Google Play account is required to make a purchase. Please sign in or create an account and try again.",
 "open_google_play": "Open Google Play",
-"open_driver_page": "Go to DriverTop page"
+"open_driver_page": "Go to DriverTop page",
+"free_trial_7_days": "7-day free trial",
+"quarterly_plan": "Quarterly Plan",
+"yearly_plan": "Yearly Plan",
+"period_3_months": "3 months",
+"period_year": "year",
+"per_day_suffix": "/ day",
+"trial_disclosure_detailed": "7-day free trial, then {price} per {period}. Cancel anytime, at least 24 hours before the trial ends, in Google Play Settings. Subscription renews automatically unless cancelled.",
+"@trial_disclosure_detailed": {
+  "placeholders": {
+    "price": { "type": "String" },
+    "period": { "type": "String" }
+  }
+},
+"log_out": "Log out",
+"log_out_confirmation": "Are you sure you want to log out?",
+"change_car_info": "Change vehicle info",
+"paid": "Paid",
+"amount": "Amount",
+"delete_account": "Delete account",
+"delete_account_confirmation": "Are you sure? All data will be permanently deleted.",
+"delete_account_success": "Account deleted",
+"check_fines_reminder_title": "Fines reminder",
+"check_fines_reminder_body": "Check for new traffic fines",
+"maintenance_due_title": "Maintenance due",
+"maintenance_due_body": "Time for: {task}",
+"@maintenance_due_body": {
+  "placeholders": {
+    "task": { "type": "String" }
+  }
+}
 
 }

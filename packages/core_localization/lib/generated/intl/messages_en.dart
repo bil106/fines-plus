@@ -20,6 +20,11 @@ typedef String MessageIfAbsent(String messageStr, List<dynamic> args);
 class MessageLookup extends MessageLookupByLibrary {
   String get localeName => 'en';
 
+  static String m0(task) => "Time for: ${task}";
+
+  static String m1(price, period) =>
+      "7-day free trial, then ${price} per ${period}. Cancel anytime, at least 24 hours before the trial ends, in Google Play Settings. Subscription renews automatically unless cancelled.";
+
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
     "access_basic": MessageLookupByLibrary.simpleMessage(
@@ -45,6 +50,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Already have an account? Sign in",
     ),
     "already_planned": MessageLookupByLibrary.simpleMessage("already planned"),
+    "amount": MessageLookupByLibrary.simpleMessage("Amount"),
     "amount_month": MessageLookupByLibrary.simpleMessage("Amount per month"),
     "analitics": MessageLookupByLibrary.simpleMessage("Analytics"),
     "analytics": MessageLookupByLibrary.simpleMessage("Analytics"),
@@ -83,6 +89,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "category_removed": MessageLookupByLibrary.simpleMessage(
       "Category removed",
     ),
+    "change_car_info": MessageLookupByLibrary.simpleMessage(
+      "Change vehicle info",
+    ),
     "check_filter": MessageLookupByLibrary.simpleMessage(
       "The filter needs to be replaced",
     ),
@@ -90,6 +99,12 @@ class MessageLookup extends MessageLookupByLibrary {
       "Checking the fine",
     ),
     "check_fines": MessageLookupByLibrary.simpleMessage("Check fines"),
+    "check_fines_reminder_body": MessageLookupByLibrary.simpleMessage(
+      "Check for new traffic fines",
+    ),
+    "check_fines_reminder_title": MessageLookupByLibrary.simpleMessage(
+      "Fines reminder",
+    ),
     "check_tires": MessageLookupByLibrary.simpleMessage(
       "Time to check the tires",
     ),
@@ -132,6 +147,13 @@ class MessageLookup extends MessageLookupByLibrary {
       "Delete ALL expenses",
     ),
     "delete": MessageLookupByLibrary.simpleMessage("Delete"),
+    "delete_account": MessageLookupByLibrary.simpleMessage("Delete account"),
+    "delete_account_confirmation": MessageLookupByLibrary.simpleMessage(
+      "Are you sure? All data will be permanently deleted.",
+    ),
+    "delete_account_success": MessageLookupByLibrary.simpleMessage(
+      "Account deleted",
+    ),
     "delete_all_expenses": MessageLookupByLibrary.simpleMessage(
       "Delete all expenses?",
     ),
@@ -214,6 +236,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "free_experience": MessageLookupByLibrary.simpleMessage(
       "Ad-free experience",
     ),
+    "free_trial_7_days": MessageLookupByLibrary.simpleMessage(
+      "7-day free trial",
+    ),
     "fuel": MessageLookupByLibrary.simpleMessage("Fuel"),
     "fuel_ai92": MessageLookupByLibrary.simpleMessage("AI-92"),
     "fuel_ai95": MessageLookupByLibrary.simpleMessage("AI-95"),
@@ -287,11 +312,19 @@ class MessageLookup extends MessageLookupByLibrary {
       "Last service date",
     ),
     "loaded": MessageLookupByLibrary.simpleMessage("Loaded"),
+    "log_out": MessageLookupByLibrary.simpleMessage("Log out"),
+    "log_out_confirmation": MessageLookupByLibrary.simpleMessage(
+      "Are you sure you want to log out?",
+    ),
     "login": MessageLookupByLibrary.simpleMessage("Login"),
     "logo": MessageLookupByLibrary.simpleMessage("LOGO"),
     "maintenance": MessageLookupByLibrary.simpleMessage("Maintenance"),
     "maintenance_control": MessageLookupByLibrary.simpleMessage(
       "Maintenance control",
+    ),
+    "maintenance_due_body": m0,
+    "maintenance_due_title": MessageLookupByLibrary.simpleMessage(
+      "Maintenance due",
     ),
     "mileage": MessageLookupByLibrary.simpleMessage("Mileage"),
     "mileage_stat": MessageLookupByLibrary.simpleMessage("Mileage Statistics"),
@@ -381,6 +414,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Or sign in using",
     ),
     "other": MessageLookupByLibrary.simpleMessage("Other"),
+    "paid": MessageLookupByLibrary.simpleMessage("Paid"),
     "password": MessageLookupByLibrary.simpleMessage("Password"),
     "password_too_short": MessageLookupByLibrary.simpleMessage(
       "Minimum 6 characters",
@@ -388,8 +422,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "pay": MessageLookupByLibrary.simpleMessage("Pay"),
     "pay_safe": MessageLookupByLibrary.simpleMessage("Safe and secure payment"),
     "pdf": MessageLookupByLibrary.simpleMessage("PDF"),
+    "per_day_suffix": MessageLookupByLibrary.simpleMessage("/ day"),
     "per_month": MessageLookupByLibrary.simpleMessage("per month"),
     "period": MessageLookupByLibrary.simpleMessage("average/year"),
+    "period_3_months": MessageLookupByLibrary.simpleMessage("3 months"),
+    "period_year": MessageLookupByLibrary.simpleMessage("year"),
     "periodicity": MessageLookupByLibrary.simpleMessage("Periodicity:"),
     "phone": MessageLookupByLibrary.simpleMessage("Phone"),
     "photo_selected": MessageLookupByLibrary.simpleMessage("Photo selected"),
@@ -414,6 +451,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "push_notifications": MessageLookupByLibrary.simpleMessage(
       "Push notifications",
     ),
+    "quarterly_plan": MessageLookupByLibrary.simpleMessage("Quarterly Plan"),
     "reached_usage": MessageLookupByLibrary.simpleMessage("reached 90% usage"),
     "reg_number": MessageLookupByLibrary.simpleMessage(
       "Technical passport number",
@@ -999,6 +1037,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "track_costs": MessageLookupByLibrary.simpleMessage(
       "Track costs, mileage and efficiency",
     ),
+    "trial_disclosure_detailed": m1,
     "trial_expired": MessageLookupByLibrary.simpleMessage(
       "Trial period expired",
     ),
@@ -1025,6 +1064,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "view_all_events": MessageLookupByLibrary.simpleMessage("View all events"),
     "write_viber": MessageLookupByLibrary.simpleMessage("Write to Viber"),
+    "yearly_plan": MessageLookupByLibrary.simpleMessage("Yearly Plan"),
     "years": MessageLookupByLibrary.simpleMessage("Years"),
   };
 }

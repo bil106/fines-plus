@@ -74,4 +74,11 @@ Stream<List<FineHistory>> getHistory(String carNumber) {
       print('Record $docId removed');
     }
   }
+
+  Future<void> markFineAsPaid(String historyDocId, String fineId, bool isPaid) async {
+    final docRef = firestore.collection('fines_history').doc(historyDocId);
+    await docRef.update({
+      'paidFines': isPaid ? FieldValue.arrayUnion([fineId]) : FieldValue.arrayRemove([fineId]),
+    });
+  }
 }

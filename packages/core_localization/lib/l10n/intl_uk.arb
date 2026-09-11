@@ -468,7 +468,36 @@
    "purchase_not_available": "Купівля недоступна",
    "create_account": "Для здійснення покупки потрібний обліковий запис Google Play. Будь ласка, увійдіть або створіть обліковий запис і спробуйте знову.",
    "open_google_play": "Відкрити Google Play",
-   "open_driver_page": "Перехід на сторінку DriverTop"
-   
+   "open_driver_page": "Перехід на сторінку DriverTop",
+   "free_trial_7_days": "7 днів безкоштовно",
+   "quarterly_plan": "Квартальний план",
+   "yearly_plan": "Річний план",
+   "period_3_months": "3 місяці",
+   "period_year": "рік",
+   "per_day_suffix": "/ день",
+   "trial_disclosure_detailed": "7 днів безкоштовно, потім {price} за {period}. Скасувати можна в будь-який момент, не менш ніж за 24 години до закінчення пробного періоду, в налаштуваннях Google Play. Підписка автоматично поновлюється, якщо її не скасовано.",
+   "@trial_disclosure_detailed": {
+     "placeholders": {
+       "price": { "type": "String" },
+       "period": { "type": "String" }
+     }
+   },
+   "log_out": "Вийти з акаунту",
+   "log_out_confirmation": "Ви впевнені, що хочете вийти з акаунту?",
+   "change_car_info": "Змінити дані авто",
+   "paid": "Оплачено",
+   "amount": "Сума",
+   "delete_account": "Видалити акаунт",
+   "delete_account_confirmation": "Ви впевнені? Всі дані будуть видалені безповоротно.",
+   "delete_account_success": "Акаунт видалено",
+   "check_fines_reminder_title": "Нагадування про штрафи",
+   "check_fines_reminder_body": "Перевірте наявність нових штрафів ПДД",
+   "maintenance_due_title": "Потрібне обслуговування",
+   "maintenance_due_body": "Час для: {task}",
+   "@maintenance_due_body": {
+     "placeholders": {
+       "task": { "type": "String" }
+     }
+   }
 
 }

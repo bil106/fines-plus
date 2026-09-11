@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:core_repository/user_not_signed_in_exception.dart';
+import 'package:fines_plus/core/extensions/safe_prefs.dart';
 import 'package:fines_plus/core/services/carplates_service.dart';
 import 'package:fines_plus/features/analytics/presentation/cubit/analytics_cubit.dart';
 import 'package:fines_plus/features/expenses/presentation/cubit/expenses_cubit.dart';
@@ -17,6 +18,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'car_info_state.dart';
 import 'dart:async';
+import 'dart:io';
 
 class CarInfoCubit extends Cubit<CarInfoState> {
   final CarInfoRepository _repo;
@@ -38,7 +40,7 @@ class CarInfoCubit extends Cubit<CarInfoState> {
     }
   }
 
-Future<void> _saveCarToFirestore(CarInfoModel m) async {
+  Future<void> _saveCarToFirestore(CarInfoModel m) async {
     if (m.carNumber.isEmpty || !carReg.hasMatch(m.carNumber)) return;
 
     final user = FirebaseAuth.instance.currentUser;
@@ -47,7 +49,7 @@ Future<void> _saveCarToFirestore(CarInfoModel m) async {
     try {
       final ref = FirebaseFirestore.instance.collection("users").doc(user.uid).collection("cars").doc(m.carNumber);
 
-      final token = await FirebaseMessaging.instance.getToken();
+      final token = await _getFcmTokenSafely();
 
       final data = <String, dynamic>{"techPassport": m.techPassport, "updatedAt": FieldValue.serverTimestamp()};
 
@@ -59,6 +61,25 @@ Future<void> _saveCarToFirestore(CarInfoModel m) async {
       debugPrint('Firestore error: ${e.code}');
     } catch (e) {
       debugPrint('Unexpected error: $e');
+    }
+  }
+
+  Future<String?> _getFcmTokenSafely() async {
+    try {
+      await FirebaseMessaging.instance.requestPermission(alert: true, badge: true, sound: true);
+
+      if (Platform.isIOS) {
+        final apnsToken = await FirebaseMessaging.instance.getAPNSToken();
+        if (apnsToken == null) {
+          debugPrint('CarInfoCubit: APNS token is not ready yet, skip FCM token');
+          return null;
+        }
+      }
+
+      return await FirebaseMessaging.instance.getToken();
+    } catch (e) {
+      debugPrint('CarInfoCubit: failed to get FCM token: $e');
+      return null;
     }
   }
 
@@ -135,7 +156,7 @@ Future<void> _saveCarToFirestore(CarInfoModel m) async {
 
   Future<void> checkFinesWithCaptcha(String captchaToken) async {
     final prefs = await SharedPreferences.getInstance();
-    final finesEnabled = prefs.getBool("finesCheck") ?? true;
+    final finesEnabled = prefs.getBoolSafe("finesCheck", defaultValue: true);
 
     if (!finesEnabled) {
       emit(state.copyWith(status: CarInfoErrorStatus(S.current.fine_checking_disabled)));

@@ -38,8 +38,33 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:fines_plus/core/services/app_initializer.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:io' show Platform;
 
 late final AppInitializer appInitializer;
+
+FirebaseOptions? _firebaseOptionsForCurrentPlatform() {
+  if (!Platform.isIOS) return null;
+
+  return const FirebaseOptions(
+    apiKey: 'AIzaSyCLEFL1aB9wi6a1dAhgeUIfVlxoCPPBxrw',
+    appId: '1:201100655892:ios:08338a73e5b31708509601',
+    messagingSenderId: '201100655892',
+    projectId: 'finesplus',
+    storageBucket: 'finesplus.firebasestorage.app',
+    iosBundleId: 'com.igorbeloded.finesplus',
+    iosClientId: '201100655892-2ansipskidg5tdeti65m0oovp2c65l8q.apps.googleusercontent.com',
+    androidClientId: '201100655892-250mb0hhicdo25lkmfhdjurka4hv1tqi.apps.googleusercontent.com',
+  );
+}
+
+void _reportStartupError(Object error, StackTrace stack) {
+  debugPrint('STARTUP ERROR: $error');
+  debugPrintStack(stackTrace: stack);
+
+  if (Firebase.apps.isNotEmpty) {
+    FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+  }
+}
 
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -51,7 +76,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
       debugPrint("BG Message: ${message.messageId}");
     }
   } catch (e, s) {
-    FirebaseCrashlytics.instance.recordError(e, s, fatal: true);
+    _reportStartupError(e, s);
   }
 }
 
@@ -63,30 +88,60 @@ void main() {
 
       await dotenv.load(fileName: 'assets/config/.env');
 
-      await Firebase.initializeApp();
+      final firebaseOptions = _firebaseOptionsForCurrentPlatform();
+      if (firebaseOptions == null) {
+        await Firebase.initializeApp();
+      } else {
+        await Firebase.initializeApp(options: firebaseOptions);
+      }
+      FirebaseFirestore.instance.settings = const Settings(persistenceEnabled: true, cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED);
+      if (Firebase.apps.isNotEmpty) {
+        FirebaseCrashlytics.instance.log('INIT: Firebase initialized');
+      }
 
       FlutterError.onError = (FlutterErrorDetails details) {
         FlutterError.presentError(details);
-        FirebaseCrashlytics.instance.recordFlutterFatalError(details);
+        if (Firebase.apps.isNotEmpty) {
+          FirebaseCrashlytics.instance.recordFlutterFatalError(details);
+        }
       };
 
       PlatformDispatcher.instance.onError = (error, stack) {
-        FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+        _reportStartupError(error, stack);
         return true;
       };
+
+      if (Firebase.apps.isNotEmpty) {
+        FirebaseCrashlytics.instance.log('INIT: Starting MobileAds');
+      }
       RequestConfiguration configuration = RequestConfiguration(testDeviceIds: Env.testDeviceIdList);
       MobileAds.instance.updateRequestConfiguration(configuration);
       await MobileAds.instance.initialize();
+      if (Firebase.apps.isNotEmpty) {
+        FirebaseCrashlytics.instance.log('INIT: MobileAds done');
+      }
 
+      if (Firebase.apps.isNotEmpty) {
+        FirebaseCrashlytics.instance.log('INIT: Starting AppInitializer');
+      }
       appInitializer = AppInitializer();
       final result = await appInitializer.init();
+      if (Firebase.apps.isNotEmpty) {
+        FirebaseCrashlytics.instance.log('INIT: AppInitializer done');
+      }
+
       await SettingsService.instance.init();
-      await result.currencyService.init();
+      if (Firebase.apps.isNotEmpty) {
+        FirebaseCrashlytics.instance.log('INIT: SettingsService done');
+      }
 
       final firestore = FirebaseFirestore.instance;
       final repository = SharedPrefsMaintenanceRepository(await SharedPreferences.getInstance());
       final firebaseRepository = ScheduleFirebaseRepository(firestore);
       setupLocator();
+      if (Firebase.apps.isNotEmpty) {
+        FirebaseCrashlytics.instance.log('INIT: Starting runApp');
+      }
 
       runApp(
         MultiRepositoryProvider(
@@ -129,7 +184,7 @@ void main() {
                   firebaseRepo: firebaseRepository,
                   carNumber: '',
                   carCubit: context.read<CarCubit>(),
-                )..loadTasks(),
+                ),
               ),
               BlocProvider(create: (_) => ExpensesCubit(repository: ExpenseRepository(firestore))),
             ],
@@ -142,7 +197,7 @@ void main() {
       );
     },
     (error, stack) {
-      FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+      _reportStartupError(error, stack);
     },
   );
 }

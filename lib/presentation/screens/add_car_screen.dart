@@ -9,6 +9,7 @@ import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:fines_plus/features/vehicle/presentation/cubit/car_cubit.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -50,9 +51,9 @@ class _AddCarScreenState extends State<AddCarScreen> {
           child: StreamBuilder<DocumentSnapshot>(
             stream: user != null ? _firestore.collection('users').doc(user.uid).snapshots() : const Stream.empty(),
             builder: (context, snapshot) {
-              bool isSubscribed = false;
+              bool isSubscribed = kDebugMode;
 
-              if (snapshot.hasData && snapshot.data!.exists) {
+              if (!kDebugMode && snapshot.hasData && snapshot.data!.exists) {
                 final data = snapshot.data!.data() as Map<String, dynamic>;
                 isSubscribed = data['isSubscribed'] ?? false;
               }
@@ -72,7 +73,7 @@ class _AddCarScreenState extends State<AddCarScreen> {
                         alignment: WrapAlignment.center,
                         children: [
                           AbsorbPointer(
-                            absorbing: !hasCar,
+                            absorbing: !hasCar && !kDebugMode,
                             child: _buildMenuSquare(
                               iconWidget: buildGradientSquare(
                                 'assets/images/maintenance_bg.png',
@@ -83,7 +84,7 @@ class _AddCarScreenState extends State<AddCarScreen> {
                             ),
                           ),
                           AbsorbPointer(
-                            absorbing: !hasCar,
+                            absorbing: !hasCar && !kDebugMode,
                             child: _buildMenuSquare(
                               iconWidget: buildGradientSquare(
                                 'assets/images/analytics_bg.png',

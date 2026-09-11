@@ -6,7 +6,6 @@ export 'app_text_theme.dart';
 
 final appLightTheme = ThemeData(
   fontFamily: 'Roboto',
-  package: 'design_system',
   appBarTheme: const AppBarTheme(
     backgroundColor: AppColors.neutreBlanc,
     surfaceTintColor: AppColors.transparent,

@@ -8,6 +8,13 @@
 .DS_Store
 .atom/
 .build/
+
+# ----------------------------
+# Signing credentials
+# ----------------------------
+*.jks
+*.keystore
+key.properties
 .buildlog/
 .history
 .svn/
@@ -43,3 +50,6 @@ migrate_working_dir/
 # ----------------------------
 .env         
 .env.*        
+
+# FVM Version Cache
+.fvm/

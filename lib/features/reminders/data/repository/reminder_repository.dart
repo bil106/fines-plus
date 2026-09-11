@@ -69,13 +69,14 @@ class ReminderRepository {
           .get();
 
       final reminders = <ReminderModel>[];
+      final invalidDocIds = <String>[];
 
       for (final doc in snapshot.docs) {
         final data = doc.data();
 
         try {
           if ((data['title'] as String?)?.trim().isEmpty ?? true) {
-            debugPrint('Skipped invalid reminder (no title) → ${doc.id}');
+            invalidDocIds.add(doc.id);
             continue;
           }
 
@@ -83,9 +84,26 @@ class ReminderRepository {
           data['description'] ??= '';
 
           reminders.add(ReminderModel.fromJson(data));
-        } catch (e, st) {
-          debugPrint('Failed to parse reminder ${doc.id}: $e\n$st');
+        } catch (_) {
+          invalidDocIds.add(doc.id);
         }
+      }
+
+      if (invalidDocIds.isNotEmpty) {
+        await Future.wait(
+          invalidDocIds.map(
+            (id) => FirebaseFirestore.instance
+                .collection('reminders')
+                .doc(carNumber)
+                .collection('items')
+                .doc(id)
+                .delete(),
+          ),
+        );
+
+        await localDataSource.saveReminders(reminders);
+      } else {
+        await localDataSource.saveReminders(reminders);
       }
 
       return reminders;

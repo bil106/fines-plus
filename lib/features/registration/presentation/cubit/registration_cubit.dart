@@ -49,24 +49,22 @@ class RegistrationCubit extends Cubit<RegistrationState> {
         emit(state.copyWith(isLoading: false, isRegistered: true));
       }
     } on FirebaseAuthException catch (e) {
-      String message;
       switch (e.code) {
         case 'wrong-password':
-          message = S.current.incorrect_password;
+          emit(state.copyWith(isLoading: false, error: S.current.incorrect_password));
           break;
         case 'email-already-in-use':
-          message = S.current.email_already_exists;
+          emit(state.copyWith(isLoading: false, emailError: S.current.email_already_exists));
           break;
         case 'user-not-found':
-          message = S.current.user_not_found;
+          emit(state.copyWith(isLoading: false, emailError: S.current.user_not_found));
           break;
         case 'invalid-email':
-          message = S.current.incorrect_email_address;
+          emit(state.copyWith(isLoading: false, emailError: S.current.incorrect_email_address));
           break;
         default:
-          message = e.message ?? e.code;
+          emit(state.copyWith(isLoading: false, error: e.message ?? e.code));
       }
-      emit(state.copyWith(isLoading: false, error: message));
     } catch (e) {
       emit(state.copyWith(isLoading: false, error: e.toString()));
     }
@@ -157,7 +155,47 @@ Future<Map<String, String>> loadCredentials() async {
       } catch (_) {}
     }
 
-    return DateTime.now(); 
+    return DateTime.now();
   }
 
+  Future<void> deleteAccount() async {
+    final user = auth.currentUser;
+    if (user == null) return;
+
+    emit(state.copyWith(isLoading: true, error: null));
+
+    try {
+      final uid = user.uid;
+      final firestore = FirebaseFirestore.instance;
+
+      final carsSnap = await firestore.collection('users').doc(uid).collection('cars').get();
+      for (final carDoc in carsSnap.docs) {
+        final subCollections = ['expenses', 'scheduleTasks', 'reminders'];
+        for (final col in subCollections) {
+          final items = await carDoc.reference.collection(col).get();
+          for (final item in items.docs) {
+            await item.reference.delete();
+          }
+        }
+        await carDoc.reference.delete();
+      }
+
+      final historySnap = await firestore.collection('fines_history').where('userId', isEqualTo: uid).get();
+      for (final doc in historySnap.docs) {
+        await doc.reference.delete();
+      }
+
+      await firestore.collection('users').doc(uid).delete();
+
+      await storage.deleteAll();
+
+      await user.delete();
+
+      emit(state.copyWith(isLoading: false, isDeleted: true));
+    } on FirebaseAuthException catch (e) {
+      emit(state.copyWith(isLoading: false, error: e.message ?? e.code));
+    } catch (e) {
+      emit(state.copyWith(isLoading: false, error: e.toString()));
+    }
+  }
 }

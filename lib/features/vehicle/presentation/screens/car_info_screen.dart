@@ -79,30 +79,27 @@ class _CarInfoViewState extends State<_CarInfoView> {
     _carNumberController.text = carCubit?.state.carNumber ?? '';
     _techPassportController.text = carCubit?.state.techPassport ?? '';
 
-    _carNumberController.addListener(() {
-      final text = _carNumberController.text;
-      final hasLatin = _latinLettersReg.hasMatch(text);
+    _carNumberController.addListener(_onCarNumberChanged);
+    _techPassportController.addListener(_onTechPassportChanged);
+  }
 
-      if (_carNumberHasLatin != hasLatin) {
-        _carNumberHasLatin = hasLatin;
-        _safeSetState(() {});
-      }
+  void _onCarNumberChanged() {
+    final text = _carNumberController.text;
+    _carNumberHasLatin = _latinLettersReg.hasMatch(text);
 
-      carCubit?.changeCar(text);
-      context.read<CarInfoCubit>().setCarNumber(text);
-    });
+    if (mounted) setState(() {});
 
-    _techPassportController.addListener(() {
-      final text = _techPassportController.text;
-      final hasLatin = _latinLettersReg.hasMatch(text);
+    carCubit?.changeCar(text);
+    context.read<CarInfoCubit>().setCarNumber(text);
+  }
 
-      if (_techPassportHasLatin != hasLatin) {
-        _techPassportHasLatin = hasLatin;
-        _safeSetState(() {});
-      }
+  void _onTechPassportChanged() {
+    final text = _techPassportController.text;
+    _techPassportHasLatin = _latinLettersReg.hasMatch(text);
 
-      carCubit?.setTechPassport(text);
-    });
+    if (mounted) setState(() {});
+
+    carCubit?.setTechPassport(text);
   }
 
   @override
