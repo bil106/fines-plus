@@ -325,6 +325,7 @@
 "tokens_extracted": "Tokens extracted",
 "no_tokens_yet": "No tokens yet",
 "tokens_already_present": "Tokens already present",
+"no_nearby_station": "No data on the nearest gas station",
 "loaded": "Loaded",
 "open_site": "Open e-Drive",
 "extracting": "Extracting...",

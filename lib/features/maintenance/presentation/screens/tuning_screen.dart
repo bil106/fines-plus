@@ -36,6 +36,7 @@ class _TuningScreenState extends State<TuningScreen> {
   final TextEditingController costController = TextEditingController();
 
   final TextEditingController mileageController = TextEditingController();
+  final FocusNode _mileageFocusNode = FocusNode();
 
   Map<String, dynamic>? _bestStation;
   bool _isLoadingBestStation = true;
@@ -51,6 +52,9 @@ class _TuningScreenState extends State<TuningScreen> {
 
     if (servicePricesUah.isEmpty) servicePricesUah.add(0.0);
     _initLocationAndService();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) _pickDate();
+    });
   }
 
   @override
@@ -63,7 +67,24 @@ class _TuningScreenState extends State<TuningScreen> {
     }
     costController.dispose();
     mileageController.dispose();
+    _mileageFocusNode.dispose();
     super.dispose();
+  }
+
+  Future<void> _pickDate() async {
+    final now = DateTime.now();
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: selectedDate ?? now,
+      firstDate: DateTime(now.year - 5),
+      lastDate: DateTime(now.year + 5),
+    );
+    if (picked != null) _onDateSelected(picked);
+  }
+
+  void _onDateSelected(DateTime date) {
+    setState(() => selectedDate = date);
+    _mileageFocusNode.requestFocus();
   }
 
   Future<void> _initLocationAndService() async {
@@ -233,14 +254,11 @@ class _TuningScreenState extends State<TuningScreen> {
     return Row(
       children: [
         Expanded(
-          child: DatePickerCard(
-            selectedDate: selectedDate,
-            onDateSelected: (date) => setState(() => selectedDate = date),
-          ),
+          child: DatePickerCard(selectedDate: selectedDate, onDateSelected: _onDateSelected),
         ),
         AppSpacers.horizontalMediumLarge,
         Expanded(
-          child: MileageCard(textTheme: textTheme, controller: mileageController),
+          child: MileageCard(textTheme: textTheme, controller: mileageController, focusNode: _mileageFocusNode),
         ),
       ],
     );

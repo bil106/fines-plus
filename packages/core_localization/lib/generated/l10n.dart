@@ -2839,6 +2839,16 @@ class S {
     );
   }
 
+  /// `No data on the nearest gas station`
+  String get no_nearby_station {
+    return Intl.message(
+      'No data on the nearest gas station',
+      name: 'no_nearby_station',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Tokens already present`
   String get tokens_already_present {
     return Intl.message(

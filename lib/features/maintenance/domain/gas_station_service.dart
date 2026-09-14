@@ -12,7 +12,7 @@ class GasStationService {
 
   Future<List<GasStation>> fetchNearbyGasStations(LatLng location) async {
     final url =
-        'https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${location.latitude},${location.longitude}&radius=3000&type=gas_station&key=$apiKey';
+        'https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${location.latitude},${location.longitude}&radius=8000&type=gas_station&key=$apiKey';
 
     if (kDebugMode) print("🌍 Query Google Places: $url");
 

@@ -9,15 +9,26 @@ import 'package:core_utils/formatters/mileageInput_formatter.dart';
 class MileageCard extends StatefulWidget {
   final TextTheme textTheme;
   final TextEditingController controller;
+  final FocusNode? focusNode;
+  final ValueChanged<String>? onChanged;
+  final ValueChanged<String>? onSubmitted;
 
-  const MileageCard({super.key, required this.textTheme, required this.controller});
+  const MileageCard({
+    super.key,
+    required this.textTheme,
+    required this.controller,
+    this.focusNode,
+    this.onChanged,
+    this.onSubmitted,
+  });
 
   @override
   State<MileageCard> createState() => _MileageCardState();
 }
 
 class _MileageCardState extends State<MileageCard> {
-  final FocusNode _focusNode = FocusNode();
+  FocusNode? _ownedFocusNode;
+  FocusNode get _focusNode => widget.focusNode ?? (_ownedFocusNode ??= FocusNode());
 
   @override
   void initState() {
@@ -29,7 +40,7 @@ class _MileageCardState extends State<MileageCard> {
 
   @override
   void dispose() {
-    _focusNode.dispose();
+    _ownedFocusNode?.dispose();
     super.dispose();
   }
 
@@ -64,7 +75,14 @@ class _MileageCardState extends State<MileageCard> {
                       controller: widget.controller,
                       focusNode: _focusNode,
                       keyboardType: TextInputType.number,
-                      inputFormatters: [FilteringTextInputFormatter.digitsOnly, MileageInputFormatter(max: 1000000)],
+                      textInputAction: TextInputAction.done,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.digitsOnly,
+                        MileageInputFormatter(max: 1000000),
+                        LengthLimitingTextInputFormatter(6),
+                      ],
+                      onChanged: widget.onChanged,
+                      onSubmitted: widget.onSubmitted,
                       decoration: InputDecoration(
                         hintText: S.of(context).enter_mileage,
                         hintStyle: widget.textTheme.hintText.copyWith(fontSize: 14),

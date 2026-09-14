@@ -39,6 +39,9 @@ class _FuelUpScreenState extends State<FuelUpScreen> {
   final TextEditingController volumeController = TextEditingController();
   final TextEditingController mileageController = TextEditingController();
   final TextEditingController priceController = TextEditingController();
+  final FocusNode _mileageFocusNode = FocusNode();
+  final FocusNode _priceFocusNode = FocusNode();
+  final FocusNode _volumeFocusNode = FocusNode();
 
   FuelType selectedFuel = FuelType.Ai95;
   DateTime? selectedDate;
@@ -53,6 +56,12 @@ class _FuelUpScreenState extends State<FuelUpScreen> {
     _gasService = GasStationService(Env.mapApiKey);
     _initLocationAndStation();
     _loadLastPrice(selectedFuel);
+
+    // Walks the user straight into the form: date is the first thing asked
+    // for, so open its picker immediately instead of waiting for a tap.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) _pickDate();
+    });
   }
 
   @override
@@ -60,7 +69,38 @@ class _FuelUpScreenState extends State<FuelUpScreen> {
     volumeController.dispose();
     mileageController.dispose();
     priceController.dispose();
+    _mileageFocusNode.dispose();
+    _priceFocusNode.dispose();
+    _volumeFocusNode.dispose();
     super.dispose();
+  }
+
+  Future<void> _pickDate() async {
+    final now = DateTime.now();
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: selectedDate ?? now,
+      firstDate: DateTime(now.year - 5),
+      lastDate: DateTime(now.year + 5),
+    );
+    if (picked != null) _onDateSelected(picked);
+  }
+
+  void _onDateSelected(DateTime date) {
+    setState(() => selectedDate = date);
+    _mileageFocusNode.requestFocus();
+  }
+
+  void _onMileageChanged(String value) {
+    if (value.length >= 6) _advanceFromMileage();
+  }
+
+  void _advanceFromMileage() {
+    if (priceController.text.isNotEmpty) {
+      _volumeFocusNode.requestFocus();
+    } else {
+      _priceFocusNode.requestFocus();
+    }
   }
 
   Future<void> _loadLastPrice(FuelType fuel) async {
@@ -121,16 +161,18 @@ class _FuelUpScreenState extends State<FuelUpScreen> {
       final stations = await _gasService.fetchNearbyGasStations(current);
       if (stations.isEmpty) return null;
 
-      final highRated = stations.where((s) => s.rating >= 4.5).toList();
-      if (highRated.isEmpty) return null;
+      double distanceTo(GasStation s) =>
+          Geolocator.distanceBetween(current.latitude, current.longitude, s.lat, s.lng);
 
-      highRated.sort((a, b) {
-        final distA = Geolocator.distanceBetween(current.latitude, current.longitude, a.lat, a.lng);
-        final distB = Geolocator.distanceBetween(current.latitude, current.longitude, b.lat, b.lng);
-        return distA.compareTo(distB);
-      });
+      // Prefer well-rated stations, but a 4.5+ bar routinely excluded every
+      // station in the area — never come back empty just because none
+      // happen to clear a high bar; fall back to the nearest one instead.
+      final wellRated = stations.where((s) => s.rating >= 4.0).toList();
+      final candidates = wellRated.isNotEmpty ? wellRated : stations;
 
-      return highRated.first;
+      candidates.sort((a, b) => distanceTo(a).compareTo(distanceTo(b)));
+
+      return candidates.first;
     } catch (e) {
       if (kDebugMode) print("Error fetching stations: $e");
       return null;
@@ -224,7 +266,7 @@ class _FuelUpScreenState extends State<FuelUpScreen> {
                               SizedBox(
                                 width: 180,
                                 child: Text(
-                                  _bestStation?.name ?? 'Нет данных о ближайшей заправке',
+                                  _bestStation?.name ?? S.of(context).no_nearby_station,
                                   style: textTheme.black14bold,
                                   overflow: TextOverflow.ellipsis,
                                 ),
@@ -256,14 +298,17 @@ class _FuelUpScreenState extends State<FuelUpScreen> {
               Row(
                 children: [
                   Expanded(
-                    child: DatePickerCard(
-                      selectedDate: selectedDate,
-                      onDateSelected: (date) => setState(() => selectedDate = date),
-                    ),
+                    child: DatePickerCard(selectedDate: selectedDate, onDateSelected: _onDateSelected),
                   ),
                   AppSpacers.horizontalLarge,
                   Expanded(
-                    child: MileageCard(textTheme: textTheme, controller: mileageController),
+                    child: MileageCard(
+                      textTheme: textTheme,
+                      controller: mileageController,
+                      focusNode: _mileageFocusNode,
+                      onChanged: _onMileageChanged,
+                      onSubmitted: (_) => _advanceFromMileage(),
+                    ),
                   ),
                 ],
               ),
@@ -289,6 +334,8 @@ class _FuelUpScreenState extends State<FuelUpScreen> {
                 volumeController: volumeController,
                 priceController: priceController,
                 onPriceChanged: _onPriceChanged,
+                priceFocusNode: _priceFocusNode,
+                volumeFocusNode: _volumeFocusNode,
               ),
 
               AppSpacers.verticalMediumLarge,

@@ -382,6 +382,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "no_such_service": MessageLookupByLibrary.simpleMessage("No_such_service"),
     "no_tasks": MessageLookupByLibrary.simpleMessage("No tasks"),
     "no_tokens_yet": MessageLookupByLibrary.simpleMessage("No tokens yet"),
+    "no_nearby_station": MessageLookupByLibrary.simpleMessage(
+      "No data on the nearest gas station",
+    ),
     "not_auth": MessageLookupByLibrary.simpleMessage("Not authorized"),
     "not_forget": MessageLookupByLibrary.simpleMessage(
       "Don\'t forget to change the oil",

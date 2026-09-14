@@ -26,6 +26,8 @@ class FuelInputCard extends StatelessWidget {
   final TextEditingController volumeController;
   final TextEditingController priceController;
   final ValueChanged<String>? onPriceChanged;
+  final FocusNode? volumeFocusNode;
+  final FocusNode? priceFocusNode;
 
   const FuelInputCard({
     super.key,
@@ -33,6 +35,8 @@ class FuelInputCard extends StatelessWidget {
     required this.volumeController,
     required this.priceController,
     this.onPriceChanged,
+    this.volumeFocusNode,
+    this.priceFocusNode,
   });
 
   @override
@@ -53,6 +57,7 @@ class FuelInputCard extends StatelessWidget {
           Expanded(
             child: TextField(
               controller: volumeController,
+              focusNode: volumeFocusNode,
               keyboardType: TextInputType.number,
               decoration: const InputDecoration(
                 border: InputBorder.none,
@@ -77,7 +82,9 @@ class FuelInputCard extends StatelessWidget {
                     width: 33,
                     child: TextField(
                       controller: priceController,
+                      focusNode: priceFocusNode,
                       keyboardType: TextInputType.number,
+                      textInputAction: TextInputAction.next,
                       inputFormatters: [FilteringTextInputFormatter.digitsOnly, LengthLimitingTextInputFormatter(2)],
                       decoration: const InputDecoration(
                         border: InputBorder.none,
@@ -88,6 +95,7 @@ class FuelInputCard extends StatelessWidget {
                       ),
                       style: textTheme.titleMedium?.copyWith(color: AppColors.black87),
                       onChanged: onPriceChanged,
+                      onSubmitted: (_) => volumeFocusNode?.requestFocus(),
                     ),
                   ),
                   const SizedBox(width: 8),

@@ -30,6 +30,7 @@ class _CarWashScreenState extends State<CarWashScreen> {
   static const LatLng _fallbackPosition = LatLng(50.4501, 30.5234);
   final TextEditingController mileageController = TextEditingController();
   final TextEditingController costController = TextEditingController();
+  final FocusNode _mileageFocusNode = FocusNode();
 
   DateTime? selectedDate;
   Map<String, dynamic>? _bestCarWash;
@@ -39,6 +40,33 @@ class _CarWashScreenState extends State<CarWashScreen> {
   void initState() {
     super.initState();
     _initLocationAndCarWash();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) _pickDate();
+    });
+  }
+
+  @override
+  void dispose() {
+    mileageController.dispose();
+    costController.dispose();
+    _mileageFocusNode.dispose();
+    super.dispose();
+  }
+
+  Future<void> _pickDate() async {
+    final now = DateTime.now();
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: selectedDate ?? now,
+      firstDate: DateTime(now.year - 5),
+      lastDate: DateTime(now.year + 5),
+    );
+    if (picked != null) _onDateSelected(picked);
+  }
+
+  void _onDateSelected(DateTime date) {
+    setState(() => selectedDate = date);
+    _mileageFocusNode.requestFocus();
   }
 
   Future<void> _initLocationAndCarWash() async {
@@ -157,14 +185,15 @@ class _CarWashScreenState extends State<CarWashScreen> {
               Row(
                 children: [
                   Expanded(
-                    child: DatePickerCard(
-                      selectedDate: selectedDate,
-                      onDateSelected: (date) => setState(() => selectedDate = date),
-                    ),
+                    child: DatePickerCard(selectedDate: selectedDate, onDateSelected: _onDateSelected),
                   ),
                   const SizedBox(width: 16),
                   Expanded(
-                    child: MileageCard(textTheme: textTheme, controller: mileageController),
+                    child: MileageCard(
+                      textTheme: textTheme,
+                      controller: mileageController,
+                      focusNode: _mileageFocusNode,
+                    ),
                   ),
                 ],
               ),

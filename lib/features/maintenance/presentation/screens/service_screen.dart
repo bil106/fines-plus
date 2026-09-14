@@ -34,6 +34,7 @@ class _ServiceScreenState extends State<ServiceScreen> {
   final List<FocusNode> serviceFocusNodes = [FocusNode()];
   final TextEditingController costController = TextEditingController();
   final TextEditingController mileageController = TextEditingController();
+  final FocusNode _mileageFocusNode = FocusNode();
 
   Map<String, dynamic>? _bestStation;
   bool _isLoadingBestStation = true;
@@ -46,6 +47,9 @@ class _ServiceScreenState extends State<ServiceScreen> {
   void initState() {
     super.initState();
     _initLocationAndService();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) _pickDate();
+    });
   }
 
   @override
@@ -58,7 +62,24 @@ class _ServiceScreenState extends State<ServiceScreen> {
     }
     costController.dispose();
     mileageController.dispose();
+    _mileageFocusNode.dispose();
     super.dispose();
+  }
+
+  Future<void> _pickDate() async {
+    final now = DateTime.now();
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: selectedDate ?? now,
+      firstDate: DateTime(now.year - 5),
+      lastDate: DateTime(now.year + 5),
+    );
+    if (picked != null) _onDateSelected(picked);
+  }
+
+  void _onDateSelected(DateTime date) {
+    setState(() => selectedDate = date);
+    _mileageFocusNode.requestFocus();
   }
 
   Future<void> _initLocationAndService() async {
@@ -223,14 +244,11 @@ class _ServiceScreenState extends State<ServiceScreen> {
     return Row(
       children: [
         Expanded(
-          child: DatePickerCard(
-            selectedDate: selectedDate,
-            onDateSelected: (date) => setState(() => selectedDate = date),
-          ),
+          child: DatePickerCard(selectedDate: selectedDate, onDateSelected: _onDateSelected),
         ),
         AppSpacers.horizontalMediumLarge,
         Expanded(
-          child: MileageCard(textTheme: textTheme, controller: mileageController),
+          child: MileageCard(textTheme: textTheme, controller: mileageController, focusNode: _mileageFocusNode),
         ),
       ],
     );

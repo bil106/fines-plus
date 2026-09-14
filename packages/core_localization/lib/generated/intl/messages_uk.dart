@@ -197,7 +197,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "enter_mileage": MessageLookupByLibrary.simpleMessage("Введіть пробіг"),
     "enter_password": MessageLookupByLibrary.simpleMessage("Введіть пароль"),
     "enter_vin": MessageLookupByLibrary.simpleMessage("Введіть VIN"),
-    "error": MessageLookupByLibrary.simpleMessage("Ошибка:"),
+    "error": MessageLookupByLibrary.simpleMessage("Помилка:"),
     "error_photo": MessageLookupByLibrary.simpleMessage(
       "Помилка при виборі фото:",
     ),
@@ -224,7 +224,10 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "fact": MessageLookupByLibrary.simpleMessage("Фактичний"),
     "failed_extract_tokens": MessageLookupByLibrary.simpleMessage(
-      "Не удалось извлечь токены",
+      "Не вдалося отримати токени",
+    ),
+    "no_nearby_station": MessageLookupByLibrary.simpleMessage(
+      "Немає даних про найближчу заправку",
     ),
     "field_required": MessageLookupByLibrary.simpleMessage("Поле обов\'язкове"),
     "fill_date": MessageLookupByLibrary.simpleMessage(
@@ -383,7 +386,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "no_tasks": MessageLookupByLibrary.simpleMessage("Немає завдань"),
     "no_tokens_yet": MessageLookupByLibrary.simpleMessage(
-      "Токены пока отсутствуют",
+      "Токенів поки немає",
     ),
     "not_auth": MessageLookupByLibrary.simpleMessage("Не авторизовані"),
     "not_forget": MessageLookupByLibrary.simpleMessage(
@@ -1052,10 +1055,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "title": MessageLookupByLibrary.simpleMessage("Заголовок"),
     "to_be_performed": MessageLookupByLibrary.simpleMessage("До виконання:"),
     "tokens_already_present": MessageLookupByLibrary.simpleMessage(
-      "Токены уже присутствуют",
+      "Токени вже є",
     ),
     "tokens_extracted": MessageLookupByLibrary.simpleMessage(
-      "Токены извлечены",
+      "Токени отримано",
     ),
     "total": MessageLookupByLibrary.simpleMessage("Разом"),
     "total_amount": MessageLookupByLibrary.simpleMessage("Загальна сума:"),
