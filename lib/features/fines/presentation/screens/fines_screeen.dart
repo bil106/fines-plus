@@ -32,8 +32,8 @@ class FinesScreen extends StatefulWidget {
 
   const FinesScreen({super.key, this.onBack, this.onFineCheck});
 
-  static final _carReg = RegExp(r'^[А-ЯЇІЄҐ]{2}\d{4}[А-ЯЇІЄҐ]{2}$');
-  static final _techReg = RegExp(r'^[А-ЯІЇЄҐ]{3}\d{6}$');
+  static final _carReg = RegExp(r'^[A-Z]{2}\d{4}[A-Z]{2}$');
+  static final _techReg = RegExp(r'^[A-Z]{3}\d{6}$');
 
   @override
   State<FinesScreen> createState() => _FinesScreenState();
