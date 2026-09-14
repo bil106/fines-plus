@@ -172,12 +172,80 @@ class ServiceList {
   /// Curated service names per quick-action category (keyed by the same
   /// labelKey QuickActionsCubit uses, e.g. 'Oil') — narrows the picker to
   /// what's actually relevant instead of the entire catalog. Categories not
-  /// listed here fall back to [names] (the full catalog).
+  /// listed here (Service, Insurance) fall back to [names] (the full
+  /// catalog) — Service is deliberately broad, matching the standalone
+  /// Service screen, and Insurance never reaches this picker at all.
   static Map<String, List<String>> get namesByCategory => {
     'Oil': [
       S.current.service_zamina_oil_dvs,
       S.current.service_zamina_oliynoho_filtra,
       S.current.service_zamina_probky_piddonu,
+    ],
+    'Coolant': [
+      S.current.service_zamina_antifryzu,
+      S.current.service_zamina_termostata,
+      S.current.service_zamina_pompy,
+      S.current.service_zamina_radiatora,
+      S.current.service_remont_radiatoriv,
+      S.current.service_systema_kondytsionuvannya,
+    ],
+    'Battery': [
+      S.current.service_zamina_akumulyatora,
+      S.current.service_remont_generatoriv,
+      S.current.service_remont_starteriv,
+      S.current.service_remont_elektroprovodky,
+    ],
+    'Tires': [
+      S.current.service_zamina_shyn,
+      S.current.service_balansuvannya_kolis,
+      S.current.service_skhid_rozval,
+    ],
+    'Tuning': tuningItems.map((e) => e.name).toList(),
+    // Suspension/steering + brakes — the "chassis" half of the catalog.
+    'Repair': [
+      S.current.service_diagnostyka_pidvisky,
+      S.current.service_remont_vazheliv_pidvisky,
+      S.current.service_zamina_amortyzatoriv,
+      S.current.service_zamina_perednikh_amortyzatoriv,
+      S.current.service_zamina_zadnikh_amortyzatoriv,
+      S.current.service_zamina_vidbijnyka_amortyzatora,
+      S.current.service_zamina_opornoho_pidshipnyka_amortyzatora,
+      S.current.service_zamina_pruzhin_amortyzatoriv,
+      S.current.service_zamina_pylnyka_zadnogo_amortyzatora,
+      S.current.service_remont_pnevmopidvisky,
+      S.current.service_zamina_stiikiv_stabilizatora,
+      S.current.service_zamina_vtulok_stabilizatora,
+      S.current.service_zamina_kulovykh_opor,
+      S.current.service_zamina_pidshipnykiv_matochok,
+      S.current.service_zamina_silentblokiv_pidvisky,
+      S.current.service_skhid_rozval,
+      S.current.service_khodova_chastyna_diagnostyka,
+      S.current.service_stiikyi_stabilizatora_zamina,
+      S.current.service_vtulky_stabilizatora_zamina,
+      S.current.service_sharova_opora_zamina,
+      S.current.service_nakonechnik_rulovoyi_tyahy_zamina,
+      S.current.service_rulova_tyaha_zamina,
+      S.current.service_amortyzatory_perednia_os_zamina,
+      S.current.service_amortyzatory_zadnia_os_zamina,
+      S.current.service_stupytsia_kolesa_zamina,
+      S.current.service_pidshipnyk_matochyny_kolesa_zamina,
+      S.current.service_rulova_reyka_remont,
+      S.current.service_vazhel_pidvisky_zamina,
+      S.current.service_silentblok_vazhelya_pidvisky_zamina,
+      S.current.service_pylovik_shrus_zovnishniy_zamina,
+      S.current.service_pylovik_shrus_vnutrishniy_zamina,
+      S.current.service_shrus_pryvodnoho_valu_zamina,
+      S.current.service_pryvodnyy_val_zamina,
+      S.current.service_zamina_halmyvnykh_kolodok,
+      S.current.service_zamina_halmyvnykh_dyskiv,
+      S.current.service_zamina_halmyvnoyi_ridyny,
+      S.current.service_zamina_halmykh_shlang,
+      S.current.service_remont_suporiv,
+      S.current.service_profilaktyka_halmyvnykh_mekhanizmiv,
+      S.current.service_remont_rulovykh_reyok,
+      S.current.service_zamina_nakonechnikiv_rulovykh_tyag,
+      S.current.service_zamina_rulovykh_tyag,
+      S.current.service_zamina_krestovyny_rulovogo_valu,
     ],
   };
 }

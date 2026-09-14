@@ -772,6 +772,10 @@ class MessageLookup extends MessageLookupByLibrary {
           "Сайлентблок важеля підвіски - заміна (при знятому важелі)",
         ),
     "service_skhid_rozval": MessageLookupByLibrary.simpleMessage("Схід-розвал"),
+    "service_zamina_shyn": MessageLookupByLibrary.simpleMessage("Заміна шин"),
+    "service_balansuvannya_kolis": MessageLookupByLibrary.simpleMessage(
+      "Балансування коліс",
+    ),
     "service_station": MessageLookupByLibrary.simpleMessage("СТО"),
     "service_station_nearby": MessageLookupByLibrary.simpleMessage("СТО поруч"),
     "service_stiikyi_stabilizatora_zamina":

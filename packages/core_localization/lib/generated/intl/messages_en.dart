@@ -758,6 +758,8 @@ class MessageLookup extends MessageLookupByLibrary {
           "Suspension lever silent block - replacement (with lever removed)",
         ),
     "service_skhid_rozval": MessageLookupByLibrary.simpleMessage("Disassembly"),
+    "service_zamina_shyn": MessageLookupByLibrary.simpleMessage("Tire replacement"),
+    "service_balansuvannya_kolis": MessageLookupByLibrary.simpleMessage("Wheel balancing"),
     "service_station": MessageLookupByLibrary.simpleMessage("Service station"),
     "service_station_nearby": MessageLookupByLibrary.simpleMessage(
       "Service station nearby",

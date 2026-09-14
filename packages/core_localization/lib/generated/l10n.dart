@@ -1534,6 +1534,16 @@ class S {
     );
   }
 
+  /// `Tire replacement`
+  String get service_zamina_shyn {
+    return Intl.message('Tire replacement', name: 'service_zamina_shyn', desc: '', args: []);
+  }
+
+  /// `Wheel balancing`
+  String get service_balansuvannya_kolis {
+    return Intl.message('Wheel balancing', name: 'service_balansuvannya_kolis', desc: '', args: []);
+  }
+
   /// `Chassis - diagnostics`
   String get service_khodova_chastyna_diagnostyka {
     return Intl.message(
