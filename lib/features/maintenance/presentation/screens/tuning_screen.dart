@@ -52,9 +52,6 @@ class _TuningScreenState extends State<TuningScreen> {
 
     if (servicePricesUah.isEmpty) servicePricesUah.add(0.0);
     _initLocationAndService();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) _pickDate();
-    });
   }
 
   @override
@@ -69,17 +66,6 @@ class _TuningScreenState extends State<TuningScreen> {
     mileageController.dispose();
     _mileageFocusNode.dispose();
     super.dispose();
-  }
-
-  Future<void> _pickDate() async {
-    final now = DateTime.now();
-    final picked = await showDatePicker(
-      context: context,
-      initialDate: selectedDate ?? now,
-      firstDate: DateTime(now.year - 5),
-      lastDate: DateTime(now.year + 5),
-    );
-    if (picked != null) _onDateSelected(picked);
   }
 
   void _onDateSelected(DateTime date) {

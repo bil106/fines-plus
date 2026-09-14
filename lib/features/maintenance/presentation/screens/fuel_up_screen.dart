@@ -56,12 +56,6 @@ class _FuelUpScreenState extends State<FuelUpScreen> {
     _gasService = GasStationService(Env.mapApiKey);
     _initLocationAndStation();
     _loadLastPrice(selectedFuel);
-
-    // Walks the user straight into the form: date is the first thing asked
-    // for, so open its picker immediately instead of waiting for a tap.
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) _pickDate();
-    });
   }
 
   @override
@@ -73,17 +67,6 @@ class _FuelUpScreenState extends State<FuelUpScreen> {
     _priceFocusNode.dispose();
     _volumeFocusNode.dispose();
     super.dispose();
-  }
-
-  Future<void> _pickDate() async {
-    final now = DateTime.now();
-    final picked = await showDatePicker(
-      context: context,
-      initialDate: selectedDate ?? now,
-      firstDate: DateTime(now.year - 5),
-      lastDate: DateTime(now.year + 5),
-    );
-    if (picked != null) _onDateSelected(picked);
   }
 
   void _onDateSelected(DateTime date) {
