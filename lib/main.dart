@@ -86,7 +86,7 @@ void main() {
       WidgetsFlutterBinding.ensureInitialized();
       FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
-      await dotenv.load(fileName: 'assets/config/.env');
+      await dotenv.load(fileName: 'assets/config/.env', isOptional: true);
 
       final firebaseOptions = _firebaseOptionsForCurrentPlatform();
       if (firebaseOptions == null) {
