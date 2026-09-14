@@ -134,14 +134,104 @@ class S {
     return Intl.message('Car number', name: 'car_number', desc: '', args: []);
   }
 
-  /// `Technical passport number`
+  /// `Technical passport number (optional)`
   String get reg_number {
     return Intl.message(
-      'Technical passport number',
+      'Technical passport number (optional)',
       name: 'reg_number',
       desc: '',
       args: [],
     );
+  }
+
+  /// `Your garage`
+  String get garage_setup_title {
+    return Intl.message('Your garage', name: 'garage_setup_title', desc: '', args: []);
+  }
+
+  /// `Add your car now, or do it later — you can start using the app right away`
+  String get garage_setup_subtitle {
+    return Intl.message(
+      'Add your car now, or do it later — you can start using the app right away',
+      name: 'garage_setup_subtitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Skip for now`
+  String get skip_for_now {
+    return Intl.message('Skip for now', name: 'skip_for_now', desc: '', args: []);
+  }
+
+  /// `Only needed to check fines — you can add these later`
+  String get car_number_fines_hint {
+    return Intl.message(
+      'Only needed to check fines — you can add these later',
+      name: 'car_number_fines_hint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `My garage`
+  String get my_garage {
+    return Intl.message('My garage', name: 'my_garage', desc: '', args: []);
+  }
+
+  /// `Active`
+  String get garage_active_car {
+    return Intl.message('Active', name: 'garage_active_car', desc: '', args: []);
+  }
+
+  /// `Car without a plate`
+  String get garage_no_number {
+    return Intl.message('Car without a plate', name: 'garage_no_number', desc: '', args: []);
+  }
+
+  /// `Edit`
+  String get edit {
+    return Intl.message('Edit', name: 'edit', desc: '', args: []);
+  }
+
+  /// `Remove this car from your garage?`
+  String get garage_delete_confirm_title {
+    return Intl.message(
+      'Remove this car from your garage?',
+      name: 'garage_delete_confirm_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `All data for this car (expenses, reminders, maintenance) will be permanently deleted.`
+  String get garage_delete_confirm_body {
+    return Intl.message(
+      'All data for this car (expenses, reminders, maintenance) will be permanently deleted.',
+      name: 'garage_delete_confirm_body',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Failed to delete the car`
+  String get garage_delete_error {
+    return Intl.message('Failed to delete the car', name: 'garage_delete_error', desc: '', args: []);
+  }
+
+  /// `Failed to complete the action`
+  String get garage_action_error {
+    return Intl.message('Failed to complete the action', name: 'garage_action_error', desc: '', args: []);
+  }
+
+  /// `Car make`
+  String get garage_make_label {
+    return Intl.message('Car make', name: 'garage_make_label', desc: '', args: []);
+  }
+
+  /// `Select a make`
+  String get garage_make_hint {
+    return Intl.message('Select a make', name: 'garage_make_hint', desc: '', args: []);
   }
 
   /// `Search`
@@ -734,15 +824,15 @@ class S {
     return Intl.message('Error:', name: 'error', desc: '', args: []);
   }
 
-  /// `АН0000НА`
+  /// `AH0000HA`
   String get hint_auto_num {
-    return Intl.message('АН0000НА', name: 'hint_auto_num', desc: '', args: []);
+    return Intl.message('AH0000HA', name: 'hint_auto_num', desc: '', args: []);
   }
 
-  /// `ХЕE128436`
+  /// `XEE128436`
   String get hint_tech_data_num {
     return Intl.message(
-      'ХЕE128436',
+      'XEE128436',
       name: 'hint_tech_data_num',
       desc: '',
       args: [],

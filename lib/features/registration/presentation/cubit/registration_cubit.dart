@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:core_localization/generated/l10n.dart';
+import 'package:fines_plus/env/env.dart';
 import 'package:fines_plus/features/registration/presentation/cubit/registration_state.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
@@ -99,6 +100,9 @@ Future<Map<String, String>> loadCredentials() async {
   Future<bool> checkSubscription() async {
     final uid = auth.currentUser?.uid;
     if (uid == null) return false;
+
+    final email = auth.currentUser?.email?.toLowerCase();
+    if (email != null && Env.freeAccessEmails.contains(email)) return true;
 
     try {
       final doc = await FirebaseFirestore.instance.collection("users").doc(uid).get();

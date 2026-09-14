@@ -65,7 +65,7 @@ class _FuelUpScreenState extends State<FuelUpScreen> {
   Future<void> _loadLastPrice(FuelType fuel) async {
     final cached = await FuelPriceCache.getPrice(fuel.name);
     if (cached != null) {
-      priceController.text = cached.toStringAsFixed(2);
+      priceController.text = cached.round().toString();
     } else {
       priceController.clear();
     }

@@ -1,5 +1,6 @@
 import java.util.Properties
 import java.io.FileInputStream
+import com.github.triplet.gradle.androidpublisher.ReleaseStatus
 
 plugins {
     id("com.android.application")
@@ -7,6 +8,7 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
     id("com.google.gms.google-services")
     id("com.google.firebase.crashlytics") version "3.0.6"
+    id("com.github.triplet.play")
 }
 
 
@@ -72,10 +74,13 @@ buildTypes {
     }
     getByName("release") {
         signingConfig = signingConfigs.getByName("release")
-        isMinifyEnabled = false
-        isShrinkResources = false
+        isMinifyEnabled = true
+        isShrinkResources = true
+        proguardFiles(
+            getDefaultProguardFile("proguard-android-optimize.txt"),
+            "proguard-rules.pro"
+        )
 
-    
         ndk {
             debugSymbolLevel = "FULL"
         }
@@ -91,6 +96,20 @@ buildTypes {
 
 
 
+}
+
+// Uploads app-release.aab straight to Play Console. Needs a service-account
+// JSON key from Play Console > Setup > API access, placed at the project
+// root (same folder as key.properties, also gitignored) as
+// play-publish-key.json. Run with: ./gradlew publishBundle
+// Defaults to the "internal" track — promote to production manually via
+// Play Console (or `./gradlew promoteArtifact --from-track internal
+// --promote-track production`) only once it's been verified there.
+play {
+    serviceAccountCredentials.set(rootProject.file("../play-publish-key.json"))
+    track.set("internal")
+    releaseStatus.set(ReleaseStatus.COMPLETED)
+    defaultToAppBundles.set(true)
 }
 
 dependencies {

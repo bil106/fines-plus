@@ -250,7 +250,11 @@ extension AppTextTheme on TextTheme {
         fontWeight: FontWeight.w400,
         fontSize: 28,
       );
-
+  TextStyle get black18W600 => const TextStyle(
+        color: AppColors.black,
+        fontWeight: FontWeight.w400,
+        fontSize: 18,
+      );
   TextStyle get black30bold => const TextStyle(
         color: AppColors.black,
         fontWeight: FontWeight.bold,
@@ -261,6 +265,8 @@ extension AppTextTheme on TextTheme {
         fontWeight: FontWeight.w400,
         fontSize: 16,
       );
-  TextStyle get historyText => const TextStyle(fontSize: 22, fontWeight: FontWeight.w500, color: AppColors.black87);
-  TextStyle get subtitleText => const TextStyle(fontSize: 18, fontWeight: FontWeight.w400, color: AppColors.black);
+  TextStyle get historyText => const TextStyle(
+      fontSize: 22, fontWeight: FontWeight.w500, color: AppColors.black87);
+  TextStyle get subtitleText => const TextStyle(
+      fontSize: 18, fontWeight: FontWeight.w400, color: AppColors.black);
 }

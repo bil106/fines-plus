@@ -15,15 +15,12 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
 
   AnalyticsCubit({required this.repository, required this.carCubit}) : super(AnalyticsState.initial()) {
     _carSub = carCubit.stream.listen((carState) {
-      final carNumber = carState.carNumber;
+      final carId = carState.carId;
 
       if (_isClosed) return;
+      if (carId.isEmpty) return;
 
-      final isValidCar = RegExp(r'^[А-ЯЇІЄҐ]{2}\d{4}[А-ЯЇІЄҐ]{2}$').hasMatch(carNumber);
-
-      if (!isValidCar) return;
-
-      _reloadForCar(carNumber);
+      _reloadForCar(carId);
     });
   }
 
@@ -56,7 +53,7 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
 
   void updateDate(DateTime date) {
     if (_isClosed) return;
-    final car = carCubit.state.carNumber;
+    final car = carCubit.state.carId;
     emit(state.copyWith(selectedDate: date));
     _reloadForCar(car);
   }
@@ -83,11 +80,9 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
   Future<void> loadForCurrentCar() async {
     if (_isClosed) return;
 
-    final carNumber = carCubit.state.carNumber;
-    if (carNumber.isEmpty) return;
-    final isValid = RegExp(r'^[А-ЯЇІЄҐ]{2}\d{4}[А-ЯЇІЄҐ]{2}$').hasMatch(carNumber);
-    if (!isValid) return;
+    final carId = carCubit.state.carId;
+    if (carId.isEmpty) return;
 
-    await _reloadForCar(carNumber);
+    await _reloadForCar(carId);
   }
 }

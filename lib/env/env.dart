@@ -23,4 +23,9 @@ class Env {
 
   static bool get iosBypassSubscription =>
       dotenv.env['IOS_BYPASS_SUBSCRIPTION']?.toLowerCase() == 'true';
+
+  static List<String> get freeAccessEmails {
+    final emails = dotenv.env['FREE_ACCESS_EMAILS'] ?? '';
+    return emails.split(',').map((e) => e.trim().toLowerCase()).where((e) => e.isNotEmpty).toList();
+  }
 }

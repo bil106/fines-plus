@@ -238,7 +238,7 @@ class AnalyticsScreenViewState extends State<_AnalyticsScreenView> with SingleTi
                             repository: context.read<ScheduleRepository>(),
                             reminderRepository: context.read<ReminderRepository>(),
                             pushHelper: context.read<PushHelper>(),
-                            carNumber: widget.carNumber,
+                            carNumber: context.read<CarCubit>().state.carId,
                             ownerId: context.read<CarCubit>().state.carNumber,
                           ),
                         ],

@@ -15,7 +15,7 @@ class StatisticsCostsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final hasCar = context.watch<CarCubit>().state.carNumber.isNotEmpty;
+    final hasCar = context.watch<CarCubit>().state.carId.isNotEmpty;
     final currency = context.watch<SettingsCubit>().state.currency;
     final textTheme = Theme.of(context).textTheme;
 

@@ -15,6 +15,7 @@
 *.jks
 *.keystore
 key.properties
+play-publish-key.json
 .buildlog/
 .history
 .svn/
@@ -53,3 +54,7 @@ migrate_working_dir/
 
 # FVM Version Cache
 .fvm/
+
+# Build artifacts
+/debug-info/
+/ios/build/

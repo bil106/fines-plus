@@ -23,7 +23,7 @@ class _MileageCardState extends State<MileageCard> {
   void initState() {
     super.initState();
     _focusNode.addListener(() {
-      setState(() {}); 
+      setState(() {});
     });
   }
 
@@ -38,46 +38,50 @@ class _MileageCardState extends State<MileageCard> {
     return Card(
       color: AppColors.neutreBlanc,
       margin: const EdgeInsets.symmetric(vertical: 6),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8,vertical: 12),
-        child: Row(
-          children: [
-            const Icon(Icons.speed, size: 24),
-            AppSpacers.horizontalSmall,
-            Flexible(
-              fit: FlexFit.loose,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  FittedBox(
-                    fit: BoxFit.scaleDown,
-                    alignment: Alignment.centerLeft,
-                    child: Text(S.of(context).mileage, style: widget.textTheme.subtitleText.copyWith(fontSize: 14)),
-                  ),
-                  AppSpacers.verticalXSmall,
-                
-                  TextField(
-                    controller: widget.controller,
-                    focusNode: _focusNode,
-                    keyboardType: TextInputType.number,
-                    inputFormatters: [FilteringTextInputFormatter.digitsOnly, MileageInputFormatter(max: 1000000)],
-                    decoration: InputDecoration(
-                      hintText: S.of(context).enter_mileage,
-                      hintStyle: widget.textTheme.hintText.copyWith(fontSize: 14),
-                      border: InputBorder.none,
-                      isDense: true,
-                      contentPadding: EdgeInsets.zero,
-                      focusedBorder: InputBorder.none,
-                      // suffixText: S.of(context).km,
-                      // suffixStyle: widget.textTheme.hintText.copyWith(fontSize: 16),
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () => _focusNode.requestFocus(),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+          child: Row(
+            children: [
+              const Icon(Icons.speed, size: 24),
+              AppSpacers.horizontalSmall,
+              Flexible(
+                fit: FlexFit.loose,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    FittedBox(
+                      fit: BoxFit.scaleDown,
+                      alignment: Alignment.centerLeft,
+                      child: Text(S.of(context).mileage, style: widget.textTheme.subtitleText.copyWith(fontSize: 14)),
                     ),
-                    style: widget.textTheme.historyText.copyWith(fontSize: 16),
-                  ),
-                ],
+                    AppSpacers.verticalXSmall,
+
+                    TextField(
+                      controller: widget.controller,
+                      focusNode: _focusNode,
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly, MileageInputFormatter(max: 1000000)],
+                      decoration: InputDecoration(
+                        hintText: S.of(context).enter_mileage,
+                        hintStyle: widget.textTheme.hintText.copyWith(fontSize: 14),
+                        border: InputBorder.none,
+                        isDense: true,
+                        contentPadding: EdgeInsets.zero,
+                        focusedBorder: InputBorder.none,
+                        // suffixText: S.of(context).km,
+                        // suffixStyle: widget.textTheme.hintText.copyWith(fontSize: 16),
+                      ),
+                      style: widget.textTheme.historyText.copyWith(fontSize: 16),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

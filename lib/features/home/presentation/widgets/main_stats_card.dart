@@ -41,7 +41,7 @@ class MainStatsCard extends StatelessWidget {
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(20, 10, 20, 2),
+        padding: const EdgeInsets.fromLTRB(4, 10, 4, 2),
         child: Column(
           children: [
             SizedBox(
@@ -63,7 +63,10 @@ class MainStatsCard extends StatelessWidget {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text(S.of(context).total_costs, style: textTheme.black20bold),
+                            Text(
+                              S.of(context).total_costs,
+                              style: textTheme.black20bold,
+                            ),
                             Text(
                               '${totalCostConverted.toStringAsFixed(0)} $selectedCurrency',
                               style: const TextStyle(
@@ -72,14 +75,22 @@ class MainStatsCard extends StatelessWidget {
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                        
+
                             StreamBuilder<double>(
-                              stream: unitStream.unitValueStream(stats.lastOdometer.toDouble()),
-                              initialData: unitStream.convert(stats.lastOdometer.toDouble()),
+                              stream: unitStream.unitValueStream(
+                                stats.lastOdometer.toDouble(),
+                              ),
+                              initialData: unitStream.convert(
+                                stats.lastOdometer.toDouble(),
+                              ),
                               builder: (context, snapshot) {
-                                final mileageValue = snapshot.data ?? stats.lastOdometer.toDouble();
-                                final unit = settingsCubit.state.unit == 'mil' ? 'mil' : S.of(context).km;
-                        
+                                final mileageValue =
+                                    snapshot.data ??
+                                    stats.lastOdometer.toDouble();
+                                final unit = settingsCubit.state.unit == 'mil'
+                                    ? 'mil'
+                                    : S.of(context).km;
+
                                 return Text(
                                   "${mileageValue.toStringAsFixed(0)} $unit",
                                   style: textTheme.black18W400,
@@ -97,33 +108,57 @@ class MainStatsCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Column(
-                  children: [
-                    Image.asset('assets/icons/coin_stack.png', width: 24, height: 24, color: Colors.blueAccent),
-                    const SizedBox(height: 4),
-                    StatValue(
-                      value: costPerKmConverted.toStringAsFixed(1),
-                      label: "$selectedCurrency/${settingsCubit.state.unit}",
-                    ),
-                  ],
+                Padding(
+                  padding: const EdgeInsets.only(left: 18.0),
+                  child: Column(
+                    children: [
+                      Image.asset(
+                        'assets/icons/coin_stack.png',
+                        width: 24,
+                        height: 24,
+                        color: Colors.blueAccent,
+                      ),
+                      const SizedBox(height: 4),
+                      StatValue(
+                        value: costPerKmConverted.toStringAsFixed(1),
+                        label: "$selectedCurrency/${settingsCubit.state.unit}",
+                      ),
+                    ],
+                  ),
                 ),
 
-                Column(
-                  children: [
-                    const Icon(Icons.local_gas_station, color: Colors.blueAccent, size: 24),
-                    const SizedBox(height: 4),
-                    StreamBuilder<double>(
-                      stream: unitStream.fuelConsumptionStream(stats.averageFuelConsumption),
-                      builder: (context, snapshot) {
-                        final value = snapshot.data ?? stats.averageFuelConsumption;
-                        final fuelUnit = settingsCubit.state.fuelConsumptionUnit;
+                Padding(
+                  padding: const EdgeInsets.only(right: 18.0),
+                  child: Column(
+                    children: [
+                      const Icon(
+                        Icons.local_gas_station,
+                        color: Colors.blueAccent,
+                        size: 24,
+                      ),
+                      const SizedBox(height: 4),
+                      StreamBuilder<double>(
+                        stream: unitStream.fuelConsumptionStream(
+                          stats.averageFuelConsumption,
+                        ),
+                        builder: (context, snapshot) {
+                          final value =
+                              snapshot.data ?? stats.averageFuelConsumption;
+                          final fuelUnit =
+                              settingsCubit.state.fuelConsumptionUnit;
 
-                        final unitLabel = fuelUnit == 'l/100km' ? "l/100${S.of(context).km}" : "mpg";
+                          final unitLabel = fuelUnit == 'l/100km'
+                              ? "l/100${S.of(context).km}"
+                              : "mpg";
 
-                        return StatValue(value: value.toStringAsFixed(1), label: unitLabel);
-                      },
-                    ),
-                  ],
+                          return StatValue(
+                            value: value.toStringAsFixed(1),
+                            label: unitLabel,
+                          );
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),

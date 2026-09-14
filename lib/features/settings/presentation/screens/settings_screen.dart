@@ -76,6 +76,10 @@ if (!mounted) return;
     context.findAncestorStateOfType<HomeScreenWrapperState>()?.openPage(HomePage.carInfo);
   }
 
+  void _openGarage(BuildContext context) {
+    context.findAncestorStateOfType<HomeScreenWrapperState>()?.openPage(HomePage.garage);
+  }
+
   Future<void> _confirmDeleteAccount(BuildContext context) async {
     final confirmed = await showDialog<bool>(
       context: context,
@@ -255,6 +259,12 @@ if (!mounted) return;
                   padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                   child: Column(
                     children: [
+                      _buildActionRow(
+                        icon: Icons.garage_outlined,
+                        title: S.of(context).my_garage,
+                        onTap: () => _openGarage(context),
+                      ),
+                      Divider(thickness: 2, color: AppColors.energyBlue50),
                       _buildActionRow(
                         icon: Icons.directions_car_outlined,
                         title: S.of(context).change_car_info,

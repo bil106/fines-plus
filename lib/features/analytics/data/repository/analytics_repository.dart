@@ -87,8 +87,7 @@ Future<AnalyticsData> getAnalytics(DateTime date, String carNumber) async {
         return AnalyticsData.empty();
       }
 
-      final isValidCar = RegExp(r'^[А-ЯЇІЄҐ]{2}\d{4}[А-ЯЇІЄҐ]{2}$').hasMatch(carNumber);
-      if (!isValidCar) {
+      if (carNumber.isEmpty) {
         return AnalyticsData.empty();
       }
 

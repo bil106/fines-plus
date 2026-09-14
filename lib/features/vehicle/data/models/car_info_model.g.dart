@@ -10,6 +10,9 @@ CarInfoModel _$CarInfoModelFromJson(Map<String, dynamic> json) => CarInfoModel(
   carNumber: json['carNumber'] as String,
   techPassport: json['techPassport'] as String,
   ownerId: json['ownerId'] as String,
+  carId: json['carId'] as String? ?? '',
+  make: json['make'] as String? ?? '',
+  photoUrl: json['photoUrl'] as String? ?? '',
 );
 
 Map<String, dynamic> _$CarInfoModelToJson(CarInfoModel instance) =>
@@ -17,4 +20,7 @@ Map<String, dynamic> _$CarInfoModelToJson(CarInfoModel instance) =>
       'carNumber': instance.carNumber,
       'techPassport': instance.techPassport,
       'ownerId': instance.ownerId,
+      'carId': instance.carId,
+      'make': instance.make,
+      'photoUrl': instance.photoUrl,
     };

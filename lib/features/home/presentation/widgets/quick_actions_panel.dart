@@ -15,8 +15,8 @@ class QuickActionsPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final carCubit = context.watch<CarCubit?>();
-    final carNumber = carCubit?.state.carNumber ?? '';
-    final hasCar = carNumber.isNotEmpty;
+    final carId = carCubit?.state.carId ?? '';
+    final hasCar = carId.isNotEmpty;
 
     final quickActionsCubit = context.read<QuickActionsCubit?>();
     if (quickActionsCubit == null) return const SizedBox.shrink();
@@ -85,10 +85,10 @@ class QuickActionsPanel extends StatelessWidget {
                       'comment': result['comment'] ?? '',
                     },
                     labelKey: labelKey,
-                    carNumber: carNumber,
+                    carNumber: carId,
                   );
                 } else {
-                  await quickActionsCubit.onTaskCreated(result, labelKey: labelKey, carNumber: carNumber);
+                  await quickActionsCubit.onTaskCreated(result, labelKey: labelKey, carNumber: carId);
                 }
 
                 wrapperState?.openAnalyticsTab(2);

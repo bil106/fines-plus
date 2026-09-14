@@ -15,7 +15,7 @@ class StatisticsMileageCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    final hasCar = context.watch<CarCubit>().state.carNumber.isNotEmpty;
+    final hasCar = context.watch<CarCubit>().state.carId.isNotEmpty;
     final settingsCubit = context.watch<SettingsCubit>();
     final unitStream = UnitStream(settingsCubit);
 

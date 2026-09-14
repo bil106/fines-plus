@@ -7,6 +7,7 @@ import 'package:design_system/constants/app_borders.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:fines_plus/features/registration/presentation/cubit/registration_cubit.dart';
 import 'package:fines_plus/features/registration/presentation/cubit/registration_state.dart';
+import 'package:fines_plus/features/registration/presentation/screens/garage_setup_screen.dart';
 import 'package:fines_plus/features/subscription/presentation/cubit/subscription_cubit.dart';
 import 'package:fines_plus/app/router/app_router.dart';
 import 'package:fines_plus/app/router/home_screen_wrapper.dart';
@@ -72,6 +73,37 @@ HomeScreenWrapperState? _wrapperState;
   }
 
   bool _isFormValid = false;
+  bool _isNewAccountAwaitingGarageSetup = false;
+
+  /// Subscription check + navigation into the app, shared by both the
+  /// "existing user logs in" path (goes here immediately) and the
+  /// "new account" path (goes here once garage setup is done/skipped).
+  Future<void> _continueToApp(BuildContext context) async {
+    final regCubit = context.read<RegistrationCubit>();
+    final hasSubscription = await regCubit.checkSubscription();
+    if (!context.mounted) return;
+
+    if (kDebugMode || hasSubscription) {
+      context.router.replaceAll([HomeRouteWrapper()]);
+    } else {
+      context.router.replaceAll([
+        SubscriptionRoute(
+          debugMode: true,
+          onBack: () async {
+            await Future.delayed(const Duration(milliseconds: 150));
+
+            if (_wrapperState != null) {
+              _wrapperState!.openPage(HomePage.home);
+              return;
+            }
+
+            if (!mounted) return;
+            context.router.root.replaceAll([HomeRouteWrapper(initialPage: HomePage.subscription)]);
+          },
+        ),
+      ]);
+    }
+  }
 
   void _validateForm() {
     final email = emailController.text.trim();
@@ -191,7 +223,8 @@ Future<void> _signInWithGoogle(BuildContext context) async {
     final usersRef = FirebaseFirestore.instance.collection("users").doc(user.uid);
 
     final doc = await usersRef.get();
-    if (!doc.exists) {
+    final isNewAccount = !doc.exists;
+    if (isNewAccount) {
       await usersRef.set({
         "email": user.email,
         "createdAt": FieldValue.serverTimestamp(),
@@ -201,12 +234,13 @@ Future<void> _signInWithGoogle(BuildContext context) async {
       });
     }
 
-    final hasSubscription = await context.read<RegistrationCubit>().checkSubscription();
+    if (!mounted) return;
 
-    if (kDebugMode || hasSubscription) {
-      context.router.replaceAll([HomeRouteWrapper(initialPage: HomePage.home)]);
+    if (isNewAccount) {
+      // Brand-new account — let the user skip or add a car before continuing.
+      setState(() => _isNewAccountAwaitingGarageSetup = true);
     } else {
-      context.router.replaceAll([SubscriptionRoute(debugMode: true)]);
+      await _continueToApp(context);
     }
   }
 @override
@@ -224,6 +258,10 @@ Future<void> _signInWithGoogle(BuildContext context) async {
 
   @override
   Widget build(BuildContext context) {
+    if (_isNewAccountAwaitingGarageSetup) {
+      return GarageSetupScreen(onDone: () => _continueToApp(context));
+    }
+
     final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
@@ -259,29 +297,12 @@ Future<void> _signInWithGoogle(BuildContext context) async {
                       ),
                     );
 
-                    final regCubit = context.read<RegistrationCubit>();
-                    final hasSubscription = await regCubit.checkSubscription();
-
-                    if (kDebugMode || hasSubscription) {
-                      context.router.replaceAll([HomeRouteWrapper()]);
+                    if (state.isExistingUser) {
+                      // Returning user logging in — no garage setup step, straight into the app.
+                      await _continueToApp(context);
                     } else {
-                      context.router.replaceAll([
-                        SubscriptionRoute(
-                          debugMode: true,
-                        onBack: () async {
-                            await Future.delayed(const Duration(milliseconds: 150));
-
-                            if (_wrapperState != null) {
-                              _wrapperState!.openPage(HomePage.home);
-                              return;
-                            }
-
-                            if (!mounted) return;
-                            context.router.root.replaceAll([HomeRouteWrapper(initialPage: HomePage.subscription)]);
-                          },
-
-                        ),
-                      ]);
+                      // Brand-new account — let the user skip or add a car before continuing.
+                      setState(() => _isNewAccountAwaitingGarageSetup = true);
                     }
                   }
                 },

@@ -16,6 +16,7 @@ class CarInfoLocalDataSource {
   static const _techKey = 'tech_passport';
   static const _seriesKey = 'doc_series';
   static const _numberKey = 'doc_number';
+  static const _carIdKey = 'car_id';
 
   Future<void> saveCarInfo(CarInfoModel model) async {
     final car = model.carNumber.trim();
@@ -33,7 +34,27 @@ class CarInfoLocalDataSource {
       debugPrint("Saved tech passport split: series=$series, number=$number");
     }
 
+    await _mirrorToCarDoc({'carNumber': car, 'techPassport': tech});
+
     debugPrint("Saved car info: number=$car, tech=$tech");
+  }
+
+  /// Merges fields onto the canonical `users/{uid}/cars/{carId}` doc so the
+  /// plate/tech-passport stay visible next to the expenses/maintenance/
+  /// reminders/analytics data already keyed by that same carId.
+  Future<void> _mirrorToCarDoc(Map<String, dynamic> fields) async {
+    final user = auth.currentUser;
+    final carId = prefs.getString(_carIdKey) ?? '';
+    if (user == null || carId.isEmpty) return;
+
+    try {
+      await firestore.collection('users').doc(user.uid).collection('cars').doc(carId).set({
+        ...fields,
+        'updatedAt': FieldValue.serverTimestamp(),
+      }, SetOptions(merge: true));
+    } catch (e) {
+      debugPrint('_mirrorToCarDoc failed: $e');
+    }
   }
 
   Future<CarInfoModel> getCarInfo() async {
@@ -41,16 +62,56 @@ class CarInfoLocalDataSource {
     final tech = prefs.getString(_techKey) ?? '';
     final series = prefs.getString(_seriesKey) ?? '';
     final number = prefs.getString(_numberKey) ?? '';
+    final carId = prefs.getString(_carIdKey) ?? '';
 
-    debugPrint("Loaded car info: number=$car, tech=$tech, series=$series, num=$number");
+    debugPrint("Loaded car info: number=$car, tech=$tech, series=$series, num=$number, carId=$carId");
 
     return CarInfoModel(
       carNumber: car,
-      techPassport: tech, ownerId: '',
+      techPassport: tech,
+      ownerId: '',
+      carId: carId,
     );
   }
 
-  Future<void> saveCarNumber(String v) async => prefs.setString(_carKey, v.trim());
+  /// Returns the stable id of the signed-in user's (single, for now) car,
+  /// generating and persisting one via a Firestore auto-id if this is the
+  /// first time — this is what lets a car with no plate yet (a "skip"
+  /// default car) still have a stable Firestore key for its expenses,
+  /// maintenance, reminders and analytics data.
+  Future<String> ensureCarId() async {
+    final existing = prefs.getString(_carIdKey) ?? '';
+    if (existing.isNotEmpty) return existing;
+
+    final user = auth.currentUser;
+    if (user == null) return '';
+
+    final carDocRef = firestore.collection('users').doc(user.uid).collection('cars').doc();
+    final carId = carDocRef.id;
+
+    await prefs.setString(_carIdKey, carId);
+
+    try {
+      await carDocRef.set({
+        'carId': carId,
+        'isDefault': true,
+        'createdAt': FieldValue.serverTimestamp(),
+      }, SetOptions(merge: true));
+      await firestore.collection('users').doc(user.uid).set({
+        'activeCarId': carId,
+      }, SetOptions(merge: true));
+    } catch (e) {
+      debugPrint('ensureCarId: failed to write car doc to Firestore: $e');
+    }
+
+    return carId;
+  }
+
+  Future<void> saveCarNumber(String v) async {
+    final car = v.trim();
+    await prefs.setString(_carKey, car);
+    await _mirrorToCarDoc({'carNumber': car});
+  }
 
   Future<void> saveTechPassport(String v) async {
     final value = v.trim().toUpperCase();
@@ -64,14 +125,192 @@ class CarInfoLocalDataSource {
 
       debugPrint("Saved tech passport split (via saveTechPassport): series=$series, number=$number");
     }
+
+    await _mirrorToCarDoc({'techPassport': value});
   }
+
+  Future<void> saveMake(String make) async => _mirrorToCarDoc({'make': make});
+
+  Future<void> savePhotoUrl(String url) async => _mirrorToCarDoc({'photoUrl': url});
+
 Future<void> clearCarInfo() async {
     await prefs.remove(_carKey);
     await prefs.remove(_techKey);
     await prefs.remove(_seriesKey);
     await prefs.remove(_numberKey);
+    await prefs.remove(_carIdKey);
 
-    
+
+  }
+
+  CollectionReference<Map<String, dynamic>> _carsCollection(String uid) =>
+      firestore.collection('users').doc(uid).collection('cars');
+
+  /// All of the signed-in user's cars — the "garage".
+  Stream<List<CarInfoModel>> streamCars() {
+    final user = auth.currentUser;
+    if (user == null) return const Stream.empty();
+
+    return _carsCollection(user.uid).orderBy('createdAt').snapshots().map(
+      (snap) => snap.docs.map((d) {
+        final data = d.data();
+        return CarInfoModel(
+          carNumber: (data['carNumber'] as String?) ?? '',
+          techPassport: (data['techPassport'] as String?) ?? '',
+          ownerId: user.uid,
+          carId: d.id,
+          make: (data['make'] as String?) ?? '',
+          photoUrl: (data['photoUrl'] as String?) ?? '',
+        );
+      }).toList(),
+    );
+  }
+
+  /// Adds a new car to the garage (its own Firestore auto-id) without
+  /// touching whichever car is currently active locally.
+  Future<CarInfoModel> addCar({
+    String carNumber = '',
+    String techPassport = '',
+    String make = '',
+    String photoUrl = '',
+  }) async {
+    final user = auth.currentUser;
+    if (user == null) throw StateError('Not signed in');
+
+    final docRef = _carsCollection(user.uid).doc();
+    final car = CarInfoModel(
+      carNumber: carNumber.trim(),
+      techPassport: techPassport.trim().toUpperCase(),
+      ownerId: user.uid,
+      carId: docRef.id,
+      make: make,
+      photoUrl: photoUrl,
+    );
+
+    await docRef.set({
+      'carId': car.carId,
+      'carNumber': car.carNumber,
+      'techPassport': car.techPassport,
+      'make': car.make,
+      'photoUrl': car.photoUrl,
+      'isDefault': false,
+      'createdAt': FieldValue.serverTimestamp(),
+      'updatedAt': FieldValue.serverTimestamp(),
+    });
+
+    return car;
+  }
+
+  /// Merges fields onto a specific car's doc — used to edit a garage car
+  /// that is NOT the currently active one (the active car's carNumber/
+  /// techPassport are kept in sync via [saveCarNumber]/[saveTechPassport]
+  /// instead, which also update the local cache).
+  Future<void> updateCarFields(
+    String carId, {
+    String? carNumber,
+    String? techPassport,
+    String? make,
+    String? photoUrl,
+  }) async {
+    final user = auth.currentUser;
+    if (user == null) return;
+
+    final fields = <String, dynamic>{'updatedAt': FieldValue.serverTimestamp()};
+    if (carNumber != null) fields['carNumber'] = carNumber.trim();
+    if (techPassport != null) fields['techPassport'] = techPassport.trim().toUpperCase();
+    if (make != null) fields['make'] = make;
+    if (photoUrl != null) fields['photoUrl'] = photoUrl;
+
+    await _carsCollection(user.uid).doc(carId).set(fields, SetOptions(merge: true));
+  }
+
+  /// Makes [car] the active one: local cache (prefs) + `activeCarId` on the
+  /// user doc switch to it, so every carNumber/techPassport-reading screen
+  /// picks it up.
+  Future<void> switchActiveCar(CarInfoModel car) async {
+    await prefs.setString(_carIdKey, car.carId);
+    await prefs.setString(_carKey, car.carNumber);
+    await prefs.setString(_techKey, car.techPassport);
+
+    if (car.techPassport.length == 9) {
+      await prefs.setString(_seriesKey, car.techPassport.substring(0, 3));
+      await prefs.setString(_numberKey, car.techPassport.substring(3));
+    } else {
+      await prefs.remove(_seriesKey);
+      await prefs.remove(_numberKey);
+    }
+
+    final user = auth.currentUser;
+    if (user != null) {
+      await firestore.collection('users').doc(user.uid).set({
+        'activeCarId': car.carId,
+      }, SetOptions(merge: true));
+    }
+  }
+
+  /// Deletes a car and all of its data: the car doc itself, its
+  /// `expenses`/`scheduleTasks` subcollections, and the (pre-existing,
+  /// carId-keyed but top-level) `reminders`/`analytics` collections.
+  ///
+  /// The car doc + its subcollections are committed as a single Firestore
+  /// batch: either ALL of it disappears together, or NONE of it does. A
+  /// per-document delete loop previously left the door open for a partial
+  /// failure (e.g. a permission-denied error partway through) to delete
+  /// some expenses while leaving the car itself in place — a real instance
+  /// of exactly that data loss is why this is now atomic.
+  ///
+  /// Cleanup of the two legacy top-level collections stays best-effort:
+  /// those predate any per-user Firestore rule and may reject the delete
+  /// outright even when nothing is there to delete, and that must not make
+  /// the whole action look like it failed once the car itself is gone.
+  Future<void> deleteCarDoc(String carId) async {
+    final user = auth.currentUser;
+    if (user == null) throw StateError('Not signed in');
+
+    final carRef = _carsCollection(user.uid).doc(carId);
+
+    // Must run BEFORE the car doc is deleted below: their security rules
+    // gate access on `exists(.../cars/{carId})`, so once the car is gone
+    // these would permanently fail and leave orphaned documents behind.
+    try {
+      final remindersRef = firestore.collection('reminders').doc(carId);
+      final remindersSnap = await remindersRef.collection('items').get();
+      for (final doc in remindersSnap.docs) {
+        await doc.reference.delete();
+      }
+      await remindersRef.delete();
+    } catch (e) {
+      debugPrint('deleteCarDoc: failed to clean up reminders for $carId: $e');
+    }
+
+    try {
+      final analyticsRef = firestore.collection('analytics').doc(carId);
+      final analyticsSnap = await analyticsRef.collection('months').get();
+      for (final doc in analyticsSnap.docs) {
+        await doc.reference.delete();
+      }
+      await analyticsRef.delete();
+    } catch (e) {
+      debugPrint('deleteCarDoc: failed to clean up analytics for $carId: $e');
+    }
+
+    final batch = firestore.batch();
+    for (final sub in ['expenses', 'scheduleTasks']) {
+      final snap = await carRef.collection(sub).get();
+      for (final doc in snap.docs) {
+        batch.delete(doc.reference);
+      }
+    }
+    batch.delete(carRef);
+    await batch.commit();
+  }
+
+  /// Clears the local "active car" entirely so the next [ensureCarId] call
+  /// creates a fresh default one — used after deleting the last car in the
+  /// garage.
+  Future<String> resetToNewDefaultCar() async {
+    await clearCarInfo();
+    return ensureCarId();
   }
 
 }

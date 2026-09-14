@@ -8,6 +8,7 @@ import 'package:fines_plus/app/router/app_router.dart';
 import 'package:fines_plus/app/router/home_screen_wrapper.dart';
 import 'package:fines_plus/features/subscription/presentation/screens/subscription_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 @RoutePage()
 class OnboardingScreen extends StatefulWidget {
@@ -20,10 +21,19 @@ class OnboardingScreen extends StatefulWidget {
 class _OnboardingScreenState extends State<OnboardingScreen> {
   final pageController = PageController();
   int currentPage = 0;
+  String _versionLabel = '';
 
   // Subscription page is only shown on Android
   bool get _showSubscription => Platform.isAndroid;
   int get _pageCount => _showSubscription ? 5 : 4;
+
+  @override
+  void initState() {
+    super.initState();
+    PackageInfo.fromPlatform().then((info) {
+      if (mounted) setState(() => _versionLabel = 'v${info.version}+${info.buildNumber}');
+    });
+  }
 
   Widget _buildPage({
     required int pageIndex,
@@ -158,6 +168,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             ],
           ),
           if (!isLandscape) Positioned(bottom: 40, left: 0, right: 0, child: _buildDots()),
+          Positioned(
+            bottom: 6,
+            right: 12,
+            child: Text(_versionLabel, style: const TextStyle(color: Colors.black26, fontSize: 11)),
+          ),
         ],
       ),
     );

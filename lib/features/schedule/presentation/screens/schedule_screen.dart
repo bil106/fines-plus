@@ -57,6 +57,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
   ReminderCubit? reminderCubit;
   late PushHelper pushHelper;
   late ScheduleFirebaseRepository firebaseRepo;
+  StreamSubscription? _carSub;
 
   @override
   void initState() {
@@ -70,23 +71,31 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     }
 
     final carCubit = context.read<CarCubit>();
-    carCubit.stream.listen((carState) {
-      final newCar = carState.carNumber;
-      if (newCar.isNotEmpty && scheduleCubit?.carNumber != newCar) {
-        _initCubits(newCar, widget.ownerId);
+    _carSub = carCubit.stream.listen((carState) {
+      if (!mounted) return;
+      final newCarId = carState.carId;
+      if (newCarId.isNotEmpty && scheduleCubit?.carNumber != newCarId) {
+        _initCubits(newCarId, widget.ownerId);
         setState(() {});
       }
     });
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
       _checkInitialAction();
       final quick = context.read<QuickActionsCubit>();
-      final carNumber = widget.carNumber;
-      if (carNumber.isNotEmpty) {
-        quick.syncActiveCategories(carNumber);
+      final carId = widget.carNumber;
+      if (carId.isNotEmpty) {
+        quick.syncActiveCategories(carId);
       }
       quick.init();
     });
+  }
+
+  @override
+  void dispose() {
+    _carSub?.cancel();
+    super.dispose();
   }
 
   void _initCubits(String carNumber, String ownerId) {
@@ -426,7 +435,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                                     unawaited(
                                       tasksRepository.removeTask(
                                         labelKey,
-                                        carNumber: context.read<CarCubit>().state.carNumber,
+                                        carNumber: context.read<CarCubit>().state.carId,
                                       ),
                                     );
                                   },

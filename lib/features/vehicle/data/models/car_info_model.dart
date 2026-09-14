@@ -7,14 +7,34 @@ class CarInfoModel {
   final String carNumber;
   final String techPassport;
   final String ownerId;
+  final String carId;
+  final String make;
+  final String photoUrl;
 
-  const CarInfoModel({required this.carNumber, required this.techPassport, required this.ownerId});
+  const CarInfoModel({
+    required this.carNumber,
+    required this.techPassport,
+    required this.ownerId,
+    this.carId = '',
+    this.make = '',
+    this.photoUrl = '',
+  });
 
-  CarInfoModel copyWith({String? carNumber, String? techPassport, String? ownerId}) {
+  CarInfoModel copyWith({
+    String? carNumber,
+    String? techPassport,
+    String? ownerId,
+    String? carId,
+    String? make,
+    String? photoUrl,
+  }) {
     return CarInfoModel(
       carNumber: carNumber ?? this.carNumber,
       techPassport: techPassport ?? this.techPassport,
       ownerId: ownerId ?? this.ownerId,
+      carId: carId ?? this.carId,
+      make: make ?? this.make,
+      photoUrl: photoUrl ?? this.photoUrl,
     );
   }
 

@@ -38,8 +38,7 @@ class _AddCarScreenState extends State<AddCarScreen> {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final user = _auth.currentUser;
-    final carNumber = context.watch<CarCubit>().state.carNumber;
-    final bool hasCar = carNumber.isNotEmpty;
+    final bool hasCar = context.watch<CarCubit>().state.carId.isNotEmpty;
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
         statusBarColor: AppColors.energyBlue50,

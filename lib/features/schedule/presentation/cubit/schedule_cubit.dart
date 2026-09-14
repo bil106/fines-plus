@@ -37,7 +37,7 @@ class ScheduleCubit extends Cubit<ScheduleState> {
     required this.carCubit,
   }) : super(ScheduleState(tasks: [], loading: true)) {
     _carSub = carCubit.stream.listen((state) {
-      final newCar = state.carNumber;
+      final newCar = state.carId;
       if (newCar != carNumber) {
         onCarChanged(newCar);
       }
@@ -185,11 +185,9 @@ class ScheduleCubit extends Cubit<ScheduleState> {
     return "${S.current.not_forget_task}: $title";
   }
 
-  static final _carReg = RegExp(r'^[А-ЯЇІЄҐ]{2}\d{4}[А-ЯЇІЄҐ]{2}$');
-
   Future<void> onCarChanged(String newCar) async {
     carNumber = newCar;
-    if (!_carReg.hasMatch(newCar)) {
+    if (newCar.isEmpty) {
       emit(state.copyWith(tasks: [], loading: false));
       return;
     }

@@ -26,12 +26,9 @@ class AppStartCubit extends Cubit<AppStartState> {
       return;
     }
 
-    final carNumber = prefs.getString('carNumber');
-    if (carNumber == null || carNumber.isEmpty) {
-      emit(AppStartOnboarding());
-      return;
-    }
-
+    // A signed-in user always has a car to land on Home with: either they
+    // already have one, or CarCubit lazily creates a default (plate-less)
+    // one the first time it initializes. No car-specific gate needed here.
     emit(AppStartHome());
   }
 }

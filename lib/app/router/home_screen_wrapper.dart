@@ -33,7 +33,9 @@ import 'package:fines_plus/features/subscription/presentation/cubit/subscription
 import 'package:fines_plus/features/vehicle/data/repository/car_info_repository.dart';
 import 'package:fines_plus/features/vehicle/presentation/cubit/car_cubit.dart';
 import 'package:fines_plus/features/vehicle/presentation/cubit/car_info_cubit.dart';
+import 'package:fines_plus/features/vehicle/presentation/cubit/garage_cubit.dart';
 import 'package:fines_plus/features/vehicle/presentation/screens/car_info_screen.dart';
+import 'package:fines_plus/features/vehicle/presentation/screens/garage_screen.dart';
 import 'package:fines_plus/presentation/screens/add_car_screen.dart';
 import 'package:fines_plus/features/maintenance/presentation/screens/car_wash_map_screen.dart';
 import 'package:fines_plus/features/maintenance/presentation/screens/car_wash_screen.dart';
@@ -78,6 +80,7 @@ enum HomePage {
   subscription,
   fuelMap,
   carWashMap,
+  garage,
 }
 
 @RoutePage()
@@ -100,6 +103,7 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
   late final HistoryCubit historyCubit;
   late final CarInfoCubit carInfoCubit;
   late final AnalyticsCubit analyticsCubit;
+  late final GarageCubit garageCubit;
 
   late final Map<HomePage, int> _pageIndexMap;
   DateTime? _lastPressedTime;
@@ -129,6 +133,7 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
       HomePage.schedule: 16,
       HomePage.fuelMap: 17,
       HomePage.carWashMap: 18,
+      HomePage.garage: 19,
     };
 
     _currentIndex = _pageIndexMap[HomePage.home]!;
@@ -137,10 +142,13 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
 
     debugPrint('HomeScreenWrapper: widget.initialPage = ${widget.initialPage}');
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final carNumber = context.read<CarCubit>().state.carNumber;
       final user = FirebaseAuth.instance.currentUser;
 
-      if (!kDebugMode && (user == null || carNumber.isEmpty)) {
+      // A missing car number is a valid state here (e.g. right after
+      // subscribing during onboarding) — HomeScreen already handles it by
+      // prompting the user to add a car. Only an unauthenticated user needs
+      // to be bounced back to onboarding.
+      if (!kDebugMode && user == null) {
         context.router.replaceAll([const OnboardingRoute()]);
         return;
       }
@@ -154,6 +162,7 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
       repository: AnalyticsRepository(firestore: FirebaseFirestore.instance),
       carCubit: context.read<CarCubit>(),
     );
+    garageCubit = GarageCubit(repository: context.read<CarInfoRepository>(), carCubit: context.read<CarCubit>());
   }
 
   void refreshUserData() {
@@ -162,6 +171,11 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
 
   Future<void> _loadCarNumber() async {
     final prefs = await SharedPreferences.getInstance();
+    if (!mounted) return;
+
+    // Guarantees a car id exists (creating a default, plate-less one if this
+    // is a fresh account) before we compute hasCar/gating below.
+    await context.read<CarCubit>().ensureCarId();
     if (!mounted) return;
 
     setState(() {
@@ -198,7 +212,7 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
 
   void openPage(HomePage page) {
     final carState = context.read<CarCubit>().state;
-    final bool hasCar = carState.carNumber.isNotEmpty;
+    final bool hasCar = carState.carId.isNotEmpty;
 
     final index = _pageIndexMap[page] ?? 0;
 
@@ -229,6 +243,7 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
     historyCubit.close();
     carInfoCubit.close();
     analyticsCubit.close();
+    garageCubit.close();
     super.dispose();
   }
 
@@ -236,7 +251,8 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
   Widget build(BuildContext context) {
     final carState = context.watch<CarCubit>().state;
     final carNumber = carState.carNumber;
-    final bool hasCar = carState.carNumber.isNotEmpty;
+    final carId = carState.carId;
+    final bool hasCar = carState.carId.isNotEmpty;
     if (_carNumber == null) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
@@ -265,6 +281,7 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
         providers: [
           BlocProvider.value(value: historyCubit),
           BlocProvider.value(value: analyticsCubit),
+          BlocProvider.value(value: garageCubit),
           BlocProvider(create: (_) => CarInfoCubit(context.read<CarInfoRepository>(), historyCubit)),
         ],
         child: Scaffold(
@@ -422,7 +439,7 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
                           repository: scheduleRepository,
                           reminderRepository: reminderRepository,
                           pushHelper: PushHelper(FlutterLocalNotificationsPlugin()),
-                          carNumber: carNumber,
+                          carNumber: carId,
                           ownerId: '',
                         );
                       },
@@ -431,6 +448,7 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
                 ),
                 FuelMapScreen(key: const ValueKey('fuel-map')),
                 CarWashMapScreen(key: const ValueKey('car-wash-map')),
+                GarageScreen(key: const ValueKey('garage_screen'), onBack: () => openPage(HomePage.home)),
               ],
             ],
           ),

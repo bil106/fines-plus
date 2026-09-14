@@ -14,6 +14,8 @@ import 'package:fines_plus/features/statistics/presentation/cubit/statistics_cub
 import 'package:fines_plus/features/statistics/presentation/cubit/statistics_state.dart';
 import 'package:fines_plus/features/vehicle/presentation/cubit/car_cubit.dart';
 import 'package:fines_plus/features/vehicle/presentation/cubit/car_state.dart';
+import 'package:fines_plus/features/vehicle/presentation/cubit/garage_cubit.dart';
+import 'package:fines_plus/features/vehicle/presentation/cubit/garage_state.dart';
 import 'package:fines_plus/app/router/home_screen_wrapper.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -38,8 +40,8 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    final carNumber = context.read<CarCubit>().state.carNumber;
-    context.read<QuickActionsCubit>().syncActiveCategories(carNumber);
+    final carId = context.read<CarCubit>().state.carId;
+    context.read<QuickActionsCubit>().syncActiveCategories(carId);
     context.read<QuickActionsCubit>().init();
     _loadLatestExpense();
   }
@@ -54,9 +56,9 @@ class _HomeScreenState extends State<HomeScreen> {
     final repo = ExpenseRepository(FirebaseFirestore.instance);
     final carCubit = context.read<CarCubit>();
 
-    final carNumber = carCubit.state.carNumber;
+    final carId = carCubit.state.carId;
 
-    if (carNumber == null || carNumber.isEmpty) {
+    if (carId.isEmpty) {
       setState(() {
         latestExpense = null;
         isLoading = false;
@@ -74,9 +76,9 @@ class _HomeScreenState extends State<HomeScreen> {
       return;
     }
 
-    await repo.ensureCarDocument(carNumber);
+    await repo.ensureCarDocument(carId);
 
-    final allExpenses = await repo.getExpensesOnce(carNumber: carNumber);
+    final allExpenses = await repo.getExpensesOnce(carNumber: carId);
     if (!mounted) return;
 
     if (allExpenses.isEmpty) {
@@ -87,9 +89,13 @@ class _HomeScreenState extends State<HomeScreen> {
       return;
     }
 
-    final allEvents = allExpenses.map((e) => LastEventUiModel.fromExpense(e)).toList();
+    final allEvents = allExpenses
+        .map((e) => LastEventUiModel.fromExpense(e))
+        .toList();
 
-    final latestByMileage = allEvents.reduce((a, b) => (a.mileage ?? 0) > (b.mileage ?? 0) ? a : b);
+    final latestByMileage = allEvents.reduce(
+      (a, b) => (a.mileage ?? 0) > (b.mileage ?? 0) ? a : b,
+    );
 
     if (!mounted) return;
     setState(() {
@@ -103,7 +109,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       backgroundColor: AppColors.energyBlue50,
       appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(45),
+        preferredSize: const Size.fromHeight(55),
         child: AppBar(
           elevation: 0,
           backgroundColor: AppColors.energyBlue50,
@@ -112,10 +118,16 @@ class _HomeScreenState extends State<HomeScreen> {
             padding: const EdgeInsets.only(top: 18.0),
             child: BlocBuilder<CarCubit, CarState>(
               builder: (context, state) {
-                final carNumber = state.carNumber.isNotEmpty ? state.carNumber : S.of(context).input_number;
+                final carNumber = state.carNumber.isNotEmpty
+                    ? state.carNumber
+                    : S.of(context).input_number;
                 return Text(
                   carNumber,
-                  style: const TextStyle(color: Colors.black87, fontWeight: FontWeight.w600),
+                  style: const TextStyle(
+                    color: Colors.black87,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 28,
+                  ),
                 );
               },
             ),
@@ -123,7 +135,8 @@ class _HomeScreenState extends State<HomeScreen> {
           leading: IconButton(
             icon: const Icon(Icons.settings, color: AppColors.grey700),
             onPressed: () {
-              final homeState = context.findAncestorStateOfType<HomeScreenWrapperState>();
+              final homeState = context
+                  .findAncestorStateOfType<HomeScreenWrapperState>();
               if (homeState != null) {
                 homeState.openPage(HomePage.settings);
               }
@@ -133,11 +146,41 @@ class _HomeScreenState extends State<HomeScreen> {
           actions: [
             Padding(
               padding: const EdgeInsets.only(right: 12.0),
-              child: IconButton(
-                icon: const Icon(Icons.directions_car, size: 28, color: AppColors.grey700),
-                onPressed: () {
-                  final wrapperState = context.findAncestorStateOfType<HomeScreenWrapperState>();
-                  wrapperState?.openPage(HomePage.carInfo);
+              child: BlocBuilder<GarageCubit, GarageState>(
+                builder: (context, garageState) {
+                  final activeCars = garageState.cars.where(
+                    (c) => c.carId == garageState.activeCarId,
+                  );
+                  final photoUrl = activeCars.isNotEmpty
+                      ? activeCars.first.photoUrl
+                      : '';
+
+                  return IconButton(
+                    icon: photoUrl.isEmpty
+                        ? const Icon(
+                            Icons.directions_car,
+                            size: 28,
+                            color: AppColors.grey700,
+                          )
+                        : ClipOval(
+                            child: Image.network(
+                              photoUrl,
+                              width: 42,
+                              height: 42,
+                              fit: BoxFit.cover,
+                              errorBuilder: (_, __, ___) => const Icon(
+                                Icons.directions_car,
+                                size: 28,
+                                color: AppColors.grey700,
+                              ),
+                            ),
+                          ),
+                    onPressed: () {
+                      final wrapperState = context
+                          .findAncestorStateOfType<HomeScreenWrapperState>();
+                      wrapperState?.openPage(HomePage.carInfo);
+                    },
+                  );
                 },
               ),
             ),
@@ -154,20 +197,31 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   BlocBuilder<StatisticsCubit, StatisticsState>(
                     builder: (context, state) {
-                      if (state.loading && context.watch<CarCubit>().state.carNumber.isNotEmpty) {
+                      if (state.loading &&
+                          context.watch<CarCubit>().state.carId.isNotEmpty) {
                         return const CircularProgressIndicator();
                       }
 
-                      final hasCar = context.watch<CarCubit>().state.carNumber.isNotEmpty;
+                      final hasCar = context
+                          .watch<CarCubit>()
+                          .state
+                          .carId
+                          .isNotEmpty;
 
                       final stats = hasCar
                           ? MainStats(
                               totalCost: state.expenseStats.total,
                               monthMileage: state.currentMonthMileage,
-                              averageFuelConsumption: state.averageFuelConsumption,
+                              averageFuelConsumption:
+                                  state.averageFuelConsumption,
                               lastOdometer: state.lastOdometer,
                             )
-                          : const MainStats(totalCost: 0, monthMileage: 0, averageFuelConsumption: 0, lastOdometer: 0);
+                          : const MainStats(
+                              totalCost: 0,
+                              monthMileage: 0,
+                              averageFuelConsumption: 0,
+                              lastOdometer: 0,
+                            );
 
                       return MainStatsCard(stats: stats);
                     },
@@ -175,7 +229,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
                   AppSpacers.verticalXSmall,
                   BlocListener<CarCubit, CarState>(
-                    listenWhen: (prev, curr) => prev.carNumber.isNotEmpty && curr.carNumber.isEmpty,
+                    listenWhen: (prev, curr) =>
+                        prev.carNumber.isNotEmpty && curr.carNumber.isEmpty,
                     listener: (context, state) {
                       if (state.carNumber.isEmpty) {
                         setState(() {
@@ -187,7 +242,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         return;
                       }
 
-                      context.read<QuickActionsCubit>().syncActiveCategories(state.carNumber);
+                      context.read<QuickActionsCubit>().syncActiveCategories(
+                        state.carNumber,
+                      );
                       _loadLatestExpense();
                     },
                     child: const QuickActionsPanel(),
@@ -196,9 +253,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
                   Builder(
                     builder: (context) {
-                      final carNumber = context.watch<CarCubit>().state.carNumber;
-                      if (carNumber.isEmpty) {
-                        return LastEventCardAction(event: null, onTap: null, onOpenEvents: null);
+                      final carId = context.watch<CarCubit>().state.carId;
+                      if (carId.isEmpty) {
+                        return LastEventCardAction(
+                          event: null,
+                          onTap: null,
+                          onOpenEvents: null,
+                        );
                       }
 
                       if (isLoading) {
@@ -209,7 +270,10 @@ class _HomeScreenState extends State<HomeScreen> {
                         event: latestExpense,
                         onTap: () {},
                         onOpenEvents: () {
-                          final wrapperState = context.findAncestorStateOfType<HomeScreenWrapperState>();
+                          final wrapperState = context
+                              .findAncestorStateOfType<
+                                HomeScreenWrapperState
+                              >();
                           wrapperState?.openPage(HomePage.maintenance);
                         },
                       );

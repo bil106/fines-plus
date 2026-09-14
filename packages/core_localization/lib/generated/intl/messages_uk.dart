@@ -265,8 +265,8 @@ class MessageLookup extends MessageLookupByLibrary {
       "Помилка входу через Google",
     ),
     "grn": MessageLookupByLibrary.simpleMessage("UAH"),
-    "hint_auto_num": MessageLookupByLibrary.simpleMessage("АН0000НА"),
-    "hint_tech_data_num": MessageLookupByLibrary.simpleMessage("ХЕE128436"),
+    "hint_auto_num": MessageLookupByLibrary.simpleMessage("AH0000HA"),
+    "hint_tech_data_num": MessageLookupByLibrary.simpleMessage("XEE128436"),
     "history": MessageLookupByLibrary.simpleMessage("Історія"),
     "history_empty": MessageLookupByLibrary.simpleMessage("Історія порожня"),
     "history_unavailable": MessageLookupByLibrary.simpleMessage(
@@ -387,7 +387,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "not_auth": MessageLookupByLibrary.simpleMessage("Не авторизовані"),
     "not_forget": MessageLookupByLibrary.simpleMessage(
-      "Не забудь замінити масло",
+      "Не забудь замінити оливу",
     ),
     "not_forget_task": MessageLookupByLibrary.simpleMessage(
       "Не забудь виконати завдання",
@@ -405,8 +405,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "of_road_accidents": MessageLookupByLibrary.simpleMessage(
       "Аварії на дорогах",
     ),
-    "oil": MessageLookupByLibrary.simpleMessage("масло"),
-    "oil_icon": MessageLookupByLibrary.simpleMessage("Олія"),
+    "oil": MessageLookupByLibrary.simpleMessage("олива"),
+    "oil_icon": MessageLookupByLibrary.simpleMessage("Олива"),
     "ok": MessageLookupByLibrary.simpleMessage("ОК"),
     "open_driver_page": MessageLookupByLibrary.simpleMessage(
       "Перехід на сторінку DriverTop",
@@ -470,7 +470,37 @@ class MessageLookup extends MessageLookupByLibrary {
     "reached_usage": MessageLookupByLibrary.simpleMessage(
       "досяг 90% використання",
     ),
-    "reg_number": MessageLookupByLibrary.simpleMessage("Номер техпаспорта"),
+    "reg_number": MessageLookupByLibrary.simpleMessage(
+      "Номер техпаспорта (необов'язково)",
+    ),
+    "garage_setup_title": MessageLookupByLibrary.simpleMessage("Ваш гараж"),
+    "garage_setup_subtitle": MessageLookupByLibrary.simpleMessage(
+      "Додайте авто зараз або зробіть це пізніше — користуватися застосунком можна вже зараз",
+    ),
+    "skip_for_now": MessageLookupByLibrary.simpleMessage("Пропустити"),
+    "car_number_fines_hint": MessageLookupByLibrary.simpleMessage(
+      "Потрібні лише для перевірки штрафів — можна додати пізніше",
+    ),
+    "my_garage": MessageLookupByLibrary.simpleMessage("Мій гараж"),
+    "garage_active_car": MessageLookupByLibrary.simpleMessage("Активна"),
+    "garage_no_number": MessageLookupByLibrary.simpleMessage(
+      "Авто без номера",
+    ),
+    "edit": MessageLookupByLibrary.simpleMessage("Редагувати"),
+    "garage_delete_confirm_title": MessageLookupByLibrary.simpleMessage(
+      "Видалити авто з гаража?",
+    ),
+    "garage_delete_confirm_body": MessageLookupByLibrary.simpleMessage(
+      "Усі дані цього авто (витрати, нагадування, обслуговування) буде видалено безповоротно.",
+    ),
+    "garage_delete_error": MessageLookupByLibrary.simpleMessage(
+      "Не вдалося видалити авто",
+    ),
+    "garage_action_error": MessageLookupByLibrary.simpleMessage(
+      "Не вдалося виконати дію",
+    ),
+    "garage_make_label": MessageLookupByLibrary.simpleMessage("Марка авто"),
+    "garage_make_hint": MessageLookupByLibrary.simpleMessage("Оберіть марку"),
     "register": MessageLookupByLibrary.simpleMessage("Зареєструватися"),
     "registration": MessageLookupByLibrary.simpleMessage("Реєстрація"),
     "reminder": MessageLookupByLibrary.simpleMessage("Нагадування"),
@@ -584,25 +614,25 @@ class MessageLookup extends MessageLookupByLibrary {
       "Хрестовина карданного валу - заміна",
     ),
     "service_maslo_transmisiine_zamina": MessageLookupByLibrary.simpleMessage(
-      "Масло трансмісійне (міст/редуктор/роздавальна коробка) - заміна",
+      "Олива трансмісійна (міст/редуктор/роздавальна коробка) - заміна",
     ),
     "service_nakonechnik_rulovoyi_tyahy_zamina":
         MessageLookupByLibrary.simpleMessage(
           "Наконечник рульової тяги - заміна",
         ),
     "service_oliya_akpp_chastkova": MessageLookupByLibrary.simpleMessage(
-      "Олія АКПП - заміна часткова (злив/затока), включаючи заміну фільтра АКПП",
+      "Олива АКПП - заміна часткова (злив/затока), включаючи заміну фільтра АКПП",
     ),
     "service_oliya_akpp_zamna_povna_bez_filtra":
         MessageLookupByLibrary.simpleMessage(
-          "Олія АКПП - заміна повна (апаратна) без заміни фільтра АКПП",
+          "Олива АКПП - заміна повна (апаратна) без заміни фільтра АКПП",
         ),
     "service_oliya_akpp_zamna_povna_z_filtra":
         MessageLookupByLibrary.simpleMessage(
-          "Олія АКПП - заміна повна (апаратна), включаючи заміну фільтра АКПП",
+          "Олива АКПП - заміна повна (апаратна), включаючи заміну фільтра АКПП",
         ),
     "service_oliya_mkpp_zamina": MessageLookupByLibrary.simpleMessage(
-      "Олія МКПП - заміна",
+      "Олива МКПП - заміна",
     ),
     "service_palivna_systema_diagnostyka": MessageLookupByLibrary.simpleMessage(
       "Паливна система - діагностика (вимір тиску)",
@@ -682,7 +712,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Ремонт клапанів двигуна",
     ),
     "service_remont_maslyanogo_nasosa": MessageLookupByLibrary.simpleMessage(
-      "Ремонт масляного насоса",
+      "Ремонт оливного насоса",
     ),
     "service_remont_pnevmopidvisky": MessageLookupByLibrary.simpleMessage(
       "Ремонт пневмопідвіски",
@@ -838,10 +868,10 @@ class MessageLookup extends MessageLookupByLibrary {
           "Заміна наконечників рульових тяг",
         ),
     "service_zamina_oil_dvs": MessageLookupByLibrary.simpleMessage(
-      "Заміна олії ДВС",
+      "Заміна оливи ДВС",
     ),
     "service_zamina_oil_variator": MessageLookupByLibrary.simpleMessage(
-      "Заміна олії у варіаторах",
+      "Заміна оливи у варіаторах",
     ),
     "service_zamina_opornoho_pidshipnyka_amortyzatora":
         MessageLookupByLibrary.simpleMessage(

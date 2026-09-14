@@ -2,6 +2,7 @@ import 'package:core_repository/user_not_signed_in_exception.dart';
 import 'package:fines_plus/core/extensions/safe_prefs.dart';
 import 'package:fines_plus/features/history/presentation/cubit/history_cubit.dart';
 import 'package:fines_plus/features/vehicle/data/datasources/car_info_local_data_source.dart';
+import 'package:fines_plus/features/vehicle/data/models/car_info_model.dart';
 import 'package:fines_plus/features/vehicle/data/repository/car_info_repository.dart';
 import 'package:fines_plus/features/vehicle/presentation/cubit/car_state.dart';
 import 'package:flutter/foundation.dart';
@@ -25,7 +26,34 @@ class CarCubit extends Cubit<CarState> {
 
   Future<void> _init() async {
     final info = await local.getCarInfo();
-    emit(state.copyWith(carNumber: info.carNumber, techPassport: info.techPassport));
+    emit(state.copyWith(carNumber: info.carNumber, techPassport: info.techPassport, carId: info.carId));
+    await ensureCarId();
+  }
+
+  /// Guarantees the signed-in user has a stable car id, generating one (via
+  /// a Firestore auto-id) the first time — this is what a "skip" registration
+  /// relies on: no plate yet, but a real car identity to store data against.
+  /// Safe to call repeatedly (a no-op once an id exists).
+  Future<String> ensureCarId() async {
+    final carId = await local.ensureCarId();
+    if (carId.isNotEmpty && carId != state.carId) {
+      emit(state.copyWith(carId: carId));
+    }
+    return carId;
+  }
+
+  /// Makes [car] (a garage entry) the active one and reflects it in state,
+  /// so every screen keyed off [CarState.carId]/[CarState.carNumber] follows.
+  Future<void> switchActiveCar(CarInfoModel car) async {
+    await local.switchActiveCar(car);
+    emit(state.copyWith(carId: car.carId, carNumber: car.carNumber, techPassport: car.techPassport));
+  }
+
+  /// Used after deleting the last remaining car in the garage — clears the
+  /// active car entirely and creates a fresh, plate-less default one.
+  Future<void> resetToNewDefaultCar() async {
+    final carId = await local.resetToNewDefaultCar();
+    emit(state.copyWith(carId: carId, carNumber: '', techPassport: ''));
   }
 
   Future<void> changeCar(String newCar) async {
@@ -40,6 +68,13 @@ class CarCubit extends Cubit<CarState> {
     await local.saveTechPassport(t);
     emit(state.copyWith(techPassport: t));
   }
+
+  /// Make/photo aren't part of [CarState] (nothing else in the app reads
+  /// them off the active car) — they're written straight to the active
+  /// car's Firestore doc, same place the garage list reads them back from.
+  Future<void> setMake(String make) => local.saveMake(make);
+
+  Future<void> setPhotoUrl(String url) => local.savePhotoUrl(url);
 
   Map<String, String> getTechPassportParts() {
     final value = state.techPassport;
@@ -91,9 +126,9 @@ class CarCubit extends Cubit<CarState> {
   }
 
   bool _isFormValid() {
-    final carReg = RegExp(r'^[А-ЯЇІЄҐ]{2}\d{4}[А-ЯЇІЄҐ]{2}$');
-    final techReg = RegExp(r'^[А-ЯІЇЄҐ]{3}\d{6}$');
-    return carReg.hasMatch(state.carNumber) && techReg.hasMatch(state.techPassport);
+    final carReg = RegExp(r'^[A-Z]{2}\d{4}[A-Z]{2}$');
+    final techReg = RegExp(r'^[A-Z]{3}\d{6}$');
+    return carReg.hasMatch(state.carNumber) && (state.techPassport.isEmpty || techReg.hasMatch(state.techPassport));
   }
 }
 

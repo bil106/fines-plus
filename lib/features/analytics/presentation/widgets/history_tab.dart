@@ -17,7 +17,7 @@ class HistoryTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final settingsCubit = context.watch<SettingsCubit>();
-    final hasCar = context.watch<CarCubit>().state.carNumber.isNotEmpty;
+    final hasCar = context.watch<CarCubit>().state.carId.isNotEmpty;
 
     if (!hasCar || events.isEmpty) {
       return  Center(

@@ -29,16 +29,16 @@ class _RemindersScreenState extends State<RemindersScreen> {
   Widget build(BuildContext context) {
     return BlocBuilder<CarCubit, CarState>(
       builder: (context, carState) {
-        final carNumber = carState.carNumber;
+        final carId = carState.carId;
 
-        if (carNumber.isEmpty) {
+        if (carId.isEmpty) {
           return Center(child: Text(S.of(context).no_car_selected));
         }
 
         return BlocProvider(
           create: (_) => ReminderCubit(
             repository: context.read<ReminderRepository>(),
-            carNumber: carNumber,
+            carNumber: carId,
             ownerId: widget.ownerId,
             pushHelper: context.read<PushHelper>(),
           )..load(),

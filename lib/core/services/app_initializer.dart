@@ -289,14 +289,20 @@ class AppInitializer {
     const weekMs = 7 * 24 * 60 * 60 * 1000;
 
     if (now - lastMs >= weekMs) {
-      // S.current недоступний до ініціалізації віджет-дерева — використовуємо фіксований рядок
-      await pushHelper.showNow(
-        id: 9000,
-        title: 'Нагадування про штрафи',
-        body: 'Перевірте наявність нових штрафів ПДД',
-      );
-      await prefs.setInt(key, now);
-      debugPrint('Weekly fines reminder shown');
+      try {
+        // S.current недоступний до ініціалізації віджет-дерева — використовуємо фіксований рядок
+        await pushHelper.showNow(
+          id: 9000,
+          title: 'Нагадування про штрафи',
+          body: 'Перевірте наявність нових штрафів ПДД',
+        );
+        await prefs.setInt(key, now);
+        debugPrint('Weekly fines reminder shown');
+      } catch (e, s) {
+        // A failure to show this non-critical reminder must not abort app startup.
+        debugPrint('Failed to show weekly fines reminder: $e');
+        FirebaseCrashlytics.instance.recordError(e, s);
+      }
     }
   }
 

@@ -20,9 +20,9 @@ class LastEventCardAction extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final carCubit = context.watch<CarCubit?>();
-    final carNumber = carCubit?.state.carNumber ?? '';
+    final carId = carCubit?.state.carId ?? '';
 
-    if (carNumber.isEmpty || event == null) {
+    if (carId.isEmpty || event == null) {
       return _buildCard(
         child: Center(
           child: Text(S.of(context).no_recent_events, style: textTheme.bodyMedium?.copyWith(color: Colors.black54)),

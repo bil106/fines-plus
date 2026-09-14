@@ -27,7 +27,7 @@ class VehicleFormatters {
 }
 
 class VehicleNumberFormatter extends TextInputFormatter {
-  static final _letterRegExp = RegExp(r'[A-Za-zА-Яа-яІіЇїЄєҐґ]');
+  static final _letterRegExp = RegExp(r'[A-Za-z]');
   static final _digitRegExp = RegExp(r'\d');
 
   @override
@@ -73,7 +73,7 @@ class VehicleNumberFormatter extends TextInputFormatter {
   }
 
   static bool isValid(String value) {
-    final reg = RegExp(r'^[А-ЯІЇЄҐ]{2}\d{4}[А-ЯІЇЄҐ]{2}$');
+    final reg = RegExp(r'^[A-Z]{2}\d{4}[A-Z]{2}$');
     return reg.hasMatch(value.toUpperCase());
   }
 }
@@ -82,7 +82,7 @@ class VehicleNumberFormatter extends TextInputFormatter {
 /// Formatter for registration number: LLLDDDDDD
 
 class TechPassportFormatter extends TextInputFormatter {
-  static final _letterRegExp = RegExp(r'[A-Za-zА-Яа-яІіЇїЄєҐґ]');
+  static final _letterRegExp = RegExp(r'[A-Za-z]');
   static final _digitRegExp = RegExp(r'\d');
 
   @override
@@ -133,7 +133,8 @@ class TechPassportFormatter extends TextInputFormatter {
 
 
   static bool isValid(String value) {
-    final reg = RegExp(r'^[А-ЯІЇЄҐ]{3}\d{6}$');
+    if (value.isEmpty) return true;
+    final reg = RegExp(r'^[A-Z]{3}\d{6}$');
     return reg.hasMatch(value.toUpperCase());
   }
 }

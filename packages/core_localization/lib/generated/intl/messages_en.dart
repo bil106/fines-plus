@@ -265,8 +265,8 @@ class MessageLookup extends MessageLookupByLibrary {
       "Google login error",
     ),
     "grn": MessageLookupByLibrary.simpleMessage("UAH"),
-    "hint_auto_num": MessageLookupByLibrary.simpleMessage("АН0000НА"),
-    "hint_tech_data_num": MessageLookupByLibrary.simpleMessage("ХЕE128436"),
+    "hint_auto_num": MessageLookupByLibrary.simpleMessage("AH0000HA"),
+    "hint_tech_data_num": MessageLookupByLibrary.simpleMessage("XEE128436"),
     "history": MessageLookupByLibrary.simpleMessage("History"),
     "history_empty": MessageLookupByLibrary.simpleMessage("History is empty"),
     "history_unavailable": MessageLookupByLibrary.simpleMessage(
@@ -454,8 +454,36 @@ class MessageLookup extends MessageLookupByLibrary {
     "quarterly_plan": MessageLookupByLibrary.simpleMessage("Quarterly Plan"),
     "reached_usage": MessageLookupByLibrary.simpleMessage("reached 90% usage"),
     "reg_number": MessageLookupByLibrary.simpleMessage(
-      "Technical passport number",
+      "Technical passport number (optional)",
     ),
+    "garage_setup_title": MessageLookupByLibrary.simpleMessage("Your garage"),
+    "garage_setup_subtitle": MessageLookupByLibrary.simpleMessage(
+      "Add your car now, or do it later — you can start using the app right away",
+    ),
+    "skip_for_now": MessageLookupByLibrary.simpleMessage("Skip for now"),
+    "car_number_fines_hint": MessageLookupByLibrary.simpleMessage(
+      "Only needed to check fines — you can add these later",
+    ),
+    "my_garage": MessageLookupByLibrary.simpleMessage("My garage"),
+    "garage_active_car": MessageLookupByLibrary.simpleMessage("Active"),
+    "garage_no_number": MessageLookupByLibrary.simpleMessage(
+      "Car without a plate",
+    ),
+    "edit": MessageLookupByLibrary.simpleMessage("Edit"),
+    "garage_delete_confirm_title": MessageLookupByLibrary.simpleMessage(
+      "Remove this car from your garage?",
+    ),
+    "garage_delete_confirm_body": MessageLookupByLibrary.simpleMessage(
+      "All data for this car (expenses, reminders, maintenance) will be permanently deleted.",
+    ),
+    "garage_delete_error": MessageLookupByLibrary.simpleMessage(
+      "Failed to delete the car",
+    ),
+    "garage_action_error": MessageLookupByLibrary.simpleMessage(
+      "Failed to complete the action",
+    ),
+    "garage_make_label": MessageLookupByLibrary.simpleMessage("Car make"),
+    "garage_make_hint": MessageLookupByLibrary.simpleMessage("Select a make"),
     "register": MessageLookupByLibrary.simpleMessage("Register"),
     "registration": MessageLookupByLibrary.simpleMessage("Registration"),
     "reminder": MessageLookupByLibrary.simpleMessage("Reminder"),

@@ -7,10 +7,13 @@ class StatsRingsPainter extends CustomPainter {
   final double costPerKmPercent;
   final double fuelPercent;
 
-  StatsRingsPainter({required double totalCostPercent, required double costPerKmPercent, required double fuelPercent})
-    : totalCostPercent = _sanitize(totalCostPercent),
-      costPerKmPercent = _sanitize(costPerKmPercent),
-      fuelPercent = _sanitize(fuelPercent);
+  StatsRingsPainter({
+    required double totalCostPercent,
+    required double costPerKmPercent,
+    required double fuelPercent,
+  }) : totalCostPercent = _sanitize(totalCostPercent),
+       costPerKmPercent = _sanitize(costPerKmPercent),
+       fuelPercent = _sanitize(fuelPercent);
 
   static double _sanitize(double value) {
     if (!value.isFinite || value.isNaN) return 0.0;
@@ -37,7 +40,14 @@ class StatsRingsPainter extends CustomPainter {
 
     final mainCenter = Offset(centerX, size.height * 0.85);
     final sideCenterY = size.height * 0.82;
-    final sideOffset = referenceSize * 1.1;
+
+    // Push the side rings out as close to the card's edges as the available
+    // width allows, on every screen size, without ever overflowing it.
+    final sideOffset = math.max(
+      0.0,
+      centerX - smallRadius - smallStroke / 2 - 2,
+    );
+    final canDrawSideRings = sideOffset > 0;
 
     // --- Paints ---
     final bgPaint = Paint()
@@ -66,30 +76,41 @@ class StatsRingsPainter extends CustomPainter {
 
     // --- Rects ---
     final mainRect = Rect.fromCircle(center: mainCenter, radius: mainRadius);
-    final leftRect = Rect.fromCircle(center: Offset(centerX - sideOffset, sideCenterY), radius: smallRadius);
-    final rightRect = Rect.fromCircle(center: Offset(centerX + sideOffset, sideCenterY), radius: smallRadius);
 
-    _drawRing(
-      canvas,
-      size,
-      rect: leftRect,
-      start: math.pi * 0.7,
-      sweep: math.pi,
-      percent: costPerKmPercent,
-      bg: smallBg,
-      active: smallActive,
-    );
+    if (canDrawSideRings) {
+      final leftRect = Rect.fromCircle(
+        center: Offset(centerX - sideOffset, sideCenterY),
+        radius: smallRadius,
+      );
+      final rightRect = Rect.fromCircle(
+        center: Offset(centerX + sideOffset, sideCenterY),
+        radius: smallRadius,
+      );
 
-    _drawRing(
-      canvas,
-      size,
-      rect: rightRect,
-      start: math.pi * 0.3,
-      sweep: -math.pi,
-      percent: fuelPercent,
-      bg: smallBg,
-      active: smallActive,
-    );
+      // Sweep stops at the top (straight up) instead of the full half-circle,
+      // so the inner tip doesn't curve past vertical into the main ring.
+      _drawRing(
+        canvas,
+        size,
+        rect: leftRect,
+        start: math.pi * 0.7,
+        sweep: math.pi * 0.89,
+        percent: costPerKmPercent,
+        bg: smallBg,
+        active: smallActive,
+      );
+
+      _drawRing(
+        canvas,
+        size,
+        rect: rightRect,
+        start: math.pi * 0.3,
+        sweep: -math.pi * 0.89,
+        percent: fuelPercent,
+        bg: smallBg,
+        active: smallActive,
+      );
+    }
 
     _drawRing(
       canvas,
@@ -125,7 +146,10 @@ class StatsRingsPainter extends CustomPainter {
   }
 
   bool _rectFits(Size size, Rect rect) {
-    return rect.left.isFinite && rect.top.isFinite && rect.right.isFinite && rect.bottom.isFinite;
+    return rect.left.isFinite &&
+        rect.top.isFinite &&
+        rect.right.isFinite &&
+        rect.bottom.isFinite;
   }
 
   @override

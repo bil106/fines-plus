@@ -27,8 +27,8 @@ class MaintenanceCubit extends Cubit<MaintenanceState> {
   MaintenanceCubit({required this.expenseRepository, required this.localDataSource, required this.carCubit})
     : super(const MaintenanceState()) {
     _carSub = carCubit.stream.listen((carState) {
-      final newCarNumber = carState.carNumber;
-      _onCarChanged(newCarNumber);
+      final newCarId = carState.carId;
+      _onCarChanged(newCarId);
     });
     init();
   }
@@ -40,10 +40,10 @@ class MaintenanceCubit extends Cubit<MaintenanceState> {
     emit(state.copyWith(isLoading: false));
   }
 
-  Future<void> _onCarChanged(String newCarNumber) async {
+  Future<void> _onCarChanged(String newCarId) async {
     try {
       final local = await localDataSource.getCarInfo();
-      if (local.carNumber == newCarNumber && state.serviceRecords.isNotEmpty) {
+      if (local.carId == newCarId && state.serviceRecords.isNotEmpty) {
         return;
       }
 
@@ -76,7 +76,7 @@ class MaintenanceCubit extends Cubit<MaintenanceState> {
       final car = await localDataSource.getCarInfo();
       final ownerId = FirebaseAuth.instance.currentUser!.uid;
       try {
-        await expenseRepository.addExpense(carNumber: car.carNumber, expense: mapper(ownerId));
+        await expenseRepository.addExpense(carNumber: car.carId, expense: mapper(ownerId));
         debugPrint("${category.name} record saved to Firestore");
       } catch (e) {
         debugPrint("Failed to save ${category.name} record: $e");
@@ -135,9 +135,9 @@ class MaintenanceCubit extends Cubit<MaintenanceState> {
     emit(state.copyWith(isLoading: true));
     try {
       final car = await localDataSource.getCarInfo();
-      if (car.carNumber.isEmpty) return emit(state.copyWith(isLoading: false));
+      if (car.carId.isEmpty) return emit(state.copyWith(isLoading: false));
 
-      final expenses = await expenseRepository.getExpensesOnce(carNumber: car.carNumber);
+      final expenses = await expenseRepository.getExpensesOnce(carNumber: car.carId);
 
       final serviceRecords = <ServiceRecord>[];
       final fuelRecords = <FuelRecord>[];
@@ -267,7 +267,7 @@ class MaintenanceCubit extends Cubit<MaintenanceState> {
     final car = await localDataSource.getCarInfo();
     final ownerId = FirebaseAuth.instance.currentUser!.uid;
     try {
-      await expenseRepository.addExpense(carNumber: car.carNumber, expense: mapper(ownerId));
+      await expenseRepository.addExpense(carNumber: car.carId, expense: mapper(ownerId));
       debugPrint("${category.name} record saved to Firestore");
     } catch (e) {
       debugPrint("Failed to save ${category.name} record: $e");
@@ -291,7 +291,7 @@ class MaintenanceCubit extends Cubit<MaintenanceState> {
     for (final record in records) {
       final expense = record.toExpense(ownerId);
       try {
-        await expenseRepository.addExpense(carNumber: car.carNumber, expense: expense);
+        await expenseRepository.addExpense(carNumber: car.carId, expense: expense);
         debugPrint("Service record saved to Firestore");
       } catch (e) {
         debugPrint("Failed to save ServiceRecord: $e");
@@ -310,7 +310,7 @@ class MaintenanceCubit extends Cubit<MaintenanceState> {
     final expense = record.toExpense(ownerId);
 
     try {
-      await expenseRepository.addExpense(carNumber: car.carNumber, expense: expense);
+      await expenseRepository.addExpense(carNumber: car.carId, expense: expense);
       debugPrint("Fuel record saved to Firestore");
     } catch (e) {
       debugPrint("Failed to save fuel record: $e");
@@ -323,7 +323,7 @@ class MaintenanceCubit extends Cubit<MaintenanceState> {
     await saveCarWashRecords();
 
     final car = await localDataSource.getCarInfo();
-    if (car.carNumber.isEmpty) {
+    if (car.carId.isEmpty) {
       debugPrint("Cannot save CarWashRecord: carNumber is empty");
       return;
     }
@@ -337,7 +337,7 @@ class MaintenanceCubit extends Cubit<MaintenanceState> {
     final expense = record.toExpense(currentUser.uid);
 
     try {
-      await expenseRepository.addExpense(carNumber: car.carNumber, expense: expense);
+      await expenseRepository.addExpense(carNumber: car.carId, expense: expense);
       debugPrint("CarWashRecord saved to Firestore");
     } catch (e) {
       debugPrint("Failed to save CarWashRecord: $e");
@@ -355,7 +355,7 @@ class MaintenanceCubit extends Cubit<MaintenanceState> {
     final expense = record.toExpense(ownerId);
 
     try {
-      await expenseRepository.addExpense(carNumber: car.carNumber, expense: expense);
+      await expenseRepository.addExpense(carNumber: car.carId, expense: expense);
       debugPrint("Service record saved to Firestore");
     } catch (e) {
       debugPrint("Service to save fuel record: $e");
@@ -373,7 +373,7 @@ class MaintenanceCubit extends Cubit<MaintenanceState> {
     for (final record in records) {
       final expense = record.toExpense(ownerId);
       try {
-        await expenseRepository.addExpense(carNumber: car.carNumber, expense: expense);
+        await expenseRepository.addExpense(carNumber: car.carId, expense: expense);
       } catch (e) {
         debugPrint("Failed to save TuningRecord: $e");
       }
@@ -442,7 +442,7 @@ class MaintenanceCubit extends Cubit<MaintenanceState> {
           throw UnimplementedError();
       }
 
-      await expenseRepository.deleteExpensesByCategory(carNumber: car.carNumber, category: category.name);
+      await expenseRepository.deleteExpensesByCategory(carNumber: car.carId, category: category.name);
 
       debugPrint(" All expenses in this category have been removed ${category.name}");
     } catch (e) {
@@ -459,16 +459,16 @@ class MaintenanceCubit extends Cubit<MaintenanceState> {
       final prefs = await SharedPreferences.getInstance();
 
       if (category == null) {
-        await expenseRepository.deleteAllExpenses(carNumber: car.carNumber);
+        await expenseRepository.deleteAllExpenses(carNumber: car.carId);
         await prefs.remove('service_records');
         await prefs.remove('fuel_records');
         await prefs.remove('tuning_records');
         await prefs.remove('car_wash_records');
 
         emit(state.copyWith(serviceRecords: [], fuelRecords: [], tuningRecords: [], carWashRecords: []));
-        debugPrint(' All expenses have been removed for ${car.carNumber}');
+        debugPrint(' All expenses have been removed for ${car.carId}');
       } else {
-        await expenseRepository.deleteExpensesByCategory(carNumber: car.carNumber, category: category.name);
+        await expenseRepository.deleteExpensesByCategory(carNumber: car.carId, category: category.name);
 
         switch (category) {
           case ExpenseCategory.service:
@@ -507,7 +507,7 @@ class MaintenanceCubit extends Cubit<MaintenanceState> {
       final car = await localDataSource.getCarInfo();
       final prefs = await SharedPreferences.getInstance();
 
-      await expenseRepository.deleteExpense(carNumber: car.carNumber, expenseId: expenseId);
+      await expenseRepository.deleteExpense(carNumber: car.carId, expenseId: expenseId);
 
       switch (category) {
         case ExpenseCategory.service:
@@ -553,7 +553,7 @@ class MaintenanceCubit extends Cubit<MaintenanceState> {
       final car = await localDataSource.getCarInfo();
       final prefs = await SharedPreferences.getInstance();
 
-      await expenseRepository.deleteAllExpenses(carNumber: car.carNumber);
+      await expenseRepository.deleteAllExpenses(carNumber: car.carId);
 
       await prefs.remove('service_records');
       await prefs.remove('tuning_records');
@@ -564,7 +564,7 @@ class MaintenanceCubit extends Cubit<MaintenanceState> {
         state.copyWith(serviceRecords: [], tuningRecords: [], fuelRecords: [], carWashRecords: [], isLoading: false),
       );
 
-      debugPrint("All expenses removed for ${car.carNumber}");
+      debugPrint("All expenses removed for ${car.carId}");
     } catch (e, st) {
       debugPrint("deleteAllExpenses error: $e\n$st");
       emit(state.copyWith(isLoading: false));
@@ -682,7 +682,7 @@ extension MileageCalculations on MaintenanceCubit {
     final ownerId = FirebaseAuth.instance.currentUser!.uid;
     for (var r in records) {
       try {
-        await expenseRepository.addExpense(carNumber: car.carNumber, expense: mapper(r, ownerId));
+        await expenseRepository.addExpense(carNumber: car.carId, expense: mapper(r, ownerId));
       } catch (e) {
         debugPrint("Failed to save ${category.name} record: $e");
       }

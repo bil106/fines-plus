@@ -12,7 +12,11 @@ import 'package:fines_plus/features/history/presentation/cubit/history_cubit.dar
 import 'package:fines_plus/features/statistics/presentation/cubit/statistics_cubit.dart';
 import 'package:fines_plus/features/vehicle/presentation/cubit/car_info_cubit.dart';
 import '../../../../../env/env.dart';
+import 'package:fines_plus/features/vehicle/data/car_makes.dart';
+import 'package:fines_plus/features/vehicle/data/datasources/car_photo_uploader.dart';
 import 'package:fines_plus/features/vehicle/presentation/cubit/car_cubit.dart';
+import 'package:fines_plus/features/vehicle/presentation/cubit/garage_cubit.dart';
+import 'package:fines_plus/features/vehicle/presentation/widgets/car_make_logo.dart';
 import 'package:fines_plus/app/router/app_router.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -49,17 +53,18 @@ class _CarInfoViewState extends State<_CarInfoView> {
   bool _showRecaptcha = false;
 
   CarCubit? carCubit;
+  String? _selectedMake;
+  String _photoUrl = '';
+  bool _isUploadingPhoto = false;
 
-  final _carReg = RegExp(r'^[А-ЯЇІЄҐ]{2}\d{4}[А-ЯЇІЄҐ]{2}$');
-  final _techReg = RegExp(r'^[А-ЯІЇЄҐ]{3}\d{6}$');
-  final _latinLettersReg = RegExp(r'[A-Z]');
+  final _carReg = RegExp(r'^[A-Z]{2}\d{4}[A-Z]{2}$');
+  final _techReg = RegExp(r'^[A-Z]{3}\d{6}$');
 
   bool get isFormValid =>
-      _carReg.hasMatch(_carNumberController.text) && _techReg.hasMatch(_techPassportController.text);
+      _carReg.hasMatch(_carNumberController.text) &&
+      (_techPassportController.text.isEmpty || _techReg.hasMatch(_techPassportController.text));
 
   bool get hasCar => carCubit?.state.carNumber.isNotEmpty ?? false;
-  bool _carNumberHasLatin = false;
-  bool _techPassportHasLatin = false;
   void _safeSetState(VoidCallback fn) {
     if (!mounted) return;
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -81,11 +86,47 @@ class _CarInfoViewState extends State<_CarInfoView> {
 
     _carNumberController.addListener(_onCarNumberChanged);
     _techPassportController.addListener(_onTechPassportChanged);
+
+    // make/photoUrl aren't part of CarState — read the active car's current
+    // values from the garage list this screen shares a provider with.
+    final activeCarId = carCubit?.state.carId ?? '';
+    final garageCars = context.read<GarageCubit>().state.cars;
+    final activeCars = garageCars.where((c) => c.carId == activeCarId);
+    if (activeCars.isNotEmpty) {
+      final activeCar = activeCars.first;
+      _selectedMake = activeCar.make.isNotEmpty ? activeCar.make : null;
+      _photoUrl = activeCar.photoUrl;
+    }
+  }
+
+  Future<void> _pickPhoto() async {
+    final cubit = carCubit;
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    final carId = cubit?.state.carId ?? '';
+    if (cubit == null || uid == null || carId.isEmpty) return;
+
+    setState(() => _isUploadingPhoto = true);
+    try {
+      final url = await CarPhotoUploader().pickAndUpload(uid: uid, carId: carId);
+      if (url != null) {
+        await cubit.setPhotoUrl(url);
+        if (mounted) setState(() => _photoUrl = url);
+      }
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('${S.of(context).garage_action_error}: $e')));
+    } finally {
+      if (mounted) setState(() => _isUploadingPhoto = false);
+    }
+  }
+
+  void _onMakeChanged(String? make) {
+    setState(() => _selectedMake = make);
+    if (make != null) carCubit?.setMake(make);
   }
 
   void _onCarNumberChanged() {
     final text = _carNumberController.text;
-    _carNumberHasLatin = _latinLettersReg.hasMatch(text);
 
     if (mounted) setState(() {});
 
@@ -95,7 +136,6 @@ class _CarInfoViewState extends State<_CarInfoView> {
 
   void _onTechPassportChanged() {
     final text = _techPassportController.text;
-    _techPassportHasLatin = _latinLettersReg.hasMatch(text);
 
     if (mounted) setState(() {});
 
@@ -223,6 +263,50 @@ class _CarInfoViewState extends State<_CarInfoView> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        Center(
+                          child: GestureDetector(
+                            onTap: _isUploadingPhoto ? null : _pickPhoto,
+                            child: CircleAvatar(
+                              radius: 40,
+                              backgroundColor: AppColors.grey50,
+                              backgroundImage: _photoUrl.isNotEmpty ? NetworkImage(_photoUrl) : null,
+                              child: _isUploadingPhoto
+                                  ? const CircularProgressIndicator(strokeWidth: 2)
+                                  : (_photoUrl.isEmpty
+                                        ? const Icon(Icons.add_a_photo_outlined, color: AppColors.neutreGrey)
+                                        : null),
+                            ),
+                          ),
+                        ),
+                        AppSpacers.verticalLarge,
+
+                        Text(S.of(context).garage_make_label, style: textTheme.carNumber),
+                        AppSpacers.verticalSmall,
+                        DropdownButtonFormField<String>(
+                          initialValue: _selectedMake,
+                          isExpanded: true,
+                          hint: Text(S.of(context).garage_make_hint),
+                          items: carMakes
+                              .map(
+                                (m) => DropdownMenuItem(
+                                  value: m,
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [CarMakeLogo(make: m, size: 20), AppSpacers.horizontalSmall, Text(m)],
+                                  ),
+                                ),
+                              )
+                              .toList(),
+                          onChanged: _onMakeChanged,
+                          decoration: InputDecoration(
+                            filled: true,
+                            fillColor: AppColors.grey50,
+                            border: OutlineInputBorder(borderRadius: AppBorders.radius18, borderSide: BorderSide.none),
+                          ),
+                        ),
+
+                        AppSpacers.verticalLarge,
+
                         Text(S.of(context).car_number, style: textTheme.carNumber),
                         AppSpacers.verticalSmall,
                         TextField(
@@ -238,7 +322,6 @@ class _CarInfoViewState extends State<_CarInfoView> {
                             filled: true,
                             fillColor: AppColors.grey50,
                             border: OutlineInputBorder(borderRadius: AppBorders.radius18, borderSide: BorderSide.none),
-                            errorText: _carNumberHasLatin ? S.of(context).enter_cyrillic_only : null,
                           ),
                         ),
 
@@ -258,7 +341,6 @@ class _CarInfoViewState extends State<_CarInfoView> {
                             filled: true,
                             fillColor: AppColors.grey50,
                             border: OutlineInputBorder(borderRadius: AppBorders.radius18, borderSide: BorderSide.none),
-                            errorText: _techPassportHasLatin ? S.of(context).enter_cyrillic_only : null,
                           ),
                         ),
                       ],

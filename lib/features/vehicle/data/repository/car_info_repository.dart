@@ -17,6 +17,18 @@ class CarInfoRepository {
   Future<CarInfoModel> getCarInfo() => local.getCarInfo();
   Future<void> saveCarNumber(String v) => local.saveCarNumber(v);
   Future<void> saveTechPassport(String v) => local.saveTechPassport(v);
+  Future<void> saveMake(String make) => local.saveMake(make);
+  Future<void> savePhotoUrl(String url) => local.savePhotoUrl(url);
+
+  // Garage (multi-car)
+  Stream<List<CarInfoModel>> streamCars() => local.streamCars();
+  Future<CarInfoModel> addCar({String carNumber = '', String techPassport = '', String make = '', String photoUrl = ''}) =>
+      local.addCar(carNumber: carNumber, techPassport: techPassport, make: make, photoUrl: photoUrl);
+  Future<void> updateCarFields(String carId, {String? carNumber, String? techPassport, String? make, String? photoUrl}) =>
+      local.updateCarFields(carId, carNumber: carNumber, techPassport: techPassport, make: make, photoUrl: photoUrl);
+  Future<void> switchActiveCar(CarInfoModel car) => local.switchActiveCar(car);
+  Future<void> deleteGarageCar(String carId) => local.deleteCarDoc(carId);
+  Future<String> resetToNewDefaultCar() => local.resetToNewDefaultCar();
 
   // API request
   Future<List<Map<String, dynamic>>> getFines({
