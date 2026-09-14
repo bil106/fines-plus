@@ -124,8 +124,9 @@ class _ActionDetailSheetState extends State<ActionDetailSheet> {
 
             Autocomplete<String>(
               optionsBuilder: (TextEditingValue value) {
-                if (value.text.isEmpty) return ServiceList.names;
-                return ServiceList.names.where((option) => option.toLowerCase().contains(value.text.toLowerCase()));
+                final options = ServiceList.namesByCategory[widget.category] ?? ServiceList.names;
+                if (value.text.isEmpty) return options;
+                return options.where((option) => option.toLowerCase().contains(value.text.toLowerCase()));
               },
               onSelected: (val) {
                 descriptionController.text = val;

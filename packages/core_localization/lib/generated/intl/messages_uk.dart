@@ -870,6 +870,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "service_zamina_oil_dvs": MessageLookupByLibrary.simpleMessage(
       "Заміна оливи ДВС",
     ),
+    "service_zamina_oliynoho_filtra": MessageLookupByLibrary.simpleMessage(
+      "Заміна оливного фільтра",
+    ),
+    "service_zamina_probky_piddonu": MessageLookupByLibrary.simpleMessage(
+      "Заміна пробки піддону",
+    ),
     "service_zamina_oil_variator": MessageLookupByLibrary.simpleMessage(
       "Заміна оливи у варіаторах",
     ),

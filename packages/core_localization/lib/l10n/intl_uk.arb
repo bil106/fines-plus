@@ -155,6 +155,8 @@
    "service_remkomplekt_grm": "Ремкомплект ГРМ - заміна",
    "service_inzhektor_chystka": "Інжектор - чистка (без урахування спецрідини)",
    "service_zamina_oil_dvs": "Заміна оливи ДВС",
+   "service_zamina_oliynoho_filtra": "Заміна оливного фільтра",
+   "service_zamina_probky_piddonu": "Заміна пробки піддону",
    "service_zamina_povitryanogo_filtra_dvs": "Заміна повітряного фільтра ДВЗ",
    "service_zamina_salonnoho_filtra": "Заміна салонного фільтра",
    "service_chystka_droselnoyi_zaslinky": "Чистка дросельної заслінки",

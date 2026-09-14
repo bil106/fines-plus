@@ -168,4 +168,16 @@ class ServiceList {
   ];
 
   static List<String> get names => [...serviceItems.map((e) => e.name), ...tuningItems.map((e) => e.name)];
+
+  /// Curated service names per quick-action category (keyed by the same
+  /// labelKey QuickActionsCubit uses, e.g. 'Oil') — narrows the picker to
+  /// what's actually relevant instead of the entire catalog. Categories not
+  /// listed here fall back to [names] (the full catalog).
+  static Map<String, List<String>> get namesByCategory => {
+    'Oil': [
+      S.current.service_zamina_oil_dvs,
+      S.current.service_zamina_oliynoho_filtra,
+      S.current.service_zamina_probky_piddonu,
+    ],
+  };
 }

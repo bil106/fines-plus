@@ -1204,6 +1204,26 @@ class S {
     );
   }
 
+  /// `Oil filter replacement`
+  String get service_zamina_oliynoho_filtra {
+    return Intl.message(
+      'Oil filter replacement',
+      name: 'service_zamina_oliynoho_filtra',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Drain plug replacement`
+  String get service_zamina_probky_piddonu {
+    return Intl.message(
+      'Drain plug replacement',
+      name: 'service_zamina_probky_piddonu',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Replacement of engine air filter`
   String get service_zamina_povitryanogo_filtra_dvs {
     return Intl.message(

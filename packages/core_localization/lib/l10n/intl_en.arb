@@ -155,6 +155,8 @@
 "service_remkomplekt_grm": "Timing repair kit - replacement",
 "service_inzhektor_chystka": "Injector - cleaning (excluding special fluids)",
 "service_zamina_oil_dvs": "Replacement of engine oil",
+"service_zamina_oliynoho_filtra": "Oil filter replacement",
+"service_zamina_probky_piddonu": "Drain plug replacement",
 "service_zamina_povitryanogo_filtra_dvs": "Replacement of engine air filter",
 "service_zamina_salonnoho_filtra": "Replacement of cabin filter",
 "service_chystka_droselnoyi_zaslinky": "Cleaning of throttle valve",

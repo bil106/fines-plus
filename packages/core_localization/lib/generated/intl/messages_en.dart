@@ -859,6 +859,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "service_zamina_oil_dvs": MessageLookupByLibrary.simpleMessage(
       "Replacement of engine oil",
     ),
+    "service_zamina_oliynoho_filtra": MessageLookupByLibrary.simpleMessage(
+      "Oil filter replacement",
+    ),
+    "service_zamina_probky_piddonu": MessageLookupByLibrary.simpleMessage(
+      "Drain plug replacement",
+    ),
     "service_zamina_oil_variator": MessageLookupByLibrary.simpleMessage(
       "Changing oil in variators",
     ),

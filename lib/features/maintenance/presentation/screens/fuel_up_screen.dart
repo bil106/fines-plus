@@ -11,6 +11,7 @@ import 'package:fines_plus/features/expenses/presentation/widgets/fuel_choice_ch
 import 'package:fines_plus/features/expenses/presentation/widgets/fuel_input_card.dart';
 import 'package:fines_plus/features/maintenance/data/models/gas_station.dart';
 import 'package:fines_plus/features/maintenance/domain/gas_station_service.dart';
+import 'package:fines_plus/features/maintenance/presentation/cubit/maintenance_cubit.dart';
 import 'package:fines_plus/features/maintenance/presentation/widgets/mileage_card.dart';
 import '../../../../../env/env.dart';
 import 'package:fines_plus/features/expenses/data/models/fuel_record.dart';
@@ -176,7 +177,19 @@ class _FuelUpScreenState extends State<FuelUpScreen> {
                   currency: settingsCubit.state.currency,
                 );
 
-                context.router.pop(record);
+                // This screen is reached both as a pushed route (Maintenance
+                // FAB) and as a static PageView page (main "Заправка" tile),
+                // where nothing awaits a popped value — so it must save the
+                // record itself rather than relying on a caller to do it.
+                context.read<MaintenanceCubit>().addFuelRecord(record);
+
+                if (widget.onBack != null) {
+                  widget.onBack!();
+                } else if (context.router.canPop()) {
+                  context.router.pop(record);
+                } else {
+                  Navigator.of(context).maybePop(record);
+                }
               },
             ),
           ],

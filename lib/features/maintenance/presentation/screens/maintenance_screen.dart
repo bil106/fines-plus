@@ -268,11 +268,10 @@ class _MaintenanceScreenView extends StatelessWidget {
                         onFuelUp!();
                         return;
                       }
-                      final record = await context.router.push<FuelRecord>(FuelUpRoute());
-                      if (record != null) {
-                        cubit.addFuelRecord(record);
-                        onFuelUp?.call();
-                      }
+                      // FuelUpScreen now saves the record itself (it has to,
+                      // since it's also reached as a static PageView page
+                      // with nothing to await a popped value) — just push it.
+                      await context.router.push<FuelRecord>(FuelUpRoute());
                     },
                   ),
                 ],
