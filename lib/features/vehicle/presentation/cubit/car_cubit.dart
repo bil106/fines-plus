@@ -34,10 +34,17 @@ class CarCubit extends Cubit<CarState> {
   /// a Firestore auto-id) the first time — this is what a "skip" registration
   /// relies on: no plate yet, but a real car identity to store data against.
   /// Safe to call repeatedly (a no-op once an id exists).
+  ///
+  /// Also covers the pre-update-install migration path: [local.ensureCarId]
+  /// may adopt a pre-existing car doc and backfill carNumber/techPassport
+  /// locally, so this re-reads and emits all three together afterward.
   Future<String> ensureCarId() async {
     final carId = await local.ensureCarId();
-    if (carId.isNotEmpty && carId != state.carId) {
-      emit(state.copyWith(carId: carId));
+    if (carId.isEmpty) return carId;
+
+    if (carId != state.carId) {
+      final info = await local.getCarInfo();
+      emit(state.copyWith(carId: info.carId, carNumber: info.carNumber, techPassport: info.techPassport));
     }
     return carId;
   }

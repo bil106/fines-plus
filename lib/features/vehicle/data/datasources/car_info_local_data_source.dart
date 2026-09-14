@@ -79,6 +79,14 @@ class CarInfoLocalDataSource {
   /// first time — this is what lets a car with no plate yet (a "skip"
   /// default car) still have a stable Firestore key for its expenses,
   /// maintenance, reminders and analytics data.
+  ///
+  /// Pre-update installs never had a carId: their car doc's Firestore id
+  /// literally *was* the plate number (`users/{uid}/cars/{plate}`), and
+  /// their expenses/scheduleTasks/reminders/analytics are still keyed by
+  /// that same string. So before minting a brand-new id (which would orphan
+  /// all of that), this checks for such a pre-existing car doc and adopts
+  /// its id instead — no data has to move, since that doc's id becomes the
+  /// carId as-is.
   Future<String> ensureCarId() async {
     final existing = prefs.getString(_carIdKey) ?? '';
     if (existing.isNotEmpty) return existing;
@@ -86,7 +94,57 @@ class CarInfoLocalDataSource {
     final user = auth.currentUser;
     if (user == null) return '';
 
-    final carDocRef = firestore.collection('users').doc(user.uid).collection('cars').doc();
+    final carsCollection = _carsCollection(user.uid);
+
+    // This lookup's outcome must be trustworthy before deciding whether to
+    // mint a brand-new id: falling through to "mint new" on a mere network
+    // hiccup here — rather than genuinely confirming no pre-existing car
+    // exists — would permanently orphan a real user's data (the new id
+    // gets persisted locally, so the check never runs again). So a failed
+    // lookup returns empty and leaves nothing persisted, letting the next
+    // call retry from scratch instead.
+    final QuerySnapshot<Map<String, dynamic>> preexisting;
+    try {
+      preexisting = await carsCollection.limit(1).get();
+    } catch (e) {
+      debugPrint('ensureCarId: failed to check for a pre-existing car doc, will retry next call: $e');
+      return '';
+    }
+
+    if (preexisting.docs.isNotEmpty) {
+      final doc = preexisting.docs.first;
+      final data = doc.data();
+      final carId = doc.id;
+      final carNumber = (data['carNumber'] as String?) ?? doc.id;
+      final techPassport = (data['techPassport'] as String?) ?? '';
+
+      await prefs.setString(_carIdKey, carId);
+      await prefs.setString(_carKey, carNumber);
+      await prefs.setString(_techKey, techPassport);
+      if (techPassport.length == 9) {
+        await prefs.setString(_seriesKey, techPassport.substring(0, 3));
+        await prefs.setString(_numberKey, techPassport.substring(3));
+      }
+
+      try {
+        await doc.reference.set({
+          'carId': carId,
+          'carNumber': carNumber,
+          if (!data.containsKey('createdAt')) 'createdAt': FieldValue.serverTimestamp(),
+          'updatedAt': FieldValue.serverTimestamp(),
+        }, SetOptions(merge: true));
+        await firestore.collection('users').doc(user.uid).set({'activeCarId': carId}, SetOptions(merge: true));
+      } catch (e) {
+        // The adoption itself (prefs + confirmed doc id) already succeeded
+        // and is what matters; this backfill write is best-effort.
+        debugPrint('ensureCarId: adopted $carId but failed to backfill its doc: $e');
+      }
+
+      debugPrint('ensureCarId: adopted pre-existing car doc $carId');
+      return carId;
+    }
+
+    final carDocRef = carsCollection.doc();
     final carId = carDocRef.id;
 
     await prefs.setString(_carIdKey, carId);
