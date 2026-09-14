@@ -95,6 +95,7 @@ class CarInfoLocalDataSource {
     if (user == null) return '';
 
     final carsCollection = _carsCollection(user.uid);
+    final userDocRef = firestore.collection('users').doc(user.uid);
 
     // This lookup's outcome must be trustworthy before deciding whether to
     // mint a brand-new id: falling through to "mint new" on a mere network
@@ -103,17 +104,32 @@ class CarInfoLocalDataSource {
     // gets persisted locally, so the check never runs again). So a failed
     // lookup returns empty and leaves nothing persisted, letting the next
     // call retry from scratch instead.
-    final QuerySnapshot<Map<String, dynamic>> preexisting;
+    DocumentSnapshot<Map<String, dynamic>>? preferred;
+    QuerySnapshot<Map<String, dynamic>>? fallbackList;
     try {
-      preexisting = await carsCollection.limit(1).get();
+      // Prefer the car the user actually had active (recorded on the user
+      // doc) over an arbitrary one — otherwise a multi-car garage user who
+      // loses local prefs (reinstall, cleared data, new device) would be
+      // silently switched to whichever car Firestore happens to return
+      // first, not the one they were using.
+      final userDoc = await userDocRef.get();
+      final activeCarId = userDoc.data()?['activeCarId'] as String?;
+      if (activeCarId != null && activeCarId.isNotEmpty) {
+        final activeDoc = await carsCollection.doc(activeCarId).get();
+        if (activeDoc.exists) preferred = activeDoc;
+      }
+      if (preferred == null) {
+        fallbackList = await carsCollection.limit(1).get();
+      }
     } catch (e) {
       debugPrint('ensureCarId: failed to check for a pre-existing car doc, will retry next call: $e');
       return '';
     }
 
-    if (preexisting.docs.isNotEmpty) {
-      final doc = preexisting.docs.first;
-      final data = doc.data();
+    final doc = preferred ?? (fallbackList != null && fallbackList.docs.isNotEmpty ? fallbackList.docs.first : null);
+
+    if (doc != null) {
+      final data = doc.data() ?? <String, dynamic>{};
       final carId = doc.id;
       final carNumber = (data['carNumber'] as String?) ?? doc.id;
       final techPassport = (data['techPassport'] as String?) ?? '';
@@ -133,7 +149,7 @@ class CarInfoLocalDataSource {
           if (!data.containsKey('createdAt')) 'createdAt': FieldValue.serverTimestamp(),
           'updatedAt': FieldValue.serverTimestamp(),
         }, SetOptions(merge: true));
-        await firestore.collection('users').doc(user.uid).set({'activeCarId': carId}, SetOptions(merge: true));
+        await userDocRef.set({'activeCarId': carId}, SetOptions(merge: true));
       } catch (e) {
         // The adoption itself (prefs + confirmed doc id) already succeeded
         // and is what matters; this backfill write is best-effort.
@@ -155,7 +171,7 @@ class CarInfoLocalDataSource {
         'isDefault': true,
         'createdAt': FieldValue.serverTimestamp(),
       }, SetOptions(merge: true));
-      await firestore.collection('users').doc(user.uid).set({
+      await userDocRef.set({
         'activeCarId': carId,
       }, SetOptions(merge: true));
     } catch (e) {
@@ -190,6 +206,8 @@ class CarInfoLocalDataSource {
   Future<void> saveMake(String make) async => _mirrorToCarDoc({'make': make});
 
   Future<void> savePhotoUrl(String url) async => _mirrorToCarDoc({'photoUrl': url});
+
+  Future<void> saveFcmToken(String token) async => _mirrorToCarDoc({'fcmToken': token});
 
 Future<void> clearCarInfo() async {
     await prefs.remove(_carKey);

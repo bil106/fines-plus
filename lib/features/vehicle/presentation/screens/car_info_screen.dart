@@ -214,16 +214,25 @@ class _CarInfoViewState extends State<_CarInfoView> {
     context.read<ExpensesCubit>().clearExpensesForCar();
     context.read<HistoryCubit>().clear();
 
-    await context.read<CarInfoCubit>().deleteCurrentCar();
+    // Deletes the actual active car (its carId-keyed doc + subcollections)
+    // via the same path the Garage screen uses — GarageCubit.deleteCar
+    // also switches to a remaining car, or creates a fresh default one,
+    // updating CarCubit's state that the fields below then pick up.
+    final activeCarId = cubit?.state.carId ?? '';
+    final garageCubit = context.read<GarageCubit>();
+    final activeCars = garageCubit.state.cars.where((c) => c.carId == activeCarId);
+    if (activeCars.isNotEmpty) {
+      await garageCubit.deleteCar(activeCars.first);
+    }
 
-    _carNumberController.clear();
-    _techPassportController.clear();
-
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(S.of(context).cars_deleted_success)));
+    _carNumberController.text = cubit?.state.carNumber ?? '';
+    _techPassportController.text = cubit?.state.techPassport ?? '';
 
     if (!mounted) return;
 
-    if (cubit == null || cubit.state.carNumber.isEmpty) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(S.of(context).cars_deleted_success)));
+
+    if (cubit == null || cubit.state.carId.isEmpty) {
       context.router.replaceAll([const HomeRoute()]);
     }
   }

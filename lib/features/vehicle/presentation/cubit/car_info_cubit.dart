@@ -1,10 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:core_repository/user_not_signed_in_exception.dart';
 import 'package:fines_plus/core/extensions/safe_prefs.dart';
 import 'package:fines_plus/core/services/carplates_service.dart';
-import 'package:fines_plus/features/analytics/presentation/cubit/analytics_cubit.dart';
-import 'package:fines_plus/features/expenses/presentation/cubit/expenses_cubit.dart';
 import 'package:fines_plus/features/export/data/repository/injector.dart';
 import 'package:fines_plus/features/history/presentation/cubit/history_cubit.dart';
 import 'package:fines_plus/features/maintenance/presentation/cubit/maintenance_cubit.dart';
@@ -36,28 +33,25 @@ class CarInfoCubit extends Cubit<CarInfoState> {
     emit(state.copyWith(carNumber: m.carNumber, techPassport: m.techPassport, carDetails: null));
 
     if (m.carNumber.isNotEmpty) {
-      await _saveCarToFirestore(m);
+      await _saveFcmToken();
     }
   }
 
-  Future<void> _saveCarToFirestore(CarInfoModel m) async {
-    if (m.carNumber.isEmpty || !carReg.hasMatch(m.carNumber)) return;
+  /// Saves the device's FCM token onto the active car's canonical doc
+  /// (`users/{uid}/cars/{carId}`, via the repository — not a separate
+  /// plate-keyed doc) so a Cloud Function can push fine-check notifications
+  /// for it. Only meaningful once a real plate is set.
+  Future<void> _saveFcmToken() async {
+    if (!carReg.hasMatch(state.carNumber)) return;
 
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) return;
 
     try {
-      final ref = FirebaseFirestore.instance.collection("users").doc(user.uid).collection("cars").doc(m.carNumber);
-
       final token = await _getFcmTokenSafely();
-
-      final data = <String, dynamic>{"techPassport": m.techPassport, "updatedAt": FieldValue.serverTimestamp()};
-
-      if (token != null) data["fcmToken"] = token;
-
-      await ref.set(data, SetOptions(merge: true));
+      if (token == null) return;
+      await _repo.saveFcmToken(token);
     } on FirebaseException catch (e) {
-  
       debugPrint('Firestore error: ${e.code}');
     } catch (e) {
       debugPrint('Unexpected error: $e');
@@ -104,7 +98,7 @@ class CarInfoCubit extends Cubit<CarInfoState> {
     final m = CarInfoModel(carNumber: carNumber, techPassport: state.techPassport, ownerId: ownerId);
 
   
-    await _saveCarToFirestore(m);
+    await _saveFcmToken();
 
     
     try {
@@ -127,7 +121,7 @@ class CarInfoCubit extends Cubit<CarInfoState> {
     await _repo.saveCarInfo(m);
     emit(state.copyWith(techPassport: techPassport));
 
-    await _saveCarToFirestore(m);
+    await _saveFcmToken();
 
     try {
       await getIt<MaintenanceCubit>().syncExpensesFromFirestore();
@@ -210,35 +204,5 @@ class CarInfoCubit extends Cubit<CarInfoState> {
       emit(state.copyWith(status: CarInfoErrorStatus('Failed to load car details: $e')));
     }
   }
-
-  Future<void> deleteCurrentCar() async {
-    final user = FirebaseAuth.instance.currentUser;
-    if (user == null) return;
-
-    final carNumber = state.carNumber;
-    if (carNumber.isEmpty) return;
-
-    try {
-      final analyticsCubit = getIt<AnalyticsCubit>();
-      analyticsCubit.stopListeningToCar();
-    } catch (_) {}
-
-    try {
-      final expensesCubit = getIt<ExpensesCubit>();
-      expensesCubit.clearExpensesForCar();
-    } catch (_) {}
-
-    emit(state.copyWith(status: CarInfoLoadingStatus()));
-
-    try {
-      await _repo.deleteCar(carNumber);
-
-      emit(const CarInfoState());
-    } catch (e) {
-      emit(state.copyWith(status: CarInfoErrorStatus(e.toString())));
-    }
-  }
-
-
 
 }
