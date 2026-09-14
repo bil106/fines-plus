@@ -270,7 +270,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final hasCar = context.watch<CarCubit>().state.carNumber.isNotEmpty;
+    final hasCar = context.watch<CarCubit>().state.carId.isNotEmpty;
 
     if (!hasCar) {
       return Center(child: Text(S.of(context).no_schedule, style: Theme.of(context).textTheme.black16bold));
@@ -363,14 +363,14 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                                   onDelete: () async {
                                     final quick = context.read<QuickActionsCubit>();
                                     final tasksRepository = context.read<TasksRepository>();
-                                    final carNumber = context.read<CarCubit>().state.carNumber;
+                                    final carId = context.read<CarCubit>().state.carId;
                                     final indexToRemove = scheduleCubit!.state.tasks.indexOf(task);
                                     if (indexToRemove != -1) {
                                       await scheduleCubit!.removeTask(indexToRemove, reminderCubit: reminderCubit);
                                     }
                                     quick.deactivateCategory(task.category.toLowerCase());
                                     unawaited(
-                                      tasksRepository.removeTask(task.category.toLowerCase(), carNumber: carNumber),
+                                      tasksRepository.removeTask(task.category.toLowerCase(), carNumber: carId),
                                     );
                                   },
                                 )
