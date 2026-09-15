@@ -48,6 +48,21 @@ whether `logoAssetPath` actually points at a real file.
 - `assets/config/_template.json` + `scripts/new_wl_flavor.sh` scaffold a new
   brand's config file (and now also registers it in `pubspec.yaml`
   automatically) without hand-writing JSON.
+- Each Android flavor can have its **own app icon**: `finesplus` keeps the
+  existing shared icon in `android/app/src/main/res/`; `autodosje` and
+  `carpapers` now have their own overrides in
+  `android/app/src/{autodosje,carpapers}/res/` (legacy `mipmap-*/ic_launcher.png`
+  + adaptive `drawable*/ic_launcher_foreground.png` + `mipmap-anydpi-v26/
+  ic_launcher.xml` + a `values/colors.xml` background color) - Gradle picks
+  the flavor-specific one automatically, no wiring needed beyond the files
+  existing. Real artwork isn't ready yet, so right now these are generated
+  placeholders (a filled circle in the brand's `primaryColorHex` with its
+  first letter) - see "Per-brand app icons" below.
+- A brand can **reword a specific string** without forking the whole
+  localization table, via `AppConfig.copyOverrides` + `brandCopy()`
+  (`lib/core/config/brand_copy.dart`) - see "Per-brand copy overrides"
+  below. Wired up as a real example on `autodosje.json`
+  (`garage_setup_title`/`garage_setup_subtitle`).
 
 ## Two real bugs this surfaced (fixed)
 
@@ -91,6 +106,79 @@ drop the tech-passport field where it doesn't apply) is a separate,
 bigger localization task - flagging it here so it doesn't get lost before
 CarPapers actually ships.
 
+## Per-brand app icons (Android)
+
+`flutter_launcher_icons`/`flutter_native_splash` in `pubspec.yaml` are
+still configured globally (one `image_path`) and only ever write into
+`android/app/src/main/res/` - they know nothing about flavors, and running
+them again will not touch a flavor's own icon directory, so it's safe to
+keep them as-is for the shared/default (`finesplus`) icon.
+
+For a flavor that needs a *different* icon, Android's normal per-flavor
+resource merging already does the rest: anything under
+`android/app/src/<flavor>/res/` overrides `src/main/res/` for that flavor
+only, with no Gradle config needed beyond the `productFlavors` entry that
+already exists for it. `autodosje` and `carpapers` both have one now.
+
+Since there's no real brand artwork for either yet, `scripts/gen_flavor_icon.py`
+generates a placeholder set (filled circle in the brand's `primaryColorHex`,
+first letter in white) in the exact file layout Android expects:
+
+```
+android/app/src/<flavor>/res/
+  mipmap-{mdpi,hdpi,xhdpi,xxhdpi,xxxhdpi}/ic_launcher.png   # legacy (pre-API26)
+  drawable-{mdpi,hdpi,xhdpi,xxhdpi,xxxhdpi}/ic_launcher_foreground.png  # adaptive foreground
+  mipmap-anydpi-v26/ic_launcher.xml                          # adaptive icon wiring
+  values/colors.xml                                          # ic_launcher_background
+```
+
+`scripts/new_wl_flavor.sh` now calls it automatically for every new flavor.
+To swap in real artwork later, just replace those PNG files at the same
+paths/sizes - nothing else needs to change. `scripts/verify_wl_configs.py`
+flags any flavor with no `src/<flavor>/res/` icon at all (that's fine for
+`finesplus`, which intentionally shares the default).
+
+**iOS is not covered by this** - `ios/Runner/Assets.xcassets/AppIcon.appiconset`
+is still one shared icon for every scheme/target, and per-flavor iOS icons
+are part of the manual Xcode work in `ios/Flutter/Flavors/README.md`
+(new target needs its own `AppIcon` asset catalog entry).
+
+## Per-brand copy overrides (same-language reword)
+
+Sometimes two brands share a language but need different wording for the
+same string - e.g. AutoDosje wants "Ваш автодосьє" where Fines+ says "Ваш
+гараж", even though both are Ukrainian. That's a different problem from
+market-based locale selection (which isn't wired up at all right now -
+`SettingsService`/`SettingsCubit` hardcode `Locale('uk')` regardless of
+`AppConfig.market`; nothing here fixes that, it's a separate task).
+
+The mechanism: `AppConfig.copyOverrides` is an optional
+`Map<String, String>`, keyed by the exact key used in
+`packages/core_localization/lib/l10n/intl_*.arb` (e.g.
+`"garage_setup_subtitle"`). `brandCopy(context, key, fallback)`
+(`lib/core/config/brand_copy.dart`) looks the key up in the active brand's
+`copyOverrides` and returns the override if present, otherwise `fallback`.
+
+To reword a string for one brand:
+
+1. Confirm the ARB key you want to override already exists (it must - this
+   only rewords existing strings, it never adds new ones).
+2. At the call site, change `S.of(context).some_key` to
+   `brandCopy(context, 'some_key', S.of(context).some_key)`.
+3. Add `"some_key": "brand's wording"` under `"copyOverrides"` in that
+   brand's config JSON.
+
+Only the call sites that actually need to vary have to change - most of
+the app can keep calling `S.of(context).xxx` directly. Today that's just
+`garage_setup_title`/`garage_setup_subtitle`
+(`lib/features/registration/presentation/screens/garage_setup_screen.dart`),
+overridden for `autodosje` - a real, working example rather than unused
+scaffolding, but deliberately small: extend it call-site-by-call-site as
+brands actually need specific strings reworded, rather than wrapping
+everything up front. `scripts/verify_wl_configs.py` flags any
+`copyOverrides` key that doesn't match a real ARB key (catches typos that
+would otherwise silently never override anything).
+
 ## What's still needed before AutoDosje/CarPapers can actually build and ship
 
 Applies to both unless noted:
@@ -117,31 +205,48 @@ Applies to both unless noted:
    logo files.
 5. **Localization**: `packages/core_localization/lib/l10n/intl_en.arb`
    already exists; add `intl_es.arb` for the ES market before shipping
-   CarPapers there. AutoDosje can reuse the existing `intl_uk.arb`.
-6. **Apple/Google developer accounts + store listings**: a different public
+   CarPapers there. AutoDosje can reuse the existing `intl_uk.arb`. Separately,
+   nothing currently picks a default locale from `AppConfig.market` -
+   `SettingsCubit` always starts at `Locale('uk')` regardless of brand/market,
+   so a fresh CarPapers install still boots in Ukrainian until the user
+   changes it by hand. Wiring `market` to a default locale is still open.
+6. **Real brand icons**: `autodosje`/`carpapers` currently ship the
+   generated placeholder circle-and-letter icon (see "Per-brand app icons"
+   above), not real artwork - swap
+   `android/app/src/{autodosje,carpapers}/res/**` for the real thing
+   whenever it's ready, and do the equivalent for iOS
+   (`ios/Runner/Assets.xcassets/AppIcon.appiconset`, per-target once those
+   targets exist).
+7. **Apple/Google developer accounts + store listings**: a different public
    name means a genuinely separate App Store Connect app record and Play
    Console app for each, not a locale-name override on the existing Fines+
    listing - for CarPapers because the feature set differs (no fines
    check); for AutoDosje because it's a distinct public brand even though
    the feature set matches Fines+. Each needs its own screenshots,
    description, privacy policy URL, etc.
-7. Make `CarInfoScreen`'s form market-aware for CarPapers (see the
+8. Make `CarInfoScreen`'s form market-aware for CarPapers (see the
    correction note above) - plate/tech-passport validation is still UA-only,
    which is fine for AutoDosje but not for a US/ES brand.
 
 ## Adding a brand beyond these three
 
 1. `scripts/new_wl_flavor.sh <key> "<Brand>" <#hex> <email>` - scaffolds
-   `assets/config/<key>.json` and registers it in `pubspec.yaml`.
+   `assets/config/<key>.json`, registers it in `pubspec.yaml`, and generates
+   a placeholder Android icon at `android/app/src/<key>/res/**` (real
+   artwork can replace it any time, same paths).
 2. Fill in the generated config's `REPLACE_ME` fields (and flip
    `finesCheckEnabled`/`market` if this brand needs the Ukraine fines
-   check - the script defaults both off, since most new brands won't).
+   check - the script defaults both off, since most new brands won't). Add
+   `copyOverrides` entries only for the specific strings this brand needs
+   reworded (see "Per-brand copy overrides" above) - most brands need none.
 3. Add a matching Android `productFlavors { create("<key>") { ... } }`
    block to `android/app/build.gradle.kts`.
 4. Add its Firebase project + `google-services.json` under
    `android/app/src/<key>/`.
-5. Follow `ios/Flutter/Flavors/README.md` for the iOS side.
+5. Follow `ios/Flutter/Flavors/README.md` for the iOS side (icon included -
+   iOS per-flavor icons aren't scripted).
 6. Run `python3 scripts/verify_wl_configs.py` to catch the obvious stuff
-   (missing pubspec registration, missing logo, bad JSON) before touching
-   Flutter at all.
+   (missing pubspec registration, missing logo, bad JSON, unknown
+   `copyOverrides` keys, missing icon override) before touching Flutter at
+   all.
 7. Build: `flutter build appbundle --flavor <key> --dart-define=FLAVOR=<key>`.
