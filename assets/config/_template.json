@@ -1,0 +1,13 @@
+{
+  "_comment": "Copy this file to assets/config/<flavor_key>.json and fill in every REPLACE_ME. This file itself is not a valid flavor (loadAppConfig() is never called with '_template') and json_serializable ignores unknown '_comment' keys, but delete it before shipping a real config to keep things tidy.",
+  "brandName": "REPLACE_ME",
+  "primaryColorHex": "#REPLACEME",
+  "logoAssetPath": "assets/logos/REPLACE_ME.png",
+  "supportEmail": "REPLACE_ME",
+  "phoneNumber": "REPLACE_ME",
+  "viberNumber": "REPLACE_ME",
+  "market": "REPLACE_ME (UA / US / ES / ...)",
+  "finesCheckEnabled": false,
+  "termsUrl": "REPLACE_ME",
+  "privacyPolicyUrl": "REPLACE_ME"
+}

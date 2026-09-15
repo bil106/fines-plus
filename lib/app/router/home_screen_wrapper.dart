@@ -51,6 +51,7 @@ import 'package:fines_plus/features/subscription/presentation/screens/subscripti
 import 'dart:io';
 
 import 'package:fines_plus/app/router/app_router.dart';
+import 'package:fines_plus/core/config/app_config.dart';
 import 'package:fines_plus/env/env.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
@@ -262,6 +263,14 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
     final carNumber = carState.carNumber;
     final carId = carState.carId;
     final bool hasCar = carState.carId.isNotEmpty;
+    final finesCheckEnabled = context.watch<AppConfig>().finesCheckEnabled;
+    // Ukraine-only feature (talks to a UA government portal) - hidden from
+    // the bottom nav entirely for brands/markets that don't have it.
+    final navPages = <HomePage>[
+      HomePage.home,
+      if (finesCheckEnabled) HomePage.fines,
+      HomePage.reminders,
+    ];
     if (_carNumber == null) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
@@ -464,15 +473,11 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
           bottomNavigationBar: _isMainTab(_currentIndex)
               ? BottomNavigationBar(
                   backgroundColor: AppColors.energyBlue50,
-                  currentIndex: _bottomNavIndexFor(_currentIndex),
-                  onTap: (i) {
-                    final page = [HomePage.home, HomePage.fines, HomePage.reminders][i];
-                    openPage(page);
-                  },
-                  items:  [
-                    BottomNavigationBarItem(icon: Icon(Icons.home), label: S.of(context).home),
-                    BottomNavigationBarItem(icon: Icon(Icons.receipt), label: S.of(context).fines),
-                    BottomNavigationBarItem(icon: Icon(Icons.support), label: S.of(context).reminder),
+                  currentIndex: _bottomNavIndexFor(_currentIndex, navPages),
+                  onTap: (i) => openPage(navPages[i]),
+                  items: [
+                    for (final page in navPages)
+                      BottomNavigationBarItem(icon: Icon(_navIcon(page)), label: _navLabel(context, page)),
                   ],
                 )
               : null,
@@ -497,10 +502,34 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
         index == _pageIndexMap[HomePage.settings];
   }
 
-  int _bottomNavIndexFor(int pageIndex) {
-    if (pageIndex == _pageIndexMap[HomePage.home]) return 0;
-    if (pageIndex == _pageIndexMap[HomePage.fines]) return 1;
-    if (pageIndex == _pageIndexMap[HomePage.reminders]) return 2;
+  int _bottomNavIndexFor(int pageIndex, List<HomePage> navPages) {
+    for (var i = 0; i < navPages.length; i++) {
+      if (_pageIndexMap[navPages[i]] == pageIndex) return i;
+    }
     return 0;
+  }
+
+  IconData _navIcon(HomePage page) {
+    switch (page) {
+      case HomePage.fines:
+        return Icons.receipt;
+      case HomePage.reminders:
+        return Icons.support;
+      case HomePage.home:
+      default:
+        return Icons.home;
+    }
+  }
+
+  String _navLabel(BuildContext context, HomePage page) {
+    switch (page) {
+      case HomePage.fines:
+        return S.of(context).fines;
+      case HomePage.reminders:
+        return S.of(context).reminder;
+      case HomePage.home:
+      default:
+        return S.of(context).home;
+    }
   }
 }

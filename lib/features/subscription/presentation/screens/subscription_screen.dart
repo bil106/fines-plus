@@ -4,6 +4,7 @@ import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
 import 'package:fines_plus/app/router/home_screen_wrapper.dart';
 import 'package:fines_plus/env/env.dart';
+import 'package:fines_plus/core/config/app_config.dart';
 import 'package:fines_plus/features/subscription/domain/entities/subscription.dart';
 import 'package:fines_plus/app/router/app_router.dart';
 import 'package:fines_plus/features/subscription/presentation/cubit/purchase/purchase_cubit.dart';
@@ -416,8 +417,9 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                           child: GestureDetector(
                             onTap: () async {
                               try {
+                                final config = context.read<AppConfig>();
                                 await launchUrl(
-                                  Uri.parse(Env.termsUrl),
+                                  Uri.parse(config.termsUrl ?? Env.termsUrl),
                                   mode: LaunchMode.externalApplication,
                                 );
                               } catch (_) {}
@@ -507,8 +509,9 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
 
   Future<void> _openPrivacy() async {
     try {
+      final config = context.read<AppConfig>();
       await launchUrl(
-        Uri.parse(Env.privacyPolicyUrl),
+        Uri.parse(config.privacyPolicyUrl ?? Env.privacyPolicyUrl),
         mode: LaunchMode.externalApplication,
       );
     } catch (_) {}
