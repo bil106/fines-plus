@@ -1,0 +1,7 @@
+// Scaffold only - not wired into any build configuration yet (no AutoDosje
+// Xcode configuration/scheme/target exists). BUNDLE_ID is a placeholder -
+// confirm it before ever archiving/uploading with it, since the first real
+// upload to App Store Connect makes it permanent. See
+// ios/Flutter/Flavors/README.md for the manual Xcode steps still needed.
+BUNDLE_ID = com.autodosje.app
+APP_DISPLAY_NAME = AutoDosje

@@ -64,6 +64,14 @@ android {
             applicationId = "com.carpapers.app"
             resValue("string", "app_name", "CarPapers")
         }
+        create("autodosje") {
+            dimension = "brand"
+            // PLACEHOLDER, same caveat as carpapers above - confirm (and
+            // register a Firebase project under it, see
+            // android/app/src/autodosje/README.md) before the first upload.
+            applicationId = "com.autodosje.app"
+            resValue("string", "app_name", "AutoDosje")
+        }
     }
  
     compileOptions {
