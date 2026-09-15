@@ -58,3 +58,6 @@ migrate_working_dir/
 # Build artifacts
 /debug-info/
 /ios/build/
+
+# Separate fines_backend project (own git repo, not a submodule of this one)
+/fines_backend/
