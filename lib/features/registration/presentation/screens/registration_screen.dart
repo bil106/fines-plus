@@ -91,7 +91,6 @@ HomeScreenWrapperState? _wrapperState;
     } else {
       context.router.replaceAll([
         SubscriptionRoute(
-          debugMode: true,
           onBack: () async {
             await Future.delayed(const Duration(milliseconds: 150));
 

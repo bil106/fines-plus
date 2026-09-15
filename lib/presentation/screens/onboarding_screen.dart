@@ -5,6 +5,7 @@ import 'package:design_system/theme/app_theme.dart';
 import 'package:fines_plus/app/router/app_router.dart';
 import 'package:fines_plus/app/router/home_screen_wrapper.dart';
 import 'package:fines_plus/core/services/trial_service.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
@@ -159,11 +160,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             ],
           ),
           if (!isLandscape) Positioned(bottom: 40, left: 0, right: 0, child: _buildDots()),
-          Positioned(
-            bottom: 6,
-            right: 12,
-            child: Text(_versionLabel, style: const TextStyle(color: Colors.black26, fontSize: 11)),
-          ),
+          if (kDebugMode)
+            Positioned(
+              bottom: 6,
+              right: 12,
+              child: Text(_versionLabel, style: const TextStyle(color: Colors.black26, fontSize: 11)),
+            ),
         ],
       ),
     );

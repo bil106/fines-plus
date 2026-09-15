@@ -18,10 +18,9 @@ import 'package:url_launcher/url_launcher.dart';
 
 @RoutePage()
 class SubscriptionScreen extends StatefulWidget {
-  final bool debugMode;
   final VoidCallback? onBack;
   final VoidCallback? onPurchaseSuccess;
-  const SubscriptionScreen({super.key, this.debugMode = true, this.onBack, this.onPurchaseSuccess});
+  const SubscriptionScreen({super.key, this.onBack, this.onPurchaseSuccess});
 
   @override
   State<SubscriptionScreen> createState() => _SubscriptionScreenState();

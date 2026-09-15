@@ -917,7 +917,9 @@ class RemindersRouteArgs {
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
     if (other is! RemindersRouteArgs) return false;
-    return key == other.key && ownerId == other.ownerId && onBack == other.onBack;
+    return key == other.key &&
+        ownerId == other.ownerId &&
+        onBack == other.onBack;
   }
 
   @override
@@ -1173,7 +1175,6 @@ class SplashRoute extends PageRouteInfo<void> {
 class SubscriptionRoute extends PageRouteInfo<SubscriptionRouteArgs> {
   SubscriptionRoute({
     Key? key,
-    bool debugMode = true,
     VoidCallback? onBack,
     VoidCallback? onPurchaseSuccess,
     List<PageRouteInfo>? children,
@@ -1181,7 +1182,6 @@ class SubscriptionRoute extends PageRouteInfo<SubscriptionRouteArgs> {
          SubscriptionRoute.name,
          args: SubscriptionRouteArgs(
            key: key,
-           debugMode: debugMode,
            onBack: onBack,
            onPurchaseSuccess: onPurchaseSuccess,
          ),
@@ -1198,7 +1198,6 @@ class SubscriptionRoute extends PageRouteInfo<SubscriptionRouteArgs> {
       );
       return SubscriptionScreen(
         key: args.key,
-        debugMode: args.debugMode,
         onBack: args.onBack,
         onPurchaseSuccess: args.onPurchaseSuccess,
       );
@@ -1207,16 +1206,9 @@ class SubscriptionRoute extends PageRouteInfo<SubscriptionRouteArgs> {
 }
 
 class SubscriptionRouteArgs {
-  const SubscriptionRouteArgs({
-    this.key,
-    this.debugMode = true,
-    this.onBack,
-    this.onPurchaseSuccess,
-  });
+  const SubscriptionRouteArgs({this.key, this.onBack, this.onPurchaseSuccess});
 
   final Key? key;
-
-  final bool debugMode;
 
   final VoidCallback? onBack;
 
@@ -1224,7 +1216,7 @@ class SubscriptionRouteArgs {
 
   @override
   String toString() {
-    return 'SubscriptionRouteArgs{key: $key, debugMode: $debugMode, onBack: $onBack, onPurchaseSuccess: $onPurchaseSuccess}';
+    return 'SubscriptionRouteArgs{key: $key, onBack: $onBack, onPurchaseSuccess: $onPurchaseSuccess}';
   }
 
   @override
@@ -1232,17 +1224,13 @@ class SubscriptionRouteArgs {
     if (identical(this, other)) return true;
     if (other is! SubscriptionRouteArgs) return false;
     return key == other.key &&
-        debugMode == other.debugMode &&
         onBack == other.onBack &&
         onPurchaseSuccess == other.onPurchaseSuccess;
   }
 
   @override
   int get hashCode =>
-      key.hashCode ^
-      debugMode.hashCode ^
-      onBack.hashCode ^
-      onPurchaseSuccess.hashCode;
+      key.hashCode ^ onBack.hashCode ^ onPurchaseSuccess.hashCode;
 }
 
 /// generated route for

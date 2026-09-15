@@ -383,7 +383,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "month_oct": MessageLookupByLibrary.simpleMessage("Жовт"),
     "month_sep": MessageLookupByLibrary.simpleMessage("Верес"),
     "months": MessageLookupByLibrary.simpleMessage("Місяці"),
-    "most_popular": MessageLookupByLibrary.simpleMessage("НАЙПОПУЛЯРНІШІ"),
+    "most_popular": MessageLookupByLibrary.simpleMessage("НАЙПОПУЛЯРНІШИЙ"),
     "my_garage": MessageLookupByLibrary.simpleMessage("Мій гараж"),
     "my_position": MessageLookupByLibrary.simpleMessage("Ви тут"),
     "name": MessageLookupByLibrary.simpleMessage("Назва"),
