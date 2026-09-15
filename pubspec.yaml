@@ -122,6 +122,9 @@ flutter:
   uses-material-design: true
   
   assets:
+    - assets/config/finesplus.json
+    - assets/config/autodosje.json
+    - assets/config/carpapers.json
     - assets/config/autolux.json
     - assets/config/fastcar.json
     - assets/icons/map.png

@@ -200,7 +200,11 @@ class AppInitializer {
       debugPrint("Using cached FCM Token: $fcmToken");
     }
 
-    const flavor = String.fromEnvironment('FLAVOR', defaultValue: 'autolux');
+    // No --dart-define=FLAVOR is passed anywhere in this repo's run/build
+    // configs (checked: no CI, no fastlane, no .vscode/.idea launch config) -
+    // so this default is what the real, currently-shipping app actually
+    // resolves to. It must be the real brand, not a demo/test one.
+    const flavor = String.fromEnvironment('FLAVOR', defaultValue: 'finesplus');
     final config = await loadAppConfig(flavor);
 
     final storage = FlutterSecureStorage();
