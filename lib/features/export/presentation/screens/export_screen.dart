@@ -82,7 +82,18 @@ class _ExportScreenView extends StatelessWidget {
                       ),
                     ],
                   ),
-            
+                  AppSpacers.verticalMedium,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ExportCard(
+                        icon: Icons.summarize,
+                        label: S.of(context).buyer_report,
+                        onTap: () => ShareHelpers.shareBuyerReport(context, carNumber, history),
+                      ),
+                    ],
+                  ),
+
                   AppSpacers.verticalMaxMassive,
                   const AdBannerWidget(),
                 ],

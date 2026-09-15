@@ -33,4 +33,17 @@ class ShareHelpers {
       text: '${S.of(context).car_history} $carNumber',
     );
   }
+
+  static Future<void> shareBuyerReport(
+    BuildContext context,
+    String carNumber,
+    List<EventModel> history,
+  ) async {
+    final cubit = context.read<ExportCubit>();
+    final file = await cubit.exportBuyerReportFile(carNumber, history);
+    await Share.shareXFiles(
+      [XFile(file.path)],
+      text: '${S.of(context).buyer_report} $carNumber',
+    );
+  }
 }

@@ -64,6 +64,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "buy_subscription": MessageLookupByLibrary.simpleMessage(
       "Купити передплату",
     ),
+    "buyer_report": MessageLookupByLibrary.simpleMessage("Звіт для покупця"),
     "by_date": MessageLookupByLibrary.simpleMessage("За датою"),
     "by_mileage": MessageLookupByLibrary.simpleMessage("За пробігом"),
     "calendar": MessageLookupByLibrary.simpleMessage("Календар"),
@@ -138,6 +139,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "csv": MessageLookupByLibrary.simpleMessage("CSV"),
     "currency": MessageLookupByLibrary.simpleMessage("Валюта"),
+    "current_mileage": MessageLookupByLibrary.simpleMessage("Поточний пробіг"),
     "date": MessageLookupByLibrary.simpleMessage("Дата"),
     "date_previous_maintenance": MessageLookupByLibrary.simpleMessage(
       "Дата попереднього ТО",
@@ -425,6 +427,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "not_forget_task": MessageLookupByLibrary.simpleMessage(
       "Не забудь виконати завдання",
     ),
+    "not_paid": MessageLookupByLibrary.simpleMessage("Не оплачено"),
     "notifications_resource": MessageLookupByLibrary.simpleMessage(
       "Повідомлення про досягнення 90% ресурсу",
     ),
@@ -1006,6 +1009,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "sign_up_button": MessageLookupByLibrary.simpleMessage("Підписатися"),
     "skip_for_now": MessageLookupByLibrary.simpleMessage("Пропустити"),
     "statistics": MessageLookupByLibrary.simpleMessage("Статистика"),
+    "status": MessageLookupByLibrary.simpleMessage("Статус"),
     "store_unavailable": MessageLookupByLibrary.simpleMessage(
       "Магазин недоступний",
     ),

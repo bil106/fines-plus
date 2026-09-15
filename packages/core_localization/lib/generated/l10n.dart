@@ -4373,6 +4373,36 @@ class S {
       args: [],
     );
   }
+
+  /// `Buyer's report`
+  String get buyer_report {
+    return Intl.message(
+      'Buyer\'s report',
+      name: 'buyer_report',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Not paid`
+  String get not_paid {
+    return Intl.message('Not paid', name: 'not_paid', desc: '', args: []);
+  }
+
+  /// `Current mileage`
+  String get current_mileage {
+    return Intl.message(
+      'Current mileage',
+      name: 'current_mileage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Status`
+  String get status {
+    return Intl.message('Status', name: 'status', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

@@ -64,6 +64,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "buy_subscription": MessageLookupByLibrary.simpleMessage(
       "Buy subscription",
     ),
+    "buyer_report": MessageLookupByLibrary.simpleMessage("Buyer\'s report"),
     "by_date": MessageLookupByLibrary.simpleMessage("By date"),
     "by_mileage": MessageLookupByLibrary.simpleMessage("By mileage"),
     "calendar": MessageLookupByLibrary.simpleMessage("Calendar"),
@@ -138,6 +139,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "csv": MessageLookupByLibrary.simpleMessage("CSV"),
     "currency": MessageLookupByLibrary.simpleMessage("Currency"),
+    "current_mileage": MessageLookupByLibrary.simpleMessage("Current mileage"),
     "date": MessageLookupByLibrary.simpleMessage("Date"),
     "date_previous_maintenance": MessageLookupByLibrary.simpleMessage(
       "Previous maintenance date",
@@ -426,6 +428,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "not_forget_task": MessageLookupByLibrary.simpleMessage(
       "Don\'t forget to complete the task",
     ),
+    "not_paid": MessageLookupByLibrary.simpleMessage("Not paid"),
     "notifications_resource": MessageLookupByLibrary.simpleMessage(
       "Notifications about reaching 90% resource",
     ),
@@ -1017,6 +1020,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "sign_up_button": MessageLookupByLibrary.simpleMessage("Sign Up"),
     "skip_for_now": MessageLookupByLibrary.simpleMessage("Skip for now"),
     "statistics": MessageLookupByLibrary.simpleMessage("Statistics"),
+    "status": MessageLookupByLibrary.simpleMessage("Status"),
     "store_unavailable": MessageLookupByLibrary.simpleMessage(
       "Store unavailable",
     ),

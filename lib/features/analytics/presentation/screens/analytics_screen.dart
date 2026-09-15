@@ -208,9 +208,19 @@ class AnalyticsScreenViewState extends State<_AnalyticsScreenView> with SingleTi
                           final homeState = context.findAncestorStateOfType<HomeScreenWrapperState>();
                           homeState?.openPage(HomePage.export);
                         },
-                        icon: const Icon(Icons.upload, size: 18),
+                        icon: const Icon(Icons.ios_share, size: 18),
                         label: Text(S.of(context).export),
-                        style: ElevatedButton.styleFrom(backgroundColor: AppColors.blue700),
+                        // A distinct accent (vs. the blue700 used almost
+                        // everywhere else) so the full-history export reads
+                        // as a standout action, not just another secondary
+                        // button next to the title — it's the feature that
+                        // sets this app apart from plain expense trackers.
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.orange,
+                          foregroundColor: AppColors.neutreBlanc,
+                          elevation: 2,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                        ),
                       ),
                     ],
                   ),

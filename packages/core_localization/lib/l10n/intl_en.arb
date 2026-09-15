@@ -519,6 +519,10 @@
   "placeholders": {
     "task": { "type": "String" }
   }
-}
+},
+"buyer_report": "Buyer's report",
+"not_paid": "Not paid",
+"current_mileage": "Current mileage",
+"status": "Status"
 
 }

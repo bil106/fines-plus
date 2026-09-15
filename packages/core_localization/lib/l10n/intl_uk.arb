@@ -520,6 +520,10 @@
      "placeholders": {
        "task": { "type": "String" }
      }
-   }
+   },
+   "buyer_report": "Звіт для покупця",
+   "not_paid": "Не оплачено",
+   "current_mileage": "Поточний пробіг",
+   "status": "Статус"
 
 }
