@@ -274,6 +274,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "garage_make_hint": MessageLookupByLibrary.simpleMessage("Оберіть марку"),
     "garage_make_label": MessageLookupByLibrary.simpleMessage("Марка авто"),
     "garage_no_number": MessageLookupByLibrary.simpleMessage("Авто без номера"),
+    "garage_requires_account": MessageLookupByLibrary.simpleMessage(
+      "Щоб додати авто в гараж, потрібно увійти в акаунт",
+    ),
     "garage_setup_subtitle": MessageLookupByLibrary.simpleMessage(
       "Додайте авто зараз або зробіть це пізніше — користуватися застосунком можна вже зараз",
     ),

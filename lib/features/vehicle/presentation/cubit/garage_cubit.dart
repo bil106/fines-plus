@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:fines_plus/features/vehicle/data/models/car_info_model.dart';
 import 'package:fines_plus/features/vehicle/data/repository/car_info_repository.dart';
 import 'package:fines_plus/features/vehicle/presentation/cubit/car_cubit.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'garage_state.dart';
@@ -13,29 +14,48 @@ import 'garage_state.dart';
 class GarageCubit extends Cubit<GarageState> {
   final CarInfoRepository repository;
   final CarCubit carCubit;
-  late final StreamSubscription<List<CarInfoModel>> _carsSub;
+  StreamSubscription<List<CarInfoModel>>? _carsSub;
   late final StreamSubscription<dynamic> _activeSub;
+  late final StreamSubscription<User?> _authSub;
 
   GarageCubit({required this.repository, required this.carCubit})
     : super(GarageState(activeCarId: carCubit.state.carId)) {
-    _carsSub = repository.streamCars().listen((cars) {
-      emit(state.copyWith(cars: cars, isLoading: false));
-    });
+    _subscribeToCars();
+    // repository.streamCars() is a one-shot snapshot of "is anyone signed in
+    // right now" — someone who signs in later in the same session (e.g.
+    // after starting on the no-account trial) would otherwise stay stuck on
+    // whatever that first subscription saw, forever. Re-subscribing on every
+    // auth change keeps it live.
+    _authSub = FirebaseAuth.instance.authStateChanges().listen((_) => _subscribeToCars());
     _activeSub = carCubit.stream.listen((carState) {
       emit(state.copyWith(activeCarId: carState.carId));
+    });
+  }
+
+  void _subscribeToCars() {
+    _carsSub?.cancel();
+    emit(state.copyWith(isLoading: true));
+    _carsSub = repository.streamCars().listen((cars) {
+      emit(state.copyWith(cars: cars, isLoading: false));
     });
   }
 
   /// If [carNumber] is a plate this account already has a car under (e.g.
   /// added earlier from another device), switches to that existing car
   /// instead of minting a duplicate with a fresh carId and orphaning its
-  /// expenses/etc.
-  Future<void> addCar({String carNumber = '', String techPassport = '', String make = '', String photoUrl = ''}) async {
+  /// expenses/etc. Returns the car that ended up active — a new car's photo
+  /// can only be uploaded once its real carId (from here) exists.
+  Future<CarInfoModel> addCar({
+    String carNumber = '',
+    String techPassport = '',
+    String make = '',
+    String photoUrl = '',
+  }) async {
     if (carNumber.isNotEmpty) {
       final existing = await repository.findCarByNumber(carNumber);
       if (existing != null) {
         await carCubit.switchActiveCar(existing);
-        return;
+        return existing;
       }
     }
 
@@ -46,6 +66,7 @@ class GarageCubit extends Cubit<GarageState> {
       photoUrl: photoUrl,
     );
     await carCubit.switchActiveCar(car);
+    return car;
   }
 
   Future<void> switchTo(CarInfoModel car) => carCubit.switchActiveCar(car);
@@ -89,8 +110,9 @@ class GarageCubit extends Cubit<GarageState> {
 
   @override
   Future<void> close() {
-    _carsSub.cancel();
+    _carsSub?.cancel();
     _activeSub.cancel();
+    _authSub.cancel();
     return super.close();
   }
 }

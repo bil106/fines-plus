@@ -1,12 +1,10 @@
-import 'dart:io';
-
 import 'package:auto_route/auto_route.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/theme/app_theme.dart';
 import 'package:fines_plus/app/router/app_router.dart';
 import 'package:fines_plus/app/router/home_screen_wrapper.dart';
-import 'package:fines_plus/features/subscription/presentation/screens/subscription_screen.dart';
+import 'package:fines_plus/core/services/trial_service.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
@@ -23,9 +21,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   int currentPage = 0;
   String _versionLabel = '';
 
-  // Subscription page is only shown on Android
-  bool get _showSubscription => Platform.isAndroid;
-  int get _pageCount => _showSubscription ? 5 : 4;
+  int get _pageCount => 4;
 
   @override
   void initState() {
@@ -75,8 +71,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
                   ),
                   onPressed: () {
-                    if (isLastInfoPage && !_showSubscription) {
-                      // iOS: last page goes straight to the app
+                    if (isLastInfoPage) {
+                      // Starts the no-account, no-card 7-day trial right as
+                      // the user enters the app for the first time, then
+                      // goes straight to Home on both platforms — no
+                      // paywall blocking first use.
+                      TrialService.ensureStarted();
                       context.router.replaceAll([HomeRouteWrapper(initialPage: HomePage.home)]);
                     } else if (pageIndex < _pageCount - 1) {
                       pageController.nextPage(
@@ -99,14 +99,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildSubscriptionPage() {
-    return SubscriptionScreen(
-      onBack: () {
-        pageController.previousPage(duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
-      },
     );
   }
 
@@ -164,7 +156,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 subtitle: S.current.track_costs,
                 imagePath: "assets/images/analytics_bg.png",
               ),
-              if (_showSubscription) _buildSubscriptionPage(),
             ],
           ),
           if (!isLandscape) Positioned(bottom: 40, left: 0, right: 0, child: _buildDots()),

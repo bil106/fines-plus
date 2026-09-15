@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:core_localization/generated/l10n.dart';
+import 'package:core_utils/formatters/vehicle_formatters.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:fines_plus/app/router/app_router.dart';
 import 'package:fines_plus/app/router/home_screen_wrapper.dart';
@@ -25,7 +26,10 @@ class MainExpenseTiles extends StatelessWidget {
   Widget build(BuildContext context) {
     final cubit = context.read<MaintenanceCubit>();
     final quickActionsCubit = context.read<QuickActionsCubit>();
-    final carId = context.read<CarCubit>().state.carId;
+    // Must be `watch`, not `read` — this widget is returned as a `const`
+    // instance from Home, so it only rebuilds with a fresh carId if it
+    // subscribes to CarCubit itself.
+    final carId = context.watch<CarCubit>().state.carId;
 
     return Row(
       children: [
@@ -34,6 +38,11 @@ class MainExpenseTiles extends StatelessWidget {
             icon: const Icon(Icons.build, color: AppColors.energyBlue, size: 34),
             label: S.of(context).service_icon,
             onTap: () async {
+              if (carId.isEmpty) {
+                await _promptForCarNumber(context);
+                return;
+              }
+
               final records = await Navigator.push<List<ServiceRecord>>(
                 context,
                 MaterialPageRoute(builder: (_) => const ServiceScreen()),
@@ -55,6 +64,11 @@ class MainExpenseTiles extends StatelessWidget {
             ),
             label: S.of(context).car_wash,
             onTap: () async {
+              if (carId.isEmpty) {
+                await _promptForCarNumber(context);
+                return;
+              }
+
               final record = await context.router.push<CarWashRecord>(CarWashRoute());
               if (record != null) {
                 cubit.addCarWashRecord(record);
@@ -68,6 +82,11 @@ class MainExpenseTiles extends StatelessWidget {
             icon: const Icon(Icons.local_gas_station, color: AppColors.energyBlue, size: 34),
             label: S.of(context).fuel_up,
             onTap: () async {
+              if (carId.isEmpty) {
+                await _promptForCarNumber(context);
+                return;
+              }
+
               await context.router.push<FuelRecord>(FuelUpRoute());
             },
           ),
@@ -78,7 +97,10 @@ class MainExpenseTiles extends StatelessWidget {
             icon: const Icon(Icons.shield, color: AppColors.energyBlue, size: 34),
             label: S.of(context).insurance,
             onTap: () async {
-              if (carId.isEmpty) return;
+              if (carId.isEmpty) {
+                await _promptForCarNumber(context);
+                return;
+              }
 
               final result = await showModalBottomSheet<Map<String, dynamic>>(
                 context: context,
@@ -111,6 +133,41 @@ class MainExpenseTiles extends StatelessWidget {
       ],
     );
   }
+}
+
+Future<void> _promptForCarNumber(BuildContext context) async {
+  final controller = TextEditingController();
+  final carCubit = context.read<CarCubit>();
+
+  await showDialog<void>(
+    context: context,
+    builder: (dialogContext) {
+      return AlertDialog(
+        title: Text(S.of(dialogContext).car_number),
+        content: TextField(
+          controller: controller,
+          autofocus: true,
+          inputFormatters: [VehicleNumberFormatter()],
+          textCapitalization: TextCapitalization.characters,
+          maxLength: 8,
+          decoration: InputDecoration(
+            hintText: S.of(dialogContext).hint_auto_num,
+            counterText: '',
+          ),
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(dialogContext), child: Text(S.of(dialogContext).cancel)),
+          TextButton(
+            onPressed: () {
+              carCubit.changeCar(controller.text);
+              Navigator.pop(dialogContext);
+            },
+            child: Text(S.of(dialogContext).save),
+          ),
+        ],
+      );
+    },
+  );
 }
 
 class _ExpenseTile extends StatelessWidget {

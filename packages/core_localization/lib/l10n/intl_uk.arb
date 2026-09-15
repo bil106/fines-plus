@@ -26,6 +26,7 @@
    "garage_delete_confirm_body": "Усі дані цього авто (витрати, нагадування, обслуговування) буде видалено безповоротно.",
    "garage_delete_error": "Не вдалося видалити авто",
    "garage_action_error": "Не вдалося виконати дію",
+   "garage_requires_account": "Щоб додати авто в гараж, потрібно увійти в акаунт",
    "garage_make_label": "Марка авто",
    "garage_make_hint": "Оберіть марку",
    "search": "Пошук",

@@ -6,6 +6,7 @@ import 'package:core_data/core_data.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:fines_plus/core/helpers/push_helper.dart';
+import 'package:fines_plus/core/services/trial_service.dart';
 import 'package:fines_plus/features/analytics/data/models/event_model.dart';
 import 'package:fines_plus/features/analytics/data/repository/analytics_repository.dart';
 import 'package:fines_plus/features/analytics/presentation/cubit/analytics_cubit.dart';
@@ -22,7 +23,6 @@ import 'package:fines_plus/features/home/presentation/cubit/quick_actions_cubit.
 import 'package:fines_plus/features/home/presentation/screens/home_screen.dart';
 import 'package:fines_plus/features/registration/presentation/cubit/registration_cubit.dart';
 import 'package:fines_plus/features/reminders/data/datasources/reminder_local_data_source.dart';
-import 'package:fines_plus/features/reminders/data/datasources/reminder_remote_data_source.dart';
 import 'package:fines_plus/features/reminders/data/repository/reminder_repository.dart';
 import 'package:fines_plus/features/reminders/presentation/cubit/reminder_cubit.dart';
 import 'package:fines_plus/features/reminders/presentation/screens/reminders_screen.dart';
@@ -184,7 +184,9 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
       _docNumber = prefs.getString('docNumber') ?? '';
     });
 
-    final hasSubscription = (kDebugMode || Env.iosBypassSubscription || Platform.isIOS) ? true : await context.read<RegistrationCubit>().checkSubscription();
+    final hasSubscription = (kDebugMode || Env.iosBypassSubscription || Platform.isIOS)
+        ? true
+        : (await context.read<RegistrationCubit>().checkSubscription()) || await TrialService.isActive();
     if (!mounted) return;
 
     // Only the "subscription required" case needs to force a page change —
@@ -223,7 +225,19 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
       _analyticsTabIndex = 0;
     }
 
-    if (!kDebugMode && !hasCar && index > 4) {
+    // Settings, the garage (where a first car actually gets added — its "+"
+    // works even with zero cars), registration and the subscription screen
+    // are never car-scoped, so they must stay reachable even before the
+    // user has one — otherwise a car-less user can never reach the one
+    // screen (garage) that would let them add a car in the first place.
+    const carIndependentPages = {
+      HomePage.settings,
+      HomePage.garage,
+      HomePage.registration,
+      HomePage.subscription,
+    };
+
+    if (!kDebugMode && !hasCar && index > 4 && !carIndependentPages.contains(page)) {
       debugPrint("Add a car to open this page");
       return;
     }
@@ -352,7 +366,16 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
                 ),
               ),
 
-              if (hasCar) ...[
+              // Unconditional — this used to be gated behind `if (hasCar)`,
+              // which meant these widgets (Settings, Garage, Registration,
+              // Subscription included) didn't exist in the PageView at all
+              // without a car, so jumpToPage() for any of their indices
+              // silently landed on whatever the last *existing* page was
+              // instead. Car-dependent screens still can't be *navigated to*
+              // without a car — openPage() above still blocks that in
+              // release builds — but they must still be present here so the
+              // index math lines up with _pageIndexMap.
+              ...[
                 BlocProvider.value(
                   value: analyticsCubit,
                   child: AnalyticsScreen(
@@ -435,12 +458,8 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
 
                         final prefs = snapshot.data!;
                         final localDataSource = ReminderLocalDataSourceImpl(SharedPrefsManager(prefs));
-                        final remoteDataSource = ReminderRemoteDataSourceImpl(FirebaseFirestore.instance);
 
-                        final reminderRepository = ReminderRepository(
-                          localDataSource: localDataSource,
-                          remoteDataSource: remoteDataSource,
-                        );
+                        final reminderRepository = ReminderRepository(localDataSource: localDataSource);
 
                         final scheduleRepository = ScheduleRepository();
 

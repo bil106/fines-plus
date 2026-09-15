@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:fines_plus/app/router/home_screen_wrapper.dart';
+import 'package:fines_plus/core/services/trial_service.dart';
 import 'package:fines_plus/env/env.dart';
 import 'package:fines_plus/features/registration/presentation/cubit/registration_cubit.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -47,12 +48,15 @@ class _SplashScreenState extends State<SplashScreen> {
 
     if (!mounted) return;
 
+    final trialActive = await TrialService.isActive();
+    if (!mounted) return;
+
     final bypassSubscription = kDebugMode || Env.iosBypassSubscription || Platform.isIOS;
 
     if (firstLaunch) {
       await prefs.setBool('first_launch', false);
       context.router.replaceAll([const OnboardingRoute()]);
-    } else if (bypassSubscription || hasSubscription) {
+    } else if (bypassSubscription || hasSubscription || trialActive) {
       context.router.replaceAll([HomeRouteWrapper(initialPage: HomePage.home)]);
     } else {
       context.router.replaceAll([HomeRouteWrapper(initialPage: HomePage.subscription)]);

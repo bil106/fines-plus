@@ -26,6 +26,7 @@
   "garage_delete_confirm_body": "All data for this car (expenses, reminders, maintenance) will be permanently deleted.",
   "garage_delete_error": "Failed to delete the car",
   "garage_action_error": "Failed to complete the action",
+  "garage_requires_account": "Sign in to add a car to your garage",
   "garage_make_label": "Car make",
   "garage_make_hint": "Select a make",
   "search": "Search",

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:core_localization/generated/l10n.dart';
 import 'package:core_utils/formatters/vehicle_formatters.dart';
 import 'package:design_system/colors/app_colors.dart';
@@ -10,8 +12,10 @@ import 'package:fines_plus/features/vehicle/data/models/car_info_model.dart';
 import 'package:fines_plus/features/vehicle/presentation/cubit/garage_cubit.dart';
 import 'package:fines_plus/features/vehicle/presentation/cubit/garage_state.dart';
 import 'package:fines_plus/features/vehicle/presentation/widgets/car_make_logo.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fines_plus/app/router/home_screen_wrapper.dart';
 
 /// Lists every car in the signed-in user's garage, lets them switch the
 /// active one, add a new car, edit an existing car's plate/tech-passport,
@@ -37,17 +41,47 @@ class GarageScreen extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         backgroundColor: AppColors.blue700,
         onPressed: () async {
+          if (FirebaseAuth.instance.currentUser == null) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(S.of(context).garage_requires_account),
+                action: SnackBarAction(
+                  label: S.of(context).login,
+                  onPressed: () {
+                    context.findAncestorStateOfType<HomeScreenWrapperState>()?.openPage(HomePage.registration);
+                  },
+                ),
+              ),
+            );
+            return;
+          }
+
           final result = await _showCarFormSheet(context);
           if (result == null) return;
           if (!context.mounted) return;
-          await _runOrShowError(
-            context,
-            () => context.read<GarageCubit>().addCar(
+
+          final localPhotoPath = result['localPhotoPath'] ?? '';
+          final garageCubit = context.read<GarageCubit>();
+
+          await _runOrShowError(context, () async {
+            final car = await garageCubit.addCar(
               carNumber: result['carNumber'] ?? '',
               techPassport: result['techPassport'] ?? '',
               make: result['make'] ?? '',
-            ),
-          );
+            );
+
+            // The photo picker can't upload anything for a brand-new car —
+            // there's no carId to upload against until the car above
+            // actually exists. Do it now that it does.
+            if (localPhotoPath.isNotEmpty) {
+              final photoUrl = await CarPhotoUploader().upload(
+                uid: car.ownerId,
+                carId: car.carId,
+                file: File(localPhotoPath),
+              );
+              await garageCubit.updateCar(car, photoUrl: photoUrl);
+            }
+          });
         },
         child: const Icon(Icons.add),
       ),
@@ -286,11 +320,13 @@ Future<void> _runOrShowError(
   }
 }
 
-/// Bottom sheet with make, optional car-number/tech-passport fields, and
-/// (only when editing an existing car, i.e. a carId already exists to
-/// upload against) a photo picker. Returns the entered values — 'make',
-/// 'carNumber', 'techPassport', and 'photoUrl' if a new photo was uploaded
-/// — or null if the user cancelled.
+/// Bottom sheet with make, optional car-number/tech-passport fields, and a
+/// photo picker. Returns the entered values — 'make', 'carNumber',
+/// 'techPassport'; 'photoUrl' if editing an existing car and a new photo was
+/// uploaded (its carId already exists to upload against); 'localPhotoPath'
+/// if adding a new car and a photo was picked but not yet uploaded (there's
+/// no carId to upload against until the new car is actually created) — or
+/// null if the user cancelled.
 Future<Map<String, String>?> _showCarFormSheet(
   BuildContext context, {
   CarInfoModel? existing,
@@ -305,6 +341,7 @@ Future<Map<String, String>?> _showCarFormSheet(
       ? existing!.make
       : null;
   String photoUrl = existing?.photoUrl ?? '';
+  String localPhotoPath = '';
   bool isUploadingPhoto = false;
 
   return showModalBottomSheet<Map<String, String>>(
@@ -334,12 +371,14 @@ Future<Map<String, String>?> _showCarFormSheet(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  if (existing != null) ...[
-                    Center(
-                      child: GestureDetector(
-                        onTap: isUploadingPhoto
-                            ? null
-                            : () async {
+                  Center(
+                    child: GestureDetector(
+                      onTap: isUploadingPhoto
+                          ? null
+                          : () async {
+                              if (existing != null) {
+                                // Editing — the carId already exists, so
+                                // pick and upload in one step, as before.
                                 setState(() => isUploadingPhoto = true);
                                 try {
                                   final url = await CarPhotoUploader()
@@ -362,26 +401,34 @@ Future<Map<String, String>?> _showCarFormSheet(
                                 } finally {
                                   setState(() => isUploadingPhoto = false);
                                 }
-                              },
-                        child: CircleAvatar(
-                          radius: 40,
-                          backgroundColor: AppColors.grey50,
-                          backgroundImage: photoUrl.isNotEmpty
-                              ? NetworkImage(photoUrl)
-                              : null,
-                          child: isUploadingPhoto
-                              ? const CircularProgressIndicator(strokeWidth: 2)
-                              : (photoUrl.isEmpty
-                                    ? const Icon(
-                                        Icons.add_a_photo_outlined,
-                                        color: AppColors.neutreGrey,
-                                      )
-                                    : null),
-                        ),
+                              } else {
+                                // Adding — no carId to upload against yet,
+                                // just remember the local file; the caller
+                                // uploads it once the new car is created.
+                                final picked = await CarPhotoUploader().pickImage();
+                                if (picked != null) {
+                                  setState(() => localPhotoPath = picked.path);
+                                }
+                              }
+                            },
+                      child: CircleAvatar(
+                        radius: 40,
+                        backgroundColor: AppColors.grey50,
+                        backgroundImage: localPhotoPath.isNotEmpty
+                            ? FileImage(File(localPhotoPath))
+                            : (photoUrl.isNotEmpty ? NetworkImage(photoUrl) : null),
+                        child: isUploadingPhoto
+                            ? const CircularProgressIndicator(strokeWidth: 2)
+                            : (photoUrl.isEmpty && localPhotoPath.isEmpty
+                                  ? const Icon(
+                                      Icons.add_a_photo_outlined,
+                                      color: AppColors.neutreGrey,
+                                    )
+                                  : null),
                       ),
                     ),
-                    AppSpacers.verticalMedium,
-                  ],
+                  ),
+                  AppSpacers.verticalMedium,
                   Text(
                     S.of(context).garage_make_label,
                     style: textTheme.black28W600,
@@ -465,6 +512,7 @@ Future<Map<String, String>?> _showCarFormSheet(
                               'techPassport': techPassportController.text,
                               'make': selectedMake ?? '',
                               'photoUrl': photoUrl,
+                              'localPhotoPath': localPhotoPath,
                             })
                           : null,
                       style: ElevatedButton.styleFrom(

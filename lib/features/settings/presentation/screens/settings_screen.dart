@@ -5,6 +5,7 @@ import 'package:core_data/core_data.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_borders.dart';
+import 'package:design_system/theme/app_theme.dart';
 import 'package:fines_plus/app/router/app_router.dart';
 import 'package:fines_plus/app/router/home_screen_wrapper.dart';
 import 'package:fines_plus/core/extensions/safe_prefs.dart';
@@ -139,17 +140,12 @@ if (!mounted) return;
       backgroundColor: AppColors.energyBlue50,
       appBar: AppBar(
         backgroundColor: AppColors.energyBlue50,
-        elevation: 0,
-        centerTitle: true,
         leading: BackButton(color: AppColors.blue700, onPressed: widget.onBack),
-        title: Text(
-          S.of(context).settings,
-          style: const TextStyle(color: Colors.black87, fontWeight: FontWeight.w600),
-        ),
+        title: Text(S.of(context).settings, style: Theme.of(context).textTheme.title),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -158,7 +154,7 @@ if (!mounted) return;
                 shape: RoundedRectangleBorder(borderRadius: AppBorders.radius22),
                 elevation: 3,
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                  padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 16),
                   child: Column(
                     children: [
                       _buildSettingRow(
@@ -166,9 +162,9 @@ if (!mounted) return;
                         finesCheck,
                         (v) => _onSwitchChanged("finesCheck", v),
                       ),
-                      Divider(thickness: 2, color: AppColors.energyBlue50),
+                      Divider(thickness: 1, color: AppColors.energyBlue50),
                       _buildSettingRow(S.of(context).reminder, reminders, (v) => _onSwitchChanged("reminders", v)),
-                      Divider(thickness: 2, color: AppColors.energyBlue50),
+                      Divider(thickness: 1, color: AppColors.energyBlue50),
                       _buildSettingRow(
                         S.of(context).push_notifications,
                         pushNotifications,
@@ -179,7 +175,7 @@ if (!mounted) return;
                 ),
               ),
 
-              const SizedBox(height: 30),
+              const SizedBox(height: 10),
 
               BlocBuilder<SettingsCubit, SettingsState>(
                 builder: (context, state) {
@@ -188,7 +184,7 @@ if (!mounted) return;
                     shape: RoundedRectangleBorder(borderRadius: AppBorders.radius22),
                     elevation: 3,
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+                      padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
                       child: Column(
                         children: [
                           _buildDropdownRow<String>(
@@ -203,7 +199,7 @@ if (!mounted) return;
                             onChanged: (v) => context.read<SettingsCubit>().setUnit(v!),
                           ),
 
-                          Divider(thickness: 1.5, color: AppColors.energyBlue50),
+                          Divider(thickness: 1, color: AppColors.energyBlue50),
 
                           _buildDropdownRow<String>(
                             context,
@@ -217,7 +213,7 @@ if (!mounted) return;
                             onChanged: (v) => context.read<SettingsCubit>().setFuelConsumptionUnit(v!),
                           ),
 
-                          Divider(thickness: 1.5, color: AppColors.energyBlue50),
+                          Divider(thickness: 1, color: AppColors.energyBlue50),
                           _buildDropdownRow<String>(
                             context,
                             icon: Icons.currency_exchange,
@@ -230,7 +226,7 @@ if (!mounted) return;
                             ],
                             onChanged: (v) => context.read<SettingsCubit>().setCurrency(v!),
                           ),
-                          Divider(thickness: 1.5, color: AppColors.energyBlue50),
+                          Divider(thickness: 1, color: AppColors.energyBlue50),
                           _buildDropdownRow<Locale>(
                             context,
                             icon: Icons.language,
@@ -249,14 +245,14 @@ if (!mounted) return;
                 },
               ),
 
-              const SizedBox(height: 30),
+              const SizedBox(height: 10),
 
               Card(
                 color: AppColors.neutreBlanc,
                 shape: RoundedRectangleBorder(borderRadius: AppBorders.radius22),
                 elevation: 3,
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                  padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 16),
                   child: Column(
                     children: [
                       _buildActionRow(
@@ -264,27 +260,27 @@ if (!mounted) return;
                         title: S.of(context).my_garage,
                         onTap: () => _openGarage(context),
                       ),
-                      Divider(thickness: 2, color: AppColors.energyBlue50),
+                      Divider(thickness: 1, color: AppColors.energyBlue50),
                       _buildActionRow(
                         icon: Icons.directions_car_outlined,
                         title: S.of(context).change_car_info,
                         onTap: () => _changeCarInfo(context),
                       ),
-                      Divider(thickness: 2, color: AppColors.energyBlue50),
+                      Divider(thickness: 1, color: AppColors.energyBlue50),
                       _buildActionRow(
                         icon: Icons.logout,
                         title: S.of(context).log_out,
                         color: AppColors.purpleRed,
                         onTap: () => _confirmLogout(context),
                       ),
-                      Divider(thickness: 2, color: AppColors.energyBlue50),
+                      Divider(thickness: 1, color: AppColors.energyBlue50),
                       BlocConsumer<RegistrationCubit, RegistrationState>(
                         listenWhen: (prev, curr) => curr.isLoading != prev.isLoading,
                         listener: (_, __) {},
                         builder: (context, regState) {
                           if (regState.isLoading) {
                             return const Padding(
-                              padding: EdgeInsets.symmetric(vertical: 10),
+                              padding: EdgeInsets.symmetric(vertical: 4),
                               child: Center(child: CircularProgressIndicator()),
                             );
                           }
@@ -317,13 +313,13 @@ if (!mounted) return;
     return InkWell(
       onTap: onTap,
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 10),
+        padding: const EdgeInsets.symmetric(vertical: 6),
         child: Row(
           children: [
-            Icon(icon, color: color ?? AppColors.energyBlue),
-            const SizedBox(width: 12),
-            Expanded(child: Text(title, style: textTheme.titleLarge?.copyWith(color: color))),
-            Icon(Icons.chevron_right, color: AppColors.grey700),
+            Icon(icon, color: color ?? AppColors.energyBlue, size: 20),
+            const SizedBox(width: 10),
+            Expanded(child: Text(title, style: textTheme.bodyLarge?.copyWith(color: color))),
+            Icon(Icons.chevron_right, color: AppColors.grey700, size: 20),
           ],
         ),
       ),
@@ -332,17 +328,23 @@ if (!mounted) return;
 
   Widget _buildSettingRow(String title, bool value, ValueChanged<bool> onChanged) {
     final textTheme = Theme.of(context).textTheme;
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Expanded(child: Text(title, style: textTheme.titleLarge)),
-        Switch(
-          value: value,
-          onChanged: onChanged,
-          activeColor: AppColors.neutreBlanc,
-          activeTrackColor: AppColors.energyBlue,
-        ),
-      ],
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 2),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Expanded(child: Text(title, style: textTheme.bodyLarge)),
+          Transform.scale(
+            scale: 0.85,
+            child: Switch(
+              value: value,
+              onChanged: onChanged,
+              activeColor: AppColors.neutreBlanc,
+              activeTrackColor: AppColors.energyBlue,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -357,21 +359,21 @@ if (!mounted) return;
     final textTheme = Theme.of(context).textTheme;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
         children: [
           Expanded(
             child: Row(
               children: [
-                Icon(icon, color: AppColors.energyBlue),
-                const SizedBox(width: 12),
+                Icon(icon, color: AppColors.energyBlue, size: 20),
+                const SizedBox(width: 10),
                 Flexible(
-                  child: Text(title, style: textTheme.titleLarge, overflow: TextOverflow.ellipsis),
+                  child: Text(title, style: textTheme.bodyLarge, overflow: TextOverflow.ellipsis),
                 ),
               ],
             ),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: 10),
           Flexible(
             flex: 1,
             child: DropdownButtonFormField<T>(
@@ -380,7 +382,7 @@ if (!mounted) return;
                 isDense: true,
                 filled: true,
                 fillColor: AppColors.energyBlue50,
-                contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
               ),
               isExpanded: true,

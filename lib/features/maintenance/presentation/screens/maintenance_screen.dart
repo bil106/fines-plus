@@ -1,7 +1,6 @@
 // ignore_for_file: unused_element_parameter
 
 import 'package:auto_route/auto_route.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:core_data/core_data.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
@@ -22,7 +21,6 @@ import 'package:fines_plus/features/expenses/data/models/tuning_record.dart';
 import 'package:fines_plus/features/maintenance/presentation/cubit/maintenance_cubit.dart';
 import 'package:fines_plus/features/maintenance/presentation/cubit/maintenance_state.dart';
 import 'package:fines_plus/features/reminders/data/datasources/reminder_local_data_source.dart';
-import 'package:fines_plus/features/reminders/data/datasources/reminder_remote_data_source.dart';
 import 'package:fines_plus/features/reminders/data/repository/reminder_repository.dart';
 import 'package:fines_plus/features/schedule/data/repository/schedule_repository.dart';
 import 'package:fines_plus/features/maintenance/presentation/screens/service_screen.dart';
@@ -194,12 +192,8 @@ class _MaintenanceScreenView extends StatelessWidget {
                       cubit.closeMenu();
                       final prefs = await SharedPreferences.getInstance();
                       final localDataSource = ReminderLocalDataSourceImpl(SharedPrefsManager(prefs));
-                      final remoteDataSource = ReminderRemoteDataSourceImpl(FirebaseFirestore.instance);
 
-                      final reminderRepository = ReminderRepository(
-                        localDataSource: localDataSource,
-                        remoteDataSource: remoteDataSource,
-                      );
+                      final reminderRepository = ReminderRepository(localDataSource: localDataSource);
 
                       final scheduleRepository = ScheduleRepository();
 

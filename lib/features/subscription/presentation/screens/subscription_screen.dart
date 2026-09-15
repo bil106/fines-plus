@@ -10,7 +10,6 @@ import 'package:fines_plus/features/subscription/presentation/cubit/purchase/pur
 import 'package:fines_plus/features/subscription/presentation/cubit/purchase/purchase_state.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -203,6 +202,16 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
           elevation: 0,
 
           title: Text(S.of(context).subscription, style: textTheme.headlineMedium),
+          // A paywall must always be dismissible (Play Store policy, and
+          // this was previously debug-only — a real Android user had no way
+          // past onboarding without paying).
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.close),
+              tooltip: S.of(context).close,
+              onPressed: _continueWithoutSubscription,
+            ),
+          ],
         ),
         body: Padding(
           padding: const EdgeInsets.all(10),
@@ -295,25 +304,6 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                         ),
                       );
                     }),
-
-                    if (kDebugMode) ...[
-                      AppSpacers.verticalLarge,
-                      SizedBox(
-                        width: double.infinity,
-                        child: OutlinedButton(
-                          onPressed: _continueWithoutSubscription,
-                          style: OutlinedButton.styleFrom(
-                            side: BorderSide(color: AppColors.blue700),
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                          ),
-                          child: Text(
-                            'Continue without subscription',
-                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.blue700),
-                          ),
-                        ),
-                      ),
-                    ],
 
                     AppSpacers.verticalLarge,
 

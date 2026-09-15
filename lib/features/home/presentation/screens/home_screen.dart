@@ -4,6 +4,8 @@ import 'package:auto_route/auto_route.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_spacers.dart';
+import 'package:fines_plus/core/helpers/push_helper.dart';
+import 'package:fines_plus/core/services/fines_reminder_service.dart';
 import 'package:fines_plus/features/home/domain/entities/main_stats.dart';
 import 'package:fines_plus/features/statistics/presentation/cubit/statistics_cubit.dart';
 import 'package:fines_plus/features/statistics/presentation/cubit/statistics_state.dart';
@@ -30,6 +32,12 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   @override
+  void initState() {
+    super.initState();
+    FinesReminderService.maybeShow(context.read<PushHelper>());
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.energyBlue50,
@@ -43,15 +51,18 @@ class _HomeScreenState extends State<HomeScreen> {
             padding: const EdgeInsets.only(top: 18.0),
             child: BlocBuilder<CarCubit, CarState>(
               builder: (context, state) {
-                final carNumber = state.carNumber.isNotEmpty
-                    ? state.carNumber
-                    : S.of(context).input_number;
-                return Text(
-                  carNumber,
-                  style: const TextStyle(
-                    color: Colors.black87,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 28,
+                final hasCarNumber = state.carNumber.isNotEmpty;
+                final carNumber = hasCarNumber ? state.carNumber : S.of(context).input_number;
+                return FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    carNumber,
+                    maxLines: 1,
+                    style: TextStyle(
+                      color: Colors.black87,
+                      fontWeight: FontWeight.w600,
+                      fontSize: hasCarNumber ? 28 : 18,
+                    ),
                   ),
                 );
               },
@@ -155,12 +166,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
 
                   AppSpacers.verticalXSmall,
-                  BlocBuilder<CarCubit, CarState>(
-                    builder: (context, state) {
-                      if (state.carId.isEmpty) return const SizedBox.shrink();
-                      return const MainExpenseTiles();
-                    },
-                  ),
+                  const MainExpenseTiles(),
                   AppSpacers.verticalXSmall,
                   BlocListener<CarCubit, CarState>(
                     listenWhen: (prev, curr) => prev.carId != curr.carId,

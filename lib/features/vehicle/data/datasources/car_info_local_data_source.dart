@@ -308,7 +308,11 @@ Future<void> clearCarInfo() async {
   /// All of the signed-in user's cars — the "garage".
   Stream<List<CarInfoModel>> streamCars() {
     final user = auth.currentUser;
-    if (user == null) return const Stream.empty();
+    // Stream.empty() never emits at all, which left GarageCubit's
+    // isLoading stuck true forever for a signed-out user (e.g. someone on
+    // the no-account free trial) — emit the (correct) empty list once
+    // instead so the "no cars yet" UI actually renders.
+    if (user == null) return Stream.value(const []);
 
     return _carsCollection(user.uid).orderBy('createdAt').snapshots().map(
       (snap) => snap.docs.map((d) {

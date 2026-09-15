@@ -254,6 +254,16 @@ class S {
     );
   }
 
+  /// `Sign in to add a car to your garage`
+  String get garage_requires_account {
+    return Intl.message(
+      'Sign in to add a car to your garage',
+      name: 'garage_requires_account',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Car make`
   String get garage_make_label {
     return Intl.message(

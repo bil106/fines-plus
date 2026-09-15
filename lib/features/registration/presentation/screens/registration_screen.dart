@@ -8,6 +8,7 @@ import 'package:design_system/constants/app_spacers.dart';
 import 'package:fines_plus/features/registration/presentation/cubit/registration_cubit.dart';
 import 'package:fines_plus/features/registration/presentation/cubit/registration_state.dart';
 import 'package:fines_plus/features/registration/presentation/screens/garage_setup_screen.dart';
+import 'package:fines_plus/core/services/trial_service.dart';
 import 'package:fines_plus/features/subscription/presentation/cubit/subscription_cubit.dart';
 import 'package:fines_plus/app/router/app_router.dart';
 import 'package:fines_plus/app/router/home_screen_wrapper.dart';
@@ -82,8 +83,10 @@ HomeScreenWrapperState? _wrapperState;
     final regCubit = context.read<RegistrationCubit>();
     final hasSubscription = await regCubit.checkSubscription();
     if (!context.mounted) return;
+    final trialActive = await TrialService.isActive();
+    if (!context.mounted) return;
 
-    if (kDebugMode || hasSubscription) {
+    if (kDebugMode || hasSubscription || trialActive) {
       context.router.replaceAll([HomeRouteWrapper()]);
     } else {
       context.router.replaceAll([

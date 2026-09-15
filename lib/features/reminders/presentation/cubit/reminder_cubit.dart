@@ -20,14 +20,14 @@ class ReminderCubit extends Cubit<ReminderState> {
   Future<void> load() async {
     if (!isClosed) emit(state.copyWith(isLoading: true));
 
-    final reminders = await repository.getAll(carNumber);
+    final reminders = await repository.getAll(ownerId, carNumber);
 
     if (!isClosed) emit(state.copyWith(isLoading: false, reminders: reminders));
   }
 
   Future<void> addReminder(ReminderModel reminder) async {
     final updated = [...state.reminders, reminder];
-    await repository.add(carNumber, reminder);
+    await repository.add(ownerId, carNumber, reminder);
     emit(state.copyWith(reminders: updated));
 
     try {
@@ -45,7 +45,7 @@ class ReminderCubit extends Cubit<ReminderState> {
 
   Future<void> updateReminder(ReminderModel reminder) async {
     final updated = state.reminders.map((e) => e.id == reminder.id ? reminder : e).toList();
-    await repository.update(carNumber, reminder);
+    await repository.update(ownerId, carNumber, reminder);
     emit(state.copyWith(reminders: updated));
 
     try {
@@ -63,7 +63,7 @@ class ReminderCubit extends Cubit<ReminderState> {
 
   Future<void> deleteReminder(String reminderId) async {
     final updated = state.reminders.where((e) => e.id != reminderId).toList();
-    await repository.delete(carNumber, reminderId);
+    await repository.delete(ownerId, carNumber, reminderId);
     emit(state.copyWith(reminders: updated));
   }
 }

@@ -276,6 +276,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "garage_no_number": MessageLookupByLibrary.simpleMessage(
       "Car without a plate",
     ),
+    "garage_requires_account": MessageLookupByLibrary.simpleMessage(
+      "Sign in to add a car to your garage",
+    ),
     "garage_setup_subtitle": MessageLookupByLibrary.simpleMessage(
       "Add your car now, or do it later — you can start using the app right away",
     ),

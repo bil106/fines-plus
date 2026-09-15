@@ -27,7 +27,6 @@ import 'package:fines_plus/features/registration/data/datasources/iextract_token
 import 'package:fines_plus/features/registration/data/models/flutter_secure_storage.dart';
 import 'package:fines_plus/features/registration/presentation/cubit/registration_cubit.dart';
 import 'package:fines_plus/features/reminders/data/datasources/reminder_local_data_source.dart';
-import 'package:fines_plus/features/reminders/data/datasources/reminder_remote_data_source.dart';
 import 'package:fines_plus/features/reminders/data/models/reminder_model.dart';
 import 'package:fines_plus/features/reminders/data/repository/reminder_repository.dart';
 import 'package:fines_plus/features/reminders/presentation/cubit/reminder_cubit.dart';
@@ -276,12 +275,9 @@ class AppInitializer {
 
     final reminderRepository = ReminderRepository(
       localDataSource: ReminderLocalDataSourceImpl(sharedPrefsManager),
-      remoteDataSource: ReminderRemoteDataSourceImpl(FirebaseFirestore.instance),
     );
     final pushHelper = PushHelper(flutterLocalNotificationsPlugin);
     reminderCubit = ReminderCubit(repository: reminderRepository, pushHelper: pushHelper, carNumber: '', ownerId: '');
-
-    await _maybeShowFinesCheckReminder(prefs, PushHelper(flutterLocalNotificationsPlugin));
 
     // Phase 1 of the "prompt to log a fuel purchase" scenario — foreground/
     // background (not fully-killed-app) geofencing only; see
@@ -320,30 +316,6 @@ class AppInitializer {
       tasksRepository: tasksRepository,
       currencyService: currencyService,
     );
-  }
-
-  Future<void> _maybeShowFinesCheckReminder(SharedPreferences prefs, PushHelper pushHelper) async {
-    const key = 'last_fines_reminder_ms';
-    final lastMs = prefs.getInt(key) ?? 0;
-    final now = DateTime.now().millisecondsSinceEpoch;
-    const weekMs = 7 * 24 * 60 * 60 * 1000;
-
-    if (now - lastMs >= weekMs) {
-      try {
-        // S.current недоступний до ініціалізації віджет-дерева — використовуємо фіксований рядок
-        await pushHelper.showNow(
-          id: 9000,
-          title: 'Нагадування про штрафи',
-          body: 'Перевірте наявність нових штрафів ПДД',
-        );
-        await prefs.setInt(key, now);
-        debugPrint('Weekly fines reminder shown');
-      } catch (e, s) {
-        // A failure to show this non-critical reminder must not abort app startup.
-        debugPrint('Failed to show weekly fines reminder: $e');
-        FirebaseCrashlytics.instance.recordError(e, s);
-      }
-    }
   }
 
   Future<void> _initFirebaseMessagingToken(SharedPreferences prefs) async {
