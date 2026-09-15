@@ -247,12 +247,12 @@ extension AppTextTheme on TextTheme {
       );
   TextStyle get black28W600 => const TextStyle(
         color: AppColors.black,
-        fontWeight: FontWeight.w400,
+        fontWeight: FontWeight.w600,
         fontSize: 28,
       );
   TextStyle get black18W600 => const TextStyle(
         color: AppColors.black,
-        fontWeight: FontWeight.w400,
+        fontWeight: FontWeight.w600,
         fontSize: 18,
       );
   TextStyle get black30bold => const TextStyle(
