@@ -4,6 +4,7 @@ import 'package:app_links/app_links.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:fines_plus/app/router/app_router.dart';
 import 'package:fines_plus/core/config/app_config.dart';
+import 'package:fines_plus/core/services/notification_tap_bus.dart';
 import 'package:fines_plus/core/theme/theme_config.dart';
 import 'package:fines_plus/features/registration/presentation/cubit/registration_cubit.dart';
 import 'package:fines_plus/features/settings/presentation/cubit/settings_cubit.dart';
@@ -35,6 +36,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   final AppLinks _appLinks = AppLinks();
   StreamSubscription? _appLinksSub;
+  StreamSubscription<String>? _notificationTapSub;
   late final AppRouter _router;
 
   @override
@@ -45,6 +47,26 @@ class _MyAppState extends State<MyApp> {
     _setupPushNotifications();
     _initDynamicLinks();
     _initAppLinks();
+    _initNotificationTapHandling();
+  }
+
+  void _initNotificationTapHandling() {
+    _notificationTapSub = NotificationTapBus.stream.listen(_handleNotificationTapPayload);
+
+    final pending = NotificationTapBus.pendingPayload;
+    if (pending != null) {
+      NotificationTapBus.pendingPayload = null;
+      WidgetsBinding.instance.addPostFrameCallback((_) => _handleNotificationTapPayload(pending));
+    }
+  }
+
+  void _handleNotificationTapPayload(String payload) {
+    if (payload == 'fuel_prompt') {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        _router.push(FuelUpRoute());
+      });
+    }
   }
 
   void _setupPushNotifications() {
@@ -190,6 +212,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void dispose() {
     _appLinksSub?.cancel();
+    _notificationTapSub?.cancel();
     super.dispose();
   }
 }

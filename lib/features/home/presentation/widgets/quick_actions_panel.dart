@@ -35,7 +35,7 @@ class QuickActionsPanel extends StatelessWidget {
             crossAxisCount: 4,
             mainAxisSpacing: 5,
             crossAxisSpacing: 5,
-            childAspectRatio: 1.52,
+            childAspectRatio: 1.68,
           ),
           itemBuilder: (context, index) {
             final action = state.actions[index];

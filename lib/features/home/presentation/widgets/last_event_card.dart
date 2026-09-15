@@ -42,13 +42,20 @@ class LastEventCardAction extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildHeader(context, textTheme),
-            SizedBox(height: 4.h),
+            SizedBox(height: 2.h),
             Divider(height: 1.h),
-            SizedBox(height: 6.h),
+            SizedBox(height: 3.h),
             _buildContent(context, textTheme, settingsCubit),
-            SizedBox(height: 4.h),
             Center(
-              child: TextButton(onPressed: onOpenEvents, child: Text(S.of(context).view_all_events)),
+              child: TextButton(
+                style: TextButton.styleFrom(
+                  padding: EdgeInsets.zero,
+                  minimumSize: const Size(0, 0),
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ),
+                onPressed: onOpenEvents,
+                child: Text(S.of(context).view_all_events, style: textTheme.bodySmall),
+              ),
             ),
           ],
         ),
@@ -93,7 +100,7 @@ class LastEventCardAction extends StatelessWidget {
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
-              SizedBox(height: 6.h),
+              SizedBox(height: 3.h),
               FittedBox(
                 fit: BoxFit.scaleDown,
                 alignment: Alignment.centerLeft,
@@ -134,7 +141,7 @@ class LastEventCardAction extends StatelessWidget {
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
       child: Padding(
-        padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 12.w),
+        padding: EdgeInsets.symmetric(vertical: 6.h, horizontal: 12.w),
         child: child,
       ),
     );

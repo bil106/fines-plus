@@ -41,7 +41,7 @@ class ActionItem extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(icon, size: 28, color: isSelected ? activeColor : inactiveColor),
+              Icon(icon, size: 21, color: isSelected ? activeColor : inactiveColor),
 
               Flexible(
                 child: Padding(

@@ -692,6 +692,20 @@ extension MileageCalculations on MaintenanceCubit {
     return past + current;
   }
 
+  int? getLastKnownMileage() {
+    final allRecords = [
+      ...state.serviceRecords.map((r) => {'date': DateFormat('dd.MM.yyyy').parse(r.date), 'mileage': r.mileage}),
+      ...state.fuelRecords.map((r) => {'date': r.date, 'mileage': r.mileage}),
+      ...state.carWashRecords.map((r) => {'date': r.date, 'mileage': r.mileage}),
+      ...state.tuningRecords.map((r) => {'date': r.date, 'mileage': r.mileage}),
+    ];
+
+    if (allRecords.isEmpty) return null;
+
+    allRecords.sort((a, b) => (a['date'] as DateTime).compareTo(b['date'] as DateTime));
+    return allRecords.last['mileage'] as int;
+  }
+
   int getAverageMileage() {
     final monthly = getMonthlyMileage();
 

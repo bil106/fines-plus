@@ -513,6 +513,8 @@
    "check_fines_reminder_body": "Перевірте наявність нових штрафів ПДД",
    "maintenance_due_title": "Потрібне обслуговування",
    "maintenance_due_body": "Час для: {task}",
+   "fuel_prompt_title": "Заправка",
+   "fuel_prompt_body": "Додати дані про заправку?",
    "@maintenance_due_body": {
      "placeholders": {
        "task": { "type": "String" }

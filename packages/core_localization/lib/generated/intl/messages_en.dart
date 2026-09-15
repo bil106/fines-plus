@@ -80,6 +80,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Reminders for car inspection and service",
     ),
     "car_number": MessageLookupByLibrary.simpleMessage("Car number"),
+    "car_number_fines_hint": MessageLookupByLibrary.simpleMessage(
+      "Only needed to check fines — you can add these later",
+    ),
     "car_wash": MessageLookupByLibrary.simpleMessage("Car wash"),
     "car_wash_nearby": MessageLookupByLibrary.simpleMessage("Car wash nearby"),
     "cars_deleted_success": MessageLookupByLibrary.simpleMessage(
@@ -171,6 +174,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "dont_have_account": MessageLookupByLibrary.simpleMessage(
       "Don\'t have an account? Sign up",
     ),
+    "edit": MessageLookupByLibrary.simpleMessage("Edit"),
     "edit_reminder": MessageLookupByLibrary.simpleMessage("Edit reminder"),
     "email": MessageLookupByLibrary.simpleMessage("Email"),
     "email_already_exists": MessageLookupByLibrary.simpleMessage(
@@ -248,8 +252,34 @@ class MessageLookup extends MessageLookupByLibrary {
       "Fuel consumption",
     ),
     "fuel_gas_lpg": MessageLookupByLibrary.simpleMessage("Gas LPG"),
+    "fuel_prompt_body": MessageLookupByLibrary.simpleMessage(
+      "Add fuel purchase details?",
+    ),
+    "fuel_prompt_title": MessageLookupByLibrary.simpleMessage("Fuel up"),
     "fuel_up": MessageLookupByLibrary.simpleMessage("Fuel up"),
     "full_tank": MessageLookupByLibrary.simpleMessage("Full tank"),
+    "garage_action_error": MessageLookupByLibrary.simpleMessage(
+      "Failed to complete the action",
+    ),
+    "garage_active_car": MessageLookupByLibrary.simpleMessage("Active"),
+    "garage_delete_confirm_body": MessageLookupByLibrary.simpleMessage(
+      "All data for this car (expenses, reminders, maintenance) will be permanently deleted.",
+    ),
+    "garage_delete_confirm_title": MessageLookupByLibrary.simpleMessage(
+      "Remove this car from your garage?",
+    ),
+    "garage_delete_error": MessageLookupByLibrary.simpleMessage(
+      "Failed to delete the car",
+    ),
+    "garage_make_hint": MessageLookupByLibrary.simpleMessage("Select a make"),
+    "garage_make_label": MessageLookupByLibrary.simpleMessage("Car make"),
+    "garage_no_number": MessageLookupByLibrary.simpleMessage(
+      "Car without a plate",
+    ),
+    "garage_setup_subtitle": MessageLookupByLibrary.simpleMessage(
+      "Add your car now, or do it later — you can start using the app right away",
+    ),
+    "garage_setup_title": MessageLookupByLibrary.simpleMessage("Your garage"),
     "gas_station_nearby": MessageLookupByLibrary.simpleMessage(
       "Gas stations nearby",
     ),
@@ -354,6 +384,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "month_sep": MessageLookupByLibrary.simpleMessage("Sep"),
     "months": MessageLookupByLibrary.simpleMessage("Months"),
     "most_popular": MessageLookupByLibrary.simpleMessage("MOST POPULAR"),
+    "my_garage": MessageLookupByLibrary.simpleMessage("My garage"),
     "my_position": MessageLookupByLibrary.simpleMessage("You are here"),
     "name": MessageLookupByLibrary.simpleMessage("Name"),
     "new_reminder": MessageLookupByLibrary.simpleMessage("New reminder"),
@@ -369,6 +400,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "There are no fines for you",
     ),
     "no_name": MessageLookupByLibrary.simpleMessage("No name"),
+    "no_nearby_station": MessageLookupByLibrary.simpleMessage(
+      "No data on the nearest gas station",
+    ),
     "no_plan_selected": MessageLookupByLibrary.simpleMessage(
       "No plan selected",
     ),
@@ -382,9 +416,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "no_such_service": MessageLookupByLibrary.simpleMessage("No_such_service"),
     "no_tasks": MessageLookupByLibrary.simpleMessage("No tasks"),
     "no_tokens_yet": MessageLookupByLibrary.simpleMessage("No tokens yet"),
-    "no_nearby_station": MessageLookupByLibrary.simpleMessage(
-      "No data on the nearest gas station",
-    ),
     "not_auth": MessageLookupByLibrary.simpleMessage("Not authorized"),
     "not_forget": MessageLookupByLibrary.simpleMessage(
       "Don\'t forget to change the oil",
@@ -459,34 +490,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "reg_number": MessageLookupByLibrary.simpleMessage(
       "Technical passport number (optional)",
     ),
-    "garage_setup_title": MessageLookupByLibrary.simpleMessage("Your garage"),
-    "garage_setup_subtitle": MessageLookupByLibrary.simpleMessage(
-      "Add your car now, or do it later — you can start using the app right away",
-    ),
-    "skip_for_now": MessageLookupByLibrary.simpleMessage("Skip for now"),
-    "car_number_fines_hint": MessageLookupByLibrary.simpleMessage(
-      "Only needed to check fines — you can add these later",
-    ),
-    "my_garage": MessageLookupByLibrary.simpleMessage("My garage"),
-    "garage_active_car": MessageLookupByLibrary.simpleMessage("Active"),
-    "garage_no_number": MessageLookupByLibrary.simpleMessage(
-      "Car without a plate",
-    ),
-    "edit": MessageLookupByLibrary.simpleMessage("Edit"),
-    "garage_delete_confirm_title": MessageLookupByLibrary.simpleMessage(
-      "Remove this car from your garage?",
-    ),
-    "garage_delete_confirm_body": MessageLookupByLibrary.simpleMessage(
-      "All data for this car (expenses, reminders, maintenance) will be permanently deleted.",
-    ),
-    "garage_delete_error": MessageLookupByLibrary.simpleMessage(
-      "Failed to delete the car",
-    ),
-    "garage_action_error": MessageLookupByLibrary.simpleMessage(
-      "Failed to complete the action",
-    ),
-    "garage_make_label": MessageLookupByLibrary.simpleMessage("Car make"),
-    "garage_make_hint": MessageLookupByLibrary.simpleMessage("Select a make"),
     "register": MessageLookupByLibrary.simpleMessage("Register"),
     "registration": MessageLookupByLibrary.simpleMessage("Registration"),
     "reminder": MessageLookupByLibrary.simpleMessage("Reminder"),
@@ -527,6 +530,9 @@ class MessageLookup extends MessageLookupByLibrary {
         MessageLookupByLibrary.simpleMessage(
           "Suspension shock absorbers (rear axle) - replacement",
         ),
+    "service_balansuvannya_kolis": MessageLookupByLibrary.simpleMessage(
+      "Wheel balancing",
+    ),
     "service_capitalnyy_remont_dvyhuna": MessageLookupByLibrary.simpleMessage(
       "Overhaul of the engine",
     ),
@@ -761,8 +767,6 @@ class MessageLookup extends MessageLookupByLibrary {
           "Suspension lever silent block - replacement (with lever removed)",
         ),
     "service_skhid_rozval": MessageLookupByLibrary.simpleMessage("Disassembly"),
-    "service_zamina_shyn": MessageLookupByLibrary.simpleMessage("Tire replacement"),
-    "service_balansuvannya_kolis": MessageLookupByLibrary.simpleMessage("Wheel balancing"),
     "service_station": MessageLookupByLibrary.simpleMessage("Service station"),
     "service_station_nearby": MessageLookupByLibrary.simpleMessage(
       "Service station nearby",
@@ -864,14 +868,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "service_zamina_oil_dvs": MessageLookupByLibrary.simpleMessage(
       "Replacement of engine oil",
     ),
-    "service_zamina_oliynoho_filtra": MessageLookupByLibrary.simpleMessage(
-      "Oil filter replacement",
-    ),
-    "service_zamina_probky_piddonu": MessageLookupByLibrary.simpleMessage(
-      "Drain plug replacement",
-    ),
     "service_zamina_oil_variator": MessageLookupByLibrary.simpleMessage(
       "Changing oil in variators",
+    ),
+    "service_zamina_oliynoho_filtra": MessageLookupByLibrary.simpleMessage(
+      "Oil filter replacement",
     ),
     "service_zamina_opornoho_pidshipnyka_amortyzatora":
         MessageLookupByLibrary.simpleMessage(
@@ -893,6 +894,9 @@ class MessageLookup extends MessageLookupByLibrary {
         MessageLookupByLibrary.simpleMessage(
           "Replacement of engine air filter",
         ),
+    "service_zamina_probky_piddonu": MessageLookupByLibrary.simpleMessage(
+      "Drain plug replacement",
+    ),
     "service_zamina_prokladky_gbc": MessageLookupByLibrary.simpleMessage(
       "Replacement of cylinder head gasket",
     ),
@@ -947,6 +951,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "service_zamina_shrus": MessageLookupByLibrary.simpleMessage(
       "ShRUS replacement",
+    ),
+    "service_zamina_shyn": MessageLookupByLibrary.simpleMessage(
+      "Tire replacement",
     ),
     "service_zamina_silentblokiv_pidvisky":
         MessageLookupByLibrary.simpleMessage(
@@ -1005,6 +1012,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "sign_up": MessageLookupByLibrary.simpleMessage("Sign Up"),
     "sign_up_button": MessageLookupByLibrary.simpleMessage("Sign Up"),
+    "skip_for_now": MessageLookupByLibrary.simpleMessage("Skip for now"),
     "statistics": MessageLookupByLibrary.simpleMessage("Statistics"),
     "store_unavailable": MessageLookupByLibrary.simpleMessage(
       "Store unavailable",

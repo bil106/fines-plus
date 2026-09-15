@@ -9,6 +9,7 @@ import 'package:core_data/core_data.dart';
 import 'package:fines_plus/core/extensions/currency_service.dart';
 import 'package:fines_plus/core/extensions/safe_prefs.dart';
 import 'package:fines_plus/core/helpers/push_helper.dart';
+import 'package:fines_plus/core/services/notification_tap_bus.dart';
 import 'package:fines_plus/features/analytics/data/repository/analytics_repository.dart';
 import 'package:fines_plus/features/analytics/presentation/cubit/analytics_cubit.dart';
 import 'package:fines_plus/features/expenses/data/repository/expense_repository.dart';
@@ -17,6 +18,8 @@ import 'package:fines_plus/features/history/presentation/cubit/history_cubit.dar
 import 'package:fines_plus/features/home/data/repositories/tasks_repository.dart';
 import 'package:fines_plus/features/home/presentation/cubit/quick_actions_cubit.dart';
 import 'package:fines_plus/features/maintenance/data/repository/schedule_firebase_repository.dart';
+import 'package:fines_plus/features/maintenance/domain/fuel_geofence_monitor.dart';
+import 'package:fines_plus/features/maintenance/domain/gas_station_service.dart';
 import 'package:fines_plus/features/maintenance/presentation/cubit/additional_options_cubit.dart';
 import 'package:fines_plus/features/maintenance/presentation/cubit/fuel_station_cubit.dart';
 import 'package:fines_plus/features/maintenance/presentation/cubit/maintenance_cubit.dart';
@@ -53,6 +56,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:fines_plus/core/config/flavor_config.dart';
+import 'package:fines_plus/env/env.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import '../config/app_config.dart';
 
@@ -76,6 +80,7 @@ class AppInitializer {
   late final AdditionalOptionsCubit additionalOptionsCubit;
   late final RemoteConfigService remoteConfigService;
   late final CurrencyService currencyService;
+  late final FuelGeofenceMonitor fuelGeofenceMonitor;
   final Map<String, int> _scheduledReminderIds = {};
   late final HistoryRepository historyRepository;
   late final AnalyticsRepository analyticsRepository;
@@ -134,9 +139,22 @@ class AppInitializer {
       initSettings,
       onDidReceiveNotificationResponse: (details) {
         debugPrint('Notification tapped! Payload: ${details.payload}');
+        final payload = details.payload;
+        if (payload != null && payload.isNotEmpty) {
+          NotificationTapBus.emit(payload);
+        }
       },
     );
     FirebaseCrashlytics.instance.log('AppInit: notifications done');
+
+    // App was cold-started by tapping a notification — nothing is listening
+    // to `NotificationTapBus.stream` yet, so stash it for `MyApp.initState`
+    // to pick up once the widget tree (and its router) exists.
+    final launchDetails = await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
+    final launchPayload = launchDetails?.notificationResponse?.payload;
+    if (launchDetails?.didNotificationLaunchApp == true && launchPayload != null && launchPayload.isNotEmpty) {
+      NotificationTapBus.pendingPayload = launchPayload;
+    }
 
     if (Platform.isAndroid) {
       final androidImpl = flutterLocalNotificationsPlugin
@@ -264,6 +282,12 @@ class AppInitializer {
     reminderCubit = ReminderCubit(repository: reminderRepository, pushHelper: pushHelper, carNumber: '', ownerId: '');
 
     await _maybeShowFinesCheckReminder(prefs, PushHelper(flutterLocalNotificationsPlugin));
+
+    // Phase 1 of the "prompt to log a fuel purchase" scenario — foreground/
+    // background (not fully-killed-app) geofencing only; see
+    // FuelGeofenceMonitor's doc comment for why.
+    fuelGeofenceMonitor = FuelGeofenceMonitor(GasStationService(Env.mapApiKey), pushHelper);
+    unawaited(fuelGeofenceMonitor.start());
 
     return AppInitResult(
       config: config,

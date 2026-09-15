@@ -28,7 +28,7 @@ class FuelAmountCard extends StatelessWidget {
       ),
       child: Row(
         children: [
-          const Icon(Icons.local_gas_station, color: AppColors.blue700),
+          const Icon(Icons.attach_money, color: AppColors.blue700),
           AppSpacers.horizontalSmallMedium,
           Expanded(
             child: ValueListenableBuilder<TextEditingValue>(

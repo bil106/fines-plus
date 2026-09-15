@@ -5,8 +5,6 @@ import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:fines_plus/features/home/domain/entities/main_stats.dart';
-import 'package:fines_plus/features/home/presentation/cubit/quick_actions_cubit.dart';
-import 'package:fines_plus/features/home/presentation/widgets/quick_actions_panel.dart';
 import 'package:fines_plus/features/statistics/presentation/cubit/statistics_cubit.dart';
 import 'package:fines_plus/features/statistics/presentation/cubit/statistics_state.dart';
 import 'package:fines_plus/features/vehicle/presentation/cubit/car_cubit.dart';
@@ -17,6 +15,7 @@ import 'package:fines_plus/app/router/home_screen_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../widgets/main_stats_card.dart';
+import '../widgets/main_expense_tiles.dart';
 import '../widgets/last_event_card.dart';
 import '../widgets/statistics_mileage_card.dart';
 import '../widgets/statistics_costs_card.dart';
@@ -30,14 +29,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  @override
-  void initState() {
-    super.initState();
-    final carId = context.read<CarCubit>().state.carId;
-    context.read<QuickActionsCubit>().listenToActiveCategories(carId);
-    context.read<QuickActionsCubit>().init();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -164,22 +155,22 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
 
                   AppSpacers.verticalXSmall,
+                  BlocBuilder<CarCubit, CarState>(
+                    builder: (context, state) {
+                      if (state.carId.isEmpty) return const SizedBox.shrink();
+                      return const MainExpenseTiles();
+                    },
+                  ),
+                  AppSpacers.verticalXSmall,
                   BlocListener<CarCubit, CarState>(
                     listenWhen: (prev, curr) => prev.carId != curr.carId,
                     listener: (context, state) {
                       if (state.carNumber.isEmpty) {
                         context.read<StatisticsCubit>().clearStats();
-                        context.read<QuickActionsCubit>().clearAllActive();
-                        return;
                       }
-
-                      context.read<QuickActionsCubit>().listenToActiveCategories(
-                        state.carId,
-                      );
                     },
-                    child: const QuickActionsPanel(),
+                    child: const SizedBox.shrink(),
                   ),
-                  AppSpacers.verticalXSmall,
 
                   BlocBuilder<StatisticsCubit, StatisticsState>(
                     builder: (context, state) {

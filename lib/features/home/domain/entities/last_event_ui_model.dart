@@ -31,16 +31,16 @@ class LastEventUiModel {
   Widget get icon {
     switch (category) {
       case 'fuel':
-        return const Icon(Icons.local_gas_station, color: AppColors.redAccent, size: 58);
+        return const Icon(Icons.local_gas_station, color: AppColors.redAccent, size: 40);
       case 'service':
-        return const Icon(Icons.build, color: AppColors.blue700, size: 58);
+        return const Icon(Icons.build, color: AppColors.blue700, size: 40);
       case 'tuning':
-        return Image.asset('assets/icons/tuning.jpg', height: 58, width: 58);
+        return Image.asset('assets/icons/tuning.jpg', height: 40, width: 40);
       case 'carWash':
-        return const Icon(Icons.local_car_wash, color: AppColors.energyBlue, size: 58);
+        return const Icon(Icons.local_car_wash, color: AppColors.energyBlue, size: 40);
       case 'other':
       default:
-        return const Icon(Icons.event_note, color: Colors.grey, size: 58);
+        return const Icon(Icons.event_note, color: Colors.grey, size: 40);
     }
   }
 

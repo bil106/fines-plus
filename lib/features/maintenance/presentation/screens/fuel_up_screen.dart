@@ -44,7 +44,7 @@ class _FuelUpScreenState extends State<FuelUpScreen> {
   final FocusNode _volumeFocusNode = FocusNode();
 
   FuelType selectedFuel = FuelType.Ai95;
-  DateTime? selectedDate;
+  DateTime? selectedDate = DateTime.now();
   GasStation? _bestStation;
   bool _isLoadingBestStation = true;
 
@@ -56,6 +56,14 @@ class _FuelUpScreenState extends State<FuelUpScreen> {
     _gasService = GasStationService(Env.mapApiKey);
     _initLocationAndStation();
     _loadLastPrice(selectedFuel);
+    _prefillLastMileage();
+  }
+
+  void _prefillLastMileage() {
+    final lastMileage = context.read<MaintenanceCubit>().getLastKnownMileage();
+    if (lastMileage != null) {
+      mileageController.text = lastMileage.toString();
+    }
   }
 
   @override
@@ -250,7 +258,10 @@ class _FuelUpScreenState extends State<FuelUpScreen> {
                                 width: 180,
                                 child: Text(
                                   _bestStation?.name ?? S.of(context).no_nearby_station,
-                                  style: textTheme.black14bold,
+                                  style: _bestStation == null
+                                      ? textTheme.black14bold.copyWith(fontWeight: FontWeight.normal)
+                                      : textTheme.black14bold,
+                                  maxLines: _bestStation == null ? 2 : 1,
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ),

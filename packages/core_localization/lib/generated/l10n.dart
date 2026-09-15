@@ -146,7 +146,12 @@ class S {
 
   /// `Your garage`
   String get garage_setup_title {
-    return Intl.message('Your garage', name: 'garage_setup_title', desc: '', args: []);
+    return Intl.message(
+      'Your garage',
+      name: 'garage_setup_title',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Add your car now, or do it later — you can start using the app right away`
@@ -161,7 +166,12 @@ class S {
 
   /// `Skip for now`
   String get skip_for_now {
-    return Intl.message('Skip for now', name: 'skip_for_now', desc: '', args: []);
+    return Intl.message(
+      'Skip for now',
+      name: 'skip_for_now',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Only needed to check fines — you can add these later`
@@ -181,12 +191,22 @@ class S {
 
   /// `Active`
   String get garage_active_car {
-    return Intl.message('Active', name: 'garage_active_car', desc: '', args: []);
+    return Intl.message(
+      'Active',
+      name: 'garage_active_car',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Car without a plate`
   String get garage_no_number {
-    return Intl.message('Car without a plate', name: 'garage_no_number', desc: '', args: []);
+    return Intl.message(
+      'Car without a plate',
+      name: 'garage_no_number',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Edit`
@@ -216,22 +236,42 @@ class S {
 
   /// `Failed to delete the car`
   String get garage_delete_error {
-    return Intl.message('Failed to delete the car', name: 'garage_delete_error', desc: '', args: []);
+    return Intl.message(
+      'Failed to delete the car',
+      name: 'garage_delete_error',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Failed to complete the action`
   String get garage_action_error {
-    return Intl.message('Failed to complete the action', name: 'garage_action_error', desc: '', args: []);
+    return Intl.message(
+      'Failed to complete the action',
+      name: 'garage_action_error',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Car make`
   String get garage_make_label {
-    return Intl.message('Car make', name: 'garage_make_label', desc: '', args: []);
+    return Intl.message(
+      'Car make',
+      name: 'garage_make_label',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Select a make`
   String get garage_make_hint {
-    return Intl.message('Select a make', name: 'garage_make_hint', desc: '', args: []);
+    return Intl.message(
+      'Select a make',
+      name: 'garage_make_hint',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Search`
@@ -1536,12 +1576,22 @@ class S {
 
   /// `Tire replacement`
   String get service_zamina_shyn {
-    return Intl.message('Tire replacement', name: 'service_zamina_shyn', desc: '', args: []);
+    return Intl.message(
+      'Tire replacement',
+      name: 'service_zamina_shyn',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Wheel balancing`
   String get service_balansuvannya_kolis {
-    return Intl.message('Wheel balancing', name: 'service_balansuvannya_kolis', desc: '', args: []);
+    return Intl.message(
+      'Wheel balancing',
+      name: 'service_balansuvannya_kolis',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Chassis - diagnostics`
@@ -2839,21 +2889,21 @@ class S {
     );
   }
 
-  /// `No data on the nearest gas station`
-  String get no_nearby_station {
-    return Intl.message(
-      'No data on the nearest gas station',
-      name: 'no_nearby_station',
-      desc: '',
-      args: [],
-    );
-  }
-
   /// `Tokens already present`
   String get tokens_already_present {
     return Intl.message(
       'Tokens already present',
       name: 'tokens_already_present',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No data on the nearest gas station`
+  String get no_nearby_station {
+    return Intl.message(
+      'No data on the nearest gas station',
+      name: 'no_nearby_station',
       desc: '',
       args: [],
     );
@@ -4291,6 +4341,26 @@ class S {
       name: 'maintenance_due_body',
       desc: '',
       args: [task],
+    );
+  }
+
+  /// `Fuel up`
+  String get fuel_prompt_title {
+    return Intl.message(
+      'Fuel up',
+      name: 'fuel_prompt_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add fuel purchase details?`
+  String get fuel_prompt_body {
+    return Intl.message(
+      'Add fuel purchase details?',
+      name: 'fuel_prompt_body',
+      desc: '',
+      args: [],
     );
   }
 }

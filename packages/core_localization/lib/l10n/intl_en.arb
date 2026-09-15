@@ -512,6 +512,8 @@
 "check_fines_reminder_body": "Check for new traffic fines",
 "maintenance_due_title": "Maintenance due",
 "maintenance_due_body": "Time for: {task}",
+"fuel_prompt_title": "Fuel up",
+"fuel_prompt_body": "Add fuel purchase details?",
 "@maintenance_due_body": {
   "placeholders": {
     "task": { "type": "String" }
