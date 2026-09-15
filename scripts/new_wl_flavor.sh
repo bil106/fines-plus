@@ -48,6 +48,14 @@ cat > "$CONFIG_FILE" <<EOF
 EOF
 echo "Wrote $CONFIG_FILE"
 
+# Placeholder Android icon (real art usually isn't ready yet) - a filled
+# circle in HEX_COLOR with the brand's first letter, in the same file layout
+# flutter_launcher_icons uses, so the flavor builds with a distinct icon
+# today. Swap the generated PNGs for real artwork whenever it lands - same
+# paths, no other changes needed. See scripts/gen_flavor_icon.py.
+ICON_LETTER="$(echo "${BRAND_NAME:0:1}" | tr '[:lower:]' '[:upper:]')"
+python3 "$ROOT/scripts/gen_flavor_icon.py" "$ROOT" "$FLAVOR_KEY" "$HEX_COLOR" "$ICON_LETTER"
+
 # Register it in pubspec.yaml's assets: list - a config file that isn't
 # bundled fails silently until someone actually builds that flavor
 # (rootBundle.loadString throws at startup). Insert right after the
@@ -81,6 +89,10 @@ echo "  - drop a logo at assets/logos/${FLAVOR_KEY}.png"
 echo "  - Android: add a productFlavors { create(\"${FLAVOR_KEY}\") { ... } } block"
 echo "    to android/app/build.gradle.kts (applicationId + resValue app_name)"
 echo "    and put its google-services.json at android/app/src/${FLAVOR_KEY}/"
+echo "  - a placeholder icon was generated at android/app/src/${FLAVOR_KEY}/res/**"
+echo "    (real artwork can replace it any time - same paths/sizes)"
+echo "  - optional: add copyOverrides to $CONFIG_FILE for any ARB string this"
+echo "    brand needs reworded (see docs/white-label-playbook.md)"
 echo "  - iOS: follow ios/Flutter/Flavors/README.md"
 echo "  - run 'flutter pub get' once so the new asset is picked up"
 echo "  - build with: flutter build appbundle --flavor ${FLAVOR_KEY} --dart-define=FLAVOR=${FLAVOR_KEY}"
