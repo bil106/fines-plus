@@ -16,9 +16,14 @@ clearly marked, and listed below.
 - The Terms/Privacy links on the paywall (`subscription_screen.dart`) prefer
   `config.termsUrl`/`config.privacyPolicyUrl`, falling back to the global
   `Env.termsUrl`/`Env.privacyPolicyUrl` when a brand doesn't set its own.
-- The bottom-nav "Fines" tab (`home_screen_wrapper.dart`) is hidden entirely
-  when `config.finesCheckEnabled` is `false` - it's a Ukraine-government-
-  portal feature with no equivalent elsewhere.
+- Every real entry point into the Ukraine fines-check is gated behind
+  `config.finesCheckEnabled`, in three layers: `CarCubit.checkFines()`
+  bails immediately (the actual portal call, so this is the real fix
+  regardless of which UI reaches it), `CarInfoScreen` hides its own
+  "Пошук" button + recaptcha step, and `HomeScreenWrapperState.openPage()`
+  refuses to navigate to `HomePage.fines` as a backstop. Turned out the
+  bottom-nav tab was not the only way in, and not even the main one - see
+  the note below.
 - `assets/config/carpapers.json` is a real second brand config (US market,
   fines check off, placeholder phone/legal links).
 - `assets/config/_template.json` + `scripts/new_wl_flavor.sh` scaffold the
@@ -28,14 +33,26 @@ clearly marked, and listed below.
   `com.finesplus` applicationId (so it keeps updating the current Play Store
   listing); `carpapers` uses a placeholder applicationId.
 
-## Known gap in this branch (not fixed here)
+## Correction: what the earlier "known gap" note actually was
 
-`AddCarScreen.onFineCheck` (and anywhere else that calls
-`openPage(HomePage.fines)` directly, e.g. from `CarInfoScreen`) still
-navigates to the Fines screen regardless of `finesCheckEnabled` - only the
-bottom-nav tab is gated. A CarPapers build today could still reach the
-Fines screen via that button. Worth a follow-up pass through
-`grep -rn "HomePage.fines" lib` before shipping CarPapers for real.
+This branch first shipped with a note that `AddCarScreen.onFineCheck`
+still navigated to the Fines screen unconditionally. On closer look that
+callback is dead code - `AddCarScreen` accepts it but no widget in that
+screen ever calls it, so it was never reachable. The real, live gap was
+`CarInfoScreen`: its "Пошук" button shows a recaptcha and, on success,
+calls `CarCubit.checkFines()` directly - a second, independent path into
+the Ukraine portal lookup that never went through the Fines screen or the
+bottom nav at all. That's fixed now (see above), at the cubit level so it
+holds regardless of which UI ends up calling it.
+
+One thing deliberately left alone: `CarInfoScreen`'s car-number/tech-
+passport form validation (`_carReg`/`_techReg`) is hardcoded to Ukrainian
+plate and tech-passport formats. Hiding the fines-check button doesn't
+change that the rest of that screen still expects a UA-shaped plate
+number. Making that screen market-aware (accept a US/ES plate format,
+drop the tech-passport field where it doesn't apply) is a separate,
+bigger localization task, not something to fold into a feature-flag fix -
+flagging it here so it doesn't get lost before CarPapers actually ships.
 
 ## What's still needed before CarPapers can actually build and ship
 
@@ -63,7 +80,8 @@ Fines screen via that button. Worth a follow-up pass through
    Console app - not a locale-name override on the existing Fines+ listing,
    because the feature set differs (no fines check). Needs its own
    screenshots, description, privacy policy URL, etc.
-7. Fix the known gap above (fines-check entry points outside the bottom nav).
+7. Make `CarInfoScreen`'s form market-aware (see the correction note above) -
+   plate/tech-passport validation is still UA-only.
 
 ## Adding a brand beyond CarPapers
 
