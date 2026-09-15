@@ -1,5 +1,6 @@
 import 'package:core_repository/user_not_signed_in_exception.dart';
 import 'package:fines_plus/core/extensions/safe_prefs.dart';
+import 'package:fines_plus/core/config/app_config.dart';
 import 'package:fines_plus/features/history/presentation/cubit/history_cubit.dart';
 import 'package:fines_plus/features/vehicle/data/datasources/car_info_local_data_source.dart';
 import 'package:fines_plus/features/vehicle/data/models/car_info_model.dart';
@@ -12,10 +13,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 class CarCubit extends Cubit<CarState> {
   final CarInfoLocalDataSource local;
   final CarInfoRepository repo;
+  final AppConfig config;
   late HistoryCubit _historyCubit;
 
 
-  CarCubit({required this.local, required this.repo}) : super(const CarState()) {
+  CarCubit({required this.local, required this.repo, required this.config}) : super(const CarState()) {
     _init();
   }
 
@@ -108,6 +110,14 @@ class CarCubit extends Cubit<CarState> {
   }
 
   Future<void> checkFines(String captchaToken) async {
+    // Ukraine-only feature (talks to a UA government portal via a captcha +
+    // the owner's own documents) - brands/markets that don't have it must
+    // not be able to trigger it even if some UI path slips through.
+    if (!config.finesCheckEnabled) {
+      debugPrint("Fine checking disabled for this brand");
+      return;
+    }
+
     final prefs = await SharedPreferences.getInstance();
     final finesEnabled = prefs.getBoolSafe("finesCheck", defaultValue: true);
 

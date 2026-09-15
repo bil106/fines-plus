@@ -215,6 +215,14 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
   }
 
   void openPage(HomePage page) {
+    // Defense in depth: even if some call site still targets the Fines
+    // page directly (bypassing the bottom-nav gating below), don't let a
+    // brand/market without the feature navigate there.
+    if (page == HomePage.fines && !context.read<AppConfig>().finesCheckEnabled) {
+      debugPrint("Fines check disabled for this brand - ignoring navigation to HomePage.fines");
+      return;
+    }
+
     final carState = context.read<CarCubit>().state;
     final bool hasCar = carState.carId.isNotEmpty;
 

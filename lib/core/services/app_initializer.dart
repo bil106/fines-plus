@@ -229,7 +229,7 @@ class AppInitializer {
     unawaited(currencyService.init());
     referralCubit = ReferralCubit(appLinks, prefs);
 
-    carCubit = CarCubit(local: carInfoLocalDataSource, repo: carInfoRepository);
+    carCubit = CarCubit(local: carInfoLocalDataSource, repo: carInfoRepository, config: config);
     historyCubit = HistoryCubit(repository: historyRepository, carCubit: carCubit);
     analyticsCubit = AnalyticsCubit(repository: analyticsRepository, carCubit: carCubit);
     carInfoCubit = CarInfoCubit(carInfoRepository, historyCubit);
