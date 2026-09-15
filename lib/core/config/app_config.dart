@@ -29,6 +29,17 @@ class AppConfig {
   final String? termsUrl;
   final String? privacyPolicyUrl;
 
+  /// Optional per-brand overrides for specific ARB-driven strings, keyed by
+  /// the same key used in intl_*.arb (e.g. "garage_setup_subtitle"). Lets
+  /// two brands that share a language (e.g. two UA brands both showing
+  /// Ukrainian) use different wording for the *same* string, without forking
+  /// the whole localization table. Looked up via brandCopy() in
+  /// core/config/brand_copy.dart - see docs/white-label-playbook.md for the
+  /// pattern and which keys are currently wired up. Null/absent key falls
+  /// back to the shared S.of(context) string, so existing configs need no
+  /// changes.
+  final Map<String, String>? copyOverrides;
+
   const AppConfig({
     required this.brandName,
     required this.primaryColorHex,
@@ -40,6 +51,7 @@ class AppConfig {
     this.finesCheckEnabled = true,
     this.termsUrl,
     this.privacyPolicyUrl,
+    this.copyOverrides,
   });
 
   factory AppConfig.fromJson(Map<String, dynamic> json) => _$AppConfigFromJson(json);

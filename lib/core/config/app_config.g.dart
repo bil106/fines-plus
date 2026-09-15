@@ -22,6 +22,9 @@ AppConfig _$AppConfigFromJson(Map<String, dynamic> json) => AppConfig(
   finesCheckEnabled: json['finesCheckEnabled'] as bool? ?? true,
   termsUrl: json['termsUrl'] as String?,
   privacyPolicyUrl: json['privacyPolicyUrl'] as String?,
+  copyOverrides: (json['copyOverrides'] as Map<String, dynamic>?)?.map(
+    (k, e) => MapEntry(k, e as String),
+  ),
 );
 
 Map<String, dynamic> _$AppConfigToJson(AppConfig instance) => <String, dynamic>{
@@ -35,4 +38,5 @@ Map<String, dynamic> _$AppConfigToJson(AppConfig instance) => <String, dynamic>{
   'finesCheckEnabled': instance.finesCheckEnabled,
   if (instance.termsUrl != null) 'termsUrl': instance.termsUrl,
   if (instance.privacyPolicyUrl != null) 'privacyPolicyUrl': instance.privacyPolicyUrl,
+  if (instance.copyOverrides != null) 'copyOverrides': instance.copyOverrides,
 };
