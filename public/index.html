@@ -1,89 +1,327 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Welcome to Firebase Hosting</title>
-
-    <!-- update the version number as needed -->
-    <script defer src="/__/firebase/12.6.0/firebase-app-compat.js"></script>
-    <!-- include only the Firebase features as you need -->
-    <script defer src="/__/firebase/12.6.0/firebase-auth-compat.js"></script>
-    <script defer src="/__/firebase/12.6.0/firebase-database-compat.js"></script>
-    <script defer src="/__/firebase/12.6.0/firebase-firestore-compat.js"></script>
-    <script defer src="/__/firebase/12.6.0/firebase-functions-compat.js"></script>
-    <script defer src="/__/firebase/12.6.0/firebase-messaging-compat.js"></script>
-    <script defer src="/__/firebase/12.6.0/firebase-storage-compat.js"></script>
-    <script defer src="/__/firebase/12.6.0/firebase-analytics-compat.js"></script>
-    <script defer src="/__/firebase/12.6.0/firebase-remote-config-compat.js"></script>
-    <script defer src="/__/firebase/12.6.0/firebase-performance-compat.js"></script>
-    <!-- 
-      initialize the SDK after all desired features are loaded, set useEmulator to false
-      to avoid connecting the SDK to running emulators.
-    -->
-    <script defer src="/__/firebase/init.js?useEmulator=true"></script>
-
-    <style media="screen">
-      body { background: #ECEFF1; color: rgba(0,0,0,0.87); font-family: Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; }
-      #message { background: white; max-width: 360px; margin: 100px auto 16px; padding: 32px 24px; border-radius: 3px; }
-      #message h2 { color: #ffa100; font-weight: bold; font-size: 16px; margin: 0 0 8px; }
-      #message h1 { font-size: 22px; font-weight: 300; color: rgba(0,0,0,0.6); margin: 0 0 16px;}
-      #message p { line-height: 140%; margin: 16px 0 24px; font-size: 14px; }
-      #message a { display: block; text-align: center; background: #039be5; text-transform: uppercase; text-decoration: none; color: white; padding: 16px; border-radius: 4px; }
-      #message, #message a { box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24); }
-      #load { color: rgba(0,0,0,0.4); text-align: center; font-size: 13px; }
-      @media (max-width: 600px) {
-        body, #message { margin-top: 0; background: white; box-shadow: none; }
-        body { border-top: 16px solid #ffa100; }
-      }
-    </style>
-  </head>
-  <body>
-    <div id="message">
-      <h2>Welcome</h2>
-      <h1>Firebase Hosting Setup Complete</h1>
-      <p>You're seeing this because you've successfully setup Firebase Hosting. Now it's time to go build something extraordinary!</p>
-      <a target="_blank" href="https://firebase.google.com/docs/hosting/">Open Hosting Documentation</a>
-    </div>
-    <p id="load">Firebase SDK Loading&hellip;</p>
-
-    <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        const loadEl = document.querySelector('#load');
-        // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
-        // // The Firebase SDK is initialized and available here!
-        //
-        // firebase.auth().onAuthStateChanged(user => { });
-        // firebase.database().ref('/path/to/ref').on('value', snapshot => { });
-        // firebase.firestore().doc('/foo/bar').get().then(() => { });
-        // firebase.functions().httpsCallable('yourFunction')().then(() => { });
-        // firebase.messaging().requestPermission().then(() => { });
-        // firebase.storage().ref('/path/to/ref').getDownloadURL().then(() => { });
-        // firebase.analytics(); // call to activate
-        // firebase.analytics().logEvent('tutorial_completed');
-        // firebase.performance(); // call to activate
-        //
-        // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
-
-        try {
-          let app = firebase.app();
-          let features = [
-            'auth', 
-            'database', 
-            'firestore',
-            'functions',
-            'messaging', 
-            'storage', 
-            'analytics', 
-            'remoteConfig',
-            'performance',
-          ].filter(feature => typeof app[feature] === 'function');
-          loadEl.textContent = `Firebase SDK loaded with ${features.join(', ')}`;
-        } catch (e) {
-          console.error(e);
-          loadEl.textContent = 'Error loading the Firebase SDK, check the console.';
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fines+ | Контроль Автовитрат та Обслуговування</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Общие стили и сброс */
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            line-height: 1.6;
+            background-color: #f4f7f9;
         }
-      });
-    </script>
-  </body>
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Секция Hero (Головний екран) */
+        .hero {
+            background-color: #004d99;
+            color: white;
+            padding: 80px 0;
+            text-align: center;
+        }
+        .hero h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        .hero p {
+            font-size: 1.2em;
+            margin-bottom: 30px;
+        }
+        
+        /* Кнопки CTA */
+        .cta-buttons a {
+            display: inline-block;
+            text-decoration: none;
+            padding: 12px 25px;
+            margin: 10px;
+            border-radius: 5px;
+            font-weight: 700;
+            transition: background-color 0.3s;
+        }
+        .cta-primary {
+            background-color: #ff6f00;
+            color: white;
+            border: 2px solid #ff6f00;
+        }
+        .cta-primary:hover {
+            background-color: #e65100;
+        }
+        .cta-secondary {
+            background-color: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+        .cta-secondary:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Общие стили для секций */
+        section {
+            padding: 60px 0;
+            text-align: center;
+        }
+        section h2 {
+            font-size: 2em;
+            color: #004d99;
+            margin-bottom: 40px;
+        }
+        
+        /* Преимущества/Функции */
+        .features-grid {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+        .feature-item {
+            width: 280px;
+            padding: 20px;
+            margin: 15px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+            text-align: left;
+            transition: transform 0.3s;
+        }
+        .feature-item:hover {
+             transform: translateY(-5px);
+        }
+        .feature-item h3 {
+            color: #ff6f00;
+            margin-top: 0;
+        }
+
+        /* Звіт для покупця */
+        .sell-report {
+            background-color: #fff8f0;
+            border-top: 3px solid #ff6f00;
+            border-bottom: 3px solid #ff6f00;
+        }
+        .sell-report p {
+            max-width: 700px;
+            margin: 0 auto 30px;
+            font-size: 1.1em;
+        }
+
+        /* Отзывы */
+        .testimonials {
+            background-color: #e3f2fd;
+        }
+        .review-grid {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .review-card {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            max-width: 350px;
+            text-align: left;
+        }
+        .review-card p {
+            font-style: italic;
+            margin-bottom: 10px;
+            color: #555;
+        }
+        .review-card .author {
+            font-weight: 700;
+            color: #004d99;
+        }
+
+        /* Футер */
+        footer {
+            background-color: #222;
+            color: white;
+            padding: 30px 0;
+            text-align: center;
+            font-size: 0.9em;
+        }
+        footer a {
+            color: #ff6f00;
+            text-decoration: none;
+        }
+        
+        /* Медиа-запросы для мобильных устройств */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2em;
+            }
+            .features-grid {
+                flex-direction: column;
+                align-items: center;
+            }
+            .feature-item {
+                width: 90%;
+            }
+            .review-card {
+                max-width: 90%;
+            }
+        }
+        
+        /* Добавление кнопки переключения языка */
+        .lang-switcher {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+        .lang-switcher a {
+            color: white;
+            text-decoration: none;
+            padding: 5px 10px;
+            border: 1px solid white;
+            border-radius: 5px;
+            margin-left: 5px;
+            transition: background-color 0.3s;
+        }
+        .lang-switcher a:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+    </style>
+</head>
+<body>
+    
+    <div class="lang-switcher">
+        <a href="en.html">English</a>
+        <a href="es.html">Español</a>
+    </div>
+
+    <header class="hero">
+        <div class="container">
+            <h1>Fines+: Повний контроль над витратами та обслуговуванням вашого автомобіля.</h1>
+            <p>Аналітика, штрафи, сервісні нагадування в одному додатку. Заощаджуйте час та кошти.</p>
+            <div class="cta-buttons">
+                <a href="https://play.google.com/store/apps/details?id=com.finesplus" class="cta-primary">Завантажити додаток</a>
+                <a href="#features" class="cta-secondary">Дізнатися більше</a>
+            </div>
+        </div>
+    </header>
+
+    <section id="features" class="features">
+        <div class="container">
+            <h2>Ваші можливості з Fines+</h2>
+            <div class="features-grid">
+                <div class="feature-item">
+                    <h3>🔍 Перевірка Штрафів</h3>
+                    <p>Миттєва перевірка актуальних штрафів за номером авто та техпаспорта. Забудьте про прострочення.</p>
+                </div>
+                <div class="feature-item">
+                    <h3>⚙️ Сповіщення про Сервіс</h3>
+                    <p>Автоматичні нагадування про планове ТО, заміну мастила та інші важливі процедури.</p>
+                </div>
+                <div class="feature-item">
+                    <h3>📊 Аналітика Витрат</h3>
+                    <p>Ведення детальної історії та аналітики витрат на обслуговування. Генерація звітів (PDF/CSV).</p>
+                </div>
+                <div class="feature-item">
+                    <h3>📱 Зручний Інтерфейс</h3>
+                    <p>Інтуїтивно зрозумілий дизайн та швидкий доступ до всіх функцій з будь-якого пристрою.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="sell-report">
+        <div class="container">
+            <h2>Продаєш авто? Передай всю історію обслуговування одним файлом</h2>
+            <p>Fines+ формує звіт для покупця — PDF з логотипом застосунку, поточним пробігом, повною історією ТО та всіма перевіреними штрафами. Це підвищує довіру покупця і прискорює продаж.</p>
+            <div class="cta-buttons">
+                <a href="https://play.google.com/store/apps/details?id=com.finesplus" class="cta-primary">Спробувати безкоштовно</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="testimonials">
+        <div class="container">
+            <h2>Що говорять наші користувачі</h2>
+            <div class="review-grid">
+                
+                <div class="review-card">
+                    <p>"Нарешті з'явився інструмент, який реально спрощує життя. Завдяки Fines+ я перестав забувати про планове ТО і завжди маю під рукою повну історію обслуговування. **Надійність** та **зручність інтерфейсу** на найвищому рівні."</p>
+                    <div class="author">Ігор С. (Водій)</div>
+                </div>
+                
+                <div class="review-card">
+                    <p>"Раніше витрати на машину були хаотичними. Зараз, завдяки аналітиці в Fines+, я бачу, куди йдуть гроші, і можу планувати бюджет. Це реальна **економія часу та коштів**. Перевірка штрафів — приємний бонус."</p>
+                    <div class="author">Олена К. (Водій)</div>
+                </div>
+                
+                <div class="review-card">
+                    <p>"Для управління невеликим автопарком критично важливий контроль витрат. Звіти у форматі CSV/PDF з Fines+ миттєво інтегруються у нашу бухгалтерію, що суттєво знижує навантаження. **Професійне рішення для бізнесу**."</p>
+                    <div class="author">Автотранс-Південь (Власник автопарку)</div>
+                </div>
+                
+                <div class="review-card">
+                    <p>"Функція **сповіщень про заплановані сервіси** просто незамінна. Додаток сам нагадує, що час міняти мастило або гуму. Сервіс працює чітко, жодних зайвих повідомлень. Дуже вдячний розробникам."</p>
+                    <div class="author">Дмитро П. (Водій)</div>
+                </div>
+
+                <div class="review-card">
+                    <p>"Ми використовуємо Fines+ для контролю службового транспорту. Можливість швидкої перевірки штрафів за номером техпаспорта мінімізує ризики прострочень, а детальна **аналітика витрат** дозволяє оптимізувати витрати на обслуговування."</p>
+                    <div class="author">Світлана В. (Юр. особа)</div>
+                </div>
+                
+                <div class="review-card">
+                    <p>"Інтерфейс дуже чистий і зрозумілий. Усі дані з обслуговування, витрат і штрафів зібрані в одному місці. Це **зручність** у чистому вигляді. Більше не потрібно зберігати купу чеків і паперів."</p>
+                    <div class="author">Сергій М. (Водій)</div>
+                </div>
+
+                <div class="review-card">
+                    <p>"Ключова перевага для нас — **надійність** збору та зберігання даних. Звіти про витрати за період генеруються коректно і швидко. Це дозволяє нам приймати виважені рішення щодо експлуатації ТЗ."</p>
+                
+                    <div class="author">Анна Б. (Водій)</div>
+                </div>
+
+                <div class="review-card">
+                    <p>"З Fines+ я вперше за 5 років точно знаю, скільки витрачаю на автомобіль. Функціонал **аналітики витрат** реалізований відмінно. Чітко, просто, ефективно. Рекомендую всім водіям."</p>
+                    <div class="author">Олег Г. (Водій)</div>
+                </div>
+
+                <div class="review-card">
+                    <p>"Ми цінуємо професійний підхід. Генерація звітів у PDF для керівництва — це величезний плюс. Fines+ — це не просто трекер, це **надійний помічник** в управлінні корпоративним транспортом."</p>
+                    <div class="author">Транзит-С (Юр. особа)</div>
+                </div>
+
+                <div class="review-card">
+                    <p>"Дякую за **нагадування про сервіси**. Відтоді як почала користуватися, жодного разу не пропустила важливу процедуру, що подовжує термін служби мого авто. Інтерфейс інтуїтивно зрозумілий."</p>
+                    <div class="author">Марина Л. (Водій)</div>
+                </div>
+
+                <div class="review-card">
+                    <p>"Моментальна перевірка штрафів для всього парку через Fines+ значно скоротила наші операційні витрати. Платформа продемонструвала високу **надійність** у роботі з великим обсягом даних."</p>
+                    <div class="author">Євген К. (Власник автопарку)</div>
+                </div>
+                
+            </div>
+        </div>
+    </section>
+
+  <section class="final-cta">
+    <div class="container">
+        <h2>Готові взяти витрати на авто під повний контроль?</h2>
+        <div class="cta-buttons">
+            <a href="https://play.google.com/store/apps/details?id=com.finesplus" class="cta-primary">Завантажити Fines+ зараз!</a>
+        </div>
+    </div>
+</section>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 Fines+. Усі права захищені. | <a href="https://bil106.github.io/finesplus-privacy-policy/">Політика конфіденційності</a></p>
+        </div>
+    </footer>
+
+</body>
 </html>

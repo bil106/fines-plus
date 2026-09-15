@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fines+ | Control of Car Expenses and Maintenance</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* [ ... Стили CSS, как и в украинской версии ... ] */
+        /* Общие стили и сброс */
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            line-height: 1.6;
+            background-color: #f4f7f9;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Секция Hero (Главный экран) */
+        .hero {
+            background-color: #004d99;
+            color: white;
+            padding: 80px 0;
+            text-align: center;
+        }
+        .hero h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        .hero p {
+            font-size: 1.2em;
+            margin-bottom: 30px;
+        }
+        
+        /* Кнопки CTA */
+        .cta-buttons a {
+            display: inline-block;
+            text-decoration: none;
+            padding: 12px 25px;
+            margin: 10px;
+            border-radius: 5px;
+            font-weight: 700;
+            transition: background-color 0.3s;
+        }
+        .cta-primary {
+            background-color: #ff6f00;
+            color: white;
+            border: 2px solid #ff6f00;
+        }
+        .cta-primary:hover {
+            background-color: #e65100;
+        }
+        .cta-secondary {
+            background-color: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+        .cta-secondary:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Общие стили для секций */
+        section {
+            padding: 60px 0;
+            text-align: center;
+        }
+        section h2 {
+            font-size: 2em;
+            color: #004d99;
+            margin-bottom: 40px;
+        }
+        
+        /* Преимущества/Функции */
+        .features-grid {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+        .feature-item {
+            width: 280px;
+            padding: 20px;
+            margin: 15px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+            text-align: left;
+            transition: transform 0.3s;
+        }
+        .feature-item:hover {
+             transform: translateY(-5px);
+        }
+        .feature-item h3 {
+            color: #ff6f00;
+            margin-top: 0;
+        }
+
+        .sell-report {
+            background-color: #fff8f0;
+            border-top: 3px solid #ff6f00;
+            border-bottom: 3px solid #ff6f00;
+        }
+        .sell-report p {
+            max-width: 700px;
+            margin: 0 auto 30px;
+            font-size: 1.1em;
+        }
+
+        /* Отзывы */
+        .testimonials {
+            background-color: #e3f2fd;
+        }
+        .review-grid {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .review-card {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            max-width: 350px;
+            text-align: left;
+        }
+        .review-card p {
+            font-style: italic;
+            margin-bottom: 10px;
+            color: #555;
+        }
+        .review-card .author {
+            font-weight: 700;
+            color: #004d99;
+        }
+
+        /* Футер */
+        footer {
+            background-color: #222;
+            color: white;
+            padding: 30px 0;
+            text-align: center;
+            font-size: 0.9em;
+        }
+        footer a {
+            color: #ff6f00;
+            text-decoration: none;
+        }
+        
+        /* Медиа-запросы для мобильных устройств */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2em;
+            }
+            .features-grid {
+                flex-direction: column;
+                align-items: center;
+            }
+            .feature-item {
+                width: 90%;
+            }
+            .review-card {
+                max-width: 90%;
+            }
+        }
+        
+        /* Добавление кнопки переключения языка */
+        .lang-switcher {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+        .lang-switcher a {
+            color: white;
+            text-decoration: none;
+            padding: 5px 10px;
+            border: 1px solid white;
+            border-radius: 5px;
+            margin-left: 5px;
+            transition: background-color 0.3s;
+        }
+        .lang-switcher a:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+    </style>
+</head>
+<body>
+    
+   <div class="lang-switcher">
+    <a href="index.html">Українська</a>
+    <a href="es.html">Español</a>
+</div>
+
+    <header class="hero">
+        <div class="container">
+            <h1>Fines+: Full Control over Your Car Expenses and Maintenance.</h1>
+            <p>Analytics, fines, and service reminders in one application. Save time and money.</p>
+            <div class="cta-buttons">
+             <a href="https://play.google.com/store/apps/details?id=com.finesplus" class="cta-primary">Download App</a>
+                <a href="#features" class="cta-secondary">Learn More</a>
+            </div>
+        </div>
+    </header>
+
+    <section id="features" class="features">
+        <div class="container">
+            <h2>Your Capabilities with Fines+</h2>
+            <div class="features-grid">
+                <div class="feature-item">
+                    <h3>🔍 Fine Check</h3>
+                    <p>Instant check of current fines by vehicle number and registration certificate. Forget about delays.</p>
+                </div>
+                <div class="feature-item">
+                    <h3>⚙️ Service Notifications</h3>
+                    <p>Automatic reminders for scheduled maintenance, oil change, and other crucial procedures.</p>
+                </div>
+                <div class="feature-item">
+                    <h3>📊 Expense Analytics</h3>
+                    <p>Detailed history and analysis of maintenance costs. Report generation (PDF/CSV).</p>
+                </div>
+                <div class="feature-item">
+                    <h3>📱 User-Friendly Interface</h3>
+                    <p>Intuitive design and quick access to all functions from any device.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="sell-report">
+        <div class="container">
+            <h2>Selling your car? Hand over the full service history in one file</h2>
+            <p>Fines+ generates a buyer's report — a PDF with the app's logo, current mileage, full maintenance history, and every checked fine. It builds buyer trust and speeds up the sale.</p>
+            <div class="cta-buttons">
+                <a href="https://play.google.com/store/apps/details?id=com.finesplus" class="cta-primary">Try It Free</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="testimonials">
+        <div class="container">
+            <h2>What Our Users Say</h2>
+            <div class="review-grid">
+                
+                <div class="review-card">
+                    <p>"Finally, a tool that truly simplifies life. Thanks to Fines+, I stopped forgetting about scheduled maintenance and always have the full service history at hand. **Reliability** and **interface convenience** are top-notch."</p>
+                    <div class="author">Ihor S. (Driver)</div>
+                </div>
+                
+                <div class="review-card">
+                    <p>"Car expenses used to be chaotic. Now, thanks to the analytics in Fines+, I see where the money is going and can plan my budget. It's a real **time and money saver**. Checking fines is a nice bonus."</p>
+                    <div class="author">Olena K. (Driver)</div>
+                </div>
+                
+                <div class="review-card">
+                    <p>"Expense control is critically important for managing a small fleet. CSV/PDF reports from Fines+ instantly integrate into our accounting, significantly reducing the workload. **A professional solution for business**."</p>
+                    <div class="author">Autotrans-South (Fleet Owner)</div>
+                </div>
+                
+                <div class="review-card">
+                    <p>"The **scheduled service notification** feature is simply indispensable. The app itself reminds me when it's time to change the oil or tires. The service works clearly, no unnecessary notifications. Very grateful to the developers."</p>
+                    <div class="author">Dmytro P. (Driver)</div>
+                </div>
+
+                <div class="review-card">
+                    <p>"We use Fines+ to monitor company transport. The ability to quickly check fines by registration certificate number minimizes the risk of overdue payments, and detailed **expense analytics** allows us to optimize maintenance costs."</p>
+                    <div class="author">Svitlana V. (Legal Entity)</div>
+                </div>
+                
+                <div class="review-card">
+                    <p>"The interface is very clean and intuitive. All data on maintenance, expenses, and fines are collected in one place. It's **convenience** in its purest form. No more need to keep stacks of receipts and papers."</p>
+                    <div class="author">Serhii M. (Driver)</div>
+                </div>
+
+                <div class="review-card">
+                    <p>"The key advantage for us is the **reliability** of data collection and storage. Expense reports for the period are generated correctly and quickly. This allows us to make informed decisions regarding vehicle operation."</p>
+                    <div class="author">"Logistic-Plus" (Fleet Owner)</div>
+                </div>
+
+                <div class="review-card">
+                    <p>"A solution to the problem of finding fines! It always shows up-to-date information, including the ability to check by registration certificate. This eliminates unnecessary stress and truly **saves time**."</p>
+                    <div class="author">Anna B. (Driver)</div>
+                </div>
+
+                <div class="review-card">
+                    <p>"With Fines+, for the first time in 5 years, I know exactly how much I spend on my car. The **expense analytics** feature is perfectly implemented. Clear, simple, effective. I recommend it to all drivers."</p>
+                    <div class="author">Oleh H. (Driver)</div>
+                </div>
+
+                <div class="review-card">
+                    <p>"We value a professional approach. PDF report generation for management is a huge plus. Fines+ is not just a tracker; it's a **reliable assistant** in corporate transport management."</p>
+                    <div class="author">Transit-S (Legal Entity)</div>
+                </div>
+
+                <div class="review-card">
+                    <p>"Thank you for the **service reminders**. Since I started using it, I haven't missed a single important procedure, which prolongs my car's lifespan. The interface is intuitively understandable."</p>
+                    <div class="author">Maryna L. (Driver)</div>
+                </div>
+
+                <div class="review-card">
+                    <p>"Instant fine checking for the entire fleet via Fines+ significantly reduced our operating costs. The platform has demonstrated high **reliability** in handling a large volume of data."</p>
+                    <div class="author">Yevhen K. (Fleet Owner)</div>
+                </div>
+                
+            </div>
+        </div>
+    </section>
+
+<section class="final-cta">
+    <div class="container">
+        <h2>Ready to take full control of your car expenses?</h2>
+        <div class="cta-buttons">
+            <a href="https://play.google.com/store/apps/details?id=com.finesplus" class="cta-primary">Download Fines+ Now!</a>
+        </div>
+    </div>
+</section>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 Fines+. All rights reserved. | <a href="https://bil106.github.io/finesplus-privacy-policy/">Privacy Policy</a></p>
+        </div>
+    </footer>
+
+</body>
+</html>

@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fines+ | Control de Gastos y Mantenimiento de Vehículos</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* [ ... Общие стили и сброс ... ] */
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            line-height: 1.6;
+            background-color: #f4f7f9;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Sección Hero (Pantalla principal) */
+        .hero {
+            background-color: #004d99;
+            color: white;
+            padding: 80px 0;
+            text-align: center;
+        }
+        .hero h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        .hero p {
+            font-size: 1.2em;
+            margin-bottom: 30px;
+        }
+        
+        /* Botones CTA */
+        .cta-buttons a {
+            display: inline-block;
+            text-decoration: none;
+            padding: 12px 25px;
+            margin: 10px;
+            border-radius: 5px;
+            font-weight: 700;
+            transition: background-color 0.3s;
+        }
+        .cta-primary {
+            background-color: #ff6f00;
+            color: white;
+            border: 2px solid #ff6f00;
+        }
+        .cta-primary:hover {
+            background-color: #e65100;
+        }
+        .cta-secondary {
+            background-color: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+        .cta-secondary:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Estilos generales para secciones */
+        section {
+            padding: 60px 0;
+            text-align: center;
+        }
+        section h2 {
+            font-size: 2em;
+            color: #004d99;
+            margin-bottom: 40px;
+        }
+        
+        /* Ventajas/Características */
+        .features-grid {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+        .feature-item {
+            width: 280px;
+            padding: 20px;
+            margin: 15px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+            text-align: left;
+            transition: transform 0.3s;
+        }
+        .feature-item:hover {
+             transform: translateY(-5px);
+        }
+        .feature-item h3 {
+            color: #ff6f00;
+            margin-top: 0;
+        }
+
+        .sell-report {
+            background-color: #fff8f0;
+            border-top: 3px solid #ff6f00;
+            border-bottom: 3px solid #ff6f00;
+        }
+        .sell-report p {
+            max-width: 700px;
+            margin: 0 auto 30px;
+            font-size: 1.1em;
+        }
+
+        /* Testimonios */
+        .testimonials {
+            background-color: #e3f2fd;
+        }
+        .review-grid {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .review-card {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            max-width: 350px;
+            text-align: left;
+        }
+        .review-card p {
+            font-style: italic;
+            margin-bottom: 10px;
+            color: #555;
+        }
+        .review-card .author {
+            font-weight: 700;
+            color: #004d99;
+        }
+
+        /* Pie de página */
+        footer {
+            background-color: #222;
+            color: white;
+            padding: 30px 0;
+            text-align: center;
+            font-size: 0.9em;
+        }
+        footer a {
+            color: #ff6f00;
+            text-decoration: none;
+        }
+        
+        /* Media queries para móviles */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2em;
+            }
+            .features-grid {
+                flex-direction: column;
+                align-items: center;
+            }
+            .feature-item {
+                width: 90%;
+            }
+            .review-card {
+                max-width: 90%;
+            }
+        }
+        
+        /* Añadir selector de idioma */
+        .lang-switcher {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+        .lang-switcher a {
+            color: white;
+            text-decoration: none;
+            padding: 5px 10px;
+            border: 1px solid white;
+            border-radius: 5px;
+            margin-left: 5px;
+            transition: background-color 0.3s;
+        }
+        .lang-switcher a:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="lang-switcher">
+        <a href="index.html">Українська</a>
+        <a href="en.html">English</a>
+    </div>
+
+    <header class="hero">
+        <div class="container">
+            <h1>Fines+: Control total de los gastos y el mantenimiento de tu vehículo.</h1>
+            <p>Análisis, multas y recordatorios de servicio en una sola aplicación. Ahorra tiempo y dinero.</p>
+            <div class="cta-buttons">
+                <a href="https://play.google.com/store/apps/details?id=com.finesplus" class="cta-primary">Descargar Aplicación</a>
+                <a href="#features" class="cta-secondary">Saber Más</a>
+            </div>
+        </div>
+    </header>
+
+    <section id="features" class="features">
+        <div class="container">
+            <h2>Tus Funcionalidades con Fines+</h2>
+            <div class="features-grid">
+                <div class="feature-item">
+                    <h3>🔍 Verificación de Multas</h3>
+                    <p>Comprobación instantánea de multas actuales por número de vehículo y tarjeta de registro. Olvídate de los retrasos.</p>
+                </div>
+                <div class="feature-item">
+                    <h3>⚙️ Notificaciones de Servicio</h3>
+                    <p>Recordatorios automáticos para el mantenimiento programado, cambio de aceite y otros procedimientos cruciales.</p>
+                </div>
+                <div class="feature-item">
+                    <h3>📊 Análisis de Gastos</h3>
+                    <p>Historial detallado y análisis de los gastos de mantenimiento. Generación de informes (PDF/CSV).</p>
+                </div>
+                <div class="feature-item">
+                    <h3>📱 Interfaz Amigable</h3>
+                    <p>Diseño intuitivo y acceso rápido a todas las funciones desde cualquier dispositivo.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="sell-report">
+        <div class="container">
+            <h2>¿Vendes tu coche? Entrega todo el historial de mantenimiento en un archivo</h2>
+            <p>Fines+ genera un informe para el comprador — un PDF con el logo de la app, el kilometraje actual, el historial completo de mantenimiento y todas las multas verificadas. Esto genera confianza en el comprador y acelera la venta.</p>
+            <div class="cta-buttons">
+                <a href="https://play.google.com/store/apps/details?id=com.finesplus" class="cta-primary">Pruébalo Gratis</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="testimonials">
+        <div class="container">
+            <h2>Lo que dicen nuestros usuarios</h2>
+            <div class="review-grid">
+                
+                <div class="review-card">
+                    <p>"Finalmente, una herramienta que realmente simplifica la vida. Gracias a Fines+, dejé de olvidar el mantenimiento programado y siempre tengo el historial de servicio completo a mano. **La fiabilidad** y **la comodidad de la interfaz** son de primera clase."</p>
+                    <div class="author">Igor S. (Conductor)</div>
+                </div>
+                
+                <div class="review-card">
+                    <p>"Antes, los gastos del coche eran caóticos. Ahora, gracias a los análisis en Fines+, veo a dónde va el dinero y puedo planificar mi presupuesto. Es un **ahorro real de tiempo y dinero**. La verificación de multas es una ventaja agradable."</p>
+                    <div class="author">Olena K. (Conductora)</div>
+                </div>
+                
+                <div class="review-card">
+                    <p>"El control de gastos es fundamental para gestionar una flota pequeña. Los informes CSV/PDF de Fines+ se integran instantáneamente en nuestra contabilidad, reduciendo significativamente la carga de trabajo. **Una solución profesional para empresas**."</p>
+                    <div class="author">Autotrans-Sur (Propietario de Flota)</div>
+                </div>
+                
+                <div class="review-card">
+                    <p>"La función de **notificación de servicio programado** es simplemente indispensable. La aplicación me recuerda cuándo es el momento de cambiar el aceite o los neumáticos. El servicio funciona perfectamente, sin notificaciones innecesarias. Muy agradecido a los desarrolladores."</p>
+                    <div class="author">Dmytro P. (Conductor)</div>
+                </div>
+
+                <div class="review-card">
+                    <p>"Utilizamos Fines+ para monitorear el transporte de la empresa. La capacidad de verificar rápidamente las multas por número de tarjeta de registro minimiza el riesgo de pagos atrasados, y el **análisis detallado de gastos** nos permite optimizar los costos de mantenimiento."</p>
+                    <div class="author">Svitlana V. (Persona Jurídica)</div>
+                </div>
+                
+                <div class="review-card">
+                    <p>"La interfaz es muy limpia y fácil de entender. Todos los datos de mantenimiento, gastos y multas se recopilan en un solo lugar. Es **conveniencia** en estado puro. Ya no es necesario guardar pilas de recibos y papeles."</p>
+                    <div class="author">Serhii M. (Conductor)</div>
+                </div>
+
+                <div class="review-card">
+                    <p>"La principal ventaja para nosotros es la **fiabilidad** en la recopilación y el almacenamiento de datos. Los informes de gastos por período se generan de manera correcta y rápida. Esto nos permite tomar decisiones informadas sobre la operación de los vehículos."</p>
+                    <div class="author">"Logistic-Plus" (Propietario de Flota)</div>
+                </div>
+
+                <div class="review-card">
+                    <p>"¡Una solución al problema de encontrar multas! Siempre muestra información actualizada, incluida la opción de verificar por tarjeta de registro. Esto elimina el estrés innecesario y realmente **ahorra tiempo**."</p>
+                    <div class="author">Anna B. (Conductora)</div>
+                </div>
+
+                <div class="review-card">
+                    <p>"Con Fines+, por primera vez en 5 años, sé exactamente cuánto gasto en mi coche. La función de **análisis de gastos** está implementada a la perfección. Claro, simple, efectivo. Lo recomiendo a todos los conductores."</p>
+                    <div class="author">Oleh H. (Conductor)</div>
+                </div>
+
+                <div class="review-card">
+                    <p>"Valoramos un enfoque profesional. La generación de informes en PDF para la gerencia es una gran ventaja. Fines+ no es solo un rastreador; es un **asistente confiable** en la gestión del transporte corporativo."</p>
+                    <div class="author">Transit-S (Persona Jurídica)</div>
+                </div>
+
+                <div class="review-card">
+                    <p>"Gracias por los **recordatorios de servicio**. Desde que comencé a usarlo, nunca me he saltado un procedimiento importante, lo que prolonga la vida útil de mi coche. La interfaz es intuitivamente comprensible."</p>
+                    <div class="author">Maryna L. (Conductora)</div>
+                </div>
+
+                <div class="review-card">
+                    <p>"La verificación instantánea de multas para toda la flota a través de Fines+ ha reducido significativamente nuestros costos operativos. La plataforma ha demostrado una gran **fiabilidad** al manejar un gran volumen de datos."</p>
+                    <div class="author">Yevhen K. (Propietario de Flota)</div>
+                </div>
+                
+            </div>
+        </div>
+    </section>
+
+<section class="final-cta">
+    <div class="container">
+        <h2>¿Listo para tomar el control total de los gastos de tu coche?</h2>
+        <div class="cta-buttons">
+            <a href="https://play.google.com/store/apps/details?id=com.finesplus" class="cta-primary">¡Descarga Fines+ ahora!</a>
+        </div>
+    </div>
+</section>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 Fines+. Todos los derechos reservados. | <a href="https://bil106.github.io/finesplus-privacy-policy/">Política de privacidad</a></p>
+        </div>
+    </footer>
+
+</body>
+</html>
