@@ -485,19 +485,14 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
         Text(
-          totalPrice,
+          perDay,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: foreground),
         ),
-        Text(
-          "/ $period",
-          maxLines: 1,
-          style: TextStyle(fontSize: 12, color: foreground),
-        ),
         const SizedBox(height: 2),
         Text(
-          perDay,
+          "$totalPrice / $period",
           maxLines: 1,
           style: TextStyle(fontSize: 12, color: secondary),
         ),
