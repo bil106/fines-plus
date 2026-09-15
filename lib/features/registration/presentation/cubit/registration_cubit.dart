@@ -127,7 +127,6 @@ Future<Map<String, String>> loadCredentials() async {
 
       return false;
     } catch (_) {
-   
       return false;
     }
   }
