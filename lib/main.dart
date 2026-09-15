@@ -86,7 +86,12 @@ void main() {
       WidgetsFlutterBinding.ensureInitialized();
       FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
-      await dotenv.load(fileName: 'assets/config/.env', isOptional: true);
+      // Only client-safe values live here (no scraping tokens or the
+      // subscription-bypass flag from the local dev `.env`) — this file is
+      // committed and actually bundled into every build, unlike the
+      // gitignored `assets/config/.env` which was never declared as a
+      // Flutter asset and so silently failed to load at all.
+      await dotenv.load(fileName: 'assets/config/public.env', isOptional: true);
 
       final firebaseOptions = _firebaseOptionsForCurrentPlatform();
       if (firebaseOptions == null) {
