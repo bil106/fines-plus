@@ -173,7 +173,11 @@ class _CarCard extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
           child: Row(
             children: [
-              _Thumbnail(photoUrl: car.photoUrl, make: car.make, isActive: isActive),
+              _Thumbnail(
+                photoUrl: car.photoUrl,
+                make: car.make,
+                isActive: isActive,
+              ),
               AppSpacers.horizontalMedium,
               Expanded(
                 child: Column(
@@ -206,6 +210,7 @@ class _CarCard extends StatelessWidget {
                   ],
                 ),
               ),
+
               IconButton(
                 icon: const Icon(Icons.edit_outlined),
                 onPressed: onEdit,
@@ -226,12 +231,20 @@ class _Thumbnail extends StatelessWidget {
   final String photoUrl;
   final String make;
   final bool isActive;
-  const _Thumbnail({required this.photoUrl, required this.make, required this.isActive});
+  const _Thumbnail({
+    required this.photoUrl,
+    required this.make,
+    required this.isActive,
+  });
 
   @override
   Widget build(BuildContext context) {
     if (photoUrl.isEmpty) {
-      return CarMakeLogo(make: make, size: 36, fallbackColor: isActive ? AppColors.blue700 : AppColors.neutreGrey);
+      return CarMakeLogo(
+        make: make,
+        size: 36,
+        fallbackColor: isActive ? AppColors.blue700 : AppColors.neutreGrey,
+      );
     }
 
     return ClipRRect(

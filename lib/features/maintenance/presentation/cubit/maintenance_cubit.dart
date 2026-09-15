@@ -23,12 +23,14 @@ class MaintenanceCubit extends Cubit<MaintenanceState> {
   final CarInfoLocalDataSource localDataSource;
   final CarCubit carCubit;
   late final StreamSubscription _carSub;
+  StreamSubscription<List<Expense>>? _expensesSub;
+  late String _activeCarId;
 
   MaintenanceCubit({required this.expenseRepository, required this.localDataSource, required this.carCubit})
     : super(const MaintenanceState()) {
+    _activeCarId = carCubit.state.carId;
     _carSub = carCubit.stream.listen((carState) {
-      final newCarId = carState.carId;
-      _onCarChanged(newCarId);
+      _onCarChanged(carState.carId);
     });
     init();
   }
@@ -36,25 +38,81 @@ class MaintenanceCubit extends Cubit<MaintenanceState> {
   Future<void> init() async {
     emit(state.copyWith(isLoading: true));
     await _loadAllFromPrefs();
-    await syncExpensesFromFirestore();
+    _listenToExpenses(_activeCarId);
     emit(state.copyWith(isLoading: false));
   }
 
+  /// [localDataSource] reflects the NEW car by the time this fires (CarCubit
+  /// persists it before emitting), so comparing against local storage here
+  /// always agreed with [newCarId] and made this a no-op — records from the
+  /// previous car were never cleared on a real switch. Track the previously
+  /// active id ourselves instead.
   Future<void> _onCarChanged(String newCarId) async {
-    try {
-      final local = await localDataSource.getCarInfo();
-      if (local.carId == newCarId && state.serviceRecords.isNotEmpty) {
-        return;
-      }
+    if (newCarId == _activeCarId) return;
+    _activeCarId = newCarId;
 
+    try {
       emit(state.copyWith(isLoading: true));
       clearAllRecords();
-      await syncExpensesFromFirestore();
+      _listenToExpenses(newCarId);
     } catch (e, st) {
       debugPrint('MaintenanceCubit _onCarChanged error: $e\n$st');
     } finally {
       emit(state.copyWith(isLoading: false));
     }
+  }
+
+  /// Keeps records live-synced with Firestore instead of only refreshing on
+  /// an explicit [syncExpensesFromFirestore] call (e.g. opening the
+  /// maintenance screen) — an expense added on another device now reaches
+  /// this one, and the Home stats it feeds, the moment Firestore pushes it.
+  void _listenToExpenses(String carId) {
+    _expensesSub?.cancel();
+    if (carId.isEmpty) return;
+
+    _expensesSub = expenseRepository.watchExpenses(carNumber: carId).listen(
+      (expenses) {
+        final serviceRecords = <ServiceRecord>[];
+        final fuelRecords = <FuelRecord>[];
+        final tuningRecords = <TuningRecord>[];
+        final carWashRecords = <CarWashRecord>[];
+
+        for (final exp in expenses) {
+          switch (exp.category) {
+            case ExpenseCategory.service:
+              serviceRecords.add(ServiceRecord.fromExpense(exp));
+              break;
+            case ExpenseCategory.fuel:
+              fuelRecords.add(FuelRecord.fromExpense(exp, currency: ''));
+              break;
+            case ExpenseCategory.tuning:
+              tuningRecords.add(TuningRecord.fromExpense(exp));
+              break;
+            case ExpenseCategory.carWash:
+              carWashRecords.add(CarWashRecord.fromExpense(exp));
+              break;
+            default:
+              break;
+          }
+        }
+
+        emit(
+          state.copyWith(
+            serviceRecords: serviceRecords,
+            fuelRecords: fuelRecords,
+            tuningRecords: tuningRecords,
+            carWashRecords: carWashRecords,
+            isLoading: false,
+          ),
+        );
+
+        _saveRecordsToPrefs('service_records', serviceRecords);
+        _saveRecordsToPrefs('fuel_records', fuelRecords);
+        _saveRecordsToPrefs('tuning_records', tuningRecords);
+        _saveRecordsToPrefs('car_wash_records', carWashRecords);
+      },
+      onError: (e) => debugPrint('MaintenanceCubit expenses stream error: $e'),
+    );
   }
 
   Future<void> addRecord<T>({
@@ -587,6 +645,9 @@ class MaintenanceCubit extends Cubit<MaintenanceState> {
   Future<void> close() {
     try {
       _carSub.cancel();
+    } catch (_) {}
+    try {
+      _expensesSub?.cancel();
     } catch (_) {}
     return super.close();
   }

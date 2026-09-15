@@ -1,12 +1,9 @@
 // ignore_for_file: unnecessary_null_comparison
 
 import 'package:auto_route/auto_route.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_spacers.dart';
-import 'package:fines_plus/features/expenses/data/repository/expense_repository.dart';
-import 'package:fines_plus/features/home/domain/entities/last_event_ui_model.dart';
 import 'package:fines_plus/features/home/domain/entities/main_stats.dart';
 import 'package:fines_plus/features/home/presentation/cubit/quick_actions_cubit.dart';
 import 'package:fines_plus/features/home/presentation/widgets/quick_actions_panel.dart';
@@ -17,7 +14,6 @@ import 'package:fines_plus/features/vehicle/presentation/cubit/car_state.dart';
 import 'package:fines_plus/features/vehicle/presentation/cubit/garage_cubit.dart';
 import 'package:fines_plus/features/vehicle/presentation/cubit/garage_state.dart';
 import 'package:fines_plus/app/router/home_screen_wrapper.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../widgets/main_stats_card.dart';
@@ -34,74 +30,12 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  LastEventUiModel? latestExpense;
-  bool isLoading = true;
-
   @override
   void initState() {
     super.initState();
     final carId = context.read<CarCubit>().state.carId;
-    context.read<QuickActionsCubit>().syncActiveCategories(carId);
+    context.read<QuickActionsCubit>().listenToActiveCategories(carId);
     context.read<QuickActionsCubit>().init();
-    _loadLatestExpense();
-  }
-
-  Future<void> _loadLatestExpense() async {
-    if (!mounted) return;
-
-    setState(() {
-      isLoading = true;
-    });
-
-    final repo = ExpenseRepository(FirebaseFirestore.instance);
-    final carCubit = context.read<CarCubit>();
-
-    final carId = carCubit.state.carId;
-
-    if (carId.isEmpty) {
-      setState(() {
-        latestExpense = null;
-        isLoading = false;
-      });
-      return;
-    }
-
-    final currentUser = FirebaseAuth.instance.currentUser;
-    if (currentUser == null) {
-      debugPrint('User not signed in, skipping ensureCarDocument');
-      setState(() {
-        latestExpense = null;
-        isLoading = false;
-      });
-      return;
-    }
-
-    await repo.ensureCarDocument(carId);
-
-    final allExpenses = await repo.getExpensesOnce(carNumber: carId);
-    if (!mounted) return;
-
-    if (allExpenses.isEmpty) {
-      setState(() {
-        latestExpense = null;
-        isLoading = false;
-      });
-      return;
-    }
-
-    final allEvents = allExpenses
-        .map((e) => LastEventUiModel.fromExpense(e))
-        .toList();
-
-    final latestByMileage = allEvents.reduce(
-      (a, b) => (a.mileage ?? 0) > (b.mileage ?? 0) ? a : b,
-    );
-
-    if (!mounted) return;
-    setState(() {
-      latestExpense = latestByMileage;
-      isLoading = false;
-    });
   }
 
   @override
@@ -134,6 +68,8 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           leading: IconButton(
             icon: const Icon(Icons.settings, color: AppColors.grey700),
+            iconSize: 30,
+            padding: const EdgeInsets.all(14),
             onPressed: () {
               final homeState = context
                   .findAncestorStateOfType<HomeScreenWrapperState>();
@@ -229,30 +165,24 @@ class _HomeScreenState extends State<HomeScreen> {
 
                   AppSpacers.verticalXSmall,
                   BlocListener<CarCubit, CarState>(
-                    listenWhen: (prev, curr) =>
-                        prev.carNumber.isNotEmpty && curr.carNumber.isEmpty,
+                    listenWhen: (prev, curr) => prev.carId != curr.carId,
                     listener: (context, state) {
                       if (state.carNumber.isEmpty) {
-                        setState(() {
-                          latestExpense = null;
-                          isLoading = false;
-                        });
                         context.read<StatisticsCubit>().clearStats();
                         context.read<QuickActionsCubit>().clearAllActive();
                         return;
                       }
 
-                      context.read<QuickActionsCubit>().syncActiveCategories(
-                        state.carNumber,
+                      context.read<QuickActionsCubit>().listenToActiveCategories(
+                        state.carId,
                       );
-                      _loadLatestExpense();
                     },
                     child: const QuickActionsPanel(),
                   ),
                   AppSpacers.verticalXSmall,
 
-                  Builder(
-                    builder: (context) {
+                  BlocBuilder<StatisticsCubit, StatisticsState>(
+                    builder: (context, state) {
                       final carId = context.watch<CarCubit>().state.carId;
                       if (carId.isEmpty) {
                         return LastEventCardAction(
@@ -262,12 +192,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         );
                       }
 
-                      if (isLoading) {
+                      if (state.loading) {
                         return const Center(child: CircularProgressIndicator());
                       }
 
                       return LastEventCardAction(
-                        event: latestExpense,
+                        event: state.lastEvent,
                         onTap: () {},
                         onOpenEvents: () {
                           final wrapperState = context

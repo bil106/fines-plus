@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:bloc/bloc.dart';
 import 'package:fines_plus/features/home/data/repositories/tasks_repository.dart';
 import 'package:fines_plus/features/home/domain/entities/action_item_model.dart';
@@ -8,6 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class QuickActionsCubit extends Cubit<QuickActionsState> {
   final TasksRepository tasksRepository;
   final SharedPreferences prefs;
+  StreamSubscription<List<String>>? _activeCategoriesSub;
 
   QuickActionsCubit(this.tasksRepository, this.prefs)
     : super(
@@ -122,6 +125,23 @@ class QuickActionsCubit extends Cubit<QuickActionsState> {
     emit(state.copyWith(activeCategories: activeCategories));
   }
 
+  /// Keeps [activeCategories] live-synced with Firestore for [carNumber] —
+  /// a quick-action task created/removed on another device (or another
+  /// screen on this one) is reflected here immediately, instead of only on
+  /// the next explicit [syncActiveCategories] call.
+  void listenToActiveCategories(String carNumber) {
+    _activeCategoriesSub?.cancel();
+    if (carNumber.isEmpty) {
+      emit(state.copyWith(activeCategories: []));
+      return;
+    }
+
+    _activeCategoriesSub = tasksRepository.watchActiveCategories(carNumber: carNumber).listen((categories) {
+      emit(state.copyWith(activeCategories: categories));
+      prefs.setStringList('activeCategories', categories);
+    });
+  }
+
   void removeCategoryLocally(String labelKey) {
     final key = labelKey.toLowerCase();
 
@@ -152,5 +172,11 @@ class QuickActionsCubit extends Cubit<QuickActionsState> {
     emit(state.copyWith(activeCategories: uniqueCategories));
 
     prefs.setStringList('activeCategories', uniqueCategories);
+  }
+
+  @override
+  Future<void> close() {
+    _activeCategoriesSub?.cancel();
+    return super.close();
   }
 }

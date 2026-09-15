@@ -11,7 +11,12 @@ abstract class ReminderLocalDataSource {
 
 class ReminderLocalDataSourceImpl implements ReminderLocalDataSource {
   final SharedPrefsManager _prefsManager;
-  static const _key = 'reminders';
+  // Deliberately distinct from the "reminders" key the Settings screen uses
+  // for its on/off toggle (SharedPreferences has one namespace) — that
+  // collision let getBoolSafe misread this cached JSON list as "not true"
+  // and stomp it back to a bare `false`, silently wiping the local cache
+  // every time the toggle's value was read.
+  static const _key = 'cached_reminders_list';
 
   ReminderLocalDataSourceImpl(this._prefsManager);
 

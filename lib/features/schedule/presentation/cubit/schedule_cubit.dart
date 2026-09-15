@@ -24,7 +24,13 @@ class ScheduleCubit extends Cubit<ScheduleState> {
   String carNumber;
   final CarCubit carCubit;
   late final StreamSubscription _carSub;
+  late final StreamSubscription _maintenanceSub;
   bool enabled;
+
+  // Tasks a push has already fired for — without this, every subsequent
+  // mileage/expense update would re-fire the same "overdue" notification
+  // for a task that was already flagged once.
+  final Set<String> _notifiedTaskIds = {};
 
   ScheduleCubit({
     required this.repository,
@@ -42,6 +48,13 @@ class ScheduleCubit extends Cubit<ScheduleState> {
         onCarChanged(newCar);
       }
     });
+
+    // Re-checks every task's progress whenever mileage-affecting data
+    // changes (a new fuel-up, service, etc.) — a task's due date/mileage can
+    // otherwise only ever be re-evaluated by editing that task directly, so
+    // one that quietly becomes overdue just from driving/time passing never
+    // got flagged.
+    _maintenanceSub = maintenanceCubit.stream.listen((_) => _checkAllTasksForOverdue());
 
     if (carNumber.isNotEmpty) {
       loadTasks();
@@ -67,10 +80,12 @@ class ScheduleCubit extends Cubit<ScheduleState> {
 
       await repository.saveTasks(carNumber, tasks);
       emit(state.copyWith(tasks: tasks, loading: false));
+      await _checkAllTasksForOverdue();
     } catch (e, st) {
       debugPrint('loadTasks from Firestore failed, falling back to local cache: $e\n$st');
       final localTasks = await repository.loadTasks(carNumber);
       emit(state.copyWith(tasks: localTasks, loading: false));
+      await _checkAllTasksForOverdue();
     }
   }
 
@@ -146,16 +161,54 @@ class ScheduleCubit extends Cubit<ScheduleState> {
         debugPrint("Reminder created for ${task.description}");
       }
 
-      final notifId = task.id.hashCode.abs() % 100000;
-      final body = progress >= 1.0
-          ? '${S.current.reminder}: ${task.description}'
-          : S.current.maintenance_due_body(task.description);
-      await pushHelper.showNow(
-        id: notifId,
-        title: S.current.maintenance_due_title,
-        body: body,
-        isMaintenance: true,
-      );
+      final taskId = task.id;
+      if (taskId != null && taskId.isNotEmpty) _notifiedTaskIds.add(taskId);
+      await _notifyTaskDue(task, progress);
+    }
+  }
+
+  Future<void> _notifyTaskDue(MaintenanceTask task, double progress) async {
+    final notifId = task.id.hashCode.abs() % 100000;
+    final body = progress >= 1.0
+        ? '${S.current.reminder}: ${task.description}'
+        : S.current.maintenance_due_body(task.description);
+    await pushHelper.showNow(
+      id: notifId,
+      title: S.current.maintenance_due_title,
+      body: body,
+      isMaintenance: true,
+    );
+  }
+
+  int _liveMileage() {
+    final s = maintenanceCubit.state;
+    final all = [
+      ...s.serviceRecords.map((r) => r.mileage),
+      ...s.fuelRecords.map((r) => r.mileage),
+      ...s.tuningRecords.map((r) => r.mileage),
+      ...s.carWashRecords.map((r) => r.mileage),
+    ];
+    return all.isEmpty ? 0 : all.reduce((a, b) => a > b ? a : b);
+  }
+
+  Future<void> _checkAllTasksForOverdue() async {
+    final liveMileage = _liveMileage();
+
+    for (final task in state.tasks) {
+      final taskId = task.id;
+      if (taskId == null || taskId.isEmpty || _notifiedTaskIds.contains(taskId)) continue;
+      if (task.description.trim().isEmpty) continue;
+
+      final liveActualMileage = task.actualMileage == null
+          ? liveMileage
+          : (liveMileage > task.actualMileage! ? liveMileage : task.actualMileage!);
+      final liveTask = task.copyWith(actualMileage: liveActualMileage);
+      final progress = liveTask.getProgress();
+
+      if (progress >= 0.9) {
+        _notifiedTaskIds.add(taskId);
+        await _notifyTaskDue(liveTask, progress);
+      }
     }
   }
 
@@ -210,6 +263,7 @@ class ScheduleCubit extends Cubit<ScheduleState> {
   @override
   Future<void> close() {
     _carSub.cancel();
+    _maintenanceSub.cancel();
     return super.close();
   }
 }

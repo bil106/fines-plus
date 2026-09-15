@@ -30,14 +30,17 @@ class ReminderCubit extends Cubit<ReminderState> {
     await repository.add(carNumber, reminder);
     emit(state.copyWith(reminders: updated));
 
-    pushHelper.scheduleNotification(
-      id: reminder.id.hashCode,
-      title: reminder.title,
-      body: reminder.description,
-      dateTime: reminder.dateTime.toLocal(),
-    );
-
-    debugPrint('Notification scheduled for ${reminder.dateTime} with id ${reminder.id}');
+    try {
+      await pushHelper.scheduleNotification(
+        id: reminder.id.hashCode,
+        title: reminder.title,
+        body: reminder.description,
+        dateTime: reminder.dateTime.toLocal(),
+      );
+      debugPrint('Notification scheduled for ${reminder.dateTime} with id ${reminder.id}');
+    } catch (e, st) {
+      debugPrint('Failed to schedule notification for ${reminder.id}: $e\n$st');
+    }
   }
 
   Future<void> updateReminder(ReminderModel reminder) async {
@@ -45,14 +48,17 @@ class ReminderCubit extends Cubit<ReminderState> {
     await repository.update(carNumber, reminder);
     emit(state.copyWith(reminders: updated));
 
-    pushHelper.scheduleNotification(
-      id: reminder.id.hashCode,
-      title: reminder.title,
-      body: reminder.description,
-      dateTime: reminder.dateTime.toLocal(),
-    );
-
-    debugPrint('Notification updated for ${reminder.dateTime} with id ${reminder.id}');
+    try {
+      await pushHelper.scheduleNotification(
+        id: reminder.id.hashCode,
+        title: reminder.title,
+        body: reminder.description,
+        dateTime: reminder.dateTime.toLocal(),
+      );
+      debugPrint('Notification updated for ${reminder.dateTime} with id ${reminder.id}');
+    } catch (e, st) {
+      debugPrint('Failed to reschedule notification for ${reminder.id}: $e\n$st');
+    }
   }
 
   Future<void> deleteReminder(String reminderId) async {

@@ -20,6 +20,7 @@ import 'package:fines_plus/features/settings/presentation/cubit/settings_cubit.d
 import 'package:fines_plus/features/statistics/presentation/screens/statistics_screen.dart';
 import 'package:fines_plus/features/vehicle/presentation/cubit/car_cubit.dart';
 import 'package:fines_plus/app/router/home_screen_wrapper.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -239,7 +240,7 @@ class AnalyticsScreenViewState extends State<_AnalyticsScreenView> with SingleTi
                             reminderRepository: context.read<ReminderRepository>(),
                             pushHelper: context.read<PushHelper>(),
                             carNumber: context.read<CarCubit>().state.carId,
-                            ownerId: context.read<CarCubit>().state.carNumber,
+                            ownerId: FirebaseAuth.instance.currentUser?.uid ?? '',
                           ),
                         ],
                       ),

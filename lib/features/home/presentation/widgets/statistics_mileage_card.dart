@@ -38,11 +38,11 @@ class StatisticsMileageCard extends StatelessWidget {
                   const SizedBox(width: 12),
 
                   Expanded(
-                    child: StreamBuilder<double>(
-                      stream: unitStream.unitValueStream(presenter.mileageThisMonth.toDouble()),
-                      initialData: unitStream.convert(presenter.mileageThisMonth.toDouble()),
-                      builder: (context, snapshot) {
-                        final value = hasCar ? snapshot.data ?? 0.0 : 0.0;
+                    child: Builder(
+                      builder: (context) {
+                        final value = hasCar
+                            ? unitStream.convert(presenter.mileageThisMonth.toDouble())
+                            : 0.0;
                         return _AmountBlock(
                           label: "${presenter.monthLabel} ${DateTime.now().year}",
                           amount: value.toStringAsFixed(0),

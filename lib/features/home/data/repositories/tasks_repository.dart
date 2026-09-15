@@ -83,6 +83,19 @@ class TasksRepository {
     return tasks.contains(category.toLowerCase());
   }
 
+  /// Live-updates as the active car's `quickActionTasks` change in Firestore
+  /// — a task created/removed on another device reaches this one
+  /// immediately instead of only on the next explicit [hasActiveTask] poll.
+  Stream<List<String>> watchActiveCategories({required String carNumber}) {
+    final user = FirebaseAuth.instance.currentUser;
+    if (carNumber.isEmpty || user == null) return const Stream.empty();
+
+    return _carsCollection(user.uid).doc(carNumber).snapshots().map((doc) {
+      final tasks = List<String>.from(doc.data()?['quickActionTasks'] ?? []);
+      return tasks.map((t) => t.toLowerCase()).toList();
+    });
+  }
+
   Future<bool> hasTaskOfType(String type) async {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) return false;

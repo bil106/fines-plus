@@ -76,17 +76,11 @@ class MainStatsCard extends StatelessWidget {
                               ),
                             ),
 
-                            StreamBuilder<double>(
-                              stream: unitStream.unitValueStream(
-                                stats.lastOdometer.toDouble(),
-                              ),
-                              initialData: unitStream.convert(
-                                stats.lastOdometer.toDouble(),
-                              ),
-                              builder: (context, snapshot) {
-                                final mileageValue =
-                                    snapshot.data ??
-                                    stats.lastOdometer.toDouble();
+                            Builder(
+                              builder: (context) {
+                                final mileageValue = unitStream.convert(
+                                  stats.lastOdometer.toDouble(),
+                                );
                                 final unit = settingsCubit.state.unit == 'mil'
                                     ? 'mil'
                                     : S.of(context).km;
@@ -137,13 +131,11 @@ class MainStatsCard extends StatelessWidget {
                         size: 24,
                       ),
                       const SizedBox(height: 4),
-                      StreamBuilder<double>(
-                        stream: unitStream.fuelConsumptionStream(
-                          stats.averageFuelConsumption,
-                        ),
-                        builder: (context, snapshot) {
-                          final value =
-                              snapshot.data ?? stats.averageFuelConsumption;
+                      Builder(
+                        builder: (context) {
+                          final value = unitStream.convertFuel(
+                            stats.averageFuelConsumption,
+                          );
                           final fuelUnit =
                               settingsCubit.state.fuelConsumptionUnit;
 

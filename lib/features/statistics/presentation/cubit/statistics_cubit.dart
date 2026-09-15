@@ -5,6 +5,7 @@ import 'package:core_localization/generated/l10n.dart';
 import 'package:fines_plus/features/expenses/data/models/car_wash_record.dart';
 import 'package:fines_plus/features/expenses/data/models/fuel_record.dart';
 import 'package:fines_plus/features/expenses/data/models/service_record.dart';
+import 'package:fines_plus/features/home/domain/entities/last_event_ui_model.dart';
 import 'package:fines_plus/features/maintenance/presentation/cubit/maintenance_cubit.dart';
 import 'package:fines_plus/features/maintenance/presentation/cubit/maintenance_state.dart';
 import 'package:fines_plus/features/statistics/presentation/cubit/statistics_state.dart';
@@ -53,7 +54,7 @@ class StatisticsCubit extends Cubit<StatisticsState> {
     if (isClosed) return;
 
     emit(
-      state.copyWith(
+      StatisticsState(
         loading: false,
         currentMonthMileage: currentMonthMileage.toDouble(),
         averageMileage: averageMileage.toDouble(),
@@ -63,8 +64,37 @@ class StatisticsCubit extends Cubit<StatisticsState> {
         previousExpenseStats: prevExpenseStats,
         fuelRecords: maintenanceState.fuelRecords,
         averageFuelConsumption: avgFuelConsumption,
+        lastEvent: _computeLastEvent(maintenanceState),
       ),
     );
+  }
+
+  /// Picks the record with the highest odometer reading across all
+  /// categories (matching the "last event" semantics the Home screen used
+  /// before this was live — the most recently *driven-to* record, not
+  /// necessarily the most recently entered one).
+  LastEventUiModel? _computeLastEvent(MaintenanceState state) {
+    LastEventUiModel? best;
+    void consider(LastEventUiModel candidate) {
+      if (best == null || (candidate.mileage ?? 0) > (best!.mileage ?? 0)) {
+        best = candidate;
+      }
+    }
+
+    for (final r in state.serviceRecords) {
+      consider(LastEventUiModel.fromService(r));
+    }
+    for (final r in state.fuelRecords) {
+      consider(LastEventUiModel.fromFuel(r));
+    }
+    for (final r in state.tuningRecords) {
+      consider(LastEventUiModel.fromTuning(r));
+    }
+    for (final r in state.carWashRecords) {
+      consider(LastEventUiModel.fromCarWash(r));
+    }
+
+    return best;
   }
 
   int _getLastOdometer(MaintenanceState state) {
@@ -153,7 +183,7 @@ class StatisticsCubit extends Cubit<StatisticsState> {
 
 void clearStats() {
     emit(
-      state.copyWith(
+      StatisticsState(
         loading: false,
         currentMonthMileage: 0,
         averageMileage: 0,
@@ -163,6 +193,7 @@ void clearStats() {
         previousExpenseStats: MonthlyExpenseStats.empty(),
         fuelRecords: const [],
         averageFuelConsumption: 0.0,
+        lastEvent: null,
       ),
     );
   }

@@ -142,18 +142,34 @@ class AppInitializer {
       final androidImpl = flutterLocalNotificationsPlugin
           .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
       if (androidImpl != null) {
-        const String soundFileName = 'notify';
+        // No custom `sound:` — a channel's sound is locked in at creation
+        // time and can't be changed later short of deleting and recreating
+        // it, and every reminder notification posted through this channel
+        // (delivered via a cold-started BroadcastReceiver when the alarm
+        // fires, not the live app) was silently never reaching
+        // NotificationManager at all. The default system sound does not
+        // have that problem.
         const channel = AndroidNotificationChannel(
           'reminders_channel',
           'Reminder',
           description: 'Channel for reminders',
           importance: Importance.max,
           playSound: true,
-          sound: RawResourceAndroidNotificationSound(soundFileName),
         );
         await androidImpl.createNotificationChannel(channel);
         final granted = await androidImpl.requestNotificationsPermission();
         debugPrint('Android notifications permission granted: $granted');
+
+        // Reminders need to fire close to their actual due time — an
+        // inexact alarm can be deferred by the OS well past when it was
+        // scheduled for (observed: still not delivered a minute after the
+        // scheduled time on a fresh Android build). Exact alarms need this
+        // separate permission on Android 12+.
+        final canScheduleExact = await androidImpl.canScheduleExactNotifications();
+        if (canScheduleExact != true) {
+          final exactGranted = await androidImpl.requestExactAlarmsPermission();
+          debugPrint('Android exact alarms permission granted: $exactGranted');
+        }
       }
     }
 

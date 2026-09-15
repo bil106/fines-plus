@@ -222,6 +222,89 @@ Future<void> clearCarInfo() async {
   CollectionReference<Map<String, dynamic>> _carsCollection(String uid) =>
       firestore.collection('users').doc(uid).collection('cars');
 
+  /// Looks up a pre-existing car doc by its exact `carNumber`, so re-typing
+  /// a plate on a new device (which starts with a brand-new, empty `carId`)
+  /// can reattach to that car's real `carId` instead of silently relabeling
+  /// the new empty one and orphaning the old car's expenses/etc.
+  Future<CarInfoModel?> findCarByNumber(String carNumber, {String? excludeCarId}) async {
+    final user = auth.currentUser;
+    if (user == null || carNumber.isEmpty) return null;
+
+    final snap = await _carsCollection(user.uid).where('carNumber', isEqualTo: carNumber).limit(2).get();
+    final candidates = snap.docs.where((d) => d.id != excludeCarId);
+    if (candidates.isNotEmpty) {
+      final match = candidates.first;
+      final data = match.data();
+      debugPrint('findCarByNumber: matched real car doc ${match.id} for $carNumber');
+      return CarInfoModel(
+        carNumber: (data['carNumber'] as String?) ?? '',
+        techPassport: (data['techPassport'] as String?) ?? '',
+        ownerId: user.uid,
+        carId: match.id,
+        make: (data['make'] as String?) ?? '',
+        photoUrl: (data['photoUrl'] as String?) ?? '',
+      );
+    }
+
+    // Pre-carId installs used the plate itself as the Firestore doc id, and
+    // some never wrote any fields onto that parent doc — only its
+    // expenses/scheduleTasks subcollections — so it's a "phantom" doc that
+    // never shows up in the collection query above. Probe for that directly.
+    if (carNumber != excludeCarId) {
+      final legacyRef = _carsCollection(user.uid).doc(carNumber);
+      final legacyExpenses = await legacyRef.collection('expenses').limit(1).get();
+      debugPrint('findCarByNumber: legacy phantom-doc probe for $carNumber found ${legacyExpenses.docs.length} expense(s)');
+      if (legacyExpenses.docs.isNotEmpty) {
+        try {
+          await legacyRef.set({
+            'carId': carNumber,
+            'carNumber': carNumber,
+            'updatedAt': FieldValue.serverTimestamp(),
+          }, SetOptions(merge: true));
+        } catch (e) {
+          debugPrint('findCarByNumber: failed to backfill legacy car doc $carNumber: $e');
+        }
+        return CarInfoModel(carNumber: carNumber, techPassport: '', ownerId: user.uid, carId: carNumber);
+      }
+    }
+
+    // Ukrainian plates deliberately only use letters that look identical in
+    // Latin and Cyrillic (A/А, B/В, C/С, E/Е, H/Н, K/К, M/М, O/О, P/Р, T/Т,
+    // X/Х) — a very old install (or a Cyrillic keyboard autocorrecting the
+    // input) could have saved the exact same-looking plate as Cyrillic text,
+    // which is a completely different, otherwise-invisible Firestore doc id.
+    final cyrillicVariant = _toCyrillicHomoglyph(carNumber);
+    if (cyrillicVariant != carNumber && cyrillicVariant != excludeCarId) {
+      final cyrillicRef = _carsCollection(user.uid).doc(cyrillicVariant);
+      final cyrillicExpenses = await cyrillicRef.collection('expenses').limit(1).get();
+      debugPrint(
+        'findCarByNumber: Cyrillic-lookalike probe for $carNumber ($cyrillicVariant) found ${cyrillicExpenses.docs.length} expense(s)',
+      );
+      if (cyrillicExpenses.docs.isNotEmpty) {
+        try {
+          await cyrillicRef.set({
+            'carId': cyrillicVariant,
+            'carNumber': carNumber,
+            'updatedAt': FieldValue.serverTimestamp(),
+          }, SetOptions(merge: true));
+        } catch (e) {
+          debugPrint('findCarByNumber: failed to backfill Cyrillic-lookalike car doc $cyrillicVariant: $e');
+        }
+        return CarInfoModel(carNumber: carNumber, techPassport: '', ownerId: user.uid, carId: cyrillicVariant);
+      }
+    }
+
+    return null;
+  }
+
+  static const _latinToCyrillicHomoglyphs = {
+    'A': 'А', 'B': 'В', 'C': 'С', 'E': 'Е', 'H': 'Н',
+    'I': 'І', 'K': 'К', 'M': 'М', 'O': 'О', 'P': 'Р', 'T': 'Т', 'X': 'Х',
+  };
+
+  String _toCyrillicHomoglyph(String latin) =>
+      latin.split('').map((c) => _latinToCyrillicHomoglyphs[c] ?? c).join();
+
   /// All of the signed-in user's cars — the "garage".
   Stream<List<CarInfoModel>> streamCars() {
     final user = auth.currentUser;

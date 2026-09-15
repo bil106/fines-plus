@@ -26,7 +26,19 @@ class GarageCubit extends Cubit<GarageState> {
     });
   }
 
+  /// If [carNumber] is a plate this account already has a car under (e.g.
+  /// added earlier from another device), switches to that existing car
+  /// instead of minting a duplicate with a fresh carId and orphaning its
+  /// expenses/etc.
   Future<void> addCar({String carNumber = '', String techPassport = '', String make = '', String photoUrl = ''}) async {
+    if (carNumber.isNotEmpty) {
+      final existing = await repository.findCarByNumber(carNumber);
+      if (existing != null) {
+        await carCubit.switchActiveCar(existing);
+        return;
+      }
+    }
+
     final car = await repository.addCar(
       carNumber: carNumber,
       techPassport: techPassport,

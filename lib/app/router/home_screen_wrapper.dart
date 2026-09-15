@@ -187,14 +187,17 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
     final hasSubscription = (kDebugMode || Env.iosBypassSubscription || Platform.isIOS) ? true : await context.read<RegistrationCubit>().checkSubscription();
     if (!mounted) return;
 
-    final targetPage = hasSubscription ? HomePage.home : HomePage.subscription;
-    final index = _pageIndexMap[targetPage] ?? 0;
-
-    if (_pageController.hasClients) {
-      _pageController.jumpToPage(index);
+    // Only the "subscription required" case needs to force a page change —
+    // jumping to home unconditionally here raced with the user's own
+    // navigation (e.g. tapping the settings gear right after launch, before
+    // this async check resolved) and snapped them back to Home mid-tap.
+    if (!hasSubscription) {
+      final index = _pageIndexMap[HomePage.subscription]!;
+      if (_pageController.hasClients) {
+        _pageController.jumpToPage(index);
+      }
+      setState(() => _currentIndex = index);
     }
-
-    setState(() => _currentIndex = index);
   }
 
   void _saveCarInfo(String carNumber, String series, String number) async {
@@ -225,7 +228,13 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
       return;
     }
 
-    _pageController.animateToPage(index, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+    // These 20 pages aren't an ordered strip — they're arbitrary, unrelated
+    // app screens sharing one PageView as a navigation stack. animateToPage
+    // scrolls linearly through every index in between on its way to the
+    // target, which visibly flashes through unrelated screens (e.g. Home ->
+    // Settings flipped through Fines and Statistics). jumpToPage cuts
+    // straight there instead.
+    _pageController.jumpToPage(index);
 
     setState(() => _currentIndex = index);
   }
@@ -233,7 +242,7 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
   void openAnalyticsTab(int tabIndex) {
     _analyticsTabIndex = tabIndex;
     final index = _pageIndexMap[HomePage.analytics]!;
-    _pageController.animateToPage(index, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+    _pageController.jumpToPage(index);
     setState(() => _currentIndex = index);
   }
 
@@ -328,8 +337,8 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
                 create: (_) {
                   final cubit = ReminderCubit(
                     repository: context.read<ReminderRepository>(),
-                    carNumber: carNumber,
-                    ownerId: '',
+                    carNumber: carId,
+                    ownerId: FirebaseAuth.instance.currentUser?.uid ?? '',
                     pushHelper: context.read<PushHelper>(),
                   );
 
@@ -339,7 +348,7 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
                 child: RemindersScreen(
                   key: ValueKey('reminders_$carNumber'),
                   onBack: () => openPage(HomePage.home),
-                  ownerId: '',
+                  ownerId: FirebaseAuth.instance.currentUser?.uid ?? '',
                 ),
               ),
 
@@ -440,7 +449,7 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
                           reminderRepository: reminderRepository,
                           pushHelper: PushHelper(FlutterLocalNotificationsPlugin()),
                           carNumber: carId,
-                          ownerId: '',
+                          ownerId: FirebaseAuth.instance.currentUser?.uid ?? '',
                         );
                       },
                     );

@@ -2,17 +2,22 @@
 
 import 'package:fines_plus/core/extensions/monthly_expense_stats.dart';
 import 'package:fines_plus/features/expenses/data/models/fuel_record.dart';
+import 'package:fines_plus/features/home/domain/entities/last_event_ui_model.dart';
 
 class StatisticsState {
   final bool loading;
   final double currentMonthMileage;
   final double averageMileage;
-  final MonthlyExpenseStats expenseStats; 
-  final MonthlyExpenseStats previousExpenseStats; 
+  final MonthlyExpenseStats expenseStats;
+  final MonthlyExpenseStats previousExpenseStats;
   final List<FuelRecord> fuelRecords;
   final double averageFuelConsumption;
   final double previousMonthMileage;
   final int lastOdometer;
+  // Nullable and meaningfully so (no event yet) — deliberately NOT part of
+  // [copyWith] below, since copyWith's usual `param ?? this.field` pattern
+  // can never express "clear this back to null".
+  final LastEventUiModel? lastEvent;
 
   StatisticsState({
     required this.loading,
@@ -24,6 +29,7 @@ class StatisticsState {
     required this.averageFuelConsumption,
     required this.previousMonthMileage,
     required this.lastOdometer,
+    this.lastEvent,
   });
 
   factory StatisticsState.initial() => StatisticsState(
@@ -36,6 +42,7 @@ class StatisticsState {
     averageFuelConsumption: 0,
     previousMonthMileage: 0,
     lastOdometer: 0,
+    lastEvent: null,
   );
 
   StatisticsState copyWith({
@@ -59,6 +66,7 @@ class StatisticsState {
       averageFuelConsumption: averageFuelConsumption ?? this.averageFuelConsumption,
       previousMonthMileage: previousMonthMileage ?? this.previousMonthMileage,
       lastOdometer: lastOdometer ?? this.lastOdometer,
+      lastEvent: lastEvent,
     );
   }
 }

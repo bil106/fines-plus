@@ -28,6 +28,7 @@ import 'package:fines_plus/features/schedule/data/repository/schedule_repository
 import 'package:fines_plus/features/maintenance/presentation/screens/service_screen.dart';
 import 'package:fines_plus/app/router/app_router.dart';
 import 'package:fines_plus/app/router/home_screen_wrapper.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -207,8 +208,8 @@ class _MaintenanceScreenView extends StatelessWidget {
                           repository: scheduleRepository,
                           reminderRepository: reminderRepository,
                           pushHelper: PushHelper(FlutterLocalNotificationsPlugin()),
-                          carNumber: '',
-                          ownerId: '',
+                          carNumber: cubit.carCubit.state.carId,
+                          ownerId: FirebaseAuth.instance.currentUser?.uid ?? '',
                         ),
                       );
                     },

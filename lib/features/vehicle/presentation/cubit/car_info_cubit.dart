@@ -20,9 +20,33 @@ import 'dart:io';
 class CarInfoCubit extends Cubit<CarInfoState> {
   final CarInfoRepository _repo;
   final HistoryCubit historyCubit;
+  StreamSubscription<String>? _tokenRefreshSub;
 
   CarInfoCubit(this._repo, this.historyCubit) : super(const CarInfoState()) {
     loadSavedCarInfo();
+
+    // getAPNSToken() in _getFcmTokenSafely can legitimately still be null
+    // right after a fresh launch (APNs registration hasn't completed yet),
+    // in which case that one-shot attempt just gives up — this is the
+    // permanent fallback that saves the token the moment it (or a later
+    // refresh) actually becomes available, instead of never saving one and
+    // silently losing push notifications for the rest of the session.
+    _tokenRefreshSub = FirebaseMessaging.instance.onTokenRefresh.listen((token) async {
+      if (!carReg.hasMatch(state.carNumber)) return;
+      if (FirebaseAuth.instance.currentUser == null) return;
+      try {
+        await _repo.saveFcmToken(token);
+        debugPrint('CarInfoCubit: saved FCM token from onTokenRefresh');
+      } catch (e) {
+        debugPrint('CarInfoCubit: failed to save refreshed FCM token: $e');
+      }
+    });
+  }
+
+  @override
+  Future<void> close() {
+    _tokenRefreshSub?.cancel();
+    return super.close();
   }
 
   static final carReg = RegExp(r'^[A-Z]{2}\d{4}[A-Z]{2}$');

@@ -1,0 +1,65 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Функция проверки авторизации
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    // ================== Users ==================
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+
+      // Машины пользователя
+      match /cars/{carNumber} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+
+        // Все подколлекции машины (расходы, задачи обслуживания и любые будущие)
+        match /{document=**} {
+          allow read, write: if request.auth != null && request.auth.uid == userId;
+        }
+      }
+    }
+
+    // ================== Fines History ==================
+    match /fines_history/{docId} {
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+      allow read, update, delete: if isSignedIn() && resource.data.userId == request.auth.uid;
+    }
+
+    // ================== Analytics ==================
+    match /analytics/{carNumber}/months/{month} {
+      // Чтение разрешено только владельцу машины
+      allow read: if isSignedIn() &&
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)/cars/$(carNumber));
+    }
+
+    // ================== Reminders ==================
+    match /reminders/{carNumber}/items/{itemId} {
+      allow read, write, delete: if isSignedIn() &&
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)/cars/$(carNumber));
+    }
+
+    // ================== Partner Stats ==================
+    match /partnerStats/{partnerId} {
+      allow read, write, delete: if isSignedIn();
+    }
+
+    // ================== Purchases ==================
+    match /purchases/{purchaseId} {
+      allow create: if isSignedIn() &&
+        request.resource.data.uid == request.auth.uid &&
+        request.resource.data.amount is number &&
+        request.resource.data.months is int &&
+        request.resource.data.currency is string;
+
+      allow read, update, delete: if isSignedIn() && resource.data.uid == request.auth.uid;
+    }
+
+    // ================== Subscription Plans ==================
+    match /subscription_plans/{planId} {
+      allow read: if isSignedIn(); // все авторизованные могут читать
+    }
+  }
+}

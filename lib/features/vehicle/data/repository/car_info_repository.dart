@@ -22,6 +22,8 @@ class CarInfoRepository {
   Stream<List<CarInfoModel>> streamCars() => local.streamCars();
   Future<CarInfoModel> addCar({String carNumber = '', String techPassport = '', String make = '', String photoUrl = ''}) =>
       local.addCar(carNumber: carNumber, techPassport: techPassport, make: make, photoUrl: photoUrl);
+  Future<CarInfoModel?> findCarByNumber(String carNumber, {String? excludeCarId}) =>
+      local.findCarByNumber(carNumber, excludeCarId: excludeCarId);
   Future<void> updateCarFields(String carId, {String? carNumber, String? techPassport, String? make, String? photoUrl}) =>
       local.updateCarFields(carId, carNumber: carNumber, techPassport: techPassport, make: make, photoUrl: photoUrl);
   Future<void> switchActiveCar(CarInfoModel car) => local.switchActiveCar(car);
