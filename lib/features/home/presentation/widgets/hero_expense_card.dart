@@ -16,6 +16,7 @@ import 'package:fines_plus/features/settings/presentation/cubit/unit_stream.dart
 import 'package:fines_plus/features/statistics/presentation/cubit/statistics_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 /// The dashboard's headline expense summary: amount for the current month,
 /// the delta vs. last month, and a per-category breakdown bar - replaces
@@ -61,10 +62,13 @@ class HeroExpenseCard extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
       decoration: BoxDecoration(
         borderRadius: AppBorders.radius16,
+        // 155deg-ish diagonal + a stronger accent mix, matching the
+        // Fines+OS hero-tile token (26% brand-primary into the card
+        // surface) more closely than the original 18% wash.
         gradient: LinearGradient(
-          begin: Alignment.topRight,
-          end: Alignment.bottomLeft,
-          colors: [accent.withOpacity(0.18), AppColors.neutreBlanc],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [accent.withOpacity(0.26), AppColors.neutreBlanc],
         ),
         border: Border.all(color: AppColors.neutreGreyLight),
       ),
@@ -82,7 +86,14 @@ class HeroExpenseCard extends StatelessWidget {
             children: [
               Text(
                 hasCar ? presenter.currentFormatted : "0",
-                style: textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.w800),
+                // JetBrains Mono, tabular figures - matches the mockup's
+                // .hero-amount token (amounts don't jiggle width digit to
+                // digit like a proportional font would).
+                style: GoogleFonts.jetBrainsMono(
+                  textStyle: textTheme.headlineMedium,
+                  fontWeight: FontWeight.w700,
+                  fontFeatures: const [FontFeature.tabularFigures()],
+                ),
               ),
               const SizedBox(width: 4),
               Text(currency, style: textTheme.titleMedium?.copyWith(color: AppColors.grey700)),
