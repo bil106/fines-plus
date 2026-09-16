@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 class ThemeConfig {
   
   static ThemeData createTheme(AppConfig config) {
-    final primary = _hexToColor(config.primaryColorHex);
+    final primary = hexToColor(config.primaryColorHex);
 
     return ThemeData(
       colorScheme: ColorScheme.fromSeed(seedColor: primary),
@@ -43,7 +43,11 @@ class ThemeConfig {
     );
   }
 
-  static Color _hexToColor(String hex) {
+  /// Parses a '#RRGGBB' (or 'RRGGBB') brand color into a Color. Public so
+  /// widgets that need the raw brand accent (not the Material3 tonal
+  /// ColorScheme.primary derived from it) can reuse the same parsing logic
+  /// instead of duplicating it.
+  static Color hexToColor(String hex) {
     final buffer = StringBuffer();
     if (hex.length == 6 || hex.length == 7) buffer.write('ff');
     buffer.write(hex.replaceFirst('#', ''));

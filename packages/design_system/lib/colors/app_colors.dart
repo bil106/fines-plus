@@ -43,4 +43,13 @@ abstract final class AppColors {
   static const black26 = Color(0x42000000);
   static const neutreBlanc = Color(0xffFFFFFF);
   static const transparent = Color(0x00000000);
+
+  // Expense-category colors: fixed per category, independent of the
+  // active white-label brand (only the accent/primary color varies by
+  // brand - see ThemeConfig.hexToColor(config.primaryColorHex)).
+  static const catFuel = Color(0xFFFF9F1C);
+  static const catService = Color(0xFF00A896);
+  static const catTuning = Color(0xFF5B6CFF);
+  static const catCarWash = Color(0xFF22A6D9);
+  static const catOther = Color(0xFF9AA1AD);
 }
