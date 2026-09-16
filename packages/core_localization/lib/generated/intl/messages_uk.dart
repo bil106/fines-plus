@@ -347,7 +347,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "login": MessageLookupByLibrary.simpleMessage("Увійти"),
     "logo": MessageLookupByLibrary.simpleMessage("LOGO"),
-    "maintenance": MessageLookupByLibrary.simpleMessage("TO"),
+    "maintenance": MessageLookupByLibrary.simpleMessage("ТО"),
     "maintenance_control": MessageLookupByLibrary.simpleMessage("Контроль ТО"),
     "maintenance_due_body": m0,
     "maintenance_due_title": MessageLookupByLibrary.simpleMessage(

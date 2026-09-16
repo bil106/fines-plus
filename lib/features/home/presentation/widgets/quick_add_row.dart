@@ -40,7 +40,7 @@ class QuickAddRow extends StatelessWidget {
         Expanded(
           child: _QuickAddButton(
             dotColor: AppColors.catFuel,
-            label: S.of(context).fuel_up,
+            label: S.of(context).fuel,
             onTap: () async {
               await context.router.push<FuelRecord>(FuelUpRoute());
             },
@@ -50,7 +50,7 @@ class QuickAddRow extends StatelessWidget {
         Expanded(
           child: _QuickAddButton(
             dotColor: AppColors.catService,
-            label: S.of(context).service_icon,
+            label: S.of(context).maintenance,
             onTap: () async {
               final records = await Navigator.push<List<ServiceRecord>>(
                 context,
