@@ -10,7 +10,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class QuickActionsPanel extends StatelessWidget {
-  const QuickActionsPanel({super.key});
+  // Labels to hide, e.g. when a caller already offers a dedicated entry
+  // point for that category elsewhere (see the dashboard's quick-add row +
+  // "more" sheet, which excludes 'Service'/'Insurance' this way).
+  final Set<String> excludeLabelKeys;
+
+  const QuickActionsPanel({super.key, this.excludeLabelKeys = const {}});
 
   @override
   Widget build(BuildContext context) {
@@ -23,13 +28,16 @@ class QuickActionsPanel extends StatelessWidget {
 
     return BlocBuilder<QuickActionsCubit, QuickActionsState>(
       builder: (context, state) {
-        if (state.actions.isEmpty) {
+        final actions = state.actions
+            .where((a) => !excludeLabelKeys.contains(a.labelKey))
+            .toList();
+        if (actions.isEmpty) {
           return const SizedBox.shrink();
         }
 
         return GridView.builder(
           shrinkWrap: true,
-          itemCount: state.actions.length,
+          itemCount: actions.length,
           physics: const NeverScrollableScrollPhysics(),
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 4,
@@ -38,7 +46,7 @@ class QuickActionsPanel extends StatelessWidget {
             childAspectRatio: 1.68,
           ),
           itemBuilder: (context, index) {
-            final action = state.actions[index];
+            final action = actions[index];
 
             final isActive =
                 hasCar && state.activeCategories.map((e) => e.toLowerCase()).contains(action.labelKey.toLowerCase());
