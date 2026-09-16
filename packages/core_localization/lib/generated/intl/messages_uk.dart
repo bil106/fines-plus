@@ -355,6 +355,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "mileage": MessageLookupByLibrary.simpleMessage("Пробіг"),
     "more": MessageLookupByLibrary.simpleMessage("Ще"),
+    "recent_transactions": MessageLookupByLibrary.simpleMessage("Останні операції"),
     "mileage_stat": MessageLookupByLibrary.simpleMessage("Статистика пробігу"),
     "mileage_statistics": MessageLookupByLibrary.simpleMessage(
       "Статистика пробігу",

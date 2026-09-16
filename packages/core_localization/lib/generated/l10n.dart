@@ -619,6 +619,15 @@ class S {
     return Intl.message('More', name: 'more', desc: '', args: []);
   }
 
+  String get recent_transactions {
+    return Intl.message(
+      'Recent transactions',
+      name: 'recent_transactions',
+      desc: '',
+      args: [],
+    );
+  }
+
   String get mileage_statistics {
     return Intl.message(
       'Mileage statistics',

@@ -358,6 +358,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "mileage": MessageLookupByLibrary.simpleMessage("Mileage"),
     "more": MessageLookupByLibrary.simpleMessage("More"),
+    "recent_transactions": MessageLookupByLibrary.simpleMessage("Recent transactions"),
     "mileage_stat": MessageLookupByLibrary.simpleMessage("Mileage Statistics"),
     "mileage_statistics": MessageLookupByLibrary.simpleMessage(
       "Mileage statistics",
