@@ -123,6 +123,7 @@ flutter:
   
   assets:
     - assets/config/autolux.json
+    - assets/config/finesplus.json
     - assets/config/fastcar.json
     - assets/icons/map.png
     - assets/icons/google_logo.png
