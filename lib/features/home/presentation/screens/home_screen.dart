@@ -14,8 +14,8 @@ import 'package:fines_plus/features/vehicle/presentation/cubit/garage_state.dart
 import 'package:fines_plus/app/router/home_screen_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../widgets/main_stats_card.dart';
-import '../widgets/main_expense_tiles.dart';
+import '../widgets/hero_expense_card.dart';
+import '../widgets/quick_add_row.dart';
 import '../widgets/last_event_card.dart';
 import '../widgets/statistics_mileage_card.dart';
 import '../widgets/statistics_costs_card.dart';
@@ -122,6 +122,14 @@ class _HomeScreenState extends State<HomeScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               child: Column(
                 children: [
+                  BlocBuilder<CarCubit, CarState>(
+                    builder: (context, state) {
+                      if (state.carId.isEmpty) return const SizedBox.shrink();
+                      return const QuickAddRow();
+                    },
+                  ),
+                  AppSpacers.verticalSmallMedium,
+
                   BlocBuilder<StatisticsCubit, StatisticsState>(
                     builder: (context, state) {
                       if (state.loading &&
@@ -150,15 +158,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               lastOdometer: 0,
                             );
 
-                      return MainStatsCard(stats: stats);
-                    },
-                  ),
-
-                  AppSpacers.verticalXSmall,
-                  BlocBuilder<CarCubit, CarState>(
-                    builder: (context, state) {
-                      if (state.carId.isEmpty) return const SizedBox.shrink();
-                      return const MainExpenseTiles();
+                      return HeroExpenseCard(hasCar: hasCar, state: state, stats: stats);
                     },
                   ),
                   AppSpacers.verticalXSmall,
