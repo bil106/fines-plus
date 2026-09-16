@@ -99,6 +99,16 @@
             color: #ff6f00;
             margin-top: 0;
         }
+        .feature-item img {
+            width: 100%;
+            max-height: 320px;
+            object-fit: cover;
+            object-position: top;
+            border-radius: 10px;
+            margin-bottom: 16px;
+            display: block;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+        }
 
         /* Звіт для покупця */
         .sell-report {
@@ -110,6 +120,41 @@
             max-width: 700px;
             margin: 0 auto 30px;
             font-size: 1.1em;
+        }
+        .sell-report-layout {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 40px;
+            text-align: left;
+            flex-wrap: wrap;
+        }
+        .sell-report-layout .text-col {
+            max-width: 480px;
+        }
+        .sell-report-layout .text-col h2 {
+            text-align: left;
+            margin-bottom: 16px;
+        }
+        .sell-report-layout .text-col p {
+            margin: 0 0 20px;
+        }
+        .sell-report-layout .screenshot-col {
+            display: flex;
+            gap: 20px;
+        }
+        .sell-report-layout .screenshot-col img {
+            width: 200px;
+            border-radius: 20px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+            display: block;
+        }
+        @media (max-width: 700px) {
+            .sell-report-layout { text-align: center; }
+            .sell-report-layout .text-col h2 { text-align: center; }
+        }
+        @media (max-width: 480px) {
+            .sell-report-layout .screenshot-col img { width: 42vw; }
         }
 
         /* Отзывы */
@@ -214,18 +259,22 @@
             <h2>Ваші можливості з Fines+</h2>
             <div class="features-grid">
                 <div class="feature-item">
+                    <img src="screenshot-fines.png" alt="Перевірка штрафів у Fines+" loading="lazy">
                     <h3>🔍 Перевірка Штрафів</h3>
                     <p>Миттєва перевірка актуальних штрафів за номером авто та техпаспорта. Забудьте про прострочення.</p>
                 </div>
                 <div class="feature-item">
+                    <img src="screenshot-schedule.png" alt="Нагадування про сервіс у Fines+" loading="lazy">
                     <h3>⚙️ Сповіщення про Сервіс</h3>
                     <p>Автоматичні нагадування про планове ТО, заміну мастила та інші важливі процедури.</p>
                 </div>
                 <div class="feature-item">
+                    <img src="screenshot-analytics.png" alt="Аналітика витрат у Fines+" loading="lazy">
                     <h3>📊 Аналітика Витрат</h3>
                     <p>Ведення детальної історії та аналітики витрат на обслуговування. Генерація звітів (PDF/CSV).</p>
                 </div>
                 <div class="feature-item">
+                    <img src="screenshot-home.png" alt="Головний екран Fines+" loading="lazy">
                     <h3>📱 Зручний Інтерфейс</h3>
                     <p>Інтуїтивно зрозумілий дизайн та швидкий доступ до всіх функцій з будь-якого пристрою.</p>
                 </div>
@@ -235,10 +284,18 @@
 
     <section class="sell-report">
         <div class="container">
-            <h2>Продаєш авто? Передай всю історію обслуговування одним файлом</h2>
-            <p>Fines+ формує звіт для покупця — PDF з логотипом застосунку, поточним пробігом, повною історією ТО та всіма перевіреними штрафами. Це підвищує довіру покупця і прискорює продаж.</p>
-            <div class="cta-buttons">
-                <a href="https://play.google.com/store/apps/details?id=com.finesplus" class="cta-primary">Спробувати безкоштовно</a>
+            <div class="sell-report-layout">
+                <div class="text-col">
+                    <h2>Продаєш авто? Передай всю історію обслуговування одним файлом</h2>
+                    <p>Fines+ формує звіт для покупця — PDF з логотипом застосунку, поточним пробігом, повною історією ТО та всіма перевіреними штрафами. Це підвищує довіру покупця і прискорює продаж.</p>
+                    <div class="cta-buttons">
+                        <a href="https://play.google.com/store/apps/details?id=com.finesplus" class="cta-primary">Спробувати безкоштовно</a>
+                    </div>
+                </div>
+                <div class="screenshot-col">
+                    <img src="screenshot-history.png" alt="Історія обслуговування авто у Fines+" loading="lazy">
+                    <img src="screenshot-export.png" alt="Звіт для покупця у Fines+" loading="lazy">
+                </div>
             </div>
         </div>
     </section>
