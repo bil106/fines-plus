@@ -357,6 +357,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Maintenance due",
     ),
     "mileage": MessageLookupByLibrary.simpleMessage("Mileage"),
+    "more": MessageLookupByLibrary.simpleMessage("More"),
     "mileage_stat": MessageLookupByLibrary.simpleMessage("Mileage Statistics"),
     "mileage_statistics": MessageLookupByLibrary.simpleMessage(
       "Mileage statistics",

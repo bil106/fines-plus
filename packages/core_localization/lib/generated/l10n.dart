@@ -615,6 +615,10 @@ class S {
   }
 
   /// `Mileage statistics`
+  String get more {
+    return Intl.message('More', name: 'more', desc: '', args: []);
+  }
+
   String get mileage_statistics {
     return Intl.message(
       'Mileage statistics',

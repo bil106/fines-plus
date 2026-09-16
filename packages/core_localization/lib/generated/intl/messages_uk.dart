@@ -354,6 +354,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Потрібне обслуговування",
     ),
     "mileage": MessageLookupByLibrary.simpleMessage("Пробіг"),
+    "more": MessageLookupByLibrary.simpleMessage("Ще"),
     "mileage_stat": MessageLookupByLibrary.simpleMessage("Статистика пробігу"),
     "mileage_statistics": MessageLookupByLibrary.simpleMessage(
       "Статистика пробігу",
