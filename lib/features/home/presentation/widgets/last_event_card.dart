@@ -1,5 +1,6 @@
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
+import 'package:design_system/constants/app_borders.dart';
 import 'package:design_system/theme/app_theme.dart';
 import 'package:fines_plus/features/home/domain/entities/last_event_ui_model.dart';
 import 'package:fines_plus/features/settings/presentation/cubit/currency_stream.dart';
@@ -137,9 +138,15 @@ class LastEventCardAction extends StatelessWidget {
   }
 
   static Widget _buildCard({required Widget child}) {
-    return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
+    // Flat, bordered card matching the Fines+OS mockup's .car-card/.tier
+    // token (1px border, no drop shadow) - was a Material Card with
+    // theme-default elevation before this pass.
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.neutreBlanc,
+        border: Border.all(color: AppColors.dashboardCardBorder),
+        borderRadius: AppBorders.radius16,
+      ),
       child: Padding(
         padding: EdgeInsets.symmetric(vertical: 6.h, horizontal: 12.w),
         child: child,
