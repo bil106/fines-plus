@@ -36,7 +36,7 @@ class FuelChoiceChips extends StatelessWidget {
           label: Text(
             _label(fuel),
             style: TextStyle(
-              color: isSelected ? AppColors.neutreBlanc : AppColors.black87,
+              color: isSelected ? AppColors.white : AppColors.black87,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -44,7 +44,7 @@ class FuelChoiceChips extends StatelessWidget {
           selectedColor: AppColors.blue700,
           backgroundColor: AppColors.grey300,
           onSelected: (_) => onSelected(fuel),
-          checkmarkColor: AppColors.neutreBlanc,
+          checkmarkColor: AppColors.white,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         );
       }).toList(),

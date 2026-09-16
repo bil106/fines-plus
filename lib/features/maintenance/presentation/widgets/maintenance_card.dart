@@ -74,13 +74,13 @@ class MaintenanceCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const SizedBox(height: 4),
-                      Text(description, style: textTheme.black16bold),
+                      Text(description, style: textTheme.bodyStrong),
                     ],
                   ),
                 ),
 
                 IconButton(
-                  icon: Icon(Icons.settings, size: 20, color: AppColors.neutreGrey),
+                  icon: Icon(Icons.settings, size: 20, color: AppColors.grey400),
                   onPressed: () {
                     context.router.push(
                       SettingsRoute(
@@ -116,7 +116,7 @@ class MaintenanceCard extends StatelessWidget {
                         child: CircleAvatar(
                           radius: 10,
                           backgroundColor: isWarning! ? AppColors.red : AppColors.green,
-                          child: Icon(isWarning! ? Icons.error : Icons.check, color: AppColors.neutreBlanc, size: 14),
+                          child: Icon(isWarning! ? Icons.error : Icons.check, color: AppColors.white, size: 14),
                         ),
                       ),
                   ],
@@ -135,7 +135,7 @@ class MaintenanceCard extends StatelessWidget {
                           progress > 0.8 ? AppColors.red : AppColors.lightGreen,
                         ),
                       ),
-                      Text("${(progress * 100).toStringAsFixed(0)}%", style: textTheme.white14W400),
+                      Text("${(progress * 100).toStringAsFixed(0)}%", style: textTheme.whiteCaption),
                     ],
                   ),
                 ),
@@ -154,9 +154,9 @@ Row(
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text("${S.of(context).previous}:", style: textTheme.black13W400),
+              Text("${S.of(context).previous}:", style: textTheme.caption),
               const SizedBox(height: 2),
-              Text(priorExecution ?? "-", style: textTheme.black13W400),
+              Text(priorExecution ?? "-", style: textTheme.caption),
             ],
           ),
           const SizedBox(height: 4),
@@ -165,9 +165,9 @@ Row(
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text("${S.of(context).mileage}:", style: textTheme.black13W400),
+              Text("${S.of(context).mileage}:", style: textTheme.caption),
               const SizedBox(height: 2),
-              Text("${convert(lastMileage).toStringAsFixed(0)} $unit", style: textTheme.black13W400),
+              Text("${convert(lastMileage).toStringAsFixed(0)} $unit", style: textTheme.caption),
             ],
           ),
           const SizedBox(height: 4),
@@ -176,9 +176,9 @@ Row(
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text("${S.of(context).fact}:", style: textTheme.black13W400),
+              Text("${S.of(context).fact}:", style: textTheme.caption),
               const SizedBox(height: 2),
-              Text("${convert(actualMileage).toStringAsFixed(0)} $unit", style: textTheme.black13W400),
+              Text("${convert(actualMileage).toStringAsFixed(0)} $unit", style: textTheme.caption),
             ],
           ),
         ],
@@ -195,22 +195,22 @@ Row(
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(S.of(context).periodicity, style: textTheme.black13W400),
+              Text(S.of(context).periodicity, style: textTheme.caption),
               const SizedBox(height: 2),
-              Text("${convert(intervalKm).toStringAsFixed(0)} $unit", style: textTheme.black13W400),
+              Text("${convert(intervalKm).toStringAsFixed(0)} $unit", style: textTheme.caption),
             ],
           ),
           const SizedBox(height: 4),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text("${S.of(context).every}:", style: textTheme.black13W400),
+              Text("${S.of(context).every}:", style: textTheme.caption),
               const SizedBox(height: 2),
               Text(
                 intervalTime != null
                     ? "${intervalTime!.inDays} ${S.of(context).days}"
                     : "-",
-                style: textTheme.black13W400,
+                style: textTheme.caption,
               ),
             ],
           ),

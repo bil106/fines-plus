@@ -24,7 +24,7 @@ class TuningRecordCard extends StatelessWidget {
     final converted = currencyService.convert(record.cost, currency, fromCurrency: 'UAH');
 
     return Card(
-      color: AppColors.neutreBlanc,
+      color: AppColors.white,
       margin: const EdgeInsets.only(bottom: 12),
       shape: RoundedRectangleBorder(borderRadius: AppBorders.radiusLarge),
       child: Padding(

@@ -24,7 +24,7 @@ class ServiceRecordCard extends StatelessWidget {
     final convertedCost = settingsCubit.convertFromUAH(record.cost);
 
     return Card(
-      color: AppColors.neutreBlanc,
+      color: AppColors.white,
       margin: const EdgeInsets.only(bottom: 12),
       shape: RoundedRectangleBorder(borderRadius: AppBorders.radiusLarge),
       child: Padding(

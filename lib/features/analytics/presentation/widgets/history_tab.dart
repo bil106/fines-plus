@@ -23,7 +23,7 @@ class HistoryTab extends StatelessWidget {
       return  Center(
         child: Text(
           S.of(context).no_story,
-          style: Theme.of(context).textTheme.black16bold)
+          style: Theme.of(context).textTheme.bodyStrong)
         
       );
     }
@@ -53,7 +53,7 @@ class HistoryTab extends StatelessWidget {
                               fontWeight: FontWeight.bold,
                             ),
                       ),
-                      const Divider(color: AppColors.neutreGrey),
+                      const Divider(color: AppColors.grey400),
                     ],
                   ),
                 ),

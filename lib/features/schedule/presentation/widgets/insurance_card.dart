@@ -33,7 +33,7 @@ class InsuranceCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(S.of(context).insurance, style: textTheme.black16bold.copyWith(fontWeight: FontWeight.bold)),
+            Text(S.of(context).insurance, style: textTheme.bodyStrong.copyWith(fontWeight: FontWeight.bold)),
 
             const SizedBox(height: 12),
 
@@ -59,7 +59,7 @@ class InsuranceCard extends StatelessWidget {
                           progress > 0.8 ? AppColors.red : AppColors.lightGreen,
                         ),
                       ),
-                      Text("${(progress * 100).toStringAsFixed(0)}%", style: textTheme.white14W400),
+                      Text("${(progress * 100).toStringAsFixed(0)}%", style: textTheme.whiteCaption),
                     ],
                   ),
                 ),
@@ -74,9 +74,9 @@ class InsuranceCard extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text("${S.of(context).previous}:", style: textTheme.black13W400),
+                      Text("${S.of(context).previous}:", style: textTheme.caption),
                       const SizedBox(height: 2),
-                      Text(priorExecution ?? "-", style: textTheme.black13W400),
+                      Text(priorExecution ?? "-", style: textTheme.caption),
                     ],
                   ),
                 ),
@@ -84,7 +84,7 @@ class InsuranceCard extends StatelessWidget {
                 const SizedBox(width: 8),
                 Text(
                   intervalTime != null ? "${S.of(context).every} ${intervalTime!.inDays} ${S.of(context).days}" : "-",
-                  style: textTheme.black13W400,
+                  style: textTheme.caption,
                 ),
               ],
             ),

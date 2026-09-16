@@ -47,7 +47,7 @@ class _MileageCardState extends State<MileageCard> {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: AppColors.neutreBlanc,
+      color: AppColors.white,
       margin: const EdgeInsets.symmetric(vertical: 6),
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,

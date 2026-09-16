@@ -158,13 +158,13 @@ class _GarageSetupScreenState extends State<GarageSetupScreen> {
                       child: _isUploadingPhoto
                           ? const CircularProgressIndicator(strokeWidth: 2)
                           : (_photoUrl.isEmpty
-                                ? const Icon(Icons.add_a_photo_outlined, color: AppColors.neutreGrey)
+                                ? const Icon(Icons.add_a_photo_outlined, color: AppColors.grey400)
                                 : null),
                     ),
                   ),
                 ),
                 AppSpacers.verticalMedium,
-                Text(S.of(context).garage_make_label, style: textTheme.black28W600),
+                Text(S.of(context).garage_make_label, style: textTheme.sectionHeading),
                 AppSpacers.verticalSmall,
                 DropdownButtonFormField<String>(
                   initialValue: _selectedMake,
@@ -189,7 +189,7 @@ class _GarageSetupScreenState extends State<GarageSetupScreen> {
                   ),
                 ),
                 AppSpacers.verticalMedium,
-                Text(S.of(context).car_number, style: textTheme.black28W600),
+                Text(S.of(context).car_number, style: textTheme.sectionHeading),
                 AppSpacers.verticalSmall,
                 TextField(
                   controller: _carNumberController,
@@ -205,7 +205,7 @@ class _GarageSetupScreenState extends State<GarageSetupScreen> {
                   ),
                 ),
                 AppSpacers.verticalMedium,
-                Text(S.of(context).reg_number, style: textTheme.black28W600),
+                Text(S.of(context).reg_number, style: textTheme.sectionHeading),
                 AppSpacers.verticalSmall,
                 TextField(
                   controller: _techPassportController,
@@ -222,7 +222,7 @@ class _GarageSetupScreenState extends State<GarageSetupScreen> {
                 AppSpacers.verticalSmall,
                 Text(
                   S.of(context).car_number_fines_hint,
-                  style: textTheme.bodySmall?.copyWith(color: AppColors.neutreGrey),
+                  style: textTheme.bodySmall?.copyWith(color: AppColors.grey400),
                 ),
                 AppSpacers.verticalXXLarge,
 

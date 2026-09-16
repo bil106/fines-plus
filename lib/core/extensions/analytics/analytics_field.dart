@@ -15,7 +15,7 @@ class AnalyticsField extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-      decoration: BoxDecoration(color: AppColors.neutreBlanc, borderRadius: AppBorders.radiusLarge),
+      decoration: BoxDecoration(color: AppColors.white, borderRadius: AppBorders.radiusLarge),
       child: Row(
         children: [
           Expanded(
@@ -24,7 +24,7 @@ class AnalyticsField extends StatelessWidget {
               keyboardType: TextInputType.number,
               decoration: InputDecoration(
                 hintText: S.of(context).enter_mileage,
-                hintStyle: textTheme.hintAnalitText,
+                hintStyle: textTheme.hintCaption,
                 focusedBorder: InputBorder.none,
                 border: InputBorder.none,
               ),
@@ -32,7 +32,7 @@ class AnalyticsField extends StatelessWidget {
             ),
           ),
           if (trailing != null) trailing!,
-          Icon(Icons.info_outline, color: AppColors.neutreGrey, size: 35),
+          Icon(Icons.info_outline, color: AppColors.grey400, size: 35),
         ],
       ),
     );

@@ -14,12 +14,12 @@ class UnauthorizedDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     return AlertDialog(
-      title: Text(S.of(context).not_auth, style: textTheme.blue28W400),
-      content: Text(S.of(context).please_log_in, style: textTheme.black16bold),
+      title: Text(S.of(context).not_auth, style: textTheme.headingAccent),
+      content: Text(S.of(context).please_log_in, style: textTheme.bodyStrong),
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: Text(S.current.close, style: textTheme.blue20W400),
+          child: Text(S.current.close, style: textTheme.statusAccent),
         ),
     TextButton(
   onPressed: () {

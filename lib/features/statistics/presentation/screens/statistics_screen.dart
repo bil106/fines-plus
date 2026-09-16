@@ -44,7 +44,7 @@ class _StatisticsScreenView extends StatelessWidget {
         final expenseStats = state.expenseStats;
 
         if (expenseStats.total == 0) {
-          return Center(child: Text(S.of(context).no_expenses, style: Theme.of(context).textTheme.black16bold));
+          return Center(child: Text(S.of(context).no_expenses, style: Theme.of(context).textTheme.bodyStrong));
         }
         final monthLabel = state.expenseStats.monthLabel;
         return SingleChildScrollView(
@@ -64,8 +64,8 @@ class _StatisticsScreenView extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(S.of(context).mileage_statistics, style: textTheme.black16bold),
-                      const Divider(color: AppColors.neutreGrey),
+                      Text(S.of(context).mileage_statistics, style: textTheme.bodyStrong),
+                      const Divider(color: AppColors.grey400),
                       AppSpacers.verticalSmall,
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -77,7 +77,7 @@ class _StatisticsScreenView extends StatelessWidget {
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(monthLabel, style: textTheme.black16bold),
+                                  Text(monthLabel, style: textTheme.bodyStrong),
                                   BlocSelector<MaintenanceCubit, MaintenanceState, int>(
                                     selector: (state) => context.read<MaintenanceCubit>().getAverageMileage(),
                                     builder: (context, averageMileage) {
@@ -93,7 +93,7 @@ class _StatisticsScreenView extends StatelessWidget {
 
                                           return Text(
                                             "${value.toStringAsFixed(0)} $unit",
-                                            style: textTheme.black16bold,
+                                            style: textTheme.bodyStrong,
                                           );
                                         },
                                       );
@@ -119,7 +119,7 @@ class _StatisticsScreenView extends StatelessWidget {
                                       final value = snapshot.data ?? averageMileage.toDouble();
                                       final unit = settingsCubit.state.unit == 'mil' ? 'mil' : 'km';
 
-                                      return Text("${value.toStringAsFixed(0)} $unit", style: textTheme.green20W400);
+                                      return Text("${value.toStringAsFixed(0)} $unit", style: textTheme.statusPositive);
                                     },
                                   );
                                 },
@@ -132,11 +132,11 @@ class _StatisticsScreenView extends StatelessWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text(S.of(context).month, style: textTheme.grey12W400),
+                          Text(S.of(context).month, style: textTheme.captionMuted),
                           AppSpacers.horizontalMassive,
-                          Container(height: 20, width: 2, color: AppColors.neutreGrey),
+                          Container(height: 20, width: 2, color: AppColors.grey400),
                           AppSpacers.horizontalMassive,
-                          Text(S.of(context).average, style: textTheme.grey12W400),
+                          Text(S.of(context).average, style: textTheme.captionMuted),
                         ],
                       ),
                     ],

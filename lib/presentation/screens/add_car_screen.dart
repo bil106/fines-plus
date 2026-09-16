@@ -123,7 +123,7 @@ class _AddCarScreenState extends State<AddCarScreen> {
                               child: Text(
                                 S.of(context).subscription,
                                 style: textTheme.titleMedium?.copyWith(
-                                  color: AppColors.neutreBlanc,
+                                  color: AppColors.white,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -166,7 +166,7 @@ Widget buildGradientSquare(String assetImage, String text, TextTheme textTheme) 
           text,
           textAlign: TextAlign.left,
           style: textTheme.titleMedium?.copyWith(
-            color: AppColors.neutreBlanc,
+            color: AppColors.white,
             fontWeight: FontWeight.bold,
             fontSize: 20,
           ),

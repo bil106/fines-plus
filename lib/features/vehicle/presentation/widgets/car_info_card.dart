@@ -16,7 +16,7 @@ class CarInfoCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: AppColors.neutreBlanc,
+      color: AppColors.white,
       shape: RoundedRectangleBorder(borderRadius: AppBorders.radius22),
       elevation: 4,
       child: Padding(
@@ -25,10 +25,10 @@ class CarInfoCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
          
-            Text('${data['brand'] ?? '-'} ${data['model'] ?? '-'}', style: textTheme.black16bold),
-            Text('Рік випуску: ${data['make_year']?.toString() ?? '-'}', style: textTheme.black14bold),
-            Text('Вартість номера: ${data['plate_cost']?.toString() ?? '-'} грн.', style: textTheme.green20W400),
-            Text('Причина вартості: ${data['plate_cost_reason'] ?? '-'}', style: textTheme.black14bold),
+            Text('${data['brand'] ?? '-'} ${data['model'] ?? '-'}', style: textTheme.bodyStrong),
+            Text('Рік випуску: ${data['make_year']?.toString() ?? '-'}', style: textTheme.captionStrong),
+            Text('Вартість номера: ${data['plate_cost']?.toString() ?? '-'} грн.', style: textTheme.statusPositive),
+            Text('Причина вартості: ${data['plate_cost_reason'] ?? '-'}', style: textTheme.captionStrong),
             AppSpacers.verticalMedium,
 
           
@@ -65,7 +65,7 @@ class CarInfoCard extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Останній запис', style: textTheme.black16bold),
+                  Text('Останній запис', style: textTheme.bodyStrong),
                   _buildText('Дата запису', data['last_record_date']),
                   _buildText('Держ. номер', data['last_plate']),
                   _buildText('Запис', data['last_record']),
@@ -88,8 +88,8 @@ class CarInfoCard extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(label, style: textTheme.black14bold),
-              Text(value?.toString() ?? '-', style: textTheme.black14bold),
+              Text(label, style: textTheme.captionStrong),
+              Text(value?.toString() ?? '-', style: textTheme.captionStrong),
             ],
           ),
         ],
@@ -100,7 +100,7 @@ class CarInfoCard extends StatelessWidget {
   Widget _buildText(String label, dynamic value) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 2),
-      child: Text('$label: ${value?.toString() ?? '-'}', style: textTheme.black14bold),
+      child: Text('$label: ${value?.toString() ?? '-'}', style: textTheme.captionStrong),
     );
   }
 }

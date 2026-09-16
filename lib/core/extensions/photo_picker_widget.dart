@@ -30,7 +30,7 @@ class _PhotoPickerWidgetState extends State<PhotoPickerWidget> {
             margin: const EdgeInsets.only(top: 8),
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              border: Border.all(color: AppColors.neutreGrey),
+              border: Border.all(color: AppColors.grey400),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Row(

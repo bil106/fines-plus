@@ -107,12 +107,16 @@ class GarageScreen extends StatelessWidget {
                 return _CarCard(
                   car: car,
                   isActive: isActive,
-                  onTap: isActive
-                      ? null
-                      : () => _runOrShowError(
-                          context,
-                          () => context.read<GarageCubit>().switchTo(car),
-                        ),
+                  onTap: () async {
+                    if (!isActive) {
+                      await _runOrShowError(
+                        context,
+                        () => context.read<GarageCubit>().switchTo(car),
+                      );
+                      if (!context.mounted) return;
+                    }
+                    context.findAncestorStateOfType<HomeScreenWrapperState>()?.openPage(HomePage.home);
+                  },
                   onEdit: () async {
                     final result = await _showCarFormSheet(
                       context,
@@ -192,7 +196,7 @@ class _CarCard extends StatelessWidget {
     final title = hasNumber ? car.carNumber : S.of(context).garage_no_number;
 
     return Card(
-      color: AppColors.neutreBlanc,
+      color: AppColors.white,
       shape: RoundedRectangleBorder(
         borderRadius: AppBorders.radius18,
         side: isActive
@@ -222,15 +226,15 @@ class _CarCard extends StatelessWidget {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: hasNumber
-                          ? textTheme.black28W600
-                          : textTheme.black28W600.copyWith(fontSize: 18),
+                          ? textTheme.sectionHeading
+                          : textTheme.sectionHeading.copyWith(fontSize: 18),
                     ),
                     if (car.make.isNotEmpty)
                       Text(
                         car.make,
                         style: textTheme.bodySmall?.copyWith(
                           fontSize: 18,
-                          color: AppColors.neutreGreyDark,
+                          color: AppColors.greyDark,
                         ),
                       ),
                     if (isActive)
@@ -277,7 +281,7 @@ class _Thumbnail extends StatelessWidget {
       return CarMakeLogo(
         make: make,
         size: 36,
-        fallbackColor: isActive ? AppColors.blue700 : AppColors.neutreGrey,
+        fallbackColor: isActive ? AppColors.blue700 : AppColors.grey400,
       );
     }
 
@@ -290,7 +294,7 @@ class _Thumbnail extends StatelessWidget {
         fit: BoxFit.cover,
         errorBuilder: (_, __, ___) => Icon(
           Icons.directions_car,
-          color: isActive ? AppColors.blue700 : AppColors.neutreGrey,
+          color: isActive ? AppColors.blue700 : AppColors.grey400,
         ),
       ),
     );
@@ -422,7 +426,7 @@ Future<Map<String, String>?> _showCarFormSheet(
                             : (photoUrl.isEmpty && localPhotoPath.isEmpty
                                   ? const Icon(
                                       Icons.add_a_photo_outlined,
-                                      color: AppColors.neutreGrey,
+                                      color: AppColors.grey400,
                                     )
                                   : null),
                       ),
@@ -431,13 +435,14 @@ Future<Map<String, String>?> _showCarFormSheet(
                   AppSpacers.verticalMedium,
                   Text(
                     S.of(context).garage_make_label,
-                    style: textTheme.black28W600,
+                    style: textTheme.subheading,
                   ),
                   AppSpacers.verticalSmall,
                   DropdownButtonFormField<String>(
                     initialValue: selectedMake,
                     isExpanded: true,
                     hint: Text(S.of(context).garage_make_hint),
+                    style: textTheme.historyText,
                     items: carMakes
                         .map(
                           (m) => DropdownMenuItem(
@@ -464,7 +469,7 @@ Future<Map<String, String>?> _showCarFormSheet(
                     ),
                   ),
                   AppSpacers.verticalMedium,
-                  Text(S.of(context).car_number, style: textTheme.black28W600),
+                  Text(S.of(context).car_number, style: textTheme.subheading),
                   AppSpacers.verticalSmall,
                   TextField(
                     controller: carNumberController,
@@ -472,6 +477,7 @@ Future<Map<String, String>?> _showCarFormSheet(
                     inputFormatters: [VehicleNumberFormatter()],
                     textCapitalization: TextCapitalization.characters,
                     maxLength: 8,
+                    style: textTheme.historyText,
                     decoration: InputDecoration(
                       hintText: S.of(context).hint_auto_num,
                       counterText: '',
@@ -484,12 +490,13 @@ Future<Map<String, String>?> _showCarFormSheet(
                     ),
                   ),
                   AppSpacers.verticalMedium,
-                  Text(S.of(context).reg_number, style: textTheme.black28W600),
+                  Text(S.of(context).reg_number, style: textTheme.subheading),
                   AppSpacers.verticalSmall,
                   TextField(
                     controller: techPassportController,
                     inputFormatters: [TechPassportFormatter()],
                     maxLength: 9,
+                    style: textTheme.historyText,
                     decoration: InputDecoration(
                       hintText: S.of(context).hint_tech_data_num,
                       counterText: '',

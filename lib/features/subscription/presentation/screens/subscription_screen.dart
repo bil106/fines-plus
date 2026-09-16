@@ -243,7 +243,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                     end: Alignment.bottomRight,
                                   )
                                 : null,
-                            color: isSelected ? null : AppColors.neutreBlanc,
+                            color: isSelected ? null : AppColors.white,
                             borderRadius: BorderRadius.circular(20),
                             boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 6, offset: const Offset(0, 3))],
                           ),
@@ -260,7 +260,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                   child: Text(
                                     S.of(context).most_popular,
                                     style: TextStyle(
-                                      color: AppColors.neutreBlanc,
+                                      color: AppColors.white,
                                       fontWeight: FontWeight.bold,
                                       fontSize: 12,
                                     ),
@@ -274,7 +274,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                   style: TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w600,
-                                    color: isSelected ? AppColors.neutreBlanc : AppColors.blue700,
+                                    color: isSelected ? AppColors.white : AppColors.blue700,
                                   ),
                                 ),
 
@@ -289,7 +289,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                       overflow: TextOverflow.ellipsis,
                                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
                                         fontWeight: FontWeight.bold,
-                                        color: isSelected ? AppColors.neutreBlanc : AppColors.blue700,
+                                        color: isSelected ? AppColors.white : AppColors.blue700,
                                       ),
                                     ),
                                   ),
@@ -413,7 +413,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                             },
                             child: Text(
                               S.of(context).terms_of_use,
-                              style: textTheme.black16bold.copyWith(color: AppColors.blue700),
+                              style: textTheme.bodyStrong.copyWith(color: AppColors.blue700),
                               maxLines: 2,
                               softWrap: true,
                             ),
@@ -425,7 +425,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                             onTap: _openPrivacy,
                             child: Text(
                               S.of(context).privacy_policy,
-                              style: textTheme.black16bold.copyWith(color: AppColors.blue700),
+                              style: textTheme.bodyStrong.copyWith(color: AppColors.blue700),
                               maxLines: 2,
                               softWrap: true,
                               textAlign: TextAlign.right,
@@ -449,7 +449,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   Widget _buildPriceColumn(BuildContext context, Map<String, dynamic> plan, bool isSelected) {
     final productId = plan["productId"] as String;
     final store = _productDetails[productId];
-    final foreground = isSelected ? AppColors.neutreBlanc : AppColors.blue700;
+    final foreground = isSelected ? AppColors.white : AppColors.blue700;
     final secondary = isSelected ? Colors.white70 : Colors.grey.shade600;
 
     final String totalPrice;

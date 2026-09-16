@@ -21,12 +21,12 @@ class ActionItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final Color activeColor = AppColors.energyBlue;
-    final Color inactiveColor = AppColors.neutreGrey;
+    final Color inactiveColor = AppColors.grey400;
 
     return Material(
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      color: AppColors.neutreGrey100,
+      color: AppColors.grey100,
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
         onTap: onTap,

@@ -26,7 +26,7 @@ class DatePickerCard extends StatelessWidget {
         if (picked != null) onDateSelected(picked);
       },
       child: Card(
-        color: AppColors.neutreBlanc,
+        color: AppColors.white,
         margin: const EdgeInsets.symmetric(vertical: 8),
         child: Padding(
           padding: const EdgeInsets.all(12),

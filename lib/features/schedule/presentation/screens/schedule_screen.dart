@@ -273,7 +273,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     final hasCar = context.watch<CarCubit>().state.carId.isNotEmpty;
 
     if (!hasCar) {
-      return Center(child: Text(S.of(context).no_schedule, style: Theme.of(context).textTheme.black16bold));
+      return Center(child: Text(S.of(context).no_schedule, style: Theme.of(context).textTheme.bodyStrong));
     }
 
     if (scheduleCubit == null || reminderCubit == null) {

@@ -96,7 +96,7 @@ class LastEventCardAction extends StatelessWidget {
             children: [
               Text(
                 event?.description ?? '',
-                style: textTheme.black18W400,
+                style: textTheme.subtitleText,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -124,7 +124,7 @@ class LastEventCardAction extends StatelessWidget {
 
                     if (mileage != null) ...[
                       const SizedBox(width: 12),
-                      Text("${mileage.toStringAsFixed(0)} ${settingsCubit.state.unit}", style: textTheme.black8718W400),
+                      Text("${mileage.toStringAsFixed(0)} ${settingsCubit.state.unit}", style: textTheme.bodySoft),
                     ],
                   ],
                 ),

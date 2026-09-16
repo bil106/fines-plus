@@ -107,7 +107,7 @@ class _HistoryView extends StatelessWidget {
                     child: ListView.separated(
                       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                       itemCount: state.history.length,
-                      separatorBuilder: (_, __) => const Divider(color: AppColors.neutreGrey),
+                      separatorBuilder: (_, __) => const Divider(color: AppColors.grey400),
                       itemBuilder: (context, index) {
                         final item = state.history[index];
                         return _HistoryRecord(item: item);

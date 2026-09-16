@@ -147,7 +147,7 @@ class _TuningScreenState extends State<TuningScreen> {
                 child: IconButton(
                   icon: const CircleAvatar(
                     backgroundColor: AppColors.energyBlue,
-                    child: Icon(Icons.add, color: AppColors.neutreBlanc),
+                    child: Icon(Icons.add, color: AppColors.white),
                   ),
                   onPressed: () {
                     setState(() {
@@ -254,7 +254,7 @@ class _TuningScreenState extends State<TuningScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: AppColors.neutreBlanc,
+        color: AppColors.white,
         borderRadius: AppBorders.radiusLarge,
         border: Border.all(color: AppColors.grey300, width: 2),
       ),

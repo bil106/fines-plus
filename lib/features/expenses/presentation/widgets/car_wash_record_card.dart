@@ -19,7 +19,7 @@ class CarWashRecordCard extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
 
     return Card(
-      color: AppColors.neutreBlanc,
+      color: AppColors.white,
       margin: const EdgeInsets.only(bottom: 12),
       shape: RoundedRectangleBorder(borderRadius: AppBorders.radiusLarge),
       child: Padding(

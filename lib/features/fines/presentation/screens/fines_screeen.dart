@@ -157,7 +157,7 @@ class _FinesScreenState extends State<FinesScreen> {
                                         }
                                       : null,
                                   child: isLoading
-                                      ? const CircularProgressIndicator(color: AppColors.neutreBlanc)
+                                      ? const CircularProgressIndicator(color: AppColors.white)
                                       : Text(S.of(context).check_fines, style: Theme.of(context).textTheme.whiteNormal),
                                 ),
                               ),
@@ -193,7 +193,7 @@ class _FinesScreenState extends State<FinesScreen> {
                             width: double.infinity,
                             height: 110,
                             decoration: BoxDecoration(
-                              color: AppColors.neutreBlanc,
+                              color: AppColors.white,
                               borderRadius: AppBorders.radius16,
                               boxShadow: [
                                 BoxShadow(
@@ -210,7 +210,7 @@ class _FinesScreenState extends State<FinesScreen> {
                                   width: 35,
                                   height: 35,
                                   decoration: const BoxDecoration(color: AppColors.blue700, shape: BoxShape.circle),
-                                  child: const Icon(Icons.check, color: AppColors.neutreBlanc, size: 26),
+                                  child: const Icon(Icons.check, color: AppColors.white, size: 26),
                                 ),
                                 AppSpacers.horizontalLarge,
                                 Expanded(child: Text(S.of(context).no_fines, style: textTheme.noFinesText)),

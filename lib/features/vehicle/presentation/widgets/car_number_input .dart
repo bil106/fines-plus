@@ -28,7 +28,7 @@ class CarNumberInput extends StatelessWidget {
         );
 
         return Card(
-          color: AppColors.neutreBlanc,
+          color: AppColors.white,
           shape: RoundedRectangleBorder(borderRadius: AppBorders.radius22),
           elevation: 4,
           child: Padding(
@@ -36,14 +36,14 @@ class CarNumberInput extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(S.of(context).car_number, style: textTheme.black28W600),
+                Text(S.of(context).car_number, style: textTheme.sectionHeading),
                 AppSpacers.verticalSmall,
                 TextField(
                   controller: controller,
                   onChanged: (value) {
                     context.read<CarCubit>().changeCar(value);
                   },
-                  style: textTheme.black28W400,
+                  style: textTheme.headingRegular,
                   inputFormatters: [VehicleNumberFormatter()],
                   textCapitalization: TextCapitalization.characters,
                   keyboardType: TextInputType.text,

@@ -217,7 +217,7 @@ class AnalyticsScreenViewState extends State<_AnalyticsScreenView> with SingleTi
                         // sets this app apart from plain expense trackers.
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.orange,
-                          foregroundColor: AppColors.neutreBlanc,
+                          foregroundColor: AppColors.white,
                           elevation: 2,
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                         ),
@@ -228,7 +228,7 @@ class AnalyticsScreenViewState extends State<_AnalyticsScreenView> with SingleTi
                   TabBar(
                     indicatorColor: AppColors.blue700,
                     labelColor: AppColors.blue700,
-                    unselectedLabelColor: AppColors.neutreGrey,
+                    unselectedLabelColor: AppColors.grey400,
 
                     controller: _tabController,
                     tabs: [

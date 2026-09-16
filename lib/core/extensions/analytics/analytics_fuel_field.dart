@@ -31,7 +31,7 @@ class _AnalyticsFuelFieldState extends State<AnalyticsFuelField> {
     final textTheme = Theme.of(context).textTheme;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      decoration: BoxDecoration(color: AppColors.neutreBlanc, borderRadius: AppBorders.radiusLarge),
+      decoration: BoxDecoration(color: AppColors.white, borderRadius: AppBorders.radiusLarge),
       child: Row(
         children: [
           SizedBox(
@@ -42,7 +42,7 @@ class _AnalyticsFuelFieldState extends State<AnalyticsFuelField> {
               keyboardType: TextInputType.number,
               decoration: InputDecoration(
                 hintText: S.of(context).enter_liters,
-                hintStyle: textTheme.hintAnalitText,
+                hintStyle: textTheme.hintCaption,
                 border: InputBorder.none,
                 focusedBorder: InputBorder.none,
               ),
@@ -54,7 +54,7 @@ class _AnalyticsFuelFieldState extends State<AnalyticsFuelField> {
           AppSpacers.horizontalSmallMedium,
           GestureDetector(
             onTap: widget.onTap,
-            child: const Icon(Icons.arrow_forward_ios, color: AppColors.neutreGrey),
+            child: const Icon(Icons.arrow_forward_ios, color: AppColors.grey400),
           ),
         ],
       ),

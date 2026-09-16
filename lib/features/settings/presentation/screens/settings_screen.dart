@@ -150,7 +150,7 @@ if (!mounted) return;
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Card(
-                color: AppColors.neutreBlanc,
+                color: AppColors.white,
                 shape: RoundedRectangleBorder(borderRadius: AppBorders.radius22),
                 elevation: 3,
                 child: Padding(
@@ -180,7 +180,7 @@ if (!mounted) return;
               BlocBuilder<SettingsCubit, SettingsState>(
                 builder: (context, state) {
                   return Card(
-                    color: AppColors.neutreBlanc,
+                    color: AppColors.white,
                     shape: RoundedRectangleBorder(borderRadius: AppBorders.radius22),
                     elevation: 3,
                     child: Padding(
@@ -248,7 +248,7 @@ if (!mounted) return;
               const SizedBox(height: 10),
 
               Card(
-                color: AppColors.neutreBlanc,
+                color: AppColors.white,
                 shape: RoundedRectangleBorder(borderRadius: AppBorders.radius22),
                 elevation: 3,
                 child: Padding(
@@ -339,7 +339,7 @@ if (!mounted) return;
             child: Switch(
               value: value,
               onChanged: onChanged,
-              activeColor: AppColors.neutreBlanc,
+              activeColor: AppColors.white,
               activeTrackColor: AppColors.energyBlue,
             ),
           ),

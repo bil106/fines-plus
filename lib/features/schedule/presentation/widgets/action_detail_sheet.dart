@@ -247,7 +247,7 @@ class _ActionDetailSheetState extends State<ActionDetailSheet> {
               },
               child: Text(
                 S.of(context).additional_options,
-                style: textTheme.blue20W400.copyWith(color: Theme.of(context).colorScheme.primary),
+                style: textTheme.statusAccent.copyWith(color: Theme.of(context).colorScheme.primary),
               ),
             ),
 

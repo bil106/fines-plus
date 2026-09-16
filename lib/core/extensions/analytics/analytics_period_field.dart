@@ -35,10 +35,10 @@ class _AnalyticsPeriodFieldState extends State<AnalyticsPeriodField> {
       ),
       decoration: InputDecoration(
         filled: true,
-        fillColor: AppColors.neutreBlanc,
+        fillColor: AppColors.white,
         prefixIcon: const Icon(Icons.calendar_today, color: AppColors.energyBlue),
         suffixIcon: IconButton(
-          icon: const Icon(Icons.arrow_forward_ios, color: AppColors.neutreGrey),
+          icon: const Icon(Icons.arrow_forward_ios, color: AppColors.grey400),
           onPressed: () async {
             final now = DateTime.now();
             final picked = await showDatePicker(

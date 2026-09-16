@@ -57,9 +57,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
               SizedBox(height: isShort ? 1 : 60),
 
-              Text(title, textAlign: TextAlign.center, style: textTheme.black28W400),
+              Text(title, textAlign: TextAlign.center, style: textTheme.headingRegular),
 
-              Text(subtitle, textAlign: TextAlign.center, style: textTheme.black54fs18),
+              Text(subtitle, textAlign: TextAlign.center, style: textTheme.bodyMuted),
 
               SizedBox(height: isShort ? 20 : 100),
 
@@ -90,7 +90,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     (pageIndex == 0)
                         ? S.of(context).next
                         : (pageIndex <= 2 ? S.of(context).good : S.of(context).of_course),
-                    style: textTheme.white18W400,
+                    style: textTheme.whiteBody,
                   ),
                 ),
               ),

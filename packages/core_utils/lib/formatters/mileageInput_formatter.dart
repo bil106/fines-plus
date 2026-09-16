@@ -28,7 +28,7 @@ Widget _buildMileageCard(TextTheme textTheme) {
   return SizedBox(
     height: 115,
     child: Card(
-      color: AppColors.neutreBlanc,
+      color: AppColors.white,
       margin: const EdgeInsets.symmetric(vertical: 8),
       child: Padding(
         padding: const EdgeInsets.all(14),

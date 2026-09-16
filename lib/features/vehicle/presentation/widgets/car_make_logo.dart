@@ -16,7 +16,7 @@ class CarMakeLogo extends StatelessWidget {
   Widget build(BuildContext context) {
     final asset = carMakeLogos[make];
     if (asset == null) {
-      return Icon(Icons.directions_car, size: size, color: fallbackColor ?? AppColors.neutreGrey);
+      return Icon(Icons.directions_car, size: size, color: fallbackColor ?? AppColors.grey400);
     }
 
     if (asset.endsWith('.svg')) {

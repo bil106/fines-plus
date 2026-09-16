@@ -26,7 +26,7 @@ class FuelRecordCard extends StatelessWidget {
     final displayCurrency = settingsCubit.getCurrencyLabel(context, targetCurrency);
 
     return Card(
-      color: AppColors.neutreBlanc,
+      color: AppColors.white,
       margin: const EdgeInsets.only(bottom: 12),
       shape: RoundedRectangleBorder(borderRadius: AppBorders.radiusLarge),
       child: Padding(

@@ -264,7 +264,7 @@ class _CarInfoViewState extends State<_CarInfoView> {
                 AppSpacers.verticalLarge,
 
                 Card(
-                  color: AppColors.neutreBlanc,
+                  color: AppColors.white,
                   shape: RoundedRectangleBorder(borderRadius: AppBorders.radius22),
                   elevation: 4,
                   child: Padding(
@@ -282,7 +282,7 @@ class _CarInfoViewState extends State<_CarInfoView> {
                               child: _isUploadingPhoto
                                   ? const CircularProgressIndicator(strokeWidth: 2)
                                   : (_photoUrl.isEmpty
-                                        ? const Icon(Icons.add_a_photo_outlined, color: AppColors.neutreGrey)
+                                        ? const Icon(Icons.add_a_photo_outlined, color: AppColors.grey400)
                                         : null),
                             ),
                           ),
@@ -320,7 +320,7 @@ class _CarInfoViewState extends State<_CarInfoView> {
                         AppSpacers.verticalSmall,
                         TextField(
                           controller: _carNumberController,
-                          style: textTheme.black28W400,
+                          style: textTheme.headingRegular,
                           inputFormatters: [VehicleNumberFormatter()],
                           textCapitalization: TextCapitalization.characters,
                           maxLength: 8,
@@ -340,7 +340,7 @@ class _CarInfoViewState extends State<_CarInfoView> {
                         AppSpacers.verticalSmall,
                         TextField(
                           controller: _techPassportController,
-                          style: textTheme.black28W400,
+                          style: textTheme.headingRegular,
                           inputFormatters: [TechPassportFormatter()],
                           maxLength: 9,
                           decoration: InputDecoration(
@@ -392,7 +392,7 @@ class _CarInfoViewState extends State<_CarInfoView> {
                     onPressed: hasCar ? () => _showDeleteDialog(context) : null,
                     child: Text(
                       S.of(context).delete_car_number,
-                      style: textTheme.bodyMedium?.copyWith(color: hasCar ? AppColors.red : AppColors.neutreGrey),
+                      style: textTheme.bodyMedium?.copyWith(color: hasCar ? AppColors.red : AppColors.grey400),
                     ),
                   ),
                 ),

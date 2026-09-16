@@ -11,22 +11,22 @@ class ThemeConfig {
     return ThemeData(
       colorScheme: ColorScheme.fromSeed(seedColor: primary),
       useMaterial3: true,
-      scaffoldBackgroundColor: AppColors.neutreBlanc,
+      scaffoldBackgroundColor: AppColors.white,
       appBarTheme: AppBarTheme(
         backgroundColor: primary,
-        foregroundColor: AppColors.neutreBlanc,
+        foregroundColor: AppColors.white,
         titleTextStyle: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: primary,
-          foregroundColor: AppColors.neutreBlanc,
+          foregroundColor: AppColors.white,
           shape: RoundedRectangleBorder(borderRadius: AppBorders.radiusLarge),
         ),
       ),
       floatingActionButtonTheme: FloatingActionButtonThemeData(
         backgroundColor: primary,
-        foregroundColor: AppColors.neutreBlanc,
+        foregroundColor: AppColors.white,
       ),
       inputDecorationTheme: InputDecorationTheme(
         focusedBorder: OutlineInputBorder(

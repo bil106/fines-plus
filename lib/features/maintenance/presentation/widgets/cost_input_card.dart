@@ -22,7 +22,7 @@ class CostInputCard extends StatelessWidget {
     final currencyLabel = settingsCubit.getCurrencyLabel(context, settings.currency);
 
     return Card(
-      color: AppColors.neutreBlanc,
+      color: AppColors.white,
       shape: RoundedRectangleBorder(borderRadius: AppBorders.radiusLarge),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),

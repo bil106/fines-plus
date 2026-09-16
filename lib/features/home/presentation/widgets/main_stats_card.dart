@@ -65,7 +65,7 @@ class MainStatsCard extends StatelessWidget {
                           children: [
                             Text(
                               S.of(context).total_costs,
-                              style: textTheme.black20bold,
+                              style: textTheme.subheading,
                             ),
                             Text(
                               '${totalCostConverted.toStringAsFixed(0)} $selectedCurrency',
@@ -87,7 +87,7 @@ class MainStatsCard extends StatelessWidget {
 
                                 return Text(
                                   "${mileageValue.toStringAsFixed(0)} $unit",
-                                  style: textTheme.black18W400,
+                                  style: textTheme.subtitleText,
                                 );
                               },
                             ),

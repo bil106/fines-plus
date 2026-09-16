@@ -23,7 +23,7 @@ class ExportCard extends StatelessWidget {
               margin: const EdgeInsets.symmetric(horizontal: 6),
               decoration: BoxDecoration(
                 color: AppColors.blueGrey25,
-                border: Border.all(color: AppColors.neutreGreyLight, width: 1.5),
+                border: Border.all(color: AppColors.greyLight, width: 1.5),
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Padding(

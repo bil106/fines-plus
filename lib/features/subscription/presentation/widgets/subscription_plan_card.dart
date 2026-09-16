@@ -57,7 +57,7 @@ class SubscriptionPlanCard extends StatelessWidget {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20),
                 gradient: LinearGradient(
-                  colors: [AppColors.neutreBlanc.withOpacity(0.9), AppColors.neutreBlanc.withOpacity(0.6)],
+                  colors: [AppColors.white.withOpacity(0.9), AppColors.white.withOpacity(0.6)],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
@@ -83,7 +83,7 @@ class SubscriptionPlanCard extends StatelessWidget {
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                           decoration: BoxDecoration(color: AppColors.blue700, borderRadius: BorderRadius.circular(12)),
-                          child: Text("Selected", style: textTheme.labelSmall?.copyWith(color: AppColors.neutreBlanc)),
+                          child: Text("Selected", style: textTheme.labelSmall?.copyWith(color: AppColors.white)),
                         ),
                     ],
                   ),
@@ -147,7 +147,7 @@ class SubscriptionPlanCard extends StatelessWidget {
                         ),
                         child: Text(
                           isSelected ? S.of(context).selected : S.of(context).select_plan,
-                          style: textTheme.titleSmall?.copyWith(color: AppColors.neutreBlanc),
+                          style: textTheme.titleSmall?.copyWith(color: AppColors.white),
                         ),
                       ),
                     ),

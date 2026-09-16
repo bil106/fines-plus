@@ -38,8 +38,8 @@ class ActionCard extends StatelessWidget {
           children: [
             Row(
               children: [
-                Expanded(child: Text(title, style: textTheme.black16bold)),
-                const Icon(Icons.settings, size: 20, color: AppColors.neutreGrey),
+                Expanded(child: Text(title, style: textTheme.bodyStrong)),
+                const Icon(Icons.settings, size: 20, color: AppColors.grey400),
               ],
             ),
             AppSpacers.verticalMedium,
@@ -59,7 +59,7 @@ class ActionCard extends StatelessWidget {
                       child: CircleAvatar(
                         radius: 10,
                         backgroundColor: isWarning ? AppColors.red : AppColors.green,
-                        child: Icon(isWarning ? Icons.error : Icons.check, color: AppColors.neutreBlanc, size: 14),
+                        child: Icon(isWarning ? Icons.error : Icons.check, color: AppColors.white, size: 14),
                       ),
                     ),
                   ],
@@ -82,7 +82,7 @@ class ActionCard extends StatelessWidget {
                             backgroundColor: AppColors.grey300,
                             valueColor: AlwaysStoppedAnimation<Color>(isWarning ? AppColors.red : AppColors.lightGreen),
                           ),
-                          Text("${(progress * 100).toStringAsFixed(0)}%", style: textTheme.white14W400),
+                          Text("${(progress * 100).toStringAsFixed(0)}%", style: textTheme.whiteCaption),
                         ],
                       ),
                     ],
@@ -95,9 +95,9 @@ class ActionCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text("${S.of(context).to_be_performed} \n$priorExecution", style: textTheme.black13W400),
+                Text("${S.of(context).to_be_performed} \n$priorExecution", style: textTheme.caption),
                 Container(width: 1, height: 32, color: AppColors.grey300),
-                Text("${S.of(context).periodicity}\n$periodicity", style: textTheme.black13W400),
+                Text("${S.of(context).periodicity}\n$periodicity", style: textTheme.caption),
               ],
             ),
 

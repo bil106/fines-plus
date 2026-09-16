@@ -22,7 +22,7 @@ class FuelAmountCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
       decoration: BoxDecoration(
-        color: AppColors.neutreBlanc,
+        color: AppColors.white,
         borderRadius: AppBorders.radiusLarge,
         border: Border.all(color: AppColors.grey300, width: 2),
       ),

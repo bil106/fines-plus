@@ -366,7 +366,7 @@ Future<void> _signInWithGoogle(BuildContext context) async {
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(30),
                                   gradient: const LinearGradient(
-                                    colors: [AppColors.colcm, AppColors.purpleRed],
+                                    colors: [AppColors.cyanAccent, AppColors.purpleRed],
                                     begin: Alignment.centerLeft,
                                     end: Alignment.centerRight,
                                   ),
@@ -375,7 +375,7 @@ Future<void> _signInWithGoogle(BuildContext context) async {
                                   child: Text(
                                     isLogin ? S.of(context).large_login : S.of(context).large_sign_up,
                                     style: textTheme.titleMedium?.copyWith(
-                                      color: AppColors.neutreBlanc,
+                                      color: AppColors.white,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),

@@ -83,7 +83,7 @@ class _RemindersView extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 1, vertical: 40),
               itemCount: state.reminders.length + 1,
               separatorBuilder: (_, __) =>
-                  const Divider(color: AppColors.neutreGrey),
+                  const Divider(color: AppColors.grey400),
               itemBuilder: (context, index) {
                 if (index == 0) {
                   return Padding(
@@ -181,7 +181,7 @@ class _EmptyReminders extends StatelessWidget {
               ),
               child: const Icon(
                 Icons.check,
-                color: AppColors.neutreBlanc,
+                color: AppColors.white,
                 size: 120,
               ),
             ),

@@ -49,7 +49,7 @@ class _ReminderDialogState extends State<ReminderDialog> {
       contentPadding: const EdgeInsets.all(16),
       title: Text(
         widget.reminder == null ? S.of(context).new_reminder : S.of(context).edit_reminder,
-        style: textTheme.black30bold,
+        style: textTheme.heroHeading,
       ),
       content: ConstrainedBox(
         constraints: BoxConstraints(maxWidth: 500, minWidth: screenWidth * 0.8),
@@ -60,18 +60,18 @@ class _ReminderDialogState extends State<ReminderDialog> {
               AppSpacers.verticalMedium,
               TextField(
                 controller: titleController,
-                decoration: InputDecoration(labelText: S.of(context).title, labelStyle: textTheme.black18W400),
+                decoration: InputDecoration(labelText: S.of(context).title, labelStyle: textTheme.subtitleText),
               ),
               AppSpacers.verticalLarge,
               TextField(
                 controller: descriptionController,
-                decoration: InputDecoration(labelText: S.of(context).description, labelStyle: textTheme.black18W400),
+                decoration: InputDecoration(labelText: S.of(context).description, labelStyle: textTheme.subtitleText),
               ),
               AppSpacers.verticalLarge,
               Row(
                 children: [
                   Expanded(
-                    child: Text(DateFormat('dd.MM.yyyy HH:mm').format(selectedDateTime), style: textTheme.black18W500),
+                    child: Text(DateFormat('dd.MM.yyyy HH:mm').format(selectedDateTime), style: textTheme.labelStrong),
                   ),
                   TextButton(
                     onPressed: () async {
@@ -94,7 +94,7 @@ class _ReminderDialogState extends State<ReminderDialog> {
                         }
                       }
                     },
-                    child: Text(S.of(context).select_date, style: textTheme.black18W500),
+                    child: Text(S.of(context).select_date, style: textTheme.labelStrong),
                   ),
                 ],
               ),
@@ -105,7 +105,7 @@ class _ReminderDialogState extends State<ReminderDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: Text(S.of(context).cancel, style: textTheme.black18W500),
+          child: Text(S.of(context).cancel, style: textTheme.labelStrong),
         ),
         ElevatedButton(
           onPressed: () async {

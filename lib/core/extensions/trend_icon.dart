@@ -15,7 +15,7 @@ class TrendIcon extends StatelessWidget {
       child: Center(
         child: Transform.rotate(
           angle: isUp ? -0.7854 : 0.7854,
-          child: Icon(Icons.arrow_forward, size: 26, color: AppColors.neutreBlanc),
+          child: Icon(Icons.arrow_forward, size: 26, color: AppColors.white),
         ),
       ),
     );

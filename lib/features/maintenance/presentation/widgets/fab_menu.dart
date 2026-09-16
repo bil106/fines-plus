@@ -33,7 +33,7 @@ class FABMenu extends StatelessWidget {
               child: AnimatedRotation(
                 turns: isMenuOpen ? 0.125 : 0,
                 duration: const Duration(milliseconds: 200),
-                child: Icon(isMenuOpen ? Icons.close : Icons.add, color: AppColors.neutreBlanc),
+                child: Icon(isMenuOpen ? Icons.close : Icons.add, color: AppColors.white),
               ),
             ),
           ),
@@ -59,7 +59,7 @@ class FABMenu extends StatelessWidget {
                 height: 50,
                 width: 50,
                 decoration: const BoxDecoration(
-                  color: AppColors.neutreBlanc,
+                  color: AppColors.white,
                   shape: BoxShape.circle,
                   boxShadow: [BoxShadow(color: AppColors.black26, blurRadius: 6, offset: Offset(0, 2))],
                 ),

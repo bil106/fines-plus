@@ -77,7 +77,7 @@ class _CostSummaryState extends State<CostSummary> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: AppColors.neutreBlanc,
+        color: AppColors.white,
         borderRadius: AppBorders.radiusLarge,
         border: Border.all(color: AppColors.grey300, width: 2),
       ),
@@ -126,7 +126,7 @@ class _CostSummaryState extends State<CostSummary> {
                                     contentPadding: EdgeInsets.symmetric(vertical: 1, horizontal: 8),
                                     border: InputBorder.none,
                                   ),
-                                  style: textTheme.black16,
+                                  style: textTheme.bodyEmphasis,
                                   onChanged: (val) {
                                     final entered = double.tryParse(val) ?? 0.0;
                                     final manualUah = widget.convertToUAH(entered);
@@ -136,7 +136,7 @@ class _CostSummaryState extends State<CostSummary> {
                               ),
                               const SizedBox(width: 4),
 
-                              Text(widget.currencyLabel, style: textTheme.black16),
+                              Text(widget.currencyLabel, style: textTheme.bodyEmphasis),
                             ],
                           ),
                         ),
@@ -154,7 +154,7 @@ class _CostSummaryState extends State<CostSummary> {
               FittedBox(fit: BoxFit.scaleDown, child: Text(S.of(context).total_amount)),
               FittedBox(
                 fit: BoxFit.scaleDown,
-                child: Text("$formattedTotal ${widget.currencyLabel}", style: textTheme.black16),
+                child: Text("$formattedTotal ${widget.currencyLabel}", style: textTheme.bodyEmphasis),
               ),
             ],
           ),

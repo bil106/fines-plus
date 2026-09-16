@@ -26,8 +26,8 @@ class ExpenseStatsCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(S.current.cost_statistics, style: textTheme.black16bold),
-            const Divider(color: AppColors.neutreGrey),
+            Text(S.current.cost_statistics, style: textTheme.bodyStrong),
+            const Divider(color: AppColors.grey400),
 
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -39,10 +39,10 @@ class ExpenseStatsCard extends StatelessWidget {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(stats.monthLabel, style: textTheme.black14bold),
+                        Text(stats.monthLabel, style: textTheme.captionStrong),
                         Text(
                           "${context.read<SettingsCubit>().convertFromUAH(stats.total).toStringAsFixed(0)} ${context.read<SettingsCubit>().getCurrencyLabel(context, context.read<SettingsCubit>().state.currency)}",
-                          style: textTheme.black20bold,
+                          style: textTheme.subheading,
                         ),
                       ],
                     ),
@@ -68,9 +68,9 @@ class ExpenseStatsCard extends StatelessWidget {
                       titleStyle: const TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
-                        color: AppColors.neutreBlanc,
+                        color: AppColors.white,
                       ),
-                      borderSide: const BorderSide(color: AppColors.neutreBlanc, width: 1),
+                      borderSide: const BorderSide(color: AppColors.white, width: 1),
                     );
                   }).toList(),
                 ),

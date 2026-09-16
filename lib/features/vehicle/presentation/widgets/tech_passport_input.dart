@@ -17,7 +17,7 @@ class TechPassportInput extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     return Card(
-      color: AppColors.neutreBlanc,
+      color: AppColors.white,
       shape: RoundedRectangleBorder(borderRadius: AppBorders.radius22),
       elevation: 4,
       child: Padding(
@@ -25,12 +25,12 @@ class TechPassportInput extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(S.of(context).reg_number, style: textTheme.black28W600),
+            Text(S.of(context).reg_number, style: textTheme.sectionHeading),
             AppSpacers.verticalSmall,
             TextField(
               controller: controller,
               onChanged: cubit.setTechPassport,
-              style: textTheme.black28W400,
+              style: textTheme.headingRegular,
               inputFormatters: [TechPassportFormatter()],
               maxLength: 9,
               decoration: InputDecoration(

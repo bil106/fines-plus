@@ -57,7 +57,7 @@ class TimelineItem extends StatelessWidget {
                     alignment: Alignment.topRight,
                     child: Text(
                       date,
-                      style: Theme.of(context).textTheme.black16bold.copyWith(color: AppColors.neutreGrey),
+                      style: Theme.of(context).textTheme.bodyStrong.copyWith(color: AppColors.grey400),
                     ),
                   ),
                   if (subtitle.isNotEmpty) Text(subtitle, style: Theme.of(context).textTheme.bodySmall),

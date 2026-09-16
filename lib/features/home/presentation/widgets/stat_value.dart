@@ -13,9 +13,9 @@ class StatValue extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text(value, style: textTheme.blue20W400),
+        Text(value, style: textTheme.statusAccent),
         
-        Text(label, style: textTheme.hintAnalitText),
+        Text(label, style: textTheme.hintCaption),
       ],
     );
   }

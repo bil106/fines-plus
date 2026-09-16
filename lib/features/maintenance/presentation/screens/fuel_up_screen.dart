@@ -176,7 +176,7 @@ class _FuelUpScreenState extends State<FuelUpScreen> {
     final settingsCubit = context.watch<SettingsCubit>();
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
-        statusBarColor: AppColors.neutreBlanc,
+        statusBarColor: AppColors.white,
         statusBarIconBrightness: Brightness.dark,
       ),
       child: Scaffold(
@@ -259,8 +259,8 @@ class _FuelUpScreenState extends State<FuelUpScreen> {
                                 child: Text(
                                   _bestStation?.name ?? S.of(context).no_nearby_station,
                                   style: _bestStation == null
-                                      ? textTheme.black14bold.copyWith(fontWeight: FontWeight.normal)
-                                      : textTheme.black14bold,
+                                      ? textTheme.captionStrong.copyWith(fontWeight: FontWeight.normal)
+                                      : textTheme.captionStrong,
                                   maxLines: _bestStation == null ? 2 : 1,
                                   overflow: TextOverflow.ellipsis,
                                 ),

@@ -7,7 +7,7 @@ export 'app_text_theme.dart';
 final appLightTheme = ThemeData(
   fontFamily: 'Roboto',
   appBarTheme: const AppBarTheme(
-    backgroundColor: AppColors.neutreBlanc,
+    backgroundColor: AppColors.white,
     surfaceTintColor: AppColors.transparent,
   ),
   bottomNavigationBarTheme: const BottomNavigationBarThemeData(
@@ -22,7 +22,7 @@ final appLightTheme = ThemeData(
       height: 1.2,
     ),
   ),
-  scaffoldBackgroundColor: AppColors.neutreBlanc,
+  scaffoldBackgroundColor: AppColors.white,
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ButtonStyle(
       backgroundColor: WidgetStateProperty.resolveWith((status) {
@@ -32,7 +32,7 @@ final appLightTheme = ThemeData(
         }
         return color;
       }),
-      foregroundColor: const WidgetStatePropertyAll(AppColors.neutreBlanc),
+      foregroundColor: const WidgetStatePropertyAll(AppColors.white),
       textStyle: const WidgetStatePropertyAll(
         TextStyle(
           fontWeight: FontWeight.w700,
@@ -111,162 +111,136 @@ final appLightTheme = ThemeData(
   ),
 );
 
+/// Semantic text-style roles for the app. Each getter's visual value
+/// (size/weight/color) is unchanged from the pre-consolidation names it
+/// replaces — this pass only cut duplicate/dead getters and gave the
+/// survivors clear names; it does not attempt to unify near-identical
+/// sizes/weights, since that would actually change how some screens look.
 extension AppTextTheme on TextTheme {
-  TextStyle get totalFines => const TextStyle(
-        fontSize: 58,
-        fontWeight: FontWeight.w600,
-        color: AppColors.black87,
-      );
-
-  TextStyle get carNumber => const TextStyle(
-        fontSize: 28,
-        fontWeight: FontWeight.w500,
-        color: AppColors.black87,
-      );
-
-  TextStyle get fineDate => const TextStyle(
-        fontSize: 28,
-        fontWeight: FontWeight.w500,
-        color: AppColors.black87,
-      );
-
-  TextStyle get violationTitle => const TextStyle(
-        fontSize: 24,
-        fontWeight: FontWeight.w500,
-        color: AppColors.black87,
-      );
+  // --- Screen/section headers ---
   TextStyle get title => const TextStyle(
         color: AppColors.black,
         fontWeight: FontWeight.bold,
         fontSize: 36,
       );
+  TextStyle get heroHeading => const TextStyle(
+        color: AppColors.black,
+        fontWeight: FontWeight.bold,
+        fontSize: 30,
+      );
+  TextStyle get sectionHeading => const TextStyle(
+        color: AppColors.black,
+        fontWeight: FontWeight.w600,
+        fontSize: 28,
+      );
+  TextStyle get subheading => const TextStyle(
+        color: AppColors.black,
+        fontWeight: FontWeight.bold,
+        fontSize: 20,
+      );
+  TextStyle get headingRegular => const TextStyle(
+        color: AppColors.black,
+        fontWeight: FontWeight.w400,
+        fontSize: 28,
+      );
+  TextStyle get headingAccent => const TextStyle(
+        color: AppColors.blue700,
+        fontWeight: FontWeight.w400,
+        fontSize: 28,
+      );
+  TextStyle get carNumber => const TextStyle(
+        fontSize: 28,
+        fontWeight: FontWeight.w500,
+        color: AppColors.black87,
+      );
+  TextStyle get historyText => const TextStyle(
+      fontSize: 22, fontWeight: FontWeight.w500, color: AppColors.black87);
   TextStyle get noFinesText => const TextStyle(
         fontSize: 24,
         fontWeight: FontWeight.w500,
         color: AppColors.black87,
       );
-  TextStyle get buttonText => const TextStyle(
-        color: AppColors.neutreBlanc,
-        fontWeight: FontWeight.bold,
-        fontSize: 22,
-      );
-  TextStyle get hintText => const TextStyle(
-        color: AppColors.neutreGrey,
-        fontWeight: FontWeight.w400,
-        fontSize: 28,
-      );
-  TextStyle get black28W400 => const TextStyle(
-        color: AppColors.black,
-        fontWeight: FontWeight.w400,
-        fontSize: 28,
-      );
-  TextStyle get blue28W400 => const TextStyle(
-        color: AppColors.blue700,
-        fontWeight: FontWeight.w400,
-        fontSize: 28,
-      );
-  TextStyle get black18W400 => const TextStyle(
-        color: AppColors.black,
-        fontWeight: FontWeight.w400,
-        fontSize: 18,
-      );
-  TextStyle get black54fs18 => const TextStyle(
-        color: Colors.black54,
-        fontWeight: FontWeight.w400,
-        fontSize: 18,
-      );
-  TextStyle get black13W400 => const TextStyle(
-        color: AppColors.black,
-        fontWeight: FontWeight.w400,
-        fontSize: 13,
-      );
-  TextStyle get grey12W400 => const TextStyle(
-        color: AppColors.neutreGrey,
-        fontWeight: FontWeight.w400,
-        fontSize: 12,
-      );
-  TextStyle get black16bold => const TextStyle(
-        color: AppColors.black,
-        fontWeight: FontWeight.bold,
-        fontSize: 16,
-      );
-  TextStyle get black16 => const TextStyle(
-        color: AppColors.black,
-        fontWeight: FontWeight.w500,
-        fontSize: 16,
-      );
-  TextStyle get black14bold => const TextStyle(
-        color: AppColors.black,
-        fontWeight: FontWeight.bold,
-        fontSize: 14,
-      );
-  TextStyle get black20bold => const TextStyle(
-        color: AppColors.black,
-        fontWeight: FontWeight.bold,
-        fontSize: 20,
-      );
-  TextStyle get green20W400 => const TextStyle(
-        color: AppColors.green,
-        fontWeight: FontWeight.w400,
-        fontSize: 20,
-      );
-  TextStyle get blue20W400 => const TextStyle(
-        color: AppColors.blue700,
-        fontWeight: FontWeight.w400,
-        fontSize: 20,
-      );
-  TextStyle get black18bold => const TextStyle(
-        color: AppColors.black,
-        fontWeight: FontWeight.bold,
-        fontSize: 18,
-      );
-  TextStyle get black18W500 => const TextStyle(
-        color: AppColors.black,
-        fontWeight: FontWeight.w500,
-        fontSize: 18,
-      );
-  TextStyle get black8718W400 => const TextStyle(
+
+  // --- Body / labels ---
+  TextStyle get subtitleText => const TextStyle(
+      fontSize: 18, fontWeight: FontWeight.w400, color: AppColors.black);
+  TextStyle get bodySoft => const TextStyle(
         color: AppColors.black87,
         fontWeight: FontWeight.w400,
         fontSize: 18,
       );
-  TextStyle get white18W400 => const TextStyle(
-        color: AppColors.neutreBlanc,
+  TextStyle get bodyMuted => const TextStyle(
+        color: Colors.black54,
         fontWeight: FontWeight.w400,
         fontSize: 18,
       );
-  TextStyle get white14W400 => const TextStyle(
-        color: AppColors.neutreBlanc,
-        fontWeight: FontWeight.w400,
-        fontSize: 14,
-      );
-  TextStyle get red14W400 => const TextStyle(
-        color: AppColors.red,
-        fontWeight: FontWeight.w400,
-        fontSize: 14,
-      );
-  TextStyle get black28W600 => const TextStyle(
+  TextStyle get labelStrong => const TextStyle(
         color: AppColors.black,
-        fontWeight: FontWeight.w600,
-        fontSize: 28,
-      );
-  TextStyle get black18W600 => const TextStyle(
-        color: AppColors.black,
-        fontWeight: FontWeight.w600,
+        fontWeight: FontWeight.w500,
         fontSize: 18,
       );
-  TextStyle get black30bold => const TextStyle(
+  TextStyle get bodyStrong => const TextStyle(
         color: AppColors.black,
         fontWeight: FontWeight.bold,
-        fontSize: 30,
+        fontSize: 16,
       );
-  TextStyle get hintAnalitText => const TextStyle(
-        color: AppColors.neutreGrey,
+  TextStyle get bodyEmphasis => const TextStyle(
+        color: AppColors.black,
+        fontWeight: FontWeight.w500,
+        fontSize: 16,
+      );
+  TextStyle get captionStrong => const TextStyle(
+        color: AppColors.black,
+        fontWeight: FontWeight.bold,
+        fontSize: 14,
+      );
+  TextStyle get caption => const TextStyle(
+        color: AppColors.black,
+        fontWeight: FontWeight.w400,
+        fontSize: 13,
+      );
+  TextStyle get captionMuted => const TextStyle(
+        color: AppColors.grey400,
+        fontWeight: FontWeight.w400,
+        fontSize: 12,
+      );
+  TextStyle get hintText => const TextStyle(
+        color: AppColors.grey400,
+        fontWeight: FontWeight.w400,
+        fontSize: 28,
+      );
+  TextStyle get hintCaption => const TextStyle(
+        color: AppColors.grey400,
         fontWeight: FontWeight.w400,
         fontSize: 16,
       );
-  TextStyle get historyText => const TextStyle(
-      fontSize: 22, fontWeight: FontWeight.w500, color: AppColors.black87);
-  TextStyle get subtitleText => const TextStyle(
-      fontSize: 18, fontWeight: FontWeight.w400, color: AppColors.black);
+
+  // --- Status / accent ---
+  TextStyle get statusPositive => const TextStyle(
+        color: AppColors.green,
+        fontWeight: FontWeight.w400,
+        fontSize: 20,
+      );
+  TextStyle get statusAccent => const TextStyle(
+        color: AppColors.blue700,
+        fontWeight: FontWeight.w400,
+        fontSize: 20,
+      );
+
+  // --- On dark / colored backgrounds ---
+  TextStyle get buttonText => const TextStyle(
+        color: AppColors.white,
+        fontWeight: FontWeight.bold,
+        fontSize: 22,
+      );
+  TextStyle get whiteBody => const TextStyle(
+        color: AppColors.white,
+        fontWeight: FontWeight.w400,
+        fontSize: 18,
+      );
+  TextStyle get whiteCaption => const TextStyle(
+        color: AppColors.white,
+        fontWeight: FontWeight.w400,
+        fontSize: 14,
+      );
 }
