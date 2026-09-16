@@ -1,0 +1,12 @@
+{
+  "brandName": "CarPapers",
+  "primaryColorHex": "#0F766E",
+  "logoAssetPath": "assets/logos/carpapers.png",
+  "supportEmail": "support@carpapers.app",
+  "phoneNumber": "REPLACE_ME",
+  "viberNumber": "",
+  "market": "US",
+  "finesCheckEnabled": false,
+  "termsUrl": "REPLACE_ME_TERMS_URL",
+  "privacyPolicyUrl": "REPLACE_ME_PRIVACY_URL"
+}

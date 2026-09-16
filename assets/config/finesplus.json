@@ -1,8 +1,10 @@
 {
-   "brandName": "Fines+",
-   "primaryColorHex": "#1976D2",
-   "logoAssetPath": "assets/logo/fines_logo.png",
-   "supportEmail": "REPLACE_ME",
-   "phoneNumber": "REPLACE_ME",
-   "viberNumber": "REPLACE_ME"
+  "brandName": "Fines+",
+  "primaryColorHex": "#1976D2",
+  "logoAssetPath": "assets/logo/fines_logo.png",
+  "supportEmail": "REPLACE_ME",
+  "phoneNumber": "REPLACE_ME",
+  "viberNumber": "REPLACE_ME",
+  "market": "UA",
+  "finesCheckEnabled": true
 }

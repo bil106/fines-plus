@@ -23,6 +23,7 @@ import 'package:flutter/material.dart';
 import 'package:core_utils/formatters/vehicle_formatters.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easy_recaptcha_v2/flutter_easy_recaptcha_v2.dart';
+import 'package:fines_plus/core/config/app_config.dart';
 
 @RoutePage()
 class CarInfoScreen extends StatelessWidget {
@@ -240,6 +241,9 @@ class _CarInfoViewState extends State<_CarInfoView> {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+    // Ukraine-only feature (see CarCubit.checkFines) - hide the search
+    // button and recaptcha step entirely for brands/markets without it.
+    final finesCheckEnabled = context.watch<AppConfig>().finesCheckEnabled;
 
     return Scaffold(
       resizeToAvoidBottomInset: true,
@@ -359,34 +363,36 @@ class _CarInfoViewState extends State<_CarInfoView> {
 
                 AppSpacers.verticalLargeXL,
 
-                SizedBox(
-                  width: double.infinity,
-                  height: 65,
-                  child: ElevatedButton(
-                    onPressed: isFormValid
-                        ? () async {
-                            final user = FirebaseAuth.instance.currentUser;
-                            if (user == null) {
-                              _handleUnauthorized();
-                            } else {
-                              if (!mounted) return;
-                              _safeSetState(() => _showRecaptcha = true);
-                            }
-                          }
-                        : null,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.blue700,
-                      shape: RoundedRectangleBorder(borderRadius: AppBorders.radius16),
-                    ),
-                    child: Text(S.of(context).search, style: textTheme.buttonText),
-                  ),
-                ),
-
-                if (_showRecaptcha)
+                if (finesCheckEnabled) ...[
                   SizedBox(
-                    height: 500,
-                    child: RecaptchaV2(apiKey: Env.recaptchaSiteKey, onVerifiedSuccessfully: _onRecaptchaVerified),
+                    width: double.infinity,
+                    height: 65,
+                    child: ElevatedButton(
+                      onPressed: isFormValid
+                          ? () async {
+                              final user = FirebaseAuth.instance.currentUser;
+                              if (user == null) {
+                                _handleUnauthorized();
+                              } else {
+                                if (!mounted) return;
+                                _safeSetState(() => _showRecaptcha = true);
+                              }
+                            }
+                          : null,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.blue700,
+                        shape: RoundedRectangleBorder(borderRadius: AppBorders.radius16),
+                      ),
+                      child: Text(S.of(context).search, style: textTheme.buttonText),
+                    ),
                   ),
+
+                  if (_showRecaptcha)
+                    SizedBox(
+                      height: 500,
+                      child: RecaptchaV2(apiKey: Env.recaptchaSiteKey, onVerifiedSuccessfully: _onRecaptchaVerified),
+                    ),
+                ],
                 Center(
                   child: TextButton(
                     onPressed: hasCar ? () => _showDeleteDialog(context) : null,

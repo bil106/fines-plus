@@ -1,0 +1,5 @@
+// Scaffold only - NOT yet included by Debug/Release.xcconfig, so it has no
+// effect on the current build. Mirrors today's actual values so wiring it in
+// later is a no-op for this brand. See ios/Flutter/Flavors/README.md.
+BUNDLE_ID = com.igorbeloded.finesplus
+APP_DISPLAY_NAME = Fines Plus

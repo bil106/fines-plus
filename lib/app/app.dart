@@ -187,7 +187,7 @@ class _MyAppState extends State<MyApp> {
                 return MaterialApp.router(
                   routerConfig: _router.config(),
                   locale: state.locale,
-                  title: 'Fines+',
+                  title: widget.config.brandName,
                   theme: ThemeConfig.createTheme(widget.config),
                   debugShowCheckedModeBanner: false,
                   localizationsDelegates: const [

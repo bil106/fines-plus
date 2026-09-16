@@ -35,6 +35,44 @@ android {
             abiFilters.addAll(listOf("armeabi-v7a", "arm64-v8a"))
         }
     }
+
+    // White-label brand flavors. Each one must have a matching
+    // assets/config/<flavor>.json (see AppConfig) and be built with the same
+    // name passed as --dart-define=FLAVOR=<flavor>, e.g.:
+    //   flutter build appbundle --flavor finesplus --dart-define=FLAVOR=finesplus
+    //   flutter build appbundle --flavor carpapers --dart-define=FLAVOR=carpapers
+    // The Gradle flavor here only controls applicationId/app name/app icon/
+    // Firebase project (native, build-time) — it does NOT automatically set
+    // FLAVOR for the Dart side, so keep both in sync by hand until this is
+    // wired through a shared script (see scripts/new_wl_flavor.sh).
+    flavorDimensions += "brand"
+    productFlavors {
+        create("finesplus") {
+            dimension = "brand"
+            // Same applicationId as before this flavor existed - required so
+            // this keeps updating the already-published Fines+ Play Store
+            // listing instead of becoming a new app.
+            applicationId = "com.finesplus"
+            resValue("string", "app_name", "Fines+")
+        }
+        create("carpapers") {
+            dimension = "brand"
+            // PLACEHOLDER. This becomes permanent the first time a build
+            // with this applicationId is uploaded to Play Console - confirm
+            // (and register a Firebase project under it, see
+            // android/app/src/carpapers/README.md) before that first upload.
+            applicationId = "com.carpapers.app"
+            resValue("string", "app_name", "CarPapers")
+        }
+        create("autodosje") {
+            dimension = "brand"
+            // PLACEHOLDER, same caveat as carpapers above - confirm (and
+            // register a Firebase project under it, see
+            // android/app/src/autodosje/README.md) before the first upload.
+            applicationId = "com.autodosje.app"
+            resValue("string", "app_name", "AutoDosje")
+        }
+    }
  
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17

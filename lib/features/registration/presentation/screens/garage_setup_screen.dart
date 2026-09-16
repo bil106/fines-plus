@@ -1,4 +1,5 @@
 import 'package:core_localization/generated/l10n.dart';
+import 'package:fines_plus/core/config/brand_copy.dart';
 import 'package:core_utils/formatters/vehicle_formatters.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_borders.dart';
@@ -116,11 +117,14 @@ class _GarageSetupScreenState extends State<GarageSetupScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                S.of(context).garage_setup_title,
+                brandCopy(context, 'garage_setup_title', S.of(context).garage_setup_title),
                 style: textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
               ),
               AppSpacers.verticalMedium,
-              Text(S.of(context).garage_setup_subtitle, style: textTheme.bodyMedium),
+              Text(
+                brandCopy(context, 'garage_setup_subtitle', S.of(context).garage_setup_subtitle),
+                style: textTheme.bodyMedium,
+              ),
               AppSpacers.verticalXXLarge,
 
               if (!_showForm) ...[

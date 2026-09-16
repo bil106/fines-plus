@@ -1,0 +1,14 @@
+{
+  "brandName": "AutoDosje",
+  "primaryColorHex": "#0EA5E9",
+  "logoAssetPath": "assets/logos/autodosje.png",
+  "supportEmail": "REPLACE_ME",
+  "phoneNumber": "REPLACE_ME",
+  "viberNumber": "",
+  "market": "UA",
+  "finesCheckEnabled": true,
+  "copyOverrides": {
+    "garage_setup_title": "Ваш автодосьє",
+    "garage_setup_subtitle": "Додайте авто зараз або зробіть це пізніше — AutoDosje вже готове показувати штрафи й нагадування"
+  }
+}
