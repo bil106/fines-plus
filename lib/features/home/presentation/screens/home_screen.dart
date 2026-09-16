@@ -14,8 +14,11 @@ import 'package:fines_plus/features/vehicle/presentation/cubit/garage_state.dart
 import 'package:fines_plus/app/router/home_screen_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../widgets/hero_expense_card.dart';
 import '../widgets/quick_add_row.dart';
+import '../widgets/fines_alert_card.dart';
+import '../widgets/recent_transactions_list.dart';
 import '../widgets/last_event_card.dart';
 import '../widgets/statistics_mileage_card.dart';
 import '../widgets/statistics_costs_card.dart';
@@ -48,10 +51,13 @@ class _HomeScreenState extends State<HomeScreen> {
                     : S.of(context).input_number;
                 return Text(
                   carNumber,
-                  style: const TextStyle(
+                  // Big Shoulders Display - the Fines+OS mockup's headline
+                  // token (.phone-h1/h1.title), applied to this screen's
+                  // equivalent big heading.
+                  style: GoogleFonts.bigShouldersDisplay(
                     color: Colors.black87,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 28,
+                    fontWeight: FontWeight.w800,
+                    fontSize: 30,
                   ),
                 );
               },
@@ -161,6 +167,33 @@ class _HomeScreenState extends State<HomeScreen> {
                       return HeroExpenseCard(hasCar: hasCar, state: state, stats: stats);
                     },
                   ),
+
+                  BlocBuilder<CarCubit, CarState>(
+                    builder: (context, state) {
+                      if (state.carId.isEmpty) return const SizedBox.shrink();
+                      return const FinesAlertCard();
+                    },
+                  ),
+
+                  BlocBuilder<CarCubit, CarState>(
+                    builder: (context, state) {
+                      if (state.carId.isEmpty) return const SizedBox.shrink();
+                      return Padding(
+                        padding: const EdgeInsets.only(top: 10),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              S.of(context).recent_transactions,
+                              style: Theme.of(context).textTheme.titleSmall,
+                            ),
+                            const RecentTransactionsList(),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+
                   AppSpacers.verticalXSmall,
                   BlocListener<CarCubit, CarState>(
                     listenWhen: (prev, curr) => prev.carId != curr.carId,

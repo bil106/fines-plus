@@ -52,4 +52,9 @@ abstract final class AppColors {
   static const catTuning = Color(0xFF5B6CFF);
   static const catCarWash = Color(0xFF22A6D9);
   static const catOther = Color(0xFF9AA1AD);
+
+  // Unpaid-fines alert card (matches the Fines+OS mockup's alert token set).
+  static const alertBg = Color(0xFFFBE1E1);
+  static const alertBorder = Color(0xFFF3B9B9);
+  static const alertFg = Color(0xFFB23A3E);
 }
