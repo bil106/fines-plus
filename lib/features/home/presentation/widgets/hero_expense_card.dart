@@ -70,7 +70,11 @@ class HeroExpenseCard extends StatelessWidget {
           end: Alignment.bottomRight,
           colors: [accent.withOpacity(0.26), AppColors.neutreBlanc],
         ),
-        border: Border.all(color: AppColors.neutreGreyLight),
+        border: Border.all(color: AppColors.dashboardCardBorder),
+        boxShadow: [
+          BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 2, offset: const Offset(0, 1)),
+          BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 16, offset: const Offset(0, 6)),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

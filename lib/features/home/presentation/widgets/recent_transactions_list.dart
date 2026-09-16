@@ -124,12 +124,23 @@ class RecentTransactionsList extends StatelessWidget {
         final currencyService = context.read<CurrencyService>();
         final textTheme = Theme.of(context).textTheme;
 
-        return Column(
+        return Padding(
+          padding: const EdgeInsets.only(top: 10),
+          child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Text(S.of(context).recent_transactions, style: textTheme.titleSmall),
+            const SizedBox(height: 4),
             for (final item in items)
-              Padding(
+              Container(
                 padding: const EdgeInsets.symmetric(vertical: 7),
+                decoration: BoxDecoration(
+                  border: Border(
+                    bottom: item == items.last
+                        ? BorderSide.none
+                        : const BorderSide(color: AppColors.dashboardDivider),
+                  ),
+                ),
                 child: Row(
                   children: [
                     Container(
@@ -162,6 +173,7 @@ class RecentTransactionsList extends StatelessWidget {
                 ),
               ),
           ],
+          ),
         );
       },
     );

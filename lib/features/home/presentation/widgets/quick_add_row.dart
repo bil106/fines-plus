@@ -205,8 +205,11 @@ class _QuickAddButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: AppColors.neutreGrey100,
-      borderRadius: AppBorders.radiusMedium,
+      color: AppColors.neutreBlanc,
+      shape: RoundedRectangleBorder(
+        borderRadius: AppBorders.radiusMedium,
+        side: const BorderSide(color: AppColors.dashboardCardBorder),
+      ),
       child: InkWell(
         borderRadius: AppBorders.radiusMedium,
         onTap: onTap,

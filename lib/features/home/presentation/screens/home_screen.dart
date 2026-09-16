@@ -35,12 +35,12 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.energyBlue50,
+      backgroundColor: AppColors.dashboardBg,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(55),
         child: AppBar(
           elevation: 0,
-          backgroundColor: AppColors.energyBlue50,
+          backgroundColor: AppColors.dashboardBg,
           centerTitle: true,
           title: Padding(
             padding: const EdgeInsets.only(top: 18.0),
@@ -126,7 +126,14 @@ class _HomeScreenState extends State<HomeScreen> {
             constraints: const BoxConstraints(maxWidth: 400),
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              child: Column(
+              // Manrope, scoped to this screen's subtree only - matches the
+              // Fines+OS mockup's body font without touching the app-wide
+              // ThemeData (other screens keep their current font).
+              child: Theme(
+                data: Theme.of(context).copyWith(
+                  textTheme: GoogleFonts.manropeTextTheme(Theme.of(context).textTheme),
+                ),
+                child: Column(
                 children: [
                   BlocBuilder<CarCubit, CarState>(
                     builder: (context, state) {
@@ -178,19 +185,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   BlocBuilder<CarCubit, CarState>(
                     builder: (context, state) {
                       if (state.carId.isEmpty) return const SizedBox.shrink();
-                      return Padding(
-                        padding: const EdgeInsets.only(top: 10),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              S.of(context).recent_transactions,
-                              style: Theme.of(context).textTheme.titleSmall,
-                            ),
-                            const RecentTransactionsList(),
-                          ],
-                        ),
-                      );
+                      return const RecentTransactionsList();
                     },
                   ),
 
@@ -238,6 +233,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                   StatisticsCostsCard(),
                 ],
+              ),
               ),
             ),
           ),
