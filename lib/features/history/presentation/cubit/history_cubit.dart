@@ -18,6 +18,15 @@ class HistoryCubit extends Cubit<HistoryState> {
   StreamSubscription? _carSubscription;
   StreamSubscription? _historySubscription;
   HistoryCubit({required this.repository, required this.carCubit}) : super(HistoryInitial()) {
+    // carCubit.stream only emits *future* changes - a Cubit doesn't replay
+    // its current state to a new .stream.listen() subscriber. Without this,
+    // a HistoryCubit created after the car is already known (the normal
+    // case: CarCubit loads the saved car before this cubit exists) would
+    // never call loadHistory until the car number changed again, leaving
+    // dashboard widgets that read this cubit's state stuck on HistoryInitial.
+    if (carCubit.state.carNumber.isNotEmpty) {
+      loadHistory(carCubit.state.carNumber);
+    }
     _carSubscription = carCubit.stream.listen((carState) {
       if (carState.carNumber.isNotEmpty) {
         loadHistory(carState.carNumber);
