@@ -524,6 +524,31 @@ class S {
     );
   }
 
+  /// `Due`
+  String get due_amount {
+    return Intl.message('Due', name: 'due_amount', desc: '', args: []);
+  }
+
+  /// `today at`
+  String get today_at {
+    return Intl.message('today at', name: 'today_at', desc: '', args: []);
+  }
+
+  /// `Unpaid`
+  String get unpaid_fines_section {
+    return Intl.message(
+      'Unpaid',
+      name: 'unpaid_fines_section',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Paid`
+  String get paid_fines_section {
+    return Intl.message('Paid', name: 'paid_fines_section', desc: '', args: []);
+  }
+
   /// `Technical maintenance`
   String get tech_service {
     return Intl.message(
@@ -615,23 +640,25 @@ class S {
   }
 
   /// `Mileage statistics`
-  String get more {
-    return Intl.message('More', name: 'more', desc: '', args: []);
-  }
-
-  String get recent_transactions {
+  String get mileage_statistics {
     return Intl.message(
-      'Recent transactions',
-      name: 'recent_transactions',
+      'Mileage statistics',
+      name: 'mileage_statistics',
       desc: '',
       args: [],
     );
   }
 
-  String get mileage_statistics {
+  /// `More`
+  String get more {
+    return Intl.message('More', name: 'more', desc: '', args: []);
+  }
+
+  /// `Recent transactions`
+  String get recent_transactions {
     return Intl.message(
-      'Mileage statistics',
-      name: 'mileage_statistics',
+      'Recent transactions',
+      name: 'recent_transactions',
       desc: '',
       args: [],
     );
@@ -782,6 +809,31 @@ class S {
     );
   }
 
+  /// `Price/L`
+  String get price_per_liter_short {
+    return Intl.message(
+      'Price/L',
+      name: 'price_per_liter_short',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Volume, L`
+  String get volume_liters_short {
+    return Intl.message(
+      'Volume, L',
+      name: 'volume_liters_short',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Amount`
+  String get sum_short {
+    return Intl.message('Amount', name: 'sum_short', desc: '', args: []);
+  }
+
   /// `days`
   String get days {
     return Intl.message('days', name: 'days', desc: '', args: []);
@@ -915,6 +967,26 @@ class S {
   /// `Gas LPG`
   String get fuel_gas_lpg {
     return Intl.message('Gas LPG', name: 'fuel_gas_lpg', desc: '', args: []);
+  }
+
+  /// `A95`
+  String get fuel_chip_a95 {
+    return Intl.message('A95', name: 'fuel_chip_a95', desc: '', args: []);
+  }
+
+  /// `A92`
+  String get fuel_chip_a92 {
+    return Intl.message('A92', name: 'fuel_chip_a92', desc: '', args: []);
+  }
+
+  /// `Diesel`
+  String get fuel_chip_diesel {
+    return Intl.message('Diesel', name: 'fuel_chip_diesel', desc: '', args: []);
+  }
+
+  /// `Gas`
+  String get fuel_chip_gas {
+    return Intl.message('Gas', name: 'fuel_chip_gas', desc: '', args: []);
   }
 
   /// `Previous maintenance date`
@@ -2922,6 +2994,31 @@ class S {
     );
   }
 
+  /// `Best price nearby · {distance} km`
+  String best_price_nearby_distance(String distance) {
+    return Intl.message(
+      'Best price nearby · $distance km',
+      name: 'best_price_nearby_distance',
+      desc: '',
+      args: [distance],
+    );
+  }
+
+  /// `{distance} km`
+  String distance_km_short(String distance) {
+    return Intl.message(
+      '$distance km',
+      name: 'distance_km_short',
+      desc: '',
+      args: [distance],
+    );
+  }
+
+  /// `Build route`
+  String get build_route {
+    return Intl.message('Build route', name: 'build_route', desc: '', args: []);
+  }
+
   /// `Loaded`
   String get loaded {
     return Intl.message('Loaded', name: 'loaded', desc: '', args: []);
@@ -3425,6 +3522,46 @@ class S {
   /// `Insurance`
   String get insurance {
     return Intl.message('Insurance', name: 'insurance', desc: '', args: []);
+  }
+
+  /// `Insurance company`
+  String get insurance_company {
+    return Intl.message(
+      'Insurance company',
+      name: 'insurance_company',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Policy number`
+  String get policy_number {
+    return Intl.message(
+      'Policy number',
+      name: 'policy_number',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Valid from`
+  String get valid_from {
+    return Intl.message('Valid from', name: 'valid_from', desc: '', args: []);
+  }
+
+  /// `Valid to`
+  String get valid_to {
+    return Intl.message('Valid to', name: 'valid_to', desc: '', args: []);
+  }
+
+  /// `Cost`
+  String get cost {
+    return Intl.message('Cost', name: 'cost', desc: '', args: []);
+  }
+
+  /// `Add expense`
+  String get add_expense {
+    return Intl.message('Add expense', name: 'add_expense', desc: '', args: []);
   }
 
   /// `Last event`
@@ -4002,6 +4139,26 @@ class S {
     );
   }
 
+  /// `No expenses yet`
+  String get no_transactions_title {
+    return Intl.message(
+      'No expenses yet',
+      name: 'no_transactions_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add your first fuel, service, or other expense above — and stats will show up here`
+  String get no_transactions_subtitle {
+    return Intl.message(
+      'Add your first fuel, service, or other expense above — and stats will show up here',
+      name: 'no_transactions_subtitle',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Get My Plan`
   String get get_plan {
     return Intl.message('Get My Plan', name: 'get_plan', desc: '', args: []);
@@ -4372,6 +4529,161 @@ class S {
     return Intl.message(
       'Add fuel purchase details?',
       name: 'fuel_prompt_body',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Fuel type`
+  String get fuel_type {
+    return Intl.message('Fuel type', name: 'fuel_type', desc: '', args: []);
+  }
+
+  /// `Reminder notifications`
+  String get reminder_notifications {
+    return Intl.message(
+      'Reminder notifications',
+      name: 'reminder_notifications',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Vehicles`
+  String get vehicles_section {
+    return Intl.message(
+      'Vehicles',
+      name: 'vehicles_section',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `General`
+  String get general_section {
+    return Intl.message('General', name: 'general_section', desc: '', args: []);
+  }
+
+  /// `About`
+  String get about_app_section {
+    return Intl.message('About', name: 'about_app_section', desc: '', args: []);
+  }
+
+  /// `Add car`
+  String get add_car {
+    return Intl.message('Add car', name: 'add_car', desc: '', args: []);
+  }
+
+  /// `Version`
+  String get app_version {
+    return Intl.message('Version', name: 'app_version', desc: '', args: []);
+  }
+
+  /// `OK`
+  String get garage_status_ok {
+    return Intl.message('OK', name: 'garage_status_ok', desc: '', args: []);
+  }
+
+  /// `OK until {date}`
+  String garage_status_ok_until(String date) {
+    return Intl.message(
+      'OK until $date',
+      name: 'garage_status_ok_until',
+      desc: '',
+      args: [date],
+    );
+  }
+
+  /// `Insurance expired`
+  String get garage_status_insurance_expired {
+    return Intl.message(
+      'Insurance expired',
+      name: 'garage_status_insurance_expired',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Completed work`
+  String get service_completed_work {
+    return Intl.message(
+      'Completed work',
+      name: 'service_completed_work',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add work`
+  String get service_add_work {
+    return Intl.message(
+      'Add work',
+      name: 'service_add_work',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No rating`
+  String get service_no_rating {
+    return Intl.message(
+      'No rating',
+      name: 'service_no_rating',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Best rated nearby · {distance} km`
+  String service_best_rating_distance(String distance) {
+    return Intl.message(
+      'Best rated nearby · $distance km',
+      name: 'service_best_rating_distance',
+      desc: '',
+      args: [distance],
+    );
+  }
+
+  /// `No nearby service stations found`
+  String get service_no_nearby {
+    return Intl.message(
+      'No nearby service stations found',
+      name: 'service_no_nearby',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Allow location access to find nearby service stations`
+  String get service_location_unavailable {
+    return Intl.message(
+      'Allow location access to find nearby service stations',
+      name: 'service_location_unavailable',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Could not load service stations`
+  String get service_load_failed {
+    return Intl.message(
+      'Could not load service stations',
+      name: 'service_load_failed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Try again`
+  String get service_retry {
+    return Intl.message('Try again', name: 'service_retry', desc: '', args: []);
+  }
+
+  /// `Enter a valid price for each job`
+  String get service_invalid_price {
+    return Intl.message(
+      'Enter a valid price for each job',
+      name: 'service_invalid_price',
       desc: '',
       args: [],
     );

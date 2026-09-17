@@ -16,9 +16,8 @@ import 'package:intl/intl.dart';
 @RoutePage()
 class RemindersScreen extends StatefulWidget {
   final String ownerId;
-  final VoidCallback? onBack;
 
-  const RemindersScreen({super.key, required this.ownerId, this.onBack});
+  const RemindersScreen({super.key, required this.ownerId});
 
   @override
   State<RemindersScreen> createState() => _RemindersScreenState();
@@ -42,7 +41,7 @@ class _RemindersScreenState extends State<RemindersScreen> {
             ownerId: widget.ownerId,
             pushHelper: context.read<PushHelper>(),
           )..load(),
-          child: _RemindersView(widget.onBack),
+          child: const _RemindersView(),
         );
       },
     );
@@ -50,8 +49,7 @@ class _RemindersScreenState extends State<RemindersScreen> {
 }
 
 class _RemindersView extends StatelessWidget {
-  final VoidCallback? onBack;
-  const _RemindersView(this.onBack);
+  const _RemindersView();
 
   @override
   Widget build(BuildContext context) {
@@ -59,12 +57,26 @@ class _RemindersView extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: AppColors.energyBlue50,
+      // Нагадування is a bottom-nav tab (peer of Дім/Штрафи), not a pushed
+      // sub-page - no back arrow, matching the redesigned Штрафи tab's
+      // chrome. The "+" moved from a FAB into the header, per the mockup.
       appBar: AppBar(
         backgroundColor: AppColors.energyBlue50,
-        leading: BackButton(
-          color: AppColors.blue700,
-          onPressed: onBack ?? () => Navigator.pop(context),
-        ),
+        automaticallyImplyLeading: false,
+        title: Text(S.of(context).reminder, style: textTheme.title),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.add_circle, color: AppColors.blue700),
+            onPressed: () {
+              final cubit = context.read<ReminderCubit>();
+              showDialog(
+                context: context,
+                barrierColor: AppColors.transparent,
+                builder: (_) => ReminderDialog(cubit: cubit, onSaved: () => cubit.load()),
+              );
+            },
+          ),
+        ],
       ),
       body: SafeArea(
         child: BlocBuilder<ReminderCubit, ReminderState>(
@@ -80,19 +92,12 @@ class _RemindersView extends StatelessWidget {
             }
 
             return ListView.separated(
-              padding: const EdgeInsets.symmetric(horizontal: 1, vertical: 40),
-              itemCount: state.reminders.length + 1,
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              itemCount: state.reminders.length,
               separatorBuilder: (_, __) =>
                   const Divider(color: AppColors.neutreGrey),
               itemBuilder: (context, index) {
-                if (index == 0) {
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 10, left: 20),
-                    child: Text(S.of(context).reminder, style: textTheme.title),
-                  );
-                }
-
-                final reminder = state.reminders[index - 1];
+                final reminder = state.reminders[index];
 
                 return ListTile(
                   leading: Checkbox(
@@ -138,18 +143,6 @@ class _RemindersView extends StatelessWidget {
           },
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          final cubit = context.read<ReminderCubit>();
-          showDialog(
-            context: context,
-            barrierColor: AppColors.transparent,
-            builder: (_) =>
-                ReminderDialog(cubit: cubit, onSaved: () => cubit.load()),
-          );
-        },
-        child: const Icon(Icons.add),
-      ),
     );
   }
 }
@@ -171,21 +164,7 @@ class _EmptyReminders extends StatelessWidget {
             child: Text(S.of(context).reminder, style: textTheme.title),
           ),
           AppSpacers.verticalGigantic,
-          Center(
-            child: Container(
-              width: 150,
-              height: 150,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: AppColors.blueGrey25,
-              ),
-              child: const Icon(
-                Icons.check,
-                color: AppColors.neutreBlanc,
-                size: 120,
-              ),
-            ),
-          ),
+          const Center(child: EmptyStateIcon()),
           AppSpacers.verticalLarge,
           Center(
             child: Text(
@@ -196,6 +175,24 @@ class _EmptyReminders extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+/// Shared empty-state circle+check icon - also used by the Штрафи tab's
+/// empty state (fines_screeen.dart).
+class EmptyStateIcon extends StatelessWidget {
+  const EmptyStateIcon({super.key, this.size = 150});
+
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(shape: BoxShape.circle, color: AppColors.blueGrey25),
+      child: Icon(Icons.check, color: AppColors.neutreBlanc, size: size * 0.8),
     );
   }
 }

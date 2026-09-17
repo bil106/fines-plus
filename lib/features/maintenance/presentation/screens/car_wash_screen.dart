@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
+import 'package:design_system/widget/app_back_button.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
 import 'package:fines_plus/core/extensions/ad_banner_widget.dart';
@@ -102,7 +103,7 @@ class _CarWashScreenState extends State<CarWashScreen> {
         appBar: AppBar(
           backgroundColor: AppColors.energyBlue50,
           elevation: 0,
-          leading: BackButton(color: AppColors.blue700, onPressed: widget.onBack),
+          leading: AppBackButton(onPressed: widget.onBack),
           actions: [
             IconButton(
               icon: const Icon(Icons.check, color: AppColors.blue700, size: 50),

@@ -1,18 +1,19 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
+import 'package:design_system/widget/app_back_button.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
 import 'package:fines_plus/core/extensions/ad_banner_widget.dart';
 import 'package:fines_plus/core/extensions/date_picker_card.dart';
 import 'package:fines_plus/core/extensions/fuel_type.dart';
-import 'package:fines_plus/features/expenses/presentation/widgets/fuel_amount_card.dart';
 import 'package:fines_plus/features/expenses/presentation/widgets/fuel_choice_chips.dart';
 import 'package:fines_plus/features/expenses/presentation/widgets/fuel_input_card.dart';
 import 'package:fines_plus/features/maintenance/data/models/gas_station.dart';
 import 'package:fines_plus/features/maintenance/domain/gas_station_service.dart';
 import 'package:fines_plus/features/maintenance/presentation/cubit/maintenance_cubit.dart';
 import 'package:fines_plus/features/maintenance/presentation/widgets/mileage_card.dart';
+import 'package:fines_plus/features/maintenance/presentation/widgets/nearby_stations_sheet.dart';
 import '../../../../../env/env.dart';
 import 'package:fines_plus/features/expenses/data/models/fuel_record.dart';
 import 'package:fines_plus/features/maintenance/presentation/screens/fuel_map_screen.dart';
@@ -28,13 +29,19 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 @RoutePage()
 class FuelUpScreen extends StatefulWidget {
   final VoidCallback? onBack;
-  const FuelUpScreen({super.key, this.onBack});
+
+  /// When true, renders just the form (no Scaffold/AppBar) for use inside
+  /// [AppBottomSheet] - the dashboard's quick-add flow. Full-screen use
+  /// (Maintenance tab, its FAB) leaves this false and is unaffected.
+  final bool embedded;
+
+  const FuelUpScreen({super.key, this.onBack, this.embedded = false});
 
   @override
-  State<FuelUpScreen> createState() => _FuelUpScreenState();
+  State<FuelUpScreen> createState() => FuelUpScreenState();
 }
 
-class _FuelUpScreenState extends State<FuelUpScreen> {
+class FuelUpScreenState extends State<FuelUpScreen> {
   static const LatLng _fallbackPosition = LatLng(50.4501, 30.5234);
   final TextEditingController volumeController = TextEditingController();
   final TextEditingController mileageController = TextEditingController();
@@ -46,7 +53,10 @@ class _FuelUpScreenState extends State<FuelUpScreen> {
   FuelType selectedFuel = FuelType.Ai95;
   DateTime? selectedDate = DateTime.now();
   GasStation? _bestStation;
+  double? _bestStationDistanceKm;
   bool _isLoadingBestStation = true;
+  LatLng? _currentPosition;
+  List<GasStation> _nearbyStations = [];
 
   late final GasStationService _gasService;
 
@@ -122,7 +132,9 @@ class _FuelUpScreenState extends State<FuelUpScreen> {
           permission == LocationPermission.denied ||
           permission == LocationPermission.deniedForever) {
         if (kDebugMode) {
-          print('FuelUpScreen: geolocation unavailable, using fallback position');
+          print(
+            'FuelUpScreen: geolocation unavailable, using fallback position',
+          );
         }
         await _loadBestStationFrom(_fallbackPosition);
         return;
@@ -139,25 +151,51 @@ class _FuelUpScreenState extends State<FuelUpScreen> {
   }
 
   Future<void> _loadBestStationFrom(LatLng current) async {
-    final bestStation = await _fetchBestNearbyGasStation(current);
+    _currentPosition = current;
+    final stations = await _fetchNearbyGasStations(current);
     if (!mounted) return;
+
+    final bestStation = _pickBestStation(stations, current);
+    final distanceKm = bestStation == null
+        ? null
+        : Geolocator.distanceBetween(
+                current.latitude,
+                current.longitude,
+                bestStation.lat,
+                bestStation.lng,
+              ) /
+              1000;
     setState(() {
+      _nearbyStations = stations;
       _bestStation = bestStation;
+      _bestStationDistanceKm = distanceKm;
       _isLoadingBestStation = false;
     });
   }
 
-  Future<GasStation?> _fetchBestNearbyGasStation(LatLng current) async {
+  Future<List<GasStation>> _fetchNearbyGasStations(LatLng current) async {
     try {
-      final stations = await _gasService.fetchNearbyGasStations(current);
-      if (stations.isEmpty) return null;
+      return await _gasService.fetchNearbyGasStations(current);
+    } catch (e) {
+      if (kDebugMode) print("Error fetching stations: $e");
+      return [];
+    }
+  }
 
-      double distanceTo(GasStation s) =>
-          Geolocator.distanceBetween(current.latitude, current.longitude, s.lat, s.lng);
+  /// Prefers well-rated stations, but a 4.5+ bar routinely excluded every
+  /// station in the area — never come back empty just because none happen
+  /// to clear a high bar; fall back to the nearest one instead.
+  GasStation? _pickBestStation(List<GasStation> stations, LatLng current) {
+    if (stations.isEmpty) return null;
 
-      // Prefer well-rated stations, but a 4.5+ bar routinely excluded every
-      // station in the area — never come back empty just because none
-      // happen to clear a high bar; fall back to the nearest one instead.
+    double distanceTo(GasStation s) => Geolocator.distanceBetween(
+      current.latitude,
+      current.longitude,
+      s.lat,
+      s.lng,
+    );
+
+    try {
       final wellRated = stations.where((s) => s.rating >= 4.0).toList();
       final candidates = wellRated.isNotEmpty ? wellRated : stations;
 
@@ -170,10 +208,63 @@ class _FuelUpScreenState extends State<FuelUpScreen> {
     }
   }
 
+  /// Validates and saves the current form, then closes/reports as
+  /// appropriate for how this screen was presented. Shared by the AppBar
+  /// check action (full-screen mode) and the pinned Save button in
+  /// [AppBottomSheet] (embedded mode).
+  void save() {
+    if (selectedDate == null ||
+        volumeController.text.isEmpty ||
+        mileageController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: AppColors.blue700,
+          content: Text(S.of(context).fill_date),
+        ),
+      );
+      return;
+    }
+
+    final volume = double.tryParse(volumeController.text) ?? 0;
+    final mileage = int.tryParse(mileageController.text) ?? 0;
+    final pricePerLiter = double.tryParse(priceController.text) ?? 0;
+    final totalCost = volume * pricePerLiter;
+
+    final record = FuelRecord(
+      fuelType: selectedFuel.name,
+      volume: volume,
+      cost: totalCost,
+      date: selectedDate!,
+      mileage: mileage,
+      currency: context.read<SettingsCubit>().state.currency,
+    );
+
+    // This screen is reached as a pushed route (Maintenance FAB), as a
+    // static PageView page (main "Заправка" tile), and embedded in a
+    // bottom sheet (dashboard quick-add) - none of those reliably have a
+    // caller awaiting a popped value, so it must save the record itself.
+    context.read<MaintenanceCubit>().addFuelRecord(record);
+
+    if (widget.embedded) {
+      Navigator.of(context).pop(record);
+    } else if (widget.onBack != null) {
+      widget.onBack!();
+    } else if (context.router.canPop()) {
+      context.router.pop(record);
+    } else {
+      Navigator.of(context).maybePop(record);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final settingsCubit = context.watch<SettingsCubit>();
+
+    if (widget.embedded) {
+      return _buildForm(textTheme, settingsCubit);
+    }
+
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
         statusBarColor: AppColors.neutreBlanc,
@@ -184,162 +275,177 @@ class _FuelUpScreenState extends State<FuelUpScreen> {
         appBar: AppBar(
           backgroundColor: AppColors.energyBlue50,
           elevation: 0,
-          leading: BackButton(color: AppColors.blue700, onPressed: widget.onBack),
+          leading: AppBackButton(onPressed: widget.onBack),
           actions: [
             IconButton(
               icon: const Icon(Icons.check, color: Colors.blue, size: 50),
-              onPressed: () {
-                if (selectedDate == null || volumeController.text.isEmpty || mileageController.text.isEmpty) {
-                  ScaffoldMessenger.of(
-                    context,
-                  ).showSnackBar(SnackBar(backgroundColor: AppColors.blue700, content: Text(S.of(context).fill_date)));
-                  return;
-                }
-
-                final volume = double.tryParse(volumeController.text) ?? 0;
-                final mileage = int.tryParse(mileageController.text) ?? 0;
-                final pricePerLiter = double.tryParse(priceController.text) ?? 0;
-                final totalCost = volume * pricePerLiter;
-
-                final record = FuelRecord(
-                  fuelType: selectedFuel.name,
-                  volume: volume,
-                  cost: totalCost,
-                  date: selectedDate!,
-                  mileage: mileage,
-                  currency: settingsCubit.state.currency,
-                );
-
-                // This screen is reached both as a pushed route (Maintenance
-                // FAB) and as a static PageView page (main "Заправка" tile),
-                // where nothing awaits a popped value — so it must save the
-                // record itself rather than relying on a caller to do it.
-                context.read<MaintenanceCubit>().addFuelRecord(record);
-
-                if (widget.onBack != null) {
-                  widget.onBack!();
-                } else if (context.router.canPop()) {
-                  context.router.pop(record);
-                } else {
-                  Navigator.of(context).maybePop(record);
-                }
-              },
+              onPressed: save,
             ),
           ],
         ),
-        body: SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
-          child: Column(
+        body: _buildForm(textTheme, settingsCubit),
+      ),
+    );
+  }
+
+  Widget _buildForm(TextTheme textTheme, SettingsCubit settingsCubit) {
+    return SingleChildScrollView(
+      padding: widget.embedded ? EdgeInsets.zero : const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (!widget.embedded)
+            Text(S.of(context).fuel_up, style: textTheme.title),
+
+          Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(S.of(context).fuel_up, style: textTheme.title),
-
-              Row(
-                children: [
-                  if (_isLoadingBestStation)
-                    const SizedBox(width: 200, child: Center(child: CircularProgressIndicator()))
-                  else
-                    GestureDetector(
-                          onTap: () {
-                            if (_bestStation == null) return;
-                            context.router.push(
-                              FuelMapRoute(
-                                focusPosition: LatLng(_bestStation!.lat, _bestStation!.lng),
-                                focusName: _bestStation!.name,
-                              ),
-                            );
-                          },
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              const Icon(Icons.location_on, color: AppColors.blueAccent, size: 40),
-                              const SizedBox(width: 8),
-                              SizedBox(
-                                width: 180,
-                                child: Text(
-                                  _bestStation?.name ?? S.of(context).no_nearby_station,
-                                  style: _bestStation == null
-                                      ? textTheme.black14bold.copyWith(fontWeight: FontWeight.normal)
-                                      : textTheme.black14bold,
-                                  maxLines: _bestStation == null ? 2 : 1,
-                                  overflow: TextOverflow.ellipsis,
+              Expanded(
+                child: GestureDetector(
+                  onTap: (_currentPosition == null || _nearbyStations.isEmpty)
+                      ? null
+                      : () {
+                          showNearbyStationsSheet(
+                            context,
+                            currentPosition: _currentPosition!,
+                            stations: _nearbyStations,
+                            onSelected: (station) {
+                              context.router.push(
+                                FuelMapRoute(
+                                  focusPosition: LatLng(
+                                    station.lat,
+                                    station.lng,
+                                  ),
+                                  focusName: station.name,
                                 ),
-                              ),
-                            ],
-                          ),
-                        ),
-                  const Spacer(),
-                  IconButton(
-                    icon: Image.asset('assets/icons/map.png', width: 40, height: 40),
-                    onPressed: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => _bestStation == null
-                              ? const FuelMapScreen()
-                              : FuelMapScreen(
-                                  focusPosition: LatLng(_bestStation!.lat, _bestStation!.lng),
-                                  focusName: _bestStation!.name,
+                              );
+                            },
+                          );
+                        },
+                  child: Card(
+                    color: AppColors.neutreBlanc,
+                    margin: EdgeInsets.zero,
+                    child: Padding(
+                      padding: const EdgeInsets.all(12),
+                      child: _isLoadingBestStation
+                          ? const Center(child: CircularProgressIndicator())
+                          : Row(
+                              children: [
+                                const Icon(
+                                  Icons.location_on,
+                                  color: AppColors.blueAccent,
+                                  size: 32,
                                 ),
-                        ),
-                      );
-                    },
-                  ),
-                ],
-              ),
-
-              AppSpacers.verticalXSmall,
-
-              Row(
-                children: [
-                  Expanded(
-                    child: DatePickerCard(selectedDate: selectedDate, onDateSelected: _onDateSelected),
-                  ),
-                  AppSpacers.horizontalLarge,
-                  Expanded(
-                    child: MileageCard(
-                      textTheme: textTheme,
-                      controller: mileageController,
-                      focusNode: _mileageFocusNode,
-                      onChanged: _onMileageChanged,
-                      onSubmitted: (_) => _advanceFromMileage(),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        _bestStation == null
+                                            ? S.of(context).no_nearby_station
+                                            : _bestStation!.vicinity.isEmpty
+                                            ? _bestStation!.name
+                                            : '${_bestStation!.name} — ${_bestStation!.vicinity}',
+                                        style: _bestStation == null
+                                            ? textTheme.black14bold.copyWith(
+                                                fontWeight: FontWeight.normal,
+                                              )
+                                            : textTheme.black14bold,
+                                        maxLines: _bestStation == null ? 2 : 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                      if (_bestStation != null &&
+                                          _bestStationDistanceKm != null) ...[
+                                        const SizedBox(height: 2),
+                                        Text(
+                                          S
+                                              .of(context)
+                                              .best_price_nearby_distance(
+                                                _bestStationDistanceKm!
+                                                    .toStringAsFixed(1),
+                                              ),
+                                          style: textTheme.bodySmall?.copyWith(
+                                            color: AppColors.grey700,
+                                          ),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ],
+                                    ],
+                                  ),
+                                ),
+                                if (_bestStation != null)
+                                  const Icon(
+                                    Icons.chevron_right,
+                                    color: AppColors.grey700,
+                                  ),
+                              ],
+                            ),
                     ),
                   ),
-                ],
+                ),
               ),
-
-              AppSpacers.verticalXSmall,
-              Text(S.of(context).fuel, style: textTheme.subtitleText),
-              AppSpacers.verticalXSmall,
-
-              FuelChoiceChips(
-                fuels: fuelPrices.keys.toList(),
-                selectedFuel: selectedFuel,
-                onSelected: (fuel) {
-                  setState(() {
-                    selectedFuel = fuel;
-                    _loadLastPrice(fuel);
-                  });
-                },
-              ),
-
-              AppSpacers.verticalMediumLarge,
-              FuelInputCard(
-                fuel: selectedFuel,
-                volumeController: volumeController,
-                priceController: priceController,
-                onPriceChanged: _onPriceChanged,
-                priceFocusNode: _priceFocusNode,
-                volumeFocusNode: _volumeFocusNode,
-              ),
-
-              AppSpacers.verticalMediumLarge,
-              FuelAmountCard(volumeController: volumeController, priceController: priceController),
-
-              AppSpacers.verticalXLarge,
-              const AdBannerWidget(),
             ],
           ),
-        ),
+
+          AppSpacers.verticalXSmall,
+
+          Row(
+            children: [
+              Expanded(
+                child: DatePickerCard(
+                  selectedDate: selectedDate,
+                  onDateSelected: _onDateSelected,
+                ),
+              ),
+              AppSpacers.horizontalLarge,
+              Expanded(
+                child: MileageCard(
+                  textTheme: textTheme,
+                  controller: mileageController,
+                  focusNode: _mileageFocusNode,
+                  onChanged: _onMileageChanged,
+                  onSubmitted: (_) => _advanceFromMileage(),
+                ),
+              ),
+            ],
+          ),
+
+          AppSpacers.verticalXSmall,
+          Text(S.of(context).fuel_type, style: textTheme.subtitleText),
+          AppSpacers.verticalXSmall,
+
+          FuelChoiceChips(
+            fuels: const [
+              FuelType.Ai95,
+              FuelType.Ai92,
+              FuelType.DIESEl,
+              FuelType.LPG,
+            ],
+            selectedFuel: selectedFuel,
+            onSelected: (fuel) {
+              setState(() {
+                selectedFuel = fuel;
+                _loadLastPrice(fuel);
+              });
+            },
+          ),
+
+          AppSpacers.verticalMediumLarge,
+          FuelPriceVolumeSumRow(
+            volumeController: volumeController,
+            priceController: priceController,
+            onPriceChanged: _onPriceChanged,
+            priceFocusNode: _priceFocusNode,
+            volumeFocusNode: _volumeFocusNode,
+          ),
+
+          AppSpacers.verticalXLarge,
+          const AdBannerWidget(),
+        ],
       ),
     );
   }

@@ -25,44 +25,37 @@ class DatePickerCard extends StatelessWidget {
         );
         if (picked != null) onDateSelected(picked);
       },
-      child: Card(
-        color: AppColors.neutreBlanc,
+      child: Container(
         margin: const EdgeInsets.symmetric(vertical: 8),
-        child: Padding(
-          padding: const EdgeInsets.all(12),
-          child: Row(
-            children: [
-              const Icon(Icons.calendar_today, size: 24),
-              AppSpacers.horizontalSmall,
-              Flexible(
-                fit: FlexFit.loose,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    FittedBox(
-                      fit: BoxFit.scaleDown,
-                      alignment: Alignment.centerLeft,
-                      child: Text(S.of(context).date, style: textTheme.subtitleText.copyWith(fontSize: 14)),
-                    ),
-                    AppSpacers.verticalXSmall,
-                    FittedBox(
-                      fit: BoxFit.scaleDown,
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        selectedDate != null
-                            ? "${selectedDate!.day.toString().padLeft(2, '0')}.${selectedDate!.month.toString().padLeft(2, '0')}.${selectedDate!.year}"
-                            : S.of(context).select_date,
-                        style: selectedDate != null
-                            ? textTheme.historyText.copyWith(fontSize: 16)
-                            : textTheme.hintText.copyWith(fontSize: 16),
-                      ),
-                    ),
-                  ],
-                ),
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: AppColors.neutreBlanc,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: AppColors.grey300),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              alignment: Alignment.centerLeft,
+              child: Text(S.of(context).date, style: textTheme.subtitleText.copyWith(fontSize: 14)),
+            ),
+            AppSpacers.verticalXSmall,
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              alignment: Alignment.centerLeft,
+              child: Text(
+                selectedDate != null
+                    ? "${selectedDate!.day.toString().padLeft(2, '0')}.${selectedDate!.month.toString().padLeft(2, '0')}.${selectedDate!.year}"
+                    : S.of(context).select_date,
+                style: selectedDate != null
+                    ? textTheme.historyText.copyWith(fontSize: 16)
+                    : textTheme.hintText.copyWith(fontSize: 16),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

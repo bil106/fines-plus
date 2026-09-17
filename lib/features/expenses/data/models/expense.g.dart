@@ -23,6 +23,11 @@ Expense _$ExpenseFromJson(Map<String, dynamic> json) => Expense(
       : DateTime.parse(json['updatedAt'] as String),
   carNumber: json['carNumber'] as String?,
   fuelVolume: (json['fuelVolume'] as num?)?.toDouble(),
+  insuranceCompany: json['insuranceCompany'] as String?,
+  insurancePolicyNumber: json['insurancePolicyNumber'] as String?,
+  insuranceValidTo: json['insuranceValidTo'] == null
+      ? null
+      : DateTime.parse(json['insuranceValidTo'] as String),
 );
 
 Map<String, dynamic> _$ExpenseToJson(Expense instance) => <String, dynamic>{
@@ -38,6 +43,9 @@ Map<String, dynamic> _$ExpenseToJson(Expense instance) => <String, dynamic>{
   'ownerId': instance.ownerId,
   'carNumber': instance.carNumber,
   'fuelVolume': instance.fuelVolume,
+  'insuranceCompany': instance.insuranceCompany,
+  'insurancePolicyNumber': instance.insurancePolicyNumber,
+  'insuranceValidTo': instance.insuranceValidTo?.toIso8601String(),
 };
 
 const _$ExpenseCategoryEnumMap = {
@@ -45,5 +53,6 @@ const _$ExpenseCategoryEnumMap = {
   ExpenseCategory.service: 'service',
   ExpenseCategory.tuning: 'tuning',
   ExpenseCategory.carWash: 'carWash',
+  ExpenseCategory.insurance: 'insurance',
   ExpenseCategory.other: 'other',
 };

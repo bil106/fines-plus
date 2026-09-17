@@ -168,6 +168,8 @@ Color _categoryColor(ExpenseCategory c) {
       return AppColors.catTuning;
     case ExpenseCategory.carWash:
       return AppColors.catCarWash;
+    case ExpenseCategory.insurance:
+      return AppColors.catInsurance;
     case ExpenseCategory.other:
       return AppColors.catOther;
   }
@@ -183,6 +185,8 @@ String _categoryLabel(ExpenseCategory c, BuildContext context) {
       return S.of(context).tuning;
     case ExpenseCategory.carWash:
       return S.of(context).car_wash;
+    case ExpenseCategory.insurance:
+      return S.of(context).insurance;
     case ExpenseCategory.other:
       return S.of(context).other;
   }

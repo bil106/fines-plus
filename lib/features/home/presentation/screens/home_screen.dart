@@ -19,9 +19,6 @@ import '../widgets/hero_expense_card.dart';
 import '../widgets/quick_add_row.dart';
 import '../widgets/fines_alert_card.dart';
 import '../widgets/recent_transactions_list.dart';
-import '../widgets/last_event_card.dart';
-import '../widgets/statistics_mileage_card.dart';
-import '../widgets/statistics_costs_card.dart';
 
 @RoutePage()
 class HomeScreen extends StatefulWidget {
@@ -43,28 +40,37 @@ class _HomeScreenState extends State<HomeScreen> {
           backgroundColor: context.brandTheme.surfaceBg,
           centerTitle: true,
           title: Padding(
-            padding: const EdgeInsets.only(top: 18.0),
+            padding: const EdgeInsets.only(top: 10.0),
             child: BlocBuilder<CarCubit, CarState>(
               builder: (context, state) {
                 final carNumber = state.carNumber.isNotEmpty
                     ? state.carNumber
                     : S.of(context).input_number;
-                return Text(
-                  carNumber,
-                  // Brand display font (Big Shoulders Display by default),
-                  // per-flavor via AppConfig.displayFontFamily.
-                  style: context.brandTheme.displayTextStyle.copyWith(
-                    color: Colors.black87,
-                    fontSize: 30,
+                return GestureDetector(
+                  // Tapping the plate opens Гараж, same as the car icon in
+                  // actions below - see that IconButton's comment.
+                  onTap: () {
+                    final wrapperState = context
+                        .findAncestorStateOfType<HomeScreenWrapperState>();
+                    wrapperState?.openPage(HomePage.garage);
+                  },
+                  child: Text(
+                    carNumber,
+                    // Brand display font (Big Shoulders Display by default),
+                    // per-flavor via AppConfig.displayFontFamily.
+                    style: context.brandTheme.displayTextStyle.copyWith(
+                      color: Colors.black87,
+                      fontSize: 30,
+                    ),
                   ),
                 );
               },
             ),
           ),
           leading: IconButton(
-            icon: const Icon(Icons.settings, color: AppColors.grey700),
+            icon: const Icon(Icons.settings_outlined, color: AppColors.grey700),
             iconSize: 30,
-            padding: const EdgeInsets.all(14),
+            padding: const EdgeInsets.only(left: 16),
             onPressed: () {
               final homeState = context
                   .findAncestorStateOfType<HomeScreenWrapperState>();
@@ -86,31 +92,41 @@ class _HomeScreenState extends State<HomeScreen> {
                       ? activeCars.first.photoUrl
                       : '';
 
-                  return IconButton(
-                    icon: photoUrl.isEmpty
-                        ? const Icon(
-                            Icons.directions_car,
-                            size: 28,
-                            color: AppColors.grey700,
-                          )
-                        : ClipOval(
-                            child: Image.network(
-                              photoUrl,
-                              width: 42,
-                              height: 42,
-                              fit: BoxFit.cover,
-                              errorBuilder: (_, __, ___) => const Icon(
+                  return Center(
+                    child: SizedBox.square(
+                      dimension: 48,
+                      child: IconButton(
+                        padding: EdgeInsets.zero,
+                        iconSize: 48,
+                        icon: photoUrl.isEmpty
+                            ? const Icon(
                                 Icons.directions_car,
                                 size: 28,
                                 color: AppColors.grey700,
+                              )
+                            : ClipOval(
+                                child: Image.network(
+                                  photoUrl,
+                                  width: 48,
+                                  height: 48,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (_, __, ___) => const Icon(
+                                    Icons.directions_car,
+                                    size: 28,
+                                    color: AppColors.grey700,
+                                  ),
+                                ),
                               ),
-                            ),
-                          ),
-                    onPressed: () {
-                      final wrapperState = context
-                          .findAncestorStateOfType<HomeScreenWrapperState>();
-                      wrapperState?.openPage(HomePage.carInfo);
-                    },
+                        onPressed: () {
+                          // Opens Гараж (the vehicle list), not CarInfoScreen -
+                          // per the redesign, "тапом на номер авто або іконку
+                          // машинки" now both open the garage.
+                          final wrapperState = context
+                              .findAncestorStateOfType<HomeScreenWrapperState>();
+                          wrapperState?.openPage(HomePage.garage);
+                        },
+                      ),
+                    ),
                   );
                 },
               ),
@@ -126,14 +142,6 @@ class _HomeScreenState extends State<HomeScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               child: Column(
                 children: [
-                  BlocBuilder<CarCubit, CarState>(
-                    builder: (context, state) {
-                      if (state.carId.isEmpty) return const SizedBox.shrink();
-                      return const QuickAddRow();
-                    },
-                  ),
-                  AppSpacers.verticalSmallMedium,
-
                   BlocBuilder<StatisticsCubit, StatisticsState>(
                     builder: (context, state) {
                       if (state.loading &&
@@ -162,7 +170,19 @@ class _HomeScreenState extends State<HomeScreen> {
                               lastOdometer: 0,
                             );
 
-                      return HeroExpenseCard(hasCar: hasCar, state: state, stats: stats);
+                      return HeroExpenseCard(
+                        hasCar: hasCar,
+                        state: state,
+                        stats: stats,
+                      );
+                    },
+                  ),
+
+                  AppSpacers.verticalSmallMedium,
+                  BlocBuilder<CarCubit, CarState>(
+                    builder: (context, state) {
+                      if (state.carId.isEmpty) return const SizedBox.shrink();
+                      return const QuickAddRow();
                     },
                   ),
 
@@ -190,39 +210,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     },
                     child: const SizedBox.shrink(),
                   ),
-
-                  BlocBuilder<StatisticsCubit, StatisticsState>(
-                    builder: (context, state) {
-                      final carId = context.watch<CarCubit>().state.carId;
-                      if (carId.isEmpty) {
-                        return LastEventCardAction(
-                          event: null,
-                          onTap: null,
-                          onOpenEvents: null,
-                        );
-                      }
-
-                      if (state.loading) {
-                        return const Center(child: CircularProgressIndicator());
-                      }
-
-                      return LastEventCardAction(
-                        event: state.lastEvent,
-                        onTap: () {},
-                        onOpenEvents: () {
-                          final wrapperState = context
-                              .findAncestorStateOfType<
-                                HomeScreenWrapperState
-                              >();
-                          wrapperState?.openPage(HomePage.maintenance);
-                        },
-                      );
-                    },
-                  ),
-
-                  StatisticsMileageCard(),
-
-                  StatisticsCostsCard(),
                 ],
               ),
             ),

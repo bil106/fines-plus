@@ -155,6 +155,7 @@ flutter:
     - assets/icons/coin_stack.png
     - assets/icons/steeringWheel.png
     - assets/icons/ic_launcher_foreground.png
+    - assets/config/.env
     - assets/logo/fines_logo.png
     - assets/car_logos/
     

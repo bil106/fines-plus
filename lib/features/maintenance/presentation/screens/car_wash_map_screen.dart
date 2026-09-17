@@ -1,3 +1,4 @@
+import 'package:design_system/widget/app_back_button.dart';
 import 'dart:convert';
 
 import 'package:auto_route/auto_route.dart';
@@ -134,7 +135,12 @@ class _CarWashMapScreenState extends State<CarWashMapScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(S.of(context).car_wash_nearby)),
+      appBar: AppBar(
+        leading: ModalRoute.of(context)?.canPop == true
+            ? const AppBackButton()
+            : null,
+        title: Text(S.of(context).car_wash_nearby),
+      ),
       body: _currentPosition == null
           ? const Center(child: CircularProgressIndicator())
           : GoogleMap(

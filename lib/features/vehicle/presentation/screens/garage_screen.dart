@@ -1,12 +1,23 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:core_utils/formatters/vehicle_formatters.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_borders.dart';
 import 'package:design_system/constants/app_spacers.dart';
+import 'package:design_system/theme/app_brand_theme.dart';
 import 'package:design_system/theme/app_theme.dart';
+import 'package:design_system/widget/app_page_app_bar.dart';
+import 'package:fines_plus/features/expenses/data/models/expense.dart';
+import 'package:fines_plus/features/expenses/data/models/expense_category.dart';
+import 'package:fines_plus/features/expenses/data/models/insurance_record.dart';
+import 'package:fines_plus/features/expenses/data/repository/expense_repository.dart';
+import 'package:fines_plus/features/maintenance/presentation/cubit/maintenance_cubit.dart';
+import 'package:fines_plus/features/maintenance/presentation/cubit/maintenance_state.dart';
+import 'package:fines_plus/features/settings/presentation/cubit/settings_cubit.dart';
 import 'package:fines_plus/features/vehicle/data/car_makes.dart';
 import 'package:fines_plus/features/vehicle/data/datasources/car_photo_uploader.dart';
 import 'package:fines_plus/features/vehicle/data/models/car_info_model.dart';
+import 'package:fines_plus/features/vehicle/presentation/cubit/car_cubit.dart';
 import 'package:fines_plus/features/vehicle/presentation/cubit/garage_cubit.dart';
 import 'package:fines_plus/features/vehicle/presentation/cubit/garage_state.dart';
 import 'package:fines_plus/features/vehicle/presentation/widgets/car_make_logo.dart';
@@ -22,25 +33,16 @@ class GarageScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-
     return Scaffold(
-      backgroundColor: AppColors.energyBlue50,
-      appBar: AppBar(
-        backgroundColor: AppColors.energyBlue50,
-        leading: BackButton(
-          color: AppColors.blue700,
-          onPressed: onBack ?? () => Navigator.pop(context),
-        ),
-        title: Text(S.of(context).my_garage, style: textTheme.title),
-      ),
+      backgroundColor: context.brandTheme.surfaceBg,
+      appBar: AppPageAppBar(title: S.of(context).my_garage, onBack: onBack),
       floatingActionButton: FloatingActionButton(
         backgroundColor: AppColors.blue700,
         onPressed: () async {
-          final result = await _showCarFormSheet(context);
+          final result = await showCarFormSheet(context);
           if (result == null) return;
           if (!context.mounted) return;
-          await _runOrShowError(
+          await runOrShowError(
             context,
             () => context.read<GarageCubit>().addCar(
               carNumber: result['carNumber'] ?? '',
@@ -75,18 +77,18 @@ class GarageScreen extends StatelessWidget {
                   isActive: isActive,
                   onTap: isActive
                       ? null
-                      : () => _runOrShowError(
+                      : () => runOrShowError(
                           context,
                           () => context.read<GarageCubit>().switchTo(car),
                         ),
                   onEdit: () async {
-                    final result = await _showCarFormSheet(
+                    final result = await showCarFormSheet(
                       context,
                       existing: car,
                     );
                     if (result == null) return;
                     if (!context.mounted) return;
-                    await _runOrShowError(
+                    await runOrShowError(
                       context,
                       () => context.read<GarageCubit>().updateCar(
                         car,
@@ -97,35 +99,7 @@ class GarageScreen extends StatelessWidget {
                       ),
                     );
                   },
-                  onDelete: () async {
-                    final confirmed = await showDialog<bool>(
-                      context: context,
-                      builder: (_) => AlertDialog(
-                        title: Text(S.of(context).garage_delete_confirm_title),
-                        content: Text(S.of(context).garage_delete_confirm_body),
-                        actions: [
-                          TextButton(
-                            onPressed: () => Navigator.pop(context, false),
-                            child: Text(S.of(context).cancel),
-                          ),
-                          TextButton(
-                            onPressed: () => Navigator.pop(context, true),
-                            child: Text(
-                              S.of(context).delete,
-                              style: const TextStyle(color: Colors.red),
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                    if (confirmed != true) return;
-                    if (!context.mounted) return;
-                    await _runOrShowError(
-                      context,
-                      () => context.read<GarageCubit>().deleteCar(car),
-                      errorMessage: S.of(context).garage_delete_error,
-                    );
-                  },
+                  onDelete: () => confirmAndDeleteCar(context, car),
                 );
               },
             );
@@ -173,7 +147,7 @@ class _CarCard extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
           child: Row(
             children: [
-              _Thumbnail(
+              Thumbnail(
                 photoUrl: car.photoUrl,
                 make: car.make,
                 isActive: isActive,
@@ -207,6 +181,7 @@ class _CarCard extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
+                    if (hasNumber) CarMileageAndStatus(carId: car.carId),
                   ],
                 ),
               ),
@@ -227,14 +202,146 @@ class _CarCard extends StatelessWidget {
   }
 }
 
-class _Thumbnail extends StatelessWidget {
+/// Mileage + a simple status line, derived from that car's own expense
+/// records (not just the currently active car's - MaintenanceCubit only
+/// tracks the active one). "ОК до `date`" reflects a real insurance
+/// record's validTo; there's no stored service-interval anywhere in the app
+/// yet to compute a real "ТО через N км" due-distance, so that case isn't
+/// shown.
+class CarMileageAndStatus extends StatefulWidget {
+  final String carId;
+  const CarMileageAndStatus({super.key, required this.carId});
+
+  @override
+  State<CarMileageAndStatus> createState() => CarMileageAndStatusState();
+}
+
+class CarMileageAndStatusState extends State<CarMileageAndStatus> {
+  Future<List<Expense>>? _expensesFuture;
+
+  bool get _isActiveCar => widget.carId == context.read<CarCubit>().state.carId;
+
+  @override
+  void initState() {
+    super.initState();
+    // For the active car, MaintenanceCubit already streams its records live
+    // - reusing that instead of a one-shot fetch means this updates right
+    // after e.g. saving a new insurance record from the dashboard's
+    // Страхування sheet, instead of staying stuck on whatever was true when
+    // this row first mounted. Other cars aren't tracked by MaintenanceCubit,
+    // so they still get a plain one-shot fetch.
+    if (!_isActiveCar) {
+      _expensesFuture = ExpenseRepository(FirebaseFirestore.instance).getExpensesOnce(carNumber: widget.carId);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_isActiveCar) {
+      return BlocBuilder<MaintenanceCubit, MaintenanceState>(
+        builder: (context, state) {
+          final mileage = [
+            ...state.fuelRecords.map((r) => r.mileage),
+            ...state.serviceRecords.map((r) => r.mileage),
+            ...state.carWashRecords.map((r) => r.mileage),
+            ...state.tuningRecords.map((r) => r.mileage),
+            ...state.otherRecords.map((r) => r.mileage),
+          ].fold(0, (max, m) => m > max ? m : max);
+
+          // "Current" policy = the one saved most recently (updatedAt), not
+          // whichever happens to run furthest into the future, and not
+          // validFrom - a renewal that only edits validTo keeps the same
+          // validFrom as the record it's replacing.
+          InsuranceRecord? currentPolicy;
+          for (final r in state.insuranceRecords) {
+            if (currentPolicy == null ||
+                currentPolicy.updatedAt == null ||
+                (r.updatedAt != null && r.updatedAt!.isAfter(currentPolicy.updatedAt!))) {
+              currentPolicy = r;
+            }
+          }
+
+          return _buildContent(context, mileage: mileage, latestInsuranceValidTo: currentPolicy?.validTo);
+        },
+      );
+    }
+
+    return FutureBuilder<List<Expense>>(
+      future: _expensesFuture,
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) return const SizedBox.shrink();
+        final expenses = snapshot.data!;
+
+        final mileage = expenses.fold<int>(0, (max, e) => (e.mileage ?? 0) > max ? e.mileage! : max);
+
+        // Same "most recently saved policy wins" rule as the active-car
+        // branch above.
+        Expense? currentPolicy;
+        for (final e in expenses) {
+          if (e.category == ExpenseCategory.insurance) {
+            if (currentPolicy == null ||
+                currentPolicy.updatedAt == null ||
+                (e.updatedAt != null && e.updatedAt!.isAfter(currentPolicy.updatedAt!))) {
+              currentPolicy = e;
+            }
+          }
+        }
+
+        return _buildContent(context, mileage: mileage, latestInsuranceValidTo: currentPolicy?.insuranceValidTo);
+      },
+    );
+  }
+
+  Widget _buildContent(BuildContext context, {required int mileage, required DateTime? latestInsuranceValidTo}) {
+    final textTheme = Theme.of(context).textTheme;
+
+    final insuranceExpired = latestInsuranceValidTo != null && latestInsuranceValidTo.isBefore(DateTime.now());
+
+    final statusText = insuranceExpired
+        ? S.of(context).garage_status_insurance_expired
+        : latestInsuranceValidTo != null
+        ? S.of(context).garage_status_ok_until(_formatDate(latestInsuranceValidTo))
+        : S.of(context).garage_status_ok;
+
+    final unit = context.read<SettingsCubit>().state.unit;
+
+    return Padding(
+      padding: const EdgeInsets.only(top: 4),
+      child: Wrap(
+        spacing: 8,
+        children: [
+          if (mileage > 0) Text('$mileage $unit', style: textTheme.bodySmall),
+          Text(
+            statusText,
+            style: textTheme.bodySmall?.copyWith(
+              color: insuranceExpired ? AppColors.red : Colors.green.shade700,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _formatDate(DateTime date) {
+    return '${date.day.toString().padLeft(2, '0')}.${date.month.toString().padLeft(2, '0')}.${date.year}';
+  }
+}
+
+/// The car's photo, or a make-logo fallback when none is set - shared by
+/// GarageScreen's list and Settings' compact "Автомобілі" rows (see
+/// settings_screen.dart), just at different [size]s.
+class Thumbnail extends StatelessWidget {
   final String photoUrl;
   final String make;
   final bool isActive;
-  const _Thumbnail({
+  final double size;
+  const Thumbnail({
+    super.key,
     required this.photoUrl,
     required this.make,
     required this.isActive,
+    this.size = 90,
   });
 
   @override
@@ -242,17 +349,17 @@ class _Thumbnail extends StatelessWidget {
     if (photoUrl.isEmpty) {
       return CarMakeLogo(
         make: make,
-        size: 36,
+        size: size * 0.4,
         fallbackColor: isActive ? AppColors.blue700 : AppColors.neutreGrey,
       );
     }
 
     return ClipRRect(
-      borderRadius: AppBorders.radius16,
+      borderRadius: AppBorders.radiusMedium,
       child: Image.network(
         photoUrl,
-        width: 90,
-        height: 90,
+        width: size,
+        height: size,
         fit: BoxFit.cover,
         errorBuilder: (_, __, ___) => Icon(
           Icons.directions_car,
@@ -263,10 +370,43 @@ class _Thumbnail extends StatelessWidget {
   }
 }
 
+/// Confirms, then deletes a car (and all of its data) via GarageCubit -
+/// shared by GarageScreen's delete button and Settings' "Автомобілі" rows,
+/// so both go through the exact same Firestore-backed deleteCar flow.
+Future<void> confirmAndDeleteCar(BuildContext context, CarInfoModel car) async {
+  final confirmed = await showDialog<bool>(
+    context: context,
+    builder: (_) => AlertDialog(
+      title: Text(S.of(context).garage_delete_confirm_title),
+      content: Text(S.of(context).garage_delete_confirm_body),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context, false),
+          child: Text(S.of(context).cancel),
+        ),
+        TextButton(
+          onPressed: () => Navigator.pop(context, true),
+          child: Text(
+            S.of(context).delete,
+            style: const TextStyle(color: Colors.red),
+          ),
+        ),
+      ],
+    ),
+  );
+  if (confirmed != true) return;
+  if (!context.mounted) return;
+  await runOrShowError(
+    context,
+    () => context.read<GarageCubit>().deleteCar(car),
+    errorMessage: S.of(context).garage_delete_error,
+  );
+}
+
 /// Runs a garage action and surfaces any failure as a SnackBar instead of
 /// letting it disappear as a silent, unhandled Future rejection (which is
 /// invisible to the user outside of debug mode).
-Future<void> _runOrShowError(
+Future<void> runOrShowError(
   BuildContext context,
   Future<void> Function() action, {
   String? errorMessage,
@@ -291,7 +431,7 @@ Future<void> _runOrShowError(
 /// upload against) a photo picker. Returns the entered values — 'make',
 /// 'carNumber', 'techPassport', and 'photoUrl' if a new photo was uploaded
 /// — or null if the user cancelled.
-Future<Map<String, String>?> _showCarFormSheet(
+Future<Map<String, String>?> showCarFormSheet(
   BuildContext context, {
   CarInfoModel? existing,
 }) {
@@ -310,7 +450,7 @@ Future<Map<String, String>?> _showCarFormSheet(
   return showModalBottomSheet<Map<String, String>>(
     context: context,
     isScrollControlled: true,
-    backgroundColor: AppColors.energyBlue50,
+    backgroundColor: context.brandTheme.surfaceBg,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(22)),
     ),

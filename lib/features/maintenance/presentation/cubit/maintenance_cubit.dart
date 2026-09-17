@@ -3,6 +3,8 @@ import 'package:fines_plus/features/expenses/data/models/car_wash_record.dart';
 import 'package:fines_plus/features/expenses/data/models/expense.dart';
 import 'package:fines_plus/features/expenses/data/models/expense_category.dart';
 import 'package:fines_plus/features/expenses/data/models/fuel_record.dart';
+import 'package:fines_plus/features/expenses/data/models/insurance_record.dart';
+import 'package:fines_plus/features/expenses/data/models/other_expense_record.dart';
 import 'package:fines_plus/features/expenses/data/models/service_record.dart';
 import 'package:fines_plus/features/expenses/data/models/tuning_record.dart';
 import 'package:fines_plus/features/expenses/data/repository/expense_repository.dart';
@@ -76,6 +78,8 @@ class MaintenanceCubit extends Cubit<MaintenanceState> {
         final fuelRecords = <FuelRecord>[];
         final tuningRecords = <TuningRecord>[];
         final carWashRecords = <CarWashRecord>[];
+        final insuranceRecords = <InsuranceRecord>[];
+        final otherRecords = <OtherExpenseRecord>[];
 
         for (final exp in expenses) {
           switch (exp.category) {
@@ -91,7 +95,11 @@ class MaintenanceCubit extends Cubit<MaintenanceState> {
             case ExpenseCategory.carWash:
               carWashRecords.add(CarWashRecord.fromExpense(exp));
               break;
-            default:
+            case ExpenseCategory.insurance:
+              insuranceRecords.add(InsuranceRecord.fromExpense(exp));
+              break;
+            case ExpenseCategory.other:
+              otherRecords.add(OtherExpenseRecord.fromExpense(exp));
               break;
           }
         }
@@ -102,6 +110,8 @@ class MaintenanceCubit extends Cubit<MaintenanceState> {
             fuelRecords: fuelRecords,
             tuningRecords: tuningRecords,
             carWashRecords: carWashRecords,
+            insuranceRecords: insuranceRecords,
+            otherRecords: otherRecords,
             isLoading: false,
           ),
         );
@@ -110,6 +120,8 @@ class MaintenanceCubit extends Cubit<MaintenanceState> {
         _saveRecordsToPrefs('fuel_records', fuelRecords);
         _saveRecordsToPrefs('tuning_records', tuningRecords);
         _saveRecordsToPrefs('car_wash_records', carWashRecords);
+        _saveRecordsToPrefs('insurance_records', insuranceRecords);
+        _saveRecordsToPrefs('other_records', otherRecords);
       },
       onError: (e) => debugPrint('MaintenanceCubit expenses stream error: $e'),
     );
@@ -173,6 +185,16 @@ class MaintenanceCubit extends Cubit<MaintenanceState> {
           'car_wash_records',
           (json) => CarWashRecord.fromJson(json),
         ),
+        insuranceRecords: _loadListFromPrefs<InsuranceRecord>(
+          prefs,
+          'insurance_records',
+          (json) => InsuranceRecord.fromJson(json),
+        ),
+        otherRecords: _loadListFromPrefs<OtherExpenseRecord>(
+          prefs,
+          'other_records',
+          (json) => OtherExpenseRecord.fromJson(json),
+        ),
       ),
     );
   }
@@ -201,6 +223,8 @@ class MaintenanceCubit extends Cubit<MaintenanceState> {
       final fuelRecords = <FuelRecord>[];
       final tuningRecords = <TuningRecord>[];
       final carWashRecords = <CarWashRecord>[];
+      final insuranceRecords = <InsuranceRecord>[];
+      final otherRecords = <OtherExpenseRecord>[];
 
       for (final exp in expenses) {
         switch (exp.category) {
@@ -216,7 +240,11 @@ class MaintenanceCubit extends Cubit<MaintenanceState> {
           case ExpenseCategory.carWash:
             carWashRecords.add(CarWashRecord.fromExpense(exp));
             break;
-          default:
+          case ExpenseCategory.insurance:
+            insuranceRecords.add(InsuranceRecord.fromExpense(exp));
+            break;
+          case ExpenseCategory.other:
+            otherRecords.add(OtherExpenseRecord.fromExpense(exp));
             break;
         }
       }
@@ -227,6 +255,8 @@ class MaintenanceCubit extends Cubit<MaintenanceState> {
           fuelRecords: _mergeRecords(state.fuelRecords, fuelRecords),
           tuningRecords: _mergeRecords(state.tuningRecords, tuningRecords),
           carWashRecords: _mergeRecords(state.carWashRecords, carWashRecords),
+          insuranceRecords: _mergeRecords(state.insuranceRecords, insuranceRecords),
+          otherRecords: _mergeRecords(state.otherRecords, otherRecords),
           isLoading: false,
         ),
       );
@@ -235,6 +265,8 @@ class MaintenanceCubit extends Cubit<MaintenanceState> {
       await _saveRecordsToPrefs('fuel_records', state.fuelRecords);
       await _saveRecordsToPrefs('tuning_records', state.tuningRecords);
       await _saveRecordsToPrefs('car_wash_records', state.carWashRecords);
+      await _saveRecordsToPrefs('insurance_records', state.insuranceRecords);
+      await _saveRecordsToPrefs('other_records', state.otherRecords);
     } catch (e) {
       debugPrint("[SYNC] Error: $e");
       emit(state.copyWith(isLoading: false));
@@ -375,6 +407,42 @@ class MaintenanceCubit extends Cubit<MaintenanceState> {
     }
   }
 
+  Future<void> addInsuranceRecord(InsuranceRecord record) async {
+    final updated = List<InsuranceRecord>.from(state.insuranceRecords)..add(record);
+    emit(state.copyWith(insuranceRecords: updated));
+    await saveInsuranceRecords();
+
+    final car = await localDataSource.getCarInfo();
+    final ownerId = FirebaseAuth.instance.currentUser!.uid;
+
+    final expense = record.toExpense(ownerId);
+
+    try {
+      await expenseRepository.addExpense(carNumber: car.carId, expense: expense);
+      debugPrint("Insurance record saved to Firestore");
+    } catch (e) {
+      debugPrint("Failed to save insurance record: $e");
+    }
+  }
+
+  Future<void> addOtherRecord(OtherExpenseRecord record) async {
+    final updated = List<OtherExpenseRecord>.from(state.otherRecords)..add(record);
+    emit(state.copyWith(otherRecords: updated));
+    await saveOtherRecords();
+
+    final car = await localDataSource.getCarInfo();
+    final ownerId = FirebaseAuth.instance.currentUser!.uid;
+
+    final expense = record.toExpense(ownerId);
+
+    try {
+      await expenseRepository.addExpense(carNumber: car.carId, expense: expense);
+      debugPrint("Other expense record saved to Firestore");
+    } catch (e) {
+      debugPrint("Failed to save other expense record: $e");
+    }
+  }
+
   Future<void> addCarWashRecord(CarWashRecord record) async {
     final updated = List<CarWashRecord>.from(state.carWashRecords)..add(record);
     emit(state.copyWith(carWashRecords: updated));
@@ -462,6 +530,18 @@ class MaintenanceCubit extends Cubit<MaintenanceState> {
     await prefs.setString('tuning_records', jsonEncode(jsonList));
   }
 
+  Future<void> saveInsuranceRecords() async {
+    final prefs = await SharedPreferences.getInstance();
+    final jsonList = state.insuranceRecords.map((r) => r.toJson()).toList();
+    await prefs.setString('insurance_records', jsonEncode(jsonList));
+  }
+
+  Future<void> saveOtherRecords() async {
+    final prefs = await SharedPreferences.getInstance();
+    final jsonList = state.otherRecords.map((r) => r.toJson()).toList();
+    await prefs.setString('other_records', jsonEncode(jsonList));
+  }
+
   Future<void> addTuningRecord(TuningRecord record) async {
     await addExpenseRecord<TuningRecord>(
       record: record,
@@ -496,8 +576,14 @@ class MaintenanceCubit extends Cubit<MaintenanceState> {
           await prefs.remove('car_wash_records');
           emit(state.copyWith(carWashRecords: []));
           break;
+        case ExpenseCategory.insurance:
+          await prefs.remove('insurance_records');
+          emit(state.copyWith(insuranceRecords: []));
+          break;
         case ExpenseCategory.other:
-          throw UnimplementedError();
+          await prefs.remove('other_records');
+          emit(state.copyWith(otherRecords: []));
+          break;
       }
 
       await expenseRepository.deleteExpensesByCategory(carNumber: car.carId, category: category.name);
@@ -522,8 +608,19 @@ class MaintenanceCubit extends Cubit<MaintenanceState> {
         await prefs.remove('fuel_records');
         await prefs.remove('tuning_records');
         await prefs.remove('car_wash_records');
+        await prefs.remove('insurance_records');
+        await prefs.remove('other_records');
 
-        emit(state.copyWith(serviceRecords: [], fuelRecords: [], tuningRecords: [], carWashRecords: []));
+        emit(
+          state.copyWith(
+            serviceRecords: [],
+            fuelRecords: [],
+            tuningRecords: [],
+            carWashRecords: [],
+            insuranceRecords: [],
+            otherRecords: [],
+          ),
+        );
         debugPrint(' All expenses have been removed for ${car.carId}');
       } else {
         await expenseRepository.deleteExpensesByCategory(carNumber: car.carId, category: category.name);
@@ -545,8 +642,14 @@ class MaintenanceCubit extends Cubit<MaintenanceState> {
             await prefs.remove('car_wash_records');
             emit(state.copyWith(carWashRecords: []));
             break;
+          case ExpenseCategory.insurance:
+            await prefs.remove('insurance_records');
+            emit(state.copyWith(insuranceRecords: []));
+            break;
           case ExpenseCategory.other:
-            throw UnimplementedError();
+            await prefs.remove('other_records');
+            emit(state.copyWith(otherRecords: []));
+            break;
         }
 
         debugPrint(' All expenses in this category have been removed ${category.name}');
@@ -592,7 +695,16 @@ class MaintenanceCubit extends Cubit<MaintenanceState> {
           await prefs.setString('car_wash_records', jsonEncode(updated.map((e) => e.toJson()).toList()));
           break;
 
-        default:
+        case ExpenseCategory.insurance:
+          final updated = state.insuranceRecords.where((r) => r.id != expenseId).toList();
+          emit(state.copyWith(insuranceRecords: updated));
+          await prefs.setString('insurance_records', jsonEncode(updated.map((e) => e.toJson()).toList()));
+          break;
+
+        case ExpenseCategory.other:
+          final updated = state.otherRecords.where((r) => r.id != expenseId).toList();
+          emit(state.copyWith(otherRecords: updated));
+          await prefs.setString('other_records', jsonEncode(updated.map((e) => e.toJson()).toList()));
           break;
       }
 
@@ -617,9 +729,19 @@ class MaintenanceCubit extends Cubit<MaintenanceState> {
       await prefs.remove('tuning_records');
       await prefs.remove('fuel_records');
       await prefs.remove('car_wash_records');
+      await prefs.remove('insurance_records');
+      await prefs.remove('other_records');
 
       emit(
-        state.copyWith(serviceRecords: [], tuningRecords: [], fuelRecords: [], carWashRecords: [], isLoading: false),
+        state.copyWith(
+          serviceRecords: [],
+          tuningRecords: [],
+          fuelRecords: [],
+          carWashRecords: [],
+          insuranceRecords: [],
+          otherRecords: [],
+          isLoading: false,
+        ),
       );
 
       debugPrint("All expenses removed for ${car.carId}");
@@ -660,6 +782,7 @@ extension MileageCalculations on MaintenanceCubit {
       ...state.fuelRecords.map((r) => {'date': r.date, 'mileage': r.mileage}),
       ...state.carWashRecords.map((r) => {'date': r.date, 'mileage': r.mileage}),
       ...state.tuningRecords.map((r) => {'date': r.date, 'mileage': r.mileage}),
+      ...state.otherRecords.map((r) => {'date': r.date, 'mileage': r.mileage}),
     ];
 
     if (allRecords.isEmpty) return {};
@@ -698,6 +821,7 @@ extension MileageCalculations on MaintenanceCubit {
       ...state.fuelRecords.map((r) => {'date': r.date, 'mileage': r.mileage}),
       ...state.carWashRecords.map((r) => {'date': r.date, 'mileage': r.mileage}),
       ...state.tuningRecords.map((r) => {'date': r.date, 'mileage': r.mileage}),
+      ...state.otherRecords.map((r) => {'date': r.date, 'mileage': r.mileage}),
     ];
 
     if (allRecords.isEmpty) return null;

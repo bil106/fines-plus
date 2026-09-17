@@ -46,57 +46,50 @@ class _MileageCardState extends State<MileageCard> {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      color: AppColors.neutreBlanc,
+    return Container(
       margin: const EdgeInsets.symmetric(vertical: 6),
+      decoration: BoxDecoration(
+        color: AppColors.neutreBlanc,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColors.grey300),
+      ),
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: () => _focusNode.requestFocus(),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
-          child: Row(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Icon(Icons.speed, size: 24),
-              AppSpacers.horizontalSmall,
-              Flexible(
-                fit: FlexFit.loose,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    FittedBox(
-                      fit: BoxFit.scaleDown,
-                      alignment: Alignment.centerLeft,
-                      child: Text(S.of(context).mileage, style: widget.textTheme.subtitleText.copyWith(fontSize: 14)),
-                    ),
-                    AppSpacers.verticalXSmall,
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerLeft,
+                child: Text(S.of(context).mileage, style: widget.textTheme.subtitleText.copyWith(fontSize: 14)),
+              ),
+              AppSpacers.verticalXSmall,
 
-                    TextField(
-                      controller: widget.controller,
-                      focusNode: _focusNode,
-                      keyboardType: TextInputType.number,
-                      textInputAction: TextInputAction.done,
-                      inputFormatters: [
-                        FilteringTextInputFormatter.digitsOnly,
-                        MileageInputFormatter(max: 1000000),
-                        LengthLimitingTextInputFormatter(6),
-                      ],
-                      onChanged: widget.onChanged,
-                      onSubmitted: widget.onSubmitted,
-                      decoration: InputDecoration(
-                        hintText: S.of(context).enter_mileage,
-                        hintStyle: widget.textTheme.hintText.copyWith(fontSize: 14),
-                        border: InputBorder.none,
-                        isDense: true,
-                        contentPadding: EdgeInsets.zero,
-                        focusedBorder: InputBorder.none,
-                        // suffixText: S.of(context).km,
-                        // suffixStyle: widget.textTheme.hintText.copyWith(fontSize: 16),
-                      ),
-                      style: widget.textTheme.historyText.copyWith(fontSize: 16),
-                    ),
-                  ],
+              TextField(
+                controller: widget.controller,
+                focusNode: _focusNode,
+                keyboardType: TextInputType.number,
+                textInputAction: TextInputAction.done,
+                inputFormatters: [
+                  FilteringTextInputFormatter.digitsOnly,
+                  MileageInputFormatter(max: 1000000),
+                  LengthLimitingTextInputFormatter(6),
+                ],
+                onChanged: widget.onChanged,
+                onSubmitted: widget.onSubmitted,
+                decoration: InputDecoration(
+                  hintText: S.of(context).enter_mileage,
+                  hintStyle: widget.textTheme.hintText.copyWith(fontSize: 14),
+                  border: InputBorder.none,
+                  isDense: true,
+                  contentPadding: EdgeInsets.zero,
+                  focusedBorder: InputBorder.none,
                 ),
+                style: widget.textTheme.historyText.copyWith(fontSize: 16),
               ),
             ],
           ),

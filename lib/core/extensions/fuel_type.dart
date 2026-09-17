@@ -23,11 +23,3 @@ extension FuelTypeExt on FuelType {
     }
   }
 }
-final Map<FuelType, int> fuelPrices = {
-  FuelType.Ai98: 60,
-  FuelType.Ai95Plus: 62,
-  FuelType.Ai95: 55,
-  FuelType.Ai92: 47,
-  FuelType.LPG: 30,
-  FuelType.DIESEl: 60,
-};

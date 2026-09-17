@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:core_data/core_data.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
+import 'package:design_system/widget/app_back_button.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
 import 'package:fines_plus/core/extensions/ad_banner_widget.dart';
@@ -102,7 +103,7 @@ class _MaintenanceScreenView extends StatelessWidget {
       backgroundColor: AppColors.energyBlue50,
       appBar: AppBar(
         backgroundColor: AppColors.energyBlue50,
-        leading: BackButton(color: AppColors.blue700, onPressed: onBack ?? () {}),
+        leading: AppBackButton(onPressed: onBack),
         actions: const [DeleteExpensesButton()],
       ),
 

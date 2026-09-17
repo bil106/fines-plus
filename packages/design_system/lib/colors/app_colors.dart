@@ -51,6 +51,7 @@ abstract final class AppColors {
   static const catService = Color(0xFF00A896);
   static const catTuning = Color(0xFF5B6CFF);
   static const catCarWash = Color(0xFF22A6D9);
+  static const catInsurance = Color(0xFFE07A5F);
   static const catOther = Color(0xFF9AA1AD);
 
   // Note: the dashboard's warm-neutral background/border/divider and the

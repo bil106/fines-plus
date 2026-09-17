@@ -62,6 +62,10 @@
 "technical_data": "Technical data sheet:",
 "fines_length": "Fines:",
 "verif_date": "Verification date:",
+"due_amount": "Due",
+"today_at": "today at",
+"unpaid_fines_section": "Unpaid",
+"paid_fines_section": "Paid",
 "tech_service": "Technical maintenance",
 "service": "Service",
 "calendar": "Calendar",
@@ -96,6 +100,9 @@
 "other": "Other",
 "sum": "Amount:",
 "price_liter": "Price per 1 liter:",
+"price_per_liter_short": "Price/L",
+"volume_liters_short": "Volume, L",
+"sum_short": "Amount",
 "days": "days",
 "mileage": "Mileage",
 "enter_mileage": "Enter mileage",
@@ -116,6 +123,10 @@
 "fuel_ai95": "AI-95",
 "fuel_ai92": "AI-92",
 "fuel_gas_lpg": "Gas LPG",
+"fuel_chip_a95": "A95",
+"fuel_chip_a92": "A92",
+"fuel_chip_diesel": "Diesel",
+"fuel_chip_gas": "Gas",
 "date_previous_maintenance": "Previous maintenance date",
 "mileage_time_service": "Mileage at time of service",
 "by_date": "By date",
@@ -328,6 +339,9 @@
 "no_tokens_yet": "No tokens yet",
 "tokens_already_present": "Tokens already present",
 "no_nearby_station": "No data on the nearest gas station",
+"best_price_nearby_distance": "Best price nearby · {distance} km",
+"distance_km_short": "{distance} km",
+"build_route": "Build route",
 "loaded": "Loaded",
 "open_site": "Open e-Drive",
 "extracting": "Extracting...",
@@ -389,6 +403,12 @@
 "tires_icon": "Tires",
 "car_icon": "Car",
 "insurance": "Insurance",
+"insurance_company": "Insurance company",
+"policy_number": "Policy number",
+"valid_from": "Valid from",
+"valid_to": "Valid to",
+"cost": "Cost",
+"add_expense": "Add expense",
 "last_event": "Last event",
 "open_events": "Open events",
 "no_recent_events": "No recent events",
@@ -468,6 +488,8 @@
 "every": "Every",
 "action": "Action",
 "no_expenses": "No expense data yet",
+"no_transactions_title": "No expenses yet",
+"no_transactions_subtitle": "Add your first fuel, service, or other expense above — and stats will show up here",
 "get_plan": "Get My Plan",
 "money_back": "30-day money back guarantee!",
 "pay_safe": "Safe and secure payment",
@@ -516,10 +538,50 @@
 "maintenance_due_body": "Time for: {task}",
 "fuel_prompt_title": "Fuel up",
 "fuel_prompt_body": "Add fuel purchase details?",
+"fuel_type": "Fuel type",
+"reminder_notifications": "Reminder notifications",
+"vehicles_section": "Vehicles",
+"general_section": "General",
+"about_app_section": "About",
+"add_car": "Add car",
+"app_version": "Version",
+"garage_status_ok": "OK",
+"garage_status_ok_until": "OK until {date}",
+"garage_status_insurance_expired": "Insurance expired",
 "@maintenance_due_body": {
   "placeholders": {
     "task": { "type": "String" }
   }
-}
-
+},
+"@garage_status_ok_until": {
+  "placeholders": {
+    "date": { "type": "String" }
+  }
+},
+"@best_price_nearby_distance": {
+  "placeholders": {
+    "distance": { "type": "String" }
+  }
+},
+"@distance_km_short": {
+  "placeholders": {
+    "distance": { "type": "String" }
+  }
+},
+   "service_completed_work": "Completed work",
+   "service_add_work": "Add work",
+   "service_no_rating": "No rating",
+   "service_best_rating_distance": "Best rated nearby · {distance} km",
+   "service_no_nearby": "No nearby service stations found",
+   "service_location_unavailable": "Allow location access to find nearby service stations",
+   "service_load_failed": "Could not load service stations",
+   "service_retry": "Try again",
+   "service_invalid_price": "Enter a valid price for each job",
+   "@service_best_rating_distance": {
+      "placeholders": {
+         "distance": {
+            "type": "String"
+         }
+      }
+   }
 }
