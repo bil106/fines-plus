@@ -1,5 +1,6 @@
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
+import 'package:design_system/theme/app_brand_theme.dart';
 import 'package:design_system/constants/app_borders.dart';
 import 'package:design_system/theme/app_theme.dart';
 import 'package:fines_plus/features/home/domain/entities/last_event_ui_model.dart';
@@ -25,6 +26,7 @@ class LastEventCardAction extends StatelessWidget {
 
     if (carId.isEmpty || event == null) {
       return _buildCard(
+        context,
         child: Center(
           child: Text(S.of(context).no_recent_events, style: textTheme.bodyMedium?.copyWith(color: Colors.black54)),
         ),
@@ -39,6 +41,7 @@ class LastEventCardAction extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: _buildCard(
+        context,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -137,14 +140,14 @@ class LastEventCardAction extends StatelessWidget {
     );
   }
 
-  static Widget _buildCard({required Widget child}) {
+  static Widget _buildCard(BuildContext context, {required Widget child}) {
     // Flat, bordered card matching the Fines+OS mockup's .car-card/.tier
     // token (1px border, no drop shadow) - was a Material Card with
     // theme-default elevation before this pass.
     return Container(
       decoration: BoxDecoration(
         color: AppColors.neutreBlanc,
-        border: Border.all(color: AppColors.dashboardCardBorder),
+        border: Border.all(color: context.brandTheme.surfaceBorder),
         borderRadius: AppBorders.radius16,
       ),
       child: Padding(

@@ -1,5 +1,6 @@
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
+import 'package:design_system/theme/app_brand_theme.dart';
 import 'package:design_system/constants/app_borders.dart';
 import 'package:fines_plus/core/extensions/currency_service.dart';
 import 'package:fines_plus/core/helpers/statistics_costs_presenter.dart';
@@ -33,6 +34,7 @@ class StatisticsCostsCard extends StatelessWidget {
         final arrowIcon = presenter.increased ? Icons.arrow_upward : Icons.arrow_downward;
 
         return _buildCard(
+          context,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -79,14 +81,14 @@ class StatisticsCostsCard extends StatelessWidget {
     );
   }
 
-  Widget _buildCard({required Widget child}) {
+  Widget _buildCard(BuildContext context, {required Widget child}) {
     // Flat, bordered card matching the Fines+OS mockup's .car-card/.tier
     // token (1px border, no drop shadow) - was a Material Card with
     // theme-default elevation before this pass.
     return Container(
       decoration: BoxDecoration(
         color: AppColors.neutreBlanc,
-        border: Border.all(color: AppColors.dashboardCardBorder),
+        border: Border.all(color: context.brandTheme.surfaceBorder),
         borderRadius: AppBorders.radius16,
       ),
       child: Padding(padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 14), child: child),

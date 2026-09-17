@@ -16,7 +16,7 @@ import 'package:fines_plus/features/settings/presentation/cubit/unit_stream.dart
 import 'package:fines_plus/features/statistics/presentation/cubit/statistics_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:design_system/theme/app_brand_theme.dart';
 
 /// The dashboard's headline expense summary: amount for the current month,
 /// the delta vs. last month, and a per-category breakdown bar - replaces
@@ -74,7 +74,7 @@ class HeroExpenseCard extends StatelessWidget {
         // .tier cards are all flat (1px border), so this now matches them
         // and the other dashboard cards instead of standing out as the one
         // elevated one.
-        border: Border.all(color: AppColors.dashboardCardBorder),
+        border: Border.all(color: context.brandTheme.surfaceBorder),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -90,14 +90,9 @@ class HeroExpenseCard extends StatelessWidget {
             children: [
               Text(
                 hasCar ? presenter.currentFormatted : "0",
-                // JetBrains Mono, tabular figures - matches the mockup's
-                // .hero-amount token (amounts don't jiggle width digit to
-                // digit like a proportional font would).
-                style: GoogleFonts.jetBrainsMono(
-                  textStyle: textTheme.headlineMedium,
-                  fontWeight: FontWeight.w700,
-                  fontFeatures: const [FontFeature.tabularFigures()],
-                ),
+                // Brand money font (tabular mono figures by default),
+                // per-flavor via AppConfig.monoFontFamily.
+                style: textTheme.headlineMedium?.merge(context.brandTheme.moneyTextStyle),
               ),
               const SizedBox(width: 4),
               Text(currency, style: textTheme.titleMedium?.copyWith(color: AppColors.grey700)),

@@ -7,7 +7,7 @@ import 'package:fines_plus/features/maintenance/presentation/cubit/maintenance_s
 import 'package:fines_plus/features/settings/presentation/cubit/settings_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:design_system/theme/app_brand_theme.dart';
 import 'package:intl/intl.dart';
 
 const _kUkMonthsShort = [
@@ -138,7 +138,7 @@ class RecentTransactionsList extends StatelessWidget {
                   border: Border(
                     bottom: item == items.last
                         ? BorderSide.none
-                        : const BorderSide(color: AppColors.dashboardDivider),
+                        : BorderSide(color: context.brandTheme.divider),
                   ),
                 ),
                 child: Row(
@@ -163,11 +163,7 @@ class RecentTransactionsList extends StatelessWidget {
                     ),
                     Text(
                       '${currencyService.convert(item.amount, currency, fromCurrency: item.currency).toStringAsFixed(0)} $currency',
-                      style: GoogleFonts.jetBrainsMono(
-                        textStyle: textTheme.bodyMedium,
-                        fontWeight: FontWeight.w700,
-                        fontFeatures: const [FontFeature.tabularFigures()],
-                      ),
+                      style: textTheme.bodyMedium?.merge(context.brandTheme.moneyTextStyle),
                     ),
                   ],
                 ),

@@ -1,5 +1,6 @@
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
+import 'package:design_system/theme/app_brand_theme.dart';
 import 'package:design_system/constants/app_borders.dart';
 import 'package:fines_plus/app/router/home_screen_wrapper.dart';
 import 'package:fines_plus/core/config/app_config.dart';
@@ -70,8 +71,8 @@ class FinesAlertCard extends StatelessWidget {
                 width: double.infinity,
                 padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
                 decoration: BoxDecoration(
-                  color: AppColors.alertBg,
-                  border: Border.all(color: AppColors.alertBorder),
+                  color: context.brandTheme.alertBg,
+                  border: Border.all(color: context.brandTheme.alertBorder),
                   borderRadius: AppBorders.radiusMedium,
                 ),
                 child: Column(
@@ -79,9 +80,10 @@ class FinesAlertCard extends StatelessWidget {
                   children: [
                     Text(
                       title,
-                      style: Theme.of(
-                        context,
-                      ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w800, color: AppColors.alertFg),
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.w800,
+                        color: context.brandTheme.alertFg,
+                      ),
                     ),
                     const SizedBox(height: 2),
                     Text(

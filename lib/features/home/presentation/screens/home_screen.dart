@@ -14,7 +14,7 @@ import 'package:fines_plus/features/vehicle/presentation/cubit/garage_state.dart
 import 'package:fines_plus/app/router/home_screen_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:design_system/theme/app_brand_theme.dart';
 import '../widgets/hero_expense_card.dart';
 import '../widgets/quick_add_row.dart';
 import '../widgets/fines_alert_card.dart';
@@ -35,12 +35,12 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.dashboardBg,
+      backgroundColor: context.brandTheme.surfaceBg,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(55),
         child: AppBar(
           elevation: 0,
-          backgroundColor: AppColors.dashboardBg,
+          backgroundColor: context.brandTheme.surfaceBg,
           centerTitle: true,
           title: Padding(
             padding: const EdgeInsets.only(top: 18.0),
@@ -51,12 +51,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     : S.of(context).input_number;
                 return Text(
                   carNumber,
-                  // Big Shoulders Display - the Fines+OS mockup's headline
-                  // token (.phone-h1/h1.title), applied to this screen's
-                  // equivalent big heading.
-                  style: GoogleFonts.bigShouldersDisplay(
+                  // Brand display font (Big Shoulders Display by default),
+                  // per-flavor via AppConfig.displayFontFamily.
+                  style: context.brandTheme.displayTextStyle.copyWith(
                     color: Colors.black87,
-                    fontWeight: FontWeight.w800,
                     fontSize: 30,
                   ),
                 );
@@ -126,14 +124,7 @@ class _HomeScreenState extends State<HomeScreen> {
             constraints: const BoxConstraints(maxWidth: 400),
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              // Manrope, scoped to this screen's subtree only - matches the
-              // Fines+OS mockup's body font without touching the app-wide
-              // ThemeData (other screens keep their current font).
-              child: Theme(
-                data: Theme.of(context).copyWith(
-                  textTheme: GoogleFonts.manropeTextTheme(Theme.of(context).textTheme),
-                ),
-                child: Column(
+              child: Column(
                 children: [
                   BlocBuilder<CarCubit, CarState>(
                     builder: (context, state) {
@@ -233,7 +224,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
                   StatisticsCostsCard(),
                 ],
-              ),
               ),
             ),
           ),

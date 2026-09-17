@@ -1,5 +1,6 @@
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
+import 'package:design_system/theme/app_brand_theme.dart';
 import 'package:design_system/constants/app_borders.dart';
 import 'package:fines_plus/app/router/app_router.dart';
 import 'package:fines_plus/app/router/home_screen_wrapper.dart';
@@ -208,7 +209,7 @@ class _QuickAddButton extends StatelessWidget {
       color: AppColors.neutreBlanc,
       shape: RoundedRectangleBorder(
         borderRadius: AppBorders.radiusMedium,
-        side: const BorderSide(color: AppColors.dashboardCardBorder),
+        side: BorderSide(color: context.brandTheme.surfaceBorder),
       ),
       child: InkWell(
         borderRadius: AppBorders.radiusMedium,
