@@ -40,6 +40,34 @@ class AppConfig {
   /// changes.
   final Map<String, String>? copyOverrides;
 
+  /// Per-brand theme tokens for the redesigned dashboard-style screens (see
+  /// packages/design_system/lib/theme/app_brand_theme.dart). Every field
+  /// defaults to the values the Fines+OS mockup was designed with, so an
+  /// existing config that doesn't set them looks exactly as it does today -
+  /// a brand only needs to add a key here to actually override one.
+  @JsonKey(defaultValue: '#F5F3ED')
+  final String surfaceBgHex;
+  @JsonKey(defaultValue: '#E6E1D2')
+  final String surfaceBorderHex;
+  @JsonKey(defaultValue: '#E7E3D6')
+  final String dividerHex;
+  @JsonKey(defaultValue: '#FBE1E1')
+  final String alertBgHex;
+  @JsonKey(defaultValue: '#F3B9B9')
+  final String alertBorderHex;
+  @JsonKey(defaultValue: '#B23A3E')
+  final String alertFgHex;
+
+  /// Google Fonts family names (see https://fonts.google.com/) - resolved
+  /// at runtime via GoogleFonts.getFont(), so any family listed there can
+  /// be dropped into a brand's config without a code change.
+  @JsonKey(defaultValue: 'Big Shoulders Display')
+  final String displayFontFamily;
+  @JsonKey(defaultValue: 'Manrope')
+  final String bodyFontFamily;
+  @JsonKey(defaultValue: 'JetBrains Mono')
+  final String monoFontFamily;
+
   const AppConfig({
     required this.brandName,
     required this.primaryColorHex,
@@ -52,6 +80,15 @@ class AppConfig {
     this.termsUrl,
     this.privacyPolicyUrl,
     this.copyOverrides,
+    this.surfaceBgHex = '#F5F3ED',
+    this.surfaceBorderHex = '#E6E1D2',
+    this.dividerHex = '#E7E3D6',
+    this.alertBgHex = '#FBE1E1',
+    this.alertBorderHex = '#F3B9B9',
+    this.alertFgHex = '#B23A3E',
+    this.displayFontFamily = 'Big Shoulders Display',
+    this.bodyFontFamily = 'Manrope',
+    this.monoFontFamily = 'JetBrains Mono',
   });
 
   factory AppConfig.fromJson(Map<String, dynamic> json) => _$AppConfigFromJson(json);

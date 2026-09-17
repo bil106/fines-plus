@@ -53,19 +53,11 @@ abstract final class AppColors {
   static const catCarWash = Color(0xFF22A6D9);
   static const catOther = Color(0xFF9AA1AD);
 
-  // Unpaid-fines alert card (matches the Fines+OS mockup's alert token set).
-  static const alertBg = Color(0xFFFBE1E1);
-  static const alertBorder = Color(0xFFF3B9B9);
-  static const alertFg = Color(0xFFB23A3E);
-
-  // Dashboard-only warm neutral background (Fines+OS mockup's --app-bg) -
-  // deliberately NOT a replacement for the shared energyBlue50 token used
-  // across the rest of the app (23 other screens): swapping that globally
-  // is a bigger, separate reskin decision. Scoped to the redesigned
-  // dashboard screen/cards only, where the accent-tinted hero card needs a
-  // neutral backdrop to actually stand out instead of blending into a
-  // same-hue blue page background.
-  static const dashboardBg = Color(0xFFF5F3ED);
-  static const dashboardCardBorder = Color(0xFFE6E1D2);
-  static const dashboardDivider = Color(0xFFE7E3D6);
+  // Note: the dashboard's warm-neutral background/border/divider and the
+  // unpaid-fines alert colors used to live here as fixed consts. They are
+  // now per-brand theme tokens (AppConfig -> ThemeConfig.createTheme ->
+  // AppBrandTheme, see packages/design_system/lib/theme/app_brand_theme.dart)
+  // so every white-label flavor can set its own values instead of all
+  // brands sharing one hardcoded look. Read them via
+  // `context.brandTheme.<token>`, not as AppColors constants.
 }

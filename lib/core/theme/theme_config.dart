@@ -1,7 +1,9 @@
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_borders.dart';
+import 'package:design_system/theme/app_brand_theme.dart';
 import 'package:fines_plus/core/config/app_config.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class ThemeConfig {
   
@@ -12,6 +14,25 @@ class ThemeConfig {
       colorScheme: ColorScheme.fromSeed(seedColor: primary),
       useMaterial3: true,
       scaffoldBackgroundColor: AppColors.neutreBlanc,
+      // Brand body font, applied app-wide - each white-label flavor picks
+      // its own via AppConfig.bodyFontFamily (any Google Fonts family
+      // name), instead of every brand sharing one hardcoded font.
+      textTheme: GoogleFonts.getTextTheme(config.bodyFontFamily),
+      extensions: [
+        AppBrandTheme(
+          surfaceBg: hexToColor(config.surfaceBgHex),
+          surfaceBorder: hexToColor(config.surfaceBorderHex),
+          divider: hexToColor(config.dividerHex),
+          alertBg: hexToColor(config.alertBgHex),
+          alertBorder: hexToColor(config.alertBorderHex),
+          alertFg: hexToColor(config.alertFgHex),
+          displayTextStyle: GoogleFonts.getFont(config.displayFontFamily, fontWeight: FontWeight.w800),
+          moneyTextStyle: GoogleFonts.getFont(
+            config.monoFontFamily,
+            fontWeight: FontWeight.w700,
+          ).copyWith(fontFeatures: const [FontFeature.tabularFigures()]),
+        ),
+      ],
       appBarTheme: AppBarTheme(
         backgroundColor: primary,
         foregroundColor: AppColors.neutreBlanc,
