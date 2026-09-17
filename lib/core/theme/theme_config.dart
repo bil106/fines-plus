@@ -9,15 +9,20 @@ class ThemeConfig {
   
   static ThemeData createTheme(AppConfig config) {
     final primary = hexToColor(config.primaryColorHex);
+    final colorScheme = ColorScheme.fromSeed(seedColor: primary);
+    // Material3's default type scale for this ColorScheme - used as the
+    // base so swapping in the brand font only changes the font family,
+    // not the sizes/weights every screen already assumes.
+    final materialTextTheme = ThemeData(colorScheme: colorScheme, useMaterial3: true).textTheme;
 
     return ThemeData(
-      colorScheme: ColorScheme.fromSeed(seedColor: primary),
+      colorScheme: colorScheme,
       useMaterial3: true,
       scaffoldBackgroundColor: AppColors.neutreBlanc,
       // Brand body font, applied app-wide - each white-label flavor picks
       // its own via AppConfig.bodyFontFamily (any Google Fonts family
       // name), instead of every brand sharing one hardcoded font.
-      textTheme: GoogleFonts.getTextTheme(config.bodyFontFamily),
+      textTheme: GoogleFonts.getTextTheme(config.bodyFontFamily, materialTextTheme),
       extensions: [
         AppBrandTheme(
           surfaceBg: hexToColor(config.surfaceBgHex),
