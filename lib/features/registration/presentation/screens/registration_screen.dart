@@ -314,7 +314,7 @@ Future<void> _signInWithGoogle(BuildContext context) async {
                   return Column(
                     children: [
                       Text(
-                        isLogin ? S.of(context).registration : S.of(context).sign_up,
+                        isLogin ? S.of(context).login : S.of(context).sign_up,
                         style: textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
                       ),
                       AppSpacers.verticalXXXLarge,
