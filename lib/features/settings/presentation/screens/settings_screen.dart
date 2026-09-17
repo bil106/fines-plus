@@ -283,7 +283,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         children: [
                           Text(
                             S.of(context).app_version,
-                            style: Theme.of(context).textTheme.titleLarge,
+                            style: Theme.of(context).textTheme.titleMedium,
                           ),
                           Text(
                             _appVersion,
@@ -378,7 +378,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(car.carNumber, style: textTheme.titleLarge),
+                  Text(car.carNumber, style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
                   CarMileageAndStatus(carId: car.carId),
                 ],
               ),
@@ -414,7 +414,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             Expanded(
               child: Text(
                 title,
-                style: textTheme.titleLarge?.copyWith(color: color),
+                style: textTheme.titleMedium?.copyWith(color: color),
               ),
             ),
             Icon(Icons.chevron_right, color: AppColors.grey700),
@@ -433,7 +433,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Expanded(child: Text(title, style: textTheme.titleLarge)),
+        Expanded(child: Text(title, style: textTheme.titleMedium)),
         Switch(
           value: value,
           onChanged: onChanged,
@@ -460,7 +460,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           Expanded(
             child: Text(
               title,
-              style: textTheme.titleLarge,
+              style: textTheme.titleMedium,
               overflow: TextOverflow.ellipsis,
             ),
           ),
