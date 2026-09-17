@@ -146,11 +146,20 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
 
       // A missing car number is a valid state here (e.g. right after
       // subscribing during onboarding) — HomeScreen already handles it by
-      // prompting the user to add a car. Only an unauthenticated user needs
-      // to be bounced back to onboarding.
+      // prompting the user to add a car. An unauthenticated user is also
+      // valid now — the no-account 7-day trial deliberately lets someone
+      // reach Home without ever signing in — so only bounce back to
+      // onboarding if they're both unauthenticated AND have no active
+      // trial. Getting this wrong sends every anonymous-trial user (i.e.
+      // everyone right after onboarding) straight back into an onboarding
+      // loop, which is exactly what happened in production before this fix.
       if (!kDebugMode && user == null) {
-        context.router.replaceAll([const OnboardingRoute()]);
-        return;
+        final trialActive = await TrialService.isActive();
+        if (!mounted) return;
+        if (!trialActive) {
+          context.router.replaceAll([const OnboardingRoute()]);
+          return;
+        }
       }
 
       _loadCarNumber();
