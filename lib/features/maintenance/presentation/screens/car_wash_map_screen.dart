@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:auto_route/auto_route.dart';
 import 'package:core_localization/generated/l10n.dart';
 import '../../../../../env/env.dart';
+import 'package:fines_plus/features/maintenance/presentation/widgets/directions_fab.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -152,6 +153,7 @@ class _CarWashMapScreenState extends State<CarWashMapScreen> {
                 zoom: 14,
               ),
             ),
+      floatingActionButton: DirectionsFab(focusPosition: widget.focusPosition),
     );
   }
 }

@@ -10,6 +10,7 @@ import 'package:fines_plus/features/expenses/data/models/service_record.dart';
 import 'package:fines_plus/features/maintenance/domain/nearby_service_ranking.dart';
 import 'package:fines_plus/features/maintenance/presentation/cubit/maintenance_cubit.dart';
 import 'package:fines_plus/features/maintenance/presentation/screens/service_map_screen.dart';
+import 'package:fines_plus/features/maintenance/presentation/widgets/dashed_add_button.dart';
 import 'package:fines_plus/features/maintenance/presentation/widgets/mileage_card.dart';
 import 'package:fines_plus/features/maintenance/presentation/widgets/nearby_services_sheet.dart';
 import 'package:fines_plus/features/settings/presentation/cubit/settings_cubit.dart';
@@ -27,11 +28,20 @@ class ServiceScreen extends StatefulWidget {
   final bool embedded;
   final ValueChanged<double>? onTotalChanged;
 
+  /// Narrows the work-list autocomplete to [ServiceList.namesByCategory]
+  /// for this labelKey (e.g. 'Oil', 'Battery', 'Tires') instead of the
+  /// full catalog - lets Oil/Battery/Tires quick-add reuse this exact
+  /// screen (station picker, work rows, total) with a smaller picklist.
+  /// Null (the default, used by the standalone "ТО" entry point) keeps
+  /// the full catalog.
+  final String? category;
+
   const ServiceScreen({
     super.key,
     this.onBack,
     this.embedded = false,
     this.onTotalChanged,
+    this.category,
   });
 
   @override
@@ -66,6 +76,12 @@ class ServiceScreenState extends State<ServiceScreen> {
   double get _totalUah => _works
       .where((work) => work.name.text.trim().isNotEmpty)
       .fold(0, (sum, work) => sum + work.priceUah);
+
+  /// [widget.category]'s curated names when set, else the full catalog -
+  /// see [ServiceScreen.category].
+  List<String> get _catalogNames => widget.category == null
+      ? ServiceList.names
+      : (ServiceList.namesByCategory[widget.category] ?? ServiceList.names);
 
   @override
   void initState() {
@@ -193,32 +209,15 @@ class ServiceScreenState extends State<ServiceScreen> {
         ),
         const SizedBox(height: 8),
         for (final work in _works) _buildWorkRow(work, settings),
-        SizedBox(
-          width: double.infinity,
-          child: CustomPaint(
-            painter: _DashedBorderPainter(context.brandTheme.surfaceBorder),
-            child: TextButton.icon(
-              style: TextButton.styleFrom(
-                foregroundColor: Theme.of(context).colorScheme.primary,
-                minimumSize: const Size.fromHeight(48),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              icon: const Icon(Icons.add, size: 20),
-              label: Text(
-                S.of(context).service_add_work,
-                style: const TextStyle(fontWeight: FontWeight.w700),
-              ),
-              onPressed: () {
-                final work = _ServiceWork();
-                setState(() => _works.add(work));
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  if (mounted) work.focus.requestFocus();
-                });
-              },
-            ),
-          ),
+        DashedAddButton(
+          label: S.of(context).service_add_work,
+          onPressed: () {
+            final work = _ServiceWork();
+            setState(() => _works.add(work));
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (mounted) work.focus.requestFocus();
+            });
+          },
         ),
       ],
     );
@@ -364,7 +363,7 @@ class ServiceScreenState extends State<ServiceScreen> {
               textEditingController: work.name,
               focusNode: work.focus,
               optionsMaxHeight: 180,
-              optionsBuilder: (value) => ServiceList.names.where(
+              optionsBuilder: (value) => _catalogNames.where(
                 (name) => name.toLowerCase().contains(value.text.toLowerCase()),
               ),
               onSelected: (name) {
@@ -553,33 +552,4 @@ class ServiceTotal extends StatelessWidget {
       ],
     );
   }
-}
-
-class _DashedBorderPainter extends CustomPainter {
-  final Color color;
-  const _DashedBorderPainter(this.color);
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final path = Path()
-      ..addRRect(
-        RRect.fromRectAndRadius(
-          (Offset.zero & size).deflate(0.5),
-          const Radius.circular(12),
-        ),
-      );
-    final paint = Paint()
-      ..color = color
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1;
-    for (final metric in path.computeMetrics()) {
-      for (double offset = 0; offset < metric.length; offset += 9) {
-        canvas.drawPath(metric.extractPath(offset, offset + 5), paint);
-      }
-    }
-  }
-
-  @override
-  bool shouldRepaint(_DashedBorderPainter oldDelegate) =>
-      color != oldDelegate.color;
 }

@@ -334,6 +334,17 @@
    "ok": "ОК",
    "car_wash": "Автомийка",
    "car_wash_nearby": "Автомийка поруч",
+   "car_wash_no_nearby": "Поруч не знайдено автомийок",
+   "car_wash_location_unavailable": "Дозвольте геолокацію, щоб знайти автомийки поруч",
+   "car_wash_load_failed": "Не вдалося завантажити автомийки",
+   "car_wash_best_rating_distance": "Найкращий рейтинг поруч · {distance} км",
+   "@car_wash_best_rating_distance": {
+      "placeholders": {
+         "distance": {
+            "type": "String"
+         }
+      }
+   },
    "enter_amount": "Введіть суму",
    "failed_extract_tokens": "Не вдалося отримати токени",
    "tokens_extracted": "Токени отримано",

@@ -9,6 +9,8 @@ Future<Map<String, dynamic>?> showNearbyServicesSheet(
   BuildContext context, {
   required LatLng currentPosition,
   required List<Map<String, dynamic>> stations,
+  String? title,
+  IconData icon = Icons.build_outlined,
 }) {
   final sorted = rankNearbyServices(stations, currentPosition);
   return showModalBottomSheet<Map<String, dynamic>>(
@@ -43,7 +45,7 @@ Future<Map<String, dynamic>?> showNearbyServicesSheet(
                   ),
                 ),
                 Text(
-                  S.of(context).service_station_nearby,
+                  title ?? S.of(context).service_station_nearby,
                   style: textTheme.titleMedium,
                 ),
                 const SizedBox(height: 8),
@@ -65,10 +67,7 @@ Future<Map<String, dynamic>?> showNearbyServicesSheet(
                           ),
                         ),
                         child: ListTile(
-                          leading: const Icon(
-                            Icons.build_outlined,
-                            color: AppColors.blueAccent,
-                          ),
+                          leading: Icon(icon, color: AppColors.blueAccent),
                           title: Text(
                             station['name'] as String,
                             style: textTheme.bodyMedium?.copyWith(

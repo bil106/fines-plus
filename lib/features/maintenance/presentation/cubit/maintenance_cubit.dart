@@ -815,19 +815,23 @@ extension MileageCalculations on MaintenanceCubit {
     return past + current;
   }
 
+  /// The odometer reading to prefill new entries with. Picks the highest
+  /// mileage across every record type rather than sorting by date: an
+  /// odometer only ever goes up, so the max is always the most recent
+  /// reading - unlike a date sort, this isn't thrown off by same-day
+  /// entries or by [ServiceRecord.date] being day-only (no time-of-day)
+  /// while the other record types store a full [DateTime].
   int? getLastKnownMileage() {
-    final allRecords = [
-      ...state.serviceRecords.map((r) => {'date': DateFormat('dd.MM.yyyy').parse(r.date), 'mileage': r.mileage}),
-      ...state.fuelRecords.map((r) => {'date': r.date, 'mileage': r.mileage}),
-      ...state.carWashRecords.map((r) => {'date': r.date, 'mileage': r.mileage}),
-      ...state.tuningRecords.map((r) => {'date': r.date, 'mileage': r.mileage}),
-      ...state.otherRecords.map((r) => {'date': r.date, 'mileage': r.mileage}),
+    final allMileages = [
+      ...state.serviceRecords.map((r) => r.mileage),
+      ...state.fuelRecords.map((r) => r.mileage),
+      ...state.carWashRecords.map((r) => r.mileage),
+      ...state.tuningRecords.map((r) => r.mileage),
+      ...state.otherRecords.map((r) => r.mileage),
     ];
 
-    if (allRecords.isEmpty) return null;
-
-    allRecords.sort((a, b) => (a['date'] as DateTime).compareTo(b['date'] as DateTime));
-    return allRecords.last['mileage'] as int;
+    if (allMileages.isEmpty) return null;
+    return allMileages.reduce((a, b) => a > b ? a : b);
   }
 
   int getAverageMileage() {

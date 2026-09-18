@@ -226,9 +226,12 @@ class _MaintenanceScreenView extends StatelessWidget {
                     icon: Image.asset('assets/icons/tuning.jpg', color: AppColors.energyBlue, height: 24),
                     onTap: () async {
                       cubit.closeMenu();
+                      // TuningScreen now saves the records itself (it has
+                      // to, since it's also reached as a static PageView
+                      // page with nothing to await a popped value) - just
+                      // push it.
                       final records = await context.router.push<List<TuningRecord>>(TuningRoute());
                       if (records != null && records.isNotEmpty) {
-                        cubit.addTuningRecordsList(records);
                         onTuning?.call();
                       }
                     },
@@ -256,10 +259,11 @@ class _MaintenanceScreenView extends StatelessWidget {
                     ),
                     onTap: () async {
                       cubit.closeMenu();
-                      final record = await context.router.push<CarWashRecord>(CarWashRoute());
-                      if (record != null) {
-                        cubit.addCarWashRecord(record);
-                      }
+                      // CarWashScreen now saves the record itself (it has
+                      // to, since it's also reached as a static PageView
+                      // page with nothing to await a popped value) - just
+                      // push it.
+                      await context.router.push<CarWashRecord>(CarWashRoute());
                     },
                   ),
                   FABAction(

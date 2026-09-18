@@ -4,11 +4,11 @@ import 'package:core_localization/generated/l10n.dart';
 import '../../../../../env/env.dart';
 
 import 'package:fines_plus/features/maintenance/domain/gas_station_service.dart';
+import 'package:fines_plus/features/maintenance/presentation/widgets/directions_fab.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 @RoutePage()
 class FuelMapScreen extends StatefulWidget {
@@ -138,28 +138,6 @@ class _FuelMapScreenState extends State<FuelMapScreen> {
     super.dispose();
   }
 
-  Future<void> _buildRouteToFocusedStation() async {
-    final destination = widget.focusPosition;
-    if (destination == null) return;
-
-    final uri = Uri.parse(
-      'https://www.google.com/maps/dir/?api=1&destination=${destination.latitude},${destination.longitude}&travelmode=driving',
-    );
-
-    // Close this screen (disposing the live GoogleMap) before switching to
-    // the external Maps app - some Android devices fail to restore an
-    // active GoogleMap's platform view after the app is backgrounded and
-    // resumed, leaving a blank white screen with no way back except
-    // force-restarting the app.
-    if (Navigator.of(context).canPop()) {
-      Navigator.of(context).pop();
-    }
-
-    try {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
-    } catch (_) {}
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -177,13 +155,7 @@ class _FuelMapScreenState extends State<FuelMapScreen> {
               markers: _markers,
               initialCameraPosition: CameraPosition(target: _currentPosition!, zoom: 14),
             ),
-      floatingActionButton: widget.focusPosition == null
-          ? null
-          : FloatingActionButton.extended(
-              onPressed: _buildRouteToFocusedStation,
-              icon: const Icon(Icons.directions),
-              label: Text(S.of(context).build_route),
-            ),
+      floatingActionButton: DirectionsFab(focusPosition: widget.focusPosition),
     );
   }
 }

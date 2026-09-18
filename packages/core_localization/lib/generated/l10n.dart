@@ -2934,6 +2934,46 @@ class S {
     );
   }
 
+  /// `No nearby car washes found`
+  String get car_wash_no_nearby {
+    return Intl.message(
+      'No nearby car washes found',
+      name: 'car_wash_no_nearby',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Allow location access to find nearby car washes`
+  String get car_wash_location_unavailable {
+    return Intl.message(
+      'Allow location access to find nearby car washes',
+      name: 'car_wash_location_unavailable',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Could not load car washes`
+  String get car_wash_load_failed {
+    return Intl.message(
+      'Could not load car washes',
+      name: 'car_wash_load_failed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Best rated nearby · {distance} km`
+  String car_wash_best_rating_distance(String distance) {
+    return Intl.message(
+      'Best rated nearby · $distance km',
+      name: 'car_wash_best_rating_distance',
+      desc: '',
+      args: [distance],
+    );
+  }
+
   /// `Enter amount`
   String get enter_amount {
     return Intl.message(

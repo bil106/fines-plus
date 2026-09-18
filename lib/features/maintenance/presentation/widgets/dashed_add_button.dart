@@ -1,0 +1,63 @@
+import 'package:design_system/theme/app_brand_theme.dart';
+import 'package:flutter/material.dart';
+
+/// Dashed-border "add another row" button shared by every work-list form
+/// (ТО, Тюнінг, ...) - visually distinct from a solid button since it adds
+/// a line item rather than submitting the form.
+class DashedAddButton extends StatelessWidget {
+  final String label;
+  final VoidCallback onPressed;
+
+  const DashedAddButton({super.key, required this.label, required this.onPressed});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      child: CustomPaint(
+        painter: _DashedBorderPainter(context.brandTheme.surfaceBorder),
+        child: TextButton.icon(
+          style: TextButton.styleFrom(
+            foregroundColor: Theme.of(context).colorScheme.primary,
+            minimumSize: const Size.fromHeight(48),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+          icon: const Icon(Icons.add, size: 20),
+          label: Text(label, style: const TextStyle(fontWeight: FontWeight.w700)),
+          onPressed: onPressed,
+        ),
+      ),
+    );
+  }
+}
+
+class _DashedBorderPainter extends CustomPainter {
+  final Color color;
+  const _DashedBorderPainter(this.color);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final path = Path()
+      ..addRRect(
+        RRect.fromRectAndRadius(
+          (Offset.zero & size).deflate(0.5),
+          const Radius.circular(12),
+        ),
+      );
+    final paint = Paint()
+      ..color = color
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1;
+    for (final metric in path.computeMetrics()) {
+      for (double offset = 0; offset < metric.length; offset += 9) {
+        canvas.drawPath(metric.extractPath(offset, offset + 5), paint);
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(_DashedBorderPainter oldDelegate) =>
+      color != oldDelegate.color;
+}

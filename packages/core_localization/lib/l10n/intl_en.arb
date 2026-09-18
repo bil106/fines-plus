@@ -333,6 +333,17 @@
 "ok": "OK",
 "car_wash": "Car wash",
 "car_wash_nearby": "Car wash nearby",
+"car_wash_no_nearby": "No nearby car washes found",
+"car_wash_location_unavailable": "Allow location access to find nearby car washes",
+"car_wash_load_failed": "Could not load car washes",
+"car_wash_best_rating_distance": "Best rated nearby · {distance} km",
+"@car_wash_best_rating_distance": {
+   "placeholders": {
+      "distance": {
+         "type": "String"
+      }
+   }
+},
 "enter_amount": "Enter amount",
 "failed_extract_tokens": "Failed to extract tokens",
 "tokens_extracted": "Tokens extracted",

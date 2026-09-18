@@ -22,15 +22,17 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m0(distance) => "Best price nearby · ${distance} km";
 
-  static String m1(distance) => "${distance} km";
+  static String m1(distance) => "Best rated nearby · ${distance} km";
 
-  static String m2(date) => "OK until ${date}";
+  static String m2(distance) => "${distance} km";
 
-  static String m3(task) => "Time for: ${task}";
+  static String m3(date) => "OK until ${date}";
 
-  static String m4(distance) => "Best rated nearby · ${distance} km";
+  static String m4(task) => "Time for: ${task}";
 
-  static String m5(price, period) =>
+  static String m5(distance) => "Best rated nearby · ${distance} km";
+
+  static String m6(price, period) =>
       "7-day free trial, then ${price} per ${period}. Cancel anytime, at least 24 hours before the trial ends, in Google Play Settings. Subscription renews automatically unless cancelled.";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
@@ -98,7 +100,17 @@ class MessageLookup extends MessageLookupByLibrary {
       "Only needed to check fines — you can add these later",
     ),
     "car_wash": MessageLookupByLibrary.simpleMessage("Car wash"),
+    "car_wash_best_rating_distance": m1,
+    "car_wash_load_failed": MessageLookupByLibrary.simpleMessage(
+      "Could not load car washes",
+    ),
+    "car_wash_location_unavailable": MessageLookupByLibrary.simpleMessage(
+      "Allow location access to find nearby car washes",
+    ),
     "car_wash_nearby": MessageLookupByLibrary.simpleMessage("Car wash nearby"),
+    "car_wash_no_nearby": MessageLookupByLibrary.simpleMessage(
+      "No nearby car washes found",
+    ),
     "cars_deleted_success": MessageLookupByLibrary.simpleMessage(
       "Car deleted successfully",
     ),
@@ -185,7 +197,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Delete expense history",
     ),
     "description": MessageLookupByLibrary.simpleMessage("Description"),
-    "distance_km_short": m1,
+    "distance_km_short": m2,
     "done": MessageLookupByLibrary.simpleMessage("Done"),
     "dont_have_account": MessageLookupByLibrary.simpleMessage(
       "Don\'t have an account? Sign up",
@@ -306,7 +318,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Insurance expired",
     ),
     "garage_status_ok": MessageLookupByLibrary.simpleMessage("OK"),
-    "garage_status_ok_until": m2,
+    "garage_status_ok_until": m3,
     "gas_station_nearby": MessageLookupByLibrary.simpleMessage(
       "Gas stations nearby",
     ),
@@ -383,7 +395,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "maintenance_control": MessageLookupByLibrary.simpleMessage(
       "Maintenance control",
     ),
-    "maintenance_due_body": m3,
+    "maintenance_due_body": m4,
     "maintenance_due_title": MessageLookupByLibrary.simpleMessage(
       "Maintenance due",
     ),
@@ -581,7 +593,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "service_balansuvannya_kolis": MessageLookupByLibrary.simpleMessage(
       "Wheel balancing",
     ),
-    "service_best_rating_distance": m4,
+    "service_best_rating_distance": m5,
     "service_capitalnyy_remont_dvyhuna": MessageLookupByLibrary.simpleMessage(
       "Overhaul of the engine",
     ),
@@ -1152,7 +1164,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "track_costs": MessageLookupByLibrary.simpleMessage(
       "Track costs, mileage and efficiency",
     ),
-    "trial_disclosure_detailed": m5,
+    "trial_disclosure_detailed": m6,
     "trial_expired": MessageLookupByLibrary.simpleMessage(
       "Trial period expired",
     ),

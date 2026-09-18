@@ -2,14 +2,18 @@ import 'package:auto_route/auto_route.dart';
 
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
+import 'package:design_system/theme/app_brand_theme.dart';
 import 'package:design_system/widget/app_back_button.dart';
-import 'package:design_system/constants/app_borders.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
 import 'package:fines_plus/core/extensions/date_picker_card.dart';
 import 'package:fines_plus/core/extensions/service_list.dart';
-import 'package:fines_plus/features/maintenance/presentation/widgets/cost_summary.dart';
+import 'package:fines_plus/features/maintenance/domain/nearby_service_ranking.dart';
+import 'package:fines_plus/features/maintenance/presentation/cubit/maintenance_cubit.dart';
+import 'package:fines_plus/features/maintenance/presentation/screens/service_screen.dart';
+import 'package:fines_plus/features/maintenance/presentation/widgets/dashed_add_button.dart';
 import 'package:fines_plus/features/maintenance/presentation/widgets/mileage_card.dart';
+import 'package:fines_plus/features/maintenance/presentation/widgets/nearby_services_sheet.dart';
 import '../../../../../env/env.dart';
 import 'package:fines_plus/features/expenses/data/models/tuning_record.dart';
 import 'package:fines_plus/features/maintenance/presentation/screens/service_map_screen.dart';
@@ -24,50 +28,75 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 @RoutePage()
 class TuningScreen extends StatefulWidget {
   final VoidCallback? onBack;
-  const TuningScreen({super.key, this.onBack});
+
+  /// When true, renders just the form (no Scaffold/AppBar) for use inside
+  /// [AppBottomSheet] - the dashboard's quick-add flow. Full-screen use
+  /// (Maintenance tab, its FAB) leaves this false and is unaffected.
+  final bool embedded;
+
+  const TuningScreen({super.key, this.onBack, this.embedded = false});
 
   @override
-  State<TuningScreen> createState() => _TuningScreenState();
+  State<TuningScreen> createState() => TuningScreenState();
 }
 
-class _TuningScreenState extends State<TuningScreen> {
+class _TuningWork {
+  final name = TextEditingController();
+  final price = TextEditingController();
+  final focus = FocusNode();
+  double priceUah = 0;
+
+  void dispose() {
+    name.dispose();
+    price.dispose();
+    focus.dispose();
+  }
+}
+
+class TuningScreenState extends State<TuningScreen> {
   static const LatLng _fallbackPosition = LatLng(50.4501, 30.5234);
-  final List<TextEditingController> tuningControllers = [TextEditingController()];
-  final List<FocusNode> tuningFocusNodes = [FocusNode()];
-  final TextEditingController costController = TextEditingController();
+  final _works = [_TuningWork()];
 
   final TextEditingController mileageController = TextEditingController();
   final FocusNode _mileageFocusNode = FocusNode();
 
+  LatLng? _currentPosition;
+  List<Map<String, dynamic>> _nearbyStations = [];
   Map<String, dynamic>? _bestStation;
   bool _isLoadingBestStation = true;
-  DateTime? selectedDate;
+  bool _locationUnavailable = false;
+  bool _loadFailed = false;
+  DateTime? selectedDate = DateTime.now();
 
-  final List<double> servicePricesUah = [0.0];
-
-  double manualAmountUah = 0.0;
+  double get _totalUah => _works
+      .where((work) => work.name.text.trim().isNotEmpty)
+      .fold(0, (sum, work) => sum + work.priceUah);
 
   @override
   void initState() {
     super.initState();
-
-    if (servicePricesUah.isEmpty) servicePricesUah.add(0.0);
     _initLocationAndService();
+    _prefillLastMileage();
+  }
+
+  void _prefillLastMileage() {
+    final lastMileage = context.read<MaintenanceCubit>().getLastKnownMileage();
+    if (lastMileage != null) {
+      mileageController.text = lastMileage.toString();
+    }
   }
 
   @override
   void dispose() {
-    for (final c in tuningControllers) {
-      c.dispose();
+    for (final work in _works) {
+      work.dispose();
     }
-    for (final f in tuningFocusNodes) {
-      f.dispose();
-    }
-    costController.dispose();
     mileageController.dispose();
     _mileageFocusNode.dispose();
     super.dispose();
   }
+
+  void _updateTotal() => setState(() {});
 
   void _onDateSelected(DateTime date) {
     setState(() => selectedDate = date);
@@ -75,6 +104,11 @@ class _TuningScreenState extends State<TuningScreen> {
   }
 
   Future<void> _initLocationAndService() async {
+    setState(() {
+      _isLoadingBestStation = true;
+      _locationUnavailable = false;
+      _loadFailed = false;
+    });
     try {
       final serviceEnabled = await Geolocator.isLocationServiceEnabled();
       var permission = await Geolocator.checkPermission();
@@ -86,26 +120,60 @@ class _TuningScreenState extends State<TuningScreen> {
           permission == LocationPermission.denied ||
           permission == LocationPermission.deniedForever) {
         if (kDebugMode) print('TuningScreen: geolocation unavailable, using fallback position');
-        await _loadBestStationFrom(_fallbackPosition);
+        if (mounted) setState(() => _locationUnavailable = true);
+        await _loadNearbyStationsFrom(_fallbackPosition);
         return;
       }
 
       final position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high)
           .timeout(const Duration(seconds: 5));
-      await _loadBestStationFrom(LatLng(position.latitude, position.longitude));
+      await _loadNearbyStationsFrom(LatLng(position.latitude, position.longitude));
     } catch (e) {
       if (kDebugMode) print("Error getting position: $e");
-      await _loadBestStationFrom(_fallbackPosition);
+      await _loadNearbyStationsFrom(_fallbackPosition);
     }
   }
 
-  Future<void> _loadBestStationFrom(LatLng current) async {
-    final bestStation = await fetchBestNearbyService(current, Env.mapApiKey);
-    if (!mounted) return;
-    setState(() {
-      _bestStation = bestStation;
-      _isLoadingBestStation = false;
-    });
+  Future<void> _loadNearbyStationsFrom(LatLng current) async {
+    _currentPosition = current;
+    try {
+      final stations = await fetchNearbyServices(current, Env.mapApiKey);
+      if (!mounted) return;
+      setState(() {
+        _nearbyStations = rankNearbyServices(stations, current);
+        _bestStation = _nearbyStations.isEmpty ? null : _nearbyStations.first;
+        _isLoadingBestStation = false;
+      });
+    } catch (e) {
+      if (kDebugMode) print("Error fetching stations: $e");
+      if (!mounted) return;
+      setState(() {
+        _loadFailed = true;
+        _isLoadingBestStation = false;
+      });
+    }
+  }
+
+  Future<void> _openStations() async {
+    if (_currentPosition == null || _nearbyStations.isEmpty) return;
+    FocusScope.of(context).unfocus();
+    final station = await showNearbyServicesSheet(
+      context,
+      currentPosition: _currentPosition!,
+      stations: _nearbyStations,
+    );
+    if (station == null || !mounted) return;
+    await Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => ServiceMapScreen(
+          focusPosition: LatLng(
+            (station['lat'] as num).toDouble(),
+            (station['lng'] as num).toDouble(),
+          ),
+          focusName: station['name'] as String,
+        ),
+      ),
+    );
   }
 
   @override
@@ -113,127 +181,158 @@ class _TuningScreenState extends State<TuningScreen> {
     final textTheme = Theme.of(context).textTheme;
     final settingsCubit = context.watch<SettingsCubit>();
 
+    if (widget.embedded) {
+      return _buildForm(textTheme, settingsCubit);
+    }
+
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
         statusBarColor: AppColors.energyBlue50,
         statusBarIconBrightness: Brightness.dark,
       ),
       child: Scaffold(
-        backgroundColor: AppColors.energyBlue50,
+        backgroundColor: context.brandTheme.surfaceBg,
         appBar: AppBar(
-          backgroundColor: AppColors.energyBlue50,
+          backgroundColor: context.brandTheme.surfaceBg,
           elevation: 0,
           leading: AppBackButton(onPressed: widget.onBack),
           actions: [
             IconButton(
               icon: const Icon(Icons.check, color: AppColors.blue700, size: 50),
-              onPressed: _saveTuningRecords,
+              onPressed: save,
             ),
           ],
         ),
-        body: SingleChildScrollView(
-          padding: const EdgeInsets.all(12),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(S.of(context).tuning, style: textTheme.title),
-              _buildBestStationRow(textTheme),
-              const Divider(),
-              _buildDateAndMileageRow(textTheme),
-              AppSpacers.verticalMedium,
-              Text(S.of(context).selecting_service, style: textTheme.subtitleText),
-              AppSpacers.verticalMedium,
-              _buildTuningFields(textTheme, settingsCubit),
-              Center(
-                child: IconButton(
-                  icon: const CircleAvatar(
-                    backgroundColor: AppColors.energyBlue,
-                    child: Icon(Icons.add, color: AppColors.neutreBlanc),
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      tuningControllers.add(TextEditingController());
-                      tuningFocusNodes.add(FocusNode());
-                      servicePricesUah.add(0.0);
-                    });
-                  },
-                ),
-              ),
-              AppSpacers.verticalMediumLarge,
-
-              CostSummary(
-                servicePricesUah: servicePricesUah,
-                manualAmountUah: manualAmountUah,
-                onManualUahChanged: (uah) {
-                  setState(() {
-                    manualAmountUah = uah;
-                  });
-                },
-                convertFromUAH: (uah) {
-                  return settingsCubit.convertFromUAH(uah);
-                },
-                convertToUAH: (enteredInDisplayCurrency) {
-                  return settingsCubit.convertToUAH(enteredInDisplayCurrency);
-                },
-                currencyLabel: settingsCubit.getCurrencyLabel(context, settingsCubit.state.currency),
-              ),
-            ],
-          ),
-        ),
+        body: _buildForm(textTheme, settingsCubit),
       ),
     );
   }
 
-  Widget _buildBestStationRow(TextTheme textTheme) {
-    return Row(
-      children: [
-        _isLoadingBestStation
-            ? AppLoaders.medium
-            : GestureDetector(
-                onTap: () {
-                  if (_bestStation == null) return;
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => ServiceMapScreen(
-                        focusPosition: LatLng(_bestStation!['lat'], _bestStation!['lng']),
-                        focusName: _bestStation!['name'],
+  Widget _buildForm(TextTheme textTheme, SettingsCubit settingsCubit) {
+    return SingleChildScrollView(
+      padding: widget.embedded ? EdgeInsets.zero : const EdgeInsets.all(12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (!widget.embedded)
+            Text(S.of(context).tuning, style: textTheme.title),
+          if (!widget.embedded) AppSpacers.verticalMedium,
+          _buildStationCard(),
+          AppSpacers.verticalMedium,
+          _buildDateAndMileageRow(textTheme),
+          AppSpacers.verticalMedium,
+          Text(
+            S.of(context).service_completed_work,
+            style: textTheme.bodyMedium?.copyWith(
+              fontWeight: FontWeight.w600,
+              color: AppColors.grey700,
+            ),
+          ),
+          AppSpacers.verticalMedium,
+          for (final work in _works) _buildWorkRow(work, settingsCubit),
+          DashedAddButton(
+            label: S.of(context).service_add_work,
+            onPressed: () {
+              final work = _TuningWork();
+              setState(() => _works.add(work));
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (mounted) work.focus.requestFocus();
+              });
+            },
+          ),
+          AppSpacers.verticalMediumLarge,
+          ServiceTotal(totalUah: _totalUah),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStationCard() {
+    final textTheme = Theme.of(context).textTheme;
+    final s = S.of(context);
+    final title = _locationUnavailable
+        ? s.service_location_unavailable
+        : _loadFailed
+        ? s.service_load_failed
+        : _bestStation == null
+        ? s.service_no_nearby
+        : [_bestStation!['name'], _bestStation!['vicinity']]
+              .where((value) => value != null && value.toString().isNotEmpty)
+              .join(' — ');
+    return Material(
+      color: AppColors.neutreBlanc,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(color: context.brandTheme.surfaceBorder),
+      ),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(12),
+        onTap: _isLoadingBestStation
+            ? null
+            : _bestStation == null
+            ? _initLocationAndService
+            : _openStations,
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: _isLoadingBestStation
+              ? const Center(
+                  child: SizedBox.square(
+                    dimension: 24,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  ),
+                )
+              : Row(
+                  children: [
+                    const Icon(
+                      Icons.settings,
+                      color: AppColors.blueAccent,
+                      size: 24,
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            title,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: textTheme.bodyMedium?.copyWith(
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            _bestStation == null
+                                ? s.service_retry
+                                : ((_bestStation!['rating'] as num?) ?? 0) > 0
+                                ? s.service_best_rating_distance(
+                                    serviceDistanceKm(
+                                      _bestStation!,
+                                      _currentPosition!,
+                                    ).toStringAsFixed(1),
+                                  )
+                                : s.distance_km_short(
+                                    serviceDistanceKm(
+                                      _bestStation!,
+                                      _currentPosition!,
+                                    ).toStringAsFixed(1),
+                                  ),
+                            style: textTheme.bodySmall?.copyWith(
+                              color: AppColors.grey700,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  );
-                },
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(Icons.location_on, color: AppColors.energyBlue, size: 40),
-                    AppSpacers.horizontalSmallMedium,
-                    SizedBox(
-                      width: 180,
-                      child: Text(
-                        _bestStation?['name'] ?? S.of(context).service_station,
-                        style: textTheme.bodyMedium,
-                        overflow: TextOverflow.ellipsis,
-                      ),
+                    Icon(
+                      _bestStation == null ? Icons.refresh : Icons.chevron_right,
+                      color: AppColors.grey700,
                     ),
                   ],
                 ),
-              ),
-        const Spacer(),
-        IconButton(
-          icon: Image.asset('assets/icons/map.png', width: 40, height: 40),
-          onPressed: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (_) => _bestStation == null
-                    ? const ServiceMapScreen()
-                    : ServiceMapScreen(
-                        focusPosition: LatLng(_bestStation!['lat'], _bestStation!['lng']),
-                        focusName: _bestStation!['name'],
-                      ),
-              ),
-            );
-          },
         ),
-      ],
+      ),
     );
   }
 
@@ -251,99 +350,132 @@ class _TuningScreenState extends State<TuningScreen> {
     );
   }
 
-  Widget _buildTuningFields(TextTheme textTheme, SettingsCubit settings) {
+  Widget _buildWorkRow(_TuningWork work, SettingsCubit settings) {
+    final textTheme = Theme.of(context).textTheme;
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      key: ObjectKey(work),
+      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.only(left: 12),
       decoration: BoxDecoration(
         color: AppColors.neutreBlanc,
-        borderRadius: AppBorders.radiusLarge,
-        border: Border.all(color: AppColors.grey300, width: 2),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: context.brandTheme.surfaceBorder),
       ),
-      child: Column(
-        children: List.generate(tuningControllers.length, (index) {
-          return Padding(
-            padding: const EdgeInsets.only(bottom: 1),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Autocomplete<String>(
-                    textEditingController: tuningControllers[index],
-                    focusNode: tuningFocusNodes[index],
-                    optionsBuilder: (value) {
-                      if (value.text.isEmpty) return ServiceList.tuningItems.map((e) => e.name);
-                      return ServiceList.tuningItems
-                          .map((e) => e.name)
-                          .where((option) => option.toLowerCase().startsWith(value.text.toLowerCase()));
-                    },
-                    onSelected: (val) {
-                      final selectedItem = ServiceList.tuningItems.firstWhere(
-                        (item) => item.name == val,
-                        orElse: () => ServiceItem(name: val, priceUSD: 0),
-                      );
-
-                      final converted = settings.currencyService.convert(
-                        selectedItem.priceUSD,
-                        "UAH",
-                        fromCurrency: "USD",
-                      );
-
-                      setState(() {
-                        if (index >= servicePricesUah.length) {
-                          while (servicePricesUah.length <= index) {
-                            servicePricesUah.add(0.0);
-                          }
-                        }
-                        servicePricesUah[index] = converted;
-
-                        final total = (servicePricesUah.fold<double>(0.0, (a, b) => a + b)) + manualAmountUah;
-                        costController.text = total.toStringAsFixed(0);
-                      });
-                    },
-                    fieldViewBuilder: (context, controller, focusNode, onFieldSubmitted) {
-                      return TextField(
-                        controller: controller,
-                        focusNode: focusNode,
-                        decoration: InputDecoration(
-                          hintText: S.of(context).select_service,
-                          hintStyle: textTheme.hintText.copyWith(fontSize: 16),
-                          border: InputBorder.none,
-                          focusedBorder: InputBorder.none,
-                          contentPadding: const EdgeInsets.only(top: 12),
-                          prefixIcon: const Icon(Icons.build, color: AppColors.blueAccent),
-                          suffixIcon: IconButton(
-                            icon: const Icon(Icons.delete, color: AppColors.red),
-                            onPressed: () {
-                              setState(() {
-                                final removedController = tuningControllers.removeAt(index);
-                                final removedFocusNode = tuningFocusNodes.removeAt(index);
-
-                                removedController.dispose();
-                                removedFocusNode.dispose();
-
-                                if (index < servicePricesUah.length) {
-                                  servicePricesUah.removeAt(index);
-                                }
-
-                                final total = (servicePricesUah.fold<double>(0.0, (a, b) => a + b)) + manualAmountUah;
-                                costController.text = total.toStringAsFixed(0);
-                              });
-                            },
-                          ),
-                        ),
-                      );
-                    },
+      child: Row(
+        children: [
+          Expanded(
+            flex: 3,
+            child: Autocomplete<String>(
+              textEditingController: work.name,
+              focusNode: work.focus,
+              optionsMaxHeight: 180,
+              optionsBuilder: (value) => ServiceList.tuningItems
+                  .map((e) => e.name)
+                  .where((name) => name.toLowerCase().contains(value.text.toLowerCase())),
+              onSelected: (name) {
+                final item = ServiceList.tuningItems.firstWhere(
+                  (item) => item.name == name,
+                  orElse: () => ServiceItem(name: name, priceUSD: 0),
+                );
+                work.priceUah = settings.currencyService.convert(
+                  item.priceUSD,
+                  'UAH',
+                  fromCurrency: 'USD',
+                );
+                work.price.text = settings
+                    .convertFromUAH(work.priceUah)
+                    .round()
+                    .toString();
+                _updateTotal();
+              },
+              fieldViewBuilder: (context, controller, focusNode, onSubmitted) =>
+                  TextField(
+                    controller: controller,
+                    focusNode: focusNode,
+                    style: textTheme.bodyMedium?.copyWith(
+                      color: AppColors.black87,
+                    ),
+                    textCapitalization: TextCapitalization.sentences,
+                    decoration: InputDecoration(
+                      hintText: S.of(context).select_a_service,
+                      hintStyle: textTheme.bodyMedium?.copyWith(
+                        color: AppColors.neutreGrey,
+                      ),
+                      border: InputBorder.none,
+                      enabledBorder: InputBorder.none,
+                      focusedBorder: InputBorder.none,
+                      contentPadding: const EdgeInsets.symmetric(vertical: 14),
+                    ),
+                    onChanged: (_) => _updateTotal(),
+                    onSubmitted: (_) => onSubmitted(),
                   ),
+            ),
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            flex: 2,
+            child: TextField(
+              controller: work.price,
+              textAlign: TextAlign.end,
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
+              inputFormatters: [
+                TextInputFormatter.withFunction(
+                  (oldValue, newValue) =>
+                      RegExp(r'^\d{0,7}([.,]\d{0,2})?$').hasMatch(newValue.text)
+                      ? newValue
+                      : oldValue,
                 ),
               ],
+              style: textTheme.bodyMedium
+                  ?.merge(context.brandTheme.moneyTextStyle)
+                  .copyWith(fontWeight: FontWeight.w700),
+              decoration: InputDecoration(
+                hintText: '0',
+                suffixText: ' ${settings.state.currency}',
+                suffixStyle: textTheme.bodySmall?.copyWith(
+                  fontWeight: FontWeight.w700,
+                ),
+                border: InputBorder.none,
+                enabledBorder: InputBorder.none,
+                focusedBorder: InputBorder.none,
+                contentPadding: const EdgeInsets.symmetric(vertical: 14),
+              ),
+              onChanged: (value) {
+                final amount = double.tryParse(value.replaceAll(',', '.')) ?? 0;
+                work.priceUah = settings.convertToUAH(amount);
+                _updateTotal();
+              },
             ),
-          );
-        }),
+          ),
+          IconButton(
+            tooltip: S.of(context).delete,
+            icon: const Icon(
+              Icons.close,
+              color: AppColors.neutreGrey,
+              size: 18,
+            ),
+            onPressed: () {
+              work.focus.unfocus();
+              setState(() => _works.remove(work));
+              WidgetsBinding.instance.addPostFrameCallback(
+                (_) => work.dispose(),
+              );
+            },
+          ),
+        ],
       ),
     );
   }
 
-  void _saveTuningRecords() {
-    if (selectedDate == null || tuningControllers.every((c) => c.text.isEmpty)) {
+  /// Validates and saves the current form, then closes/reports as
+  /// appropriate for how this screen was presented. Shared by the AppBar
+  /// check action (full-screen mode) and the pinned Save button in
+  /// [AppBottomSheet] (embedded mode).
+  void save() {
+    final works = _works.where((work) => work.name.text.trim().isNotEmpty).toList();
+    if (selectedDate == null || works.isEmpty) {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(backgroundColor: AppColors.blue700, content: Text(S.of(context).select_service)));
@@ -352,69 +484,32 @@ class _TuningScreenState extends State<TuningScreen> {
 
     final mileage = int.tryParse(mileageController.text) ?? 0;
 
-    final records = <TuningRecord>[];
+    final records = works
+        .map(
+          (work) => TuningRecord(
+            tuningName: work.name.text.trim(),
+            cost: work.priceUah,
+            date: selectedDate!,
+            mileage: mileage,
+            currency: 'UAH',
+          ),
+        )
+        .toList();
 
-    for (int i = 0; i < tuningControllers.length; i++) {
-      final name = tuningControllers[i].text.trim();
-      if (name.isEmpty) continue;
+    // This screen is reached as a pushed route (Maintenance FAB), as a
+    // static PageView page (main "Тюнінг" tile), and embedded in a bottom
+    // sheet (dashboard quick-add) - none of those reliably have a caller
+    // awaiting a popped value, so it must save the records itself.
+    context.read<MaintenanceCubit>().addTuningRecordsList(records);
 
-      final selectedTuning = ServiceList.tuningItems.firstWhere(
-        (item) => item.name == name,
-        orElse: () => ServiceItem(name: name, priceUSD: 0),
-      );
-
-      final costUah = (i < servicePricesUah.length) ? servicePricesUah[i] : 0.0;
-
-      records.add(
-        TuningRecord(
-          tuningName: selectedTuning.name,
-          cost: costUah,
-          date: selectedDate!,
-          mileage: mileage,
-          currency: 'UAH',
-        ),
-      );
+    if (widget.embedded) {
+      Navigator.of(context).pop(records);
+    } else if (widget.onBack != null) {
+      widget.onBack!();
+    } else if (context.router.canPop()) {
+      context.router.pop(records);
+    } else {
+      Navigator.of(context).maybePop(records);
     }
-
-    if (manualAmountUah > 0) {
-      bool assigned = false;
-      for (int i = 0; i < records.length; i++) {
-        if ((records[i].cost == 0 || records[i].cost == 0.0) && records[i].tuningName.trim().isNotEmpty) {
-          records[i] = TuningRecord(
-            tuningName: records[i].tuningName,
-            cost: records[i].cost + manualAmountUah,
-            date: records[i].date,
-            mileage: records[i].mileage,
-            currency: records[i].currency,
-          );
-          assigned = true;
-          break;
-        }
-      }
-
-      if (!assigned) {
-        records.add(
-          TuningRecord(tuningName: "", cost: manualAmountUah, date: selectedDate!, mileage: mileage, currency: 'UAH'),
-        );
-      }
-    }
-
-    Navigator.pop(context, records);
   }
-}
-
-Future<Map<String, dynamic>?> fetchBestNearbyService(LatLng current, String apiKey) async {
-  final stations = await fetchNearbyServices(current, apiKey);
-  if (stations.isEmpty) return null;
-
-  final highRated = stations.where((s) => (s['rating'] ?? 0) >= 4.0).toList();
-  if (highRated.isEmpty) return null;
-
-  highRated.sort((a, b) {
-    final distA = Geolocator.distanceBetween(current.latitude, current.longitude, a['lat'], a['lng']);
-    final distB = Geolocator.distanceBetween(current.latitude, current.longitude, b['lat'], b['lng']);
-    return distA.compareTo(distB);
-  });
-
-  return highRated.first;
 }
