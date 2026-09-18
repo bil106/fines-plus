@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:math';
 import 'package:crypto/crypto.dart';
-import 'package:fines_plus/env/env.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:core_localization/generated/l10n.dart';
@@ -10,6 +9,7 @@ import 'package:design_system/widget/app_back_button.dart';
 import 'package:fines_plus/features/registration/presentation/cubit/registration_cubit.dart';
 import 'package:fines_plus/features/registration/presentation/cubit/registration_state.dart';
 import 'package:fines_plus/features/registration/presentation/screens/garage_setup_screen.dart';
+import 'package:fines_plus/features/subscription/presentation/screens/subscription_screen.dart';
 import 'package:fines_plus/app/router/app_router.dart';
 import 'package:fines_plus/app/router/home_screen_wrapper.dart';
 import 'package:flutter/foundation.dart';
@@ -54,20 +54,23 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     });
   }
 
+  bool _isNewAccountAwaitingSubscription = false;
   bool _isNewAccountAwaitingGarageSetup = false;
 
-  /// Subscription check + navigation into the app, shared by both the
-  /// "existing user logs in" path (goes here immediately) and the
-  /// "new account" path (goes here once garage setup is done/skipped).
+  bool _bypassPaywall(bool hasSubscription) =>
+      kDebugMode ||
+      defaultTargetPlatform == TargetPlatform.iOS ||
+      hasSubscription;
+
+  /// Subscription check + navigation into the app, for the "existing user
+  /// logs in" path only. New accounts go through [_startPostAuthFlow]
+  /// instead so Передплата/Мій гараж show in the right order.
   Future<void> _continueToApp(BuildContext context) async {
     final regCubit = context.read<RegistrationCubit>();
     final hasSubscription = await regCubit.checkSubscription();
     if (!context.mounted) return;
 
-    if (kDebugMode ||
-        Env.iosBypassSubscription ||
-        defaultTargetPlatform == TargetPlatform.iOS ||
-        hasSubscription) {
+    if (_bypassPaywall(hasSubscription)) {
       context.router.replaceAll([HomeRouteWrapper()]);
     } else {
       context.router.replaceAll([
@@ -89,6 +92,34 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         ),
       ]);
     }
+  }
+
+  /// New-account onboarding order: Реєстрація -> Передплата (unless
+  /// bypassed) -> Мій гараж -> Home. Передплата is shown in-place (like
+  /// Мій гараж already was) rather than via router navigation, so its back
+  /// button can return here without losing this onboarding sequence.
+  Future<void> _startPostAuthFlow(
+    BuildContext context, {
+    required bool isNewAccount,
+  }) async {
+    if (!isNewAccount) {
+      await _continueToApp(context);
+      return;
+    }
+
+    final regCubit = context.read<RegistrationCubit>();
+    final hasSubscription = await regCubit.checkSubscription();
+    if (!mounted) return;
+
+    if (_bypassPaywall(hasSubscription)) {
+      setState(() => _isNewAccountAwaitingGarageSetup = true);
+    } else {
+      setState(() => _isNewAccountAwaitingSubscription = true);
+    }
+  }
+
+  void _finishNewAccountOnboarding(BuildContext context) {
+    context.router.replaceAll([HomeRouteWrapper()]);
   }
 
   Future<void> _onSubmit(BuildContext context) async {
@@ -276,12 +307,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
     if (!mounted) return;
 
-    if (isNewAccount) {
-      // Brand-new account — let the user skip or add a car before continuing.
-      setState(() => _isNewAccountAwaitingGarageSetup = true);
-    } else {
-      await _continueToApp(context);
-    }
+    await _startPostAuthFlow(context, isNewAccount: isNewAccount);
   }
 
   @override
@@ -299,8 +325,22 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (_isNewAccountAwaitingSubscription) {
+      return SubscriptionScreen(
+        onBack: () => setState(() {
+          _isNewAccountAwaitingSubscription = false;
+          _isNewAccountAwaitingGarageSetup = true;
+        }),
+        onPurchaseSuccess: () => setState(() {
+          _isNewAccountAwaitingSubscription = false;
+          _isNewAccountAwaitingGarageSetup = true;
+        }),
+      );
+    }
     if (_isNewAccountAwaitingGarageSetup) {
-      return GarageSetupScreen(onDone: () => _continueToApp(context));
+      return GarageSetupScreen(
+        onDone: () => _finishNewAccountOnboarding(context),
+      );
     }
 
     const background = Color(0xFFF6F4ED);
@@ -330,11 +370,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   listenWhen: (previous, current) =>
                       !previous.isRegistered && current.isRegistered,
                   listener: (context, state) async {
-                    if (state.isExistingUser) {
-                      await _continueToApp(context);
-                    } else {
-                      setState(() => _isNewAccountAwaitingGarageSetup = true);
-                    }
+                    await _startPostAuthFlow(
+                      context,
+                      isNewAccount: !state.isExistingUser,
+                    );
                   },
                   builder: (context, state) {
                     final busy = state.isLoading || _socialLoading;
@@ -347,7 +386,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       labelText: label,
                       floatingLabelBehavior: FloatingLabelBehavior.always,
                       hintText: hint,
-                      errorText: error,
+                      error: error == null ? null : Text(error, softWrap: true),
                       filled: true,
                       fillColor: Colors.white,
                       labelStyle: const TextStyle(
@@ -362,21 +401,25 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         horizontal: 18,
                         vertical: 20,
                       ),
-                      border: InputBorder.none,
-                      enabledBorder: InputBorder.none,
-                      focusedBorder: InputBorder.none,
-                      errorBorder: InputBorder.none,
-                      focusedErrorBorder: InputBorder.none,
-                    );
-                    Widget field(Widget child) => DecoratedBox(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        border: Border.all(color: border),
+                      border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(16),
+                        borderSide: const BorderSide(color: border),
                       ),
-                      child: ClipRRect(
+                      enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(16),
-                        child: child,
+                        borderSide: const BorderSide(color: border),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16),
+                        borderSide: const BorderSide(color: blue),
+                      ),
+                      errorBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16),
+                        borderSide: const BorderSide(color: border),
+                      ),
+                      focusedErrorBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16),
+                        borderSide: const BorderSide(color: border),
                       ),
                     );
                     return AutofillGroup(
@@ -395,60 +438,60 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                             ),
                           ),
                           const SizedBox(height: 28),
-                          field(
-                            TextFormField(
-                              controller: emailController,
-                              enabled: !busy,
-                              decoration: decoration(
-                                S.of(context).email,
-                                'you@email.com',
-                                state.emailError,
-                              ),
-                              keyboardType: TextInputType.emailAddress,
-                              textInputAction: TextInputAction.next,
-                              autofillHints: const [AutofillHints.email],
-                              autocorrect: false,
-                              validator: (value) {
-                                final email = value?.trim() ?? '';
-                                if (email.isEmpty) {
-                                  return S.of(context).enter_email;
-                                }
-                                if (!email.contains('@')) {
-                                  return S.of(context).incorrect_email;
-                                }
-                                return null;
-                              },
+                          TextFormField(
+                            controller: emailController,
+                            enabled: !busy,
+                            decoration: decoration(
+                              S.of(context).email,
+                              'you@email.com',
+                              state.emailError,
                             ),
+                            keyboardType: TextInputType.emailAddress,
+                            textInputAction: TextInputAction.next,
+                            autofillHints: const [AutofillHints.email],
+                            autocorrect: false,
+                            errorBuilder: (context, error) =>
+                                Text(error, softWrap: true),
+                            validator: (value) {
+                              final email = value?.trim() ?? '';
+                              if (email.isEmpty) {
+                                return S.of(context).enter_email;
+                              }
+                              if (!email.contains('@')) {
+                                return S.of(context).incorrect_email;
+                              }
+                              return null;
+                            },
                           ),
                           const SizedBox(height: 22),
-                          field(
-                            TextFormField(
-                              controller: passwordController,
-                              enabled: !busy,
-                              obscureText: true,
-                              autocorrect: false,
-                              enableSuggestions: false,
-                              autofillHints: [
-                                isLogin
-                                    ? AutofillHints.password
-                                    : AutofillHints.newPassword,
-                              ],
-                              decoration: decoration(
-                                S.of(context).password,
-                                '• • • • • • • •',
-                                state.error,
-                              ),
-                              onFieldSubmitted: (_) => _onSubmit(context),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return S.of(context).enter_password;
-                                }
-                                if (value.length < 6) {
-                                  return S.of(context).min_char;
-                                }
-                                return null;
-                              },
+                          TextFormField(
+                            controller: passwordController,
+                            enabled: !busy,
+                            obscureText: true,
+                            autocorrect: false,
+                            enableSuggestions: false,
+                            autofillHints: [
+                              isLogin
+                                  ? AutofillHints.password
+                                  : AutofillHints.newPassword,
+                            ],
+                            decoration: decoration(
+                              S.of(context).password,
+                              '• • • • • • • •',
+                              state.error,
                             ),
+                            onFieldSubmitted: (_) => _onSubmit(context),
+                            errorBuilder: (context, error) =>
+                                Text(error, softWrap: true),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return S.of(context).enter_password;
+                              }
+                              if (value.length < 6) {
+                                return S.of(context).min_char;
+                              }
+                              return null;
+                            },
                           ),
                           const SizedBox(height: 28),
                           SizedBox(

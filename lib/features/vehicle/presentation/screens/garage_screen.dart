@@ -6,7 +6,8 @@ import 'package:design_system/constants/app_borders.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_brand_theme.dart';
 import 'package:design_system/theme/app_theme.dart';
-import 'package:design_system/widget/app_page_app_bar.dart';
+import 'package:design_system/widget/app_back_button.dart';
+import 'package:intl/intl.dart';
 import 'package:fines_plus/features/expenses/data/models/expense.dart';
 import 'package:fines_plus/features/expenses/data/models/expense_category.dart';
 import 'package:fines_plus/features/expenses/data/models/insurance_record.dart';
@@ -29,15 +30,84 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 /// or delete a car (and all of its data) entirely.
 class GarageScreen extends StatelessWidget {
   final VoidCallback? onBack;
-  const GarageScreen({super.key, this.onBack});
+  final VoidCallback? onContinue;
+  final bool isContinuing;
+  const GarageScreen({
+    super.key,
+    this.onBack,
+    this.onContinue,
+    this.isContinuing = false,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: context.brandTheme.surfaceBg,
-      appBar: AppPageAppBar(title: S.of(context).my_garage, onBack: onBack),
+      appBar: AppBar(
+        backgroundColor: context.brandTheme.surfaceBg,
+        surfaceTintColor: Colors.transparent,
+        elevation: 0,
+        toolbarHeight: 80,
+        centerTitle: true,
+        leadingWidth: 70,
+        leading: AppBackButton(onPressed: onBack),
+        title: BlocBuilder<GarageCubit, GarageState>(
+          builder: (context, state) => Column(
+            children: [
+              Text(
+                S.of(context).my_garage,
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.w800,
+                  fontSize: 28,
+                  color: const Color(0xFF202124),
+                ),
+              ),
+              Text(
+                S.of(context).garage_cars_count(state.cars.length),
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  fontSize: 14,
+                  color: const Color(0xFF707070),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+      bottomNavigationBar: onContinue == null
+          ? null
+          : SafeArea(
+              minimum: const EdgeInsets.fromLTRB(20, 12, 20, 16),
+              child: SizedBox(
+                height: 52,
+                child: ElevatedButton(
+                  onPressed: isContinuing ? null : onContinue,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.blue700,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                  ),
+                  child: isContinuing
+                      ? const SizedBox(
+                          width: 22,
+                          height: 22,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : Text(
+                          S.of(context).garage_continue,
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                ),
+              ),
+            ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: AppColors.blue700,
+        foregroundColor: Colors.white,
+        shape: const CircleBorder(),
+        tooltip: S.of(context).add_cars,
         onPressed: () async {
           final result = await showCarFormSheet(context);
           if (result == null) return;
@@ -61,18 +131,19 @@ class GarageScreen extends StatelessWidget {
             }
 
             if (state.cars.isEmpty) {
-              return Center(child: Text(S.of(context).no_car_selected));
+              return Center(child: Text(S.of(context).garage_empty_add_car));
             }
 
             return ListView.separated(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+              padding: const EdgeInsets.fromLTRB(20, 8, 20, 96),
               itemCount: state.cars.length,
-              separatorBuilder: (_, __) => AppSpacers.verticalSmall,
+              separatorBuilder: (_, __) => const SizedBox(height: 12),
               itemBuilder: (context, index) {
                 final car = state.cars[index];
                 final isActive = car.carId == state.activeCarId;
 
                 return _CarCard(
+                  key: ValueKey(car.carId),
                   car: car,
                   isActive: isActive,
                   onTap: isActive
@@ -118,6 +189,7 @@ class _CarCard extends StatelessWidget {
   final VoidCallback onDelete;
 
   const _CarCard({
+    super.key,
     required this.car,
     required this.isActive,
     required this.onTap,
@@ -127,74 +199,98 @@ class _CarCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    final hasNumber = car.carNumber.isNotEmpty;
-    final title = hasNumber ? car.carNumber : S.of(context).garage_no_number;
-
-    return Card(
-      color: AppColors.neutreBlanc,
-      shape: RoundedRectangleBorder(
-        borderRadius: AppBorders.radius18,
-        side: isActive
-            ? const BorderSide(color: AppColors.blue700, width: 2)
-            : BorderSide.none,
-      ),
-      elevation: 3,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: AppBorders.radius18,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-          child: Row(
-            children: [
-              Thumbnail(
-                photoUrl: car.photoUrl,
-                make: car.make,
-                isActive: isActive,
-              ),
-              AppSpacers.horizontalMedium,
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+    final brand = context.brandTheme;
+    return Semantics(
+      selected: isActive,
+      child: Material(
+        color: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(18),
+          side: BorderSide(color: brand.surfaceBorder),
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: onTap,
+          onLongPress: onEdit,
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
                   children: [
-                    Text(
-                      title,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: hasNumber
-                          ? textTheme.black28W600
-                          : textTheme.black28W600.copyWith(fontSize: 18),
+                    Expanded(
+                      child: Text(
+                        car.make.isNotEmpty ? car.make : S.of(context).auto,
+                        style: Theme.of(context).textTheme.titleMedium
+                            ?.copyWith(
+                              fontWeight: FontWeight.w800,
+                              fontSize: 18,
+                              color: const Color(0xFF202124),
+                            ),
+                      ),
                     ),
-                    if (car.make.isNotEmpty)
-                      Text(
-                        car.make,
-                        style: textTheme.bodySmall?.copyWith(
-                          fontSize: 18,
-                          color: AppColors.neutreGreyDark,
+                    const SizedBox(width: 8),
+                    if (car.carNumber.isNotEmpty)
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: brand.surfaceBg,
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Text(
+                          car.carNumber,
+                          style: brand.moneyTextStyle.copyWith(
+                            fontSize: 13,
+                            color: const Color(0xFF202124),
+                          ),
                         ),
                       ),
-                    if (isActive)
-                      Text(
-                        S.of(context).garage_active_car,
-                        style: textTheme.bodySmall?.copyWith(
-                          color: AppColors.blue700,
-                          fontWeight: FontWeight.bold,
+                    PopupMenuButton<String>(
+                      tooltip: MaterialLocalizations.of(
+                        context,
+                      ).showMenuTooltip,
+                      icon: const Icon(Icons.more_vert),
+                      onSelected: (action) =>
+                          action == 'edit' ? onEdit() : onDelete(),
+                      itemBuilder: (_) => [
+                        PopupMenuItem(
+                          value: 'edit',
+                          child: Row(
+                            children: [
+                              const Icon(Icons.edit_outlined, size: 20),
+                              const SizedBox(width: 12),
+                              Text(S.of(context).edit),
+                            ],
+                          ),
                         ),
-                      ),
-                    if (hasNumber) CarMileageAndStatus(carId: car.carId),
+                        PopupMenuItem(
+                          value: 'delete',
+                          child: Row(
+                            children: [
+                              const Icon(
+                                Icons.delete_outline,
+                                size: 20,
+                                color: AppColors.red,
+                              ),
+                              const SizedBox(width: 12),
+                              Text(
+                                S.of(context).delete,
+                                style: const TextStyle(color: AppColors.red),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                   ],
                 ),
-              ),
-
-              IconButton(
-                icon: const Icon(Icons.edit_outlined),
-                onPressed: onEdit,
-              ),
-              IconButton(
-                icon: const Icon(Icons.delete_outline, color: AppColors.red),
-                onPressed: onDelete,
-              ),
-            ],
+                CarMileageAndStatus(carId: car.carId, cardStyle: true),
+              ],
+            ),
           ),
         ),
       ),
@@ -210,7 +306,12 @@ class _CarCard extends StatelessWidget {
 /// shown.
 class CarMileageAndStatus extends StatefulWidget {
   final String carId;
-  const CarMileageAndStatus({super.key, required this.carId});
+  final bool cardStyle;
+  const CarMileageAndStatus({
+    super.key,
+    required this.carId,
+    this.cardStyle = false,
+  });
 
   @override
   State<CarMileageAndStatus> createState() => CarMileageAndStatusState();
@@ -231,13 +332,17 @@ class CarMileageAndStatusState extends State<CarMileageAndStatus> {
     // this row first mounted. Other cars aren't tracked by MaintenanceCubit,
     // so they still get a plain one-shot fetch.
     if (!_isActiveCar) {
-      _expensesFuture = ExpenseRepository(FirebaseFirestore.instance).getExpensesOnce(carNumber: widget.carId);
+      _expensesFuture = ExpenseRepository(
+        FirebaseFirestore.instance,
+      ).getExpensesOnce(carNumber: widget.carId);
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    context.watch<CarCubit>();
     if (_isActiveCar) {
+      _expensesFuture = null;
       return BlocBuilder<MaintenanceCubit, MaintenanceState>(
         builder: (context, state) {
           final mileage = [
@@ -256,23 +361,34 @@ class CarMileageAndStatusState extends State<CarMileageAndStatus> {
           for (final r in state.insuranceRecords) {
             if (currentPolicy == null ||
                 currentPolicy.updatedAt == null ||
-                (r.updatedAt != null && r.updatedAt!.isAfter(currentPolicy.updatedAt!))) {
+                (r.updatedAt != null &&
+                    r.updatedAt!.isAfter(currentPolicy.updatedAt!))) {
               currentPolicy = r;
             }
           }
 
-          return _buildContent(context, mileage: mileage, latestInsuranceValidTo: currentPolicy?.validTo);
+          return _buildContent(
+            context,
+            mileage: mileage,
+            latestInsuranceValidTo: currentPolicy?.validTo,
+          );
         },
       );
     }
 
+    _expensesFuture ??= ExpenseRepository(
+      FirebaseFirestore.instance,
+    ).getExpensesOnce(carNumber: widget.carId);
     return FutureBuilder<List<Expense>>(
       future: _expensesFuture,
       builder: (context, snapshot) {
         if (!snapshot.hasData) return const SizedBox.shrink();
         final expenses = snapshot.data!;
 
-        final mileage = expenses.fold<int>(0, (max, e) => (e.mileage ?? 0) > max ? e.mileage! : max);
+        final mileage = expenses.fold<int>(
+          0,
+          (max, e) => (e.mileage ?? 0) > max ? e.mileage! : max,
+        );
 
         // Same "most recently saved policy wins" rule as the active-car
         // branch above.
@@ -281,43 +397,100 @@ class CarMileageAndStatusState extends State<CarMileageAndStatus> {
           if (e.category == ExpenseCategory.insurance) {
             if (currentPolicy == null ||
                 currentPolicy.updatedAt == null ||
-                (e.updatedAt != null && e.updatedAt!.isAfter(currentPolicy.updatedAt!))) {
+                (e.updatedAt != null &&
+                    e.updatedAt!.isAfter(currentPolicy.updatedAt!))) {
               currentPolicy = e;
             }
           }
         }
 
-        return _buildContent(context, mileage: mileage, latestInsuranceValidTo: currentPolicy?.insuranceValidTo);
+        return _buildContent(
+          context,
+          mileage: mileage,
+          latestInsuranceValidTo: currentPolicy?.insuranceValidTo,
+        );
       },
     );
   }
 
-  Widget _buildContent(BuildContext context, {required int mileage, required DateTime? latestInsuranceValidTo}) {
+  Widget _buildContent(
+    BuildContext context, {
+    required int mileage,
+    required DateTime? latestInsuranceValidTo,
+  }) {
     final textTheme = Theme.of(context).textTheme;
 
-    final insuranceExpired = latestInsuranceValidTo != null && latestInsuranceValidTo.isBefore(DateTime.now());
+    final insuranceExpired =
+        latestInsuranceValidTo != null &&
+        latestInsuranceValidTo.isBefore(DateTime.now());
 
     final statusText = insuranceExpired
         ? S.of(context).garage_status_insurance_expired
         : latestInsuranceValidTo != null
-        ? S.of(context).garage_status_ok_until(_formatDate(latestInsuranceValidTo))
+        ? S
+              .of(context)
+              .garage_status_ok_until(_formatDate(latestInsuranceValidTo))
         : S.of(context).garage_status_ok;
 
     final unit = context.read<SettingsCubit>().state.unit;
 
-    return Padding(
-      padding: const EdgeInsets.only(top: 4),
-      child: Wrap(
-        spacing: 8,
-        children: [
-          if (mileage > 0) Text('$mileage $unit', style: textTheme.bodySmall),
-          Text(
-            statusText,
-            style: textTheme.bodySmall?.copyWith(
-              color: insuranceExpired ? AppColors.red : Colors.green.shade700,
-              fontWeight: FontWeight.w600,
+    if (!widget.cardStyle) {
+      return Padding(
+        padding: const EdgeInsets.only(top: 4),
+        child: Wrap(
+          spacing: 8,
+          children: [
+            if (mileage > 0) Text('$mileage $unit', style: textTheme.bodySmall),
+            Text(
+              statusText,
+              style: textTheme.bodySmall?.copyWith(
+                color: insuranceExpired ? AppColors.red : Colors.green.shade700,
+                fontWeight: FontWeight.w600,
+              ),
             ),
+          ],
+        ),
+      );
+    }
+
+    final foreground = insuranceExpired
+        ? const Color(0xFFBE3540)
+        : const Color(0xFF198B49);
+    return Padding(
+      padding: const EdgeInsets.only(top: 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            '${NumberFormat.decimalPattern('uk').format(mileage)} $unit',
+            style: textTheme.bodySmall
+                ?.merge(context.brandTheme.moneyTextStyle)
+                .copyWith(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w400,
+                  color: const Color(0xFF707070),
+                ),
           ),
+          if (latestInsuranceValidTo != null) ...[
+            const SizedBox(height: 8),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              decoration: BoxDecoration(
+                color: insuranceExpired
+                    ? const Color(0xFFFBE0E2)
+                    : const Color(0xFFDEF4E6),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Text(
+                '● $statusText',
+                style: textTheme.bodySmall?.copyWith(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: foreground,
+                ),
+              ),
+            ),
+          ],
         ],
       ),
     );

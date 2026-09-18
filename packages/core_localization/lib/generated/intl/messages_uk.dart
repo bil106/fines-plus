@@ -26,13 +26,15 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m2(distance) => "${distance} км";
 
-  static String m3(date) => "ОК до ${date}";
+  static String m3(count) => "${count} авто";
 
-  static String m4(task) => "Час для: ${task}";
+  static String m4(date) => "ОК до ${date}";
 
-  static String m5(distance) => "Найкращий рейтинг поруч · ${distance} км";
+  static String m5(task) => "Час для: ${task}";
 
-  static String m6(price, period) =>
+  static String m6(distance) => "Найкращий рейтинг поруч · ${distance} км";
+
+  static String m7(price, period) =>
       "7 днів безкоштовно, потім ${price} за ${period}. Скасувати можна в будь-який момент, не менш ніж за 24 години до закінчення пробного періоду, в налаштуваннях Google Play. Підписка автоматично поновлюється, якщо її не скасовано.";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
@@ -296,6 +298,8 @@ class MessageLookup extends MessageLookupByLibrary {
       "Не вдалося виконати дію",
     ),
     "garage_active_car": MessageLookupByLibrary.simpleMessage("Активна"),
+    "garage_cars_count": m3,
+    "garage_continue": MessageLookupByLibrary.simpleMessage("Продовжити"),
     "garage_delete_confirm_body": MessageLookupByLibrary.simpleMessage(
       "Усі дані цього авто (витрати, нагадування, обслуговування) буде видалено безповоротно.",
     ),
@@ -304,6 +308,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "garage_delete_error": MessageLookupByLibrary.simpleMessage(
       "Не вдалося видалити авто",
+    ),
+    "garage_empty_add_car": MessageLookupByLibrary.simpleMessage(
+      "Додайте своє авто",
     ),
     "garage_make_hint": MessageLookupByLibrary.simpleMessage("Оберіть марку"),
     "garage_make_label": MessageLookupByLibrary.simpleMessage("Марка авто"),
@@ -316,7 +323,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Страхування просрочено",
     ),
     "garage_status_ok": MessageLookupByLibrary.simpleMessage("ОК"),
-    "garage_status_ok_until": m3,
+    "garage_status_ok_until": m4,
     "gas_station_nearby": MessageLookupByLibrary.simpleMessage(
       "Заправки поруч",
     ),
@@ -392,7 +399,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "logo": MessageLookupByLibrary.simpleMessage("LOGO"),
     "maintenance": MessageLookupByLibrary.simpleMessage("ТО"),
     "maintenance_control": MessageLookupByLibrary.simpleMessage("Контроль ТО"),
-    "maintenance_due_body": m4,
+    "maintenance_due_body": m5,
     "maintenance_due_title": MessageLookupByLibrary.simpleMessage(
       "Потрібне обслуговування",
     ),
@@ -425,7 +432,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "months": MessageLookupByLibrary.simpleMessage("Місяці"),
     "more": MessageLookupByLibrary.simpleMessage("Ще"),
     "most_popular": MessageLookupByLibrary.simpleMessage("НАЙПОПУЛЯРНІШІ"),
-    "my_garage": MessageLookupByLibrary.simpleMessage("Мій гараж"),
+    "my_garage": MessageLookupByLibrary.simpleMessage("Гараж"),
     "my_position": MessageLookupByLibrary.simpleMessage("Ви тут"),
     "name": MessageLookupByLibrary.simpleMessage("Назва"),
     "new_reminder": MessageLookupByLibrary.simpleMessage("Нове нагадування"),
@@ -516,6 +523,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "pdf": MessageLookupByLibrary.simpleMessage("PDF"),
     "per_day_suffix": MessageLookupByLibrary.simpleMessage("/ день"),
     "per_month": MessageLookupByLibrary.simpleMessage("за місяць"),
+    "per_month_suffix": MessageLookupByLibrary.simpleMessage("/ місяць"),
     "period": MessageLookupByLibrary.simpleMessage("середнє/рік"),
     "period_3_months": MessageLookupByLibrary.simpleMessage("3 місяці"),
     "period_year": MessageLookupByLibrary.simpleMessage("рік"),
@@ -606,7 +614,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "service_balansuvannya_kolis": MessageLookupByLibrary.simpleMessage(
       "Балансування коліс",
     ),
-    "service_best_rating_distance": m5,
+    "service_best_rating_distance": m6,
     "service_capitalnyy_remont_dvyhuna": MessageLookupByLibrary.simpleMessage(
       "Капітальний ремонт двигуна",
     ),
@@ -1104,6 +1112,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Не вдалося активувати підписку",
     ),
     "subscription_for": MessageLookupByLibrary.simpleMessage("Підписка на"),
+    "subscription_subtitle": MessageLookupByLibrary.simpleMessage(
+      "Повний доступ до контролю штрафів, ТО та страхування",
+    ),
     "successful_registration": MessageLookupByLibrary.simpleMessage(
       "Успішна реєстрація",
     ),
@@ -1147,7 +1158,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "track_costs": MessageLookupByLibrary.simpleMessage(
       "Стежте за витратами, пробігом та ефективністю",
     ),
-    "trial_disclosure_detailed": m6,
+    "trial_disclosure_detailed": m7,
     "trial_expired": MessageLookupByLibrary.simpleMessage(
       "Пробний період минув",
     ),

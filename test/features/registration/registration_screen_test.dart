@@ -17,6 +17,8 @@ class RegistrationStub extends Cubit<RegistrationState>
   RegistrationStub() : super(const RegistrationState());
   String? submittedPassword;
   int submissions = 0;
+  void showErrors({String? email, String? general}) =>
+      emit(state.copyWith(emailError: email, error: general));
   @override
   Future<Map<String, String>> loadCredentials() async => {
     'email': '',
@@ -136,6 +138,47 @@ void main() {
       debugDefaultTargetPlatformOverride = null;
     },
   );
+
+  testWidgets('server errors wrap below inputs without clipping', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(320, 700);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    final cubit = await open(tester, TargetPlatform.android);
+    const networkError =
+        'A network error (such as timeout, interrupted connection or unreachable host) has occurred. Please try again.';
+    cubit.showErrors(email: 'Email already in use', general: networkError);
+    await tester.pumpAndSettle();
+    for (final field in find.byType(TextFormField).evaluate()) {
+      expect(
+        find.descendant(
+          of: find.byWidget(field.widget),
+          matching: find.byType(ClipRRect),
+        ),
+        findsNothing,
+      );
+    }
+    final error = find.text(networkError);
+    expect(error, findsOneWidget);
+    expect(tester.getSize(error).height, greaterThan(30));
+    final inputs = find.byType(EditableText);
+    expect(
+      tester.getTopLeft(find.text('Email already in use')).dy,
+      greaterThan(tester.getBottomLeft(inputs.first).dy),
+    );
+    expect(
+      tester.getTopLeft(error).dy,
+      greaterThan(tester.getBottomLeft(inputs.last).dy),
+    );
+    expect(
+      tester.getBottomLeft(error).dy,
+      lessThan(tester.getTopLeft(find.byType(FilledButton)).dy),
+    );
+    expect(tester.takeException(), isNull);
+    debugDefaultTargetPlatformOverride = null;
+  });
 
   testWidgets(
     'small screen with keyboard remains scrollable without overflow',

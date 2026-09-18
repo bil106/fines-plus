@@ -18,7 +18,15 @@
   "garage_setup_subtitle": "Add your car now, or do it later — you can start using the app right away",
   "skip_for_now": "Skip for now",
   "car_number_fines_hint": "Only needed to check fines — you can add these later",
-  "my_garage": "My garage",
+  "garage_continue": "Continue",
+  "my_garage": "Garage",
+  "garage_cars_count": "{count} cars",
+  "@garage_cars_count": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "garage_empty_add_car": "Add your car",
   "garage_active_car": "Active",
   "garage_no_number": "Car without a plate",
   "edit": "Edit",
@@ -379,6 +387,7 @@
 "successfully_completed": "months successfully completed!",
 "authorization_required": "Authorization required",
 "subscription": "Subscription",
+"subscription_subtitle": "Full access to fines, maintenance and insurance tracking",
 "store_unavailable": "Store unavailable",
 "click_again": "Click again to exit",
 "sign_up": "Sign Up",
@@ -528,6 +537,7 @@
 "period_3_months": "3 months",
 "period_year": "year",
 "per_day_suffix": "/ day",
+"per_month_suffix": "/ month",
 "trial_disclosure_detailed": "7-day free trial, then {price} per {period}. Cancel anytime, at least 24 hours before the trial ends, in Google Play Settings. Subscription renews automatically unless cancelled.",
 "@trial_disclosure_detailed": {
   "placeholders": {

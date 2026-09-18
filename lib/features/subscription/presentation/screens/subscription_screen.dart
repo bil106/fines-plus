@@ -1,7 +1,9 @@
 import 'package:design_system/widget/app_back_button.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:core_localization/generated/l10n.dart';
+import 'package:design_system/constants/app_borders.dart';
 import 'package:design_system/constants/app_spacers.dart';
+import 'package:design_system/theme/app_brand_theme.dart';
 import 'package:design_system/theme/app_theme.dart';
 import 'package:fines_plus/app/router/home_screen_wrapper.dart';
 import 'package:fines_plus/env/env.dart';
@@ -31,7 +33,7 @@ class SubscriptionScreen extends StatefulWidget {
 }
 
 class _SubscriptionScreenState extends State<SubscriptionScreen> {
-  int _selectedIndex = 0;
+  late int _selectedIndex = plans.indexWhere((p) => p["popular"] == true).clamp(0, plans.length - 1);
   bool _navigated = false;
   bool _productsLoading = true;
   bool _productsUnavailable = false;
@@ -126,6 +128,15 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     setState(() => _selectedIndex = index);
   }
 
+  String _perMonthText(BuildContext context, Map<String, dynamic> plan) {
+    final period = _localizedPeriod(context, plan["periodKey"] as String);
+    final store = _productDetails[plan["productId"] as String];
+    if (store == null) return period;
+    final perMonthAmount = store.rawPrice / (plan["months"] as int);
+    final perMonth = "${store.currencySymbol}${perMonthAmount.toStringAsFixed(2)}";
+    return "$period · $perMonth ${S.of(context).per_month_suffix}";
+  }
+
   Future<void> _buySelectedPlan() async {
     FirebaseCrashlytics.instance.log('buySelectedPlan tapped, selectedIndex=$_selectedIndex');
     final user = FirebaseAuth.instance.currentUser;
@@ -168,15 +179,15 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     final wrapperState = context.findAncestorStateOfType<HomeScreenWrapperState>();
 
     if (wrapperState != null) {
-      wrapperState.openPage(HomePage.home);
+      wrapperState.openPage(HomePage.garage);
       return;
     }
 
-    context.router.replaceAll([HomeRouteWrapper(initialPage: HomePage.home)]);
+    context.router.replaceAll([HomeRouteWrapper(initialPage: HomePage.garage)]);
   }
 
   void _continueWithoutSubscription() {
-    context.router.root.replaceAll([HomeRouteWrapper(initialPage: HomePage.home)]);
+    _handlePurchaseSuccess();
   }
 
   @override
@@ -199,25 +210,30 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         }
       },
       child: Scaffold(
-        backgroundColor: AppColors.energyBlue50,
+        backgroundColor: context.brandTheme.surfaceBg,
         appBar: AppBar(
-          leading: ModalRoute.of(context)?.canPop == true
-              ? const AppBackButton()
-              : null,
-          backgroundColor: AppColors.energyBlue50,
+          leading: widget.onBack != null
+              ? AppBackButton(onPressed: widget.onBack)
+              : (ModalRoute.of(context)?.canPop == true ? const AppBackButton() : null),
+          backgroundColor: context.brandTheme.surfaceBg,
           elevation: 0,
-
-          title: Text(S.of(context).subscription, style: textTheme.headlineMedium),
         ),
         body: Padding(
-          padding: const EdgeInsets.all(10),
+          padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Column(
             children: [
-              Padding(
-                padding: const EdgeInsets.only(left: 50),
-                child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: []),
+              Text(
+                S.of(context).subscription,
+                textAlign: TextAlign.center,
+                style: textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
               ),
-              AppSpacers.verticalMedium,
+              AppSpacers.verticalSmallMedium,
+              Text(
+                S.of(context).subscription_subtitle,
+                textAlign: TextAlign.center,
+                style: textTheme.black16.copyWith(color: AppColors.grey700),
+              ),
+              AppSpacers.verticalLarge,
 
               Expanded(
                 child: ListView(
@@ -226,77 +242,85 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                       final plan = plans[index];
                       final isSelected = index == _selectedIndex;
 
-                      return GestureDetector(
-                        onTap: () => _onPlanSelected(index),
-                        child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 250),
-                          margin: const EdgeInsets.symmetric(vertical: 10),
-                          padding: const EdgeInsets.all(20),
-                          decoration: BoxDecoration(
-                            gradient: isSelected
-                                ? LinearGradient(
-                                    colors: [AppColors.blue700, AppColors.blue700.withOpacity(0.4)],
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                  )
-                                : null,
-                            color: isSelected ? null : AppColors.neutreBlanc,
-                            borderRadius: BorderRadius.circular(20),
-                            boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 6, offset: const Offset(0, 3))],
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              if (plan["popular"])
-                                Container(
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        child: Stack(
+                          clipBehavior: Clip.none,
+                          children: [
+                            GestureDetector(
+                              onTap: () => _onPlanSelected(index),
+                              child: AnimatedContainer(
+                                duration: const Duration(milliseconds: 250),
+                                padding: const EdgeInsets.all(16),
+                                decoration: BoxDecoration(
+                                  color: isSelected ? AppColors.energyBlue50 : AppColors.neutreBlanc,
+                                  borderRadius: AppBorders.radius16,
+                                  border: Border.all(
+                                    color: isSelected ? AppColors.blue700 : AppColors.grey300,
+                                    width: isSelected ? AppBorders.widthThick : AppBorders.widthThin,
+                                  ),
+                                  boxShadow: [
+                                    BoxShadow(color: Colors.black12, blurRadius: 6, offset: const Offset(0, 3)),
+                                  ],
+                                ),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            _localizedTitle(context, plan["titleKey"] as String),
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: textTheme.black18bold,
+                                          ),
+                                          if (plan["hasTrial"]) ...[
+                                            AppSpacers.verticalSmallMedium,
+                                            Container(
+                                              padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 10),
+                                              decoration: BoxDecoration(
+                                                color: AppColors.energyBlue25,
+                                                borderRadius: AppBorders.radiusLarge,
+                                              ),
+                                              child: Text(
+                                                S.of(context).free_trial_7_days,
+                                                style: textTheme.black14bold.copyWith(color: AppColors.blue700),
+                                              ),
+                                            ),
+                                          ],
+                                          AppSpacers.verticalSmallMedium,
+                                          Text(
+                                            _perMonthText(context, plan),
+                                            style: textTheme.black13W400.copyWith(color: AppColors.grey700),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    AppSpacers.horizontalMedium,
+                                    _buildPriceColumn(context, plan, isSelected),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            if (plan["popular"])
+                              Positioned(
+                                top: -12,
+                                right: 16,
+                                child: Container(
                                   padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 10),
                                   decoration: BoxDecoration(
-                                    color: Colors.orange,
-                                    borderRadius: BorderRadius.circular(12),
+                                    color: AppColors.blue700,
+                                    borderRadius: AppBorders.radiusLarge,
                                   ),
                                   child: Text(
                                     S.of(context).most_popular,
-                                    style: TextStyle(
-                                      color: AppColors.neutreBlanc,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 12,
-                                    ),
+                                    style: textTheme.black14bold.copyWith(color: AppColors.neutreBlanc, fontSize: 12),
                                   ),
                                 ),
-
-                              AppSpacers.verticalMedium,
-                              if (plan["hasTrial"])
-                                Text(
-                                  S.of(context).free_trial_7_days,
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
-                                    color: isSelected ? AppColors.neutreBlanc : AppColors.blue700,
-                                  ),
-                                ),
-
-                              AppSpacers.verticalMedium,
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      _localizedTitle(context, plan["titleKey"] as String),
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                        fontWeight: FontWeight.bold,
-                                        color: isSelected ? AppColors.neutreBlanc : AppColors.blue700,
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 12),
-
-                                  _buildPriceColumn(context, plan, isSelected),
-                                ],
                               ),
-                            ],
-                          ),
+                          ],
                         ),
                       );
                     }),
@@ -332,9 +356,9 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                           return ElevatedButton(
                             style: ElevatedButton.styleFrom(
                               padding: const EdgeInsets.symmetric(vertical: 16),
-                              backgroundColor: AppColors.orange,
-                              disabledBackgroundColor: AppColors.orange.withOpacity(0.5),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                              backgroundColor: AppColors.blue700,
+                              disabledBackgroundColor: AppColors.blue700.withOpacity(0.5),
+                              shape: RoundedRectangleBorder(borderRadius: AppBorders.radius16),
                             ),
                             onPressed: disabled ? null : _buySelectedPlan,
                             child: loading || _productsLoading
@@ -345,7 +369,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                   )
                                 : Text(
                                     _productsUnavailable ? S.of(context).store_unavailable : S.of(context).get_plan,
-                                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                    style: textTheme.black18bold.copyWith(color: AppColors.neutreBlanc),
                                   ),
                           );
                         },
@@ -378,39 +402,41 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Icon(Icons.check_circle, color: AppColors.green),
-                        const SizedBox(width: 8),
                         Expanded(
-                          child: Text(
-                            S.of(context).money_back,
-                            maxLines: 2,
-                            softWrap: true,
-                            overflow: TextOverflow.visible,
-                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Icon(Icons.check_circle, color: AppColors.green, size: 18),
+                              const SizedBox(width: 6),
+                              Expanded(
+                                child: Text(
+                                  S.of(context).money_back,
+                                  maxLines: 2,
+                                  softWrap: true,
+                                  style: textTheme.black14bold,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                      ],
-                    ),
-
-                    AppSpacers.verticalLarge,
-
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                      child: Text(
-                        S.of(context).text_automatically_renew,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 13, color: AppColors.grey700),
-                      ),
-                    ),
-
-                    AppSpacers.verticalLarge,
-
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.lock, color: AppColors.green),
-                        SizedBox(width: 6),
-                        Text(S.of(context).pay_safe, style: TextStyle(fontWeight: FontWeight.w600)),
+                        AppSpacers.horizontalMedium,
+                        Expanded(
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Icon(Icons.lock, color: AppColors.green, size: 18),
+                              const SizedBox(width: 6),
+                              Expanded(
+                                child: Text(
+                                  S.of(context).pay_safe,
+                                  maxLines: 2,
+                                  softWrap: true,
+                                  style: textTheme.black14bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ],
                     ),
                     AppSpacers.verticalLarge,
@@ -464,10 +490,9 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   }
 
   Widget _buildPriceColumn(BuildContext context, Map<String, dynamic> plan, bool isSelected) {
+    final textTheme = Theme.of(context).textTheme;
     final productId = plan["productId"] as String;
     final store = _productDetails[productId];
-    final foreground = isSelected ? AppColors.neutreBlanc : AppColors.blue700;
-    final secondary = isSelected ? Colors.white70 : Colors.grey.shade600;
 
     final String totalPrice;
     final String perDay;
@@ -485,27 +510,31 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
       perDay = "";
     }
 
-    final period = _localizedPeriod(context, plan["periodKey"] as String);
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        Text(
-          totalPrice,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: foreground),
-        ),
-        Text(
-          "/ $period",
-          maxLines: 1,
-          style: TextStyle(fontSize: 12, color: foreground),
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              totalPrice,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: textTheme.black20bold,
+            ),
+            AppSpacers.horizontalSmallMedium,
+            Icon(
+              isSelected ? Icons.check_circle : Icons.circle_outlined,
+              color: isSelected ? AppColors.blue700 : AppColors.grey300,
+              size: 22,
+            ),
+          ],
         ),
         const SizedBox(height: 2),
         Text(
           perDay,
           maxLines: 1,
-          style: TextStyle(fontSize: 12, color: secondary),
+          style: textTheme.grey12W400,
         ),
       ],
     );

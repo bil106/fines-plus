@@ -170,9 +170,6 @@ flutter_native_splash:
   ios: true
   android_gravity: center
   ios_content_mode: center
-dependency_overrides:
-  freezed: 3.1.1
-  freezed_annotation: 3.1.1
 flutter_launcher_icons:
   android: true
   ios: true

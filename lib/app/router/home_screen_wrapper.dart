@@ -415,10 +415,10 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
                     onPurchaseSuccess: () {
                       final wrapperState = context.findAncestorStateOfType<HomeScreenWrapperState>();
                       if (wrapperState != null) {
-                        wrapperState.openPage(HomePage.home);
+                        wrapperState.openPage(HomePage.garage);
                         return;
                       }
-                      context.router.root.replaceAll([HomeRouteWrapper(initialPage: HomePage.home)]);
+                      context.router.root.replaceAll([HomeRouteWrapper(initialPage: HomePage.garage)]);
                     },
                   ),
                 ),
@@ -462,7 +462,7 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
                 ),
                 FuelMapScreen(key: const ValueKey('fuel-map')),
                 CarWashMapScreen(key: const ValueKey('car-wash-map')),
-                GarageScreen(key: const ValueKey('garage_screen'), onBack: () => openPage(HomePage.home)),
+                GarageScreen(key: const ValueKey('garage_screen'), onBack: () => openPage(HomePage.home), onContinue: () => openPage(HomePage.home)),
               ],
             ],
           ),

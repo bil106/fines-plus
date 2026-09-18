@@ -184,9 +184,39 @@ class S {
     );
   }
 
-  /// `My garage`
+  /// `Continue`
+  String get garage_continue {
+    return Intl.message(
+      'Continue',
+      name: 'garage_continue',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Garage`
   String get my_garage {
-    return Intl.message('My garage', name: 'my_garage', desc: '', args: []);
+    return Intl.message('Garage', name: 'my_garage', desc: '', args: []);
+  }
+
+  /// `{count} cars`
+  String garage_cars_count(int count) {
+    return Intl.message(
+      '$count cars',
+      name: 'garage_cars_count',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `Add your car`
+  String get garage_empty_add_car {
+    return Intl.message(
+      'Add your car',
+      name: 'garage_empty_add_car',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Active`
@@ -3294,6 +3324,16 @@ class S {
     );
   }
 
+  /// `Full access to fines, maintenance and insurance tracking`
+  String get subscription_subtitle {
+    return Intl.message(
+      'Full access to fines, maintenance and insurance tracking',
+      name: 'subscription_subtitle',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Store unavailable`
   String get store_unavailable {
     return Intl.message(
@@ -4437,6 +4477,16 @@ class S {
   /// `/ day`
   String get per_day_suffix {
     return Intl.message('/ day', name: 'per_day_suffix', desc: '', args: []);
+  }
+
+  /// `/ month`
+  String get per_month_suffix {
+    return Intl.message(
+      '/ month',
+      name: 'per_month_suffix',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `7-day free trial, then {price} per {period}. Cancel anytime, at least 24 hours before the trial ends, in Google Play Settings. Subscription renews automatically unless cancelled.`

@@ -18,7 +18,15 @@
    "garage_setup_subtitle": "Додайте авто зараз або зробіть це пізніше — користуватися застосунком можна вже зараз",
    "skip_for_now": "Пропустити",
    "car_number_fines_hint": "Потрібні лише для перевірки штрафів — можна додати пізніше",
-   "my_garage": "Мій гараж",
+   "garage_continue": "Продовжити",
+   "my_garage": "Гараж",
+   "garage_cars_count": "{count} авто",
+   "@garage_cars_count": {
+     "placeholders": {
+       "count": { "type": "int" }
+     }
+   },
+   "garage_empty_add_car": "Додайте своє авто",
    "garage_active_car": "Активна",
    "garage_no_number": "Авто без номера",
    "edit": "Редагувати",
@@ -380,6 +388,7 @@
    "successfully_completed": "місяців успішно оформлено!",
    "authorization_required": "Потрібна авторизація",
    "subscription": "Передплата",
+   "subscription_subtitle": "Повний доступ до контролю штрафів, ТО та страхування",
    "store_unavailable": "Магазин недоступний",
    "click_again": "Натисніть ще раз, щоб вийти",
    "sign_up": "Реєстрація",
@@ -529,6 +538,7 @@
    "period_3_months": "3 місяці",
    "period_year": "рік",
    "per_day_suffix": "/ день",
+   "per_month_suffix": "/ місяць",
    "trial_disclosure_detailed": "7 днів безкоштовно, потім {price} за {period}. Скасувати можна в будь-який момент, не менш ніж за 24 години до закінчення пробного періоду, в налаштуваннях Google Play. Підписка автоматично поновлюється, якщо її не скасовано.",
    "@trial_disclosure_detailed": {
      "placeholders": {
