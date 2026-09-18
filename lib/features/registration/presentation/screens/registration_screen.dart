@@ -1,15 +1,15 @@
-import 'dart:async';
+import 'dart:convert';
+import 'dart:math';
+import 'package:crypto/crypto.dart';
+import 'package:fines_plus/env/env.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/widget/app_back_button.dart';
-import 'package:design_system/constants/app_borders.dart';
-import 'package:design_system/constants/app_spacers.dart';
 import 'package:fines_plus/features/registration/presentation/cubit/registration_cubit.dart';
 import 'package:fines_plus/features/registration/presentation/cubit/registration_state.dart';
 import 'package:fines_plus/features/registration/presentation/screens/garage_setup_screen.dart';
-import 'package:fines_plus/features/subscription/presentation/cubit/subscription_cubit.dart';
 import 'package:fines_plus/app/router/app_router.dart';
 import 'package:fines_plus/app/router/home_screen_wrapper.dart';
 import 'package:flutter/foundation.dart';
@@ -17,7 +17,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
-import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -34,20 +33,15 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   final _formKey = GlobalKey<FormState>();
   late TextEditingController emailController;
   late TextEditingController passwordController;
-final GoogleSignIn _googleSignIn = GoogleSignIn.instance;
-HomeScreenWrapperState? _wrapperState;
+  final GoogleSignIn _googleSignIn = GoogleSignIn.instance;
+  HomeScreenWrapperState? _wrapperState;
   bool _socialLoading = false;
-  late final Future<void> _googleSignInInit;
-
-
-  Timer? _emailCheckTimer;
+  static Future<void>? _googleSignInInit;
 
   @override
   void initState() {
     super.initState();
-    _googleSignInInit = _googleSignIn.initialize(
-      serverClientId: '201100655892-ocbfb9gl3j1ad5ma9t6n6pove9dom2n4.apps.googleusercontent.com',
-    );
+
     emailController = TextEditingController();
     passwordController = TextEditingController();
 
@@ -57,23 +51,9 @@ HomeScreenWrapperState? _wrapperState;
       if (!mounted) return;
       emailController.text = data['email']!;
       passwordController.text = data['password']!;
-      _validateForm();
-      if (data['email']!.isNotEmpty) cubit.checkEmail(data['email']!);
     });
-
-    emailController.addListener(() {
-      final email = emailController.text.trim();
-      _emailCheckTimer?.cancel();
-      _emailCheckTimer = Timer(const Duration(milliseconds: 600), () {
-        cubit.checkEmail(email);
-        _validateForm();
-      });
-    });
-
-    passwordController.addListener(_validateForm);
   }
 
-  bool _isFormValid = false;
   bool _isNewAccountAwaitingGarageSetup = false;
 
   /// Subscription check + navigation into the app, shared by both the
@@ -84,7 +64,10 @@ HomeScreenWrapperState? _wrapperState;
     final hasSubscription = await regCubit.checkSubscription();
     if (!context.mounted) return;
 
-    if (kDebugMode || hasSubscription) {
+    if (kDebugMode ||
+        Env.iosBypassSubscription ||
+        defaultTargetPlatform == TargetPlatform.iOS ||
+        hasSubscription) {
       context.router.replaceAll([HomeRouteWrapper()]);
     } else {
       context.router.replaceAll([
@@ -99,41 +82,51 @@ HomeScreenWrapperState? _wrapperState;
             }
 
             if (!mounted) return;
-            context.router.root.replaceAll([HomeRouteWrapper(initialPage: HomePage.subscription)]);
+            context.router.root.replaceAll([
+              HomeRouteWrapper(initialPage: HomePage.subscription),
+            ]);
           },
         ),
       ]);
     }
   }
 
-  void _validateForm() {
-    final email = emailController.text.trim();
-    final pass = passwordController.text.trim();
-    final isValid = email.isNotEmpty && email.contains('@') && pass.length >= 6;
-    if (isValid != _isFormValid) setState(() => _isFormValid = isValid);
-  }
-
-Future<void> _onSubmit(BuildContext context) async {
+  Future<void> _onSubmit(BuildContext context) async {
+    if (_socialLoading || context.read<RegistrationCubit>().state.isLoading) {
+      return;
+    }
     if (!(_formKey.currentState?.validate() ?? false)) return;
 
     final cubit = context.read<RegistrationCubit>();
     final email = emailController.text.trim();
-    final password = passwordController.text.trim();
+    final password = passwordController.text;
 
-    await cubit.saveCredentials(email, password);
     await cubit.register(email, password);
+    if (cubit.state.isRegistered) await cubit.saveCredentials(email, password);
     // Post-registration navigation (home vs subscription) is handled reactively
     // by the BlocConsumer listener below once `state.isRegistered` becomes true.
   }
-Future<void> _signInWithGoogle(BuildContext context) async {
+
+  Future<void> _signInWithGoogle(BuildContext context) async {
+    if (_socialLoading || context.read<RegistrationCubit>().state.isLoading) {
+      return;
+    }
     setState(() => _socialLoading = true);
     try {
-      await _googleSignInInit;
+      await (_googleSignInInit ??= _googleSignIn.initialize(
+        serverClientId:
+            '201100655892-ocbfb9gl3j1ad5ma9t6n6pove9dom2n4.apps.googleusercontent.com',
+      ));
       final googleUser = await _googleSignIn.authenticate();
 
       final googleAuth = googleUser.authentication;
 
-      final credential = GoogleAuthProvider.credential(idToken: googleAuth.idToken);
+      if (googleAuth.idToken == null) {
+        throw FirebaseAuthException(code: 'missing-google-id-token');
+      }
+      final credential = GoogleAuthProvider.credential(
+        idToken: googleAuth.idToken,
+      );
 
       await FirebaseAuth.instance.signInWithCredential(credential);
       if (!context.mounted) return;
@@ -142,49 +135,82 @@ Future<void> _signInWithGoogle(BuildContext context) async {
       if (e.code == GoogleSignInExceptionCode.canceled) return;
       debugPrint('Google sign-in error: $e');
       if (!context.mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('${S.of(context).google_login_error}: ${e.description}')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            '${S.of(context).google_login_error}: ${e.description}',
+          ),
+        ),
+      );
     } catch (e, s) {
       debugPrint('Google sign-in error: $e');
       debugPrint('$s');
       if (!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('${S.of(context).google_login_error}: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('${S.of(context).google_login_error}: $e')),
+      );
     } finally {
       if (mounted) setState(() => _socialLoading = false);
     }
   }
 
-
   Future<void> _signInWithFacebook(BuildContext context) async {
+    if (_socialLoading || context.read<RegistrationCubit>().state.isLoading) {
+      return;
+    }
     setState(() => _socialLoading = true);
     try {
-      final result = await FacebookAuth.instance.login(permissions: ['email', 'public_profile']);
+      final random = Random.secure();
+      final rawNonce = base64Url.encode(
+        List<int>.generate(32, (_) => random.nextInt(256)),
+      );
+      final result = await FacebookAuth.instance.login(
+        permissions: ['email', 'public_profile'],
+        nonce: sha256.convert(utf8.encode(rawNonce)).toString(),
+      );
+      if (!context.mounted) return;
 
       if (result.status == LoginStatus.success) {
         final accessToken = result.accessToken;
         if (accessToken == null) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(S.of(context).facebook_error)));
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(S.of(context).facebook_error)));
           return;
         }
 
-        final credential = FacebookAuthProvider.credential(accessToken.tokenString);
+        final credential = accessToken is LimitedToken
+            ? OAuthProvider(
+                'facebook.com',
+              ).credential(idToken: accessToken.tokenString, rawNonce: rawNonce)
+            : FacebookAuthProvider.credential(accessToken.tokenString);
 
         await FirebaseAuth.instance.signInWithCredential(credential);
         if (!context.mounted) return;
         await _onSocialLoginSuccess(context);
         if (!context.mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(S.of(context).facebook_login_successful)));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(S.of(context).facebook_login_successful)),
+        );
       } else if (result.status == LoginStatus.cancelled) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(S.of(context).facebook_login_cancelled)));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(S.of(context).facebook_login_cancelled)),
+        );
       } else {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('${S.of(context).facebook_login_error}: ${result.message}')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              '${S.of(context).facebook_login_error}: ${result.message}',
+            ),
+          ),
+        );
         debugPrint("${result.message}");
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('${S.of(context).facebook_login_error}: $e')));
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('${S.of(context).facebook_login_error}: $e')),
+      );
       debugPrint("error: $e");
     } finally {
       if (mounted) setState(() => _socialLoading = false);
@@ -192,25 +218,36 @@ Future<void> _signInWithGoogle(BuildContext context) async {
   }
 
   Future<void> _signInWithApple(BuildContext context) async {
+    if (_socialLoading || context.read<RegistrationCubit>().state.isLoading) {
+      return;
+    }
     setState(() => _socialLoading = true);
     try {
-      final credential = await SignInWithApple.getAppleIDCredential(
-        scopes: [AppleIDAuthorizationScopes.email, AppleIDAuthorizationScopes.fullName],
+      await FirebaseAuth.instance.signInWithProvider(
+        AppleAuthProvider()
+          ..addScope('email')
+          ..addScope('name'),
       );
-
-      final oauthCredential = OAuthProvider(
-        "apple.com",
-      ).credential(idToken: credential.identityToken, accessToken: credential.authorizationCode);
-
-      await FirebaseAuth.instance.signInWithCredential(oauthCredential);
       if (!context.mounted) return;
       await _onSocialLoginSuccess(context);
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Sign in with Apple successful'), backgroundColor: AppColors.blue700),
+        const SnackBar(
+          content: Text('Sign in with Apple successful'),
+          backgroundColor: AppColors.blue700,
+        ),
       );
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'canceled' || e.code == 'web-context-cancelled') return;
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Apple: ${e.message ?? e.code}')));
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Apple login error: $e')));
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Apple login error: $e')));
       debugPrint('Apple login error: $e');
     } finally {
       if (mounted) setState(() => _socialLoading = false);
@@ -221,7 +258,9 @@ Future<void> _signInWithGoogle(BuildContext context) async {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) return;
 
-    final usersRef = FirebaseFirestore.instance.collection("users").doc(user.uid);
+    final usersRef = FirebaseFirestore.instance
+        .collection("users")
+        .doc(user.uid);
 
     final doc = await usersRef.get();
     final isNewAccount = !doc.exists;
@@ -244,14 +283,15 @@ Future<void> _signInWithGoogle(BuildContext context) async {
       await _continueToApp(context);
     }
   }
-@override
+
+  @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     _wrapperState ??= context.findAncestorStateOfType<HomeScreenWrapperState>();
   }
+
   @override
   void dispose() {
-    _emailCheckTimer?.cancel();
     emailController.dispose();
     passwordController.dispose();
     super.dispose();
@@ -263,169 +303,289 @@ Future<void> _signInWithGoogle(BuildContext context) async {
       return GarageSetupScreen(onDone: () => _continueToApp(context));
     }
 
-    final textTheme = Theme.of(context).textTheme;
+    const background = Color(0xFFF6F4ED);
+    const border = Color(0xFFE5DFD0);
+    const blue = Color(0xFF207BD7);
 
     return Scaffold(
-      backgroundColor: AppColors.energyBlue50,
+      backgroundColor: background,
       appBar: AppBar(
-        backgroundColor: AppColors.energyBlue50,
+        backgroundColor: background,
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
+        leadingWidth: 72,
         leading: AppBackButton(onPressed: widget.onBack),
       ),
-      body: Center(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
-          child: BlocListener<SubscriptionCubit, SubscriptionState>(
-            listener: (context, state) {
-              if (state is SubscriptionBought) {
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(S.current.plan_activated)));
-                Navigator.of(context).pop();
-              } else if (state is SubscriptionError) {
-                // ScaffoldMessenger.of(
-                //   context,
-                // ).showSnackBar(SnackBar(content: Text("${S.current.subscription_error}: ${state.message}")));
-              }
-            },
-            child: Form(
-              key: _formKey,
-              child: BlocConsumer<RegistrationCubit, RegistrationState>(
-                listener: (context, state) async {
-                  if (state.isRegistered) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(S.of(context).successful_registration),
-                        backgroundColor: AppColors.blue700,
-                      ),
-                    );
-
+      body: SafeArea(
+        top: false,
+        child: Align(
+          alignment: Alignment.topCenter,
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.fromLTRB(28, 20, 28, 32),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 540),
+              child: Form(
+                key: _formKey,
+                child: BlocConsumer<RegistrationCubit, RegistrationState>(
+                  listenWhen: (previous, current) =>
+                      !previous.isRegistered && current.isRegistered,
+                  listener: (context, state) async {
                     if (state.isExistingUser) {
-                      // Returning user logging in — no garage setup step, straight into the app.
                       await _continueToApp(context);
                     } else {
-                      // Brand-new account — let the user skip or add a car before continuing.
                       setState(() => _isNewAccountAwaitingGarageSetup = true);
                     }
-                  }
-                },
-
-                builder: (context, state) {
-                  final isLogin = state.isExistingUser;
-                  final isLoading = state.isLoading;
-
-                  return Column(
-                    children: [
-                      Text(
-                        isLogin ? S.of(context).login : S.of(context).sign_up,
-                        style: textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
+                  },
+                  builder: (context, state) {
+                    final busy = state.isLoading || _socialLoading;
+                    final isLogin = state.isExistingUser;
+                    InputDecoration decoration(
+                      String label,
+                      String hint,
+                      String? error,
+                    ) => InputDecoration(
+                      labelText: label,
+                      floatingLabelBehavior: FloatingLabelBehavior.always,
+                      hintText: hint,
+                      errorText: error,
+                      filled: true,
+                      fillColor: Colors.white,
+                      labelStyle: const TextStyle(
+                        color: Color(0xFF626262),
+                        fontSize: 16,
                       ),
-                      AppSpacers.verticalXXXLarge,
-
-                      // Email
-                      TextFormField(
-                        controller: emailController,
-                        decoration: InputDecoration(
-                          prefixIcon: const Icon(Icons.email_outlined),
-                          labelText: S.of(context).email,
-                          errorText: state.emailError,
-                          border: OutlineInputBorder(borderRadius: AppBorders.radiusLarge),
-                        ),
-                        keyboardType: TextInputType.emailAddress,
-                        validator: (v) {
-                          if (v == null || v.isEmpty) return S.of(context).enter_email;
-                          if (!v.contains('@')) return S.of(context).incorrect_email;
-                          return null;
-                        },
+                      hintStyle: const TextStyle(
+                        color: Color(0xFF9BA1B0),
+                        fontWeight: FontWeight.w600,
                       ),
-                      AppSpacers.verticalLarge,
-
-                      TextFormField(
-                        controller: passwordController,
-                        obscureText: true,
-                        decoration: InputDecoration(
-                          prefixIcon: const Icon(Icons.lock_outline),
-                          labelText: S.of(context).password,
-                          errorText: state.error,
-                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                        ),
-                        validator: (v) {
-                          if (v == null || v.isEmpty) return S.of(context).enter_password;
-                          if (v.length < 6) return S.of(context).min_char;
-                          return null;
-                        },
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 18,
+                        vertical: 20,
                       ),
-                      AppSpacers.verticalXXXLarge,
-
-                      isLoading
-                          ? const CircularProgressIndicator()
-                          : InkWell(
-                              onTap: _isFormValid ? () => _onSubmit(context) : null,
-                              child: Container(
-                                width: double.infinity,
-                                padding: const EdgeInsets.symmetric(vertical: 16),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(30),
-                                  gradient: const LinearGradient(
-                                    colors: [AppColors.colcm, AppColors.purpleRed],
-                                    begin: Alignment.centerLeft,
-                                    end: Alignment.centerRight,
-                                  ),
+                      border: InputBorder.none,
+                      enabledBorder: InputBorder.none,
+                      focusedBorder: InputBorder.none,
+                      errorBorder: InputBorder.none,
+                      focusedErrorBorder: InputBorder.none,
+                    );
+                    Widget field(Widget child) => DecoratedBox(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        border: Border.all(color: border),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(16),
+                        child: child,
+                      ),
+                    );
+                    return AutofillGroup(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Text(
+                            isLogin
+                                ? S.of(context).login
+                                : S.of(context).registration,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              fontSize: 32,
+                              fontWeight: FontWeight.w700,
+                              color: Color(0xFF191A1C),
+                            ),
+                          ),
+                          const SizedBox(height: 28),
+                          field(
+                            TextFormField(
+                              controller: emailController,
+                              enabled: !busy,
+                              decoration: decoration(
+                                S.of(context).email,
+                                'you@email.com',
+                                state.emailError,
+                              ),
+                              keyboardType: TextInputType.emailAddress,
+                              textInputAction: TextInputAction.next,
+                              autofillHints: const [AutofillHints.email],
+                              autocorrect: false,
+                              validator: (value) {
+                                final email = value?.trim() ?? '';
+                                if (email.isEmpty) {
+                                  return S.of(context).enter_email;
+                                }
+                                if (!email.contains('@')) {
+                                  return S.of(context).incorrect_email;
+                                }
+                                return null;
+                              },
+                            ),
+                          ),
+                          const SizedBox(height: 22),
+                          field(
+                            TextFormField(
+                              controller: passwordController,
+                              enabled: !busy,
+                              obscureText: true,
+                              autocorrect: false,
+                              enableSuggestions: false,
+                              autofillHints: [
+                                isLogin
+                                    ? AutofillHints.password
+                                    : AutofillHints.newPassword,
+                              ],
+                              decoration: decoration(
+                                S.of(context).password,
+                                '• • • • • • • •',
+                                state.error,
+                              ),
+                              onFieldSubmitted: (_) => _onSubmit(context),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return S.of(context).enter_password;
+                                }
+                                if (value.length < 6) {
+                                  return S.of(context).min_char;
+                                }
+                                return null;
+                              },
+                            ),
+                          ),
+                          const SizedBox(height: 28),
+                          SizedBox(
+                            height: 58,
+                            child: FilledButton(
+                              style: FilledButton.styleFrom(
+                                backgroundColor: blue,
+                                disabledBackgroundColor: blue.withValues(
+                                  alpha: 0.65,
                                 ),
-                                child: Center(
+                                shape: const StadiumBorder(),
+                              ),
+                              onPressed: busy ? null : () => _onSubmit(context),
+                              child: busy
+                                  ? const SizedBox.square(
+                                      dimension: 24,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        color: Colors.white,
+                                      ),
+                                    )
+                                  : Text(
+                                      isLogin
+                                          ? S.of(context).large_login
+                                          : S.of(context).large_sign_up,
+                                      style: const TextStyle(
+                                        fontSize: 17,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          TextButton(
+                            onPressed: busy
+                                ? null
+                                : () => context
+                                      .read<RegistrationCubit>()
+                                      .toggleLoginMode(),
+                            child: Text(
+                              isLogin
+                                  ? S.of(context).dont_have_account
+                                  : S.of(context).already_have_account,
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                color: blue,
+                                fontSize: 15,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 18),
+                          Row(
+                            children: [
+                              const Expanded(child: Divider(color: border)),
+                              Flexible(
+                                flex: 3,
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                  ),
                                   child: Text(
-                                    isLogin ? S.of(context).large_login : S.of(context).large_sign_up,
-                                    style: textTheme.titleMedium?.copyWith(
-                                      color: AppColors.neutreBlanc,
-                                      fontWeight: FontWeight.bold,
+                                    S.of(context).or_sign_in_using,
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(
+                                      color: Color(0xFF626262),
+                                      fontSize: 14,
                                     ),
                                   ),
                                 ),
                               ),
-                            ),
-
-                      AppSpacers.verticalLargeXL,
-                      TextButton(
-                        onPressed: () => context.read<RegistrationCubit>().toggleLoginMode(),
-                        child: Text(
-                          isLogin ? S.of(context).dont_have_account : S.of(context).already_have_account,
-                          style: const TextStyle(color: AppColors.purpleRed),
-                        ),
-                      ),
-
-                      AppSpacers.verticalXXLarge,
-                      Text(S.of(context).or_sign_in_using, style: const TextStyle(color: Colors.grey)),
-                      AppSpacers.verticalMediumLarge,
-
-                      _socialLoading
-                          ? const Padding(
-                              padding: EdgeInsets.symmetric(vertical: 8),
-                              child: CircularProgressIndicator(),
-                            )
-                          : Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          IconButton(
-                            icon: Image.asset('assets/icons/google_logo.png', height: 30),
-                            onPressed: () => _signInWithGoogle(context),
+                              const Expanded(child: Divider(color: border)),
+                            ],
                           ),
-                          AppSpacers.horizontalMedium,
-                          IconButton(
-                            icon: const Icon(Icons.facebook, color: AppColors.blue700, size: 30),
-                            onPressed: () => _signInWithFacebook(context),
-                          ),
-                          AppSpacers.horizontalMedium,
-                          IconButton(
-                            icon: const Icon(Icons.apple, color: AppColors.black, size: 30),
-                            onPressed: () => _signInWithApple(context),
+                          const SizedBox(height: 20),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              _socialButton(
+                                'Google',
+                                Image.asset(
+                                  'assets/icons/google_logo.png',
+                                  height: 22,
+                                ),
+                                busy ? null : () => _signInWithGoogle(context),
+                              ),
+                              const SizedBox(width: 18),
+                              _socialButton(
+                                'Facebook',
+                                const Icon(
+                                  Icons.facebook,
+                                  color: Color(0xFF3E5D9F),
+                                  size: 25,
+                                ),
+                                busy
+                                    ? null
+                                    : () => _signInWithFacebook(context),
+                              ),
+                              if (defaultTargetPlatform ==
+                                  TargetPlatform.iOS) ...[
+                                const SizedBox(width: 18),
+                                _socialButton(
+                                  'Apple',
+                                  const Icon(
+                                    Icons.apple,
+                                    color: Color(0xFF191A1C),
+                                    size: 25,
+                                  ),
+                                  busy ? null : () => _signInWithApple(context),
+                                ),
+                              ],
+                            ],
                           ),
                         ],
                       ),
-                    ],
-                  );
-                },
+                    );
+                  },
+                ),
               ),
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _socialButton(String label, Widget icon, VoidCallback? onPressed) {
+    return SizedBox.square(
+      dimension: 56,
+      child: IconButton(
+        tooltip: label,
+        onPressed: onPressed,
+        style: IconButton.styleFrom(
+          backgroundColor: Colors.white,
+          shape: const CircleBorder(side: BorderSide(color: Color(0xFFE5DFD0))),
+        ),
+        icon: icon,
       ),
     );
   }

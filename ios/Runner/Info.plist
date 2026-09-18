@@ -27,7 +27,7 @@
 			<dict>
 				<key>CFBundleURLSchemes</key>
 				<array>
-					<string>fb11263037285626970</string>
+					<string>fb1263037285626970</string>
 				</array>
 			</dict>
 			<dict>
@@ -41,6 +41,10 @@
 		<string>$(FLUTTER_BUILD_NUMBER)</string>
 		<key>FacebookAppID</key>
 		<string>1263037285626970</string>
+		<key>FacebookClientToken</key>
+		<string>f116b1bbb98de9679b4106347b6d68b6</string>
+		<key>LSApplicationQueriesSchemes</key>
+		<array><string>fbapi</string><string>fb-messenger-share-api</string></array>
 		<key>FacebookDisplayName</key>
 		<string>Fines+</string>
 		<key>GADApplicationIdentifier</key>

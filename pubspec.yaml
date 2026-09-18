@@ -59,6 +59,7 @@ dependencies:
   firebase_dynamic_links: ^6.1.10
   firebase_messaging: ^15.2.10
   firebase_remote_config: ^5.5.0
+  crypto: ^3.0.6
   firebase_auth: ^5.7.0
   app_links: ^6.4.1
   flutter_easy_recaptcha_v2: ^0.1.0

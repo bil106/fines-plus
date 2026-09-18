@@ -13,26 +13,9 @@ class RegistrationCubit extends Cubit<RegistrationState> {
 
   RegistrationCubit({required this.auth, required this.storage}) : super(const RegistrationState());
 
-  Future<void> checkEmail(String email) async {
-    if (email.isEmpty || !email.contains('@')) {
-      emit(state.copyWith(isExistingUser: false, emailError: null));
-      return;
-    }
-
-    try {
-      final methods = await auth.fetchSignInMethodsForEmail(email);
-      if (methods.isNotEmpty) {
-        emit(state.copyWith(isExistingUser: true, emailError: null));
-      } else {
-        emit(state.copyWith(isExistingUser: false, emailError: null));
-      }
-    } on FirebaseAuthException catch (_) {
-      emit(state.copyWith(emailError: S.current.email_verification_error));
-    }
-  }
-
   Future<void> register(String email, String password) async {
-    emit(state.copyWith(isLoading: true, error: null));
+    if (state.isLoading) return;
+    emit(state.copyWith(isLoading: true, isRegistered: false, error: null));
 
     try {
       if (state.isExistingUser) {
@@ -94,7 +77,7 @@ Future<Map<String, String>> loadCredentials() async {
   }
 
   void toggleLoginMode() {
-    emit(state.copyWith(isExistingUser: !state.isExistingUser, emailError: null, error: null));
+    emit(state.copyWith(isExistingUser: !state.isExistingUser, isRegistered: false, emailError: null, error: null));
   }
 
   Future<bool> checkSubscription() async {

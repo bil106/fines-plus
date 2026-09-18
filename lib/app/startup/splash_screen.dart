@@ -42,20 +42,27 @@ class _SplashScreenState extends State<SplashScreen> {
     bool hasSubscription = false;
 
     if (user != null && mounted) {
-      hasSubscription = await context.read<RegistrationCubit>().checkSubscription();
+      hasSubscription = await context
+          .read<RegistrationCubit>()
+          .checkSubscription();
     }
 
     if (!mounted) return;
 
-    final bypassSubscription = kDebugMode || Env.iosBypassSubscription || Platform.isIOS;
+    final bypassSubscription =
+        kDebugMode || Env.iosBypassSubscription || Platform.isIOS;
 
     if (firstLaunch) {
       await prefs.setBool('first_launch', false);
       context.router.replaceAll([const OnboardingRoute()]);
+    } else if (user == null) {
+      context.router.replaceAll([RegistrationRoute()]);
     } else if (bypassSubscription || hasSubscription) {
       context.router.replaceAll([HomeRouteWrapper(initialPage: HomePage.home)]);
     } else {
-      context.router.replaceAll([HomeRouteWrapper(initialPage: HomePage.subscription)]);
+      context.router.replaceAll([
+        HomeRouteWrapper(initialPage: HomePage.subscription),
+      ]);
     }
   }
 
