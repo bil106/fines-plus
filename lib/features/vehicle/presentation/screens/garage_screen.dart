@@ -222,6 +222,13 @@ class _CarCard extends StatelessWidget {
               children: [
                 Row(
                   children: [
+                    Thumbnail(
+                      photoUrl: car.photoUrl,
+                      make: car.make,
+                      isActive: isActive,
+                      size: 54,
+                    ),
+                    const SizedBox(width: 12),
                     Expanded(
                       child: Text(
                         car.make.isNotEmpty ? car.make : S.of(context).auto,
@@ -661,7 +668,8 @@ Future<Map<String, String>?> showCarFormSheet(
                                 setState(() => isUploadingPhoto = true);
                                 try {
                                   if (existing == null) {
-                                    final picked = await CarPhotoUploader().pick();
+                                    final picked = await CarPhotoUploader()
+                                        .pick();
                                     if (picked != null) {
                                       setState(() => photoPath = picked.path);
                                     }

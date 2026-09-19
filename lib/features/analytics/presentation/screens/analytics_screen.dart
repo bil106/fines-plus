@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:auto_route/auto_route.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
-import 'package:design_system/theme/app_theme.dart';
+import 'package:design_system/theme/app_brand_theme.dart';
 import 'package:design_system/widget/app_back_button.dart';
 import 'package:fines_plus/core/helpers/push_helper.dart';
 import 'package:fines_plus/features/analytics/presentation/widgets/history_tab.dart';
@@ -185,41 +185,59 @@ class AnalyticsScreenViewState extends State<_AnalyticsScreenView> with SingleTi
     return DefaultTabController(
       length: 3,
       child: Scaffold(
-        backgroundColor: AppColors.energyBlue50,
+        backgroundColor: context.brandTheme.surfaceBg,
         appBar: AppBar(
-          backgroundColor: AppColors.energyBlue50,
-          leading: AppBackButton(onPressed: widget.onBack),
+          backgroundColor: context.brandTheme.surfaceBg,
+          automaticallyImplyLeading: false,
+          leading: widget.onBack == null
+              ? null
+              : Padding(padding: const EdgeInsets.only(left: 20), child: AppBackButton(onPressed: widget.onBack)),
+          leadingWidth: widget.onBack == null ? null : 68,
+          surfaceTintColor: Colors.transparent,
+          elevation: 0,
+          toolbarHeight: 72,
+          titleSpacing: widget.onBack == null ? 20 : 12,
+          actionsPadding: const EdgeInsets.only(right: 20),
+          title: Text(
+            S.of(context).analitics,
+            maxLines: 2,
+            style: textTheme.headlineMedium?.copyWith(
+              fontSize: 24,
+              fontWeight: FontWeight.w800,
+              color: const Color(0xFF191A1C),
+            ),
+          ),
+          actions: [
+            IconButton(
+              tooltip: S.of(context).export,
+              style: IconButton.styleFrom(
+                backgroundColor: const Color(0xFF207BD7),
+                foregroundColor: Colors.white,
+                minimumSize: const Size(36, 36),
+                padding: EdgeInsets.zero,
+                shape: const CircleBorder(),
+              ),
+              icon: const Icon(Icons.upload, size: 20),
+              onPressed: () {
+                final homeState = context.findAncestorStateOfType<HomeScreenWrapperState>();
+                homeState?.openPage(HomePage.export);
+              },
+            ),
+          ],
         ),
         body: BlocBuilder<AnalyticsCubit, AnalyticsState>(
           builder: (context, state) {
             return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Expanded(
-                        child: Text(S.of(context).analitics, style: textTheme.title, maxLines: 2, softWrap: true),
-                      ),
-                      const SizedBox(width: 8),
-                      ElevatedButton.icon(
-                        onPressed: () {
-                          final homeState = context.findAncestorStateOfType<HomeScreenWrapperState>();
-                          homeState?.openPage(HomePage.export);
-                        },
-                        icon: const Icon(Icons.upload, size: 18),
-                        label: Text(S.of(context).export),
-                        style: ElevatedButton.styleFrom(backgroundColor: AppColors.blue700),
-                      ),
-                    ],
-                  ),
-
                   TabBar(
-                    indicatorColor: AppColors.blue700,
-                    labelColor: AppColors.blue700,
-                    unselectedLabelColor: AppColors.neutreGrey,
+                    indicatorColor: const Color(0xFF207BD7),
+                    labelColor: const Color(0xFF207BD7),
+                    unselectedLabelColor: const Color(0xFF707070),
+                    labelStyle: textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700),
+                    dividerColor: context.brandTheme.divider,
 
                     controller: _tabController,
                     tabs: [

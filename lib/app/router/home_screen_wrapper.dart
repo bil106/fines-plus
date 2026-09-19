@@ -35,7 +35,6 @@ import 'package:fines_plus/features/vehicle/presentation/cubit/car_info_cubit.da
 import 'package:fines_plus/features/vehicle/presentation/cubit/garage_cubit.dart';
 import 'package:fines_plus/features/vehicle/presentation/screens/car_info_screen.dart';
 import 'package:fines_plus/features/vehicle/presentation/screens/garage_screen.dart';
-import 'package:fines_plus/presentation/screens/add_car_screen.dart';
 import 'package:fines_plus/features/maintenance/presentation/screens/car_wash_map_screen.dart';
 import 'package:fines_plus/features/maintenance/presentation/screens/car_wash_screen.dart';
 import 'package:fines_plus/features/maintenance/presentation/screens/fuel_map_screen.dart';
@@ -222,6 +221,14 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
       return;
     }
 
+    // CarInfoScreen ("Adding a car") is temporarily hidden but not removed
+    // yet - send anyone who used to land there (e.g. History's back button)
+    // to Home instead.
+    if (page == HomePage.carInfo) {
+      openPage(HomePage.home);
+      return;
+    }
+
     final carState = context.read<CarCubit>().state;
     final bool hasCar = carState.carId.isNotEmpty;
 
@@ -321,12 +328,14 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
                 value: context.read<QuickActionsCubit>(),
                 child: HomeScreen(key: const ValueKey('home')),
               ),
-              AddCarScreen(
-                key: const ValueKey('add_car_screen'),
-                onOpenCarInfo: () => openPage(HomePage.carInfo),
-                onFineCheck: () => openPage(HomePage.fines),
-                onMaintenance: () => openPage(HomePage.maintenance),
-                onAnalytics: () => openPage(HomePage.analytics),
+              BlocProvider.value(
+                value: analyticsCubit,
+                child: AnalyticsScreen(
+                  key: const ValueKey('analytics_tab'),
+                  carNumber: carNumber,
+                  onBack: () => openPage(HomePage.home),
+                  initialTabIndex: _analyticsTabIndex,
+                ),
               ),
               BlocProvider(
                 create: (_) => ExpensesCubit(repository: ExpenseRepository(FirebaseFirestore.instance)),
