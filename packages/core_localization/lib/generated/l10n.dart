@@ -54,6 +54,61 @@ class S {
     return Localizations.of<S>(context, S);
   }
 
+  /// `Checked`
+  String get fines_checked {
+    return Intl.message('Checked', name: 'fines_checked', desc: '', args: []);
+  }
+
+  /// `Violation`
+  String get fines_violation {
+    return Intl.message(
+      'Violation',
+      name: 'fines_violation',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Demo data · payment unavailable`
+  String get fines_demo_label {
+    return Intl.message(
+      'Demo data · payment unavailable',
+      name: 'fines_demo_label',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Speeding by 25 km/h`
+  String get fines_demo_speed {
+    return Intl.message(
+      'Speeding by 25 km/h',
+      name: 'fines_demo_speed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Parking violation`
+  String get fines_demo_parking {
+    return Intl.message(
+      'Parking violation',
+      name: 'fines_demo_parking',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Running a red light`
+  String get fines_demo_signal {
+    return Intl.message(
+      'Running a red light',
+      name: 'fines_demo_signal',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Enter VIN`
   String get enter_vin {
     return Intl.message('Enter VIN', name: 'enter_vin', desc: '', args: []);

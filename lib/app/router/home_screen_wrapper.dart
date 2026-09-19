@@ -340,7 +340,7 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
                 ),
               ),
 
-              FinesScreen(key: const ValueKey('fines_screen')),
+              FinesScreen(key: const ValueKey('fines_screen'), onBack: () => openPage(HomePage.home)),
               BlocProvider(
                 key: ValueKey(carNumber),
                 create: (_) {

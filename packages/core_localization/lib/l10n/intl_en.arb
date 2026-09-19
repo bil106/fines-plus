@@ -1,4 +1,12 @@
 {
+  "reminder_soon": "Soon",
+  "reminder_overdue": "Overdue",
+  "fines_checked": "Checked",
+  "fines_violation": "Violation",
+  "fines_demo_label": "Demo data · payment unavailable",
+  "fines_demo_speed": "Speeding by 25 km/h",
+  "fines_demo_parking": "Parking violation",
+  "fines_demo_signal": "Running a red light",
   "@@locale": "en",
   "enter_vin": "Enter VIN",
   "auto": "Auto",

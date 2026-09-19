@@ -1,5 +1,5 @@
 import 'package:core_localization/generated/l10n.dart';
-import 'package:design_system/colors/app_colors.dart';
+import 'package:design_system/theme/app_brand_theme.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
 import 'package:fines_plus/features/reminders/data/models/reminder_model.dart';
@@ -44,12 +44,13 @@ class _ReminderDialogState extends State<ReminderDialog> {
     final textTheme = Theme.of(context).textTheme;
 
     return AlertDialog(
-      backgroundColor: AppColors.energyBlue50,
+      backgroundColor: context.brandTheme.surfaceBg,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       insetPadding: EdgeInsets.symmetric(horizontal: screenWidth * 0.06, vertical: 24),
       contentPadding: const EdgeInsets.all(16),
       title: Text(
         widget.reminder == null ? S.of(context).new_reminder : S.of(context).edit_reminder,
-        style: textTheme.black30bold,
+        style: textTheme.titleLarge?.copyWith(fontSize: 24, fontWeight: FontWeight.w700),
       ),
       content: ConstrainedBox(
         constraints: BoxConstraints(maxWidth: 500, minWidth: screenWidth * 0.8),

@@ -266,8 +266,22 @@ class MessageLookup extends MessageLookupByLibrary {
       "Fine checking is disabled in settings",
     ),
     "fines": MessageLookupByLibrary.simpleMessage("Fines"),
+    "fines_checked": MessageLookupByLibrary.simpleMessage("Checked"),
     "fines_control": MessageLookupByLibrary.simpleMessage("Fine fines control"),
+    "fines_demo_label": MessageLookupByLibrary.simpleMessage(
+      "Demo data · payment unavailable",
+    ),
+    "fines_demo_parking": MessageLookupByLibrary.simpleMessage(
+      "Parking violation",
+    ),
+    "fines_demo_signal": MessageLookupByLibrary.simpleMessage(
+      "Running a red light",
+    ),
+    "fines_demo_speed": MessageLookupByLibrary.simpleMessage(
+      "Speeding by 25 km/h",
+    ),
     "fines_length": MessageLookupByLibrary.simpleMessage("Fines:"),
+    "fines_violation": MessageLookupByLibrary.simpleMessage("Violation"),
     "free_experience": MessageLookupByLibrary.simpleMessage(
       "Ad-free experience",
     ),

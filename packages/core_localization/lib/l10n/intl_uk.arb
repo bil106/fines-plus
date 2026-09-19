@@ -1,4 +1,12 @@
 {
+  "reminder_soon": "Скоро",
+  "reminder_overdue": "Прострочено",
+  "fines_checked": "Перевірено",
+  "fines_violation": "Порушення",
+  "fines_demo_label": "Демонстраційні дані · оплата недоступна",
+  "fines_demo_speed": "Перевищення швидкості на 25 км/год",
+  "fines_demo_parking": "Порушення правил парковки",
+  "fines_demo_signal": "Проїзд на заборонний сигнал",
    "@@locale": "uk",
    "enter_vin": "Введіть VIN",
    "auto": "Авто",

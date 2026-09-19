@@ -1,8 +1,8 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
-import 'package:design_system/constants/app_spacers.dart';
-import 'package:design_system/theme/app_theme.dart';
+import 'package:design_system/theme/app_brand_theme.dart';
+import 'package:fines_plus/features/reminders/data/models/reminder_model.dart';
 import 'package:fines_plus/core/helpers/push_helper.dart';
 import 'package:fines_plus/features/reminders/presentation/widgets/reminder_dialog.dart';
 import 'package:fines_plus/features/reminders/data/repository/reminder_repository.dart';
@@ -56,17 +56,25 @@ class _RemindersView extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
-      backgroundColor: AppColors.energyBlue50,
-      // Нагадування is a bottom-nav tab (peer of Дім/Штрафи), not a pushed
-      // sub-page - no back arrow, matching the redesigned Штрафи tab's
-      // chrome. The "+" moved from a FAB into the header, per the mockup.
+      backgroundColor: context.brandTheme.surfaceBg,
       appBar: AppBar(
-        backgroundColor: AppColors.energyBlue50,
+        backgroundColor: context.brandTheme.surfaceBg,
         automaticallyImplyLeading: false,
-        title: Text(S.of(context).reminder, style: textTheme.title),
+        surfaceTintColor: Colors.transparent,
+        elevation: 0,
+        toolbarHeight: 88,
+        titleSpacing: 20,
+        actionsPadding: const EdgeInsets.only(right: 20),
+        title: Text(S.of(context).reminder,
+          maxLines: 2,
+          style: textTheme.headlineMedium?.copyWith(fontSize: 28, fontWeight: FontWeight.w800, color: const Color(0xFF191A1C))),
         actions: [
           IconButton(
-            icon: const Icon(Icons.add_circle, color: AppColors.blue700),
+            tooltip: S.of(context).new_reminder,
+            style: IconButton.styleFrom(
+              backgroundColor: const Color(0xFF207BD7), foregroundColor: Colors.white,
+              minimumSize: const Size(44, 44), shape: const CircleBorder()),
+            icon: const Icon(Icons.add, size: 24),
             onPressed: () {
               final cubit = context.read<ReminderCubit>();
               showDialog(
@@ -92,40 +100,18 @@ class _RemindersView extends StatelessWidget {
             }
 
             return ListView.separated(
-              padding: const EdgeInsets.symmetric(vertical: 8),
+              padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
               itemCount: state.reminders.length,
               separatorBuilder: (_, __) =>
-                  const Divider(color: AppColors.neutreGrey),
+                  const SizedBox(height: 12),
               itemBuilder: (context, index) {
                 final reminder = state.reminders[index];
 
-                return ListTile(
-                  leading: Checkbox(
-                    value: reminder.isCompleted,
-                    onChanged: (value) {
-                      cubit.updateReminder(
-                        reminder.copyWith(isCompleted: value ?? false),
-                      );
-                    },
-                  ),
-                  title: Text(
-                    reminder.title,
-                    style: TextStyle(
-                      decoration: reminder.isCompleted
-                          ? TextDecoration.lineThrough
-                          : TextDecoration.none,
-                      fontWeight: FontWeight.w500,
-                      fontSize: 24,
-                    ),
-                  ),
-                  subtitle: Text(
-                    '${reminder.description}\n${DateFormat('dd.MM.yyyy HH:mm').format(reminder.dateTime)}',
-                    style: textTheme.headlineSmall,
-                  ),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.delete, color: AppColors.red),
-                    onPressed: () => cubit.deleteReminder(reminder.id),
-                  ),
+                return _ReminderCard(
+                  reminder: reminder,
+                  onToggle: () => cubit.updateReminder(
+                    reminder.copyWith(isCompleted: !reminder.isCompleted)),
+                  onDelete: () => cubit.deleteReminder(reminder.id),
                   onTap: () {
                     showDialog(
                       context: context,
@@ -147,36 +133,114 @@ class _RemindersView extends StatelessWidget {
   }
 }
 
+class _ReminderCard extends StatelessWidget {
+  final ReminderModel reminder;
+  final VoidCallback onToggle;
+  final VoidCallback onDelete;
+  final VoidCallback onTap;
+  const _ReminderCard({required this.reminder, required this.onToggle, required this.onDelete, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context).textTheme;
+    final now = DateTime.now();
+    final due = reminder.dateTime.toLocal();
+    final days = DateTime.utc(due.year, due.month, due.day)
+        .difference(DateTime.utc(now.year, now.month, now.day)).inDays;
+    final overdue = due.isBefore(now) && !reminder.isCompleted;
+    final soon = !reminder.isCompleted && !overdue && days <= 14;
+    final accent = reminder.isCompleted ? const Color(0xFF79B58A)
+        : overdue ? const Color(0xFFBE3540)
+        : soon ? const Color(0xFF00A99A) : const Color(0xFF6366F1);
+    final status = reminder.isCompleted ? S.of(context).done
+        : overdue ? S.of(context).reminder_overdue
+        : soon ? S.of(context).reminder_soon : '$days ${S.of(context).days}';
+    final statusWidget = Text(status, style: theme.bodySmall?.copyWith(
+      fontSize: 14, fontWeight: FontWeight.w700,
+      color: overdue ? const Color(0xFFBE3540) : soon ? const Color(0xFFBA8700) : const Color(0xFF707070)));
+    return Material(
+      color: Colors.white,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16),
+        side: BorderSide(color: context.brandTheme.surfaceBorder)),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: LayoutBuilder(builder: (context, constraints) {
+            final stacked = constraints.maxWidth < 300 || MediaQuery.textScalerOf(context).scale(16) > 20;
+            return Row(
+              children: [
+                Semantics(
+                  checked: reminder.isCompleted,
+                  label: reminder.title,
+                  child: SizedBox.square(
+                    dimension: 48,
+                    child: IconButton(
+                      onPressed: onToggle,
+                      style: IconButton.styleFrom(
+                        backgroundColor: accent.withValues(alpha: 0.16), foregroundColor: accent,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(13))),
+                      icon: Icon(reminder.isCompleted ? Icons.check : Icons.circle,
+                        size: reminder.isCompleted ? 22 : 10),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(reminder.title, style: theme.bodyLarge?.copyWith(
+                      fontSize: 16, fontWeight: FontWeight.w700, color: const Color(0xFF202124),
+                      decoration: reminder.isCompleted ? TextDecoration.lineThrough : TextDecoration.none)),
+                    if (reminder.description.isNotEmpty) ...[
+                      const SizedBox(height: 4),
+                      Text(reminder.description, style: theme.bodySmall?.copyWith(fontSize: 14, color: const Color(0xFF707070))),
+                    ],
+                    const SizedBox(height: 4),
+                    Text(DateFormat('d MMM yyyy · HH:mm', Localizations.localeOf(context).toString()).format(due),
+                      style: theme.bodySmall?.copyWith(fontSize: 14, color: const Color(0xFF707070))),
+                    if (stacked) ...[const SizedBox(height: 8), statusWidget],
+                  ],
+                )),
+                if (!stacked) ...[const SizedBox(width: 12), statusWidget],
+                PopupMenuButton<String>(
+                  tooltip: MaterialLocalizations.of(context).showMenuTooltip,
+                  icon: const Icon(Icons.more_vert, color: Color(0xFF707070), size: 20),
+                  onSelected: (action) => action == 'edit' ? onTap() : onDelete(),
+                  itemBuilder: (_) => [
+                    PopupMenuItem(value: 'edit', child: Text(S.of(context).edit)),
+                    PopupMenuItem(value: 'delete', child: Text(S.of(context).delete, style: const TextStyle(color: AppColors.red))),
+                  ],
+                ),
+              ],
+            );
+          }),
+        ),
+      ),
+    );
+  }
+}
+
 class _EmptyReminders extends StatelessWidget {
   const _EmptyReminders();
 
   @override
-  Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: 1, vertical: 40),
+  Widget build(BuildContext context) => Center(
+    child: SingleChildScrollView(
+      padding: const EdgeInsets.all(24),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
-          AppSpacers.verticalXLarge,
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Text(S.of(context).reminder, style: textTheme.title),
-          ),
-          AppSpacers.verticalGigantic,
-          const Center(child: EmptyStateIcon()),
-          AppSpacers.verticalLarge,
-          Center(
-            child: Text(
-              S.of(context).no_reminders,
-              style: textTheme.noFinesText,
-              textAlign: TextAlign.center,
-            ),
-          ),
+          Icon(Icons.notifications_none_rounded, size: 64, color: Theme.of(context).colorScheme.outline),
+          const SizedBox(height: 16),
+          Text(S.of(context).no_reminders,
+            style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: const Color(0xFF707070)),
+            textAlign: TextAlign.center),
         ],
       ),
-    );
-  }
+    ),
+  );
 }
 
 /// Shared empty-state circle+check icon - also used by the Штрафи tab's
