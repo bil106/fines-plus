@@ -2,6 +2,9 @@ import 'package:auto_route/auto_route.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/theme/app_brand_theme.dart';
 import 'package:design_system/widget/app_back_button.dart';
+import 'package:fines_plus/core/helpers/push_helper.dart';
+import 'package:fines_plus/features/fines/domain/fines_check_reminder.dart';
+import 'package:fines_plus/features/fines/domain/fines_diff.dart';
 import 'package:fines_plus/features/history/presentation/cubit/history_cubit.dart';
 import 'package:fines_plus/features/history/presentation/cubit/history_state.dart';
 import 'package:fines_plus/features/reminders/presentation/screens/reminders_screen.dart'
@@ -30,14 +33,25 @@ class FinesScreen extends StatefulWidget {
 class _FinesScreenState extends State<FinesScreen> {
   Future<void> _refresh() async {
     final carCubit = context.read<CarCubit>();
+    final historyCubit = context.read<HistoryCubit>();
+    final reminder = FinesCheckReminder(context.read<PushHelper>());
+    final messenger = ScaffoldMessenger.of(context);
+    final l10n = S.of(context);
+
     final blocker = await carCubit.finesCheckBlocker();
     if (!mounted) return;
     if (blocker != null) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(blocker)));
+      messenger.showSnackBar(SnackBar(content: Text(blocker)));
       return;
     }
+
+    final historyBefore = historyCubit.state;
+    final lastCheck = historyBefore is HistoryLoaded && historyBefore.history.isNotEmpty
+        ? historyBefore.history.first
+        : null;
+    if (lastCheck != null && _isToday(lastCheck.checkedAt) && !await _confirmRecheck()) return;
+    if (!mounted) return;
+
     final fines = await Navigator.push<List<Map<String, dynamic>>>(
       context,
       MaterialPageRoute(
@@ -49,6 +63,41 @@ class _FinesScreenState extends State<FinesScreen> {
     );
     if (fines == null) return;
     await carCubit.saveCheckedFines(fines);
+    await reminder.rescheduleFromNow(l10n);
+
+    final newCount = FinesDiff.newUnpaidCount(fines, FinesDiff.unpaidIds(lastCheck));
+    messenger.showSnackBar(
+      SnackBar(content: Text(newCount > 0 ? l10n.fines_new_found(newCount) : l10n.fines_no_new)),
+    );
+  }
+
+  /// Every check makes the user solve a captcha, so a second one on the same
+  /// day is confirmed first.
+  Future<bool> _confirmRecheck() async {
+    final l10n = S.of(context);
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(l10n.fines_recheck_title),
+        content: Text(l10n.fines_recheck_message),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, false),
+            child: Text(l10n.cancel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, true),
+            child: Text(l10n.fines_recheck_confirm),
+          ),
+        ],
+      ),
+    );
+    return confirmed ?? false;
+  }
+
+  bool _isToday(DateTime date) {
+    final now = DateTime.now();
+    return date.year == now.year && date.month == now.month && date.day == now.day;
   }
 
   @override
@@ -134,12 +183,7 @@ class _FinesScreenState extends State<FinesScreen> {
   }
 
   String _checkedAtLabel(BuildContext context, DateTime checkedAt) {
-    final now = DateTime.now();
-    final isToday =
-        checkedAt.year == now.year &&
-        checkedAt.month == now.month &&
-        checkedAt.day == now.day;
-    if (isToday) {
+    if (_isToday(checkedAt)) {
       return '${S.of(context).fines_checked} ${S.of(context).today_at} ${DateFormat('HH:mm').format(checkedAt)}';
     }
     return '${S.of(context).fines_checked} ${DateFormat('dd.MM.yyyy HH:mm').format(checkedAt)}';

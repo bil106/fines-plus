@@ -444,6 +444,76 @@ class S {
     );
   }
 
+  /// `Fines reminder`
+  String get fines_reminder_title {
+    return Intl.message(
+      'Fines reminder',
+      name: 'fines_reminder_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Time to check for new traffic fines`
+  String get fines_reminder_body {
+    return Intl.message(
+      'Time to check for new traffic fines',
+      name: 'fines_reminder_body',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No new fines`
+  String get fines_no_new {
+    return Intl.message(
+      'No new fines',
+      name: 'fines_no_new',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Already checked today`
+  String get fines_recheck_title {
+    return Intl.message(
+      'Already checked today',
+      name: 'fines_recheck_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Fines were already checked today. You will need to solve the captcha again. Check anyway?`
+  String get fines_recheck_message {
+    return Intl.message(
+      'Fines were already checked today. You will need to solve the captcha again. Check anyway?',
+      name: 'fines_recheck_message',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Check again`
+  String get fines_recheck_confirm {
+    return Intl.message(
+      'Check again',
+      name: 'fines_recheck_confirm',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `New fines found: {count}`
+  String fines_new_found(int count) {
+    return Intl.message(
+      'New fines found: $count',
+      name: 'fines_new_found',
+      desc: '',
+      args: [count],
+    );
+  }
+
   /// `Settings`
   String get settings {
     return Intl.message('Settings', name: 'settings', desc: '', args: []);

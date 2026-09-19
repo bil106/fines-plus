@@ -9,6 +9,7 @@ import 'package:core_data/core_data.dart';
 import 'package:fines_plus/core/extensions/currency_service.dart';
 import 'package:fines_plus/core/extensions/safe_prefs.dart';
 import 'package:fines_plus/core/helpers/push_helper.dart';
+import 'package:fines_plus/features/fines/domain/fines_check_reminder.dart';
 import 'package:fines_plus/core/services/notification_tap_bus.dart';
 import 'package:fines_plus/features/analytics/data/repository/analytics_repository.dart';
 import 'package:fines_plus/features/analytics/presentation/cubit/analytics_cubit.dart';
@@ -327,7 +328,7 @@ class AppInitializer {
   }
 
   Future<void> _maybeShowFinesCheckReminder(SharedPreferences prefs, PushHelper pushHelper) async {
-    const key = 'last_fines_reminder_ms';
+    const key = FinesCheckReminder.lastShownKey;
     final lastMs = prefs.getInt(key) ?? 0;
     final now = DateTime.now().millisecondsSinceEpoch;
     const weekMs = 7 * 24 * 60 * 60 * 1000;
@@ -336,7 +337,7 @@ class AppInitializer {
       try {
         // S.current недоступний до ініціалізації віджет-дерева — використовуємо фіксований рядок
         await pushHelper.showNow(
-          id: 9000,
+          id: FinesCheckReminder.notificationId,
           title: 'Нагадування про штрафи',
           body: 'Перевірте наявність нових штрафів ПДД',
         );
