@@ -16,9 +16,9 @@ class AppConfig {
   @JsonKey(defaultValue: 'UA')
   final String market;
 
-  /// Whether the Ukraine-specific automated fines-check feature (see
-  /// core/config/fines_api.dart) is available for this brand. It talks to a
-  /// Ukrainian government portal, so it has no equivalent outside UA.
+  /// Whether the Ukraine-specific fines-check feature (the MVS portal, see
+  /// MvsFinesWebView) is available for this brand. It talks to a Ukrainian
+  /// government portal, so it has no equivalent outside UA.
   /// Defaults to true so existing configs (finesplus, autolux, fastcar) keep
   /// today's behavior unchanged.
   @JsonKey(defaultValue: true)

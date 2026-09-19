@@ -17,8 +17,7 @@ import 'package:intl/intl.dart';
 
 /// Штрафи tab - a results list + refresh action, not the old "enter plate
 /// and check" form (that flow's plate/tech-passport were already captured
-/// during car setup, so CarInfoCubit already knows them; see checkFines
-/// below). Reads from HistoryCubit, the same source FinesAlertCard on the
+/// during car setup, so CarCubit already knows them). Reads from HistoryCubit, the same source FinesAlertCard on the
 /// dashboard uses, instead of the dead FinesCubit/FinesRepository stack
 /// this replaces.
 @RoutePage()

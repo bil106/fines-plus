@@ -1,5 +1,4 @@
 import 'package:core_localization/generated/l10n.dart';
-import 'package:core_repository/user_not_signed_in_exception.dart';
 import 'package:fines_plus/core/extensions/safe_prefs.dart';
 import 'package:fines_plus/core/config/app_config.dart';
 import 'package:fines_plus/features/history/presentation/cubit/history_cubit.dart';
@@ -7,7 +6,6 @@ import 'package:fines_plus/features/vehicle/data/datasources/car_info_local_data
 import 'package:fines_plus/features/vehicle/data/models/car_info_model.dart';
 import 'package:fines_plus/features/vehicle/data/repository/car_info_repository.dart';
 import 'package:fines_plus/features/vehicle/presentation/cubit/car_state.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -108,55 +106,6 @@ class CarCubit extends Cubit<CarState> {
       return {'series': value.substring(0, 3), 'number': value.substring(3)};
     }
     return {'series': '', 'number': ''};
-  }
-
-  Future<void> checkFines(String captchaToken) async {
-    // Ukraine-only feature (talks to a UA government portal via a captcha +
-    // the owner's own documents) - brands/markets that don't have it must
-    // not be able to trigger it even if some UI path slips through.
-    if (!config.finesCheckEnabled) {
-      debugPrint("Fine checking disabled for this brand");
-      return;
-    }
-
-    final prefs = await SharedPreferences.getInstance();
-    final finesEnabled = prefs.getBoolSafe("finesCheck", defaultValue: true);
-
-    if (!finesEnabled) {
-      debugPrint("Fine checking disabled");
-      return;
-    }
-
-    if (!_isFormValid()) {
-      debugPrint("Invalid car number or tech passport");
-      return;
-    }
-
-    final carNumber = state.carNumber;
-    final parts = getTechPassportParts();
-
-    try {
-      final finesList = await repo.getFines(
-        carNumber: carNumber,
-        docSeries: parts['series']!,
-        docNumber: parts['number']!,
-        captchaToken: captchaToken,
-      );
-
-  
-      _historyCubit.addHistory(
-        carNumber: carNumber,
-        docSeries: parts['series']!,
-        docNumber: parts['number']!,
-        fines: finesList,
-      );
-
-      debugPrint("Fines loaded: ${finesList.length}");
-    } on UserNotSignedInException catch (_) {
-      debugPrint("User not signed in");
-    } catch (e) {
-      debugPrint("Error checking fines: $e");
-    }
   }
 
   /// Why a fines check can't start right now (brand/setting off, car data

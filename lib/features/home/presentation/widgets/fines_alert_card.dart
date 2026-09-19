@@ -18,7 +18,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 ///
 /// Hidden entirely when this brand doesn't have the fines-check feature
 /// (config.finesCheckEnabled), or when there's no check yet, or the latest
-/// check came back clean - same gating CarCubit.checkFines already applies.
+/// check came back clean - same gating CarCubit.finesCheckBlocker applies.
 class FinesAlertCard extends StatelessWidget {
   const FinesAlertCard({super.key});
 

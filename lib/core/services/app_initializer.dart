@@ -41,7 +41,6 @@ import 'package:fines_plus/features/subscription/data/repository/subscription_re
 import 'package:fines_plus/features/subscription/presentation/cubit/purchase/purchase_cubit.dart';
 import 'package:fines_plus/features/subscription/presentation/cubit/subscription_cubit.dart';
 import 'package:fines_plus/features/vehicle/data/datasources/car_info_local_data_source.dart';
-import 'package:fines_plus/features/vehicle/data/datasources/car_info_remote_data_source.dart';
 import 'package:fines_plus/features/vehicle/data/repository/car_info_repository.dart';
 import 'package:fines_plus/features/vehicle/presentation/cubit/car_cubit.dart';
 import 'package:fines_plus/features/vehicle/presentation/cubit/car_info_cubit.dart';
@@ -224,10 +223,7 @@ class AppInitializer {
       FirebaseFirestore.instance,
       FirebaseAuth.instance,
     );
-    final carInfoRepository = CarInfoRepository(
-      carInfoLocalDataSource,
-      CarInfoRemoteDataSource(FirebaseFirestore.instance, FirebaseAuth.instance),
-    );
+    final carInfoRepository = CarInfoRepository(carInfoLocalDataSource);
 
     quickActionsCubit = QuickActionsCubit(tasksRepository, prefs);
     currencyService = CurrencyService();

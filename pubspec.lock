@@ -767,7 +767,7 @@ packages:
     source: hosted
     version: "6.0.1"
   flutter_easy_recaptcha_v2:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: flutter_easy_recaptcha_v2
       sha256: "372d2faab027b166a7d83a872bb7a471d9736a72cf8f1487b96c315d12aa0ad2"
@@ -1101,14 +1101,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.0.0"
-  g_recaptcha_v3:
-    dependency: "direct main"
-    description:
-      name: g_recaptcha_v3
-      sha256: a93bc48d2086939ccbca4531c386d6363adc81d68fb2dea1ec8f751d9a7dba84
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.1.0"
   geoclue:
     dependency: transitive
     description:
@@ -1342,7 +1334,7 @@ packages:
     source: hosted
     version: "4.4.0"
   html:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: html
       sha256: "43b67b8f43321ab066817dfac5619596c98bb1b61624e77203bb4351785f9699"
@@ -1357,14 +1349,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.6.0"
-  http_methods:
-    dependency: transitive
-    description:
-      name: http_methods
-      sha256: "6bccce8f1ec7b5d701e7921dca35e202d425b57e317ba1a37f2638590e29e566"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.1.1"
   http_multi_server:
     dependency: transitive
     description:
@@ -2022,21 +2006,13 @@ packages:
     source: hosted
     version: "2.4.1"
   shelf:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: shelf
       sha256: e7dd780a7ffb623c57850b33f43309312fc863fb6aa3d276a754bb299839ef12
       url: "https://pub.dev"
     source: hosted
     version: "1.4.2"
-  shelf_router:
-    dependency: "direct main"
-    description:
-      name: shelf_router
-      sha256: f5e5d492440a7fb165fe1e2e1a623f31f734d3370900070b2b1e0d0428d59864
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.1.4"
   shelf_web_socket:
     dependency: transitive
     description:

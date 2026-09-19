@@ -47,10 +47,6 @@ dependencies:
   flutter_local_notifications: ^19.4.0
   timezone: ^0.10.1
   http: ^1.5.0
-  shelf: ^1.4.1
-  shelf_router: ^1.1.4
-  g_recaptcha_v3: ^1.0.0
-  html: ^0.15.6
   google_mobile_ads: ^6.0.0
   font_awesome_flutter: ^10.10.0
   fl_chart: ^1.0.0
@@ -62,7 +58,6 @@ dependencies:
   crypto: ^3.0.6
   firebase_auth: ^5.7.0
   app_links: ^6.4.1
-  flutter_easy_recaptcha_v2: ^0.1.0
   flutter_inappwebview: ^6.1.5
   firebase_analytics: ^11.6.0
   firebase_crashlytics: ^4.3.9

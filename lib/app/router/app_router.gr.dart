@@ -175,16 +175,11 @@ class AnalyticsRouteArgs {
 class CarInfoRoute extends PageRouteInfo<CarInfoRouteArgs> {
   CarInfoRoute({
     Key? key,
-    void Function(String, String, String)? onCheckFine,
     VoidCallback? onBack,
     List<PageRouteInfo>? children,
   }) : super(
          CarInfoRoute.name,
-         args: CarInfoRouteArgs(
-           key: key,
-           onCheckFine: onCheckFine,
-           onBack: onBack,
-         ),
+         args: CarInfoRouteArgs(key: key, onBack: onBack),
          initialChildren: children,
        );
 
@@ -196,27 +191,21 @@ class CarInfoRoute extends PageRouteInfo<CarInfoRouteArgs> {
       final args = data.argsAs<CarInfoRouteArgs>(
         orElse: () => const CarInfoRouteArgs(),
       );
-      return CarInfoScreen(
-        key: args.key,
-        onCheckFine: args.onCheckFine,
-        onBack: args.onBack,
-      );
+      return CarInfoScreen(key: args.key, onBack: args.onBack);
     },
   );
 }
 
 class CarInfoRouteArgs {
-  const CarInfoRouteArgs({this.key, this.onCheckFine, this.onBack});
+  const CarInfoRouteArgs({this.key, this.onBack});
 
   final Key? key;
-
-  final void Function(String, String, String)? onCheckFine;
 
   final VoidCallback? onBack;
 
   @override
   String toString() {
-    return 'CarInfoRouteArgs{key: $key, onCheckFine: $onCheckFine, onBack: $onBack}';
+    return 'CarInfoRouteArgs{key: $key, onBack: $onBack}';
   }
 
   @override

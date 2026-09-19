@@ -199,19 +199,6 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
     }
   }
 
-  void _saveCarInfo(String carNumber, String series, String number) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('carNumber', carNumber);
-    await prefs.setString('docSeries', series);
-    await prefs.setString('docNumber', number);
-    if (!mounted) return;
-    setState(() {
-      _carNumber = carNumber;
-      _docSeries = series;
-      _docNumber = number;
-    });
-  }
-
   void openPage(HomePage page) {
     // Defense in depth: even if some call site still targets the Fines
     // page directly (bypassing the bottom-nav gating below), don't let a
@@ -342,10 +329,6 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
                 child: CarInfoScreen(
                   key: const ValueKey('car_info_screen'),
                   onBack: () => openPage(HomePage.home),
-                  onCheckFine: (carNumber, series, number) {
-                    _saveCarInfo(carNumber, series, number);
-                    openPage(HomePage.history);
-                  },
                 ),
               ),
 

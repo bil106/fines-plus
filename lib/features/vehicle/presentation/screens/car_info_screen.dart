@@ -12,7 +12,6 @@ import 'package:fines_plus/features/expenses/presentation/cubit/expenses_cubit.d
 import 'package:fines_plus/features/history/presentation/cubit/history_cubit.dart';
 import 'package:fines_plus/features/statistics/presentation/cubit/statistics_cubit.dart';
 import 'package:fines_plus/features/vehicle/presentation/cubit/car_info_cubit.dart';
-import '../../../../../env/env.dart';
 import 'package:fines_plus/features/vehicle/data/car_makes.dart';
 import 'package:fines_plus/features/vehicle/data/datasources/car_photo_uploader.dart';
 import 'package:fines_plus/features/vehicle/presentation/cubit/car_cubit.dart';
@@ -23,27 +22,23 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:core_utils/formatters/vehicle_formatters.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_easy_recaptcha_v2/flutter_easy_recaptcha_v2.dart';
-import 'package:fines_plus/core/config/app_config.dart';
 
 @RoutePage()
 class CarInfoScreen extends StatelessWidget {
   final VoidCallback? onBack;
-  final void Function(String carNumber, String series, String number)? onCheckFine;
 
-  const CarInfoScreen({super.key, this.onCheckFine, this.onBack});
+  const CarInfoScreen({super.key, this.onBack});
 
   @override
   Widget build(BuildContext context) {
-    return _CarInfoView(onCheckFine: onCheckFine, onBack: onBack);
+    return _CarInfoView(onBack: onBack);
   }
 }
 
 class _CarInfoView extends StatefulWidget {
-  final void Function(String carNumber, String series, String number)? onCheckFine;
   final VoidCallback? onBack;
 
-  const _CarInfoView({this.onCheckFine, this.onBack});
+  const _CarInfoView({this.onBack});
 
   @override
   State<_CarInfoView> createState() => _CarInfoViewState();
@@ -52,7 +47,6 @@ class _CarInfoView extends StatefulWidget {
 class _CarInfoViewState extends State<_CarInfoView> {
   late final TextEditingController _carNumberController;
   late final TextEditingController _techPassportController;
-  bool _showRecaptcha = false;
 
   CarCubit? carCubit;
   String? _selectedMake;
@@ -67,13 +61,6 @@ class _CarInfoViewState extends State<_CarInfoView> {
       (_techPassportController.text.isEmpty || _techReg.hasMatch(_techPassportController.text));
 
   bool get hasCar => carCubit?.state.carNumber.isNotEmpty ?? false;
-  void _safeSetState(VoidCallback fn) {
-    if (!mounted) return;
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) return;
-      setState(fn);
-    });
-  }
 
   @override
   void initState() {
@@ -151,24 +138,6 @@ class _CarInfoViewState extends State<_CarInfoView> {
     super.dispose();
   }
 
-  void _onRecaptchaVerified(String token) async {
-    if (!mounted) return;
-    _safeSetState(() => _showRecaptcha = false);
-
-    final cubit = carCubit;
-    if (cubit == null) return;
-
-    await cubit.checkFines(token);
-
-    final carNumber = cubit.state.carNumber;
-    if (carNumber.isNotEmpty) {
-      final parts = cubit.getTechPassportParts();
-      if (widget.onCheckFine != null) {
-        widget.onCheckFine!(carNumber, parts['series']!, parts['number']!);
-      }
-    }
-  }
-
   void _handleUnauthorized() {
     showDialog(
       context: context,
@@ -242,9 +211,6 @@ class _CarInfoViewState extends State<_CarInfoView> {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    // Ukraine-only feature (see CarCubit.checkFines) - hide the search
-    // button and recaptcha step entirely for brands/markets without it.
-    final finesCheckEnabled = context.watch<AppConfig>().finesCheckEnabled;
 
     return Scaffold(
       resizeToAvoidBottomInset: true,
@@ -364,36 +330,6 @@ class _CarInfoViewState extends State<_CarInfoView> {
 
                 AppSpacers.verticalLargeXL,
 
-                if (finesCheckEnabled) ...[
-                  SizedBox(
-                    width: double.infinity,
-                    height: 65,
-                    child: ElevatedButton(
-                      onPressed: isFormValid
-                          ? () async {
-                              final user = FirebaseAuth.instance.currentUser;
-                              if (user == null) {
-                                _handleUnauthorized();
-                              } else {
-                                if (!mounted) return;
-                                _safeSetState(() => _showRecaptcha = true);
-                              }
-                            }
-                          : null,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.blue700,
-                        shape: RoundedRectangleBorder(borderRadius: AppBorders.radius16),
-                      ),
-                      child: Text(S.of(context).search, style: textTheme.buttonText),
-                    ),
-                  ),
-
-                  if (_showRecaptcha)
-                    SizedBox(
-                      height: 500,
-                      child: RecaptchaV2(apiKey: Env.recaptchaSiteKey, onVerifiedSuccessfully: _onRecaptchaVerified),
-                    ),
-                ],
                 Center(
                   child: TextButton(
                     onPressed: hasCar ? () => _showDeleteDialog(context) : null,

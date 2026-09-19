@@ -4,7 +4,6 @@ class Env {
   static String get apiUrl => dotenv.env['API_URL'] ?? 'https://api.fines_plus.dev';
   static String get apiKey => dotenv.env['API_KEY'] ?? '';
   static String get openDataBotApiKey => dotenv.env['OPEN_DATABOT_API_KEY'] ?? '';
-  static String get recaptchaSiteKey => dotenv.env['RECAPTCHA_SITE_KEY'] ?? '';
   static String get mapApiKey => dotenv.env['MAP_API_KEY'] ?? '';
   static String get expId => dotenv.env['EXP_ID'] ?? '61629';
   static String get userId => dotenv.env['USER_ID'] ?? '';
