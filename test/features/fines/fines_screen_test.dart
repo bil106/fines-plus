@@ -28,7 +28,6 @@ class HistoryStub extends Cubit<HistoryState> implements HistoryCubit {
 void main() {
   Future<HistoryStub> open(
     WidgetTester tester, {
-    bool demo = true,
     HistoryState? state,
   }) async {
     final cubit = HistoryStub(state ?? HistoryEmpty());
@@ -59,7 +58,7 @@ void main() {
             GlobalWidgetsLocalizations.delegate,
             GlobalCupertinoLocalizations.delegate,
           ],
-          home: FinesScreen(showDemo: demo),
+          home: const FinesScreen(),
         ),
       ),
     );
@@ -67,28 +66,9 @@ void main() {
     return cubit;
   }
 
-  testWidgets(
-    'preview has unpaid and paid fines; pay and refresh never write live data',
-    (tester) async {
-      final cubit = await open(tester);
-      expect(find.text(S.current.fines_demo_speed), findsOneWidget);
-      expect(find.text(S.current.fines_demo_parking), findsOneWidget);
-      expect(find.text('255 UAH'), findsNWidgets(2));
-      expect(find.text(S.current.paid_fines_section), findsOneWidget);
-      await tester.tap(find.text(S.current.pay));
-      await tester.pump();
-      expect(cubit.payments, 0);
-      await tester.tap(find.byIcon(Icons.refresh));
-      await tester.pump();
-      expect(cubit.payments, 0);
-      expect(tester.takeException(), isNull);
-    },
-  );
-
   testWidgets('real empty history shows no fabricated fines', (tester) async {
-    await open(tester, demo: false);
+    await open(tester);
     expect(find.text(S.current.no_fines), findsOneWidget);
-    expect(find.text(S.current.fines_demo_label), findsNothing);
     expect(find.text(S.current.pay), findsNothing);
   });
 
@@ -97,7 +77,6 @@ void main() {
   ) async {
     final cubit = await open(
       tester,
-      demo: false,
       state: HistoryLoaded([
         FineHistory(
           id: 'real',
@@ -121,23 +100,5 @@ void main() {
     await tester.tap(find.text(S.current.pay));
     await tester.pump();
     expect(cubit.payments, 1);
-  });
-
-  testWidgets('preview remains scrollable at narrow width and large text', (
-    tester,
-  ) async {
-    tester.view.physicalSize = const Size(320, 700);
-    tester.view.devicePixelRatio = 1;
-    tester.platformDispatcher.textScaleFactorTestValue = 1.5;
-    addTearDown(tester.view.resetPhysicalSize);
-    addTearDown(tester.view.resetDevicePixelRatio);
-    addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
-    await open(tester);
-    await tester.scrollUntilVisible(
-      find.text(S.current.fines_demo_signal),
-      250,
-      scrollable: find.byType(Scrollable).first,
-    );
-    expect(tester.takeException(), isNull);
   });
 }

@@ -134,46 +134,6 @@ class S {
     );
   }
 
-  /// `Demo data · payment unavailable`
-  String get fines_demo_label {
-    return Intl.message(
-      'Demo data · payment unavailable',
-      name: 'fines_demo_label',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Speeding by 25 km/h`
-  String get fines_demo_speed {
-    return Intl.message(
-      'Speeding by 25 km/h',
-      name: 'fines_demo_speed',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Parking violation`
-  String get fines_demo_parking {
-    return Intl.message(
-      'Parking violation',
-      name: 'fines_demo_parking',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Running a red light`
-  String get fines_demo_signal {
-    return Intl.message(
-      'Running a red light',
-      name: 'fines_demo_signal',
-      desc: '',
-      args: [],
-    );
-  }
-
   /// `Enter VIN`
   String get enter_vin {
     return Intl.message('Enter VIN', name: 'enter_vin', desc: '', args: []);
@@ -459,6 +419,26 @@ class S {
     return Intl.message(
       'There are no fines for you',
       name: 'no_fines',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Fines check (MVS)`
+  String get fines_mvs_title {
+    return Intl.message(
+      'Fines check (MVS)',
+      name: 'fines_mvs_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Solve the captcha and tap “Перевірити” — the fines will be added to the app automatically.`
+  String get fines_mvs_hint {
+    return Intl.message(
+      'Solve the captcha and tap “Перевірити” — the fines will be added to the app automatically.',
+      name: 'fines_mvs_hint',
       desc: '',
       args: [],
     );

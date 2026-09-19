@@ -22,6 +22,18 @@ class FineHistory {
     this.paidFines = const {},
   });
 
+  /// Paid if the user marked it, or the source (MVS) already reports it paid.
+  bool isFinePaid(String fineId, Map<String, dynamic> fine) => paidFines.contains(fineId) || fine['paid'] == true;
+
+  int get paidCount {
+    var count = 0;
+    for (final entry in fines.asMap().entries) {
+      final fineId = entry.value['id']?.toString() ?? '${entry.key}';
+      if (isFinePaid(fineId, entry.value)) count++;
+    }
+    return count;
+  }
+
   FineHistory copyWith({Set<String>? paidFines}) {
     return FineHistory(
       id: id,

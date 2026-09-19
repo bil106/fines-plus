@@ -30,6 +30,11 @@ class HistoryCubit extends Cubit<HistoryState> {
     _carSubscription = carCubit.stream.listen((carState) {
       if (carState.carNumber.isNotEmpty) {
         loadHistory(carState.carNumber);
+      } else {
+        // Switched to a car without a plate: don't keep showing the
+        // previous car's fines.
+        _historySubscription?.cancel();
+        emit(HistoryEmpty());
       }
     });
   }

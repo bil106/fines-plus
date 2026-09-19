@@ -278,19 +278,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "fines": MessageLookupByLibrary.simpleMessage("Штрафи"),
     "fines_checked": MessageLookupByLibrary.simpleMessage("Перевірено"),
     "fines_control": MessageLookupByLibrary.simpleMessage("Контроль штрафів"),
-    "fines_demo_label": MessageLookupByLibrary.simpleMessage(
-      "Демонстраційні дані · оплата недоступна",
-    ),
-    "fines_demo_parking": MessageLookupByLibrary.simpleMessage(
-      "Порушення правил парковки",
-    ),
-    "fines_demo_signal": MessageLookupByLibrary.simpleMessage(
-      "Проїзд на заборонний сигнал",
-    ),
-    "fines_demo_speed": MessageLookupByLibrary.simpleMessage(
-      "Перевищення швидкості на 25 км/год",
-    ),
     "fines_length": MessageLookupByLibrary.simpleMessage("Штрафів:"),
+    "fines_mvs_hint": MessageLookupByLibrary.simpleMessage(
+      "Пройдіть капчу та натисніть «Перевірити» — штрафи додадуться в застосунок автоматично.",
+    ),
+    "fines_mvs_title": MessageLookupByLibrary.simpleMessage(
+      "Перевірка штрафів (МВС)",
+    ),
     "fines_violation": MessageLookupByLibrary.simpleMessage("Порушення"),
     "free_experience": MessageLookupByLibrary.simpleMessage("Без реклами"),
     "free_trial_7_days": MessageLookupByLibrary.simpleMessage(

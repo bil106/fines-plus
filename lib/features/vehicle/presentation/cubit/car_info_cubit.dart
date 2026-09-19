@@ -1,6 +1,3 @@
-import 'package:core_localization/generated/l10n.dart';
-import 'package:core_repository/user_not_signed_in_exception.dart';
-import 'package:fines_plus/core/extensions/safe_prefs.dart';
 import 'package:fines_plus/core/services/carplates_service.dart';
 import 'package:fines_plus/features/export/data/repository/injector.dart';
 import 'package:fines_plus/features/history/presentation/cubit/history_cubit.dart';
@@ -12,7 +9,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'car_info_state.dart';
 import 'dart:async';
 import 'dart:io';
@@ -171,49 +167,6 @@ class CarInfoCubit extends Cubit<CarInfoState> {
       return {'series': value.substring(0, 3), 'number': value.substring(3)};
     }
     return {'series': '', 'number': ''};
-  }
-
-  Future<void> checkFinesWithCaptcha(String captchaToken) async {
-    final prefs = await SharedPreferences.getInstance();
-    final finesEnabled = prefs.getBoolSafe("finesCheck", defaultValue: true);
-
-    if (!finesEnabled) {
-      emit(state.copyWith(status: CarInfoErrorStatus(S.current.fine_checking_disabled)));
-      return;
-    }
-
-    final error = validate();
-    if (error != null) {
-      emit(state.copyWith(status: CarInfoErrorStatus(error)));
-      return;
-    }
-
-    emit(state.copyWith(status: CarInfoLoadingStatus()));
-
-    final carNumber = state.carNumber;
-    final parts = getTechPassportParts();
-
-    try {
-      final finesList = await _repo.getFines(
-        carNumber: carNumber,
-        docSeries: parts['series']!,
-        docNumber: parts['number']!,
-        captchaToken: captchaToken,
-      );
-
-      await historyCubit.addHistory(
-        carNumber: carNumber,
-        docSeries: parts['series']!,
-        docNumber: parts['number']!,
-        fines: finesList,
-      );
-
-      emit(state.copyWith(status: CarInfoLoadedStatus(finesList)));
-    } on UserNotSignedInException catch (_) {
-      emit(state.copyWith(status: CarInfoUnauthorizedStatus()));
-    } catch (e) {
-      emit(state.copyWith(status: CarInfoErrorStatus(e.toString())));
-    }
   }
 
   Future<void> loadCarDetailsFromApi() async {

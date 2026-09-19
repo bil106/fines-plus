@@ -1,3 +1,4 @@
+import 'package:core_localization/generated/l10n.dart';
 import 'package:core_repository/user_not_signed_in_exception.dart';
 import 'package:fines_plus/core/extensions/safe_prefs.dart';
 import 'package:fines_plus/core/config/app_config.dart';
@@ -156,6 +157,30 @@ class CarCubit extends Cubit<CarState> {
     } catch (e) {
       debugPrint("Error checking fines: $e");
     }
+  }
+
+  /// Why a fines check can't start right now (brand/setting off, car data
+  /// invalid), or null when it can. Reads the active car straight from this
+  /// cubit, so it follows garage switches.
+  Future<String?> finesCheckBlocker() async {
+    if (!config.finesCheckEnabled) return S.current.fine_checking_disabled;
+    final prefs = await SharedPreferences.getInstance();
+    if (!prefs.getBoolSafe("finesCheck", defaultValue: true)) {
+      return S.current.fine_checking_disabled;
+    }
+    if (!_isFormValid()) return S.current.enter_correct_number_auto;
+    return null;
+  }
+
+  /// Stores fines read off the official MVS page for the active car.
+  Future<void> saveCheckedFines(List<Map<String, dynamic>> fines) {
+    final parts = getTechPassportParts();
+    return _historyCubit.addHistory(
+      carNumber: state.carNumber,
+      docSeries: parts['series']!,
+      docNumber: parts['number']!,
+      fines: fines,
+    );
   }
 
   bool _isFormValid() {

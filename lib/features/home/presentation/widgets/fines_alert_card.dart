@@ -40,7 +40,7 @@ class FinesAlertCard extends StatelessWidget {
         var unpaidCount = 0;
         for (final entry in latest.fines.asMap().entries) {
           final fineId = entry.value['id']?.toString() ?? '${entry.key}';
-          if (latest.paidFines.contains(fineId)) continue;
+          if (latest.isFinePaid(fineId, entry.value)) continue;
           unpaidCount++;
           final raw = entry.value['amount'] ?? entry.value['suma'] ?? entry.value['penalty'];
           if (raw is num) {

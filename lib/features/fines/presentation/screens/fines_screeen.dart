@@ -1,18 +1,15 @@
-import 'package:core_data/core_data.dart';
-import 'package:flutter/foundation.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/theme/app_brand_theme.dart';
 import 'package:design_system/widget/app_back_button.dart';
-import 'package:fines_plus/env/env.dart';
 import 'package:fines_plus/features/history/presentation/cubit/history_cubit.dart';
 import 'package:fines_plus/features/history/presentation/cubit/history_state.dart';
 import 'package:fines_plus/features/reminders/presentation/screens/reminders_screen.dart'
     show EmptyStateIcon;
-import 'package:fines_plus/features/vehicle/presentation/cubit/car_info_cubit.dart';
+import 'package:fines_plus/features/vehicle/presentation/cubit/car_cubit.dart';
+import 'package:fines_plus/features/webview/presentation/screens/mvs_fines_web_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_easy_recaptcha_v2/flutter_easy_recaptcha_v2.dart';
 import 'package:intl/intl.dart';
 
 /// Штрафи tab - a results list + refresh action, not the old "enter plate
@@ -23,63 +20,35 @@ import 'package:intl/intl.dart';
 /// this replaces.
 @RoutePage()
 class FinesScreen extends StatefulWidget {
-  // Temporary preview: disable with --dart-define=FINES_DEMO=false.
-  // Release builds always use real history.
-  static const demoEnabled =
-      kDebugMode && bool.fromEnvironment('FINES_DEMO', defaultValue: true);
-  final bool showDemo;
   final VoidCallback? onBack;
-  const FinesScreen({super.key, this.showDemo = demoEnabled, this.onBack});
+  const FinesScreen({super.key, this.onBack});
 
   @override
   State<FinesScreen> createState() => _FinesScreenState();
 }
 
 class _FinesScreenState extends State<FinesScreen> {
-  bool _showRecaptcha = false;
-  late DateTime _demoCheckedAt = DateTime.now();
-
-  HistoryLoaded _demoHistory(BuildContext context) {
-    final labels = S.of(context);
-    return HistoryLoaded([
-      FineHistory(
-        id: 'demo',
-        userId: '',
-        carNumber: '',
-        docSeries: '',
-        docNumber: '',
-        checkedAt: _demoCheckedAt,
-        paidFines: const {'parking', 'signal'},
-        fines: [
-          {
-            'id': 'speed',
-            'description': labels.fines_demo_speed,
-            'amount': 255,
-            'date': '2026-09-02',
-          },
-          {
-            'id': 'parking',
-            'description': labels.fines_demo_parking,
-            'amount': 510,
-            'paidAt': '2026-08-18',
-          },
-          {
-            'id': 'signal',
-            'description': labels.fines_demo_signal,
-            'amount': 1700,
-            'paidAt': '2026-07-03',
-          },
-        ],
-      ),
-    ]);
-  }
-
-  void _refresh() {
-    if (kDebugMode && widget.showDemo) {
-      setState(() => _demoCheckedAt = DateTime.now());
+  Future<void> _refresh() async {
+    final carCubit = context.read<CarCubit>();
+    final blocker = await carCubit.finesCheckBlocker();
+    if (!mounted) return;
+    if (blocker != null) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(blocker)));
       return;
     }
-    setState(() => _showRecaptcha = true);
+    final fines = await Navigator.push<List<Map<String, dynamic>>>(
+      context,
+      MaterialPageRoute(
+        builder: (_) => MvsFinesWebView(
+          plate: carCubit.state.carNumber,
+          document: carCubit.state.techPassport,
+        ),
+      ),
+    );
+    if (fines == null) return;
+    await carCubit.saveCheckedFines(fines);
   }
 
   @override
@@ -88,9 +57,7 @@ class _FinesScreenState extends State<FinesScreen> {
       backgroundColor: context.brandTheme.surfaceBg,
       body: SafeArea(
         child: BlocBuilder<HistoryCubit, HistoryState>(
-          builder: (context, liveState) {
-            final demo = kDebugMode && widget.showDemo;
-            final state = demo ? _demoHistory(context) : liveState;
+          builder: (context, state) {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -155,36 +122,8 @@ class _FinesScreenState extends State<FinesScreen> {
                     ],
                   ),
                 ),
-                if (_showRecaptcha)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints(
-                        maxHeight: MediaQuery.of(context).size.height * 0.6,
-                      ),
-                      child: RecaptchaV2(
-                        apiKey: Env.recaptchaSiteKey,
-                        onVerifiedSuccessfully: (token) {
-                          setState(() => _showRecaptcha = false);
-                          context.read<CarInfoCubit>().checkFinesWithCaptcha(
-                            token,
-                          );
-                        },
-                      ),
-                    ),
-                  ),
-                if (demo)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: Text(
-                      S.of(context).fines_demo_label,
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: const Color(0xFF707070),
-                      ),
-                    ),
-                  ),
                 Expanded(
-                  child: _Body(state: state, demo: demo),
+                  child: _Body(state: state),
                 ),
               ],
             );
@@ -209,8 +148,7 @@ class _FinesScreenState extends State<FinesScreen> {
 
 class _Body extends StatelessWidget {
   final HistoryState state;
-  final bool demo;
-  const _Body({required this.state, required this.demo});
+  const _Body({required this.state});
 
   @override
   Widget build(BuildContext context) {
@@ -238,7 +176,7 @@ class _Body extends StatelessWidget {
     for (final entry in latest.fines.asMap().entries) {
       final fineId = entry.value['id']?.toString() ?? '${entry.key}';
       final e = MapEntry(fineId, entry.value);
-      if (latest.paidFines.contains(fineId)) {
+      if (latest.isFinePaid(fineId, entry.value)) {
         paid.add(e);
       } else {
         unpaid.add(e);
@@ -296,7 +234,6 @@ class _Body extends StatelessWidget {
               fine: e.value,
               historyDocId: latest.id,
               isPaid: false,
-              demo: demo,
             ),
         ],
         if (paid.isNotEmpty) ...[
@@ -315,7 +252,6 @@ class _Body extends StatelessWidget {
               fine: e.value,
               historyDocId: latest.id,
               isPaid: true,
-              demo: demo,
             ),
         ],
       ],
@@ -351,14 +287,12 @@ class _FineRow extends StatelessWidget {
   final Map<String, dynamic> fine;
   final String historyDocId;
   final bool isPaid;
-  final bool demo;
 
   const _FineRow({
     required this.fineId,
     required this.fine,
     required this.historyDocId,
     required this.isPaid,
-    required this.demo,
   });
 
   @override
@@ -426,12 +360,6 @@ class _FineRow extends StatelessWidget {
               ),
             ),
             onPressed: () {
-              if (demo) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(S.of(context).fines_demo_label)),
-                );
-                return;
-              }
               context.read<HistoryCubit>().markFineAsPaid(
                 historyDocId,
                 fineId,
@@ -495,7 +423,7 @@ class _EmptyFines extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Padding(
+      child: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
         child: Column(
           mainAxisSize: MainAxisSize.min,

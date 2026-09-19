@@ -14,5 +14,6 @@ class AppUrls {
 
   static String nearbyGasStations(LatLng location, String apiKey, {int radius = 3000}) =>
       '$googlePlacesBase?location=${location.latitude},${location.longitude}&radius=$radius&type=gas_station&key=$apiKey';
+  static const String mvsFines = 'https://bdr.mvs.gov.ua/';
   static const String nbuRateUSD = 'https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?valcode=USD&json';
 }

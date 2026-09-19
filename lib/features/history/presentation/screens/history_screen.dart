@@ -72,7 +72,7 @@ class _HistoryView extends StatelessWidget {
 
             if (state is HistoryLoaded) {
               final totalFines = state.history.fold<int>(0, (sum, record) => sum + record.fines.length);
-              final paidCount = state.history.fold<int>(0, (sum, record) => sum + record.paidFines.length);
+              final paidCount = state.history.fold<int>(0, (sum, record) => sum + record.paidCount);
 
               return Column(
                 children: [
@@ -154,10 +154,10 @@ class _HistoryRecord extends StatelessWidget {
                   color: item.fines.isEmpty ? Colors.green : AppColors.red,
                 ),
               ),
-              if (item.paidFines.isNotEmpty && item.fines.isNotEmpty) ...[
+              if (item.paidCount > 0 && item.fines.isNotEmpty) ...[
                 const SizedBox(width: 8),
                 Text(
-                  "(${S.of(context).paid}: ${item.paidFines.length}/${item.fines.length})",
+                  "(${S.of(context).paid}: ${item.paidCount}/${item.fines.length})",
                   style: textTheme.historyText.copyWith(color: Colors.green.shade600),
                 ),
               ],
@@ -187,7 +187,7 @@ class _HistoryRecord extends StatelessWidget {
               final fineIndex = entry.key;
               final fine = entry.value;
               final fineId = fine['id']?.toString() ?? '$fineIndex';
-              final isPaid = item.paidFines.contains(fineId);
+              final isPaid = item.isFinePaid(fineId, fine);
 
               final amount = fine['amount'] ?? fine['suma'] ?? fine['penalty'] ?? '';
               final description = fine['description'] ?? fine['article'] ?? fine['offense'] ?? '';
