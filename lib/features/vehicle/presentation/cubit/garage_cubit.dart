@@ -1,9 +1,12 @@
 import 'dart:async';
 
+import 'package:fines_plus/features/vehicle/data/datasources/car_photo_uploader.dart';
 import 'package:fines_plus/features/vehicle/data/models/car_info_model.dart';
 import 'package:fines_plus/features/vehicle/data/repository/car_info_repository.dart';
 import 'package:fines_plus/features/vehicle/presentation/cubit/car_cubit.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
 
 import 'garage_state.dart';
 
@@ -30,7 +33,18 @@ class GarageCubit extends Cubit<GarageState> {
   /// added earlier from another device), switches to that existing car
   /// instead of minting a duplicate with a fresh carId and orphaning its
   /// expenses/etc.
-  Future<void> addCar({String carNumber = '', String techPassport = '', String make = '', String photoUrl = ''}) async {
+  ///
+  /// [photoPath] is a locally picked photo: it can only be uploaded once the
+  /// car exists (its carId is part of the storage path), so it is uploaded
+  /// right after creation. A failed upload doesn't undo the new car - the
+  /// photo can still be added later by editing it.
+  Future<void> addCar({
+    String carNumber = '',
+    String techPassport = '',
+    String make = '',
+    String photoUrl = '',
+    String photoPath = '',
+  }) async {
     if (carNumber.isNotEmpty) {
       final existing = await repository.findCarByNumber(carNumber);
       if (existing != null) {
@@ -46,6 +60,14 @@ class GarageCubit extends Cubit<GarageState> {
       photoUrl: photoUrl,
     );
     await carCubit.switchActiveCar(car);
+
+    if (photoPath.isEmpty) return;
+    try {
+      final url = await CarPhotoUploader().upload(uid: car.ownerId, carId: car.carId, file: XFile(photoPath));
+      await updateCar(car, photoUrl: url);
+    } catch (e) {
+      debugPrint('GarageCubit.addCar: photo upload failed for ${car.carId}: $e');
+    }
   }
 
   Future<void> switchTo(CarInfoModel car) => carCubit.switchActiveCar(car);

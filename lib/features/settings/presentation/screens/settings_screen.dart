@@ -69,6 +69,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       carNumber: result['carNumber'] ?? '',
       techPassport: result['techPassport'] ?? '',
       make: result['make'] ?? '',
+      photoPath: result['photoPath'] ?? '',
     );
   }
 

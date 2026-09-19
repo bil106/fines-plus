@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:core_utils/formatters/vehicle_formatters.dart';
@@ -118,6 +120,7 @@ class GarageScreen extends StatelessWidget {
               carNumber: result['carNumber'] ?? '',
               techPassport: result['techPassport'] ?? '',
               make: result['make'] ?? '',
+              photoPath: result['photoPath'] ?? '',
             ),
           );
         },
@@ -599,11 +602,12 @@ Future<void> runOrShowError(
   }
 }
 
-/// Bottom sheet with make, optional car-number/tech-passport fields, and
-/// (only when editing an existing car, i.e. a carId already exists to
-/// upload against) a photo picker. Returns the entered values — 'make',
-/// 'carNumber', 'techPassport', and 'photoUrl' if a new photo was uploaded
-/// — or null if the user cancelled.
+/// Bottom sheet with make, optional car-number/tech-passport fields and a
+/// photo picker. When editing, the photo is uploaded straight away
+/// ('photoUrl'); for a new car there is no carId to upload against yet, so
+/// the picked file is returned as 'photoPath' for the caller to upload once
+/// the car has been created. Also returns 'make', 'carNumber',
+/// 'techPassport' — or null if the user cancelled.
 Future<Map<String, String>?> showCarFormSheet(
   BuildContext context, {
   CarInfoModel? existing,
@@ -619,6 +623,7 @@ Future<Map<String, String>?> showCarFormSheet(
       : null;
   String photoUrl = existing?.photoUrl ?? '';
   bool isUploadingPhoto = false;
+  String photoPath = '';
 
   return showModalBottomSheet<Map<String, String>>(
     context: context,
@@ -647,7 +652,7 @@ Future<Map<String, String>?> showCarFormSheet(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  if (existing != null) ...[
+                  ...[
                     Center(
                       child: GestureDetector(
                         onTap: isUploadingPhoto
@@ -655,13 +660,20 @@ Future<Map<String, String>?> showCarFormSheet(
                             : () async {
                                 setState(() => isUploadingPhoto = true);
                                 try {
-                                  final url = await CarPhotoUploader()
-                                      .pickAndUpload(
-                                        uid: existing.ownerId,
-                                        carId: existing.carId,
-                                      );
-                                  if (url != null) {
-                                    setState(() => photoUrl = url);
+                                  if (existing == null) {
+                                    final picked = await CarPhotoUploader().pick();
+                                    if (picked != null) {
+                                      setState(() => photoPath = picked.path);
+                                    }
+                                  } else {
+                                    final url = await CarPhotoUploader()
+                                        .pickAndUpload(
+                                          uid: existing.ownerId,
+                                          carId: existing.carId,
+                                        );
+                                    if (url != null) {
+                                      setState(() => photoUrl = url);
+                                    }
                                   }
                                 } catch (e) {
                                   if (!context.mounted) return;
@@ -679,12 +691,14 @@ Future<Map<String, String>?> showCarFormSheet(
                         child: CircleAvatar(
                           radius: 40,
                           backgroundColor: AppColors.grey50,
-                          backgroundImage: photoUrl.isNotEmpty
+                          backgroundImage: photoPath.isNotEmpty
+                              ? FileImage(File(photoPath))
+                              : photoUrl.isNotEmpty
                               ? NetworkImage(photoUrl)
                               : null,
                           child: isUploadingPhoto
                               ? const CircularProgressIndicator(strokeWidth: 2)
-                              : (photoUrl.isEmpty
+                              : (photoUrl.isEmpty && photoPath.isEmpty
                                     ? const Icon(
                                         Icons.add_a_photo_outlined,
                                         color: AppColors.neutreGrey,
@@ -778,6 +792,7 @@ Future<Map<String, String>?> showCarFormSheet(
                               'techPassport': techPassportController.text,
                               'make': selectedMake ?? '',
                               'photoUrl': photoUrl,
+                              'photoPath': photoPath,
                             })
                           : null,
                       style: ElevatedButton.styleFrom(

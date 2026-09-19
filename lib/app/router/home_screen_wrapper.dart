@@ -357,6 +357,7 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
                 child: RemindersScreen(
                   key: ValueKey('reminders_$carNumber'),
                   ownerId: FirebaseAuth.instance.currentUser?.uid ?? '',
+                  onBack: () => openPage(HomePage.home),
                 ),
               ),
 

@@ -13,7 +13,6 @@ import 'package:fines_plus/features/reminders/data/models/reminder_model.dart';
 import 'package:fines_plus/features/reminders/presentation/cubit/reminder_cubit.dart';
 import 'package:fines_plus/features/vehicle/presentation/cubit/car_cubit.dart';
 import 'package:flutter/material.dart';
-import 'package:uuid/uuid.dart';
 
 class ScheduleCubit extends Cubit<ScheduleState> {
   final ScheduleRepository repository;
@@ -89,7 +88,7 @@ class ScheduleCubit extends Cubit<ScheduleState> {
     }
   }
 
-  Future<void> addTask(MaintenanceTask task, {ReminderCubit? reminderCubit}) async {
+  Future<void> addTask(MaintenanceTask task) async {
     if (carNumber.isEmpty) return;
 
     if (task.id != null && state.tasks.any((t) => t.id != null && t.id == task.id)) {
@@ -115,7 +114,7 @@ class ScheduleCubit extends Cubit<ScheduleState> {
 
       await repository.saveTasks(carNumber, updatedTasks);
       emit(state.copyWith(tasks: updatedTasks));
-      await _checkTask(savedTask, reminderCubit);
+      await _checkTask(savedTask);
     } catch (e, st) {
       debugPrint('addTask failed: $e\n$st');
       // Revert the optimistic update — task was not persisted
@@ -129,7 +128,7 @@ class ScheduleCubit extends Cubit<ScheduleState> {
     }
   }
 
-  Future<void> updateTask(int index, MaintenanceTask task, {ReminderCubit? reminderCubit}) async {
+  Future<void> updateTask(int index, MaintenanceTask task) async {
     if (carNumber.isEmpty) {
       return;
     }
@@ -139,28 +138,15 @@ class ScheduleCubit extends Cubit<ScheduleState> {
       emit(state.copyWith(tasks: updatedTasks));
       await repository.saveTasks(carNumber, updatedTasks);
       await firebaseRepo.updateTask(carNumber, task);
-      await _checkTask(task, reminderCubit);
+      await _checkTask(task);
     }
   }
 
-  Future<void> _checkTask(MaintenanceTask task, ReminderCubit? reminderCubit) async {
+  Future<void> _checkTask(MaintenanceTask task) async {
     final progress = task.getProgress();
     debugPrint("Checking progress for ${task.description}: ${(progress * 100).toStringAsFixed(1)}%");
 
     if (task.description.trim().isNotEmpty && progress >= 0.9) {
-      if (reminderCubit != null) {
-        final reminder = ReminderModel(
-          id: const Uuid().v4(),
-          title: "${S.current.reminder}: ${task.description}",
-          description: _generateDescription(task.description),
-          dateTime: DateTime.now().add(const Duration(seconds: 5)),
-          isCompleted: false,
-          ownerId: ownerId,
-        );
-        await reminderCubit.addReminder(reminder);
-        debugPrint("Reminder created for ${task.description}");
-      }
-
       final taskId = task.id;
       if (taskId != null && taskId.isNotEmpty) _notifiedTaskIds.add(taskId);
       await _notifyTaskDue(task, progress);
@@ -228,14 +214,6 @@ class ScheduleCubit extends Cubit<ScheduleState> {
       firebaseRepo.deleteTask(carNumber, removedTask),
       if (reminderCubit != null) reminderCubit.deleteReminder(removedTask.id?.toString() ?? ""),
     ]);
-  }
-
-  String _generateDescription(String title) {
-    final lower = title.toLowerCase();
-    if (lower.contains(S.current.oil)) return S.current.not_forget;
-    if (lower.contains(S.current.tires)) return S.current.check_tires;
-    if (lower.contains(S.current.filter)) return S.current.check_filter;
-    return "${S.current.not_forget_task}: $title";
   }
 
   Future<void> onCarChanged(String newCar) async {

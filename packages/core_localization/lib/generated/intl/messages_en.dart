@@ -32,9 +32,15 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m5(task) => "Time for: ${task}";
 
-  static String m6(distance) => "Best rated nearby · ${distance} km";
+  static String m6(count) => "Approx. in ${count} days";
 
-  static String m7(price, period) =>
+  static String m7(count) => "Approx. in ${count} weeks";
+
+  static String m8(km) => "Oil change in ${km} km";
+
+  static String m9(distance) => "Best rated nearby · ${distance} km";
+
+  static String m10(price, period) =>
       "7-day free trial, then ${price} per ${period}. Cancel anytime, at least 24 hours before the trial ends, in Google Play Settings. Subscription renews automatically unless cancelled.";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
@@ -571,9 +577,20 @@ class MessageLookup extends MessageLookupByLibrary {
     "register": MessageLookupByLibrary.simpleMessage("Register"),
     "registration": MessageLookupByLibrary.simpleMessage("Registration"),
     "reminder": MessageLookupByLibrary.simpleMessage("Reminder"),
+    "reminder_approx_days": m6,
+    "reminder_approx_weeks": m7,
+    "reminder_insurance_expires": MessageLookupByLibrary.simpleMessage(
+      "Insurance expires",
+    ),
     "reminder_notifications": MessageLookupByLibrary.simpleMessage(
       "Reminder notifications",
     ),
+    "reminder_oil_due": MessageLookupByLibrary.simpleMessage(
+      "Time to change the oil",
+    ),
+    "reminder_oil_in_km": m8,
+    "reminder_overdue": MessageLookupByLibrary.simpleMessage("Overdue"),
+    "reminder_soon": MessageLookupByLibrary.simpleMessage("Soon"),
     "remove": MessageLookupByLibrary.simpleMessage("Remove"),
     "repair": MessageLookupByLibrary.simpleMessage("Repair"),
     "repair_icon": MessageLookupByLibrary.simpleMessage("Repair"),
@@ -615,7 +632,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "service_balansuvannya_kolis": MessageLookupByLibrary.simpleMessage(
       "Wheel balancing",
     ),
-    "service_best_rating_distance": m6,
+    "service_best_rating_distance": m9,
     "service_capitalnyy_remont_dvyhuna": MessageLookupByLibrary.simpleMessage(
       "Overhaul of the engine",
     ),
@@ -1189,7 +1206,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "track_costs": MessageLookupByLibrary.simpleMessage(
       "Track costs, mileage and efficiency",
     ),
-    "trial_disclosure_detailed": m7,
+    "trial_disclosure_detailed": m10,
     "trial_expired": MessageLookupByLibrary.simpleMessage(
       "Trial period expired",
     ),

@@ -125,7 +125,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
       return;
     }
 
-    scheduleCubit!.addTask(task, reminderCubit: reminderCubit);
+    scheduleCubit!.addTask(task);
 
     context.read<QuickActionsCubit>().activateCategory(task.category);
   }
@@ -263,7 +263,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
           isInsurance: isInsurance,
         );
 
-        scheduleCubit!.addTask(newTask, reminderCubit: reminderCubit);
+        scheduleCubit!.addTask(newTask);
       }
     }
   }
@@ -354,7 +354,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                                           );
                                           final index = scheduleCubit!.state.tasks.indexOf(task);
                                           if (index != -1) {
-                                            scheduleCubit!.updateTask(index, updatedTask, reminderCubit: reminderCubit);
+                                            scheduleCubit!.updateTask(index, updatedTask);
                                           }
                                         },
                                       ),
@@ -419,7 +419,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                                             : null,
                                         comment: result["comment"],
                                       );
-                                      scheduleCubit!.updateTask(index, updatedTask, reminderCubit: reminderCubit);
+                                      scheduleCubit!.updateTask(index, updatedTask);
                                       context.read<QuickActionsCubit>().init();
                                     }
                                   },

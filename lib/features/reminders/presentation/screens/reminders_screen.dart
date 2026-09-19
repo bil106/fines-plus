@@ -2,8 +2,12 @@ import 'package:auto_route/auto_route.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/theme/app_brand_theme.dart';
-import 'package:fines_plus/features/reminders/data/models/reminder_model.dart';
+import 'package:design_system/widget/app_back_button.dart';
 import 'package:fines_plus/core/helpers/push_helper.dart';
+import 'package:fines_plus/features/maintenance/data/repository/schedule_firebase_repository.dart';
+import 'package:fines_plus/features/maintenance/presentation/cubit/maintenance_cubit.dart';
+import 'package:fines_plus/features/schedule/data/repository/schedule_repository.dart';
+import 'package:fines_plus/features/reminders/presentation/widgets/reminder_card.dart';
 import 'package:fines_plus/features/reminders/presentation/widgets/reminder_dialog.dart';
 import 'package:fines_plus/features/reminders/data/repository/reminder_repository.dart';
 import 'package:fines_plus/features/reminders/presentation/cubit/reminder_cubit.dart';
@@ -11,13 +15,13 @@ import 'package:fines_plus/features/vehicle/presentation/cubit/car_cubit.dart';
 import 'package:fines_plus/features/vehicle/presentation/cubit/car_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
 
 @RoutePage()
 class RemindersScreen extends StatefulWidget {
   final String ownerId;
+  final VoidCallback? onBack;
 
-  const RemindersScreen({super.key, required this.ownerId});
+  const RemindersScreen({super.key, required this.ownerId, this.onBack});
 
   @override
   State<RemindersScreen> createState() => _RemindersScreenState();
@@ -40,8 +44,11 @@ class _RemindersScreenState extends State<RemindersScreen> {
             carNumber: carId,
             ownerId: widget.ownerId,
             pushHelper: context.read<PushHelper>(),
+            maintenanceCubit: context.read<MaintenanceCubit>(),
+            scheduleRepository: context.read<ScheduleFirebaseRepository>(),
+            scheduleCache: context.read<ScheduleRepository>(),
           )..load(),
-          child: const _RemindersView(),
+          child: _RemindersView(onBack: widget.onBack),
         );
       },
     );
@@ -49,7 +56,9 @@ class _RemindersScreenState extends State<RemindersScreen> {
 }
 
 class _RemindersView extends StatelessWidget {
-  const _RemindersView();
+  final VoidCallback? onBack;
+
+  const _RemindersView({this.onBack});
 
   @override
   Widget build(BuildContext context) {
@@ -60,21 +69,25 @@ class _RemindersView extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: context.brandTheme.surfaceBg,
         automaticallyImplyLeading: false,
+        leading: onBack == null
+            ? null
+            : Padding(padding: const EdgeInsets.only(left: 20), child: AppBackButton(onPressed: onBack)),
+        leadingWidth: onBack == null ? null : 68,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
-        toolbarHeight: 88,
-        titleSpacing: 20,
+        toolbarHeight: 72,
+        titleSpacing: onBack == null ? 20 : 12,
         actionsPadding: const EdgeInsets.only(right: 20),
         title: Text(S.of(context).reminder,
           maxLines: 2,
-          style: textTheme.headlineMedium?.copyWith(fontSize: 28, fontWeight: FontWeight.w800, color: const Color(0xFF191A1C))),
+          style: textTheme.headlineMedium?.copyWith(fontSize: 24, fontWeight: FontWeight.w800, color: const Color(0xFF191A1C))),
         actions: [
           IconButton(
             tooltip: S.of(context).new_reminder,
             style: IconButton.styleFrom(
               backgroundColor: const Color(0xFF207BD7), foregroundColor: Colors.white,
-              minimumSize: const Size(44, 44), shape: const CircleBorder()),
-            icon: const Icon(Icons.add, size: 24),
+              minimumSize: const Size(36, 36), padding: EdgeInsets.zero, shape: const CircleBorder()),
+            icon: const Icon(Icons.add, size: 20),
             onPressed: () {
               final cubit = context.read<ReminderCubit>();
               showDialog(
@@ -95,20 +108,22 @@ class _RemindersView extends StatelessWidget {
               return const Center(child: CircularProgressIndicator());
             }
 
-            if (state.reminders.isEmpty) {
+            if (state.items.isEmpty) {
               return _EmptyReminders();
             }
 
             return ListView.separated(
-              padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
-              itemCount: state.reminders.length,
+              padding: const EdgeInsets.fromLTRB(20, 4, 20, 24),
+              itemCount: state.items.length,
               separatorBuilder: (_, __) =>
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 10),
               itemBuilder: (context, index) {
-                final reminder = state.reminders[index];
+                final item = state.items[index];
+                final reminder = item.manual;
+                if (reminder == null) return ReminderCard(item: item);
 
-                return _ReminderCard(
-                  reminder: reminder,
+                return ReminderCard(
+                  item: item,
                   onToggle: () => cubit.updateReminder(
                     reminder.copyWith(isCompleted: !reminder.isCompleted)),
                   onDelete: () => cubit.deleteReminder(reminder.id),
@@ -127,95 +142,6 @@ class _RemindersView extends StatelessWidget {
               },
             );
           },
-        ),
-      ),
-    );
-  }
-}
-
-class _ReminderCard extends StatelessWidget {
-  final ReminderModel reminder;
-  final VoidCallback onToggle;
-  final VoidCallback onDelete;
-  final VoidCallback onTap;
-  const _ReminderCard({required this.reminder, required this.onToggle, required this.onDelete, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context).textTheme;
-    final now = DateTime.now();
-    final due = reminder.dateTime.toLocal();
-    final days = DateTime.utc(due.year, due.month, due.day)
-        .difference(DateTime.utc(now.year, now.month, now.day)).inDays;
-    final overdue = due.isBefore(now) && !reminder.isCompleted;
-    final soon = !reminder.isCompleted && !overdue && days <= 14;
-    final accent = reminder.isCompleted ? const Color(0xFF79B58A)
-        : overdue ? const Color(0xFFBE3540)
-        : soon ? const Color(0xFF00A99A) : const Color(0xFF6366F1);
-    final status = reminder.isCompleted ? S.of(context).done
-        : overdue ? S.of(context).reminder_overdue
-        : soon ? S.of(context).reminder_soon : '$days ${S.of(context).days}';
-    final statusWidget = Text(status, style: theme.bodySmall?.copyWith(
-      fontSize: 14, fontWeight: FontWeight.w700,
-      color: overdue ? const Color(0xFFBE3540) : soon ? const Color(0xFFBA8700) : const Color(0xFF707070)));
-    return Material(
-      color: Colors.white,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: context.brandTheme.surfaceBorder)),
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: LayoutBuilder(builder: (context, constraints) {
-            final stacked = constraints.maxWidth < 300 || MediaQuery.textScalerOf(context).scale(16) > 20;
-            return Row(
-              children: [
-                Semantics(
-                  checked: reminder.isCompleted,
-                  label: reminder.title,
-                  child: SizedBox.square(
-                    dimension: 48,
-                    child: IconButton(
-                      onPressed: onToggle,
-                      style: IconButton.styleFrom(
-                        backgroundColor: accent.withValues(alpha: 0.16), foregroundColor: accent,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(13))),
-                      icon: Icon(reminder.isCompleted ? Icons.check : Icons.circle,
-                        size: reminder.isCompleted ? 22 : 10),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(reminder.title, style: theme.bodyLarge?.copyWith(
-                      fontSize: 16, fontWeight: FontWeight.w700, color: const Color(0xFF202124),
-                      decoration: reminder.isCompleted ? TextDecoration.lineThrough : TextDecoration.none)),
-                    if (reminder.description.isNotEmpty) ...[
-                      const SizedBox(height: 4),
-                      Text(reminder.description, style: theme.bodySmall?.copyWith(fontSize: 14, color: const Color(0xFF707070))),
-                    ],
-                    const SizedBox(height: 4),
-                    Text(DateFormat('d MMM yyyy · HH:mm', Localizations.localeOf(context).toString()).format(due),
-                      style: theme.bodySmall?.copyWith(fontSize: 14, color: const Color(0xFF707070))),
-                    if (stacked) ...[const SizedBox(height: 8), statusWidget],
-                  ],
-                )),
-                if (!stacked) ...[const SizedBox(width: 12), statusWidget],
-                PopupMenuButton<String>(
-                  tooltip: MaterialLocalizations.of(context).showMenuTooltip,
-                  icon: const Icon(Icons.more_vert, color: Color(0xFF707070), size: 20),
-                  onSelected: (action) => action == 'edit' ? onTap() : onDelete(),
-                  itemBuilder: (_) => [
-                    PopupMenuItem(value: 'edit', child: Text(S.of(context).edit)),
-                    PopupMenuItem(value: 'delete', child: Text(S.of(context).delete, style: const TextStyle(color: AppColors.red))),
-                  ],
-                ),
-              ],
-            );
-          }),
         ),
       ),
     );

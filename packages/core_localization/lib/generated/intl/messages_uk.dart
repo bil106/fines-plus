@@ -32,9 +32,15 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m5(task) => "Час для: ${task}";
 
-  static String m6(distance) => "Найкращий рейтинг поруч · ${distance} км";
+  static String m6(count) => "Орієнтовно через ${count} дн.";
 
-  static String m7(price, period) =>
+  static String m7(count) => "Орієнтовно через ${count} тиж.";
+
+  static String m8(km) => "Заміна оливи через ${km} км";
+
+  static String m9(distance) => "Найкращий рейтинг поруч · ${distance} км";
+
+  static String m10(price, period) =>
       "7 днів безкоштовно, потім ${price} за ${period}. Скасувати можна в будь-який момент, не менш ніж за 24 години до закінчення пробного періоду, в налаштуваннях Google Play. Підписка автоматично поновлюється, якщо її не скасовано.";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
@@ -584,9 +590,20 @@ class MessageLookup extends MessageLookupByLibrary {
     "register": MessageLookupByLibrary.simpleMessage("Зареєструватися"),
     "registration": MessageLookupByLibrary.simpleMessage("Реєстрація"),
     "reminder": MessageLookupByLibrary.simpleMessage("Нагадування"),
+    "reminder_approx_days": m6,
+    "reminder_approx_weeks": m7,
+    "reminder_insurance_expires": MessageLookupByLibrary.simpleMessage(
+      "Страхування закінчується",
+    ),
     "reminder_notifications": MessageLookupByLibrary.simpleMessage(
       "Сповіщення про нагадування",
     ),
+    "reminder_oil_due": MessageLookupByLibrary.simpleMessage(
+      "Час замінити оливу",
+    ),
+    "reminder_oil_in_km": m8,
+    "reminder_overdue": MessageLookupByLibrary.simpleMessage("Прострочено"),
+    "reminder_soon": MessageLookupByLibrary.simpleMessage("Скоро"),
     "remove": MessageLookupByLibrary.simpleMessage("Видалити"),
     "repair": MessageLookupByLibrary.simpleMessage("Ремонт"),
     "repair_icon": MessageLookupByLibrary.simpleMessage("Ремонт"),
@@ -628,7 +645,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "service_balansuvannya_kolis": MessageLookupByLibrary.simpleMessage(
       "Балансування коліс",
     ),
-    "service_best_rating_distance": m6,
+    "service_best_rating_distance": m9,
     "service_capitalnyy_remont_dvyhuna": MessageLookupByLibrary.simpleMessage(
       "Капітальний ремонт двигуна",
     ),
@@ -1172,7 +1189,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "track_costs": MessageLookupByLibrary.simpleMessage(
       "Стежте за витратами, пробігом та ефективністю",
     ),
-    "trial_disclosure_detailed": m7,
+    "trial_disclosure_detailed": m10,
     "trial_expired": MessageLookupByLibrary.simpleMessage(
       "Пробний період минув",
     ),

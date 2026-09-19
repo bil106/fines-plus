@@ -54,6 +54,71 @@ class S {
     return Localizations.of<S>(context, S);
   }
 
+  /// `Soon`
+  String get reminder_soon {
+    return Intl.message('Soon', name: 'reminder_soon', desc: '', args: []);
+  }
+
+  /// `Overdue`
+  String get reminder_overdue {
+    return Intl.message(
+      'Overdue',
+      name: 'reminder_overdue',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Insurance expires`
+  String get reminder_insurance_expires {
+    return Intl.message(
+      'Insurance expires',
+      name: 'reminder_insurance_expires',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Oil change in {km} km`
+  String reminder_oil_in_km(int km) {
+    return Intl.message(
+      'Oil change in $km km',
+      name: 'reminder_oil_in_km',
+      desc: '',
+      args: [km],
+    );
+  }
+
+  /// `Time to change the oil`
+  String get reminder_oil_due {
+    return Intl.message(
+      'Time to change the oil',
+      name: 'reminder_oil_due',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Approx. in {count} days`
+  String reminder_approx_days(int count) {
+    return Intl.message(
+      'Approx. in $count days',
+      name: 'reminder_approx_days',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `Approx. in {count} weeks`
+  String reminder_approx_weeks(int count) {
+    return Intl.message(
+      'Approx. in $count weeks',
+      name: 'reminder_approx_weeks',
+      desc: '',
+      args: [count],
+    );
+  }
+
   /// `Checked`
   String get fines_checked {
     return Intl.message('Checked', name: 'fines_checked', desc: '', args: []);
