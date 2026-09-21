@@ -1315,6 +1315,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "valid_from": MessageLookupByLibrary.simpleMessage("Valid from"),
     "valid_to": MessageLookupByLibrary.simpleMessage("Valid to"),
     "vehicle_color": MessageLookupByLibrary.simpleMessage("Color"),
+    "vehicle_fuel": MessageLookupByLibrary.simpleMessage("Fuel"),
     "vehicle_owner": MessageLookupByLibrary.simpleMessage("Owner"),
     "vehicle_region": MessageLookupByLibrary.simpleMessage("Region"),
     "vehicle_type": MessageLookupByLibrary.simpleMessage("Type"),

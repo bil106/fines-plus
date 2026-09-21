@@ -335,7 +335,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "free_trial_7_days": MessageLookupByLibrary.simpleMessage(
       "7 днів безкоштовно",
     ),
-    "fuel": MessageLookupByLibrary.simpleMessage("Паливо"),
+    "fuel": MessageLookupByLibrary.simpleMessage("Заправка"),
     "fuel_ai92": MessageLookupByLibrary.simpleMessage("АІ-92"),
     "fuel_ai95": MessageLookupByLibrary.simpleMessage("АІ-95"),
     "fuel_ai95_plus": MessageLookupByLibrary.simpleMessage("АІ-95+"),
@@ -1294,6 +1294,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "valid_from": MessageLookupByLibrary.simpleMessage("Діє з"),
     "valid_to": MessageLookupByLibrary.simpleMessage("Діє до"),
     "vehicle_color": MessageLookupByLibrary.simpleMessage("Колір"),
+    "vehicle_fuel": MessageLookupByLibrary.simpleMessage("Паливо"),
     "vehicle_owner": MessageLookupByLibrary.simpleMessage("Власник"),
     "vehicle_region": MessageLookupByLibrary.simpleMessage("Регіон"),
     "vehicle_type": MessageLookupByLibrary.simpleMessage("Тип"),

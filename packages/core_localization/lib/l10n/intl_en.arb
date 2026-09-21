@@ -644,6 +644,7 @@
 "car_make_year": "Year of manufacture",
 "plate_cost": "Plate cost",
 "plate_cost_reason": "Plate cost reason",
+"vehicle_fuel": "Fuel",
 "vehicle_color": "Color",
 "vehicle_type": "Type",
 "engine_capacity": "Engine capacity",

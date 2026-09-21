@@ -36,7 +36,7 @@ class CarInfoCard extends StatelessWidget {
           
             _buildParam(Icons.color_lens, l10n.vehicle_color, data['color'], textTheme),
             _buildParam(Icons.directions_car, l10n.vehicle_type, data['kind'], textTheme),
-            _buildParam(Icons.local_gas_station, l10n.fuel, data['fuel'], textTheme),
+            _buildParam(Icons.local_gas_station, l10n.vehicle_fuel, data['fuel'], textTheme),
             _buildParam(Icons.engineering, l10n.engine_capacity, data['capacity'], textTheme),
             _buildParam(
               Icons.fitness_center,

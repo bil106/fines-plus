@@ -5074,6 +5074,11 @@ class S {
     );
   }
 
+  /// `Fuel`
+  String get vehicle_fuel {
+    return Intl.message('Fuel', name: 'vehicle_fuel', desc: '', args: []);
+  }
+
   /// `Color`
   String get vehicle_color {
     return Intl.message('Color', name: 'vehicle_color', desc: '', args: []);

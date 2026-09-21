@@ -63,7 +63,7 @@ class QuickAddRow extends StatelessWidget {
             buildWhen: (previous, current) =>
                 previous.reminders != current.reminders,
             builder: (context, reminderState) => _QuickAddButton(
-              icon: Icons.build,
+              icon: Icons.assignment_turned_in,
               iconColor: AppColors.catService,
               label: S.of(context).maintenance,
               ring: MaintenanceRing.plannedRemaining(

@@ -302,7 +302,7 @@ class ServiceScreenState extends State<ServiceScreen> {
               : Row(
                   children: [
                     const Icon(
-                      Icons.build_outlined,
+                      Icons.assignment_turned_in_outlined,
                       color: AppColors.blueAccent,
                       size: 24,
                     ),
