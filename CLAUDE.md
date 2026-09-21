@@ -37,7 +37,7 @@ Flutter app for car expense/document tracking (fines, ТО, insurance, fuel).
 
 ### 3) White-label flavors — never hardcode brand-specific values
 - Per-flavor config: `assets/config/<flavor>.json`, validated against `assets/config/_template.json`.
-- Current flavors: `finesplus` (real, ships, UA, fines-check on — the default), `autodosje` (UA, config ready, no Firebase/applicationId yet), `carpapers` (US/ES, fines-check off, config ready, no Firebase/applicationId yet), `autolux`/`fastcar` (old demo flavors, don't touch).
+- Current flavors: `finesplus` (real, ships, UA, fines-check on — the default), `autodosje` (UA, config ready, no Firebase/applicationId yet), `carpapers` (US/ES, fines-check off, config ready, no Firebase/applicationId yet).
 - New flavor: `scripts/new_wl_flavor.sh <key> "<Brand>" <#hex> <email>` → fill `REPLACE_ME` fields → add `productFlavors { create("<key>") {...} }` in `android/app/build.gradle.kts` → Firebase project + `google-services.json`/`GoogleService-Info.plist` → iOS target per `ios/Flutter/Flavors/README.md` (manual, not scripted).
 - **After any `assets/config/*.json` edit, run `python3 scripts/verify_wl_configs.py`** — it catches broken JSON, an unregistered asset, a missing icon, or a `copyOverrides` typo.
 - Full playbook: `docs/white-label-playbook.md`.
@@ -129,4 +129,16 @@ dart run build_runner build --delete-conflicting-outputs
 
 ### Design mockup vs. code
 - The click-through design mockup (Design canvas artifact) may be ahead of the code — it's where new screens/flows get full approval before implementation. When a mockup convention (e.g. status colors: green `#1E8A4C` / amber `#B25E00` / red `#B23A3E` for ТО/insurance/fines state) gets implemented, give it a proper `AppBrandTheme`/`AppConfig` token — don't copy the mockup's hex values into widget code as literals.
-- Project handover/status notes for the current redesign live in a Google Doc (linked from the mockup's notes) — check there for open decisions before assuming something is finalized.
+- Project handover/status notes for the current redesign live in a Google Doc — see "Робочі документи" below for the current link; check there for open decisions before assuming something is finalized.
+
+
+## Робочі документи
+
+- Design canvas (Claude Artifact, джерело правди для UI): https://claude.ai/artifact/U9zexMtARry73jthp6tWMg
+- Текстовий знімок поточного стану дизайну (короткий опис екранів/груп, оновлюється окремо): `docs/design.md`
+- Google Doc — хендовер команди (статус впровадження, задачі, зміни по датах): https://docs.google.com/document/d/1-hfgMqRixjxjQti-_mrasZhomd-hIt0Xqav64occP0o/edit
+
+  Google Drive API тут не дає редагувати вміст документа "на місці" — кожне
+  оновлення технічно перестворює файл (новий id/URL), тому посилання вище
+  завжди актуальне на момент останнього оновлення документа — воно
+  переписується тут же кожного разу. Не хардкодь цей URL деінде.

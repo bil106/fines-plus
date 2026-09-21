@@ -171,7 +171,7 @@ extension AppTextTheme on TextTheme {
         fontSize: 18,
       );
   TextStyle get black54fs18 => const TextStyle(
-        color: Colors.black54,
+        color: AppColors.black54,
         fontWeight: FontWeight.w400,
         fontSize: 18,
       );

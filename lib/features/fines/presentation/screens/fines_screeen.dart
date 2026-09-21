@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:core_localization/generated/l10n.dart';
+import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/theme/app_brand_theme.dart';
 import 'package:design_system/widget/app_back_button.dart';
 import 'package:fines_plus/core/helpers/push_helper.dart';
@@ -125,7 +126,7 @@ class _FinesScreenState extends State<FinesScreen> {
                                   ?.copyWith(
                                     fontSize: 28,
                                     fontWeight: FontWeight.w800,
-                                    color: const Color(0xFF191A1C),
+                                    color: AppColors.ink,
                                   ),
                             ),
                             const SizedBox(height: 4),
@@ -137,7 +138,7 @@ class _FinesScreenState extends State<FinesScreen> {
                                   state.history.first.checkedAt,
                                 ),
                                 style: Theme.of(context).textTheme.bodyMedium
-                                    ?.copyWith(color: const Color(0xFF707070)),
+                                    ?.copyWith(color: AppColors.textSecondary),
                               ),
                           ],
                         ),
@@ -148,8 +149,8 @@ class _FinesScreenState extends State<FinesScreen> {
                           context,
                         ).refreshIndicatorSemanticLabel,
                         style: IconButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          foregroundColor: const Color(0xFF207BD7),
+                          backgroundColor: AppColors.neutreBlanc,
+                          foregroundColor: Theme.of(context).colorScheme.primary,
                           side: BorderSide(
                             color: context.brandTheme.surfaceBorder,
                           ),
@@ -268,7 +269,7 @@ class _Body extends StatelessWidget {
             style: Theme.of(context).textTheme.titleSmall?.copyWith(
               fontSize: 16,
               fontWeight: FontWeight.w700,
-              color: const Color(0xFF707070),
+              color: AppColors.textSecondary,
             ),
           ),
           for (final e in unpaid)
@@ -286,7 +287,7 @@ class _Body extends StatelessWidget {
             style: Theme.of(context).textTheme.titleSmall?.copyWith(
               fontSize: 16,
               fontWeight: FontWeight.w700,
-              color: const Color(0xFF707070),
+              color: AppColors.textSecondary,
             ),
           ),
           for (final e in paid)
@@ -350,7 +351,7 @@ class _FineRow extends StatelessWidget {
         : DateFormat.yMMMd(
             Localizations.localeOf(context).toString(),
           ).format(parsedDate);
-    final muted = const Color(0xFF707070);
+    const muted = AppColors.textSecondary;
     final theme = Theme.of(context).textTheme;
     final details = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -362,7 +363,7 @@ class _FineRow extends StatelessWidget {
               fontSize: 16,
               height: 1.35,
               fontWeight: FontWeight.w700,
-              color: isPaid ? muted : const Color(0xFF191A1C),
+              color: isPaid ? muted : AppColors.ink,
             ),
           ),
         if (date.isNotEmpty) ...[
@@ -390,8 +391,8 @@ class _FineRow extends StatelessWidget {
           const SizedBox(height: 4),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF207BD7),
-              foregroundColor: Colors.white,
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              foregroundColor: AppColors.neutreBlanc,
               elevation: 0,
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               shape: RoundedRectangleBorder(
@@ -431,9 +432,9 @@ class _FineRow extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               if (isPaid) ...[
-                const Icon(
+                Icon(
                   Icons.check_circle_outline,
-                  color: Color(0xFF79B58A),
+                  color: context.brandTheme.statusComplete,
                   size: 20,
                 ),
                 const SizedBox(width: 12),

@@ -36,13 +36,30 @@ abstract final class AppColors {
   static const neutreGrey100 = Color(0xffF5F5F5);
   static const grey50 = Color(0xFFFAFAFA);
   static const grey300 = Color(0xFFE0E0E0);
+  static const grey400 = Color(0xFFBDBDBD);
+  static const grey500 = Color(0xFF9E9E9E);
+  static const grey600 = Color(0xFF757575);
   static const grey700 = Color(0xFF616161);
+  static const red700 = Color(0xFFD32F2F);
 
   static const black = Color(0xFF000000);
+  static const black12 = Color(0x1F000000);
   static const black87 = Color(0xDD000000);
+  static const black54 = Color(0x8A000000);
   static const black26 = Color(0x42000000);
   static const neutreBlanc = Color(0xffFFFFFF);
   static const transparent = Color(0x00000000);
+
+  // Fixed neutral content colors from the dashboard redesign. Brand accents
+  // and semantic status colors come from ColorScheme/AppBrandTheme.
+  static const ink = Color(0xFF191A1C);
+  static const inkSoft = Color(0xFF202124);
+  static const textSecondary = Color(0xFF707070);
+  static const textMuted = Color(0xFF626262);
+  static const textSubtle = Color(0xFF9BA1B0);
+
+  // Identity-provider color, intentionally independent of app flavor.
+  static const facebookBlue = Color(0xFF3E5D9F);
 
   // Expense-category colors: fixed per category, independent of the
   // active white-label brand (only the accent/primary color varies by

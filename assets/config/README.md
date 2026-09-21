@@ -8,7 +8,7 @@ assets/config/$FLAVOR.json  ->  AppConfig.fromJson(...)
 ```
 
 `$FLAVOR` comes from `--dart-define=FLAVOR=<flavor_key>` at build/run time
-(see `lib/core/services/app_initializer.dart`); it defaults to `autolux` if
+(see `lib/core/services/app_initializer.dart`); it defaults to `finesplus` if
 not passed.
 
 ## Fields
@@ -31,9 +31,8 @@ not passed.
   for any non-UA brand. Defaults to `true` if omitted.
 - `termsUrl` / `privacyPolicyUrl` — per-brand legal links. Leave unset
   (`null`) to fall back to the global `Env.termsUrl` / `Env.privacyPolicyUrl`
-  (`.env` file) — that's what the existing `autolux`/`fastcar` demo configs
-  do. A brand with its own legal entity/domain (like CarPapers) should set
-  its own.
+  (`.env` file) — that's what `finesplus.json`/`autodosje.json` do. A brand
+  with its own legal entity/domain (like CarPapers) should set its own.
 
 ## Adding a new brand
 
@@ -49,9 +48,6 @@ Firebase project, iOS scheme, store listing).
 
 ## Existing files
 
-- `autolux.json`, `fastcar.json` — pre-existing demo/test brands (fastcar.json
-  is currently an empty stub — not touched here, out of scope for this
-  change).
 - `carpapers.json` — first real second-market brand (US/ES). Ships with
   `finesCheckEnabled: false` and placeholder `phoneNumber`/`termsUrl`/
   `privacyPolicyUrl` — fill those in before building it for real.

@@ -2,7 +2,7 @@
 //
 // NOTE: hand-updated alongside the market/finesCheckEnabled/termsUrl/
 // privacyPolicyUrl fields, and again for the surfaceBgHex/surfaceBorderHex/
-// dividerHex/alertBgHex/alertBorderHex/alertFgHex/displayFontFamily/
+// dividerHex/alertBgHex/alertBorderHex/alertFgHex/status*/displayFontFamily/
 // bodyFontFamily/monoFontFamily brand-theme fields, added to AppConfig.
 // Re-run `dart run build_runner build --delete-conflicting-outputs` to
 // regenerate the canonical version once you can run it locally.
@@ -33,6 +33,13 @@ AppConfig _$AppConfigFromJson(Map<String, dynamic> json) => AppConfig(
   alertBgHex: json['alertBgHex'] as String? ?? '#FBE1E1',
   alertBorderHex: json['alertBorderHex'] as String? ?? '#F3B9B9',
   alertFgHex: json['alertFgHex'] as String? ?? '#B23A3E',
+  statusSuccessHex: json['statusSuccessHex'] as String? ?? '#198B49',
+  statusSuccessBgHex: json['statusSuccessBgHex'] as String? ?? '#DEF4E6',
+  statusWarningHex: json['statusWarningHex'] as String? ?? '#BA8700',
+  statusDangerHex: json['statusDangerHex'] as String? ?? '#BE3540',
+  statusDangerBgHex: json['statusDangerBgHex'] as String? ?? '#FBE0E2',
+  statusInfoHex: json['statusInfoHex'] as String? ?? '#00A99A',
+  statusCompleteHex: json['statusCompleteHex'] as String? ?? '#79B58A',
   displayFontFamily: json['displayFontFamily'] as String? ?? 'Big Shoulders Display',
   bodyFontFamily: json['bodyFontFamily'] as String? ?? 'Manrope',
   monoFontFamily: json['monoFontFamily'] as String? ?? 'JetBrains Mono',
@@ -56,6 +63,13 @@ Map<String, dynamic> _$AppConfigToJson(AppConfig instance) => <String, dynamic>{
   'alertBgHex': instance.alertBgHex,
   'alertBorderHex': instance.alertBorderHex,
   'alertFgHex': instance.alertFgHex,
+  'statusSuccessHex': instance.statusSuccessHex,
+  'statusSuccessBgHex': instance.statusSuccessBgHex,
+  'statusWarningHex': instance.statusWarningHex,
+  'statusDangerHex': instance.statusDangerHex,
+  'statusDangerBgHex': instance.statusDangerBgHex,
+  'statusInfoHex': instance.statusInfoHex,
+  'statusCompleteHex': instance.statusCompleteHex,
   'displayFontFamily': instance.displayFontFamily,
   'bodyFontFamily': instance.bodyFontFamily,
   'monoFontFamily': instance.monoFontFamily,

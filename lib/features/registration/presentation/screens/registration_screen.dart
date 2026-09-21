@@ -5,6 +5,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
+import 'package:design_system/theme/app_brand_theme.dart';
 import 'package:design_system/widget/app_back_button.dart';
 import 'package:fines_plus/features/registration/presentation/cubit/registration_cubit.dart';
 import 'package:fines_plus/features/registration/presentation/cubit/registration_state.dart';
@@ -263,8 +264,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       await _onSocialLoginSuccess(context);
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Sign in with Apple successful'),
+        SnackBar(
+          content: Text(S.of(context).apple_login_successful),
           backgroundColor: AppColors.blue700,
         ),
       );
@@ -273,12 +274,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       if (!context.mounted) return;
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text('Apple: ${e.message ?? e.code}')));
+      ).showSnackBar(SnackBar(content: Text(S.of(context).apple_login_error(e.message ?? e.code))));
     } catch (e) {
       if (!context.mounted) return;
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text('Apple login error: $e')));
+      ).showSnackBar(SnackBar(content: Text(S.of(context).apple_login_error(e.toString()))));
       debugPrint('Apple login error: $e');
     } finally {
       if (mounted) setState(() => _socialLoading = false);
@@ -343,15 +344,15 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       );
     }
 
-    const background = Color(0xFFF6F4ED);
-    const border = Color(0xFFE5DFD0);
-    const blue = Color(0xFF207BD7);
+    final background = context.brandTheme.surfaceBg;
+    final border = context.brandTheme.surfaceBorder;
+    final blue = Theme.of(context).colorScheme.primary;
 
     return Scaffold(
       backgroundColor: background,
       appBar: AppBar(
         backgroundColor: background,
-        surfaceTintColor: Colors.transparent,
+        surfaceTintColor: AppColors.transparent,
         elevation: 0,
         leadingWidth: 72,
         leading: AppBackButton(onPressed: widget.onBack),
@@ -388,13 +389,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       hintText: hint,
                       error: error == null ? null : Text(error, softWrap: true),
                       filled: true,
-                      fillColor: Colors.white,
+                      fillColor: AppColors.neutreBlanc,
                       labelStyle: const TextStyle(
-                        color: Color(0xFF626262),
+                        color: AppColors.textMuted,
                         fontSize: 16,
                       ),
                       hintStyle: const TextStyle(
-                        color: Color(0xFF9BA1B0),
+                        color: AppColors.textSubtle,
                         fontWeight: FontWeight.w600,
                       ),
                       contentPadding: const EdgeInsets.symmetric(
@@ -403,23 +404,23 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       ),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(16),
-                        borderSide: const BorderSide(color: border),
+                        borderSide: BorderSide(color: border),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(16),
-                        borderSide: const BorderSide(color: border),
+                        borderSide: BorderSide(color: border),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(16),
-                        borderSide: const BorderSide(color: blue),
+                        borderSide: BorderSide(color: blue),
                       ),
                       errorBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(16),
-                        borderSide: const BorderSide(color: border),
+                        borderSide: BorderSide(color: border),
                       ),
                       focusedErrorBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(16),
-                        borderSide: const BorderSide(color: border),
+                        borderSide: BorderSide(color: border),
                       ),
                     );
                     return AutofillGroup(
@@ -434,7 +435,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                             style: const TextStyle(
                               fontSize: 32,
                               fontWeight: FontWeight.w700,
-                              color: Color(0xFF191A1C),
+                              color: AppColors.ink,
                             ),
                           ),
                           const SizedBox(height: 28),
@@ -510,7 +511,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                       dimension: 24,
                                       child: CircularProgressIndicator(
                                         strokeWidth: 2,
-                                        color: Colors.white,
+                                        color: AppColors.neutreBlanc,
                                       ),
                                     )
                                   : Text(
@@ -536,7 +537,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                   ? S.of(context).dont_have_account
                                   : S.of(context).already_have_account,
                               textAlign: TextAlign.center,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 color: blue,
                                 fontSize: 15,
                                 fontWeight: FontWeight.w600,
@@ -546,7 +547,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                           const SizedBox(height: 18),
                           Row(
                             children: [
-                              const Expanded(child: Divider(color: border)),
+                              Expanded(child: Divider(color: border)),
                               Flexible(
                                 flex: 3,
                                 child: Padding(
@@ -557,13 +558,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                     S.of(context).or_sign_in_using,
                                     textAlign: TextAlign.center,
                                     style: const TextStyle(
-                                      color: Color(0xFF626262),
+                                      color: AppColors.textMuted,
                                       fontSize: 14,
                                     ),
                                   ),
                                 ),
                               ),
-                              const Expanded(child: Divider(color: border)),
+                              Expanded(child: Divider(color: border)),
                             ],
                           ),
                           const SizedBox(height: 20),
@@ -583,7 +584,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                 'Facebook',
                                 const Icon(
                                   Icons.facebook,
-                                  color: Color(0xFF3E5D9F),
+                                  color: AppColors.facebookBlue,
                                   size: 25,
                                 ),
                                 busy
@@ -597,7 +598,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                   'Apple',
                                   const Icon(
                                     Icons.apple,
-                                    color: Color(0xFF191A1C),
+                                    color: AppColors.ink,
                                     size: 25,
                                   ),
                                   busy ? null : () => _signInWithApple(context),
@@ -625,8 +626,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         tooltip: label,
         onPressed: onPressed,
         style: IconButton.styleFrom(
-          backgroundColor: Colors.white,
-          shape: const CircleBorder(side: BorderSide(color: Color(0xFFE5DFD0))),
+          backgroundColor: AppColors.neutreBlanc,
+          shape: CircleBorder(side: BorderSide(color: context.brandTheme.surfaceBorder)),
         ),
         icon: icon,
       ),

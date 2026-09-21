@@ -1,4 +1,5 @@
 import 'package:core_localization/generated/l10n.dart';
+import 'package:design_system/colors/app_colors.dart';
 import 'package:flutter/material.dart';
 
 
@@ -17,14 +18,14 @@ class InsuranceTypePickerSheet extends StatelessWidget {
 
   const InsuranceTypePickerSheet({super.key, this.disabledTypes = const {}});
 
-  static const _types = <InsuranceType>[
-    InsuranceType(key: 'osago', title: 'ОСАГО', icon: Icons.policy),
-    InsuranceType(key: 'kasko', title: 'КАСКО', icon: Icons.security),
-    InsuranceType(key: 'green_card', title: 'Green Card', icon: Icons.public),
-  ];
-
   @override
   Widget build(BuildContext context) {
+    final l10n = S.of(context);
+    final types = <InsuranceType>[
+      InsuranceType(key: 'osago', title: l10n.insurance_osago, icon: Icons.policy),
+      InsuranceType(key: 'kasko', title: l10n.insurance_kasko, icon: Icons.security),
+      InsuranceType(key: 'green_card', title: l10n.insurance_green_card, icon: Icons.public),
+    ];
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -34,11 +35,11 @@ class InsuranceTypePickerSheet extends StatelessWidget {
           children: [
             Text(S.of(context).select_type_insurance, style: Theme.of(context).textTheme.titleLarge),
             const SizedBox(height: 12),
-            ..._types.map((type) {
+            ...types.map((type) {
               final disabled = disabledTypes.contains(type.key);
 
               return ListTile(
-                leading: Icon(type.icon, color: disabled ? Colors.grey : null),
+                leading: Icon(type.icon, color: disabled ? AppColors.grey500 : null),
                 title: Text(type.title),
                 subtitle: disabled ?  Text(S.of(context).already_added) : null,
                 enabled: !disabled,

@@ -4,8 +4,9 @@
 Does NOT replace `flutter analyze`/`flutter build` - there's no Flutter/Dart
 toolchain assumed here on purpose, so this only catches what's checkable
 without one: JSON validity, the exact defaulting AppConfig.fromJson applies,
-whether each flavor is registered in pubspec.yaml's assets: list (a config
-that exists on disk but isn't bundled fails silently at runtime - this is
+whether each flavor is registered directly or through the assets/config/
+directory in pubspec.yaml (a config that exists on disk but isn't bundled
+fails silently at runtime - this is
 what caught the missing carpapers.json/finesplus.json bug), whether a
 matching Android Gradle productFlavor exists, whether logoAssetPath actually
 points at a real file, whether every copyOverrides key actually exists in
@@ -91,7 +92,10 @@ def main():
             problems.append(f"{fname}: does not parse - {e}")
             continue
 
-        in_pubspec = f"assets/config/{fname}" in pubspec_text
+        in_pubspec = (
+            "- assets/config/" in pubspec_text
+            or f"assets/config/{fname}" in pubspec_text
+        )
         has_gradle_flavor = key in gradle_flavors
         logo_exists = os.path.exists(os.path.join(ROOT, cfg["logoAssetPath"]))
         fines = cfg["finesCheckEnabled"]

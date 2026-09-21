@@ -134,7 +134,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           height: 10,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: isActive ? AppColors.blue700 : Colors.grey.shade400,
+            color: isActive ? AppColors.blue700 : AppColors.grey400,
           ),
         );
       }),
@@ -195,7 +195,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             right: 12,
             child: Text(
               _versionLabel,
-              style: const TextStyle(color: Colors.black26, fontSize: 11),
+              style: const TextStyle(color: AppColors.black26, fontSize: 11),
             ),
           ),
         ],

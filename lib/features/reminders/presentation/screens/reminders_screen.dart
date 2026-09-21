@@ -57,19 +57,19 @@ class _RemindersView extends StatelessWidget {
             ? null
             : Padding(padding: const EdgeInsets.only(left: 20), child: AppBackButton(onPressed: onBack)),
         leadingWidth: onBack == null ? null : 68,
-        surfaceTintColor: Colors.transparent,
+        surfaceTintColor: AppColors.transparent,
         elevation: 0,
         toolbarHeight: 72,
         titleSpacing: onBack == null ? 20 : 12,
         actionsPadding: const EdgeInsets.only(right: 20),
         title: Text(S.of(context).reminder,
           maxLines: 2,
-          style: textTheme.headlineMedium?.copyWith(fontSize: 24, fontWeight: FontWeight.w800, color: const Color(0xFF191A1C))),
+          style: textTheme.headlineMedium?.copyWith(fontSize: 24, fontWeight: FontWeight.w800, color: AppColors.ink)),
         actions: [
           IconButton(
             tooltip: S.of(context).new_reminder,
             style: IconButton.styleFrom(
-              backgroundColor: const Color(0xFF207BD7), foregroundColor: Colors.white,
+              backgroundColor: Theme.of(context).colorScheme.primary, foregroundColor: AppColors.neutreBlanc,
               minimumSize: const Size(36, 36), padding: EdgeInsets.zero, shape: const CircleBorder()),
             icon: const Icon(Icons.add, size: 20),
             onPressed: () {
@@ -145,7 +145,7 @@ class _EmptyReminders extends StatelessWidget {
           Icon(Icons.notifications_none_rounded, size: 64, color: Theme.of(context).colorScheme.outline),
           const SizedBox(height: 16),
           Text(S.of(context).no_reminders,
-            style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: const Color(0xFF707070)),
+            style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: AppColors.textSecondary),
             textAlign: TextAlign.center),
         ],
       ),

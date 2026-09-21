@@ -19,8 +19,8 @@ class AppConfig {
   /// Whether the Ukraine-specific fines-check feature (the MVS portal, see
   /// MvsFinesWebView) is available for this brand. It talks to a Ukrainian
   /// government portal, so it has no equivalent outside UA.
-  /// Defaults to true so existing configs (finesplus, autolux, fastcar) keep
-  /// today's behavior unchanged.
+  /// Defaults to true so existing configs (finesplus, autodosje, carpapers)
+  /// keep today's behavior unchanged.
   @JsonKey(defaultValue: true)
   final bool finesCheckEnabled;
 
@@ -57,6 +57,20 @@ class AppConfig {
   final String alertBorderHex;
   @JsonKey(defaultValue: '#B23A3E')
   final String alertFgHex;
+  @JsonKey(defaultValue: '#198B49')
+  final String statusSuccessHex;
+  @JsonKey(defaultValue: '#DEF4E6')
+  final String statusSuccessBgHex;
+  @JsonKey(defaultValue: '#BA8700')
+  final String statusWarningHex;
+  @JsonKey(defaultValue: '#BE3540')
+  final String statusDangerHex;
+  @JsonKey(defaultValue: '#FBE0E2')
+  final String statusDangerBgHex;
+  @JsonKey(defaultValue: '#00A99A')
+  final String statusInfoHex;
+  @JsonKey(defaultValue: '#79B58A')
+  final String statusCompleteHex;
 
   /// Google Fonts family names (see https://fonts.google.com/) - resolved
   /// at runtime via GoogleFonts.getFont(), so any family listed there can
@@ -86,6 +100,13 @@ class AppConfig {
     this.alertBgHex = '#FBE1E1',
     this.alertBorderHex = '#F3B9B9',
     this.alertFgHex = '#B23A3E',
+    this.statusSuccessHex = '#198B49',
+    this.statusSuccessBgHex = '#DEF4E6',
+    this.statusWarningHex = '#BA8700',
+    this.statusDangerHex = '#BE3540',
+    this.statusDangerBgHex = '#FBE0E2',
+    this.statusInfoHex = '#00A99A',
+    this.statusCompleteHex = '#79B58A',
     this.displayFontFamily = 'Big Shoulders Display',
     this.bodyFontFamily = 'Manrope',
     this.monoFontFamily = 'JetBrains Mono',

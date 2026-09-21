@@ -19,7 +19,7 @@ extension FuelTypeExt on FuelType {
       case FuelType.LPG:
         return S.of(context).fuel_gas_lpg;
       case FuelType.DIESEl:
-        return S.of(context).fuel_gas_lpg;
+        return S.of(context).fuel_chip_diesel;
     }
   }
 }

@@ -38,10 +38,12 @@ class ExportHistoryPdf {
     required String carNumber,
     required List<CarHistory> history,
     required List<FineHistory> finesHistory,
+    required String brandName,
+    required String logoAssetPath,
   }) async {
     final pdf = pw.Document();
     final font = await _loadFont();
-    final logoBytes = await rootBundle.load('assets/logo/fines_logo.png');
+    final logoBytes = await rootBundle.load(logoAssetPath);
     final logo = pw.MemoryImage(logoBytes.buffer.asUint8List());
 
     final mileage = history.fold<int>(0, (max, h) => h.mileage > max ? h.mileage : max);
@@ -55,7 +57,7 @@ class ExportHistoryPdf {
             children: [
               pw.Image(logo, width: 36, height: 36),
               pw.SizedBox(width: 10),
-              pw.Text('Fines+', style: pw.TextStyle(font: font, fontSize: 20, fontWeight: pw.FontWeight.bold)),
+              pw.Text(brandName, style: pw.TextStyle(font: font, fontSize: 20, fontWeight: pw.FontWeight.bold)),
               pw.Spacer(),
               pw.Text(
                 DateFormat('dd.MM.yyyy').format(DateTime.now()),

@@ -47,7 +47,7 @@ class SubscriptionPlanCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(22),
           boxShadow: isSelected
               ? [BoxShadow(color: AppColors.blue700.withOpacity(0.35), blurRadius: 18, offset: const Offset(0, 6))]
-              : [BoxShadow(color: Colors.black12, blurRadius: 6, offset: const Offset(0, 3))],
+              : [BoxShadow(color: AppColors.black12, blurRadius: 6, offset: const Offset(0, 3))],
         ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(20),
@@ -68,7 +68,7 @@ class SubscriptionPlanCard extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      Icon(Icons.workspace_premium, color: isSelected ? AppColors.blue700 : Colors.grey[600], size: 24),
+                      Icon(Icons.workspace_premium, color: isSelected ? AppColors.blue700 : AppColors.grey600, size: 24),
 
                       const SizedBox(width: 8),
 
@@ -83,7 +83,7 @@ class SubscriptionPlanCard extends StatelessWidget {
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                           decoration: BoxDecoration(color: AppColors.blue700, borderRadius: BorderRadius.circular(12)),
-                          child: Text("Selected", style: textTheme.labelSmall?.copyWith(color: AppColors.neutreBlanc)),
+                          child: Text(S.of(context).selected, style: textTheme.labelSmall?.copyWith(color: AppColors.neutreBlanc)),
                         ),
                     ],
                   ),
@@ -96,7 +96,7 @@ class SubscriptionPlanCard extends StatelessWidget {
                     style: textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold, color: AppColors.blue700),
                   ),
 
-                  Text("$months ${'months'}", style: textTheme.bodySmall?.copyWith(color: Colors.grey[600])),
+                  Text('$months ${S.of(context).months}', style: textTheme.bodySmall?.copyWith(color: AppColors.grey600)),
 
                   const SizedBox(height: 16),
 
@@ -112,7 +112,7 @@ class SubscriptionPlanCard extends StatelessWidget {
                         children: [
                           Icon(
                             isActive ? Icons.check_circle : Icons.circle_outlined,
-                            color: isActive ? AppColors.blue700 : Colors.grey[400],
+                            color: isActive ? AppColors.blue700 : AppColors.grey400,
                             size: 20,
                           ),
                           const SizedBox(width: 8),
@@ -120,7 +120,7 @@ class SubscriptionPlanCard extends StatelessWidget {
                             child: Text(
                               feature,
                               style: TextStyle(
-                                color: isActive ? AppColors.black : Colors.grey[500],
+                                color: isActive ? AppColors.black : AppColors.grey500,
                                 fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
                               ),
                             ),

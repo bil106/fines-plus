@@ -193,7 +193,7 @@ class AnalyticsScreenViewState extends State<_AnalyticsScreenView> with SingleTi
               ? null
               : Padding(padding: const EdgeInsets.only(left: 20), child: AppBackButton(onPressed: widget.onBack)),
           leadingWidth: widget.onBack == null ? null : 68,
-          surfaceTintColor: Colors.transparent,
+          surfaceTintColor: AppColors.transparent,
           elevation: 0,
           toolbarHeight: 72,
           titleSpacing: widget.onBack == null ? 20 : 12,
@@ -204,15 +204,15 @@ class AnalyticsScreenViewState extends State<_AnalyticsScreenView> with SingleTi
             style: textTheme.headlineMedium?.copyWith(
               fontSize: 24,
               fontWeight: FontWeight.w800,
-              color: const Color(0xFF191A1C),
+              color: AppColors.ink,
             ),
           ),
           actions: [
             IconButton(
               tooltip: S.of(context).export,
               style: IconButton.styleFrom(
-                backgroundColor: const Color(0xFF207BD7),
-                foregroundColor: Colors.white,
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                foregroundColor: AppColors.neutreBlanc,
                 minimumSize: const Size(36, 36),
                 padding: EdgeInsets.zero,
                 shape: const CircleBorder(),
@@ -233,9 +233,9 @@ class AnalyticsScreenViewState extends State<_AnalyticsScreenView> with SingleTi
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   TabBar(
-                    indicatorColor: const Color(0xFF207BD7),
-                    labelColor: const Color(0xFF207BD7),
-                    unselectedLabelColor: const Color(0xFF707070),
+                    indicatorColor: Theme.of(context).colorScheme.primary,
+                    labelColor: Theme.of(context).colorScheme.primary,
+                    unselectedLabelColor: AppColors.textSecondary,
                     labelStyle: textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700),
                     dividerColor: context.brandTheme.divider,
 

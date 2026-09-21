@@ -69,7 +69,7 @@ class FinesAlertCard extends StatelessWidget {
         return Padding(
           padding: const EdgeInsets.only(top: 10),
           child: Material(
-            color: Colors.transparent,
+            color: AppColors.transparent,
             child: InkWell(
               borderRadius: AppBorders.radiusMedium,
               onTap: () => context.findAncestorStateOfType<HomeScreenWrapperState>()?.openPage(HomePage.fines),

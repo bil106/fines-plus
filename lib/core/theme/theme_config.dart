@@ -31,6 +31,13 @@ class ThemeConfig {
           alertBg: hexToColor(config.alertBgHex),
           alertBorder: hexToColor(config.alertBorderHex),
           alertFg: hexToColor(config.alertFgHex),
+          statusSuccess: hexToColor(config.statusSuccessHex),
+          statusSuccessBg: hexToColor(config.statusSuccessBgHex),
+          statusWarning: hexToColor(config.statusWarningHex),
+          statusDanger: hexToColor(config.statusDangerHex),
+          statusDangerBg: hexToColor(config.statusDangerBgHex),
+          statusInfo: hexToColor(config.statusInfoHex),
+          statusComplete: hexToColor(config.statusCompleteHex),
           displayTextStyle: GoogleFonts.getFont(config.displayFontFamily, fontWeight: FontWeight.w800),
           moneyTextStyle: GoogleFonts.getFont(
             config.monoFontFamily,

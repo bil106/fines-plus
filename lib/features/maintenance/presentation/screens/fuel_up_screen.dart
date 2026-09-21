@@ -350,7 +350,7 @@ class FuelUpScreenState extends State<FuelUpScreen> {
           leading: AppBackButton(onPressed: widget.onBack),
           actions: [
             IconButton(
-              icon: const Icon(Icons.check, color: Colors.blue, size: 50),
+              icon: Icon(Icons.check, color: Theme.of(context).colorScheme.primary, size: 50),
               onPressed: save,
             ),
           ],

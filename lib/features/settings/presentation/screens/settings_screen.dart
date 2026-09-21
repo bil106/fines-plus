@@ -193,14 +193,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           context,
                           title: S.of(context).language,
                           value: state.locale,
-                          items: const [
+                          items: [
                             DropdownMenuItem(
-                              value: Locale('uk'),
-                              child: Text('Українська'),
+                              value: const Locale('uk'),
+                              child: Text(S.of(context).ukr),
                             ),
                             DropdownMenuItem(
-                              value: Locale('en'),
-                              child: Text('English'),
+                              value: const Locale('en'),
+                              child: Text(S.of(context).english),
                             ),
                           ],
                           onChanged: (v) =>
@@ -310,7 +310,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   child: Text(
                     S.of(context).log_out,
                     style: TextStyle(
-                      color: Colors.red.shade700,
+                      color: AppColors.red700,
                       fontWeight: FontWeight.w600,
                     ),
                   ),

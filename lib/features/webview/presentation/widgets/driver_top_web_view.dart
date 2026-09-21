@@ -1,4 +1,5 @@
 import 'package:design_system/widget/app_back_button.dart';
+import 'package:core_localization/generated/l10n.dart';
 import 'package:core/config/app_urls.dart';
 import 'package:fines_plus/features/webview/data/datasource/webview_form_injector.dart';
 import 'package:flutter/material.dart';
@@ -25,7 +26,7 @@ class _DriverTopWebViewState extends State<DriverTopWebView> {
         leading: ModalRoute.of(context)?.canPop == true
             ? const AppBackButton()
             : null,
-        title: const Text('Publish'),
+        title: Text(S.of(context).publish),
       ),
       body: InAppWebView(
         initialUrlRequest: URLRequest(url: WebUri(AppUrls.exps)),
