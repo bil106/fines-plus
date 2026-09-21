@@ -1,8 +1,10 @@
+import 'package:design_system/widget/app_back_button.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:core_localization/generated/l10n.dart';
 import '../../../../../env/env.dart';
 
 import 'package:fines_plus/features/maintenance/domain/gas_station_service.dart';
+import 'package:fines_plus/features/maintenance/presentation/widgets/directions_fab.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -139,7 +141,12 @@ class _FuelMapScreenState extends State<FuelMapScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(S.of(context).gas_station_nearby)),
+      appBar: AppBar(
+        leading: ModalRoute.of(context)?.canPop == true
+            ? const AppBackButton()
+            : null,
+        title: Text(S.of(context).gas_station_nearby),
+      ),
       body: _currentPosition == null
           ? const Center(child: CircularProgressIndicator())
           : GoogleMap(
@@ -148,6 +155,7 @@ class _FuelMapScreenState extends State<FuelMapScreen> {
               markers: _markers,
               initialCameraPosition: CameraPosition(target: _currentPosition!, zoom: 14),
             ),
+      floatingActionButton: DirectionsFab(focusPosition: widget.focusPosition),
     );
   }
 }

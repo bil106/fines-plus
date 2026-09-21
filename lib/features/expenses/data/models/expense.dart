@@ -18,7 +18,13 @@ class Expense {
   final String ownerId;
   final String? carNumber;
   final double? fuelVolume;
-  
+
+  // Insurance-specific, mirroring how fuelVolume was added for fuel: the
+  // policy's insurer/number/expiry don't fit in the single generic
+  // `comment` string, and are only ever set for ExpenseCategory.insurance.
+  final String? insuranceCompany;
+  final String? insurancePolicyNumber;
+  final DateTime? insuranceValidTo;
 
   Expense({
     this.id,
@@ -33,7 +39,9 @@ class Expense {
     this.updatedAt,
     this.carNumber,
     this.fuelVolume,
-    
+    this.insuranceCompany,
+    this.insurancePolicyNumber,
+    this.insuranceValidTo,
   });
 
   /// Firestore-specific serialization
@@ -48,6 +56,9 @@ Map<String, dynamic> toFirestore({bool isNew = false}) {
       'ownerId': ownerId,
       'carNumber': carNumber,
       'fuelVolume': fuelVolume,
+      'insuranceCompany': insuranceCompany,
+      'insurancePolicyNumber': insurancePolicyNumber,
+      'insuranceValidTo': insuranceValidTo == null ? null : Timestamp.fromDate(insuranceValidTo!),
       if (isNew) 'createdAt': FieldValue.serverTimestamp(),
       'updatedAt': FieldValue.serverTimestamp(),
     };
@@ -97,6 +108,9 @@ Map<String, dynamic> toFirestore({bool isNew = false}) {
       fuelVolume: (json['fuelVolume'] is num)
           ? (json['fuelVolume'] as num).toDouble()
           : double.tryParse(json['fuelVolume']?.toString() ?? '0.0'),
+      insuranceCompany: json['insuranceCompany'] as String?,
+      insurancePolicyNumber: json['insurancePolicyNumber'] as String?,
+      insuranceValidTo: json['insuranceValidTo'] is Timestamp ? (json['insuranceValidTo'] as Timestamp).toDate() : null,
     );
   }
 

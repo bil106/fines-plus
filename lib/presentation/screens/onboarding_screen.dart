@@ -1,3 +1,4 @@
+import 'package:design_system/widget/app_back_button.dart';
 import 'dart:io';
 
 import 'package:auto_route/auto_route.dart';
@@ -132,7 +133,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(20),
-        child: AppBar(backgroundColor: AppColors.blue700, elevation: 0),
+        child: AppBar(
+          leading: ModalRoute.of(context)?.canPop == true
+              ? const AppBackButton()
+              : null,
+          backgroundColor: AppColors.blue700,
+          elevation: 0,
+        ),
       ),
       body: Stack(
         children: [

@@ -32,5 +32,6 @@ const _$ExpenseCategoryEnumMap = {
   ExpenseCategory.service: 'service',
   ExpenseCategory.tuning: 'tuning',
   ExpenseCategory.carWash: 'carWash',
+  ExpenseCategory.insurance: 'insurance',
   ExpenseCategory.other: 'other',
 };

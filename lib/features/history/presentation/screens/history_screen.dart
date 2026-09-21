@@ -6,6 +6,7 @@ import 'package:core_data/core_data.dart';
 import 'package:core_localization/generated/l10n.dart';
 
 import 'package:design_system/colors/app_colors.dart';
+import 'package:design_system/widget/app_back_button.dart';
 import 'package:design_system/theme/app_theme.dart';
 import 'package:fines_plus/features/history/domain/history_repository.dart';
 import 'package:fines_plus/features/history/presentation/cubit/history_cubit.dart';
@@ -47,8 +48,7 @@ class _HistoryView extends StatelessWidget {
       backgroundColor: AppColors.energyBlue50,
       appBar: AppBar(
         backgroundColor: AppColors.energyBlue50,
-        leading: BackButton(
-          color: AppColors.black,
+        leading: AppBackButton(
           onPressed: () {
             final homeState = context.findAncestorStateOfType<HomeScreenWrapperState>();
             homeState?.openPage(HomePage.carInfo);

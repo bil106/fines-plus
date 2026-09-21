@@ -246,7 +246,7 @@ class AppInitializer {
     );
     fuelStationCubit = FuelStationCubit();
     statisticsCubit = StatisticsCubit(maintenanceCubit);
-    settingsCubit = SettingsCubit(currencyService: currencyService);
+    settingsCubit = SettingsCubit(currencyService: currencyService, config: config);
     FirebaseCrashlytics.instance.log('AppInit: creating SubscriptionRepository');
     subscriptionRepository = SubscriptionRepository(
       InAppPurchase.instance,

@@ -416,62 +416,18 @@ class ExportRouteArgs {
 
 /// generated route for
 /// [FinesScreen]
-class FinesRoute extends PageRouteInfo<FinesRouteArgs> {
-  FinesRoute({
-    Key? key,
-    VoidCallback? onBack,
-    void Function(String, String, String)? onFineCheck,
-    List<PageRouteInfo>? children,
-  }) : super(
-         FinesRoute.name,
-         args: FinesRouteArgs(
-           key: key,
-           onBack: onBack,
-           onFineCheck: onFineCheck,
-         ),
-         initialChildren: children,
-       );
+class FinesRoute extends PageRouteInfo<void> {
+  const FinesRoute({List<PageRouteInfo>? children})
+    : super(FinesRoute.name, initialChildren: children);
 
   static const String name = 'FinesRoute';
 
   static PageInfo page = PageInfo(
     name,
     builder: (data) {
-      final args = data.argsAs<FinesRouteArgs>(
-        orElse: () => const FinesRouteArgs(),
-      );
-      return FinesScreen(
-        key: args.key,
-        onBack: args.onBack,
-        onFineCheck: args.onFineCheck,
-      );
+      return const FinesScreen();
     },
   );
-}
-
-class FinesRouteArgs {
-  const FinesRouteArgs({this.key, this.onBack, this.onFineCheck});
-
-  final Key? key;
-
-  final VoidCallback? onBack;
-
-  final void Function(String, String, String)? onFineCheck;
-
-  @override
-  String toString() {
-    return 'FinesRouteArgs{key: $key, onBack: $onBack, onFineCheck: $onFineCheck}';
-  }
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-    if (other is! FinesRouteArgs) return false;
-    return key == other.key && onBack == other.onBack;
-  }
-
-  @override
-  int get hashCode => key.hashCode ^ onBack.hashCode;
 }
 
 /// generated route for
@@ -540,12 +496,16 @@ class FuelMapRouteArgs {
 /// generated route for
 /// [FuelUpScreen]
 class FuelUpRoute extends PageRouteInfo<FuelUpRouteArgs> {
-  FuelUpRoute({Key? key, VoidCallback? onBack, List<PageRouteInfo>? children})
-    : super(
-        FuelUpRoute.name,
-        args: FuelUpRouteArgs(key: key, onBack: onBack),
-        initialChildren: children,
-      );
+  FuelUpRoute({
+    Key? key,
+    VoidCallback? onBack,
+    bool embedded = false,
+    List<PageRouteInfo>? children,
+  }) : super(
+         FuelUpRoute.name,
+         args: FuelUpRouteArgs(key: key, onBack: onBack, embedded: embedded),
+         initialChildren: children,
+       );
 
   static const String name = 'FuelUpRoute';
 
@@ -555,32 +515,40 @@ class FuelUpRoute extends PageRouteInfo<FuelUpRouteArgs> {
       final args = data.argsAs<FuelUpRouteArgs>(
         orElse: () => const FuelUpRouteArgs(),
       );
-      return FuelUpScreen(key: args.key, onBack: args.onBack);
+      return FuelUpScreen(
+        key: args.key,
+        onBack: args.onBack,
+        embedded: args.embedded,
+      );
     },
   );
 }
 
 class FuelUpRouteArgs {
-  const FuelUpRouteArgs({this.key, this.onBack});
+  const FuelUpRouteArgs({this.key, this.onBack, this.embedded = false});
 
   final Key? key;
 
   final VoidCallback? onBack;
 
+  final bool embedded;
+
   @override
   String toString() {
-    return 'FuelUpRouteArgs{key: $key, onBack: $onBack}';
+    return 'FuelUpRouteArgs{key: $key, onBack: $onBack, embedded: $embedded}';
   }
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
     if (other is! FuelUpRouteArgs) return false;
-    return key == other.key && onBack == other.onBack;
+    return key == other.key &&
+        onBack == other.onBack &&
+        embedded == other.embedded;
   }
 
   @override
-  int get hashCode => key.hashCode ^ onBack.hashCode;
+  int get hashCode => key.hashCode ^ onBack.hashCode ^ embedded.hashCode;
 }
 
 /// generated route for
@@ -876,11 +844,10 @@ class RemindersRoute extends PageRouteInfo<RemindersRouteArgs> {
   RemindersRoute({
     Key? key,
     required String ownerId,
-    VoidCallback? onBack,
     List<PageRouteInfo>? children,
   }) : super(
          RemindersRoute.name,
-         args: RemindersRouteArgs(key: key, ownerId: ownerId, onBack: onBack),
+         args: RemindersRouteArgs(key: key, ownerId: ownerId),
          initialChildren: children,
        );
 
@@ -890,38 +857,32 @@ class RemindersRoute extends PageRouteInfo<RemindersRouteArgs> {
     name,
     builder: (data) {
       final args = data.argsAs<RemindersRouteArgs>();
-      return RemindersScreen(
-        key: args.key,
-        ownerId: args.ownerId,
-        onBack: args.onBack,
-      );
+      return RemindersScreen(key: args.key, ownerId: args.ownerId);
     },
   );
 }
 
 class RemindersRouteArgs {
-  const RemindersRouteArgs({this.key, required this.ownerId, this.onBack});
+  const RemindersRouteArgs({this.key, required this.ownerId});
 
   final Key? key;
 
   final String ownerId;
 
-  final VoidCallback? onBack;
-
   @override
   String toString() {
-    return 'RemindersRouteArgs{key: $key, ownerId: $ownerId, onBack: $onBack}';
+    return 'RemindersRouteArgs{key: $key, ownerId: $ownerId}';
   }
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
     if (other is! RemindersRouteArgs) return false;
-    return key == other.key && ownerId == other.ownerId && onBack == other.onBack;
+    return key == other.key && ownerId == other.ownerId;
   }
 
   @override
-  int get hashCode => key.hashCode ^ ownerId.hashCode ^ onBack.hashCode;
+  int get hashCode => key.hashCode ^ ownerId.hashCode;
 }
 
 /// generated route for
@@ -1026,12 +987,22 @@ class ScheduleRouteArgs {
 /// generated route for
 /// [ServiceScreen]
 class ServiceRoute extends PageRouteInfo<ServiceRouteArgs> {
-  ServiceRoute({Key? key, VoidCallback? onBack, List<PageRouteInfo>? children})
-    : super(
-        ServiceRoute.name,
-        args: ServiceRouteArgs(key: key, onBack: onBack),
-        initialChildren: children,
-      );
+  ServiceRoute({
+    Key? key,
+    VoidCallback? onBack,
+    bool embedded = false,
+    ValueChanged<double>? onTotalChanged,
+    List<PageRouteInfo>? children,
+  }) : super(
+         ServiceRoute.name,
+         args: ServiceRouteArgs(
+           key: key,
+           onBack: onBack,
+           embedded: embedded,
+           onTotalChanged: onTotalChanged,
+         ),
+         initialChildren: children,
+       );
 
   static const String name = 'ServiceRoute';
 
@@ -1041,115 +1012,99 @@ class ServiceRoute extends PageRouteInfo<ServiceRouteArgs> {
       final args = data.argsAs<ServiceRouteArgs>(
         orElse: () => const ServiceRouteArgs(),
       );
-      return ServiceScreen(key: args.key, onBack: args.onBack);
-    },
-  );
-}
-
-class ServiceRouteArgs {
-  const ServiceRouteArgs({this.key, this.onBack});
-
-  final Key? key;
-
-  final VoidCallback? onBack;
-
-  @override
-  String toString() {
-    return 'ServiceRouteArgs{key: $key, onBack: $onBack}';
-  }
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-    if (other is! ServiceRouteArgs) return false;
-    return key == other.key && onBack == other.onBack;
-  }
-
-  @override
-  int get hashCode => key.hashCode ^ onBack.hashCode;
-}
-
-/// generated route for
-/// [SettingsScreen]
-class SettingsRoute extends PageRouteInfo<SettingsRouteArgs> {
-  SettingsRoute({
-    Key? key,
-    VoidCallback? onBack,
-    required RemoteConfigService remoteConfigService,
-    required ScheduleCubit scheduleCubit,
-    required PurchaseCubit purchaseCubit,
-    List<PageRouteInfo>? children,
-  }) : super(
-         SettingsRoute.name,
-         args: SettingsRouteArgs(
-           key: key,
-           onBack: onBack,
-           remoteConfigService: remoteConfigService,
-           scheduleCubit: scheduleCubit,
-           purchaseCubit: purchaseCubit,
-         ),
-         initialChildren: children,
-       );
-
-  static const String name = 'SettingsRoute';
-
-  static PageInfo page = PageInfo(
-    name,
-    builder: (data) {
-      final args = data.argsAs<SettingsRouteArgs>();
-      return SettingsScreen(
+      return ServiceScreen(
         key: args.key,
         onBack: args.onBack,
-        remoteConfigService: args.remoteConfigService,
-        scheduleCubit: args.scheduleCubit,
-        purchaseCubit: args.purchaseCubit,
+        embedded: args.embedded,
+        onTotalChanged: args.onTotalChanged,
       );
     },
   );
 }
 
-class SettingsRouteArgs {
-  const SettingsRouteArgs({
+class ServiceRouteArgs {
+  const ServiceRouteArgs({
     this.key,
     this.onBack,
-    required this.remoteConfigService,
-    required this.scheduleCubit,
-    required this.purchaseCubit,
+    this.embedded = false,
+    this.onTotalChanged,
   });
 
   final Key? key;
 
   final VoidCallback? onBack;
 
-  final RemoteConfigService remoteConfigService;
+  final bool embedded;
 
-  final ScheduleCubit scheduleCubit;
-
-  final PurchaseCubit purchaseCubit;
+  final ValueChanged<double>? onTotalChanged;
 
   @override
   String toString() {
-    return 'SettingsRouteArgs{key: $key, onBack: $onBack, remoteConfigService: $remoteConfigService, scheduleCubit: $scheduleCubit, purchaseCubit: $purchaseCubit}';
+    return 'ServiceRouteArgs{key: $key, onBack: $onBack, embedded: $embedded, onTotalChanged: $onTotalChanged}';
   }
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-    if (other is! SettingsRouteArgs) return false;
+    if (other is! ServiceRouteArgs) return false;
     return key == other.key &&
         onBack == other.onBack &&
-        remoteConfigService == other.remoteConfigService &&
-        scheduleCubit == other.scheduleCubit &&
-        purchaseCubit == other.purchaseCubit;
+        embedded == other.embedded &&
+        onTotalChanged == other.onTotalChanged;
   }
 
   @override
   int get hashCode =>
       key.hashCode ^
       onBack.hashCode ^
-      remoteConfigService.hashCode ^
-      scheduleCubit.hashCode ^
-      purchaseCubit.hashCode;
+      embedded.hashCode ^
+      onTotalChanged.hashCode;
+}
+
+/// generated route for
+/// [SettingsScreen]
+class SettingsRoute extends PageRouteInfo<SettingsRouteArgs> {
+  SettingsRoute({Key? key, VoidCallback? onBack, List<PageRouteInfo>? children})
+    : super(
+        SettingsRoute.name,
+        args: SettingsRouteArgs(key: key, onBack: onBack),
+        initialChildren: children,
+      );
+
+  static const String name = 'SettingsRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      final args = data.argsAs<SettingsRouteArgs>(
+        orElse: () => const SettingsRouteArgs(),
+      );
+      return SettingsScreen(key: args.key, onBack: args.onBack);
+    },
+  );
+}
+
+class SettingsRouteArgs {
+  const SettingsRouteArgs({this.key, this.onBack});
+
+  final Key? key;
+
+  final VoidCallback? onBack;
+
+  @override
+  String toString() {
+    return 'SettingsRouteArgs{key: $key, onBack: $onBack}';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! SettingsRouteArgs) return false;
+    return key == other.key && onBack == other.onBack;
+  }
+
+  @override
+  int get hashCode => key.hashCode ^ onBack.hashCode;
 }
 
 /// generated route for

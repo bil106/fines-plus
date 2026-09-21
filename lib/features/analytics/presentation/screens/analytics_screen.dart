@@ -4,6 +4,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/theme/app_theme.dart';
+import 'package:design_system/widget/app_back_button.dart';
 import 'package:fines_plus/core/helpers/push_helper.dart';
 import 'package:fines_plus/features/analytics/presentation/widgets/history_tab.dart';
 import 'package:fines_plus/features/analytics/data/models/event_model.dart';
@@ -187,7 +188,7 @@ class AnalyticsScreenViewState extends State<_AnalyticsScreenView> with SingleTi
         backgroundColor: AppColors.energyBlue50,
         appBar: AppBar(
           backgroundColor: AppColors.energyBlue50,
-          leading: BackButton(color: AppColors.blue700, onPressed: widget.onBack ?? () {}),
+          leading: AppBackButton(onPressed: widget.onBack),
         ),
         body: BlocBuilder<AnalyticsCubit, AnalyticsState>(
           builder: (context, state) {

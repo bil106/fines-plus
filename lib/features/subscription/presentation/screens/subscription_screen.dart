@@ -1,3 +1,4 @@
+import 'package:design_system/widget/app_back_button.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/constants/app_spacers.dart';
@@ -200,6 +201,9 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
       child: Scaffold(
         backgroundColor: AppColors.energyBlue50,
         appBar: AppBar(
+          leading: ModalRoute.of(context)?.canPop == true
+              ? const AppBackButton()
+              : null,
           backgroundColor: AppColors.energyBlue50,
           elevation: 0,
 

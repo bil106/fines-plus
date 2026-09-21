@@ -1,7 +1,9 @@
+import 'package:design_system/widget/app_back_button.dart';
 import 'dart:convert';
 
 import 'package:core_localization/generated/l10n.dart';
 import '../../../../../env/env.dart';
+import 'package:fines_plus/features/maintenance/presentation/widgets/directions_fab.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -125,7 +127,12 @@ class _ServiceMapScreenState extends State<ServiceMapScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title:  Text(S.of(context).service_station_nearby)),
+      appBar: AppBar(
+        leading: ModalRoute.of(context)?.canPop == true
+            ? const AppBackButton()
+            : null,
+        title: Text(S.of(context).service_station_nearby),
+      ),
       body: _currentPosition == null
           ? const Center(child: CircularProgressIndicator())
           : GoogleMap(
@@ -137,6 +144,7 @@ class _ServiceMapScreenState extends State<ServiceMapScreen> {
                 zoom: 14,
               ),
             ),
+      floatingActionButton: DirectionsFab(focusPosition: widget.focusPosition),
     );
   }
 }
@@ -149,23 +157,16 @@ Future<List<Map<String, dynamic>>> fetchNearbyServices(LatLng location, String a
       '&keyword=автосервис'
       '&key=$apiKey';
 
-  if (kDebugMode) {
-    print("🌍 Query Google Places (services): $url");
-  }
-
   final response = await http.get(Uri.parse(url));
-
-  if (kDebugMode) {
-    print("API Response (${response.statusCode}): ${response.body}");
-  }
 
   if (response.statusCode == 200) {
     final data = json.decode(response.body);
+    if (data['status'] == 'ZERO_RESULTS') return [];
     if (data['status'] != 'OK') {
       if (kDebugMode) {
         print("Error from Google API: ${data['status']} — ${data['error_message']}");
       }
-      return [];
+      throw StateError('Could not load nearby services');
     }
 
     final results = data['results'] as List;
@@ -184,7 +185,7 @@ Future<List<Map<String, dynamic>>> fetchNearbyServices(LatLng location, String a
 
     services.sort((a, b) => b['rating'].compareTo(a['rating']));
 
-  return services.take(10).toList();
+  return services;
   } else {
     throw Exception("Error loading services");
   }

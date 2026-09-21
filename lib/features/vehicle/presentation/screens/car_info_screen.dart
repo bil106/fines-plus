@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
+import 'package:design_system/widget/app_back_button.dart';
 import 'package:design_system/constants/app_borders.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
@@ -251,7 +252,7 @@ class _CarInfoViewState extends State<_CarInfoView> {
 
       appBar: AppBar(
         backgroundColor: AppColors.energyBlue50,
-        leading: BackButton(color: AppColors.blue700, onPressed: widget.onBack ?? () => Navigator.pop(context)),
+        leading: AppBackButton(onPressed: widget.onBack),
       ),
 
       body: SafeArea(

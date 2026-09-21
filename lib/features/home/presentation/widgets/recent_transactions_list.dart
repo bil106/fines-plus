@@ -20,6 +20,7 @@ class _TxItem {
   final DateTime date;
   final double amount;
   final String currency;
+  final int? mileage;
 
   const _TxItem({
     required this.category,
@@ -27,6 +28,7 @@ class _TxItem {
     required this.date,
     required this.amount,
     required this.currency,
+    this.mileage,
   });
 }
 
@@ -40,6 +42,8 @@ Color _categoryColor(ExpenseCategory c) {
       return AppColors.catTuning;
     case ExpenseCategory.carWash:
       return AppColors.catCarWash;
+    case ExpenseCategory.insurance:
+      return AppColors.catInsurance;
     case ExpenseCategory.other:
       return AppColors.catOther;
   }
@@ -55,6 +59,8 @@ String _categoryLabel(ExpenseCategory c, BuildContext context) {
       return S.of(context).tuning;
     case ExpenseCategory.carWash:
       return S.of(context).car_wash;
+    case ExpenseCategory.insurance:
+      return S.of(context).insurance;
     case ExpenseCategory.other:
       return S.of(context).other;
   }
@@ -63,7 +69,14 @@ String _categoryLabel(ExpenseCategory c, BuildContext context) {
 List<_TxItem> _mergeRecords(MaintenanceState state) {
   final items = <_TxItem>[
     for (final r in state.fuelRecords)
-      _TxItem(category: ExpenseCategory.fuel, label: r.fuelType, date: r.date, amount: r.cost, currency: r.currency),
+      _TxItem(
+        category: ExpenseCategory.fuel,
+        label: r.fuelType,
+        date: r.date,
+        amount: r.cost,
+        currency: r.currency,
+        mileage: r.mileage,
+      ),
     for (final r in state.serviceRecords)
       _TxItem(
         category: ExpenseCategory.service,
@@ -71,6 +84,7 @@ List<_TxItem> _mergeRecords(MaintenanceState state) {
         date: _parseDdMmYyyy(r.date),
         amount: r.cost,
         currency: r.currency,
+        mileage: r.mileage,
       ),
     for (final r in state.carWashRecords)
       _TxItem(
@@ -79,6 +93,7 @@ List<_TxItem> _mergeRecords(MaintenanceState state) {
         date: r.date,
         amount: r.amount,
         currency: r.currency ?? 'UAH',
+        mileage: r.mileage,
       ),
     for (final r in state.tuningRecords)
       _TxItem(
@@ -87,9 +102,43 @@ List<_TxItem> _mergeRecords(MaintenanceState state) {
         date: r.date,
         amount: r.cost,
         currency: r.currency,
+        mileage: r.mileage,
+      ),
+    for (final r in state.insuranceRecords)
+      _TxItem(
+        category: ExpenseCategory.insurance,
+        label: r.company,
+        date: r.validFrom,
+        amount: r.cost,
+        currency: r.currency,
+      ),
+    for (final r in state.otherRecords)
+      _TxItem(
+        category: ExpenseCategory.other,
+        label: (r.comment?.isNotEmpty ?? false) ? r.comment! : 'Other',
+        date: r.date,
+        amount: r.cost,
+        currency: r.currency,
+        mileage: r.mileage,
       ),
   ];
-  items.sort((a, b) => b.date.compareTo(a.date));
+  items.sort((a, b) {
+    // These are all a user-chosen "date of service", not a save timestamp -
+    // Service's date is always flattened to midnight (it round-trips
+    // through a "dd.MM.yyyy" string), while Fuel's keeps a real
+    // time-of-day whenever the date picker was never touched (it just
+    // defaults to DateTime.now()). Comparing the raw DateTimes then made a
+    // same-day fuel entry always outrank a same-day service entry added
+    // later, since "14:32" > "00:00" even on the same calendar day.
+    // Normalize to calendar-day first so same-day entries actually tie.
+    final aDay = DateTime(a.date.year, a.date.month, a.date.day);
+    final bDay = DateTime(b.date.year, b.date.month, b.date.day);
+    final byDate = bDay.compareTo(aDay);
+    if (byDate != 0) return byDate;
+    // Odometer reading only goes up, so on a same-day tie it's the best
+    // signal for which entry actually happened later.
+    return (b.mileage ?? -1).compareTo(a.mileage ?? -1);
+  });
   return items;
 }
 
@@ -102,12 +151,12 @@ DateTime _parseDdMmYyyy(String value) {
 }
 
 /// The dashboard's "recent transactions" list from the Fines+OS mockup -
-/// merges the same four record streams StatisticsCubit already reads off
-/// MaintenanceCubit (no new data source), newest first.
+/// merges the record streams MaintenanceCubit already tracks, newest first.
 ///
-/// Insurance isn't in this list: it's a reminder/task (QuickActionsCubit),
-/// not an expense record like the other three - see QuickAddRow's header
-/// comment for the same distinction.
+/// Insurance here means a purchased policy (InsuranceRecord, company/policy/
+/// cost) - distinct from the older recurring renewal *reminder* still created
+/// via InsuranceDetailSheet/QuickActionsCubit under the "Ще" sheet's other
+/// tiles, which isn't an expense and stays out of this list.
 class RecentTransactionsList extends StatelessWidget {
   final int maxItems;
   const RecentTransactionsList({super.key, this.maxItems = 5});
@@ -117,7 +166,7 @@ class RecentTransactionsList extends StatelessWidget {
     return BlocBuilder<MaintenanceCubit, MaintenanceState>(
       builder: (context, state) {
         final items = _mergeRecords(state).take(maxItems).toList();
-        if (items.isEmpty) return const SizedBox.shrink();
+        if (items.isEmpty) return const _EmptyTransactions();
 
         final settingsCubit = context.watch<SettingsCubit>();
         final currency = settingsCubit.state.currency;
@@ -172,6 +221,35 @@ class RecentTransactionsList extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+}
+
+class _EmptyTransactions extends StatelessWidget {
+  const _EmptyTransactions();
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 32),
+      child: Column(
+        children: [
+          const Icon(Icons.directions_car_outlined, size: 36, color: AppColors.grey700),
+          const SizedBox(height: 12),
+          Text(
+            S.of(context).no_transactions_title,
+            textAlign: TextAlign.center,
+            style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            S.of(context).no_transactions_subtitle,
+            textAlign: TextAlign.center,
+            style: textTheme.bodyMedium?.copyWith(color: AppColors.grey700),
+          ),
+        ],
+      ),
     );
   }
 }

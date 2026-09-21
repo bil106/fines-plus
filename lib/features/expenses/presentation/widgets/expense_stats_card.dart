@@ -133,6 +133,12 @@ class ExpenseStatsCard extends StatelessWidget {
           end: Alignment.bottomRight,
           colors: [AppColors.energyBlue25, AppColors.greenAccent],
         );
+      case ExpenseCategory.insurance:
+        return const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [AppColors.catInsurance, AppColors.darkRed],
+        );
       case ExpenseCategory.other:
         return const LinearGradient(
           begin: Alignment.topLeft,
@@ -152,6 +158,8 @@ class ExpenseStatsCard extends StatelessWidget {
         return S.current.tuning;
       case ExpenseCategory.carWash:
         return S.current.car_wash;
+      case ExpenseCategory.insurance:
+        return S.current.insurance;
       case ExpenseCategory.other:
         return S.current.other;
     }

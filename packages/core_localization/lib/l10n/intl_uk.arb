@@ -62,6 +62,10 @@
    "technical_data": "Техпаспорт:",
    "fines_length": "Штрафів:",
    "verif_date": "Дата перевірки:",
+   "due_amount": "До сплати",
+   "today_at": "сьогодні о",
+   "unpaid_fines_section": "Неоплачені",
+   "paid_fines_section": "Оплачені",
    "tech_service": "Тех. Обслуговування",
    "service": "Сервіс",
    "calendar": "Календар",
@@ -96,6 +100,9 @@
    "other": "Інше",
    "sum": "Сума:",
    "price_liter": "Ціна за 1 літр:",
+   "price_per_liter_short": "Ціна/л",
+   "volume_liters_short": "Обсяг, л",
+   "sum_short": "Сума",
    "days": "днів",
    "mileage": "Пробіг",
    "enter_mileage": "Введіть пробіг",
@@ -116,6 +123,10 @@
    "fuel_ai95": "АІ-95",
    "fuel_ai92": "АІ-92",
    "fuel_gas_lpg": "Газ LPG",
+   "fuel_chip_a95": "A95",
+   "fuel_chip_a92": "A92",
+   "fuel_chip_diesel": "Дизель",
+   "fuel_chip_gas": "Газ",
    "date_previous_maintenance": "Дата попереднього ТО",
    "mileage_time_service": "Пробіг на момент обслуговування",
    "by_date": "За датою",
@@ -323,12 +334,26 @@
    "ok": "ОК",
    "car_wash": "Автомийка",
    "car_wash_nearby": "Автомийка поруч",
+   "car_wash_no_nearby": "Поруч не знайдено автомийок",
+   "car_wash_location_unavailable": "Дозвольте геолокацію, щоб знайти автомийки поруч",
+   "car_wash_load_failed": "Не вдалося завантажити автомийки",
+   "car_wash_best_rating_distance": "Найкращий рейтинг поруч · {distance} км",
+   "@car_wash_best_rating_distance": {
+      "placeholders": {
+         "distance": {
+            "type": "String"
+         }
+      }
+   },
    "enter_amount": "Введіть суму",
    "failed_extract_tokens": "Не вдалося отримати токени",
    "tokens_extracted": "Токени отримано",
    "no_tokens_yet": "Токенів поки немає",
    "tokens_already_present": "Токени вже є",
    "no_nearby_station": "Немає даних про найближчу заправку",
+   "best_price_nearby_distance": "Найвигідніша ціна поруч · {distance} км",
+   "distance_km_short": "{distance} км",
+   "build_route": "Прокласти маршрут",
    "loaded": "Завантажено",
    "open_site": "Увійти у e-Drive",
    "extracting": "Видобування...",
@@ -390,6 +415,12 @@
    "tires_icon": "Шини",
    "car_icon": "Авто",
    "insurance": "Страхування",
+   "insurance_company": "Страхова компанія",
+   "policy_number": "Номер полісу",
+   "valid_from": "Діє з",
+   "valid_to": "Діє до",
+   "cost": "Вартість",
+   "add_expense": "Додати витрату",
    "last_event": "Остання подія",
    "open_events": "Відкриті події",
    "no_recent_events": "Немає нещодавніх подій",
@@ -469,6 +500,8 @@
    "every": "Кожні",
    "action": "Дія",
    "no_expenses": "Поки що немає даних щодо витрат",
+   "no_transactions_title": "Ще немає жодної витрати",
+   "no_transactions_subtitle": "Додайте перше пальне, ТО чи інше вище — і статистика з'явиться тут",
    "get_plan": "Отримати Мій План",
    "money_back": "30-денна гарантія повернення грошей!",
    "pay_safe": "Безпечна та надійна оплата",
@@ -517,10 +550,50 @@
    "maintenance_due_body": "Час для: {task}",
    "fuel_prompt_title": "Заправка",
    "fuel_prompt_body": "Додати дані про заправку?",
+   "fuel_type": "Тип пального",
+   "reminder_notifications": "Сповіщення про нагадування",
+   "vehicles_section": "Автомобілі",
+   "general_section": "Загальні",
+   "about_app_section": "Про додаток",
+   "add_car": "Додати авто",
+   "app_version": "Версія",
+   "garage_status_ok": "ОК",
+   "garage_status_ok_until": "ОК до {date}",
+   "garage_status_insurance_expired": "Страхування просрочено",
    "@maintenance_due_body": {
      "placeholders": {
        "task": { "type": "String" }
      }
+   },
+   "@garage_status_ok_until": {
+     "placeholders": {
+       "date": { "type": "String" }
+     }
+   },
+   "@best_price_nearby_distance": {
+     "placeholders": {
+       "distance": { "type": "String" }
+     }
+   },
+   "@distance_km_short": {
+     "placeholders": {
+       "distance": { "type": "String" }
+     }
+   },
+   "service_completed_work": "Виконані роботи",
+   "service_add_work": "Додати роботу",
+   "service_no_rating": "Без рейтингу",
+   "service_best_rating_distance": "Найкращий рейтинг поруч · {distance} км",
+   "service_no_nearby": "Поруч не знайдено СТО",
+   "service_location_unavailable": "Дозвольте геолокацію, щоб знайти СТО поруч",
+   "service_load_failed": "Не вдалося завантажити СТО",
+   "service_retry": "Спробувати ще раз",
+   "service_invalid_price": "Вкажіть коректну вартість кожної роботи",
+   "@service_best_rating_distance": {
+      "placeholders": {
+         "distance": {
+            "type": "String"
+         }
+      }
    }
-
 }

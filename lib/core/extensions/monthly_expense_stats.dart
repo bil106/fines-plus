@@ -24,6 +24,7 @@ factory MonthlyExpenseStats.initial() {
         ExpenseCategory.service: 0.0,
         ExpenseCategory.tuning: 0.0,
         ExpenseCategory.carWash: 0.0,
+        ExpenseCategory.insurance: 0.0,
         ExpenseCategory.other: 0.0,
       },);}
   factory MonthlyExpenseStats.empty() {
@@ -35,6 +36,7 @@ factory MonthlyExpenseStats.initial() {
         ExpenseCategory.service: 0.0,
         ExpenseCategory.tuning: 0.0,
         ExpenseCategory.carWash: 0.0,
+        ExpenseCategory.insurance: 0.0,
         ExpenseCategory.other: 0.0,
       },
     );
@@ -51,6 +53,7 @@ MonthlyExpenseStats calculateMonthlyStats(List<ExpenseRecord> expenses, int year
     ExpenseCategory.service: 0,
     ExpenseCategory.tuning: 0,
     ExpenseCategory.carWash: 0,
+    ExpenseCategory.insurance: 0,
     ExpenseCategory.other: 0,
   };
 

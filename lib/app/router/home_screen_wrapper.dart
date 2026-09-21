@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:core_data/core_data.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
+import 'package:design_system/theme/app_brand_theme.dart';
 import 'package:fines_plus/core/helpers/push_helper.dart';
 import 'package:fines_plus/features/analytics/data/models/event_model.dart';
 import 'package:fines_plus/features/analytics/data/repository/analytics_repository.dart';
@@ -27,8 +28,6 @@ import 'package:fines_plus/features/reminders/data/repository/reminder_repositor
 import 'package:fines_plus/features/reminders/presentation/cubit/reminder_cubit.dart';
 import 'package:fines_plus/features/reminders/presentation/screens/reminders_screen.dart';
 import 'package:fines_plus/features/schedule/data/repository/schedule_repository.dart';
-import 'package:fines_plus/features/schedule/presentation/cubit/schedule_cubit.dart';
-import 'package:fines_plus/features/subscription/presentation/cubit/purchase/purchase_cubit.dart';
 import 'package:fines_plus/features/subscription/presentation/cubit/subscription_cubit.dart';
 import 'package:fines_plus/features/vehicle/data/repository/car_info_repository.dart';
 import 'package:fines_plus/features/vehicle/presentation/cubit/car_cubit.dart';
@@ -341,14 +340,7 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
                 ),
               ),
 
-              FinesScreen(
-                key: const ValueKey('fines_screen'),
-                onBack: () => openPage(HomePage.home),
-                onFineCheck: (carNumber, series, number) {
-                  _saveCarInfo(carNumber, series, number);
-                  openPage(HomePage.history);
-                },
-              ),
+              FinesScreen(key: const ValueKey('fines_screen')),
               BlocProvider(
                 key: ValueKey(carNumber),
                 create: (_) {
@@ -364,7 +356,6 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
                 },
                 child: RemindersScreen(
                   key: ValueKey('reminders_$carNumber'),
-                  onBack: () => openPage(HomePage.home),
                   ownerId: FirebaseAuth.instance.currentUser?.uid ?? '',
                 ),
               ),
@@ -383,9 +374,6 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
                 SettingsScreen(
                   key: const ValueKey('settings_screen'),
                   onBack: () => openPage(HomePage.home),
-                  remoteConfigService: context.read<RemoteConfigService>(),
-                  scheduleCubit: context.read<ScheduleCubit>(),
-                  purchaseCubit: context.read<PurchaseCubit>(),
                 ),
                 HistoryScreen(key: const ValueKey('history_screen'), carNumber: carNumber),
                 Builder(
@@ -479,14 +467,22 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
             ],
           ),
           bottomNavigationBar: _isMainTab(_currentIndex)
-              ? BottomNavigationBar(
-                  backgroundColor: AppColors.energyBlue50,
-                  currentIndex: _bottomNavIndexFor(_currentIndex, navPages),
-                  onTap: (i) => openPage(navPages[i]),
-                  items: [
-                    for (final page in navPages)
-                      BottomNavigationBarItem(icon: Icon(_navIcon(page)), label: _navLabel(context, page)),
-                  ],
+              ? Container(
+                  decoration: BoxDecoration(
+                    color: AppColors.neutreBlanc,
+                    border: Border(top: BorderSide(color: context.brandTheme.surfaceBorder)),
+                  ),
+                  child: BottomNavigationBar(
+                    backgroundColor: AppColors.neutreBlanc,
+                    elevation: 0,
+                    type: BottomNavigationBarType.fixed,
+                    currentIndex: _bottomNavIndexFor(_currentIndex, navPages),
+                    onTap: (i) => openPage(navPages[i]),
+                    items: [
+                      for (final page in navPages)
+                        BottomNavigationBarItem(icon: Icon(_navIcon(page)), label: _navLabel(context, page)),
+                    ],
+                  ),
                 )
               : null,
 
@@ -520,9 +516,9 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
   IconData _navIcon(HomePage page) {
     switch (page) {
       case HomePage.fines:
-        return Icons.receipt;
+        return Icons.confirmation_number_outlined;
       case HomePage.reminders:
-        return Icons.support;
+        return Icons.access_time;
       case HomePage.home:
       default:
         return Icons.home;

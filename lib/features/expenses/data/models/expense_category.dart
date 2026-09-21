@@ -1,4 +1,4 @@
-enum ExpenseCategory { fuel, service, tuning, carWash, other }
+enum ExpenseCategory { fuel, service, tuning, carWash, insurance, other }
 String expenseCategoryToString(ExpenseCategory c) => c.toString().split('.').last;
 
 ExpenseCategory expenseCategoryFromString(String name) {

@@ -2,27 +2,27 @@ import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/theme/app_brand_theme.dart';
 import 'package:design_system/constants/app_borders.dart';
-import 'package:fines_plus/app/router/app_router.dart';
-import 'package:fines_plus/app/router/home_screen_wrapper.dart';
+import 'package:design_system/widget/app_bottom_sheet.dart';
 import 'package:fines_plus/features/expenses/data/models/car_wash_record.dart';
 import 'package:fines_plus/features/expenses/data/models/fuel_record.dart';
+import 'package:fines_plus/features/expenses/data/models/other_expense_record.dart';
 import 'package:fines_plus/features/expenses/data/models/service_record.dart';
-import 'package:fines_plus/features/home/presentation/cubit/quick_actions_cubit.dart';
-import 'package:fines_plus/features/home/presentation/widgets/insurance_detail_sheet.dart';
-import 'package:fines_plus/features/home/presentation/widgets/quick_actions_panel.dart';
-import 'package:fines_plus/features/maintenance/presentation/cubit/maintenance_cubit.dart';
+import 'package:fines_plus/features/expenses/data/models/tuning_record.dart';
+import 'package:fines_plus/features/home/presentation/widgets/insurance_sheet.dart';
+import 'package:fines_plus/features/home/presentation/widgets/other_expense_sheet.dart';
+import 'package:fines_plus/features/maintenance/presentation/screens/car_wash_screen.dart';
+import 'package:fines_plus/features/maintenance/presentation/screens/fuel_up_screen.dart';
 import 'package:fines_plus/features/maintenance/presentation/screens/service_screen.dart';
+import 'package:fines_plus/features/maintenance/presentation/screens/tuning_screen.dart';
 import 'package:fines_plus/features/vehicle/presentation/cubit/car_cubit.dart';
-import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 /// The dashboard's "quick add" row: the three most common expense actions
 /// (Fuel/Service/Insurance) plus a "More" button for everything else -
-/// deliberately not all 8 maintenance categories at once (see
-/// QuickActionsPanel), and deliberately no "Add fine" here since fines
-/// arrive from the automated check, not a manual entry.
+/// deliberately not all maintenance categories at once, and deliberately
+/// no "Add fine" here since fines arrive from the automated check, not a
+/// manual entry.
 ///
 /// Replaces the old 4-tile MainExpenseTiles row (Service/CarWash/Fuel/
 /// Insurance): same underlying navigation for the three that stayed
@@ -32,33 +32,58 @@ class QuickAddRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final maintenanceCubit = context.read<MaintenanceCubit>();
-    final quickActionsCubit = context.read<QuickActionsCubit>();
     final carId = context.read<CarCubit>().state.carId;
 
     return Row(
       children: [
         Expanded(
           child: _QuickAddButton(
-            dotColor: AppColors.catFuel,
+            icon: Icons.local_gas_station,
+            iconColor: AppColors.catFuel,
             label: S.of(context).fuel,
             onTap: () async {
-              await context.router.push<FuelRecord>(FuelUpRoute());
+              final fuelKey = GlobalKey<FuelUpScreenState>();
+              await AppBottomSheet.show<FuelRecord>(
+                context,
+                title: S.of(context).fuel,
+                contentBuilder: (_) =>
+                    FuelUpScreen(key: fuelKey, embedded: true),
+                saveLabel: S.of(context).save,
+                onSave: () => fuelKey.currentState?.save(),
+              );
             },
           ),
         ),
         const SizedBox(width: 6),
         Expanded(
           child: _QuickAddButton(
-            dotColor: AppColors.catService,
+            icon: Icons.build,
+            iconColor: AppColors.catService,
             label: S.of(context).maintenance,
             onTap: () async {
-              final records = await Navigator.push<List<ServiceRecord>>(
-                context,
-                MaterialPageRoute(builder: (_) => const ServiceScreen()),
-              );
-              if (records != null && records.isNotEmpty) {
-                maintenanceCubit.addServiceRecords(records);
+              final serviceKey = GlobalKey<ServiceScreenState>();
+              final totalUah = ValueNotifier<double>(0);
+              // ServiceScreen self-saves via MaintenanceCubit when embedded
+              // (see its `embedded` doc comment) - no need to await/save a
+              // popped list here, unlike the full-screen route.
+              try {
+                await AppBottomSheet.show<List<ServiceRecord>>(
+                  context,
+                  title: S.of(context).maintenance,
+                  contentBuilder: (_) => ServiceScreen(
+                    key: serviceKey,
+                    embedded: true,
+                    onTotalChanged: (value) => totalUah.value = value,
+                  ),
+                  footerBuilder: (_) => ValueListenableBuilder<double>(
+                    valueListenable: totalUah,
+                    builder: (_, total, _) => ServiceTotal(totalUah: total),
+                  ),
+                  saveLabel: S.of(context).save,
+                  onSave: () => serviceKey.currentState?.save(),
+                );
+              } finally {
+                totalUah.dispose();
               }
             },
           ),
@@ -66,51 +91,37 @@ class QuickAddRow extends StatelessWidget {
         const SizedBox(width: 6),
         Expanded(
           child: _QuickAddButton(
-            dotColor: AppColors.catTuning,
+            icon: Icons.gpp_good,
+            iconColor: AppColors.catInsurance,
             label: S.of(context).insurance,
             onTap: () async {
               if (carId.isEmpty) return;
 
-              final result = await showModalBottomSheet<Map<String, dynamic>>(
-                context: context,
-                isScrollControlled: true,
-                builder: (ctx) => const InsuranceDetailSheet(),
+              final insuranceKey = GlobalKey<InsuranceSheetState>();
+              await AppBottomSheet.show(
+                context,
+                title: S.of(context).insurance,
+                contentBuilder: (_) => InsuranceSheet(key: insuranceKey),
+                saveLabel: S.of(context).save,
+                onSave: () => insuranceKey.currentState?.save(),
               );
-              if (result == null) return;
-
-              final wrapperState = context.findAncestorStateOfType<HomeScreenWrapperState>();
-
-              await quickActionsCubit.onTaskCreated(
-                {
-                  'description': S.maybeOf(context)?.insurance ?? 'Insurance',
-                  'category': 'insurance',
-                  'isInsurance': true,
-                  'date': result['date'] ?? DateTime.now(),
-                  'byDate': result['byDate'] ?? true,
-                  'intervalDays': result['intervalDays'] ?? 365,
-                  'comment': result['comment'] ?? '',
-                },
-                labelKey: 'Insurance',
-                carNumber: carId,
-              );
-
-              wrapperState?.openAnalyticsTab(2);
             },
           ),
         ),
         const SizedBox(width: 6),
         Expanded(
           child: _QuickAddButton(
+            icon: Icons.more_horiz,
+            iconColor: AppColors.grey700,
             label: S.of(context).more,
-            isMore: true,
-            onTap: () => _openMoreSheet(context, maintenanceCubit: maintenanceCubit),
+            onTap: () => _openMoreSheet(context, carId: carId),
           ),
         ),
       ],
     );
   }
 
-  void _openMoreSheet(BuildContext context, {required MaintenanceCubit maintenanceCubit}) {
+  void _openMoreSheet(BuildContext context, {required String carId}) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -136,13 +147,105 @@ class QuickAddRow extends StatelessWidget {
                     ),
                   ),
                 ),
-                Text(S.of(ctx).more, style: Theme.of(ctx).textTheme.titleMedium),
+                Text(
+                  S.of(ctx).add_expense,
+                  style: Theme.of(ctx).textTheme.titleMedium,
+                ),
                 const SizedBox(height: 12),
-                _MoreCarWashTile(maintenanceCubit: maintenanceCubit),
-                const SizedBox(height: 8),
-                // Service/Insurance already have a dedicated top-level
-                // button above - don't show them a second time here.
-                const QuickActionsPanel(excludeLabelKeys: {'Service', 'Insurance'}),
+                GridView.count(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  crossAxisCount: 3,
+                  mainAxisSpacing: 8,
+                  crossAxisSpacing: 8,
+                  childAspectRatio: 1.05,
+                  children: [
+                    _QuickAddButton(
+                      icon: Icons.local_car_wash,
+                      iconColor: AppColors.catCarWash,
+                      label: S.of(ctx).car_wash,
+                      onTap: () async {
+                        Navigator.of(ctx).pop();
+                        final carWashKey = GlobalKey<CarWashScreenState>();
+                        await AppBottomSheet.show<CarWashRecord>(
+                          context,
+                          title: S.of(context).car_wash,
+                          contentBuilder: (_) =>
+                              CarWashScreen(key: carWashKey, embedded: true),
+                          saveLabel: S.of(context).save,
+                          onSave: () => carWashKey.currentState?.save(),
+                        );
+                      },
+                    ),
+                    _QuickAddButton(
+                      icon: Icons.settings,
+                      iconColor: AppColors.catTuning,
+                      label: S.of(ctx).tuning,
+                      onTap: () async {
+                        Navigator.of(ctx).pop();
+                        final tuningKey = GlobalKey<TuningScreenState>();
+                        await AppBottomSheet.show<List<TuningRecord>>(
+                          context,
+                          title: S.of(context).tuning,
+                          contentBuilder: (_) =>
+                              TuningScreen(key: tuningKey, embedded: true),
+                          saveLabel: S.of(context).save,
+                          onSave: () => tuningKey.currentState?.save(),
+                        );
+                      },
+                    ),
+                    _QuickAddButton(
+                      icon: Icons.oil_barrel,
+                      iconColor: AppColors.catService,
+                      label: S.of(ctx).oil_icon,
+                      onTap: () => _openServiceCategorySheet(
+                        context,
+                        ctx: ctx,
+                        category: 'Oil',
+                        title: S.of(ctx).oil_icon,
+                      ),
+                    ),
+                    _QuickAddButton(
+                      icon: Icons.battery_full,
+                      iconColor: AppColors.catService,
+                      label: S.of(ctx).battery,
+                      onTap: () => _openServiceCategorySheet(
+                        context,
+                        ctx: ctx,
+                        category: 'Battery',
+                        title: S.of(ctx).battery,
+                      ),
+                    ),
+                    _QuickAddButton(
+                      icon: Icons.tire_repair,
+                      iconColor: AppColors.catService,
+                      label: S.of(ctx).tires_icon,
+                      onTap: () => _openServiceCategorySheet(
+                        context,
+                        ctx: ctx,
+                        category: 'Tires',
+                        title: S.of(ctx).tires_icon,
+                      ),
+                    ),
+                    _QuickAddButton(
+                      icon: Icons.more_horiz,
+                      iconColor: AppColors.catOther,
+                      label: S.of(ctx).other,
+                      onTap: () {
+                        Navigator.of(ctx).pop();
+                        final otherKey = GlobalKey<OtherExpenseSheetState>();
+                        AppBottomSheet.show<OtherExpenseRecord>(
+                          context,
+                          title: S.of(context).other,
+                          contentBuilder: (_) =>
+                              OtherExpenseSheet(key: otherKey),
+                          saveLabel: S.of(context).save,
+                          onSave: () => otherKey.currentState?.save(),
+                        );
+                      },
+                    ),
+                  ],
+                ),
               ],
             ),
           ),
@@ -150,97 +253,93 @@ class QuickAddRow extends StatelessWidget {
       },
     );
   }
-}
 
-class _MoreCarWashTile extends StatelessWidget {
-  final MaintenanceCubit maintenanceCubit;
-  const _MoreCarWashTile({required this.maintenanceCubit});
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: AppColors.neutreGrey100,
-      borderRadius: AppBorders.radiusMedium,
-      child: InkWell(
-        borderRadius: AppBorders.radiusMedium,
-        onTap: () async {
-          Navigator.of(context).pop();
-          final record = await context.router.push<CarWashRecord>(CarWashRoute());
-          if (record != null) {
-            maintenanceCubit.addCarWashRecord(record);
-          }
-        },
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
-          child: Row(
-            children: [
-              SvgPicture.asset(
-                'assets/icons/car-wash.svg',
-                color: AppColors.catCarWash,
-                colorBlendMode: BlendMode.srcIn,
-                height: 22,
-              ),
-              const SizedBox(width: 12),
-              Text(S.of(context).car_wash, style: Theme.of(context).textTheme.bodyMedium),
-            ],
-          ),
+  /// Shared by the Oil/Battery/Tires "More" tiles: same [ServiceScreen] as
+  /// "ТО", just with its work-list narrowed to [category] - these create a
+  /// real expense record, same as Fuel/Service/Car wash/Tuning.
+  Future<void> _openServiceCategorySheet(
+    BuildContext context, {
+    required BuildContext ctx,
+    required String category,
+    required String title,
+  }) async {
+    Navigator.of(ctx).pop();
+    final serviceKey = GlobalKey<ServiceScreenState>();
+    final totalUah = ValueNotifier<double>(0);
+    try {
+      await AppBottomSheet.show<List<ServiceRecord>>(
+        context,
+        title: title,
+        contentBuilder: (_) => ServiceScreen(
+          key: serviceKey,
+          embedded: true,
+          category: category,
+          onTotalChanged: (value) => totalUah.value = value,
         ),
-      ),
-    );
+        footerBuilder: (_) => ValueListenableBuilder<double>(
+          valueListenable: totalUah,
+          builder: (_, total, _) => ServiceTotal(totalUah: total),
+        ),
+        saveLabel: S.of(context).save,
+        onSave: () => serviceKey.currentState?.save(),
+      );
+    } finally {
+      totalUah.dispose();
+    }
   }
 }
 
 class _QuickAddButton extends StatelessWidget {
-  final Color? dotColor;
+  final IconData icon;
+  final Color iconColor;
   final String label;
   final VoidCallback onTap;
-  final bool isMore;
 
   const _QuickAddButton({
-    this.dotColor,
+    required this.icon,
+    required this.iconColor,
     required this.label,
     required this.onTap,
-    this.isMore = false,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: AppColors.neutreBlanc,
-      shape: RoundedRectangleBorder(
-        borderRadius: AppBorders.radiusMedium,
-        side: BorderSide(color: context.brandTheme.surfaceBorder),
-      ),
-      child: InkWell(
-        borderRadius: AppBorders.radiusMedium,
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 4),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (dotColor != null) ...[
-                Container(
-                  width: 8,
-                  height: 8,
-                  decoration: BoxDecoration(color: dotColor, shape: BoxShape.circle),
-                ),
-                const SizedBox(width: 5),
-              ],
-              Flexible(
-                child: FittedBox(
-                  fit: BoxFit.scaleDown,
-                  child: Text(
-                    isMore ? '$label ⋯' : '+ $label',
-                    style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                      fontWeight: FontWeight.w800,
-                      color: isMore ? AppColors.grey700 : Colors.black87,
+    return AspectRatio(
+      // Shared by both the top-level row and the "More" sheet's grid, so
+      // every quick-add tile stays uniform and scales with its container's
+      // width instead of a fixed pixel height.
+      aspectRatio: 1.05,
+      child: Material(
+        color: AppColors.neutreBlanc,
+        shape: RoundedRectangleBorder(
+          borderRadius: AppBorders.radiusMedium,
+          side: BorderSide(color: context.brandTheme.surfaceBorder),
+        ),
+        child: InkWell(
+          borderRadius: AppBorders.radiusMedium,
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(icon, color: iconColor, size: 24),
+                const SizedBox(height: 6),
+                Flexible(
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      label,
+                      style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                        fontWeight: FontWeight.w800,
+                        color: Colors.black87,
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
