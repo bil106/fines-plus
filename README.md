@@ -39,11 +39,11 @@ Feature-first: `lib/features/<назва>/{data,domain,presentation}`, спіл�
 
 ## White-label / флейвори
 
-5 флейворів: `finesplus` (реальний бренд, дефолтний), `autodosje`, `carpapers`, `autolux`, `fastcar` — поточний статус кожного, як додати/змінити/прибрати флейвор — `docs/white-label-playbook.md` і CLAUDE.md → "White-label flavors".
+3 флейвори: `finesplus` (реальний бренд, дефолтний), `autodosje`, `carpapers` — поточний статус кожного, як додати/змінити/прибрати флейвор — `docs/white-label-playbook.md` і CLAUDE.md → "White-label flavors".
 
 ## Дизайн
 
-Клікабельний макет нового дашборда й пов'язаних екранів (Fines+OS): https://claude.ai/artifact/U9zexMtARry73jthp6tWMg — джерело правди для UI, поки не перенесено в код. Статус впровадження, що вже зроблено в коді і що лишилось — робочий хендовер-документ команди в Google Docs (посилання — запитати у власника репозиторію).
+Клікабельний макет нового дашборда й пов'язаних екранів (Fines+OS): https://claude.ai/artifact/U9zexMtARry73jthp6tWMg — джерело правди для UI, поки не перенесено в код. Короткий текстовий знімок поточного стану дизайну (список екранів, групи, дата) — `docs/design.md`. Статус впровадження, що вже зроблено в коді і що лишилось — робочий хендовер-документ команди в Google Docs, актуальна адреса — CLAUDE.md → "Робочі документи".
 
 ## Команди
 

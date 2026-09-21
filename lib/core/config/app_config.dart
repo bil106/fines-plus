@@ -19,8 +19,8 @@ class AppConfig {
   /// Whether the Ukraine-specific fines-check feature (the MVS portal, see
   /// MvsFinesWebView) is available for this brand. It talks to a Ukrainian
   /// government portal, so it has no equivalent outside UA.
-  /// Defaults to true so existing configs (finesplus, autolux, fastcar) keep
-  /// today's behavior unchanged.
+  /// Defaults to true so existing configs (finesplus, autodosje, carpapers)
+  /// keep today's behavior unchanged.
   @JsonKey(defaultValue: true)
   final bool finesCheckEnabled;
 

@@ -130,8 +130,6 @@ dart run intl_utils:generate
 - `autodosje` and `carpapers` have configuration/assets but incomplete native
   Firebase/application setup; do not describe them as release-ready without
   verifying the platform configuration.
-- `autolux` and `fastcar` are legacy demo flavors; leave them unchanged unless the
-  task explicitly names them.
 - Never change flavor behavior by branching on a displayed brand name. Add or use a
   typed config field instead.
 - After every `assets/config/*.json` change, run:

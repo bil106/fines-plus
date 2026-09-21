@@ -9,10 +9,6 @@
   actually build (see below).
 - `carpapers` - CarPapers, US/ES market, fines check off. Same status as
   autodosje.
-- `autolux` - AutoLux, UA market (default), fines check on (default).
-  Pre-existing demo/test brand, unrelated to the three real ones above.
-- `fastcar` - pre-existing demo brand whose JSON file is empty (was
-  already broken before this branch; not fixed here, out of scope).
 
 Run `python3 scripts/verify_wl_configs.py` any time to re-check all of the
 above without needing a Flutter/Dart toolchain - it validates each config's
@@ -24,8 +20,8 @@ whether `logoAssetPath` actually points at a real file.
 
 - `AppConfig` (`lib/core/config/app_config.dart`) carries `market`,
   `finesCheckEnabled`, `termsUrl`, `privacyPolicyUrl` alongside the existing
-  brand/color/contact fields - all optional, so `autolux`/`fastcar` keep
-  their old behavior.
+  brand/color/contact fields - all optional, so existing configs keep
+  their old behavior unchanged.
 - `MaterialApp.title` reads `config.brandName` instead of a hardcoded
   `'Fines+'` (`lib/app/app.dart`).
 - The Terms/Privacy links on the paywall (`subscription_screen.dart`) prefer
@@ -78,8 +74,9 @@ JSON" pass would have missed:
 2. There was never an `assets/config/finesplus.json`, and nothing in this
    repo passes `--dart-define=FLAVOR=` (checked: no CI, no fastlane, no
    `.vscode`/`.idea` run config) - so the real production app has been
-   silently resolving `AppConfig` from the `autolux` demo brand via
-   `flavor_config.dart`'s default this whole time. Harmless while nothing
+   silently resolving `AppConfig` from the `autolux` demo brand (a legacy
+   demo flavor, since removed from the repo) via `flavor_config.dart`'s
+   default this whole time. Harmless while nothing
    read `config.brandName`, but this branch's `MaterialApp.title` change
    would have made the shipping app's title regress to "AutoLux". Fixed by
    adding the real `finesplus.json` and changing the default flavor to
