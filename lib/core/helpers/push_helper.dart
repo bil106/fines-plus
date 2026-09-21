@@ -80,15 +80,6 @@ class PushHelper {
       iOS: _iosDetails,
     );
 
-    var scheduleMode = AndroidScheduleMode.inexactAllowWhileIdle;
-    if (Platform.isAndroid) {
-      final androidImpl = _notificationsPlugin
-          .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
-      if (await androidImpl?.canScheduleExactNotifications() == true) {
-        scheduleMode = AndroidScheduleMode.exactAllowWhileIdle;
-      }
-    }
-
     await _notificationsPlugin.zonedSchedule(
       id,
       title,
@@ -96,10 +87,49 @@ class PushHelper {
       tz.TZDateTime.from(dateTime, tz.local),
       details,
       payload: payload,
-      androidScheduleMode: scheduleMode,
+      androidScheduleMode: await _scheduleMode(),
     );
 
     debugPrint('Notification "$title" scheduled (OS-level) for $dateTime');
+  }
+
+  /// Like [scheduleNotification], but repeats every day at [firstDate]'s
+  /// time of day until cancelled.
+  Future<void> scheduleDailyNotification({
+    required int id,
+    required String title,
+    required String body,
+    required DateTime firstDate,
+    String? payload,
+  }) async {
+    final details = NotificationDetails(
+      android: _androidReminders,
+      iOS: _iosDetails,
+    );
+
+    await _notificationsPlugin.zonedSchedule(
+      id,
+      title,
+      body,
+      tz.TZDateTime.from(firstDate, tz.local),
+      details,
+      payload: payload,
+      androidScheduleMode: await _scheduleMode(),
+      matchDateTimeComponents: DateTimeComponents.time,
+    );
+
+    debugPrint('Daily notification "$title" scheduled from $firstDate');
+  }
+
+  Future<AndroidScheduleMode> _scheduleMode() async {
+    if (Platform.isAndroid) {
+      final androidImpl = _notificationsPlugin
+          .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
+      if (await androidImpl?.canScheduleExactNotifications() == true) {
+        return AndroidScheduleMode.exactAllowWhileIdle;
+      }
+    }
+    return AndroidScheduleMode.inexactAllowWhileIdle;
   }
 
   Future<void> cancelNotification(int id) => _notificationsPlugin.cancel(id);

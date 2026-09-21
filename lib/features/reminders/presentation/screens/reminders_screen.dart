@@ -3,13 +3,8 @@ import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/theme/app_brand_theme.dart';
 import 'package:design_system/widget/app_back_button.dart';
-import 'package:fines_plus/core/helpers/push_helper.dart';
-import 'package:fines_plus/features/maintenance/data/repository/schedule_firebase_repository.dart';
-import 'package:fines_plus/features/maintenance/presentation/cubit/maintenance_cubit.dart';
-import 'package:fines_plus/features/schedule/data/repository/schedule_repository.dart';
 import 'package:fines_plus/features/reminders/presentation/widgets/reminder_card.dart';
 import 'package:fines_plus/features/reminders/presentation/widgets/reminder_dialog.dart';
-import 'package:fines_plus/features/reminders/data/repository/reminder_repository.dart';
 import 'package:fines_plus/features/reminders/presentation/cubit/reminder_cubit.dart';
 import 'package:fines_plus/features/vehicle/presentation/cubit/car_cubit.dart';
 import 'package:fines_plus/features/vehicle/presentation/cubit/car_state.dart';
@@ -38,18 +33,7 @@ class _RemindersScreenState extends State<RemindersScreen> {
           return Center(child: Text(S.of(context).no_car_selected));
         }
 
-        return BlocProvider(
-          create: (_) => ReminderCubit(
-            repository: context.read<ReminderRepository>(),
-            carNumber: carId,
-            ownerId: widget.ownerId,
-            pushHelper: context.read<PushHelper>(),
-            maintenanceCubit: context.read<MaintenanceCubit>(),
-            scheduleRepository: context.read<ScheduleFirebaseRepository>(),
-            scheduleCache: context.read<ScheduleRepository>(),
-          )..load(),
-          child: _RemindersView(onBack: widget.onBack),
-        );
+        return _RemindersView(onBack: widget.onBack);
       },
     );
   }

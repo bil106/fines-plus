@@ -1,3 +1,6 @@
+import 'dart:ui';
+
+import 'package:core_localization/generated/l10n.dart';
 import 'package:fines_plus/core/helpers/push_helper.dart';
 import 'package:fines_plus/features/reminders/data/models/reminder_model.dart';
 import 'package:fines_plus/features/reminders/data/repository/reminder_repository.dart';
@@ -34,6 +37,18 @@ class _FakePush implements PushHelper {
   }) async {}
 
   @override
+  Future<void> scheduleDailyNotification({
+    required int id,
+    required String title,
+    required String body,
+    required DateTime firstDate,
+    String? payload,
+  }) async {}
+
+  @override
+  Future<void> cancelNotification(int id) async {}
+
+  @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
@@ -62,6 +77,17 @@ void main() {
     expect(repository.store.keys, ['a']);
     expect(cubit.state.reminders.map((r) => r.id), ['a']);
     expect(cubit.state.items.map((i) => i.id), ['a']);
+  });
+
+  test('addPlannedServices books each work as a planned reminder of its sheet', () async {
+    await S.load(const Locale('en'));
+    await cubit.addPlannedServices(names: ['Oil', 'Filter'], date: DateTime(2030, 5, 20), category: 'Oil');
+
+    final planned = cubit.state.reminders;
+    expect(planned.map((r) => r.title), ['Oil', 'Filter']);
+    expect(planned.every((r) => r.isPlannedService && r.plannedCategory == 'Oil'), isTrue);
+    expect(planned.every((r) => r.dateTime == DateTime(2030, 5, 20, 9)), isTrue);
+    expect(repository.store, hasLength(2));
   });
 
   test('load returns what was saved and stops loading', () async {

@@ -6,11 +6,18 @@ import 'package:flutter/material.dart';
 /// (Паливо/ТО/Страхування/...): a thin bordered white box with a small
 /// grey label always visible above the field, instead of a floating
 /// Material label. [child] is typically a borderless TextField.
+const _accentWashAlpha = 0.18;
+const _accentBorderWidth = 1.5;
+
 class AppFieldCard extends StatelessWidget {
   final String label;
   final Widget child;
 
-  const AppFieldCard({super.key, required this.label, required this.child});
+  /// Draws attention to the field (e.g. an expiry date that is near or past):
+  /// coloured border and a light wash of the same colour.
+  final Color? accent;
+
+  const AppFieldCard({super.key, required this.label, required this.child, this.accent});
 
   @override
   Widget build(BuildContext context) {
@@ -18,9 +25,11 @@ class AppFieldCard extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
-        color: AppColors.neutreBlanc,
+        color: accent == null
+            ? AppColors.neutreBlanc
+            : Color.alphaBlend(accent!.withValues(alpha: _accentWashAlpha), AppColors.neutreBlanc),
         borderRadius: AppBorders.radiusMedium,
-        border: Border.all(color: AppColors.grey300),
+        border: Border.all(color: accent ?? AppColors.grey300, width: accent == null ? 1 : _accentBorderWidth),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

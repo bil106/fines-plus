@@ -3,6 +3,8 @@ import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/widget/app_field_card.dart';
 import 'package:fines_plus/features/expenses/data/models/insurance_record.dart';
 import 'package:fines_plus/features/maintenance/presentation/cubit/maintenance_cubit.dart';
+import 'package:fines_plus/features/reminders/data/models/reminder_item.dart';
+import 'package:fines_plus/features/reminders/presentation/reminder_status_tint.dart';
 import 'package:fines_plus/features/settings/presentation/cubit/settings_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -87,6 +89,9 @@ class InsuranceSheetState extends State<InsuranceSheet> {
       validTo: validTo!,
       cost: double.tryParse(costController.text) ?? 0,
       currency: context.read<SettingsCubit>().state.currency,
+      // Until Firestore hands back its own timestamp, so this record already
+      // counts as the most recently saved policy.
+      updatedAt: DateTime.now(),
     );
 
     context.read<MaintenanceCubit>().addInsuranceRecord(record);
@@ -184,6 +189,9 @@ class InsuranceSheetState extends State<InsuranceSheet> {
             Expanded(
               child: AppFieldCard(
                 label: S.of(context).valid_to,
+                accent: validTo == null
+                    ? null
+                    : ReminderItem(id: '', kind: ReminderKind.insurance, dueDate: validTo).status(DateTime.now()).attentionTint,
                 child: InkWell(
                   onTap: () => _pickDate(isFrom: false),
                   child: Row(

@@ -4951,7 +4951,12 @@ class S {
 
   /// `Buyer's report`
   String get buyer_report {
-    return Intl.message('Buyer\'s report', name: 'buyer_report', desc: '', args: []);
+    return Intl.message(
+      'Buyer\'s report',
+      name: 'buyer_report',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Not paid`
@@ -4961,7 +4966,12 @@ class S {
 
   /// `Current mileage`
   String get current_mileage {
-    return Intl.message('Current mileage', name: 'current_mileage', desc: '', args: []);
+    return Intl.message(
+      'Current mileage',
+      name: 'current_mileage',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Status`
@@ -4974,6 +4984,36 @@ class S {
     return Intl.message(
       'Tank volume, L',
       name: 'tank_volume_liters',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Planned service is due. Add the cost once it's done.`
+  String get planned_service_reminder_body {
+    return Intl.message(
+      'Planned service is due. Add the cost once it\'s done.',
+      name: 'planned_service_reminder_body',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Your insurance expires on {date}. Time to renew it.`
+  String insurance_expiry_reminder_body(String date) {
+    return Intl.message(
+      'Your insurance expires on $date. Time to renew it.',
+      name: 'insurance_expiry_reminder_body',
+      desc: '',
+      args: [date],
+    );
+  }
+
+  /// `Planned works`
+  String get planned_services {
+    return Intl.message(
+      'Planned works',
+      name: 'planned_services',
       desc: '',
       args: [],
     );

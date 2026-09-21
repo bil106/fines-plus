@@ -15,10 +15,23 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 class _Maintenance extends Cubit<MaintenanceState> implements MaintenanceCubit {
-  _Maintenance() : super(const MaintenanceState());
+  // getLastKnownMileage() is an extension over the records in the state, so
+  // the previous mileage is seeded as a record rather than overridden.
+  _Maintenance()
+    : super(
+        MaintenanceState(
+          serviceRecords: [
+            ServiceRecord(
+              serviceName: 'Previous service',
+              cost: 0,
+              date: '01.01.2026',
+              mileage: 127900,
+              currency: 'UAH',
+            ),
+          ],
+        ),
+      );
   List<ServiceRecord>? saved;
-  @override
-  int? getLastKnownMileage() => 127900;
   @override
   Future<void> addServiceRecords(List<ServiceRecord> records) async =>
       saved = records;
@@ -102,6 +115,9 @@ void main() {
           ],
           supportedLocales: S.delegate.supportedLocales,
           theme: ThemeData(
+            // The default InkSparkle splash loads a shader asset that can't be
+            // decoded in the test environment.
+            splashFactory: NoSplash.splashFactory,
             extensions: const [
               AppBrandTheme(
                 surfaceBg: Color(0xFFF5F3ED),

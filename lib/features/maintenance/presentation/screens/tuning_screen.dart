@@ -14,6 +14,9 @@ import 'package:fines_plus/features/maintenance/presentation/screens/service_scr
 import 'package:fines_plus/features/maintenance/presentation/widgets/dashed_add_button.dart';
 import 'package:fines_plus/features/maintenance/presentation/widgets/mileage_card.dart';
 import 'package:fines_plus/features/maintenance/presentation/widgets/nearby_services_sheet.dart';
+import 'package:fines_plus/features/maintenance/presentation/widgets/planned_services_list.dart';
+import 'package:fines_plus/features/reminders/domain/planned_service.dart';
+import 'package:fines_plus/features/reminders/presentation/cubit/reminder_cubit.dart';
 import '../../../../../env/env.dart';
 import 'package:fines_plus/features/expenses/data/models/tuning_record.dart';
 import 'package:fines_plus/features/maintenance/presentation/screens/service_map_screen.dart';
@@ -34,7 +37,14 @@ class TuningScreen extends StatefulWidget {
   /// (Maintenance tab, its FAB) leaves this false and is unaffected.
   final bool embedded;
 
-  const TuningScreen({super.key, this.onBack, this.embedded = false});
+  /// When set, a date after today books the works as reminders (no cost
+  /// needed, no expense created) instead of saving them as done.
+  final ReminderCubit? reminderCubit;
+
+  /// Category of this sheet's planned works.
+  static const plannedCategory = 'Tuning';
+
+  const TuningScreen({super.key, this.onBack, this.embedded = false, this.reminderCubit});
 
   @override
   State<TuningScreen> createState() => TuningScreenState();
@@ -240,6 +250,8 @@ class TuningScreenState extends State<TuningScreen> {
               });
             },
           ),
+          if (widget.reminderCubit != null)
+            PlannedServicesList(cubit: widget.reminderCubit!, category: TuningScreen.plannedCategory),
           AppSpacers.verticalMediumLarge,
           ServiceTotal(totalUah: _totalUah),
         ],
@@ -473,12 +485,30 @@ class TuningScreenState extends State<TuningScreen> {
   /// appropriate for how this screen was presented. Shared by the AppBar
   /// check action (full-screen mode) and the pinned Save button in
   /// [AppBottomSheet] (embedded mode).
-  void save() {
+  Future<void> save() async {
     final works = _works.where((work) => work.name.text.trim().isNotEmpty).toList();
     if (selectedDate == null || works.isEmpty) {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(backgroundColor: AppColors.blue700, content: Text(S.of(context).select_service)));
+      return;
+    }
+
+    final reminderCubit = widget.reminderCubit;
+    if (reminderCubit != null && PlannedService.isPlannedDate(selectedDate!, DateTime.now())) {
+      try {
+        await reminderCubit.addPlannedServices(
+          names: [for (final work in works) work.name.text.trim()],
+          date: selectedDate!,
+          category: TuningScreen.plannedCategory,
+        );
+      } catch (_) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(S.of(context).request_error)));
+        return;
+      }
+      if (!mounted) return;
+      Navigator.of(context).pop(<TuningRecord>[]);
       return;
     }
 

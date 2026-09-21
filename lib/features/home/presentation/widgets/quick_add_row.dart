@@ -14,9 +14,24 @@ import 'package:fines_plus/features/maintenance/presentation/screens/car_wash_sc
 import 'package:fines_plus/features/maintenance/presentation/screens/fuel_up_screen.dart';
 import 'package:fines_plus/features/maintenance/presentation/screens/service_screen.dart';
 import 'package:fines_plus/features/maintenance/presentation/screens/tuning_screen.dart';
+import 'package:fines_plus/features/reminders/data/models/reminder_item.dart';
+import 'package:fines_plus/features/reminders/domain/planned_service.dart';
+import 'package:fines_plus/features/reminders/presentation/reminder_status_tint.dart';
+import 'package:fines_plus/features/reminders/presentation/cubit/reminder_cubit.dart';
 import 'package:fines_plus/features/vehicle/presentation/cubit/car_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+const _tintAlpha = 0.45;
+
+/// Colours the insurance button by how close the current policy's expiry is
+/// - the same automatic reminder the Reminders tab shows for it.
+Color? _insuranceTint(List<ReminderItem> items) {
+  final insurance = items
+      .where((item) => item.kind == ReminderKind.insurance)
+      .firstOrNull;
+  return insurance?.status(DateTime.now()).attentionTint;
+}
 
 /// The dashboard's "quick add" row: the three most common expense actions
 /// (Fuel/Service/Insurance) plus a "More" button for everything else -
@@ -56,56 +71,70 @@ class QuickAddRow extends StatelessWidget {
         ),
         const SizedBox(width: 6),
         Expanded(
-          child: _QuickAddButton(
-            icon: Icons.build,
-            iconColor: AppColors.catService,
-            label: S.of(context).maintenance,
-            onTap: () async {
-              final serviceKey = GlobalKey<ServiceScreenState>();
-              final totalUah = ValueNotifier<double>(0);
-              // ServiceScreen self-saves via MaintenanceCubit when embedded
-              // (see its `embedded` doc comment) - no need to await/save a
-              // popped list here, unlike the full-screen route.
-              try {
-                await AppBottomSheet.show<List<ServiceRecord>>(
-                  context,
-                  title: S.of(context).maintenance,
-                  contentBuilder: (_) => ServiceScreen(
-                    key: serviceKey,
-                    embedded: true,
-                    onTotalChanged: (value) => totalUah.value = value,
-                  ),
-                  footerBuilder: (_) => ValueListenableBuilder<double>(
-                    valueListenable: totalUah,
-                    builder: (_, total, _) => ServiceTotal(totalUah: total),
-                  ),
-                  saveLabel: S.of(context).save,
-                  onSave: () => serviceKey.currentState?.save(),
-                );
-              } finally {
-                totalUah.dispose();
-              }
-            },
+          child: BlocBuilder<ReminderCubit, ReminderState>(
+            buildWhen: (previous, current) =>
+                previous.reminders != current.reminders,
+            builder: (context, reminderState) => _QuickAddButton(
+              icon: Icons.build,
+              iconColor: AppColors.catService,
+              label: S.of(context).maintenance,
+              tint: PlannedService.status(
+                reminderState.reminders,
+                DateTime.now(),
+              ).tint,
+              onTap: () async {
+                final serviceKey = GlobalKey<ServiceScreenState>();
+                final totalUah = ValueNotifier<double>(0);
+                // ServiceScreen self-saves via MaintenanceCubit when embedded
+                // (see its `embedded` doc comment) - no need to await/save a
+                // popped list here, unlike the full-screen route.
+                try {
+                  await AppBottomSheet.show<List<ServiceRecord>>(
+                    context,
+                    title: S.of(context).maintenance,
+                    contentBuilder: (_) => ServiceScreen(
+                      key: serviceKey,
+                      embedded: true,
+                      reminderCubit: context.read<ReminderCubit>(),
+                      onTotalChanged: (value) => totalUah.value = value,
+                    ),
+                    footerBuilder: (_) => ValueListenableBuilder<double>(
+                      valueListenable: totalUah,
+                      builder: (_, total, _) => ServiceTotal(totalUah: total),
+                    ),
+                    saveLabel: S.of(context).save,
+                    onSave: () => serviceKey.currentState?.save(),
+                  );
+                } finally {
+                  totalUah.dispose();
+                }
+              },
+            ),
           ),
         ),
         const SizedBox(width: 6),
         Expanded(
-          child: _QuickAddButton(
-            icon: Icons.gpp_good,
-            iconColor: AppColors.catInsurance,
-            label: S.of(context).insurance,
-            onTap: () async {
-              if (carId.isEmpty) return;
+          child: BlocBuilder<ReminderCubit, ReminderState>(
+            buildWhen: (previous, current) =>
+                previous.items != current.items,
+            builder: (context, reminderState) => _QuickAddButton(
+              icon: Icons.gpp_good,
+              iconColor: AppColors.catInsurance,
+              label: S.of(context).insurance,
+              tint: _insuranceTint(reminderState.items),
+              onTap: () async {
+                if (carId.isEmpty) return;
 
-              final insuranceKey = GlobalKey<InsuranceSheetState>();
-              await AppBottomSheet.show(
-                context,
-                title: S.of(context).insurance,
-                contentBuilder: (_) => InsuranceSheet(key: insuranceKey),
-                saveLabel: S.of(context).save,
-                onSave: () => insuranceKey.currentState?.save(),
-              );
-            },
+                final insuranceKey = GlobalKey<InsuranceSheetState>();
+                await AppBottomSheet.show(
+                  context,
+                  title: S.of(context).insurance,
+                  contentBuilder: (_) => InsuranceSheet(key: insuranceKey),
+                  saveLabel: S.of(context).save,
+                  onSave: () => insuranceKey.currentState?.save(),
+                );
+              },
+            ),
           ),
         ),
         const SizedBox(width: 6),
@@ -122,6 +151,8 @@ class QuickAddRow extends StatelessWidget {
   }
 
   void _openMoreSheet(BuildContext context, {required String carId}) {
+    // The sheet is built above the Home providers, so hand it the cubit.
+    final reminderCubit = context.read<ReminderCubit>();
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -177,7 +208,9 @@ class QuickAddRow extends StatelessWidget {
                         );
                       },
                     ),
-                    _QuickAddButton(
+                    _PlannedTile(
+                      cubit: reminderCubit,
+                      category: TuningScreen.plannedCategory,
                       icon: Icons.settings,
                       iconColor: AppColors.catTuning,
                       label: S.of(ctx).tuning,
@@ -188,13 +221,19 @@ class QuickAddRow extends StatelessWidget {
                           context,
                           title: S.of(context).tuning,
                           contentBuilder: (_) =>
-                              TuningScreen(key: tuningKey, embedded: true),
+                              TuningScreen(
+                                key: tuningKey,
+                                embedded: true,
+                                reminderCubit: reminderCubit,
+                              ),
                           saveLabel: S.of(context).save,
                           onSave: () => tuningKey.currentState?.save(),
                         );
                       },
                     ),
-                    _QuickAddButton(
+                    _PlannedTile(
+                      cubit: reminderCubit,
+                      category: 'Oil',
                       icon: Icons.oil_barrel,
                       iconColor: AppColors.catService,
                       label: S.of(ctx).oil_icon,
@@ -205,7 +244,9 @@ class QuickAddRow extends StatelessWidget {
                         title: S.of(ctx).oil_icon,
                       ),
                     ),
-                    _QuickAddButton(
+                    _PlannedTile(
+                      cubit: reminderCubit,
+                      category: 'Battery',
                       icon: Icons.battery_full,
                       iconColor: AppColors.catService,
                       label: S.of(ctx).battery,
@@ -216,7 +257,9 @@ class QuickAddRow extends StatelessWidget {
                         title: S.of(ctx).battery,
                       ),
                     ),
-                    _QuickAddButton(
+                    _PlannedTile(
+                      cubit: reminderCubit,
+                      category: 'Tires',
                       icon: Icons.tire_repair,
                       iconColor: AppColors.catService,
                       label: S.of(ctx).tires_icon,
@@ -274,6 +317,7 @@ class QuickAddRow extends StatelessWidget {
           key: serviceKey,
           embedded: true,
           category: category,
+          reminderCubit: context.read<ReminderCubit>(),
           onTotalChanged: (value) => totalUah.value = value,
         ),
         footerBuilder: (_) => ValueListenableBuilder<double>(
@@ -289,17 +333,56 @@ class QuickAddRow extends StatelessWidget {
   }
 }
 
+/// A "More" sheet tile coloured by its own planned services (see
+/// [PlannedService.status]).
+class _PlannedTile extends StatelessWidget {
+  final ReminderCubit cubit;
+  final String category;
+  final IconData icon;
+  final Color iconColor;
+  final String label;
+  final VoidCallback onTap;
+
+  const _PlannedTile({
+    required this.cubit,
+    required this.category,
+    required this.icon,
+    required this.iconColor,
+    required this.label,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<ReminderCubit, ReminderState>(
+      bloc: cubit,
+      buildWhen: (previous, current) => previous.reminders != current.reminders,
+      builder: (context, state) => _QuickAddButton(
+        icon: icon,
+        iconColor: iconColor,
+        label: label,
+        tint: PlannedService.status(state.reminders, DateTime.now(), category: category).tint,
+        onTap: onTap,
+      ),
+    );
+  }
+}
+
 class _QuickAddButton extends StatelessWidget {
   final IconData icon;
   final Color iconColor;
   final String label;
   final VoidCallback onTap;
 
+  /// Planned-service status colour laid over the tile background.
+  final Color? tint;
+
   const _QuickAddButton({
     required this.icon,
     required this.iconColor,
     required this.label,
     required this.onTap,
+    this.tint,
   });
 
   @override
@@ -310,7 +393,12 @@ class _QuickAddButton extends StatelessWidget {
       // width instead of a fixed pixel height.
       aspectRatio: 1.05,
       child: Material(
-        color: AppColors.neutreBlanc,
+        color: tint == null
+            ? AppColors.neutreBlanc
+            : Color.alphaBlend(
+                tint!.withValues(alpha: _tintAlpha),
+                AppColors.neutreBlanc,
+              ),
         shape: RoundedRectangleBorder(
           borderRadius: AppBorders.radiusMedium,
           side: BorderSide(color: context.brandTheme.surfaceBorder),

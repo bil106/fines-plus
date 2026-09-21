@@ -631,5 +631,9 @@
    "not_paid": "Not paid",
    "current_mileage": "Current mileage",
    "status": "Status",
-   "tank_volume_liters": "Tank volume, L"
+   "tank_volume_liters": "Tank volume, L",
+"planned_service_reminder_body": "Planned service is due. Add the cost once it's done.",
+"insurance_expiry_reminder_body": "Your insurance expires on {date}. Time to renew it.",
+"@insurance_expiry_reminder_body": {"placeholders": {"date": {"type": "String"}}},
+"planned_services": "Planned works"
 }

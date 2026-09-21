@@ -13,6 +13,9 @@ import 'package:fines_plus/features/maintenance/presentation/screens/service_map
 import 'package:fines_plus/features/maintenance/presentation/widgets/dashed_add_button.dart';
 import 'package:fines_plus/features/maintenance/presentation/widgets/mileage_card.dart';
 import 'package:fines_plus/features/maintenance/presentation/widgets/nearby_services_sheet.dart';
+import 'package:fines_plus/features/maintenance/presentation/widgets/planned_services_list.dart';
+import 'package:fines_plus/features/reminders/domain/planned_service.dart';
+import 'package:fines_plus/features/reminders/presentation/cubit/reminder_cubit.dart';
 import 'package:fines_plus/features/settings/presentation/cubit/settings_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -36,12 +39,17 @@ class ServiceScreen extends StatefulWidget {
   /// the full catalog.
   final String? category;
 
+  /// When set, a date after today books the works as reminders (no cost
+  /// needed, no expense created) instead of saving them as a done service.
+  final ReminderCubit? reminderCubit;
+
   const ServiceScreen({
     super.key,
     this.onBack,
     this.embedded = false,
     this.onTotalChanged,
     this.category,
+    this.reminderCubit,
   });
 
   @override
@@ -219,6 +227,8 @@ class ServiceScreenState extends State<ServiceScreen> {
             });
           },
         ),
+        if (widget.reminderCubit != null)
+          PlannedServicesList(cubit: widget.reminderCubit!, category: widget.category),
       ],
     );
     if (widget.embedded) return form;
@@ -459,6 +469,28 @@ class ServiceScreenState extends State<ServiceScreen> {
     );
   }
 
+  Future<void> _savePlanned(List<_ServiceWork> works, ReminderCubit reminderCubit) async {
+    setState(() => _saving = true);
+    try {
+      await reminderCubit.addPlannedServices(
+        names: [for (final work in works) work.name.text.trim()],
+        date: selectedDate,
+        category: widget.category,
+      );
+    } catch (_) {
+      if (!mounted) return;
+      setState(() => _saving = false);
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(S.of(context).request_error)));
+      return;
+    }
+    if (!mounted) return;
+    if (widget.onBack != null && !widget.embedded) {
+      widget.onBack!();
+    } else {
+      Navigator.of(context).pop(<ServiceRecord>[]);
+    }
+  }
+
   Future<void> save() async {
     if (_saving) return;
     final works = _works
@@ -468,6 +500,11 @@ class ServiceScreenState extends State<ServiceScreen> {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text(S.of(context).select_service)));
+      return;
+    }
+    final reminderCubit = widget.reminderCubit;
+    if (reminderCubit != null && PlannedService.isPlannedDate(selectedDate, DateTime.now())) {
+      await _savePlanned(works, reminderCubit);
       return;
     }
     if (works.any(

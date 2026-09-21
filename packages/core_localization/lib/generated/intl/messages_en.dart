@@ -32,17 +32,20 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m5(date) => "OK until ${date}";
 
-  static String m6(task) => "Time for: ${task}";
+  static String m6(date) =>
+      "Your insurance expires on ${date}. Time to renew it.";
 
-  static String m7(count) => "Approx. in ${count} days";
+  static String m7(task) => "Time for: ${task}";
 
-  static String m8(count) => "Approx. in ${count} weeks";
+  static String m8(count) => "Approx. in ${count} days";
 
-  static String m9(km) => "Oil change in ${km} km";
+  static String m9(count) => "Approx. in ${count} weeks";
 
-  static String m10(distance) => "Best rated nearby · ${distance} km";
+  static String m10(km) => "Oil change in ${km} km";
 
-  static String m11(price, period) =>
+  static String m11(distance) => "Best rated nearby · ${distance} km";
+
+  static String m12(price, period) =>
       "7-day free trial, then ${price} per ${period}. Cancel anytime, at least 24 hours before the trial ends, in Google Play Settings. Subscription renews automatically unless cancelled.";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
@@ -326,9 +329,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Add fuel purchase details?",
     ),
     "fuel_prompt_title": MessageLookupByLibrary.simpleMessage("Fuel up"),
-    "full_tank": MessageLookupByLibrary.simpleMessage("Full tank"),
     "fuel_type": MessageLookupByLibrary.simpleMessage("Fuel type"),
     "fuel_up": MessageLookupByLibrary.simpleMessage("Fuel up"),
+    "full_tank": MessageLookupByLibrary.simpleMessage("Full tank"),
     "garage_action_error": MessageLookupByLibrary.simpleMessage(
       "Failed to complete the action",
     ),
@@ -405,6 +408,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "insurance_control": MessageLookupByLibrary.simpleMessage(
       "Insurance control",
     ),
+    "insurance_expiry_reminder_body": m6,
     "interval": MessageLookupByLibrary.simpleMessage("Interval (km)"),
     "interval_by_date": MessageLookupByLibrary.simpleMessage(
       "Interval by date",
@@ -437,7 +441,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "maintenance_control": MessageLookupByLibrary.simpleMessage(
       "Maintenance control",
     ),
-    "maintenance_due_body": m6,
+    "maintenance_due_body": m7,
     "maintenance_due_title": MessageLookupByLibrary.simpleMessage(
       "Maintenance due",
     ),
@@ -562,6 +566,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "plan_activated": MessageLookupByLibrary.simpleMessage(
       "Plan successfully activated",
     ),
+    "planned_service_reminder_body": MessageLookupByLibrary.simpleMessage(
+      "Planned service is due. Add the cost once it\'s done.",
+    ),
+    "planned_services": MessageLookupByLibrary.simpleMessage("Planned works"),
     "please_log_in": MessageLookupByLibrary.simpleMessage(
       "Please leave or register to continue.",
     ),
@@ -593,8 +601,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "register": MessageLookupByLibrary.simpleMessage("Register"),
     "registration": MessageLookupByLibrary.simpleMessage("Registration"),
     "reminder": MessageLookupByLibrary.simpleMessage("Reminder"),
-    "reminder_approx_days": m7,
-    "reminder_approx_weeks": m8,
+    "reminder_approx_days": m8,
+    "reminder_approx_weeks": m9,
     "reminder_insurance_expires": MessageLookupByLibrary.simpleMessage(
       "Insurance expires",
     ),
@@ -604,7 +612,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "reminder_oil_due": MessageLookupByLibrary.simpleMessage(
       "Time to change the oil",
     ),
-    "reminder_oil_in_km": m9,
+    "reminder_oil_in_km": m10,
     "reminder_overdue": MessageLookupByLibrary.simpleMessage("Overdue"),
     "reminder_soon": MessageLookupByLibrary.simpleMessage("Soon"),
     "remove": MessageLookupByLibrary.simpleMessage("Remove"),
@@ -648,7 +656,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "service_balansuvannya_kolis": MessageLookupByLibrary.simpleMessage(
       "Wheel balancing",
     ),
-    "service_best_rating_distance": m10,
+    "service_best_rating_distance": m11,
     "service_capitalnyy_remont_dvyhuna": MessageLookupByLibrary.simpleMessage(
       "Overhaul of the engine",
     ),
@@ -1192,7 +1200,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "sum_short": MessageLookupByLibrary.simpleMessage("Amount"),
     "support": MessageLookupByLibrary.simpleMessage("Support"),
     "take_a_picture": MessageLookupByLibrary.simpleMessage("Take a picture"),
-    "tank_volume_liters": MessageLookupByLibrary.simpleMessage("Tank volume, L"),
+    "tank_volume_liters": MessageLookupByLibrary.simpleMessage(
+      "Tank volume, L",
+    ),
     "tech_service": MessageLookupByLibrary.simpleMessage(
       "Technical maintenance",
     ),
@@ -1224,7 +1234,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "track_costs": MessageLookupByLibrary.simpleMessage(
       "Track costs, mileage and efficiency",
     ),
-    "trial_disclosure_detailed": m11,
+    "trial_disclosure_detailed": m12,
     "trial_expired": MessageLookupByLibrary.simpleMessage(
       "Trial period expired",
     ),

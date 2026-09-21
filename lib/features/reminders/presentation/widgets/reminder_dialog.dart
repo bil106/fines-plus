@@ -119,6 +119,8 @@ class _ReminderDialogState extends State<ReminderDialog> {
               description: descriptionController.text.trim().isEmpty ? 'Push check' : descriptionController.text.trim(),
               dateTime: selectedDateTime,
               isCompleted: widget.reminder?.isCompleted ?? false,
+              isPlannedService: widget.reminder?.isPlannedService ?? false,
+              plannedCategory: widget.reminder?.plannedCategory,
               ownerId: cubit.ownerId,
             );
 

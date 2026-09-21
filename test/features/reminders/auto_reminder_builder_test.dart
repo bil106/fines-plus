@@ -44,7 +44,17 @@ void main() {
   group('insurance', () {
     test('nothing without data', () => expect(build(), isEmpty));
 
-    test('uses the policy that ends last', () {
+    test('uses the policy saved last, even if it ends sooner', () {
+      final items = build(
+        insurance: [
+          policy(DateTime(2027, 10, 12), updatedAt: DateTime(2026, 9, 1)),
+          policy(DateTime(2026, 10, 12), updatedAt: DateTime(2026, 9, 18)),
+        ],
+      );
+      expect(items.single.dueDate, DateTime(2026, 10, 12));
+    });
+
+    test('without save times, the later policy wins', () {
       final items = build(insurance: [policy(DateTime(2026, 10, 12)), policy(DateTime(2027, 10, 12))]);
       expect(items.single.dueDate, DateTime(2027, 10, 12));
     });

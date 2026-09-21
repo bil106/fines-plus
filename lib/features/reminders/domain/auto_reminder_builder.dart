@@ -27,10 +27,13 @@ class AutoReminderBuilder {
 
   static ReminderItem? _insurance(List<InsuranceRecord> records, List<MaintenanceTask> tasks) {
     if (records.isNotEmpty) {
+      // The current policy is the one saved last - same rule as the garage
+      // card and the insurance sheet's prefill - not the one that ends last,
+      // so a date the user just entered is never hidden by an older record.
       final latest = records.reduce((a, b) {
-        final byEnd = a.validTo.compareTo(b.validTo);
-        if (byEnd != 0) return byEnd > 0 ? a : b;
-        return (a.updatedAt ?? a.validFrom).isAfter(b.updatedAt ?? b.validFrom) ? a : b;
+        final bySaved = (a.updatedAt ?? a.validFrom).compareTo(b.updatedAt ?? b.validFrom);
+        if (bySaved != 0) return bySaved > 0 ? a : b;
+        return a.validTo.isAfter(b.validTo) ? a : b;
       });
       return ReminderItem(id: 'auto_insurance', kind: ReminderKind.insurance, dueDate: latest.validTo);
     }

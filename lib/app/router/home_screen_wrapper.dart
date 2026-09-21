@@ -24,6 +24,8 @@ import 'package:fines_plus/features/reminders/data/datasources/reminder_remote_d
 import 'package:fines_plus/features/reminders/data/repository/reminder_repository.dart';
 import 'package:fines_plus/features/reminders/presentation/cubit/reminder_cubit.dart';
 import 'package:fines_plus/features/reminders/presentation/screens/reminders_screen.dart';
+import 'package:fines_plus/features/maintenance/data/repository/schedule_firebase_repository.dart';
+import 'package:fines_plus/features/maintenance/presentation/cubit/maintenance_cubit.dart';
 import 'package:fines_plus/features/schedule/data/repository/schedule_repository.dart';
 import 'package:fines_plus/features/subscription/presentation/cubit/subscription_cubit.dart';
 import 'package:fines_plus/features/vehicle/data/repository/car_info_repository.dart';
@@ -87,6 +89,8 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
   late final CarInfoCubit carInfoCubit;
   late final AnalyticsCubit analyticsCubit;
   late final GarageCubit garageCubit;
+  ReminderCubit? _reminderCubit;
+  String? _reminderCarId;
 
   late final Map<HomePage, int> _pageIndexMap;
   DateTime? _lastPressedTime;
@@ -224,7 +228,28 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
     carInfoCubit.close();
     analyticsCubit.close();
     garageCubit.close();
+    _reminderCubit?.close();
     super.dispose();
+  }
+
+  /// One reminders cubit per car, shared by the Home "ТО" button (planned
+  /// services) and the Reminders tab so both always show the same list.
+  ReminderCubit _reminderCubitFor(String carId) {
+    if (_reminderCubit == null || _reminderCarId != carId) {
+      _reminderCubit?.close();
+      _reminderCarId = carId;
+      _reminderCubit = ReminderCubit(
+        repository: context.read<ReminderRepository>(),
+        carNumber: carId,
+        ownerId: FirebaseAuth.instance.currentUser?.uid ?? '',
+        pushHelper: context.read<PushHelper>(),
+        maintenanceCubit: context.read<MaintenanceCubit>(),
+        scheduleRepository: context.read<ScheduleFirebaseRepository>(),
+        scheduleCache: context.read<ScheduleRepository>(),
+      );
+      if (carId.isNotEmpty) _reminderCubit!.load();
+    }
+    return _reminderCubit!;
   }
 
   @override
@@ -270,6 +295,7 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
           BlocProvider.value(value: historyCubit),
           BlocProvider.value(value: analyticsCubit),
           BlocProvider.value(value: garageCubit),
+          BlocProvider.value(value: _reminderCubitFor(carId)),
           BlocProvider(create: (_) => CarInfoCubit(context.read<CarInfoRepository>(), historyCubit)),
         ],
         child: Scaffold(
@@ -294,24 +320,10 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
                 ),
               ),
               FinesScreen(key: const ValueKey('fines_screen'), onBack: () => openPage(HomePage.home)),
-              BlocProvider(
-                key: ValueKey(carNumber),
-                create: (_) {
-                  final cubit = ReminderCubit(
-                    repository: context.read<ReminderRepository>(),
-                    carNumber: carId,
-                    ownerId: FirebaseAuth.instance.currentUser?.uid ?? '',
-                    pushHelper: context.read<PushHelper>(),
-                  );
-
-                  cubit.load();
-                  return cubit;
-                },
-                child: RemindersScreen(
-                  key: ValueKey('reminders_$carNumber'),
-                  ownerId: FirebaseAuth.instance.currentUser?.uid ?? '',
-                  onBack: () => openPage(HomePage.home),
-                ),
+              RemindersScreen(
+                key: ValueKey('reminders_$carNumber'),
+                ownerId: FirebaseAuth.instance.currentUser?.uid ?? '',
+                onBack: () => openPage(HomePage.home),
               ),
 
               if (hasCar) ...[

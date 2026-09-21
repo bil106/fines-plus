@@ -632,5 +632,9 @@
    "not_paid": "Не оплачено",
    "current_mileage": "Поточний пробіг",
    "status": "Статус",
-   "tank_volume_liters": "Обсяг бака, л"
+   "tank_volume_liters": "Обсяг бака, л",
+"planned_service_reminder_body": "Настав час запланованого ТО. Внесіть вартість після виконання.",
+"insurance_expiry_reminder_body": "Страховка закінчується {date}. Час її продовжити.",
+"@insurance_expiry_reminder_body": {"placeholders": {"date": {"type": "String"}}},
+"planned_services": "Заплановані роботи"
 }

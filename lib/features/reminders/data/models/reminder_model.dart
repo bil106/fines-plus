@@ -15,6 +15,14 @@ class ReminderModel extends Equatable {
   @JsonKey(defaultValue: '')
   final String ownerId;
 
+  /// Created from a service booked for a future date on the Home "ТО" button.
+  @JsonKey(defaultValue: false)
+  final bool isPlannedService;
+
+  /// Which quick-add sheet a planned service belongs to (`Oil`, `Battery`,
+  /// `Tires`, `Tuning`); null for the main "ТО" one.
+  final String? plannedCategory;
+
   const ReminderModel({
     required this.id,
     required this.title,
@@ -22,6 +30,8 @@ class ReminderModel extends Equatable {
     required this.dateTime,
     required this.ownerId,
     this.isCompleted = false,
+    this.isPlannedService = false,
+    this.plannedCategory,
   });
 
   ReminderModel copyWith({
@@ -31,6 +41,8 @@ class ReminderModel extends Equatable {
     DateTime? dateTime,
     bool? isCompleted,
     String? ownerId,
+    bool? isPlannedService,
+    String? plannedCategory,
   }) {
     return ReminderModel(
       id: id ?? this.id,
@@ -39,6 +51,8 @@ class ReminderModel extends Equatable {
       dateTime: dateTime ?? this.dateTime,
       ownerId: ownerId ?? this.ownerId,
       isCompleted: isCompleted ?? this.isCompleted,
+      isPlannedService: isPlannedService ?? this.isPlannedService,
+      plannedCategory: plannedCategory ?? this.plannedCategory,
     );
   }
 
@@ -47,7 +61,7 @@ class ReminderModel extends Equatable {
   Map<String, dynamic> toJson() => _$ReminderModelToJson(this);
 
   @override
-  List<Object?> get props => [id, title, description, dateTime, isCompleted, ownerId];
+  List<Object?> get props => [id, title, description, dateTime, isCompleted, ownerId, isPlannedService, plannedCategory];
 
   static DateTime _fromTimestamp(dynamic timestamp) {
     if (timestamp is Timestamp) {
