@@ -63,7 +63,7 @@ class ExpenseStatsCard extends StatelessWidget {
                     return PieChartSectionData(
                       value: convertedValue,
                       radius: 50,
-                      gradient: _gradientForCategory(e.key),
+                      color: _colorForCategory(e.key),
                       title: convertedValue.toStringAsFixed(0),
                       titleStyle: const TextStyle(
                         fontSize: 14,
@@ -86,7 +86,7 @@ class ExpenseStatsCard extends StatelessWidget {
               mainAxisSpacing: 6,
               crossAxisSpacing: 8,
               children: ExpenseCategory.values.map((cat) {
-                return _LegendItem(gradient: _gradientForCategory(cat), text: _categoryName(cat));
+                return _LegendItem(color: _colorForCategory(cat), text: _categoryName(cat));
               }).toList(),
             ),
 
@@ -103,44 +103,21 @@ class ExpenseStatsCard extends StatelessWidget {
     );
   }
 
-  Gradient _gradientForCategory(ExpenseCategory cat) {
+  // Same tokens as the dashboard's HeroExpenseCard so both screens match.
+  Color _colorForCategory(ExpenseCategory cat) {
     switch (cat) {
       case ExpenseCategory.fuel:
-        return const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [AppColors.greenAccent, AppColors.green],
-        );
+        return AppColors.catFuel;
       case ExpenseCategory.service:
-        return const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [AppColors.lightRed, AppColors.darkRed],
-        );
+        return AppColors.catService;
       case ExpenseCategory.tuning:
-        return const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [AppColors.energyBlue25, AppColors.darkBlue],
-        );
+        return AppColors.catTuning;
       case ExpenseCategory.carWash:
-        return const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [AppColors.energyBlue25, AppColors.greenAccent],
-        );
+        return AppColors.catCarWash;
       case ExpenseCategory.insurance:
-        return const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [AppColors.catInsurance, AppColors.darkRed],
-        );
+        return AppColors.catInsurance;
       case ExpenseCategory.other:
-        return const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [AppColors.grey50, AppColors.grey700],
-        );
+        return AppColors.catOther;
     }
   }
 
@@ -163,10 +140,10 @@ class ExpenseStatsCard extends StatelessWidget {
 }
 
 class _LegendItem extends StatelessWidget {
-  final Gradient gradient;
+  final Color color;
   final String text;
 
-  const _LegendItem({required this.gradient, required this.text});
+  const _LegendItem({required this.color, required this.text});
 
   @override
   Widget build(BuildContext context) {
@@ -175,7 +152,7 @@ class _LegendItem extends StatelessWidget {
         Container(
           width: 16,
           height: 16,
-          decoration: BoxDecoration(shape: BoxShape.circle, gradient: gradient),
+          decoration: BoxDecoration(shape: BoxShape.circle, color: color),
         ),
         const SizedBox(width: 4), 
         Expanded(
