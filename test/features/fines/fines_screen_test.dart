@@ -37,6 +37,9 @@ void main() {
         value: cubit,
         child: MaterialApp(
           theme: ThemeData(
+            // The default InkSparkle splash loads a shader asset that can't be
+            // decoded in the test environment.
+            splashFactory: NoSplash.splashFactory,
             extensions: const [
               AppBrandTheme(
                 surfaceBg: Color(0xFFF5F3ED),

@@ -74,6 +74,9 @@ void main() {
         ],
         child: MaterialApp(
           theme: ThemeData(
+            // The default InkSparkle splash loads a shader asset that can't be
+            // decoded in the test environment.
+            splashFactory: NoSplash.splashFactory,
             extensions: const [
               AppBrandTheme(
                 surfaceBg: Color(0xFFF6F4ED),

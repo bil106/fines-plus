@@ -184,6 +184,8 @@ class GarageScreen extends StatelessWidget {
   }
 }
 
+const _plateMaxWidth = 110.0;
+
 class _CarCard extends StatelessWidget {
   final CarInfoModel car;
   final bool isActive;
@@ -242,20 +244,30 @@ class _CarCard extends StatelessWidget {
                     ),
                     const SizedBox(width: 8),
                     if (car.carNumber.isNotEmpty)
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 4,
+                      // Capped and scaled down so a large system font can't
+                      // push the plate + menu past the card's edge.
+                      ConstrainedBox(
+                        constraints: const BoxConstraints(
+                          maxWidth: _plateMaxWidth,
                         ),
-                        decoration: BoxDecoration(
-                          color: brand.surfaceBg,
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        child: Text(
-                          car.carNumber,
-                          style: brand.moneyTextStyle.copyWith(
-                            fontSize: 13,
-                            color: const Color(0xFF202124),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: brand.surfaceBg,
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Text(
+                              car.carNumber,
+                              style: brand.moneyTextStyle.copyWith(
+                                fontSize: 13,
+                                color: const Color(0xFF202124),
+                              ),
+                            ),
                           ),
                         ),
                       ),
