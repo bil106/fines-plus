@@ -43,7 +43,10 @@ class FuelTankCache {
 class FuelPriceVolumeSumRow extends StatelessWidget {
   final TextEditingController volumeController;
   final TextEditingController priceController;
+  final TextEditingController sumController;
   final ValueChanged<String>? onPriceChanged;
+  final ValueChanged<String>? onVolumeChanged;
+  final ValueChanged<String>? onSumChanged;
   final FocusNode? volumeFocusNode;
   final FocusNode? priceFocusNode;
 
@@ -51,7 +54,10 @@ class FuelPriceVolumeSumRow extends StatelessWidget {
     super.key,
     required this.volumeController,
     required this.priceController,
+    required this.sumController,
     this.onPriceChanged,
+    this.onVolumeChanged,
+    this.onSumChanged,
     this.volumeFocusNode,
     this.priceFocusNode,
   });
@@ -94,7 +100,7 @@ class FuelPriceVolumeSumRow extends StatelessWidget {
             child: TextField(
               controller: volumeController,
               focusNode: volumeFocusNode,
-              keyboardType: TextInputType.number,
+              keyboardType: const TextInputType.numberWithOptions(decimal: true),
               decoration: const InputDecoration(
                 border: InputBorder.none,
                 focusedBorder: InputBorder.none,
@@ -103,41 +109,36 @@ class FuelPriceVolumeSumRow extends StatelessWidget {
                 contentPadding: EdgeInsets.zero,
               ),
               style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, color: AppColors.black87),
+              onChanged: onVolumeChanged,
             ),
           ),
         ),
         AppSpacers.horizontalSmallMedium,
         Expanded(
-          child: ValueListenableBuilder<TextEditingValue>(
-            valueListenable: priceController,
-            builder: (context, priceValue, _) {
-              return ValueListenableBuilder<TextEditingValue>(
-                valueListenable: volumeController,
-                builder: (context, volumeValue, __) {
-                  final liters = double.tryParse(volumeValue.text) ?? 0;
-                  final price = double.tryParse(priceValue.text) ?? 0;
-                  final total = (liters * price).toStringAsFixed(0);
-
-                  return Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: AppColors.energyBlue50,
-                      borderRadius: AppBorders.radiusMedium,
-                      border: Border.all(color: AppColors.energyBlue),
-                    ),
-                    child: _FieldColumn(
-                      label: S.of(context).sum_short,
-                      child: Text(
-                        "$total $currencyLabel",
-                        style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, color: AppColors.blue700),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  );
-                },
-              );
-            },
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+            decoration: BoxDecoration(
+              color: AppColors.energyBlue50,
+              borderRadius: AppBorders.radiusMedium,
+              border: Border.all(color: AppColors.energyBlue),
+            ),
+            child: _FieldColumn(
+              label: S.of(context).sum_short,
+              child: TextField(
+                controller: sumController,
+                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                decoration: InputDecoration(
+                  border: InputBorder.none,
+                  focusedBorder: InputBorder.none,
+                  hintText: "0",
+                  suffixText: currencyLabel,
+                  isDense: true,
+                  contentPadding: EdgeInsets.zero,
+                ),
+                style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, color: AppColors.blue700),
+                onChanged: onSumChanged,
+              ),
+            ),
           ),
         ),
       ],

@@ -48,6 +48,9 @@ class FuelUpScreenState extends State<FuelUpScreen> {
   final TextEditingController volumeController = TextEditingController();
   final TextEditingController mileageController = TextEditingController();
   final TextEditingController priceController = TextEditingController();
+  final TextEditingController sumController = TextEditingController();
+  // Which of volume/sum the user typed last - the other one is derived from it.
+  bool _sumIsSource = false;
   final FocusNode _mileageFocusNode = FocusNode();
   final FocusNode _priceFocusNode = FocusNode();
   final FocusNode _volumeFocusNode = FocusNode();
@@ -86,6 +89,7 @@ class FuelUpScreenState extends State<FuelUpScreen> {
     volumeController.dispose();
     mileageController.dispose();
     priceController.dispose();
+    sumController.dispose();
     tankController.dispose();
     _mileageFocusNode.dispose();
     _priceFocusNode.dispose();
@@ -117,6 +121,7 @@ class FuelUpScreenState extends State<FuelUpScreen> {
     } else {
       priceController.clear();
     }
+    _recalculate();
   }
 
   String get _carNumber => context.read<CarCubit>().state.carNumber;
@@ -133,14 +138,20 @@ class FuelUpScreenState extends State<FuelUpScreen> {
   /// stays editable for when the tank wasn't empty.
   void _onFullTankChanged(bool value) {
     setState(() => _fullTank = value);
-    if (value && tankController.text.isNotEmpty) volumeController.text = tankController.text;
+    if (value && tankController.text.isNotEmpty) {
+      volumeController.text = tankController.text;
+      _onVolumeChanged(tankController.text);
+    }
   }
 
   void _onTankVolumeChanged(String value) {
     final parsed = double.tryParse(value);
     if (parsed == null) return;
     FuelTankCache.saveVolume(_carNumber, parsed);
-    if (_fullTank) volumeController.text = value;
+    if (_fullTank) {
+      volumeController.text = value;
+      _onVolumeChanged(value);
+    }
   }
 
   void _onPriceChanged(String value) {
@@ -148,6 +159,36 @@ class FuelUpScreenState extends State<FuelUpScreen> {
     if (parsed != null) {
       FuelPriceCache.savePrice(selectedFuel.name, parsed);
     }
+    _recalculate();
+  }
+
+  void _onVolumeChanged(String _) {
+    _sumIsSource = false;
+    _recalculate();
+  }
+
+  void _onSumChanged(String _) {
+    _sumIsSource = true;
+    _recalculate();
+  }
+
+  /// Keeps volume, price and sum consistent: whichever of volume/sum the
+  /// user typed last drives the other (e.g. a receipt total gives the liters).
+  void _recalculate() {
+    final price = double.tryParse(priceController.text) ?? 0;
+    if (price <= 0) return;
+    if (_sumIsSource) {
+      final sum = double.tryParse(sumController.text);
+      volumeController.text = sum == null ? '' : _formatNumber(sum / price);
+    } else {
+      final volume = double.tryParse(volumeController.text);
+      sumController.text = volume == null ? '' : _formatNumber(volume * price);
+    }
+  }
+
+  String _formatNumber(double value) {
+    final text = value.toStringAsFixed(2);
+    return text.replaceFirst(RegExp(r'\.?0+$'), '');
   }
 
   Future<void> _initLocationAndStation() async {
@@ -258,7 +299,7 @@ class FuelUpScreenState extends State<FuelUpScreen> {
     final volume = double.tryParse(volumeController.text) ?? 0;
     final mileage = int.tryParse(mileageController.text) ?? 0;
     final pricePerLiter = double.tryParse(priceController.text) ?? 0;
-    final totalCost = volume * pricePerLiter;
+    final totalCost = double.tryParse(sumController.text) ?? volume * pricePerLiter;
 
     final record = FuelRecord(
       fuelType: selectedFuel.name,
@@ -469,7 +510,10 @@ class FuelUpScreenState extends State<FuelUpScreen> {
           FuelPriceVolumeSumRow(
             volumeController: volumeController,
             priceController: priceController,
+            sumController: sumController,
             onPriceChanged: _onPriceChanged,
+            onVolumeChanged: _onVolumeChanged,
+            onSumChanged: _onSumChanged,
             priceFocusNode: _priceFocusNode,
             volumeFocusNode: _volumeFocusNode,
           ),
