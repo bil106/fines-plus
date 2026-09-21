@@ -5074,6 +5074,91 @@ class S {
     );
   }
 
+  /// `Electric`
+  String get fuel_electric {
+    return Intl.message('Electric', name: 'fuel_electric', desc: '', args: []);
+  }
+
+  /// `kWh`
+  String get kwh {
+    return Intl.message('kWh', name: 'kwh', desc: '', args: []);
+  }
+
+  /// `Price/kWh`
+  String get price_per_kwh_short {
+    return Intl.message(
+      'Price/kWh',
+      name: 'price_per_kwh_short',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Amount, kWh`
+  String get volume_kwh_short {
+    return Intl.message(
+      'Amount, kWh',
+      name: 'volume_kwh_short',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Full charge`
+  String get full_charge {
+    return Intl.message('Full charge', name: 'full_charge', desc: '', args: []);
+  }
+
+  /// `Battery capacity, kWh`
+  String get battery_capacity_kwh {
+    return Intl.message(
+      'Battery capacity, kWh',
+      name: 'battery_capacity_kwh',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No data on the nearest charger`
+  String get no_nearby_charger {
+    return Intl.message(
+      'No data on the nearest charger',
+      name: 'no_nearby_charger',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Chargers nearby`
+  String get charging_nearby {
+    return Intl.message(
+      'Chargers nearby',
+      name: 'charging_nearby',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No fines found`
+  String get fines_not_found_title {
+    return Intl.message(
+      'No fines found',
+      name: 'fines_not_found_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `There are no active fines for your plate right now`
+  String get fines_not_found_body {
+    return Intl.message(
+      'There are no active fines for your plate right now',
+      name: 'fines_not_found_body',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Fuel`
   String get vehicle_fuel {
     return Intl.message('Fuel', name: 'vehicle_fuel', desc: '', args: []);

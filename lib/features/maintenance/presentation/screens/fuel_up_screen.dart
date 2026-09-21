@@ -56,6 +56,7 @@ class FuelUpScreenState extends State<FuelUpScreen> {
   final FocusNode _volumeFocusNode = FocusNode();
 
   FuelType selectedFuel = FuelType.Ai95;
+  bool get _isElectric => selectedFuel.isElectric;
   bool _fullTank = false;
   final TextEditingController tankController = TextEditingController();
   DateTime? selectedDate = DateTime.now();
@@ -117,7 +118,7 @@ class FuelUpScreenState extends State<FuelUpScreen> {
   Future<void> _loadLastPrice(FuelType fuel) async {
     final cached = await FuelPriceCache.getPrice(fuel.name);
     if (cached != null) {
-      priceController.text = cached.round().toString();
+      priceController.text = _formatNumber(cached);
     } else {
       priceController.clear();
     }
@@ -127,9 +128,31 @@ class FuelUpScreenState extends State<FuelUpScreen> {
   String get _carNumber => context.read<CarCubit>().state.carNumber;
 
   Future<void> _loadTankVolume() async {
-    final saved = await FuelTankCache.getVolume(_carNumber);
+    final saved = await FuelTankCache.getVolume(_carNumber, electric: _isElectric);
     if (saved == null || !mounted) return;
     tankController.text = _formatLiters(saved);
+    if (_fullTank) _onFullTankChanged(true);
+  }
+
+  /// Switching between fuel and electricity changes the unit (liters / kWh),
+  /// so the amount fields, the remembered tank / battery capacity and the
+  /// nearby stations (gas stations / chargers) are all reset for the new kind.
+  void _onFuelSelected(FuelType fuel) {
+    final electricChanged = fuel.isElectric != selectedFuel.isElectric;
+    setState(() {
+      selectedFuel = fuel;
+      if (electricChanged) {
+        _isLoadingBestStation = true;
+        tankController.clear();
+        volumeController.clear();
+        sumController.clear();
+      }
+    });
+    _loadLastPrice(fuel);
+    if (electricChanged) {
+      _loadTankVolume();
+      _loadBestStationFrom(_currentPosition ?? _fallbackPosition);
+    }
   }
 
   String _formatLiters(double liters) => liters == liters.roundToDouble() ? liters.toInt().toString() : liters.toString();
@@ -147,7 +170,7 @@ class FuelUpScreenState extends State<FuelUpScreen> {
   void _onTankVolumeChanged(String value) {
     final parsed = double.tryParse(value);
     if (parsed == null) return;
-    FuelTankCache.saveVolume(_carNumber, parsed);
+    FuelTankCache.saveVolume(_carNumber, parsed, electric: _isElectric);
     if (_fullTank) {
       volumeController.text = value;
       _onVolumeChanged(value);
@@ -223,8 +246,10 @@ class FuelUpScreenState extends State<FuelUpScreen> {
 
   Future<void> _loadBestStationFrom(LatLng current) async {
     _currentPosition = current;
+    final electric = _isElectric;
     final stations = await _fetchNearbyGasStations(current);
-    if (!mounted) return;
+    // The user may have switched fuel / electricity while this was loading.
+    if (!mounted || electric != _isElectric) return;
 
     final bestStation = _pickBestStation(stations, current);
     final distanceKm = bestStation == null
@@ -246,7 +271,7 @@ class FuelUpScreenState extends State<FuelUpScreen> {
 
   Future<List<GasStation>> _fetchNearbyGasStations(LatLng current) async {
     try {
-      return await _gasService.fetchNearbyGasStations(current);
+      return await _gasService.fetchNearbyGasStations(current, electric: _isElectric);
     } catch (e) {
       if (kDebugMode) print("Error fetching stations: $e");
       return [];
@@ -381,6 +406,7 @@ class FuelUpScreenState extends State<FuelUpScreen> {
                             context,
                             currentPosition: _currentPosition!,
                             stations: _nearbyStations,
+                            title: _isElectric ? S.of(context).charging_nearby : null,
                             onSelected: (station) {
                               context.router.push(
                                 FuelMapRoute(
@@ -403,8 +429,8 @@ class FuelUpScreenState extends State<FuelUpScreen> {
                           ? const Center(child: CircularProgressIndicator())
                           : Row(
                               children: [
-                                const Icon(
-                                  Icons.location_on,
+                                Icon(
+                                  _isElectric ? Icons.ev_station : Icons.local_gas_station,
                                   color: AppColors.blueAccent,
                                   size: 32,
                                 ),
@@ -417,7 +443,9 @@ class FuelUpScreenState extends State<FuelUpScreen> {
                                     children: [
                                       Text(
                                         _bestStation == null
-                                            ? S.of(context).no_nearby_station
+                                            ? (_isElectric
+                                                  ? S.of(context).no_nearby_charger
+                                                  : S.of(context).no_nearby_station)
                                             : _bestStation!.vicinity.isEmpty
                                             ? _bestStation!.name
                                             : '${_bestStation!.name} — ${_bestStation!.vicinity}',
@@ -496,14 +524,10 @@ class FuelUpScreenState extends State<FuelUpScreen> {
               FuelType.Ai92,
               FuelType.DIESEl,
               FuelType.LPG,
+              FuelType.Electric,
             ],
             selectedFuel: selectedFuel,
-            onSelected: (fuel) {
-              setState(() {
-                selectedFuel = fuel;
-                _loadLastPrice(fuel);
-              });
-            },
+            onSelected: _onFuelSelected,
           ),
 
           AppSpacers.verticalMediumLarge,
@@ -516,6 +540,7 @@ class FuelUpScreenState extends State<FuelUpScreen> {
             onSumChanged: _onSumChanged,
             priceFocusNode: _priceFocusNode,
             volumeFocusNode: _volumeFocusNode,
+            electric: _isElectric,
           ),
 
           GestureDetector(
@@ -524,13 +549,18 @@ class FuelUpScreenState extends State<FuelUpScreen> {
             child: Row(
               children: [
                 Checkbox(value: _fullTank, onChanged: (value) => _onFullTankChanged(value ?? false)),
-                Expanded(child: Text(S.of(context).full_tank, style: textTheme.subtitleText)),
+                Expanded(
+                  child: Text(
+                    _isElectric ? S.of(context).full_charge : S.of(context).full_tank,
+                    style: textTheme.subtitleText,
+                  ),
+                ),
               ],
             ),
           ),
           if (_fullTank)
             AppFieldCard(
-              label: S.of(context).tank_volume_liters,
+              label: _isElectric ? S.of(context).battery_capacity_kwh : S.of(context).tank_volume_liters,
               child: TextField(
                 controller: tankController,
                 keyboardType: const TextInputType.numberWithOptions(decimal: true),

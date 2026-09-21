@@ -96,6 +96,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "auto": MessageLookupByLibrary.simpleMessage("Авто"),
     "average": MessageLookupByLibrary.simpleMessage("Середній"),
     "battery": MessageLookupByLibrary.simpleMessage("Батарея"),
+    "battery_capacity_kwh": MessageLookupByLibrary.simpleMessage(
+      "Ємність батареї, кВт·год",
+    ),
     "best_price_nearby_distance": m1,
     "body_category": MessageLookupByLibrary.simpleMessage("Категорія / кузов"),
     "build_route": MessageLookupByLibrary.simpleMessage("Прокласти маршрут"),
@@ -145,6 +148,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "change_car_info": MessageLookupByLibrary.simpleMessage(
       "Змінити дані авто",
     ),
+    "charging_nearby": MessageLookupByLibrary.simpleMessage("Зарядки поруч"),
     "check_filter": MessageLookupByLibrary.simpleMessage(
       "Потрібно замінити фільтр",
     ),
@@ -312,6 +316,12 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "fines_new_found": m4,
     "fines_no_new": MessageLookupByLibrary.simpleMessage("Нових штрафів немає"),
+    "fines_not_found_body": MessageLookupByLibrary.simpleMessage(
+      "За вашим номером наразі немає активних штрафів",
+    ),
+    "fines_not_found_title": MessageLookupByLibrary.simpleMessage(
+      "Штрафів не знайдено",
+    ),
     "fines_recheck_confirm": MessageLookupByLibrary.simpleMessage(
       "Перевірити ще раз",
     ),
@@ -345,6 +355,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "fuel_chip_diesel": MessageLookupByLibrary.simpleMessage("Дизель"),
     "fuel_chip_gas": MessageLookupByLibrary.simpleMessage("Газ"),
     "fuel_consumption": MessageLookupByLibrary.simpleMessage("Витрата палива"),
+    "fuel_electric": MessageLookupByLibrary.simpleMessage("Електро"),
     "fuel_gas_lpg": MessageLookupByLibrary.simpleMessage("Газ LPG"),
     "fuel_prompt_body": MessageLookupByLibrary.simpleMessage(
       "Додати дані про заправку?",
@@ -352,6 +363,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "fuel_prompt_title": MessageLookupByLibrary.simpleMessage("Заправка"),
     "fuel_type": MessageLookupByLibrary.simpleMessage("Тип пального"),
     "fuel_up": MessageLookupByLibrary.simpleMessage("Заправка"),
+    "full_charge": MessageLookupByLibrary.simpleMessage("Повна зарядка"),
     "full_tank": MessageLookupByLibrary.simpleMessage("Повний бак"),
     "garage_action_error": MessageLookupByLibrary.simpleMessage(
       "Не вдалося виконати дію",
@@ -444,6 +456,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "keep_track": MessageLookupByLibrary.simpleMessage(
       "Слідкуйте за термінами страховки авто",
     ),
+    "kwh": MessageLookupByLibrary.simpleMessage("кВт·год"),
     "l": MessageLookupByLibrary.simpleMessage("л."),
     "language": MessageLookupByLibrary.simpleMessage("Мова"),
     "large_login": MessageLookupByLibrary.simpleMessage("УВІЙТИ"),
@@ -518,6 +531,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "no_fines": MessageLookupByLibrary.simpleMessage("На вас немає штрафів"),
     "no_fines_short": MessageLookupByLibrary.simpleMessage("Штрафів немає"),
     "no_name": MessageLookupByLibrary.simpleMessage("Без назви"),
+    "no_nearby_charger": MessageLookupByLibrary.simpleMessage(
+      "Немає даних про найближчу зарядку",
+    ),
     "no_nearby_station": MessageLookupByLibrary.simpleMessage(
       "Немає даних про найближчу заправку",
     ),
@@ -627,6 +643,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "previous": MessageLookupByLibrary.simpleMessage("Попереднє"),
     "price": MessageLookupByLibrary.simpleMessage("Ціна"),
     "price_liter": MessageLookupByLibrary.simpleMessage("Ціна за 1 літр:"),
+    "price_per_kwh_short": MessageLookupByLibrary.simpleMessage("Ціна/кВт·год"),
     "price_per_liter_short": MessageLookupByLibrary.simpleMessage("Ціна/л"),
     "privacy_policy": MessageLookupByLibrary.simpleMessage(
       "Політика конфіденційності",
@@ -1307,6 +1324,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "view_all_events": MessageLookupByLibrary.simpleMessage(
       "Переглянути всі події",
     ),
+    "volume_kwh_short": MessageLookupByLibrary.simpleMessage("Обсяг, кВт·год"),
     "volume_liters_short": MessageLookupByLibrary.simpleMessage("Обсяг, л"),
     "write_viber": MessageLookupByLibrary.simpleMessage("Написати у Viber"),
     "yearly_plan": MessageLookupByLibrary.simpleMessage("Річний план"),

@@ -24,6 +24,8 @@ class FuelChoiceChips extends StatelessWidget {
         return S.of(context).fuel_chip_gas;
       case FuelType.DIESEl:
         return S.of(context).fuel_chip_diesel;
+      case FuelType.Electric:
+        return S.of(context).fuel_electric;
     }
   }
 

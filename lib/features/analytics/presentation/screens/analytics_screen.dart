@@ -5,6 +5,7 @@ import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/theme/app_brand_theme.dart';
 import 'package:design_system/widget/app_back_button.dart';
+import 'package:fines_plus/core/extensions/fuel_type.dart';
 import 'package:fines_plus/core/helpers/push_helper.dart';
 import 'package:fines_plus/features/analytics/presentation/widgets/history_tab.dart';
 import 'package:fines_plus/features/analytics/data/models/event_model.dart';
@@ -118,7 +119,7 @@ class AnalyticsScreenViewState extends State<_AnalyticsScreenView> with SingleTi
           final record = FuelRecord.fromJson(e);
           return EventModel(
             date: record.date,
-            title: "${record.fuelType} / ${record.volume} ${S.of(context).l}",
+            title: "${fuelTypeLabel(context, record.fuelType)} / ${record.volume} ${fuelUnitLabel(context, record.fuelType)}",
             amount: record.cost.toDouble(),
             mileage: formatMileage(record.mileage),
             iconCodePoint: Icons.local_gas_station.codePoint,

@@ -12,7 +12,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class FuelPriceCache {
   static Future<void> savePrice(String fuelName, double price) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setDouble('fuel_price_$fuelName', price.roundToDouble());
+    await prefs.setDouble('fuel_price_$fuelName', price);
   }
 
   static Future<double?> getPrice(String fuelName) async {
@@ -21,17 +21,21 @@ class FuelPriceCache {
   }
 }
 
-/// Tank capacity (liters) remembered per car, so a full-tank fill-up doesn't
-/// need it typed in every time.
+/// Tank capacity (liters) - or, for [electric], battery capacity (kWh) -
+/// remembered per car, so a full-tank / full-charge fill-up doesn't need it
+/// typed in every time.
 class FuelTankCache {
-  static Future<void> saveVolume(String carNumber, double liters) async {
+  static String _key(String carNumber, bool electric) =>
+      electric ? 'battery_capacity_$carNumber' : 'fuel_tank_volume_$carNumber';
+
+  static Future<void> saveVolume(String carNumber, double amount, {bool electric = false}) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setDouble('fuel_tank_volume_$carNumber', liters);
+    await prefs.setDouble(_key(carNumber, electric), amount);
   }
 
-  static Future<double?> getVolume(String carNumber) async {
+  static Future<double?> getVolume(String carNumber, {bool electric = false}) async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getDouble('fuel_tank_volume_$carNumber');
+    return prefs.getDouble(_key(carNumber, electric));
   }
 }
 
@@ -50,6 +54,9 @@ class FuelPriceVolumeSumRow extends StatelessWidget {
   final FocusNode? volumeFocusNode;
   final FocusNode? priceFocusNode;
 
+  /// Electricity: the price and amount fields are per kWh instead of per liter.
+  final bool electric;
+
   const FuelPriceVolumeSumRow({
     super.key,
     required this.volumeController,
@@ -60,6 +67,7 @@ class FuelPriceVolumeSumRow extends StatelessWidget {
     this.onSumChanged,
     this.volumeFocusNode,
     this.priceFocusNode,
+    this.electric = false,
   });
 
   @override
@@ -73,13 +81,17 @@ class FuelPriceVolumeSumRow extends StatelessWidget {
       children: [
         Expanded(
           child: AppFieldCard(
-            label: S.of(context).price_per_liter_short,
+            label: electric ? S.of(context).price_per_kwh_short : S.of(context).price_per_liter_short,
             child: TextField(
               controller: priceController,
               focusNode: priceFocusNode,
-              keyboardType: TextInputType.number,
+              keyboardType: electric ? const TextInputType.numberWithOptions(decimal: true) : TextInputType.number,
               textInputAction: TextInputAction.next,
-              inputFormatters: [FilteringTextInputFormatter.digitsOnly, LengthLimitingTextInputFormatter(2)],
+              // A kWh costs a few UAH, so electricity takes cents; a liter of
+              // fuel stays a whole number.
+              inputFormatters: electric
+                  ? [_KwhPriceFormatter()]
+                  : [FilteringTextInputFormatter.digitsOnly, LengthLimitingTextInputFormatter(2)],
               decoration: const InputDecoration(
                 border: InputBorder.none,
                 focusedBorder: InputBorder.none,
@@ -96,7 +108,7 @@ class FuelPriceVolumeSumRow extends StatelessWidget {
         AppSpacers.horizontalSmallMedium,
         Expanded(
           child: AppFieldCard(
-            label: S.of(context).volume_liters_short,
+            label: electric ? S.of(context).volume_kwh_short : S.of(context).volume_liters_short,
             child: TextField(
               controller: volumeController,
               focusNode: volumeFocusNode,
@@ -143,6 +155,20 @@ class FuelPriceVolumeSumRow extends StatelessWidget {
         ),
       ],
     );
+  }
+}
+
+/// Up to three digits and two decimals; accepts a comma as the decimal
+/// separator (many keyboards only offer one) and stores it as a dot so the
+/// value parses.
+class _KwhPriceFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
+    final text = newValue.text.replaceAll(',', '.');
+    final parts = text.split('.');
+    final digitsOnly = parts.every((part) => part.codeUnits.every((unit) => unit >= 48 && unit <= 57));
+    final valid = parts.length <= 2 && digitsOnly && parts[0].length <= 3 && (parts.length == 1 || parts[1].length <= 2);
+    return valid ? newValue.copyWith(text: text) : oldValue;
   }
 }
 

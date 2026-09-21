@@ -16,6 +16,7 @@ void showNearbyStationsSheet(
   required LatLng currentPosition,
   required List<GasStation> stations,
   required ValueChanged<GasStation> onSelected,
+  String? title,
 }) {
   showModalBottomSheet(
     context: context,
@@ -24,6 +25,7 @@ void showNearbyStationsSheet(
     builder: (ctx) => NearbyStationsSheet(
       currentPosition: currentPosition,
       stations: stations,
+      title: title,
       onSelected: (station) {
         Navigator.of(ctx).pop();
         onSelected(station);
@@ -37,11 +39,15 @@ class NearbyStationsSheet extends StatelessWidget {
   final List<GasStation> stations;
   final ValueChanged<GasStation> onSelected;
 
+  /// Header text; defaults to the gas-stations title.
+  final String? title;
+
   const NearbyStationsSheet({
     super.key,
     required this.currentPosition,
     required this.stations,
     required this.onSelected,
+    this.title,
   });
 
   double _distanceKm(GasStation station) =>
@@ -71,7 +77,7 @@ class NearbyStationsSheet extends StatelessWidget {
                 ),
               ),
             ),
-            Text(S.of(context).gas_station_nearby, style: textTheme.titleMedium),
+            Text(title ?? S.of(context).gas_station_nearby, style: textTheme.titleMedium),
             const SizedBox(height: 8),
             Flexible(
               child: ListView.separated(

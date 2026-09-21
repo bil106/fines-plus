@@ -1,5 +1,6 @@
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
+import 'package:fines_plus/core/extensions/fuel_type.dart';
 import 'package:fines_plus/core/extensions/currency_service.dart';
 import 'package:fines_plus/features/expenses/data/models/expense_category.dart';
 import 'package:fines_plus/features/maintenance/presentation/cubit/maintenance_cubit.dart';
@@ -66,12 +67,12 @@ String _categoryLabel(ExpenseCategory c, BuildContext context) {
   }
 }
 
-List<_TxItem> _mergeRecords(MaintenanceState state) {
+List<_TxItem> _mergeRecords(BuildContext context, MaintenanceState state) {
   final items = <_TxItem>[
     for (final r in state.fuelRecords)
       _TxItem(
         category: ExpenseCategory.fuel,
-        label: r.fuelType,
+        label: fuelTypeLabel(context, r.fuelType),
         date: r.date,
         amount: r.cost,
         currency: r.currency,
@@ -165,7 +166,7 @@ class RecentTransactionsList extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<MaintenanceCubit, MaintenanceState>(
       builder: (context, state) {
-        final items = _mergeRecords(state).take(maxItems).toList();
+        final items = _mergeRecords(context, state).take(maxItems).toList();
         if (items.isEmpty) return const _EmptyTransactions();
 
         final settingsCubit = context.watch<SettingsCubit>();

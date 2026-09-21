@@ -3,6 +3,7 @@ import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_borders.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
+import 'package:fines_plus/core/extensions/fuel_type.dart';
 import 'package:fines_plus/core/extensions/currency_service.dart';
 import 'package:fines_plus/features/expenses/data/models/fuel_record.dart';
 import 'package:fines_plus/features/settings/presentation/cubit/settings_cubit.dart';
@@ -47,7 +48,7 @@ class FuelRecordCard extends StatelessWidget {
                         FittedBox(
                           fit: BoxFit.scaleDown,
                           alignment: Alignment.centerLeft,
-                          child: Text("${record.fuelType} / ${record.volume.toInt()}L", style: textTheme.historyText),
+                          child: Text("${fuelTypeLabel(context, record.fuelType)} / ${record.volume.toInt()} ${fuelUnitLabel(context, record.fuelType)}", style: textTheme.historyText),
                         ),
                         AppSpacers.verticalXSmall,
                         Row(

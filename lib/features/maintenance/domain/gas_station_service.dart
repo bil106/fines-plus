@@ -10,9 +10,11 @@ class GasStationService {
 
   const GasStationService(this.apiKey);
 
-  Future<List<GasStation>> fetchNearbyGasStations(LatLng location) async {
+  /// Gas stations, or - with [electric] - EV charging stations.
+  Future<List<GasStation>> fetchNearbyGasStations(LatLng location, {bool electric = false}) async {
+    final type = electric ? 'electric_vehicle_charging_station' : 'gas_station';
     final url =
-        'https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${location.latitude},${location.longitude}&radius=8000&type=gas_station&key=$apiKey';
+        'https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${location.latitude},${location.longitude}&radius=8000&type=$type&key=$apiKey';
 
     if (kDebugMode) print("🌍 Query Google Places: $url");
 

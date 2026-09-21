@@ -96,6 +96,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "auto": MessageLookupByLibrary.simpleMessage("Auto"),
     "average": MessageLookupByLibrary.simpleMessage("Average"),
     "battery": MessageLookupByLibrary.simpleMessage("Battery"),
+    "battery_capacity_kwh": MessageLookupByLibrary.simpleMessage(
+      "Battery capacity, kWh",
+    ),
     "best_price_nearby_distance": m1,
     "body_category": MessageLookupByLibrary.simpleMessage("Category / body"),
     "build_route": MessageLookupByLibrary.simpleMessage("Build route"),
@@ -147,6 +150,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "change_car_info": MessageLookupByLibrary.simpleMessage(
       "Change vehicle info",
     ),
+    "charging_nearby": MessageLookupByLibrary.simpleMessage("Chargers nearby"),
     "check_filter": MessageLookupByLibrary.simpleMessage(
       "The filter needs to be replaced",
     ),
@@ -310,6 +314,12 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "fines_new_found": m4,
     "fines_no_new": MessageLookupByLibrary.simpleMessage("No new fines"),
+    "fines_not_found_body": MessageLookupByLibrary.simpleMessage(
+      "There are no active fines for your plate right now",
+    ),
+    "fines_not_found_title": MessageLookupByLibrary.simpleMessage(
+      "No fines found",
+    ),
     "fines_recheck_confirm": MessageLookupByLibrary.simpleMessage(
       "Check again",
     ),
@@ -347,6 +357,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "fuel_consumption": MessageLookupByLibrary.simpleMessage(
       "Fuel consumption",
     ),
+    "fuel_electric": MessageLookupByLibrary.simpleMessage("Electric"),
     "fuel_gas_lpg": MessageLookupByLibrary.simpleMessage("Gas LPG"),
     "fuel_prompt_body": MessageLookupByLibrary.simpleMessage(
       "Add fuel purchase details?",
@@ -354,6 +365,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "fuel_prompt_title": MessageLookupByLibrary.simpleMessage("Fuel up"),
     "fuel_type": MessageLookupByLibrary.simpleMessage("Fuel type"),
     "fuel_up": MessageLookupByLibrary.simpleMessage("Fuel up"),
+    "full_charge": MessageLookupByLibrary.simpleMessage("Full charge"),
     "full_tank": MessageLookupByLibrary.simpleMessage("Full tank"),
     "garage_action_error": MessageLookupByLibrary.simpleMessage(
       "Failed to complete the action",
@@ -447,6 +459,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Track car insurance due dates",
     ),
     "km": MessageLookupByLibrary.simpleMessage("km"),
+    "kwh": MessageLookupByLibrary.simpleMessage("kWh"),
     "l": MessageLookupByLibrary.simpleMessage("l."),
     "language": MessageLookupByLibrary.simpleMessage("Language"),
     "large_login": MessageLookupByLibrary.simpleMessage("LOG IN"),
@@ -521,6 +534,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "no_fines_short": MessageLookupByLibrary.simpleMessage("No fines"),
     "no_name": MessageLookupByLibrary.simpleMessage("No name"),
+    "no_nearby_charger": MessageLookupByLibrary.simpleMessage(
+      "No data on the nearest charger",
+    ),
     "no_nearby_station": MessageLookupByLibrary.simpleMessage(
       "No data on the nearest gas station",
     ),
@@ -618,6 +634,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "previous": MessageLookupByLibrary.simpleMessage("Previous"),
     "price": MessageLookupByLibrary.simpleMessage("Price"),
     "price_liter": MessageLookupByLibrary.simpleMessage("Price per 1 liter:"),
+    "price_per_kwh_short": MessageLookupByLibrary.simpleMessage("Price/kWh"),
     "price_per_liter_short": MessageLookupByLibrary.simpleMessage("Price/L"),
     "privacy_policy": MessageLookupByLibrary.simpleMessage("Privacy Policy"),
     "publish": MessageLookupByLibrary.simpleMessage("Publish"),
@@ -1328,6 +1345,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Verification history",
     ),
     "view_all_events": MessageLookupByLibrary.simpleMessage("View all events"),
+    "volume_kwh_short": MessageLookupByLibrary.simpleMessage("Amount, kWh"),
     "volume_liters_short": MessageLookupByLibrary.simpleMessage("Volume, L"),
     "write_viber": MessageLookupByLibrary.simpleMessage("Write to Viber"),
     "yearly_plan": MessageLookupByLibrary.simpleMessage("Yearly Plan"),

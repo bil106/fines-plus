@@ -1,3 +1,4 @@
+import 'package:fines_plus/core/extensions/fuel_type.dart';
 import 'package:fines_plus/features/expenses/data/models/fuel_record.dart';
 import 'package:flutter/foundation.dart';
 
@@ -6,7 +7,9 @@ Future<double> calculateAverageFuelConsumptionAsync(List<FuelRecord> records) {
   return compute(_calculateAverageFuelConsumption, records);
 }
 
-double _calculateAverageFuelConsumption(List<FuelRecord> records) {
+double _calculateAverageFuelConsumption(List<FuelRecord> allRecords) {
+  // Electricity is measured in kWh, not liters - it would skew l/100km.
+  final records = allRecords.where((r) => r.fuelType != FuelType.Electric.name).toList();
   if (records.length < 2) return 0.0;
   final sorted = List<FuelRecord>.from(records)..sort((a, b) => a.mileage.compareTo(b.mileage));
 
