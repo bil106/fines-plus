@@ -17,8 +17,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 /// from Firestore) rather than any new data plumbing.
 ///
 /// Hidden entirely when this brand doesn't have the fines-check feature
-/// (config.finesCheckEnabled), or when there's no check yet, or the latest
-/// check came back clean - same gating CarCubit.finesCheckBlocker applies.
+/// (config.finesCheckEnabled) or when there's no check yet. A clean latest
+/// check shows the green "no fines" state instead of the red alert.
 class FinesAlertCard extends StatelessWidget {
   const FinesAlertCard({super.key});
 
@@ -50,15 +50,21 @@ class FinesAlertCard extends StatelessWidget {
           }
         }
 
-        if (unpaidCount == 0) return const SizedBox.shrink();
-
         final settingsCubit = context.watch<SettingsCubit>();
         final currency = settingsCubit.state.currency;
         final currencyService = context.read<CurrencyService>();
         final converted = currencyService.convert(unpaidTotal.toDouble(), currency, fromCurrency: S.of(context).grn);
 
+        final hasFines = unpaidCount > 0;
         final locale = Localizations.localeOf(context).languageCode;
-        final title = locale == 'uk' ? _unpaidFinesLabelUk(unpaidCount) : _unpaidFinesLabelEn(unpaidCount);
+        final title = !hasFines
+            ? S.of(context).no_fines_short
+            : locale == 'uk'
+            ? _unpaidFinesLabelUk(unpaidCount)
+            : _unpaidFinesLabelEn(unpaidCount);
+        final bgColor = hasFines ? context.brandTheme.alertBg : AppColors.green.withOpacity(0.12);
+        final borderColor = hasFines ? context.brandTheme.alertBorder : AppColors.green.withOpacity(0.4);
+        final fgColor = hasFines ? context.brandTheme.alertFg : AppColors.green;
 
         return Padding(
           padding: const EdgeInsets.only(top: 10),
@@ -71,8 +77,8 @@ class FinesAlertCard extends StatelessWidget {
                 width: double.infinity,
                 padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
                 decoration: BoxDecoration(
-                  color: context.brandTheme.alertBg,
-                  border: Border.all(color: context.brandTheme.alertBorder),
+                  color: bgColor,
+                  border: Border.all(color: borderColor),
                   borderRadius: AppBorders.radiusMedium,
                 ),
                 child: Column(
@@ -82,14 +88,16 @@ class FinesAlertCard extends StatelessWidget {
                       title,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         fontWeight: FontWeight.w800,
-                        color: context.brandTheme.alertFg,
+                        color: fgColor,
                       ),
                     ),
-                    const SizedBox(height: 2),
-                    Text(
-                      '${converted.toStringAsFixed(0)} $currency',
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(color: AppColors.black),
-                    ),
+                    if (hasFines) ...[
+                      const SizedBox(height: 2),
+                      Text(
+                        '${converted.toStringAsFixed(0)} $currency',
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(color: AppColors.black),
+                      ),
+                    ],
                   ],
                 ),
               ),

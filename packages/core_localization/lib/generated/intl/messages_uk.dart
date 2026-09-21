@@ -488,6 +488,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Поки що немає даних щодо витрат",
     ),
     "no_fines": MessageLookupByLibrary.simpleMessage("На вас немає штрафів"),
+    "no_fines_short": MessageLookupByLibrary.simpleMessage("Штрафів немає"),
     "no_name": MessageLookupByLibrary.simpleMessage("Без назви"),
     "no_nearby_station": MessageLookupByLibrary.simpleMessage(
       "Немає даних про найближчу заправку",

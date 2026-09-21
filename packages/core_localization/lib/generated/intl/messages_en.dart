@@ -489,6 +489,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "no_fines": MessageLookupByLibrary.simpleMessage(
       "There are no fines for you",
     ),
+    "no_fines_short": MessageLookupByLibrary.simpleMessage("No fines"),
     "no_name": MessageLookupByLibrary.simpleMessage("No name"),
     "no_nearby_station": MessageLookupByLibrary.simpleMessage(
       "No data on the nearest gas station",

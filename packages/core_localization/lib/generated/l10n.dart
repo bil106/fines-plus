@@ -424,6 +424,11 @@ class S {
     );
   }
 
+  /// `No fines`
+  String get no_fines_short {
+    return Intl.message('No fines', name: 'no_fines_short', desc: '', args: []);
+  }
+
   /// `Fines check (MVS)`
   String get fines_mvs_title {
     return Intl.message(
