@@ -8,8 +8,6 @@ import 'package:fines_plus/features/fines/domain/fines_check_reminder.dart';
 import 'package:fines_plus/features/fines/domain/fines_diff.dart';
 import 'package:fines_plus/features/history/presentation/cubit/history_cubit.dart';
 import 'package:fines_plus/features/history/presentation/cubit/history_state.dart';
-import 'package:fines_plus/features/reminders/presentation/screens/reminders_screen.dart'
-    show EmptyStateIcon;
 import 'package:fines_plus/features/vehicle/presentation/cubit/car_cubit.dart';
 import 'package:fines_plus/features/webview/presentation/screens/mvs_fines_web_view.dart';
 import 'package:flutter/material.dart';
@@ -172,7 +170,7 @@ class _FinesScreenState extends State<FinesScreen> {
                   ),
                 ),
                 Expanded(
-                  child: _Body(state: state),
+                  child: _Body(state: state, onRefresh: _refresh),
                 ),
               ],
             );
@@ -192,7 +190,8 @@ class _FinesScreenState extends State<FinesScreen> {
 
 class _Body extends StatelessWidget {
   final HistoryState state;
-  const _Body({required this.state});
+  final VoidCallback onRefresh;
+  const _Body({required this.state, required this.onRefresh});
 
   @override
   Widget build(BuildContext context) {
@@ -209,11 +208,11 @@ class _Body extends StatelessWidget {
     }
 
     if (state is! HistoryLoaded || (state as HistoryLoaded).history.isEmpty) {
-      return _EmptyFines();
+      return _EmptyFines(onRefresh: onRefresh);
     }
 
     final latest = (state as HistoryLoaded).history.first;
-    if (latest.fines.isEmpty) return _EmptyFines();
+    if (latest.fines.isEmpty) return _EmptyFines(onRefresh: onRefresh);
     final unpaid = <MapEntry<String, Map<String, dynamic>>>[];
     final paid = <MapEntry<String, Map<String, dynamic>>>[];
 
@@ -464,17 +463,44 @@ class _FineRow extends StatelessWidget {
 }
 
 class _EmptyFines extends StatelessWidget {
+  final VoidCallback onRefresh;
+  const _EmptyFines({required this.onRefresh});
+
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
     return Center(
       child: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const EmptyStateIcon(),
+            const Icon(Icons.check_circle_outline, size: 44, color: AppColors.textSecondary),
+            const SizedBox(height: 12),
+            Text(
+              S.of(context).fines_not_found_title,
+              textAlign: TextAlign.center,
+              style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800, color: AppColors.ink),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              S.of(context).fines_not_found_body,
+              textAlign: TextAlign.center,
+              style: textTheme.bodyMedium?.copyWith(color: AppColors.textSecondary),
+            ),
             const SizedBox(height: 16),
-            Text(S.of(context).no_fines, textAlign: TextAlign.center),
+            OutlinedButton(
+              style: OutlinedButton.styleFrom(
+                backgroundColor: AppColors.neutreBlanc,
+                foregroundColor: Theme.of(context).colorScheme.primary,
+                side: BorderSide(color: context.brandTheme.surfaceBorder),
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                textStyle: textTheme.labelLarge?.copyWith(fontWeight: FontWeight.w700),
+              ),
+              onPressed: onRefresh,
+              child: Text(S.of(context).fines_recheck_confirm),
+            ),
           ],
         ),
       ),

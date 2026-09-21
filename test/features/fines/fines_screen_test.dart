@@ -71,7 +71,9 @@ void main() {
 
   testWidgets('real empty history shows no fabricated fines', (tester) async {
     await open(tester);
-    expect(find.text(S.current.no_fines), findsOneWidget);
+    expect(find.text(S.current.fines_not_found_title), findsOneWidget);
+    expect(find.text(S.current.fines_not_found_body), findsOneWidget);
+    expect(find.text(S.current.fines_recheck_confirm), findsOneWidget);
     expect(find.text(S.current.pay), findsNothing);
   });
 
