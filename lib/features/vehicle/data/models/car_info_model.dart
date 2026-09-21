@@ -43,4 +43,8 @@ class CarInfoModel {
   Map<String, dynamic> toJson() => _$CarInfoModelToJson(this);
 
   static const empty = CarInfoModel(carNumber: '', techPassport: '', ownerId: '');
+
+  /// The placeholder car the app creates on first launch so there is always
+  /// an active car id: nothing filled in yet.
+  bool get isBlank => carNumber.isEmpty && techPassport.isEmpty && make.isEmpty && photoUrl.isEmpty;
 }

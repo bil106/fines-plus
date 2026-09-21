@@ -117,6 +117,19 @@ void main() {
     expect(continued, isTrue);
   });
 
+  testWidgets('the blank first-launch car is not listed or counted', (tester) async {
+    await open(
+      tester,
+      cars: const [
+        CarInfoModel(carId: 'blank', carNumber: '', techPassport: '', ownerId: 'owner'),
+        CarInfoModel(carId: 'car', carNumber: 'AI1234IO', techPassport: '', ownerId: 'owner', make: 'Ford'),
+      ],
+    );
+    expect(find.text('1 авто'), findsOneWidget);
+    expect(find.text('Ford'), findsOneWidget);
+    expect(find.text(S.current.auto), findsNothing);
+  });
+
   testWidgets(
     'card fits narrow display with large text and retains edit/delete menu',
     (tester) async {

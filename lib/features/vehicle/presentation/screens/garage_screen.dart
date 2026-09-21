@@ -65,7 +65,7 @@ class GarageScreen extends StatelessWidget {
                 ),
               ),
               Text(
-                S.of(context).garage_cars_count(state.cars.length),
+                S.of(context).garage_cars_count(state.visibleCars.length),
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
                   fontSize: 14,
                   color: AppColors.textSecondary,
@@ -133,16 +133,17 @@ class GarageScreen extends StatelessWidget {
               return const Center(child: CircularProgressIndicator());
             }
 
-            if (state.cars.isEmpty) {
+            final cars = state.visibleCars;
+            if (cars.isEmpty) {
               return Center(child: Text(S.of(context).garage_empty_add_car));
             }
 
             return ListView.separated(
               padding: const EdgeInsets.fromLTRB(20, 8, 20, 96),
-              itemCount: state.cars.length,
+              itemCount: cars.length,
               separatorBuilder: (_, __) => const SizedBox(height: 12),
               itemBuilder: (context, index) {
-                final car = state.cars[index];
+                final car = cars[index];
                 final isActive = car.carId == state.activeCarId;
 
                 return _CarCard(

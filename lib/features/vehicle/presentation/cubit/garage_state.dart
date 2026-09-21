@@ -6,6 +6,10 @@ class GarageState extends Equatable {
   final String activeCarId;
   final bool isLoading;
 
+  /// [cars] without the blank first-launch placeholder, which the garage
+  /// doesn't list.
+  List<CarInfoModel> get visibleCars => cars.where((car) => !car.isBlank).toList();
+
   const GarageState({this.cars = const [], this.activeCarId = '', this.isLoading = true});
 
   GarageState copyWith({List<CarInfoModel>? cars, String? activeCarId, bool? isLoading}) {
