@@ -60,7 +60,7 @@ class ReminderCubit extends Cubit<ReminderState> {
 
     if (!isClosed) {
       final items = _buildItems(reminders);
-      emit(state.copyWith(isLoading: false, reminders: reminders, items: items));
+      emit(state.copyWith(isLoading: false, reminders: reminders, items: items, tasks: _tasks));
       unawaited(_syncInsuranceNotification(items));
     }
   }

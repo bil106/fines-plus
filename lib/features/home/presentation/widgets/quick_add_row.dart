@@ -10,28 +10,16 @@ import 'package:fines_plus/features/expenses/data/models/service_record.dart';
 import 'package:fines_plus/features/expenses/data/models/tuning_record.dart';
 import 'package:fines_plus/features/home/presentation/widgets/insurance_sheet.dart';
 import 'package:fines_plus/features/home/presentation/widgets/other_expense_sheet.dart';
+import 'package:fines_plus/features/maintenance/presentation/cubit/maintenance_cubit.dart';
 import 'package:fines_plus/features/maintenance/presentation/screens/car_wash_screen.dart';
 import 'package:fines_plus/features/maintenance/presentation/screens/fuel_up_screen.dart';
 import 'package:fines_plus/features/maintenance/presentation/screens/service_screen.dart';
 import 'package:fines_plus/features/maintenance/presentation/screens/tuning_screen.dart';
-import 'package:fines_plus/features/reminders/data/models/reminder_item.dart';
-import 'package:fines_plus/features/reminders/domain/planned_service.dart';
-import 'package:fines_plus/features/reminders/presentation/reminder_status_tint.dart';
+import 'package:fines_plus/features/reminders/domain/maintenance_ring.dart';
 import 'package:fines_plus/features/reminders/presentation/cubit/reminder_cubit.dart';
 import 'package:fines_plus/features/vehicle/presentation/cubit/car_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-const _tintAlpha = 0.45;
-
-/// Colours the insurance button by how close the current policy's expiry is
-/// - the same automatic reminder the Reminders tab shows for it.
-Color? _insuranceTint(List<ReminderItem> items) {
-  final insurance = items
-      .where((item) => item.kind == ReminderKind.insurance)
-      .firstOrNull;
-  return insurance?.status(DateTime.now()).attentionTint;
-}
 
 /// The dashboard's "quick add" row: the three most common expense actions
 /// (Fuel/Service/Insurance) plus a "More" button for everything else -
@@ -78,10 +66,10 @@ class QuickAddRow extends StatelessWidget {
               icon: Icons.build,
               iconColor: AppColors.catService,
               label: S.of(context).maintenance,
-              tint: PlannedService.status(
+              ring: MaintenanceRing.plannedRemaining(
                 reminderState.reminders,
                 DateTime.now(),
-              ).tint,
+              ),
               onTap: () async {
                 final serviceKey = GlobalKey<ServiceScreenState>();
                 final totalUah = ValueNotifier<double>(0);
@@ -116,12 +104,17 @@ class QuickAddRow extends StatelessWidget {
         Expanded(
           child: BlocBuilder<ReminderCubit, ReminderState>(
             buildWhen: (previous, current) =>
-                previous.items != current.items,
+                previous.items != current.items ||
+                previous.tasks != current.tasks,
             builder: (context, reminderState) => _QuickAddButton(
               icon: Icons.gpp_good,
               iconColor: AppColors.catInsurance,
               label: S.of(context).insurance,
-              tint: _insuranceTint(reminderState.items),
+              ring: MaintenanceRing.insuranceRemaining(
+                context.read<MaintenanceCubit>().state.insuranceRecords,
+                reminderState.tasks,
+                DateTime.now(),
+              ),
               onTap: () async {
                 if (carId.isEmpty) return;
 
@@ -333,8 +326,7 @@ class QuickAddRow extends StatelessWidget {
   }
 }
 
-/// A "More" sheet tile coloured by its own planned services (see
-/// [PlannedService.status]).
+/// A "More" sheet tile with a progress ring for its own service category.
 class _PlannedTile extends StatelessWidget {
   final ReminderCubit cubit;
   final String category;
@@ -361,7 +353,7 @@ class _PlannedTile extends StatelessWidget {
         icon: icon,
         iconColor: iconColor,
         label: label,
-        tint: PlannedService.status(state.reminders, DateTime.now(), category: category).tint,
+        ring: MaintenanceRing.plannedRemaining(state.reminders, DateTime.now(), category: category),
         onTap: onTap,
       ),
     );
@@ -374,15 +366,16 @@ class _QuickAddButton extends StatelessWidget {
   final String label;
   final VoidCallback onTap;
 
-  /// Planned-service status colour laid over the tile background.
-  final Color? tint;
+  /// Share of the service / policy interval still left (see
+  /// [MaintenanceRing]); draws a progress ring around the icon when set.
+  final double? ring;
 
   const _QuickAddButton({
     required this.icon,
     required this.iconColor,
     required this.label,
     required this.onTap,
-    this.tint,
+    this.ring,
   });
 
   @override
@@ -393,12 +386,7 @@ class _QuickAddButton extends StatelessWidget {
       // width instead of a fixed pixel height.
       aspectRatio: 1.05,
       child: Material(
-        color: tint == null
-            ? AppColors.neutreBlanc
-            : Color.alphaBlend(
-                tint!.withValues(alpha: _tintAlpha),
-                AppColors.neutreBlanc,
-              ),
+        color: AppColors.neutreBlanc,
         shape: RoundedRectangleBorder(
           borderRadius: AppBorders.radiusMedium,
           side: BorderSide(color: context.brandTheme.surfaceBorder),
@@ -412,7 +400,9 @@ class _QuickAddButton extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(icon, color: iconColor, size: 24),
+                ring == null
+                    ? Icon(icon, color: iconColor, size: 24)
+                    : _RingIcon(icon: icon, iconColor: iconColor, remaining: ring!),
                 const SizedBox(height: 6),
                 Flexible(
                   child: FittedBox(
@@ -430,6 +420,40 @@ class _QuickAddButton extends StatelessWidget {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// The tile icon inside a progress ring: the arc is the share still left,
+/// coloured by [MaintenanceRing.color].
+class _RingIcon extends StatelessWidget {
+  static const _size = 32.0;
+
+  final IconData icon;
+  final Color iconColor;
+  final double remaining;
+
+  const _RingIcon({required this.icon, required this.iconColor, required this.remaining});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: _size,
+      height: _size,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          SizedBox.expand(
+            child: CircularProgressIndicator(
+              value: remaining.clamp(0.0, 1.0),
+              strokeWidth: 3,
+              backgroundColor: AppColors.neutreGreyLight,
+              color: MaintenanceRing.color(remaining),
+            ),
+          ),
+          Icon(icon, color: iconColor, size: 18),
+        ],
       ),
     );
   }
