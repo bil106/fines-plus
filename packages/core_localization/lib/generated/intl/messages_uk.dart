@@ -90,6 +90,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "buy_subscription": MessageLookupByLibrary.simpleMessage(
       "Купити передплату",
     ),
+    "buyer_report": MessageLookupByLibrary.simpleMessage("Звіт для покупця"),
     "by_date": MessageLookupByLibrary.simpleMessage("За датою"),
     "by_mileage": MessageLookupByLibrary.simpleMessage("За пробігом"),
     "calendar": MessageLookupByLibrary.simpleMessage("Календар"),
@@ -175,6 +176,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "csv": MessageLookupByLibrary.simpleMessage("CSV"),
     "currency": MessageLookupByLibrary.simpleMessage("Валюта"),
+    "current_mileage": MessageLookupByLibrary.simpleMessage("Поточний пробіг"),
     "date": MessageLookupByLibrary.simpleMessage("Дата"),
     "date_previous_maintenance": MessageLookupByLibrary.simpleMessage(
       "Дата попереднього ТО",
@@ -324,9 +326,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Додати дані про заправку?",
     ),
     "fuel_prompt_title": MessageLookupByLibrary.simpleMessage("Заправка"),
+    "full_tank": MessageLookupByLibrary.simpleMessage("Повний бак"),
     "fuel_type": MessageLookupByLibrary.simpleMessage("Тип пального"),
     "fuel_up": MessageLookupByLibrary.simpleMessage("Заправка"),
-    "full_tank": MessageLookupByLibrary.simpleMessage("Повний бак"),
     "garage_action_error": MessageLookupByLibrary.simpleMessage(
       "Не вдалося виконати дію",
     ),
@@ -512,6 +514,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "not_forget_task": MessageLookupByLibrary.simpleMessage(
       "Не забудь виконати завдання",
     ),
+    "not_paid": MessageLookupByLibrary.simpleMessage("Не оплачено"),
     "notifications_resource": MessageLookupByLibrary.simpleMessage(
       "Повідомлення про досягнення 90% ресурсу",
     ),
@@ -1133,6 +1136,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "sign_up_button": MessageLookupByLibrary.simpleMessage("Підписатися"),
     "skip_for_now": MessageLookupByLibrary.simpleMessage("Пропустити"),
     "statistics": MessageLookupByLibrary.simpleMessage("Статистика"),
+    "status": MessageLookupByLibrary.simpleMessage("Статус"),
     "store_unavailable": MessageLookupByLibrary.simpleMessage(
       "Магазин недоступний",
     ),
@@ -1175,6 +1179,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "sum_short": MessageLookupByLibrary.simpleMessage("Сума"),
     "support": MessageLookupByLibrary.simpleMessage("Підтримка"),
     "take_a_picture": MessageLookupByLibrary.simpleMessage("Сфотографувати"),
+    "tank_volume_liters": MessageLookupByLibrary.simpleMessage("Обсяг бака, л"),
     "tech_service": MessageLookupByLibrary.simpleMessage("Тех. Обслуговування"),
     "technical_data": MessageLookupByLibrary.simpleMessage("Техпаспорт:"),
     "terms_of_use": MessageLookupByLibrary.simpleMessage("Умови використання"),

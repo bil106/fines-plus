@@ -10,7 +10,6 @@ import 'package:fines_plus/features/settings/presentation/cubit/settings_cubit.d
 import 'package:fines_plus/features/settings/presentation/cubit/unit_stream.dart';
 import 'package:fines_plus/features/statistics/presentation/cubit/statistics_cubit.dart';
 import 'package:fines_plus/features/statistics/presentation/cubit/statistics_state.dart';
-import 'package:fines_plus/app/router/home_screen_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -145,11 +144,7 @@ class _StatisticsScreenView extends StatelessWidget {
               ),
               AppSpacers.verticalSmall,
 
-              ExpenseStatsCard(
-                stats: state.expenseStats,
-                onMaintenance: () =>
-                    context.findAncestorStateOfType<HomeScreenWrapperState>()?.openPage(HomePage.maintenance),
-              ),
+              ExpenseStatsCard(stats: state.expenseStats),
             ],
           ),
         );

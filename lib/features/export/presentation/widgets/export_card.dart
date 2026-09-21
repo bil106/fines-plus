@@ -1,6 +1,7 @@
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_spacers.dart';
-import 'package:design_system/theme/app_theme.dart';
+import 'package:design_system/constants/app_borders.dart';
+import 'package:design_system/theme/app_brand_theme.dart';
 import 'package:flutter/material.dart';
 
 class ExportCard extends StatelessWidget {
@@ -22,9 +23,9 @@ class ExportCard extends StatelessWidget {
             return Container(
               margin: const EdgeInsets.symmetric(horizontal: 6),
               decoration: BoxDecoration(
-                color: AppColors.blueGrey25,
-                border: Border.all(color: AppColors.neutreGreyLight, width: 1.5),
-                borderRadius: BorderRadius.circular(16),
+                color: AppColors.neutreBlanc,
+                border: Border.all(color: context.brandTheme.surfaceBorder),
+                borderRadius: AppBorders.radius22,
               ),
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 16.0),
@@ -37,7 +38,7 @@ class ExportCard extends StatelessWidget {
                     Flexible(
                       child: Text(
                         label,
-                        style: textTheme.historyText,
+                        style: textTheme.titleMedium,
                         textAlign: TextAlign.center,
                         overflow: TextOverflow.visible,
                       ),

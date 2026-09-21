@@ -20,6 +20,8 @@ class FuelRecord {
 
   final String currency; 
 
+  final bool fullTank;
+
   const FuelRecord({
     this.id,
     required this.fuelType,
@@ -28,6 +30,7 @@ class FuelRecord {
     required this.date,
     required this.mileage,
     required this.currency, 
+    this.fullTank = false,
   });
 
   factory FuelRecord.fromJson(Map<String, dynamic> json) => _$FuelRecordFromJson(json);
@@ -43,6 +46,7 @@ class FuelRecord {
       date: expense.date,
       mileage: expense.mileage ?? 0,
       currency: currency, 
+      fullTank: expense.fullTank,
     );
   }
 
@@ -55,6 +59,7 @@ class FuelRecord {
       comment: fuelType,
       ownerId: ownerId,
       fuelVolume: volume,
+      fullTank: fullTank,
     );
   }
 

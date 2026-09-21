@@ -19,6 +19,10 @@ class Expense {
   final String? carNumber;
   final double? fuelVolume;
 
+  // Fuel-only: the tank was filled to the brim, so consumption can be
+  // computed exactly between two such fill-ups.
+  final bool fullTank;
+
   // Insurance-specific, mirroring how fuelVolume was added for fuel: the
   // policy's insurer/number/expiry don't fit in the single generic
   // `comment` string, and are only ever set for ExpenseCategory.insurance.
@@ -39,6 +43,7 @@ class Expense {
     this.updatedAt,
     this.carNumber,
     this.fuelVolume,
+    this.fullTank = false,
     this.insuranceCompany,
     this.insurancePolicyNumber,
     this.insuranceValidTo,
@@ -56,6 +61,7 @@ Map<String, dynamic> toFirestore({bool isNew = false}) {
       'ownerId': ownerId,
       'carNumber': carNumber,
       'fuelVolume': fuelVolume,
+      'fullTank': fullTank,
       'insuranceCompany': insuranceCompany,
       'insurancePolicyNumber': insurancePolicyNumber,
       'insuranceValidTo': insuranceValidTo == null ? null : Timestamp.fromDate(insuranceValidTo!),
@@ -108,6 +114,7 @@ Map<String, dynamic> toFirestore({bool isNew = false}) {
       fuelVolume: (json['fuelVolume'] is num)
           ? (json['fuelVolume'] as num).toDouble()
           : double.tryParse(json['fuelVolume']?.toString() ?? '0.0'),
+      fullTank: json['fullTank'] == true,
       insuranceCompany: json['insuranceCompany'] as String?,
       insurancePolicyNumber: json['insurancePolicyNumber'] as String?,
       insuranceValidTo: json['insuranceValidTo'] is Timestamp ? (json['insuranceValidTo'] as Timestamp).toDate() : null,

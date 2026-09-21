@@ -90,17 +90,13 @@ class ExpenseStatsCard extends StatelessWidget {
               }).toList(),
             ),
 
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                TextButton(
-                  onPressed: () {
-                    if (onMaintenance != null) onMaintenance!();
-                  },
-                  child: Text(S.current.open_statistics),
-                ),
-              ],
-            ),
+            if (onMaintenance != null)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  TextButton(onPressed: onMaintenance, child: Text(S.current.open_statistics)),
+                ],
+              ),
           ],
         ),
       ),

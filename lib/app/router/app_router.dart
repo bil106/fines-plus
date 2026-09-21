@@ -7,7 +7,6 @@ import 'package:fines_plus/features/analytics/presentation/screens/analytics_scr
 import 'package:fines_plus/features/export/presentation/screens/export_screen.dart';
 
 import 'package:fines_plus/features/fines/presentation/screens/fines_screeen.dart';
-import 'package:fines_plus/features/history/presentation/screens/history_screen.dart';
 import 'package:fines_plus/features/home/presentation/screens/home_screen.dart';
 import 'package:fines_plus/features/reminders/data/repository/reminder_repository.dart';
 import 'package:fines_plus/features/reminders/presentation/screens/reminders_screen.dart';
@@ -54,7 +53,6 @@ class AppRouter extends RootStackRouter {
         AutoRoute(page: RemindersRoute.page, path: 'reminders'),
         AutoRoute(page: MaintenanceRoute.page, path: 'maintenance'),
         AutoRoute(page: AnalyticsRoute.page, path: 'analytics'),
-        AutoRoute(page: HistoryRoute.page, path: 'history'),
         AutoRoute(page: RegistrationRoute.page, path: 'registration'),
         AutoRoute(page: FuelUpRoute.page, path: 'fuel'),
         AutoRoute(page: ServiceRoute.page, path: 'service'),

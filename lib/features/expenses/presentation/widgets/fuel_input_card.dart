@@ -21,6 +21,20 @@ class FuelPriceCache {
   }
 }
 
+/// Tank capacity (liters) remembered per car, so a full-tank fill-up doesn't
+/// need it typed in every time.
+class FuelTankCache {
+  static Future<void> saveVolume(String carNumber, double liters) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setDouble('fuel_tank_volume_$carNumber', liters);
+  }
+
+  static Future<double?> getVolume(String carNumber) async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getDouble('fuel_tank_volume_$carNumber');
+  }
+}
+
 /// The dashboard "Паливо" sheet's price/volume/sum row - three equal-width
 /// fields side by side (price and volume editable, sum computed and
 /// visually called out), matching the Fines+OS mockup. Replaces the older

@@ -23,6 +23,7 @@ Expense _$ExpenseFromJson(Map<String, dynamic> json) => Expense(
       : DateTime.parse(json['updatedAt'] as String),
   carNumber: json['carNumber'] as String?,
   fuelVolume: (json['fuelVolume'] as num?)?.toDouble(),
+  fullTank: json['fullTank'] as bool? ?? false,
   insuranceCompany: json['insuranceCompany'] as String?,
   insurancePolicyNumber: json['insurancePolicyNumber'] as String?,
   insuranceValidTo: json['insuranceValidTo'] == null
@@ -43,6 +44,7 @@ Map<String, dynamic> _$ExpenseToJson(Expense instance) => <String, dynamic>{
   'ownerId': instance.ownerId,
   'carNumber': instance.carNumber,
   'fuelVolume': instance.fuelVolume,
+  'fullTank': instance.fullTank,
   'insuranceCompany': instance.insuranceCompany,
   'insurancePolicyNumber': instance.insurancePolicyNumber,
   'insuranceValidTo': instance.insuranceValidTo?.toIso8601String(),

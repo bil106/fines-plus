@@ -129,7 +129,7 @@ class _MyAppState extends State<MyApp> {
     if (car != null && mounted) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
-        context.router.push(HistoryRoute(carNumber: car));
+        context.router.push(FinesRoute());
       });
     }
   }
@@ -154,14 +154,11 @@ class _MyAppState extends State<MyApp> {
 
   void _routeFromAppLink(Uri uri) {
     final car = uri.queryParameters['car'];
-    final isAddCar = uri.path.contains("addCar");
     if (mounted) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
-        if (isAddCar) {
-          context.router.push(AddCarRoute());
-        } else if (car != null) {
-          context.router.push(HistoryRoute(carNumber: car));
+        if (car != null) {
+          context.router.push(FinesRoute());
         }
       });
     }

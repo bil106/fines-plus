@@ -626,5 +626,10 @@
             "type": "String"
          }
       }
-   }
+   },
+   "buyer_report": "Buyer's report",
+   "not_paid": "Not paid",
+   "current_mileage": "Current mileage",
+   "status": "Status",
+   "tank_volume_liters": "Tank volume, L"
 }

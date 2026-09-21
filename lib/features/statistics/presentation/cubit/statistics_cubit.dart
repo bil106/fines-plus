@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:core_localization/generated/l10n.dart';
+import 'package:fines_plus/core/extensions/fuel_calculator.dart';
 import 'package:fines_plus/features/expenses/data/models/car_wash_record.dart';
-import 'package:fines_plus/features/expenses/data/models/fuel_record.dart';
 import 'package:fines_plus/features/expenses/data/models/service_record.dart';
 import 'package:fines_plus/features/maintenance/presentation/cubit/maintenance_cubit.dart';
 import 'package:fines_plus/features/maintenance/presentation/cubit/maintenance_state.dart';
@@ -44,7 +44,7 @@ class StatisticsCubit extends Cubit<StatisticsState> {
     double avgFuelConsumption = 0.0;
     try {
       if (maintenanceState.fuelRecords.isNotEmpty) {
-        avgFuelConsumption = await _calculateAverageFuelConsumption(maintenanceState.fuelRecords);
+        avgFuelConsumption = await calculateAverageFuelConsumptionAsync(maintenanceState.fuelRecords);
       }
     } catch (e, st) {
       debugPrint('Error calculating average fuel: $e\n$st');
@@ -143,17 +143,6 @@ class StatisticsCubit extends Cubit<StatisticsState> {
     }
   }
 
-  Future<double> _calculateAverageFuelConsumption(List<FuelRecord> records) async {
-    if (records.length < 2) return 0.0;
-
-    final sorted = List<FuelRecord>.from(records)..sort((a, b) => a.mileage.compareTo(b.mileage));
-    final distance = (sorted.last.mileage - sorted.first.mileage).toDouble();
-    if (distance <= 0) return 0.0;
-
-    final totalLiters = sorted.fold<double>(0.0, (sum, r) => sum + r.volume);
-    final avgPer100km = totalLiters / distance * 100.0;
-    return (avgPer100km.isFinite && !avgPer100km.isNaN) ? avgPer100km : 0.0;
-  }
 
 void clearStats() {
     emit(

@@ -14,6 +14,7 @@ FuelRecord _$FuelRecordFromJson(Map<String, dynamic> json) => FuelRecord(
   date: FuelRecord._fromJsonDate(json['date']),
   mileage: (json['mileage'] as num).toInt(),
   currency: json['currency'] as String,
+  fullTank: json['fullTank'] as bool? ?? false,
 );
 
 Map<String, dynamic> _$FuelRecordToJson(FuelRecord instance) =>
@@ -25,4 +26,5 @@ Map<String, dynamic> _$FuelRecordToJson(FuelRecord instance) =>
       'date': FuelRecord._toJsonDate(instance.date),
       'mileage': instance.mileage,
       'currency': instance.currency,
+      'fullTank': instance.fullTank,
     };

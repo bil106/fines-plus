@@ -1,6 +1,8 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
+import 'package:design_system/widget/app_field_card.dart';
+import 'package:fines_plus/features/vehicle/presentation/cubit/car_cubit.dart';
 import 'package:design_system/widget/app_back_button.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
@@ -51,6 +53,8 @@ class FuelUpScreenState extends State<FuelUpScreen> {
   final FocusNode _volumeFocusNode = FocusNode();
 
   FuelType selectedFuel = FuelType.Ai95;
+  bool _fullTank = false;
+  final TextEditingController tankController = TextEditingController();
   DateTime? selectedDate = DateTime.now();
   GasStation? _bestStation;
   double? _bestStationDistanceKm;
@@ -67,6 +71,7 @@ class FuelUpScreenState extends State<FuelUpScreen> {
     _initLocationAndStation();
     _loadLastPrice(selectedFuel);
     _prefillLastMileage();
+    _loadTankVolume();
   }
 
   void _prefillLastMileage() {
@@ -81,6 +86,7 @@ class FuelUpScreenState extends State<FuelUpScreen> {
     volumeController.dispose();
     mileageController.dispose();
     priceController.dispose();
+    tankController.dispose();
     _mileageFocusNode.dispose();
     _priceFocusNode.dispose();
     _volumeFocusNode.dispose();
@@ -111,6 +117,30 @@ class FuelUpScreenState extends State<FuelUpScreen> {
     } else {
       priceController.clear();
     }
+  }
+
+  String get _carNumber => context.read<CarCubit>().state.carNumber;
+
+  Future<void> _loadTankVolume() async {
+    final saved = await FuelTankCache.getVolume(_carNumber);
+    if (saved == null || !mounted) return;
+    tankController.text = _formatLiters(saved);
+  }
+
+  String _formatLiters(double liters) => liters == liters.roundToDouble() ? liters.toInt().toString() : liters.toString();
+
+  /// A full-tank fill-up is assumed to add the car's whole tank; the volume
+  /// stays editable for when the tank wasn't empty.
+  void _onFullTankChanged(bool value) {
+    setState(() => _fullTank = value);
+    if (value && tankController.text.isNotEmpty) volumeController.text = tankController.text;
+  }
+
+  void _onTankVolumeChanged(String value) {
+    final parsed = double.tryParse(value);
+    if (parsed == null) return;
+    FuelTankCache.saveVolume(_carNumber, parsed);
+    if (_fullTank) volumeController.text = value;
   }
 
   void _onPriceChanged(String value) {
@@ -237,6 +267,7 @@ class FuelUpScreenState extends State<FuelUpScreen> {
       date: selectedDate!,
       mileage: mileage,
       currency: context.read<SettingsCubit>().state.currency,
+      fullTank: _fullTank,
     );
 
     // This screen is reached as a pushed route (Maintenance FAB), as a
@@ -442,6 +473,34 @@ class FuelUpScreenState extends State<FuelUpScreen> {
             priceFocusNode: _priceFocusNode,
             volumeFocusNode: _volumeFocusNode,
           ),
+
+          GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: () => _onFullTankChanged(!_fullTank),
+            child: Row(
+              children: [
+                Checkbox(value: _fullTank, onChanged: (value) => _onFullTankChanged(value ?? false)),
+                Expanded(child: Text(S.of(context).full_tank, style: textTheme.subtitleText)),
+              ],
+            ),
+          ),
+          if (_fullTank)
+            AppFieldCard(
+              label: S.of(context).tank_volume_liters,
+              child: TextField(
+                controller: tankController,
+                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                decoration: const InputDecoration(
+                  border: InputBorder.none,
+                  focusedBorder: InputBorder.none,
+                  hintText: "0",
+                  isDense: true,
+                  contentPadding: EdgeInsets.zero,
+                ),
+                style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, color: AppColors.black87),
+                onChanged: _onTankVolumeChanged,
+              ),
+            ),
 
           AppSpacers.verticalXLarge,
           const AdBannerWidget(),

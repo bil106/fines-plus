@@ -90,6 +90,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "buy_subscription": MessageLookupByLibrary.simpleMessage(
       "Buy subscription",
     ),
+    "buyer_report": MessageLookupByLibrary.simpleMessage("Buyer\'s report"),
     "by_date": MessageLookupByLibrary.simpleMessage("By date"),
     "by_mileage": MessageLookupByLibrary.simpleMessage("By mileage"),
     "calendar": MessageLookupByLibrary.simpleMessage("Calendar"),
@@ -175,6 +176,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "csv": MessageLookupByLibrary.simpleMessage("CSV"),
     "currency": MessageLookupByLibrary.simpleMessage("Currency"),
+    "current_mileage": MessageLookupByLibrary.simpleMessage("Current mileage"),
     "date": MessageLookupByLibrary.simpleMessage("Date"),
     "date_previous_maintenance": MessageLookupByLibrary.simpleMessage(
       "Previous maintenance date",
@@ -324,9 +326,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Add fuel purchase details?",
     ),
     "fuel_prompt_title": MessageLookupByLibrary.simpleMessage("Fuel up"),
+    "full_tank": MessageLookupByLibrary.simpleMessage("Full tank"),
     "fuel_type": MessageLookupByLibrary.simpleMessage("Fuel type"),
     "fuel_up": MessageLookupByLibrary.simpleMessage("Fuel up"),
-    "full_tank": MessageLookupByLibrary.simpleMessage("Full tank"),
     "garage_action_error": MessageLookupByLibrary.simpleMessage(
       "Failed to complete the action",
     ),
@@ -513,6 +515,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "not_forget_task": MessageLookupByLibrary.simpleMessage(
       "Don\'t forget to complete the task",
     ),
+    "not_paid": MessageLookupByLibrary.simpleMessage("Not paid"),
     "notifications_resource": MessageLookupByLibrary.simpleMessage(
       "Notifications about reaching 90% resource",
     ),
@@ -1144,6 +1147,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "sign_up_button": MessageLookupByLibrary.simpleMessage("Sign Up"),
     "skip_for_now": MessageLookupByLibrary.simpleMessage("Skip for now"),
     "statistics": MessageLookupByLibrary.simpleMessage("Statistics"),
+    "status": MessageLookupByLibrary.simpleMessage("Status"),
     "store_unavailable": MessageLookupByLibrary.simpleMessage(
       "Store unavailable",
     ),
@@ -1188,6 +1192,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "sum_short": MessageLookupByLibrary.simpleMessage("Amount"),
     "support": MessageLookupByLibrary.simpleMessage("Support"),
     "take_a_picture": MessageLookupByLibrary.simpleMessage("Take a picture"),
+    "tank_volume_liters": MessageLookupByLibrary.simpleMessage("Tank volume, L"),
     "tech_service": MessageLookupByLibrary.simpleMessage(
       "Technical maintenance",
     ),

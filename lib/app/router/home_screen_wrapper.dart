@@ -11,14 +11,11 @@ import 'package:fines_plus/features/analytics/data/models/event_model.dart';
 import 'package:fines_plus/features/analytics/data/repository/analytics_repository.dart';
 import 'package:fines_plus/features/analytics/presentation/cubit/analytics_cubit.dart';
 import 'package:fines_plus/features/analytics/presentation/screens/analytics_screen.dart';
-import 'package:fines_plus/features/expenses/data/repository/expense_repository.dart';
-import 'package:fines_plus/features/expenses/presentation/cubit/expenses_cubit.dart';
 import 'package:fines_plus/features/export/presentation/screens/export_screen.dart';
 
 import 'package:fines_plus/features/fines/presentation/screens/fines_screeen.dart';
 import 'package:fines_plus/features/history/domain/history_repository.dart';
 import 'package:fines_plus/features/history/presentation/cubit/history_cubit.dart';
-import 'package:fines_plus/features/history/presentation/screens/history_screen.dart';
 import 'package:fines_plus/features/home/presentation/cubit/quick_actions_cubit.dart';
 import 'package:fines_plus/features/home/presentation/screens/home_screen.dart';
 import 'package:fines_plus/features/registration/presentation/cubit/registration_cubit.dart';
@@ -33,18 +30,12 @@ import 'package:fines_plus/features/vehicle/data/repository/car_info_repository.
 import 'package:fines_plus/features/vehicle/presentation/cubit/car_cubit.dart';
 import 'package:fines_plus/features/vehicle/presentation/cubit/car_info_cubit.dart';
 import 'package:fines_plus/features/vehicle/presentation/cubit/garage_cubit.dart';
-import 'package:fines_plus/features/vehicle/presentation/screens/car_info_screen.dart';
 import 'package:fines_plus/features/vehicle/presentation/screens/garage_screen.dart';
 import 'package:fines_plus/features/maintenance/presentation/screens/car_wash_map_screen.dart';
-import 'package:fines_plus/features/maintenance/presentation/screens/car_wash_screen.dart';
 import 'package:fines_plus/features/maintenance/presentation/screens/fuel_map_screen.dart';
-import 'package:fines_plus/features/maintenance/presentation/screens/fuel_up_screen.dart';
 import 'package:fines_plus/features/registration/presentation/screens/registration_screen.dart';
 import 'package:fines_plus/features/schedule/presentation/screens/schedule_screen.dart';
-import 'package:fines_plus/features/maintenance/presentation/screens/service_screen.dart';
 import 'package:fines_plus/features/settings/presentation/screens/settings_screen.dart';
-import 'package:fines_plus/features/maintenance/presentation/screens/maintenance_screen.dart';
-import 'package:fines_plus/features/maintenance/presentation/screens/tuning_screen.dart';
 import 'package:fines_plus/features/subscription/presentation/screens/subscription_screen.dart';
 import 'dart:io';
 
@@ -65,16 +56,9 @@ enum HomePage {
   fines,
   reminders,
   analytics,
-  carInfo,
   settings,
-  history,
-  maintenance,
   export,
   registration,
-  fuel,
-  service,
-  tuning,
-  carWash,
   schedule,
   subscription,
   fuelMap,
@@ -113,26 +97,19 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
     _pageIndexMap = {
       HomePage.home: 0,
       HomePage.addCar: 1,
-      HomePage.carInfo: 2,
 
-      HomePage.fines: 3,
-      HomePage.reminders: 4,
+      HomePage.fines: 2,
+      HomePage.reminders: 3,
 
-      HomePage.analytics: 5,
-      HomePage.settings: 6,
-      HomePage.history: 7,
-      HomePage.maintenance: 8,
-      HomePage.export: 9,
-      HomePage.registration: 10,
-      HomePage.subscription: 11,
-      HomePage.carWash: 12,
-      HomePage.tuning: 13,
-      HomePage.fuel: 14,
-      HomePage.service: 15,
-      HomePage.schedule: 16,
-      HomePage.fuelMap: 17,
-      HomePage.carWashMap: 18,
-      HomePage.garage: 19,
+      HomePage.analytics: 4,
+      HomePage.settings: 5,
+      HomePage.export: 6,
+      HomePage.registration: 7,
+      HomePage.subscription: 8,
+      HomePage.schedule: 9,
+      HomePage.fuelMap: 10,
+      HomePage.carWashMap: 11,
+      HomePage.garage: 12,
     };
 
     _currentIndex = _pageIndexMap[HomePage.home]!;
@@ -208,14 +185,6 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
       return;
     }
 
-    // CarInfoScreen ("Adding a car") is temporarily hidden but not removed
-    // yet - send anyone who used to land there (e.g. History's back button)
-    // to Home instead.
-    if (page == HomePage.carInfo) {
-      openPage(HomePage.home);
-      return;
-    }
-
     final carState = context.read<CarCubit>().state;
     final bool hasCar = carState.carId.isNotEmpty;
 
@@ -225,7 +194,7 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
       _analyticsTabIndex = 0;
     }
 
-    if (!kDebugMode && !hasCar && index > 4) {
+    if (!kDebugMode && !hasCar && index > 3) {
       debugPrint("Add a car to open this page");
       return;
     }
@@ -307,7 +276,7 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
           backgroundColor: AppColors.grey50,
           body: PageView(
             controller: _pageController,
-            physics: (kDebugMode || hasCar) ? const BouncingScrollPhysics() : const NeverScrollableScrollPhysics(),
+            physics: const NeverScrollableScrollPhysics(),
 
             onPageChanged: (index) => setState(() => _currentIndex = index),
             children: [
@@ -324,14 +293,6 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
                   initialTabIndex: _analyticsTabIndex,
                 ),
               ),
-              BlocProvider(
-                create: (_) => ExpensesCubit(repository: ExpenseRepository(FirebaseFirestore.instance)),
-                child: CarInfoScreen(
-                  key: const ValueKey('car_info_screen'),
-                  onBack: () => openPage(HomePage.home),
-                ),
-              ),
-
               FinesScreen(key: const ValueKey('fines_screen'), onBack: () => openPage(HomePage.home)),
               BlocProvider(
                 key: ValueKey(carNumber),
@@ -368,18 +329,6 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
                   key: const ValueKey('settings_screen'),
                   onBack: () => openPage(HomePage.home),
                 ),
-                HistoryScreen(key: const ValueKey('history_screen'), carNumber: carNumber),
-                Builder(
-                  key: const ValueKey('maintenance_screen'),
-                  builder: (_) {
-                    return MaintenanceScreen(
-                      onFuelUp: () => openPage(HomePage.fuel),
-                      onService: () => openPage(HomePage.service),
-                      onTuning: () => openPage(HomePage.tuning),
-                      onBack: () => openPage(HomePage.home),
-                    );
-                  },
-                ),
                 ExportScreen(
                   key: const ValueKey('export'),
                   history: exportHistory,
@@ -415,11 +364,6 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
                     },
                   ),
                 ),
-
-                TuningScreen(key: const ValueKey('tuning'), onBack: () => openPage(HomePage.maintenance)),
-                ServiceScreen(key: const ValueKey('service'), onBack: () => openPage(HomePage.maintenance)),
-                CarWashScreen(key: const ValueKey('car-wash'), onBack: () => openPage(HomePage.maintenance)),
-                FuelUpScreen(key: const ValueKey('fuel'), onBack: () => openPage(HomePage.maintenance)),
 
                 Builder(
                   key: const ValueKey('schedule_screen'),
@@ -491,11 +435,6 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
         index == _pageIndexMap[HomePage.addCar] ||
         index == _pageIndexMap[HomePage.analytics] ||
         index == _pageIndexMap[HomePage.schedule] ||
-        index == _pageIndexMap[HomePage.maintenance] ||
-        index == _pageIndexMap[HomePage.tuning] ||
-        index == _pageIndexMap[HomePage.service] ||
-        index == _pageIndexMap[HomePage.carWash] ||
-        index == _pageIndexMap[HomePage.fuel] ||
         index == _pageIndexMap[HomePage.settings];
   }
 
