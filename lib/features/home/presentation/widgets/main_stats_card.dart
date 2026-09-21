@@ -110,7 +110,7 @@ class MainStatsCard extends StatelessWidget {
                         'assets/icons/coin_stack.png',
                         width: 24,
                         height: 24,
-                        color: Colors.blueAccent,
+                        color: Theme.of(context).colorScheme.primary,
                       ),
                       const SizedBox(height: 4),
                       StatValue(
@@ -125,9 +125,9 @@ class MainStatsCard extends StatelessWidget {
                   padding: const EdgeInsets.only(right: 18.0),
                   child: Column(
                     children: [
-                      const Icon(
+                      Icon(
                         Icons.local_gas_station,
-                        color: Colors.blueAccent,
+                        color: Theme.of(context).colorScheme.primary,
                         size: 24,
                       ),
                       const SizedBox(height: 4),

@@ -421,7 +421,7 @@ class _QuickAddButton extends StatelessWidget {
                       label,
                       style: Theme.of(context).textTheme.labelMedium?.copyWith(
                         fontWeight: FontWeight.w800,
-                        color: Colors.black87,
+                        color: AppColors.black87,
                       ),
                     ),
                   ),

@@ -6,6 +6,7 @@ import 'package:app_links/app_links.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:core_cubit/cubit/referral/referral_cubit.dart';
 import 'package:core_data/core_data.dart';
+import 'package:core_localization/generated/l10n.dart';
 import 'package:fines_plus/core/extensions/currency_service.dart';
 import 'package:fines_plus/core/extensions/safe_prefs.dart';
 import 'package:fines_plus/core/helpers/push_helper.dart';
@@ -331,11 +332,11 @@ class AppInitializer {
 
     if (now - lastMs >= weekMs) {
       try {
-        // S.current недоступний до ініціалізації віджет-дерева — використовуємо фіксований рядок
+        final l10n = await S.load(PlatformDispatcher.instance.locale);
         await pushHelper.showNow(
           id: FinesCheckReminder.notificationId,
-          title: 'Нагадування про штрафи',
-          body: 'Перевірте наявність нових штрафів ПДД',
+          title: l10n.check_fines_reminder_title,
+          body: l10n.check_fines_reminder_body,
         );
         await prefs.setInt(key, now);
         debugPrint('Weekly fines reminder shown');

@@ -119,9 +119,9 @@ flutter:
   uses-material-design: true
   
   assets:
-    - assets/config/finesplus.json
-    - assets/config/autodosje.json
-    - assets/config/carpapers.json
+    # Includes flavor JSON files and an optional, ignored local .env.
+    # Declaring the directory keeps builds valid when .env is absent.
+    - assets/config/
     - assets/icons/map.png
     - assets/icons/google_logo.png
     - assets/icons/logo_app.png
@@ -149,7 +149,6 @@ flutter:
     - assets/icons/coin_stack.png
     - assets/icons/steeringWheel.png
     - assets/icons/ic_launcher_foreground.png
-    - assets/config/.env
     - assets/logo/fines_logo.png
     - assets/car_logos/
     

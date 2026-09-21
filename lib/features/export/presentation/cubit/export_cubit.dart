@@ -37,7 +37,12 @@ Future<File> exportCsvFile(String carNumber, List<EventModel> history) async {
     return file.writeAsBytes(csvBytes);
   }
 
-  Future<File> exportBuyerReportFile(String carNumber, List<EventModel> history) async {
+  Future<File> exportBuyerReportFile(
+    String carNumber,
+    List<EventModel> history, {
+    required String brandName,
+    required String logoAssetPath,
+  }) async {
     final carHistoryList = exportRepository.convertEventsToCarHistory(history);
 
     List<FineHistory> finesHistory = [];
@@ -51,6 +56,8 @@ Future<File> exportCsvFile(String carNumber, List<EventModel> history) async {
       carNumber: carNumber,
       history: carHistoryList,
       finesHistory: finesHistory,
+      brandName: brandName,
+      logoAssetPath: logoAssetPath,
     );
     final dir = await getTemporaryDirectory();
     final safeCarNumber = carNumber.isEmpty ? "car" : carNumber;

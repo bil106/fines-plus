@@ -47,7 +47,7 @@ class GarageScreen extends StatelessWidget {
       backgroundColor: context.brandTheme.surfaceBg,
       appBar: AppBar(
         backgroundColor: context.brandTheme.surfaceBg,
-        surfaceTintColor: Colors.transparent,
+        surfaceTintColor: AppColors.transparent,
         elevation: 0,
         toolbarHeight: 80,
         centerTitle: true,
@@ -61,14 +61,14 @@ class GarageScreen extends StatelessWidget {
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.w800,
                   fontSize: 28,
-                  color: const Color(0xFF202124),
+                  color: AppColors.inkSoft,
                 ),
               ),
               Text(
                 S.of(context).garage_cars_count(state.cars.length),
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
                   fontSize: 14,
-                  color: const Color(0xFF707070),
+                  color: AppColors.textSecondary,
                 ),
               ),
             ],
@@ -107,7 +107,7 @@ class GarageScreen extends StatelessWidget {
             ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: AppColors.blue700,
-        foregroundColor: Colors.white,
+        foregroundColor: AppColors.neutreBlanc,
         shape: const CircleBorder(),
         tooltip: S.of(context).add_cars,
         onPressed: () async {
@@ -208,7 +208,7 @@ class _CarCard extends StatelessWidget {
     return Semantics(
       selected: isActive,
       child: Material(
-        color: Colors.white,
+        color: AppColors.neutreBlanc,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(18),
           side: BorderSide(color: brand.surfaceBorder),
@@ -238,7 +238,7 @@ class _CarCard extends StatelessWidget {
                             ?.copyWith(
                               fontWeight: FontWeight.w800,
                               fontSize: 18,
-                              color: const Color(0xFF202124),
+                              color: AppColors.inkSoft,
                             ),
                       ),
                     ),
@@ -265,7 +265,7 @@ class _CarCard extends StatelessWidget {
                               car.carNumber,
                               style: brand.moneyTextStyle.copyWith(
                                 fontSize: 13,
-                                color: const Color(0xFF202124),
+                                color: AppColors.inkSoft,
                               ),
                             ),
                           ),
@@ -466,7 +466,9 @@ class CarMileageAndStatusState extends State<CarMileageAndStatus> {
             Text(
               statusText,
               style: textTheme.bodySmall?.copyWith(
-                color: insuranceExpired ? AppColors.red : Colors.green.shade700,
+                color: insuranceExpired
+                    ? context.brandTheme.statusDanger
+                    : context.brandTheme.statusSuccess,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -476,8 +478,8 @@ class CarMileageAndStatusState extends State<CarMileageAndStatus> {
     }
 
     final foreground = insuranceExpired
-        ? const Color(0xFFBE3540)
-        : const Color(0xFF198B49);
+        ? context.brandTheme.statusDanger
+        : context.brandTheme.statusSuccess;
     return Padding(
       padding: const EdgeInsets.only(top: 8),
       child: Column(
@@ -490,7 +492,7 @@ class CarMileageAndStatusState extends State<CarMileageAndStatus> {
                 .copyWith(
                   fontSize: 14,
                   fontWeight: FontWeight.w400,
-                  color: const Color(0xFF707070),
+                  color: AppColors.textSecondary,
                 ),
           ),
           if (latestInsuranceValidTo != null) ...[
@@ -499,8 +501,8 @@ class CarMileageAndStatusState extends State<CarMileageAndStatus> {
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
               decoration: BoxDecoration(
                 color: insuranceExpired
-                    ? const Color(0xFFFBE0E2)
-                    : const Color(0xFFDEF4E6),
+                    ? context.brandTheme.statusDangerBg
+                    : context.brandTheme.statusSuccessBg,
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Text(
@@ -583,7 +585,7 @@ Future<void> confirmAndDeleteCar(BuildContext context, CarInfoModel car) async {
           onPressed: () => Navigator.pop(context, true),
           child: Text(
             S.of(context).delete,
-            style: const TextStyle(color: Colors.red),
+            style: const TextStyle(color: AppColors.red),
           ),
         ),
       ],

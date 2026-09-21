@@ -5018,6 +5018,276 @@ class S {
       args: [],
     );
   }
+
+  /// `English`
+  String get english {
+    return Intl.message('English', name: 'english', desc: '', args: []);
+  }
+
+  /// `Sign in with Apple successful`
+  String get apple_login_successful {
+    return Intl.message(
+      'Sign in with Apple successful',
+      name: 'apple_login_successful',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Apple sign-in error: {error}`
+  String apple_login_error(String error) {
+    return Intl.message(
+      'Apple sign-in error: $error',
+      name: 'apple_login_error',
+      desc: '',
+      args: [error],
+    );
+  }
+
+  /// `Year of manufacture`
+  String get car_make_year {
+    return Intl.message(
+      'Year of manufacture',
+      name: 'car_make_year',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Plate cost`
+  String get plate_cost {
+    return Intl.message('Plate cost', name: 'plate_cost', desc: '', args: []);
+  }
+
+  /// `Plate cost reason`
+  String get plate_cost_reason {
+    return Intl.message(
+      'Plate cost reason',
+      name: 'plate_cost_reason',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Color`
+  String get vehicle_color {
+    return Intl.message('Color', name: 'vehicle_color', desc: '', args: []);
+  }
+
+  /// `Type`
+  String get vehicle_type {
+    return Intl.message('Type', name: 'vehicle_type', desc: '', args: []);
+  }
+
+  /// `Engine capacity`
+  String get engine_capacity {
+    return Intl.message(
+      'Engine capacity',
+      name: 'engine_capacity',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Weight / max. weight`
+  String get vehicle_weight {
+    return Intl.message(
+      'Weight / max. weight',
+      name: 'vehicle_weight',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Category / body`
+  String get body_category {
+    return Intl.message(
+      'Category / body',
+      name: 'body_category',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Number of seats`
+  String get seats_count {
+    return Intl.message(
+      'Number of seats',
+      name: 'seats_count',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Registration plate`
+  String get registration_plate {
+    return Intl.message(
+      'Registration plate',
+      name: 'registration_plate',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Registration address (KOATUU)`
+  String get registration_address {
+    return Intl.message(
+      'Registration address (KOATUU)',
+      name: 'registration_address',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Owner address`
+  String get owner_address {
+    return Intl.message(
+      'Owner address',
+      name: 'owner_address',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Region`
+  String get vehicle_region {
+    return Intl.message('Region', name: 'vehicle_region', desc: '', args: []);
+  }
+
+  /// `First registration date`
+  String get first_registration_date {
+    return Intl.message(
+      'First registration date',
+      name: 'first_registration_date',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Owner`
+  String get vehicle_owner {
+    return Intl.message('Owner', name: 'vehicle_owner', desc: '', args: []);
+  }
+
+  /// `Department`
+  String get registration_department {
+    return Intl.message(
+      'Department',
+      name: 'registration_department',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Department address`
+  String get department_address {
+    return Intl.message(
+      'Department address',
+      name: 'department_address',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Operation`
+  String get registration_operation {
+    return Intl.message(
+      'Operation',
+      name: 'registration_operation',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Operation code`
+  String get operation_code {
+    return Intl.message(
+      'Operation code',
+      name: 'operation_code',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Last record`
+  String get last_record {
+    return Intl.message('Last record', name: 'last_record', desc: '', args: []);
+  }
+
+  /// `Record date`
+  String get record_date {
+    return Intl.message('Record date', name: 'record_date', desc: '', args: []);
+  }
+
+  /// `Record`
+  String get record {
+    return Intl.message('Record', name: 'record', desc: '', args: []);
+  }
+
+  /// `Completed at department`
+  String get completed_at_department {
+    return Intl.message(
+      'Completed at department',
+      name: 'completed_at_department',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Selected gas station`
+  String get selected_gas_station {
+    return Intl.message(
+      'Selected gas station',
+      name: 'selected_gas_station',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Selected car wash`
+  String get selected_car_wash {
+    return Intl.message(
+      'Selected car wash',
+      name: 'selected_car_wash',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `rating: {rating}`
+  String map_rating(String rating) {
+    return Intl.message(
+      'rating: $rating',
+      name: 'map_rating',
+      desc: '',
+      args: [rating],
+    );
+  }
+
+  /// `MTPL`
+  String get insurance_osago {
+    return Intl.message('MTPL', name: 'insurance_osago', desc: '', args: []);
+  }
+
+  /// `Comprehensive insurance`
+  String get insurance_kasko {
+    return Intl.message(
+      'Comprehensive insurance',
+      name: 'insurance_kasko',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Green Card`
+  String get insurance_green_card {
+    return Intl.message(
+      'Green Card',
+      name: 'insurance_green_card',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

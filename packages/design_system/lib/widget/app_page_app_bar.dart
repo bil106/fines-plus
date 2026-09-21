@@ -1,5 +1,6 @@
 import 'package:design_system/theme/app_brand_theme.dart';
 import 'package:design_system/widget/app_back_button.dart';
+import 'package:design_system/colors/app_colors.dart';
 import 'package:flutter/material.dart';
 
 /// Shared AppBar for sub-pages reached via a back arrow (Налаштування,
@@ -28,7 +29,7 @@ class AppPageAppBar extends StatelessWidget implements PreferredSizeWidget {
       title: Text(
         title,
         style: const TextStyle(
-            color: Colors.black87, fontWeight: FontWeight.w700, fontSize: 22),
+            color: AppColors.black87, fontWeight: FontWeight.w700, fontSize: 22),
       ),
       actions: actions,
     );

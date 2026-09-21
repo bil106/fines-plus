@@ -45,7 +45,7 @@ class _FuelMapScreenState extends State<FuelMapScreen> {
           Marker(
             markerId: const MarkerId('my_location'),
             position: current,
-            infoWindow: const InfoWindow(title: 'You are here'),
+            infoWindow: InfoWindow(title: S.of(context).my_position),
             icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
           ),
         );
@@ -86,7 +86,8 @@ class _FuelMapScreenState extends State<FuelMapScreen> {
               infoWindow: InfoWindow(
                 title: station.name,
                 snippet:
-                    '${station.vicinity.isNotEmpty ? station.vicinity : 'Address not specified'}${rating > 0 ? ', rating: ${rating.toStringAsFixed(1)}' : ''}',
+                    '${station.vicinity.isNotEmpty ? station.vicinity : S.of(context).address_not_specified}'
+                    '${rating > 0 ? ', ${S.of(context).map_rating(rating.toStringAsFixed(1))}' : ''}',
               ),
             ),
           );
@@ -97,7 +98,7 @@ class _FuelMapScreenState extends State<FuelMapScreen> {
             Marker(
               markerId: const MarkerId('focus_station'),
               position: widget.focusPosition!,
-              infoWindow: InfoWindow(title: widget.focusName ?? 'Selected gas station'),
+              infoWindow: InfoWindow(title: widget.focusName ?? S.of(context).selected_gas_station),
               icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
             ),
           );

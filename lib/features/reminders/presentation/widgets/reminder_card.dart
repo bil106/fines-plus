@@ -54,23 +54,24 @@ class ReminderCard extends StatelessWidget {
     final overdue = status == ReminderStatus.overdue;
     final soon = status == ReminderStatus.soon;
 
-    final accent = done ? const Color(0xFF79B58A)
-        : overdue ? const Color(0xFFBE3540)
-        : soon ? const Color(0xFF00A99A) : const Color(0xFF6366F1);
+    final brand = context.brandTheme;
+    final accent = done ? brand.statusComplete
+        : overdue ? brand.statusDanger
+        : soon ? brand.statusInfo : Theme.of(context).colorScheme.primary;
     final statusText = done ? S.of(context).done
         : overdue ? S.of(context).reminder_overdue
         : soon ? S.of(context).reminder_soon
         : days == null ? '' : '$days ${S.of(context).days}';
     final statusWidget = Text(statusText, style: theme.bodySmall?.copyWith(
       fontSize: 13, fontWeight: FontWeight.w700,
-      color: overdue ? const Color(0xFFBE3540) : soon ? const Color(0xFFBA8700) : const Color(0xFF707070)));
+      color: overdue ? brand.statusDanger : soon ? brand.statusWarning : AppColors.textSecondary));
 
     final manual = item.manual;
     final subtitle = _subtitle(context);
-    final subtitleStyle = theme.bodySmall?.copyWith(fontSize: 13, color: const Color(0xFF707070));
+    final subtitleStyle = theme.bodySmall?.copyWith(fontSize: 13, color: AppColors.textSecondary);
 
     return Material(
-      color: Colors.white,
+      color: AppColors.neutreBlanc,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14),
         side: BorderSide(color: context.brandTheme.surfaceBorder)),
       clipBehavior: Clip.antiAlias,
@@ -102,7 +103,7 @@ class ReminderCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(_title(context, days), style: theme.bodyLarge?.copyWith(
-                      fontSize: 15, fontWeight: FontWeight.w700, color: const Color(0xFF202124),
+                      fontSize: 15, fontWeight: FontWeight.w700, color: AppColors.inkSoft,
                       decoration: done ? TextDecoration.lineThrough : TextDecoration.none)),
                     if (manual != null && manual.description.isNotEmpty) ...[
                       const SizedBox(height: 2),
@@ -125,7 +126,7 @@ class ReminderCard extends StatelessWidget {
                     tooltip: MaterialLocalizations.of(context).showMenuTooltip,
                     padding: EdgeInsets.zero,
                     iconSize: 20,
-                    icon: const Icon(Icons.more_vert, color: Color(0xFF707070)),
+                    icon: const Icon(Icons.more_vert, color: AppColors.textSecondary),
                     onSelected: (action) => action == 'edit' ? onTap?.call() : onDelete?.call(),
                     itemBuilder: (_) => [
                       PopupMenuItem(value: 'edit', child: Text(S.of(context).edit)),

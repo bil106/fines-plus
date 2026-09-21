@@ -20,32 +20,36 @@ typedef String MessageIfAbsent(String messageStr, List<dynamic> args);
 class MessageLookup extends MessageLookupByLibrary {
   String get localeName => 'en';
 
-  static String m0(distance) => "Best price nearby · ${distance} km";
+  static String m0(error) => "Apple sign-in error: ${error}";
 
-  static String m1(distance) => "Best rated nearby · ${distance} km";
+  static String m1(distance) => "Best price nearby · ${distance} km";
 
-  static String m2(distance) => "${distance} km";
+  static String m2(distance) => "Best rated nearby · ${distance} km";
 
-  static String m3(count) => "New fines found: ${count}";
+  static String m3(distance) => "${distance} km";
 
-  static String m4(count) => "${count} cars";
+  static String m4(count) => "New fines found: ${count}";
 
-  static String m5(date) => "OK until ${date}";
+  static String m5(count) => "${count} cars";
 
-  static String m6(date) =>
+  static String m6(date) => "OK until ${date}";
+
+  static String m7(date) =>
       "Your insurance expires on ${date}. Time to renew it.";
 
-  static String m7(task) => "Time for: ${task}";
+  static String m8(task) => "Time for: ${task}";
 
-  static String m8(count) => "Approx. in ${count} days";
+  static String m9(rating) => "rating: ${rating}";
 
-  static String m9(count) => "Approx. in ${count} weeks";
+  static String m10(count) => "Approx. in ${count} days";
 
-  static String m10(km) => "Oil change in ${km} km";
+  static String m11(count) => "Approx. in ${count} weeks";
 
-  static String m11(distance) => "Best rated nearby · ${distance} km";
+  static String m12(km) => "Oil change in ${km} km";
 
-  static String m12(price, period) =>
+  static String m13(distance) => "Best rated nearby · ${distance} km";
+
+  static String m14(price, period) =>
       "7-day free trial, then ${price} per ${period}. Cancel anytime, at least 24 hours before the trial ends, in Google Play Settings. Subscription renews automatically unless cancelled.";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
@@ -81,6 +85,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "analitics": MessageLookupByLibrary.simpleMessage("Analytics"),
     "analytics": MessageLookupByLibrary.simpleMessage("Analytics"),
     "app_version": MessageLookupByLibrary.simpleMessage("Version"),
+    "apple_login_error": m0,
+    "apple_login_successful": MessageLookupByLibrary.simpleMessage(
+      "Sign in with Apple successful",
+    ),
     "attention": MessageLookupByLibrary.simpleMessage("Attention"),
     "authorization_required": MessageLookupByLibrary.simpleMessage(
       "Authorization required",
@@ -88,7 +96,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "auto": MessageLookupByLibrary.simpleMessage("Auto"),
     "average": MessageLookupByLibrary.simpleMessage("Average"),
     "battery": MessageLookupByLibrary.simpleMessage("Battery"),
-    "best_price_nearby_distance": m0,
+    "best_price_nearby_distance": m1,
+    "body_category": MessageLookupByLibrary.simpleMessage("Category / body"),
     "build_route": MessageLookupByLibrary.simpleMessage("Build route"),
     "buy_subscription": MessageLookupByLibrary.simpleMessage(
       "Buy subscription",
@@ -109,12 +118,15 @@ class MessageLookup extends MessageLookupByLibrary {
     "car_inspection": MessageLookupByLibrary.simpleMessage(
       "Reminders for car inspection and service",
     ),
+    "car_make_year": MessageLookupByLibrary.simpleMessage(
+      "Year of manufacture",
+    ),
     "car_number": MessageLookupByLibrary.simpleMessage("Car number"),
     "car_number_fines_hint": MessageLookupByLibrary.simpleMessage(
       "Only needed to check fines — you can add these later",
     ),
     "car_wash": MessageLookupByLibrary.simpleMessage("Car wash"),
-    "car_wash_best_rating_distance": m1,
+    "car_wash_best_rating_distance": m2,
     "car_wash_load_failed": MessageLookupByLibrary.simpleMessage(
       "Could not load car washes",
     ),
@@ -160,6 +172,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "comment": MessageLookupByLibrary.simpleMessage("Comment"),
     "comment_published": MessageLookupByLibrary.simpleMessage(
       "Comment published!",
+    ),
+    "completed_at_department": MessageLookupByLibrary.simpleMessage(
+      "Completed at department",
     ),
     "configure_action": MessageLookupByLibrary.simpleMessage(
       "Configure action",
@@ -211,8 +226,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "delete_expense_history": MessageLookupByLibrary.simpleMessage(
       "Delete expense history",
     ),
+    "department_address": MessageLookupByLibrary.simpleMessage(
+      "Department address",
+    ),
     "description": MessageLookupByLibrary.simpleMessage("Description"),
-    "distance_km_short": m2,
+    "distance_km_short": m3,
     "done": MessageLookupByLibrary.simpleMessage("Done"),
     "dont_have_account": MessageLookupByLibrary.simpleMessage(
       "Don\'t have an account? Sign up",
@@ -227,6 +245,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "email_verification_error": MessageLookupByLibrary.simpleMessage(
       "Email verification error",
     ),
+    "engine_capacity": MessageLookupByLibrary.simpleMessage("Engine capacity"),
+    "english": MessageLookupByLibrary.simpleMessage("English"),
     "enter_amount": MessageLookupByLibrary.simpleMessage("Enter amount"),
     "enter_comment": MessageLookupByLibrary.simpleMessage("Enter comment"),
     "enter_correct_number_auto": MessageLookupByLibrary.simpleMessage(
@@ -288,7 +308,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "fines_mvs_title": MessageLookupByLibrary.simpleMessage(
       "Fines check (MVS)",
     ),
-    "fines_new_found": m3,
+    "fines_new_found": m4,
     "fines_no_new": MessageLookupByLibrary.simpleMessage("No new fines"),
     "fines_recheck_confirm": MessageLookupByLibrary.simpleMessage(
       "Check again",
@@ -306,6 +326,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Fines reminder",
     ),
     "fines_violation": MessageLookupByLibrary.simpleMessage("Violation"),
+    "first_registration_date": MessageLookupByLibrary.simpleMessage(
+      "First registration date",
+    ),
     "free_experience": MessageLookupByLibrary.simpleMessage(
       "Ad-free experience",
     ),
@@ -336,7 +359,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Failed to complete the action",
     ),
     "garage_active_car": MessageLookupByLibrary.simpleMessage("Active"),
-    "garage_cars_count": m4,
+    "garage_cars_count": m5,
     "garage_continue": MessageLookupByLibrary.simpleMessage("Continue"),
     "garage_delete_confirm_body": MessageLookupByLibrary.simpleMessage(
       "All data for this car (expenses, reminders, maintenance) will be permanently deleted.",
@@ -363,7 +386,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Insurance expired",
     ),
     "garage_status_ok": MessageLookupByLibrary.simpleMessage("OK"),
-    "garage_status_ok_until": m5,
+    "garage_status_ok_until": m6,
     "gas_station_nearby": MessageLookupByLibrary.simpleMessage(
       "Gas stations nearby",
     ),
@@ -408,7 +431,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "insurance_control": MessageLookupByLibrary.simpleMessage(
       "Insurance control",
     ),
-    "insurance_expiry_reminder_body": m6,
+    "insurance_expiry_reminder_body": m7,
+    "insurance_green_card": MessageLookupByLibrary.simpleMessage("Green Card"),
+    "insurance_kasko": MessageLookupByLibrary.simpleMessage(
+      "Comprehensive insurance",
+    ),
+    "insurance_osago": MessageLookupByLibrary.simpleMessage("MTPL"),
     "interval": MessageLookupByLibrary.simpleMessage("Interval (km)"),
     "interval_by_date": MessageLookupByLibrary.simpleMessage(
       "Interval by date",
@@ -427,6 +455,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "last_insurance_date": MessageLookupByLibrary.simpleMessage(
       "Last insurance date",
     ),
+    "last_record": MessageLookupByLibrary.simpleMessage("Last record"),
     "last_service_date": MessageLookupByLibrary.simpleMessage(
       "Last service date",
     ),
@@ -441,10 +470,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "maintenance_control": MessageLookupByLibrary.simpleMessage(
       "Maintenance control",
     ),
-    "maintenance_due_body": m7,
+    "maintenance_due_body": m8,
     "maintenance_due_title": MessageLookupByLibrary.simpleMessage(
       "Maintenance due",
     ),
+    "map_rating": m9,
     "mileage": MessageLookupByLibrary.simpleMessage("Mileage"),
     "mileage_stat": MessageLookupByLibrary.simpleMessage("Mileage Statistics"),
     "mileage_statistics": MessageLookupByLibrary.simpleMessage(
@@ -541,10 +571,12 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "open_site": MessageLookupByLibrary.simpleMessage("Open e-Drive"),
     "open_statistics": MessageLookupByLibrary.simpleMessage("Open statistics"),
+    "operation_code": MessageLookupByLibrary.simpleMessage("Operation code"),
     "or_sign_in_using": MessageLookupByLibrary.simpleMessage(
       "Or sign in using",
     ),
     "other": MessageLookupByLibrary.simpleMessage("Other"),
+    "owner_address": MessageLookupByLibrary.simpleMessage("Owner address"),
     "paid": MessageLookupByLibrary.simpleMessage("Paid"),
     "paid_fines_section": MessageLookupByLibrary.simpleMessage("Paid"),
     "password": MessageLookupByLibrary.simpleMessage("Password"),
@@ -570,6 +602,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "Planned service is due. Add the cost once it\'s done.",
     ),
     "planned_services": MessageLookupByLibrary.simpleMessage("Planned works"),
+    "plate_cost": MessageLookupByLibrary.simpleMessage("Plate cost"),
+    "plate_cost_reason": MessageLookupByLibrary.simpleMessage(
+      "Plate cost reason",
+    ),
     "please_log_in": MessageLookupByLibrary.simpleMessage(
       "Please leave or register to continue.",
     ),
@@ -595,14 +631,26 @@ class MessageLookup extends MessageLookupByLibrary {
     "recent_transactions": MessageLookupByLibrary.simpleMessage(
       "Recent transactions",
     ),
+    "record": MessageLookupByLibrary.simpleMessage("Record"),
+    "record_date": MessageLookupByLibrary.simpleMessage("Record date"),
     "reg_number": MessageLookupByLibrary.simpleMessage(
       "Technical passport number (optional)",
     ),
     "register": MessageLookupByLibrary.simpleMessage("Register"),
     "registration": MessageLookupByLibrary.simpleMessage("Registration"),
+    "registration_address": MessageLookupByLibrary.simpleMessage(
+      "Registration address (KOATUU)",
+    ),
+    "registration_department": MessageLookupByLibrary.simpleMessage(
+      "Department",
+    ),
+    "registration_operation": MessageLookupByLibrary.simpleMessage("Operation"),
+    "registration_plate": MessageLookupByLibrary.simpleMessage(
+      "Registration plate",
+    ),
     "reminder": MessageLookupByLibrary.simpleMessage("Reminder"),
-    "reminder_approx_days": m8,
-    "reminder_approx_weeks": m9,
+    "reminder_approx_days": m10,
+    "reminder_approx_weeks": m11,
     "reminder_insurance_expires": MessageLookupByLibrary.simpleMessage(
       "Insurance expires",
     ),
@@ -612,7 +660,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "reminder_oil_due": MessageLookupByLibrary.simpleMessage(
       "Time to change the oil",
     ),
-    "reminder_oil_in_km": m10,
+    "reminder_oil_in_km": m12,
     "reminder_overdue": MessageLookupByLibrary.simpleMessage("Overdue"),
     "reminder_soon": MessageLookupByLibrary.simpleMessage("Soon"),
     "remove": MessageLookupByLibrary.simpleMessage("Remove"),
@@ -625,6 +673,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "schedule": MessageLookupByLibrary.simpleMessage("Schedule"),
     "search": MessageLookupByLibrary.simpleMessage("Search"),
     "search_fines": MessageLookupByLibrary.simpleMessage("Search fines"),
+    "seats_count": MessageLookupByLibrary.simpleMessage("Number of seats"),
     "select_a_service": MessageLookupByLibrary.simpleMessage(
       "Select a service",
     ),
@@ -637,6 +686,12 @@ class MessageLookup extends MessageLookupByLibrary {
       "Select insurance type",
     ),
     "selected": MessageLookupByLibrary.simpleMessage("Selected"),
+    "selected_car_wash": MessageLookupByLibrary.simpleMessage(
+      "Selected car wash",
+    ),
+    "selected_gas_station": MessageLookupByLibrary.simpleMessage(
+      "Selected gas station",
+    ),
     "selected_service_station": MessageLookupByLibrary.simpleMessage(
       "Selected service station",
     ),
@@ -656,7 +711,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "service_balansuvannya_kolis": MessageLookupByLibrary.simpleMessage(
       "Wheel balancing",
     ),
-    "service_best_rating_distance": m11,
+    "service_best_rating_distance": m13,
     "service_capitalnyy_remont_dvyhuna": MessageLookupByLibrary.simpleMessage(
       "Overhaul of the engine",
     ),
@@ -1234,7 +1289,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "track_costs": MessageLookupByLibrary.simpleMessage(
       "Track costs, mileage and efficiency",
     ),
-    "trial_disclosure_detailed": m12,
+    "trial_disclosure_detailed": m14,
     "trial_expired": MessageLookupByLibrary.simpleMessage(
       "Trial period expired",
     ),
@@ -1258,6 +1313,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "user_not_found": MessageLookupByLibrary.simpleMessage("User not found"),
     "valid_from": MessageLookupByLibrary.simpleMessage("Valid from"),
     "valid_to": MessageLookupByLibrary.simpleMessage("Valid to"),
+    "vehicle_color": MessageLookupByLibrary.simpleMessage("Color"),
+    "vehicle_owner": MessageLookupByLibrary.simpleMessage("Owner"),
+    "vehicle_region": MessageLookupByLibrary.simpleMessage("Region"),
+    "vehicle_type": MessageLookupByLibrary.simpleMessage("Type"),
+    "vehicle_weight": MessageLookupByLibrary.simpleMessage(
+      "Weight / max. weight",
+    ),
     "vehicles_section": MessageLookupByLibrary.simpleMessage("Vehicles"),
     "verif_date": MessageLookupByLibrary.simpleMessage("Verification date:"),
     "verification_history": MessageLookupByLibrary.simpleMessage(

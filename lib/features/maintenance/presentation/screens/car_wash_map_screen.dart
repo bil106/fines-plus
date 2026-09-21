@@ -78,10 +78,10 @@ class _CarWashMapScreenState extends State<CarWashMapScreen> {
               position: LatLng(wash['lat'], wash['lng']),
               icon: BitmapDescriptor.defaultMarkerWithHue(hue),
               infoWindow: InfoWindow(
-                title: wash['name'] ?? 'Car wash',
+                title: wash['name'] ?? S.of(context).car_wash,
                 snippet:
                     '${wash['vicinity'] ?? S.of(context).address_not_specified}'
-                    '${wash['rating'] != null ? ', rating: $rating' : ''}',
+                    '${wash['rating'] != null ? ', ${S.of(context).map_rating(rating.toString())}' : ''}',
               ),
             ),
           );
@@ -92,7 +92,7 @@ class _CarWashMapScreenState extends State<CarWashMapScreen> {
             Marker(
               markerId: const MarkerId('focus_wash'),
               position: widget.focusPosition!,
-              infoWindow: InfoWindow(title: widget.focusName ?? 'Selected car wash'),
+              infoWindow: InfoWindow(title: widget.focusName ?? S.of(context).selected_car_wash),
               icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
             ),
           );

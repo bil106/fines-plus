@@ -59,7 +59,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     // Brand display font (Big Shoulders Display by default),
                     // per-flavor via AppConfig.displayFontFamily.
                     style: context.brandTheme.displayTextStyle.copyWith(
-                      color: Colors.black87,
+                      color: AppColors.black87,
                       fontSize: 30,
                     ),
                   ),

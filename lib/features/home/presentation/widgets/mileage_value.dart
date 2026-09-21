@@ -22,7 +22,7 @@ class MileageValue extends StatelessWidget {
 
         return Text(
           '${converted.toStringAsFixed(0)} $unit',
-          style: const TextStyle(color: Colors.blueAccent, fontSize: 22, fontWeight: FontWeight.bold),
+          style: TextStyle(color: Theme.of(context).colorScheme.primary, fontSize: 22, fontWeight: FontWeight.bold),
         );
       },
     );

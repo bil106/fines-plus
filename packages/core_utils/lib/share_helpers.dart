@@ -40,7 +40,13 @@ class ShareHelpers {
     List<EventModel> history,
   ) async {
     final cubit = context.read<ExportCubit>();
-    final file = await cubit.exportBuyerReportFile(carNumber, history);
+    final config = context.read<CarCubit>().config;
+    final file = await cubit.exportBuyerReportFile(
+      carNumber,
+      history,
+      brandName: config.brandName,
+      logoAssetPath: config.logoAssetPath,
+    );
     await Share.shareXFiles(
       [XFile(file.path)],
       text: '${S.of(context).buyer_report} $carNumber',

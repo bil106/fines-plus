@@ -163,7 +163,7 @@ class _CarInfoViewState extends State<_CarInfoView> {
               Navigator.pop(context);
               await _deleteCars();
             },
-            child: Text(S.of(context).delete, style: const TextStyle(color: Colors.red)),
+            child: Text(S.of(context).delete, style: const TextStyle(color: AppColors.red)),
           ),
         ],
       ),

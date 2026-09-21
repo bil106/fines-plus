@@ -91,7 +91,7 @@ class AppBottomSheet extends StatelessWidget {
                                   .titleLarge
                                   ?.copyWith(
                                     fontWeight: FontWeight.w700,
-                                    color: Colors.black87,
+                                    color: AppColors.black87,
                                   )),
                         ),
                         IconButton(

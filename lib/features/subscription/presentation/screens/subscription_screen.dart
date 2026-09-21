@@ -1,4 +1,5 @@
 import 'package:design_system/widget/app_back_button.dart';
+import 'package:design_system/colors/app_colors.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/constants/app_borders.dart';
@@ -16,7 +17,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:design_system/colors/app_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -260,7 +260,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                     width: isSelected ? AppBorders.widthThick : AppBorders.widthThin,
                                   ),
                                   boxShadow: [
-                                    BoxShadow(color: Colors.black12, blurRadius: 6, offset: const Offset(0, 3)),
+                                    BoxShadow(color: AppColors.black12, blurRadius: 6, offset: const Offset(0, 3)),
                                   ],
                                 ),
                                 child: Row(
@@ -365,7 +365,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                 ? const SizedBox(
                                     height: 22,
                                     width: 22,
-                                    child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                                    child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.neutreBlanc),
                                   )
                                 : Text(
                                     _productsUnavailable ? S.of(context).store_unavailable : S.of(context).get_plan,
@@ -382,7 +382,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                         child: Text(
                           S.of(context).store_unavailable,
                           textAlign: TextAlign.center,
-                          style: const TextStyle(fontSize: 13, color: Colors.red),
+                          style: const TextStyle(fontSize: 13, color: AppColors.red),
                         ),
                       ),
 
