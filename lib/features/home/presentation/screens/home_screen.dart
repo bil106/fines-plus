@@ -170,10 +170,16 @@ class _HomeScreenState extends State<HomeScreen> {
                               lastOdometer: 0,
                             );
 
-                      return HeroExpenseCard(
-                        hasCar: hasCar,
-                        state: state,
-                        stats: stats,
+                      return GestureDetector(
+                        behavior: HitTestBehavior.opaque,
+                        onTap: () => context
+                            .findAncestorStateOfType<HomeScreenWrapperState>()
+                            ?.openPage(HomePage.analytics),
+                        child: HeroExpenseCard(
+                          hasCar: hasCar,
+                          state: state,
+                          stats: stats,
+                        ),
                       );
                     },
                   ),
