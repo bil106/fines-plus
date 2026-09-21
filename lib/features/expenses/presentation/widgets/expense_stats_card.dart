@@ -58,12 +58,12 @@ class ExpenseStatsCard extends StatelessWidget {
                 PieChartData(
                   sectionsSpace: 0.5,
                   centerSpaceRadius: 40,
-                  sections: stats.categoryTotals.entries.map((e) {
+                  sections: _slices().map((e) {
                     final convertedValue = context.read<SettingsCubit>().convertFromUAH(e.value);
                     return PieChartSectionData(
                       value: convertedValue,
                       radius: 50,
-                      color: _colorForCategory(e.key),
+                      color: e.color,
                       title: convertedValue.toStringAsFixed(0),
                       titleStyle: const TextStyle(
                         fontSize: 14,
@@ -85,9 +85,7 @@ class ExpenseStatsCard extends StatelessWidget {
               childAspectRatio: 4,
               mainAxisSpacing: 6,
               crossAxisSpacing: 8,
-              children: ExpenseCategory.values.map((cat) {
-                return _LegendItem(color: _colorForCategory(cat), text: _categoryName(cat));
-              }).toList(),
+              children: _legend().map((e) => _LegendItem(color: e.color, text: e.text)).toList(),
             ),
 
             if (onMaintenance != null)
@@ -101,6 +99,31 @@ class ExpenseStatsCard extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  /// The pie's slices: every category, with the electric part of the fuel
+  /// total split out as its own slice (as on the dashboard card).
+  List<({Color color, double value})> _slices() {
+    final electric = stats.electricTotal;
+    final slices = <({Color color, double value})>[];
+    for (final e in stats.categoryTotals.entries) {
+      if (e.key == ExpenseCategory.fuel) {
+        slices.add((color: _colorForCategory(e.key), value: (e.value - electric).clamp(0.0, e.value)));
+        if (electric > 0) slices.add((color: AppColors.catElectric, value: electric.clamp(0.0, e.value)));
+      } else {
+        slices.add((color: _colorForCategory(e.key), value: e.value));
+      }
+    }
+    return slices;
+  }
+
+  List<({Color color, String text})> _legend() {
+    final items = <({Color color, String text})>[];
+    for (final cat in ExpenseCategory.values) {
+      items.add((color: _colorForCategory(cat), text: _categoryName(cat)));
+      if (cat == ExpenseCategory.fuel) items.add((color: AppColors.catElectric, text: S.current.fuel_electric));
+    }
+    return items;
   }
 
   // Same tokens as the dashboard's HeroExpenseCard so both screens match.

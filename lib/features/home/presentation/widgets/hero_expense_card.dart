@@ -8,6 +8,7 @@ import 'package:fines_plus/core/config/app_config.dart';
 import 'package:fines_plus/core/extensions/currency_service.dart';
 import 'package:fines_plus/core/helpers/statistics_costs_presenter.dart';
 import 'package:fines_plus/core/theme/theme_config.dart';
+import 'package:fines_plus/core/extensions/monthly_expense_stats.dart';
 import 'package:fines_plus/features/expenses/data/models/expense_category.dart';
 import 'package:fines_plus/features/home/domain/entities/main_stats.dart';
 import 'package:fines_plus/features/home/presentation/localization/flutter_stats_localization.dart';
@@ -49,6 +50,7 @@ class HeroExpenseCard extends StatelessWidget {
     );
 
     final current = state.expenseStats.total;
+    final segments = _segments(context, state.expenseStats);
     final previous = state.previousExpenseStats.total;
     final deltaPercent = previous > 0 ? ((current - previous) / previous * 100) : null;
 
@@ -121,10 +123,10 @@ class HeroExpenseCard extends StatelessWidget {
 
           if (hasCar && current > 0) ...[
             const SizedBox(height: 12),
-            _CategoryBar(categoryTotals: state.expenseStats.categoryTotals, total: current),
+            _CategoryBar(segments: segments, total: current),
             const SizedBox(height: 8),
             _CategoryLegend(
-              categoryTotals: state.expenseStats.categoryTotals,
+              segments: segments,
               currency: currency,
               currencyService: currencyService,
               baseCurrency: S.of(context).grn,
@@ -192,19 +194,45 @@ String _categoryLabel(ExpenseCategory c, BuildContext context) {
   }
 }
 
+/// One slice of the month's breakdown: a category, except that the electric
+/// part of the fuel total is split out so a hybrid's petrol and electricity
+/// show apart.
+class _Segment {
+  final Color color;
+  final String label;
+  final double amount;
+
+  const _Segment({required this.color, required this.label, required this.amount});
+}
+
+List<_Segment> _segments(BuildContext context, MonthlyExpenseStats stats) {
+  final result = <_Segment>[];
+  for (final category in ExpenseCategory.values) {
+    var amount = stats.categoryTotals[category] ?? 0;
+    if (category == ExpenseCategory.fuel) {
+      final electric = stats.electricTotal.clamp(0.0, amount);
+      amount -= electric;
+      if (amount > 0) {
+        result.add(_Segment(color: _categoryColor(category), label: _categoryLabel(category, context), amount: amount));
+      }
+      if (electric > 0) {
+        result.add(_Segment(color: AppColors.catElectric, label: S.of(context).fuel_electric, amount: electric));
+      }
+    } else if (amount > 0) {
+      result.add(_Segment(color: _categoryColor(category), label: _categoryLabel(category, context), amount: amount));
+    }
+  }
+  return result;
+}
+
 class _CategoryBar extends StatelessWidget {
-  final Map<ExpenseCategory, double> categoryTotals;
+  final List<_Segment> segments;
   final double total;
 
-  const _CategoryBar({required this.categoryTotals, required this.total});
+  const _CategoryBar({required this.segments, required this.total});
 
   @override
   Widget build(BuildContext context) {
-    final segments = ExpenseCategory.values
-        .map((c) => MapEntry(c, categoryTotals[c] ?? 0))
-        .where((e) => e.value > 0)
-        .toList();
-
     if (segments.isEmpty) return const SizedBox.shrink();
 
     return ClipRRect(
@@ -215,8 +243,8 @@ class _CategoryBar extends StatelessWidget {
           children: segments
               .map(
                 (e) => Expanded(
-                  flex: (e.value / total * 1000).round().clamp(1, 1000).toInt(),
-                  child: Container(color: _categoryColor(e.key)),
+                  flex: (e.amount / total * 1000).round().clamp(1, 1000).toInt(),
+                  child: Container(color: e.color),
                 ),
               )
               .toList(),
@@ -227,13 +255,13 @@ class _CategoryBar extends StatelessWidget {
 }
 
 class _CategoryLegend extends StatelessWidget {
-  final Map<ExpenseCategory, double> categoryTotals;
+  final List<_Segment> segments;
   final String currency;
   final CurrencyService currencyService;
   final String baseCurrency;
 
   const _CategoryLegend({
-    required this.categoryTotals,
+    required this.segments,
     required this.currency,
     required this.currencyService,
     required this.baseCurrency,
@@ -241,27 +269,22 @@ class _CategoryLegend extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final entries = ExpenseCategory.values
-        .map((c) => MapEntry(c, categoryTotals[c] ?? 0))
-        .where((e) => e.value > 0)
-        .toList();
-
     return Wrap(
       spacing: 10,
       runSpacing: 4,
-      children: entries.map((e) {
-        final converted = currencyService.convert(e.value, currency, fromCurrency: baseCurrency);
+      children: segments.map((e) {
+        final converted = currencyService.convert(e.amount, currency, fromCurrency: baseCurrency);
         return Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
               width: 6,
               height: 6,
-              decoration: BoxDecoration(color: _categoryColor(e.key), shape: BoxShape.circle),
+              decoration: BoxDecoration(color: e.color, shape: BoxShape.circle),
             ),
             const SizedBox(width: 4),
             Text(
-              '${_categoryLabel(e.key, context)} ${converted.toStringAsFixed(0)} $currency',
+              '${e.label} ${converted.toStringAsFixed(0)} $currency',
               style: Theme.of(context).textTheme.bodySmall?.copyWith(color: AppColors.grey700),
             ),
           ],

@@ -70,6 +70,7 @@ abstract final class AppColors {
   static const catCarWash = Color(0xFF22A6D9);
   static const catInsurance = Color(0xFFE07A5F);
   static const catOther = Color(0xFF9AA1AD);
+  static const catElectric = Color(0xFFEC407A);
 
   // Note: the dashboard's warm-neutral background/border/divider and the
   // unpaid-fines alert colors used to live here as fixed consts. They are

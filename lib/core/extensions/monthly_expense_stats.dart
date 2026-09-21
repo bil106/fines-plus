@@ -10,7 +10,16 @@ class MonthlyExpenseStats {
   final double total;
   final Map<ExpenseCategory, double> categoryTotals;
 
-  MonthlyExpenseStats({required this.monthLabel, required this.total, required this.categoryTotals});
+  /// The part of the fuel total spent on electric charging, so a hybrid's
+  /// petrol and electricity can be shown apart.
+  final double electricTotal;
+
+  MonthlyExpenseStats({
+    required this.monthLabel,
+    required this.total,
+    required this.categoryTotals,
+    this.electricTotal = 0.0,
+  });
 
   factory MonthlyExpenseStats.fromJson(Map<String, dynamic> json) => _$MonthlyExpenseStatsFromJson(json);
 

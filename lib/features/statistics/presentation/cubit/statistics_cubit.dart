@@ -3,7 +3,9 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:fines_plus/core/extensions/fuel_calculator.dart';
+import 'package:fines_plus/core/extensions/fuel_type.dart';
 import 'package:fines_plus/features/expenses/data/models/car_wash_record.dart';
+import 'package:fines_plus/features/expenses/data/models/fuel_record.dart';
 import 'package:fines_plus/features/expenses/data/models/service_record.dart';
 import 'package:fines_plus/features/maintenance/presentation/cubit/maintenance_cubit.dart';
 import 'package:fines_plus/features/maintenance/presentation/cubit/maintenance_state.dart';
@@ -80,6 +82,7 @@ class StatisticsCubit extends Cubit<StatisticsState> {
 
   MonthlyExpenseStats _calculateMonthlyStats(MaintenanceState state, int year, int month) {
     double total = 0;
+    double electricTotal = 0;
     final categoryTotals = <ExpenseCategory, double>{
       ExpenseCategory.fuel: 0,
       ExpenseCategory.service: 0,
@@ -106,10 +109,16 @@ class StatisticsCubit extends Cubit<StatisticsState> {
         final cost = (record is CarWashRecord) ? record.amount : (record as dynamic).cost;
         total += cost;
         categoryTotals[entry.key] = (categoryTotals[entry.key] ?? 0) + cost;
+        if (record is FuelRecord && record.fuelType == FuelType.Electric.name) electricTotal += cost;
       }
     }
 
-    return MonthlyExpenseStats(monthLabel: "${_monthName(month)} $year", total: total, categoryTotals: categoryTotals);
+    return MonthlyExpenseStats(
+      monthLabel: "${_monthName(month)} $year",
+      total: total,
+      categoryTotals: categoryTotals,
+      electricTotal: electricTotal,
+    );
   }
 
   DateTime _parseDate(String dateStr) {

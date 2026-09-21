@@ -16,6 +16,7 @@ MonthlyExpenseStats _$MonthlyExpenseStatsFromJson(Map<String, dynamic> json) =>
           (e as num).toDouble(),
         ),
       ),
+      electricTotal: (json['electricTotal'] as num?)?.toDouble() ?? 0.0,
     );
 
 Map<String, dynamic> _$MonthlyExpenseStatsToJson(
@@ -26,6 +27,7 @@ Map<String, dynamic> _$MonthlyExpenseStatsToJson(
   'categoryTotals': instance.categoryTotals.map(
     (k, e) => MapEntry(_$ExpenseCategoryEnumMap[k]!, e),
   ),
+  'electricTotal': instance.electricTotal,
 };
 
 const _$ExpenseCategoryEnumMap = {
