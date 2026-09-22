@@ -24,15 +24,17 @@ class CostInputCard extends StatelessWidget {
 
     return Card(
       color: AppColors.neutreBlanc,
+      elevation: 2,
+      shadowColor: AppColors.black,
       shape: RoundedRectangleBorder(
         borderRadius: AppBorders.radiusLarge,
         side: BorderSide(color: context.brandTheme.surfaceBorder),
       ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
         child: Row(
           children: [
-            const Icon(Icons.attach_money, color: AppColors.green, size: 32),
+            Icon(Icons.attach_money, color: Theme.of(context).colorScheme.primary, size: 24),
             AppSpacers.horizontalSmallMedium,
             Expanded(
               child: TextField(
@@ -42,9 +44,11 @@ class CostInputCard extends StatelessWidget {
                   border: InputBorder.none,
                   focusedBorder: InputBorder.none,
                   hintText: S.of(context).enter_amount,
-                  hintStyle: textTheme.subtitleText.copyWith(color: AppColors.grey300),
+                  hintStyle: const TextStyle(fontSize: 15, color: AppColors.neutreGrey),
                 ),
-                style: textTheme.subtitleText,
+                style: textTheme.subtitleText
+                    .merge(context.brandTheme.moneyTextStyle)
+                    .copyWith(fontSize: 15, color: AppColors.ink),
                 onChanged: (value) {
                   final input = double.tryParse(value.replaceAll(',', '.')) ?? 0.0;
 
@@ -57,7 +61,7 @@ class CostInputCard extends StatelessWidget {
                 },
               ),
             ),
-            Text(currencyLabel, style: textTheme.subtitleText),
+            Text(currencyLabel, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: AppColors.textSecondary)),
           ],
         ),
       ),

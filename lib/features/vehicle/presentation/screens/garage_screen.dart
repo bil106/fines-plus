@@ -17,6 +17,7 @@ import 'package:fines_plus/features/expenses/data/repository/expense_repository.
 import 'package:fines_plus/features/maintenance/presentation/cubit/maintenance_cubit.dart';
 import 'package:fines_plus/features/maintenance/presentation/cubit/maintenance_state.dart';
 import 'package:fines_plus/features/settings/presentation/cubit/settings_cubit.dart';
+import 'package:fines_plus/features/settings/presentation/cubit/unit_stream.dart';
 import 'package:fines_plus/features/vehicle/data/car_makes.dart';
 import 'package:fines_plus/features/vehicle/data/datasources/car_photo_uploader.dart';
 import 'package:fines_plus/features/vehicle/data/models/car_info_model.dart';
@@ -75,36 +76,7 @@ class GarageScreen extends StatelessWidget {
           ),
         ),
       ),
-      bottomNavigationBar: onContinue == null
-          ? null
-          : SafeArea(
-              minimum: const EdgeInsets.fromLTRB(20, 12, 20, 16),
-              child: SizedBox(
-                height: 52,
-                child: ElevatedButton(
-                  onPressed: isContinuing ? null : onContinue,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.blue700,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                  ),
-                  child: isContinuing
-                      ? const SizedBox(
-                          width: 22,
-                          height: 22,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : Text(
-                          S.of(context).garage_continue,
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                ),
-              ),
-            ),
+
       floatingActionButton: FloatingActionButton(
         backgroundColor: AppColors.blue700,
         foregroundColor: AppColors.neutreBlanc,
@@ -272,43 +244,6 @@ class _CarCard extends StatelessWidget {
                           ),
                         ),
                       ),
-                    PopupMenuButton<String>(
-                      tooltip: MaterialLocalizations.of(
-                        context,
-                      ).showMenuTooltip,
-                      icon: const Icon(Icons.more_vert),
-                      onSelected: (action) =>
-                          action == 'edit' ? onEdit() : onDelete(),
-                      itemBuilder: (_) => [
-                        PopupMenuItem(
-                          value: 'edit',
-                          child: Row(
-                            children: [
-                              const Icon(Icons.edit_outlined, size: 20),
-                              const SizedBox(width: 12),
-                              Text(S.of(context).edit),
-                            ],
-                          ),
-                        ),
-                        PopupMenuItem(
-                          value: 'delete',
-                          child: Row(
-                            children: [
-                              const Icon(
-                                Icons.delete_outline,
-                                size: 20,
-                                color: AppColors.red,
-                              ),
-                              const SizedBox(width: 12),
-                              Text(
-                                S.of(context).delete,
-                                style: const TextStyle(color: AppColors.red),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
                   ],
                 ),
                 CarMileageAndStatus(carId: car.carId, cardStyle: true),
@@ -455,7 +390,9 @@ class CarMileageAndStatusState extends State<CarMileageAndStatus> {
               .garage_status_ok_until(_formatDate(latestInsuranceValidTo))
         : S.of(context).garage_status_ok;
 
-    final unit = context.read<SettingsCubit>().state.unit;
+    final settingsCubit = context.read<SettingsCubit>();
+    final unit = settingsCubit.state.unit == 'mil' ? 'mil' : S.of(context).km;
+    final displayMileage = UnitStream(settingsCubit).convert(mileage.toDouble()).round();
 
     if (!widget.cardStyle) {
       return Padding(
@@ -463,7 +400,7 @@ class CarMileageAndStatusState extends State<CarMileageAndStatus> {
         child: Wrap(
           spacing: 8,
           children: [
-            if (mileage > 0) Text('$mileage $unit', style: textTheme.bodySmall),
+            if (mileage > 0) Text('$displayMileage $unit', style: textTheme.bodySmall),
             Text(
               statusText,
               style: textTheme.bodySmall?.copyWith(
@@ -487,7 +424,7 @@ class CarMileageAndStatusState extends State<CarMileageAndStatus> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            '${NumberFormat.decimalPattern('uk').format(mileage)} $unit',
+            '${NumberFormat.decimalPattern('uk').format(displayMileage)} $unit',
             style: textTheme.bodySmall
                 ?.merge(context.brandTheme.moneyTextStyle)
                 .copyWith(

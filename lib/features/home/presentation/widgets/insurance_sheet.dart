@@ -1,5 +1,6 @@
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
+import 'package:design_system/theme/app_brand_theme.dart';
 import 'package:design_system/widget/app_field_card.dart';
 import 'package:fines_plus/features/expenses/data/models/insurance_record.dart';
 import 'package:fines_plus/features/maintenance/presentation/cubit/maintenance_cubit.dart';
@@ -142,10 +143,10 @@ class InsuranceSheetState extends State<InsuranceSheet> {
               isDense: true,
               contentPadding: EdgeInsets.zero,
             ),
-            style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, color: AppColors.black87),
+            style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700, fontSize: 15, color: AppColors.ink),
           ),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 14),
         AppFieldCard(
           label: S.of(context).policy_number,
           child: TextField(
@@ -160,10 +161,12 @@ class InsuranceSheetState extends State<InsuranceSheet> {
               isDense: true,
               contentPadding: EdgeInsets.zero,
             ),
-            style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, color: AppColors.black87),
+            style: textTheme.titleMedium
+                ?.merge(context.brandTheme.moneyTextStyle)
+                .copyWith(fontWeight: FontWeight.w700, fontSize: 15, color: AppColors.ink),
           ),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 14),
         Row(
           children: [
             Expanded(
@@ -176,10 +179,10 @@ class InsuranceSheetState extends State<InsuranceSheet> {
                       Expanded(
                         child: Text(
                           _formatDate(validFrom),
-                          style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, color: AppColors.black87),
+                          style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700, fontSize: 15, color: AppColors.ink),
                         ),
                       ),
-                      const Icon(Icons.calendar_today, size: 18, color: AppColors.grey700),
+                      const Icon(Icons.calendar_today, size: 16, color: AppColors.catOther),
                     ],
                   ),
                 ),
@@ -199,10 +202,10 @@ class InsuranceSheetState extends State<InsuranceSheet> {
                       Expanded(
                         child: Text(
                           _formatDate(validTo),
-                          style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, color: AppColors.black87),
+                          style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700, fontSize: 15, color: AppColors.ink),
                         ),
                       ),
-                      const Icon(Icons.calendar_today, size: 18, color: AppColors.grey700),
+                      const Icon(Icons.calendar_today, size: 16, color: AppColors.catOther),
                     ],
                   ),
                 ),
@@ -210,7 +213,7 @@ class InsuranceSheetState extends State<InsuranceSheet> {
             ),
           ],
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 14),
         AppFieldCard(
           label: S.of(context).cost,
           child: TextField(
@@ -227,9 +230,11 @@ class InsuranceSheetState extends State<InsuranceSheet> {
               contentPadding: EdgeInsets.zero,
               hintText: '0',
               suffixText: ' ${settings.state.currency}',
-              suffixStyle: textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w700),
+              suffixStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: AppColors.textSecondary),
             ),
-            style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, color: AppColors.black87),
+            style: textTheme.titleMedium
+                ?.merge(context.brandTheme.moneyTextStyle)
+                .copyWith(fontWeight: FontWeight.w800, fontSize: 15, color: AppColors.ink),
           ),
         ),
       ],

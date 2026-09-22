@@ -27,6 +27,11 @@ abstract final class AppColors {
   static const lightGreen = Color(0xFF8BC34A);
   static const greenAccent = Color(0xFF69F0AE);
 
+  // "No fines" success card (dashboard fines alert) border - pairs with
+  // AppBrandTheme.statusSuccess/statusSuccessBg, which have no border
+  // counterpart of their own.
+  static const successCardBorder = Color(0xFFBFE3CC);
+
   static const oldAlerte = Color(0xffFFBF00);
   static const orange = Color(0xFFFF9800);
 
@@ -52,9 +57,9 @@ abstract final class AppColors {
 
   // Fixed neutral content colors from the dashboard redesign. Brand accents
   // and semantic status colors come from ColorScheme/AppBrandTheme.
-  static const ink = Color(0xFF191A1C);
+  static const ink = Color(0xFF14161A);
   static const inkSoft = Color(0xFF202124);
-  static const textSecondary = Color(0xFF707070);
+  static const textSecondary = Color(0xFF616161);
   static const textMuted = Color(0xFF626262);
   static const textSubtle = Color(0xFF9BA1B0);
 
@@ -66,11 +71,26 @@ abstract final class AppColors {
   // brand - see ThemeConfig.hexToColor(config.primaryColorHex)).
   static const catFuel = Color(0xFFFF9F1C);
   static const catService = Color(0xFF00A896);
-  static const catTuning = Color(0xFF5B6CFF);
+  static const catTuning = Color(0xFF9B59B6);
   static const catCarWash = Color(0xFF22A6D9);
-  static const catInsurance = Color(0xFFE07A5F);
+  static const catInsurance = Color(0xFF5B6CFF);
   static const catOther = Color(0xFF9AA1AD);
   static const catElectric = Color(0xFFEC407A);
+
+  // Reminders list icon-square accents, one per ReminderKind, kept as their
+  // own tokens (rather than reusing the expense-category colors) since they
+  // color a different concept.
+  static const reminderOilAccent = Color(0xFF00A896);
+  static const reminderInsuranceAccent = Color(0xFF5B6CFF);
+  static const reminderManualAccent = Color(0xFF22A6D9);
+
+  // Dashed "add another row" button border (work lists in ТО/Тюнінг),
+  // deliberately a warmer tone than surfaceBorder so the dashed affordance
+  // reads as distinct from a regular field's solid border.
+  static const dashedBorder = Color(0xFFC9C2A8);
+
+  // Unselected radio/dot (subscription plan picker, onboarding page dots).
+  static const inactiveDot = Color(0xFFD8D3C4);
 
   // Note: the dashboard's warm-neutral background/border/divider and the
   // unpaid-fines alert colors used to live here as fixed consts. They are

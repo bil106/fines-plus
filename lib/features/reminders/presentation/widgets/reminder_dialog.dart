@@ -1,24 +1,47 @@
 import 'package:core_localization/generated/l10n.dart';
+import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/theme/app_brand_theme.dart';
-import 'package:design_system/constants/app_spacers.dart';
-import 'package:design_system/theme/app_theme.dart';
+import 'package:design_system/widget/app_bottom_sheet.dart';
+import 'package:design_system/widget/app_field_card.dart';
 import 'package:fines_plus/features/reminders/data/models/reminder_model.dart';
 import 'package:fines_plus/features/reminders/presentation/cubit/reminder_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-class ReminderDialog extends StatefulWidget {
-  final ReminderModel? reminder;
-  final VoidCallback? onSaved;
-  final ReminderCubit cubit;
-
-  const ReminderDialog({super.key, this.reminder, this.onSaved, required this.cubit});
-
-  @override
-  State<ReminderDialog> createState() => _ReminderDialogState();
+/// Opens the "Нове нагадування"/"Редагувати нагадування" form in the same
+/// [AppBottomSheet] shell as the Паливо/ТО/Мийка/Тюнінг quick-add sheets,
+/// instead of a centered AlertDialog - keeps every "add a thing" flow in
+/// this app looking the same. Resolves with `true` once actually saved
+/// (vs. dismissed via the sheet's close button), so [onSaved] only fires
+/// on a real save.
+Future<void> showReminderSheet(
+  BuildContext context, {
+  required ReminderCubit cubit,
+  ReminderModel? reminder,
+  VoidCallback? onSaved,
+}) async {
+  final formKey = GlobalKey<_ReminderFormState>();
+  final saved = await AppBottomSheet.show<bool>(
+    context,
+    title: reminder == null ? S.of(context).new_reminder : S.of(context).edit_reminder,
+    contentBuilder: (_) => _ReminderForm(key: formKey, cubit: cubit, reminder: reminder),
+    saveLabel: S.of(context).save,
+    onSave: () => formKey.currentState?.save(),
+  );
+  if (saved == true) onSaved?.call();
 }
 
-class _ReminderDialogState extends State<ReminderDialog> {
+class _ReminderForm extends StatefulWidget {
+  final ReminderModel? reminder;
+  final ReminderCubit cubit;
+
+  const _ReminderForm({super.key, this.reminder, required this.cubit});
+
+  @override
+  State<_ReminderForm> createState() => _ReminderFormState();
+}
+
+class _ReminderFormState extends State<_ReminderForm> {
   late TextEditingController titleController;
   late TextEditingController descriptionController;
   late DateTime selectedDateTime;
@@ -38,111 +61,123 @@ class _ReminderDialogState extends State<ReminderDialog> {
     super.dispose();
   }
 
+  Future<void> _pickDateTime() async {
+    final date = await showDatePicker(
+      context: context,
+      initialDate: selectedDateTime,
+      firstDate: DateTime(2020),
+      lastDate: DateTime(2100),
+    );
+    if (date == null || !mounted) return;
+    final time = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.fromDateTime(selectedDateTime),
+    );
+    if (time == null || !mounted) return;
+    setState(() {
+      selectedDateTime = DateTime(date.year, date.month, date.day, time.hour, time.minute);
+    });
+  }
+
+  Future<void> save() async {
+    final cubit = widget.cubit;
+    if (cubit.carNumber.isEmpty) return;
+
+    final newReminder = ReminderModel(
+      id: widget.reminder?.id ?? 'reminder_${DateTime.now().millisecondsSinceEpoch}',
+      title: titleController.text.trim().isEmpty ? 'Test notification' : titleController.text.trim(),
+      description: descriptionController.text.trim().isEmpty ? 'Push check' : descriptionController.text.trim(),
+      dateTime: selectedDateTime,
+      isCompleted: widget.reminder?.isCompleted ?? false,
+      isPlannedService: widget.reminder?.isPlannedService ?? false,
+      plannedCategory: widget.reminder?.plannedCategory,
+      ownerId: cubit.ownerId,
+    );
+
+    try {
+      if (widget.reminder == null) {
+        await cubit.addReminder(newReminder);
+      } else {
+        await cubit.updateReminder(newReminder);
+      }
+      if (!mounted) return;
+      Navigator.of(context).pop(true);
+      debugPrint('Reminder saved and scheduled: ${newReminder.id}');
+    } catch (e, stackTrace) {
+      debugPrint('Error saving reminder: $e');
+      debugPrint('$stackTrace');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final textTheme = Theme.of(context).textTheme;
-
-    return AlertDialog(
-      backgroundColor: context.brandTheme.surfaceBg,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      insetPadding: EdgeInsets.symmetric(horizontal: screenWidth * 0.06, vertical: 24),
-      contentPadding: const EdgeInsets.all(16),
-      title: Text(
-        widget.reminder == null ? S.of(context).new_reminder : S.of(context).edit_reminder,
-        style: textTheme.titleLarge?.copyWith(fontSize: 24, fontWeight: FontWeight.w700),
-      ),
-      content: ConstrainedBox(
-        constraints: BoxConstraints(maxWidth: 500, minWidth: screenWidth * 0.8),
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              AppSpacers.verticalMedium,
-              TextField(
-                controller: titleController,
-                decoration: InputDecoration(labelText: S.of(context).title, labelStyle: textTheme.black18W400),
-              ),
-              AppSpacers.verticalLarge,
-              TextField(
-                controller: descriptionController,
-                decoration: InputDecoration(labelText: S.of(context).description, labelStyle: textTheme.black18W400),
-              ),
-              AppSpacers.verticalLarge,
-              Row(
-                children: [
-                  Expanded(
-                    child: Text(DateFormat('dd.MM.yyyy HH:mm').format(selectedDateTime), style: textTheme.black18W500),
-                  ),
-                  TextButton(
-                    onPressed: () async {
-                      final date = await showDatePicker(
-                        context: context,
-                        initialDate: selectedDateTime,
-                        firstDate: DateTime(2020),
-                        lastDate: DateTime(2100),
-                      );
-                      if (date != null) {
-                        final time = await showTimePicker(
-                          context: context,
-                          initialTime: TimeOfDay.fromDateTime(selectedDateTime),
-                        );
-                        if (time != null) {
-                          if (!mounted) return;
-                          setState(() {
-                            selectedDateTime = DateTime(date.year, date.month, date.day, time.hour, time.minute);
-                          });
-                        }
-                      }
-                    },
-                    child: Text(S.of(context).select_date, style: textTheme.black18W500),
-                  ),
-                ],
-              ),
-            ],
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        AppFieldCard(
+          label: S.of(context).title,
+          child: TextField(
+            controller: titleController,
+            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: AppColors.ink),
+            decoration: const InputDecoration(
+              border: InputBorder.none,
+              focusedBorder: InputBorder.none,
+              enabledBorder: InputBorder.none,
+              isDense: true,
+              contentPadding: EdgeInsets.zero,
+            ),
           ),
         ),
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: Text(S.of(context).cancel, style: textTheme.black18W500),
+        const SizedBox(height: 14),
+        AppFieldCard(
+          label: S.of(context).description,
+          child: TextField(
+            controller: descriptionController,
+            maxLines: 2,
+            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: AppColors.ink),
+            decoration: const InputDecoration(
+              border: InputBorder.none,
+              focusedBorder: InputBorder.none,
+              enabledBorder: InputBorder.none,
+              isDense: true,
+              contentPadding: EdgeInsets.zero,
+            ),
+          ),
         ),
-        ElevatedButton(
-          onPressed: () async {
-            final cubit = widget.cubit;
-            if (cubit.carNumber.isEmpty) return;
-
-            final newReminder = ReminderModel(
-              id: widget.reminder?.id ?? 'reminder_${DateTime.now().millisecondsSinceEpoch}',
-              title: titleController.text.trim().isEmpty ? 'Test notification' : titleController.text.trim(),
-              description: descriptionController.text.trim().isEmpty ? 'Push check' : descriptionController.text.trim(),
-              dateTime: selectedDateTime,
-              isCompleted: widget.reminder?.isCompleted ?? false,
-              isPlannedService: widget.reminder?.isPlannedService ?? false,
-              plannedCategory: widget.reminder?.plannedCategory,
-              ownerId: cubit.ownerId,
-            );
-
-            try {
-              if (widget.reminder == null) {
-                await cubit.addReminder(newReminder);
-              } else {
-                await cubit.updateReminder(newReminder);
-              }
-
-              if (!mounted) return;
-              Navigator.pop(context);
-
-              widget.onSaved?.call();
-
-              debugPrint('Reminder saved and scheduled: ${newReminder.id}');
-            } catch (e, stackTrace) {
-              debugPrint('Error saving reminder: $e');
-              debugPrint('$stackTrace');
-            }
-          },
-          child: Text(S.of(context).save),
+        const SizedBox(height: 14),
+        GestureDetector(
+          onTap: _pickDateTime,
+          child: Material(
+            color: AppColors.neutreBlanc,
+            elevation: 2,
+            shadowColor: AppColors.black,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+              side: BorderSide(color: context.brandTheme.surfaceBorder),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(S.of(context).select_date, style: const TextStyle(fontSize: 11.5, color: AppColors.textSecondary)),
+                        const SizedBox(height: 2),
+                        Text(
+                          DateFormat('dd.MM.yyyy HH:mm').format(selectedDateTime),
+                          style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: AppColors.ink),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const Icon(Icons.calendar_today, size: 16, color: AppColors.catOther),
+                ],
+              ),
+            ),
+          ),
         ),
       ],
     );

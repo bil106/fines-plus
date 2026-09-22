@@ -21,12 +21,19 @@ class MaintenanceRing {
   /// actually written for.
   static const insuranceFullDays = 365;
 
-  /// Ring colour for a [remaining] share: red up to 20%, yellow up to 50%,
-  /// green above.
-  static Color color(double remaining) {
-    if (remaining <= redUpTo) return AppColors.lightRed;
-    if (remaining <= yellowUpTo) return AppColors.amber;
-    return AppColors.green;
+  /// Ring colour for a [remaining] share: [danger] up to 20%, [warning] up
+  /// to 50%, [success] above - defaults match the mockup's ring thresholds
+  /// (AppBrandTheme.statusDanger/statusWarning/statusSuccess normally cover
+  /// these; the AppColors fallbacks below only apply if a caller omits them).
+  static Color color(
+    double remaining, {
+    Color danger = AppColors.lightRed,
+    Color warning = AppColors.amber,
+    Color success = AppColors.green,
+  }) {
+    if (remaining <= redUpTo) return danger;
+    if (remaining <= yellowUpTo) return warning;
+    return success;
   }
 
   /// Share of [task]'s time interval still left (since its last service),

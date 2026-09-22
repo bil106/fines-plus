@@ -9,6 +9,7 @@ import 'package:design_system/theme/app_theme.dart';
 import 'package:fines_plus/app/router/home_screen_wrapper.dart';
 import 'package:fines_plus/env/env.dart';
 import 'package:fines_plus/core/config/app_config.dart';
+import 'package:fines_plus/core/theme/theme_config.dart';
 import 'package:fines_plus/features/subscription/domain/entities/subscription.dart';
 import 'package:fines_plus/app/router/app_router.dart';
 import 'package:fines_plus/features/subscription/presentation/cubit/purchase/purchase_cubit.dart';
@@ -193,6 +194,9 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+    // The mockup's {{accent}} is the raw brand hex, not Material3's
+    // tonal-palette colorScheme.primary (see registration_screen.dart).
+    final accent = ThemeConfig.hexToColor(context.watch<AppConfig>().primaryColorHex);
     return BlocListener<PurchaseCubit, PurchaseState>(
       listener: (context, state) {
         if (state is PurchaseSuccess && !_navigated) {
@@ -225,15 +229,15 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
               Text(
                 S.of(context).subscription,
                 textAlign: TextAlign.center,
-                style: textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
+                style: context.brandTheme.displayTextStyle.copyWith(fontSize: 24, fontWeight: FontWeight.w800, color: AppColors.ink),
               ),
-              AppSpacers.verticalSmallMedium,
+              const SizedBox(height: 4),
               Text(
                 S.of(context).subscription_subtitle,
                 textAlign: TextAlign.center,
-                style: textTheme.black16.copyWith(color: AppColors.grey700),
+                style: textTheme.black16.copyWith(fontSize: 13, color: AppColors.textSecondary),
               ),
-              AppSpacers.verticalLarge,
+              AppSpacers.verticalMedium,
 
               Expanded(
                 child: ListView(
@@ -243,7 +247,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                       final isSelected = index == _selectedIndex;
 
                       return Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        padding: const EdgeInsets.symmetric(vertical: 6),
                         child: Stack(
                           clipBehavior: Clip.none,
                           children: [
@@ -251,17 +255,14 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                               onTap: () => _onPlanSelected(index),
                               child: AnimatedContainer(
                                 duration: const Duration(milliseconds: 250),
-                                padding: const EdgeInsets.all(16),
+                                padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
                                 decoration: BoxDecoration(
-                                  color: isSelected ? AppColors.energyBlue50 : AppColors.neutreBlanc,
+                                  color: isSelected ? Color.lerp(accent, AppColors.neutreBlanc, 0.92) : AppColors.neutreBlanc,
                                   borderRadius: AppBorders.radius16,
                                   border: Border.all(
-                                    color: isSelected ? AppColors.blue700 : AppColors.grey300,
-                                    width: isSelected ? AppBorders.widthThick : AppBorders.widthThin,
+                                    color: isSelected ? accent : context.brandTheme.surfaceBorder,
+                                    width: AppBorders.widthMedium,
                                   ),
-                                  boxShadow: [
-                                    BoxShadow(color: AppColors.black12, blurRadius: 6, offset: const Offset(0, 3)),
-                                  ],
                                 ),
                                 child: Row(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -274,49 +275,54 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                             _localizedTitle(context, plan["titleKey"] as String),
                                             maxLines: 2,
                                             overflow: TextOverflow.ellipsis,
-                                            style: textTheme.black18bold,
+                                            style: textTheme.black18bold.copyWith(fontSize: 15.5, fontWeight: FontWeight.w800, color: AppColors.ink),
                                           ),
                                           if (plan["hasTrial"]) ...[
-                                            AppSpacers.verticalSmallMedium,
+                                            const SizedBox(height: 6),
                                             Container(
-                                              padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 10),
+                                              padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 8),
                                               decoration: BoxDecoration(
-                                                color: AppColors.energyBlue25,
-                                                borderRadius: AppBorders.radiusLarge,
+                                                color: Color.lerp(accent, AppColors.neutreBlanc, 0.86),
+                                                borderRadius: BorderRadius.circular(999),
                                               ),
                                               child: Text(
                                                 S.of(context).free_trial_7_days,
-                                                style: textTheme.black14bold.copyWith(color: AppColors.blue700),
+                                                style: textTheme.black14bold.copyWith(fontSize: 10.5, fontWeight: FontWeight.w700, color: accent),
                                               ),
                                             ),
                                           ],
-                                          AppSpacers.verticalSmallMedium,
+                                          const SizedBox(height: 8),
                                           Text(
                                             _perMonthText(context, plan),
-                                            style: textTheme.black13W400.copyWith(color: AppColors.grey700),
+                                            style: textTheme.black13W400.copyWith(fontSize: 11, color: AppColors.catOther),
                                           ),
                                         ],
                                       ),
                                     ),
                                     AppSpacers.horizontalMedium,
-                                    _buildPriceColumn(context, plan, isSelected),
+                                    _buildPriceColumn(context, plan, isSelected, accent),
                                   ],
                                 ),
                               ),
                             ),
                             if (plan["popular"])
                               Positioned(
-                                top: -12,
-                                right: 16,
+                                top: -10,
+                                right: 14,
                                 child: Container(
-                                  padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 10),
+                                  padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 10),
                                   decoration: BoxDecoration(
-                                    color: AppColors.blue700,
-                                    borderRadius: AppBorders.radiusLarge,
+                                    color: accent,
+                                    borderRadius: BorderRadius.circular(999),
                                   ),
                                   child: Text(
                                     S.of(context).most_popular,
-                                    style: textTheme.black14bold.copyWith(color: AppColors.neutreBlanc, fontSize: 12),
+                                    style: textTheme.black14bold.copyWith(
+                                      color: AppColors.neutreBlanc,
+                                      fontSize: 9.5,
+                                      fontWeight: FontWeight.w800,
+                                      letterSpacing: 0.4,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -332,19 +338,30 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                         child: OutlinedButton(
                           onPressed: _continueWithoutSubscription,
                           style: OutlinedButton.styleFrom(
-                            side: BorderSide(color: AppColors.blue700),
+                            side: BorderSide(color: accent),
                             padding: const EdgeInsets.symmetric(vertical: 16),
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                           ),
                           child: Text(
                             'Continue without subscription',
-                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.blue700),
+                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: accent),
                           ),
                         ),
                       ),
                     ],
 
-                    AppSpacers.verticalLarge,
+                    AppSpacers.verticalMedium,
+
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      child: Text(
+                        _trialDisclosureText(context),
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(fontSize: 10.5, height: 1.4, color: AppColors.catOther),
+                      ),
+                    ),
+
+                    AppSpacers.verticalMedium,
 
                     SizedBox(
                       width: double.infinity,
@@ -356,9 +373,10 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                           return ElevatedButton(
                             style: ElevatedButton.styleFrom(
                               padding: const EdgeInsets.symmetric(vertical: 16),
-                              backgroundColor: AppColors.blue700,
-                              disabledBackgroundColor: AppColors.blue700.withOpacity(0.5),
-                              shape: RoundedRectangleBorder(borderRadius: AppBorders.radius16),
+                              backgroundColor: accent,
+                              foregroundColor: AppColors.neutreBlanc,
+                              disabledBackgroundColor: accent.withOpacity(0.5),
+                              shape: const StadiumBorder(),
                             ),
                             onPressed: disabled ? null : _buySelectedPlan,
                             child: loading || _productsLoading
@@ -369,7 +387,11 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                   )
                                 : Text(
                                     _productsUnavailable ? S.of(context).store_unavailable : S.of(context).get_plan,
-                                    style: textTheme.black18bold.copyWith(color: AppColors.neutreBlanc),
+                                    style: textTheme.black18bold.copyWith(
+                                      fontSize: 15.5,
+                                      fontWeight: FontWeight.w800,
+                                      color: AppColors.neutreBlanc,
+                                    ),
                                   ),
                           );
                         },
@@ -386,97 +408,74 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                         ),
                       ),
 
-                    AppSpacers.verticalLarge,
-
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                      child: Text(
-                        _trialDisclosureText(context),
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 12, color: AppColors.grey700),
-                      ),
-                    ),
-
-                    AppSpacers.verticalLarge,
+                    AppSpacers.verticalMedium,
 
                     Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Expanded(
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Icon(Icons.check_circle, color: AppColors.green, size: 18),
-                              const SizedBox(width: 6),
-                              Expanded(
-                                child: Text(
-                                  S.of(context).money_back,
-                                  maxLines: 2,
-                                  softWrap: true,
-                                  style: textTheme.black14bold,
-                                ),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Icon(Icons.check, color: AppColors.textSecondary, size: 13),
+                            const SizedBox(width: 5),
+                            Flexible(
+                              child: Text(
+                                S.of(context).money_back,
+                                maxLines: 2,
+                                softWrap: true,
+                                style: textTheme.black14bold.copyWith(fontSize: 10.5, fontWeight: FontWeight.w400, color: AppColors.textSecondary),
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                        AppSpacers.horizontalMedium,
-                        Expanded(
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Icon(Icons.lock, color: AppColors.green, size: 18),
-                              const SizedBox(width: 6),
-                              Expanded(
-                                child: Text(
-                                  S.of(context).pay_safe,
-                                  maxLines: 2,
-                                  softWrap: true,
-                                  style: textTheme.black14bold,
-                                ),
+                        const SizedBox(width: 16),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Icon(Icons.lock, color: AppColors.textSecondary, size: 13),
+                            const SizedBox(width: 5),
+                            Flexible(
+                              child: Text(
+                                S.of(context).pay_safe,
+                                maxLines: 2,
+                                softWrap: true,
+                                style: textTheme.black14bold.copyWith(fontSize: 10.5, fontWeight: FontWeight.w400, color: AppColors.textSecondary),
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
-                    AppSpacers.verticalLarge,
+                    AppSpacers.verticalMedium,
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: () async {
-                              try {
-                                final config = context.read<AppConfig>();
-                                await launchUrl(
-                                  Uri.parse(config.termsUrl ?? Env.termsUrl),
-                                  mode: LaunchMode.externalApplication,
-                                );
-                              } catch (_) {}
-                            },
-                            child: Text(
-                              S.of(context).terms_of_use,
-                              style: textTheme.black16bold.copyWith(color: AppColors.blue700),
-                              maxLines: 2,
-                              softWrap: true,
-                            ),
+                        GestureDetector(
+                          onTap: () async {
+                            try {
+                              final config = context.read<AppConfig>();
+                              await launchUrl(
+                                Uri.parse(config.termsUrl ?? Env.termsUrl),
+                                mode: LaunchMode.externalApplication,
+                              );
+                            } catch (_) {}
+                          },
+                          child: Text(
+                            S.of(context).terms_of_use,
+                            style: textTheme.black16bold.copyWith(fontSize: 10.5, fontWeight: FontWeight.w600, color: AppColors.catOther),
                           ),
                         ),
-                        const SizedBox(width: 16),
-                        Flexible(
-                          child: GestureDetector(
-                            onTap: _openPrivacy,
-                            child: Text(
-                              S.of(context).privacy_policy,
-                              style: textTheme.black16bold.copyWith(color: AppColors.blue700),
-                              maxLines: 2,
-                              softWrap: true,
-                              textAlign: TextAlign.right,
-                            ),
+                        const SizedBox(width: 14),
+                        GestureDetector(
+                          onTap: _openPrivacy,
+                          child: Text(
+                            S.of(context).privacy_policy,
+                            style: textTheme.black16bold.copyWith(fontSize: 10.5, fontWeight: FontWeight.w600, color: AppColors.catOther),
                           ),
                         ),
-
-                        AppSpacers.verticalLarge,
                       ],
                     ),
                   ],
@@ -489,7 +488,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     );
   }
 
-  Widget _buildPriceColumn(BuildContext context, Map<String, dynamic> plan, bool isSelected) {
+  Widget _buildPriceColumn(BuildContext context, Map<String, dynamic> plan, bool isSelected, Color accent) {
     final textTheme = Theme.of(context).textTheme;
     final productId = plan["productId"] as String;
     final store = _productDetails[productId];
@@ -520,12 +519,14 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
               totalPrice,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: textTheme.black20bold,
+              style: textTheme.black20bold
+                  .merge(context.brandTheme.moneyTextStyle)
+                  .copyWith(fontSize: 18, fontWeight: FontWeight.w700, color: AppColors.ink),
             ),
             AppSpacers.horizontalSmallMedium,
             Icon(
               isSelected ? Icons.check_circle : Icons.circle_outlined,
-              color: isSelected ? AppColors.blue700 : AppColors.grey300,
+              color: isSelected ? accent : AppColors.inactiveDot,
               size: 22,
             ),
           ],
@@ -534,7 +535,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         Text(
           perDay,
           maxLines: 1,
-          style: textTheme.grey12W400,
+          style: textTheme.grey12W400.copyWith(fontSize: 10.5, color: AppColors.textSecondary),
         ),
       ],
     );

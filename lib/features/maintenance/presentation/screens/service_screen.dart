@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:core_localization/generated/l10n.dart';
+import 'package:core_utils/formatters/thousands_separator_formatter.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/theme/app_brand_theme.dart';
 import 'package:design_system/widget/app_back_button.dart';
@@ -17,6 +18,7 @@ import 'package:fines_plus/features/maintenance/presentation/widgets/planned_ser
 import 'package:fines_plus/features/reminders/domain/planned_service.dart';
 import 'package:fines_plus/features/reminders/presentation/cubit/reminder_cubit.dart';
 import 'package:fines_plus/features/settings/presentation/cubit/settings_cubit.dart';
+import 'package:fines_plus/features/settings/presentation/cubit/unit_stream.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -94,9 +96,38 @@ class ServiceScreenState extends State<ServiceScreen> {
   @override
   void initState() {
     super.initState();
-    final mileage = context.read<MaintenanceCubit>().getLastKnownMileage();
-    if (mileage != null) mileageController.text = mileage.toString();
+    final mileageKm = context.read<MaintenanceCubit>().getLastKnownMileage();
+    if (mileageKm != null) {
+      final settingsCubit = context.read<SettingsCubit>();
+      final displayValue = UnitStream(settingsCubit).convert(mileageKm.toDouble()).round();
+      mileageController.text = formatThousands(displayValue);
+    }
     _initLocationAndService();
+  }
+
+  /// Inverse of [UnitStream.convert]: the field shows the active unit, but
+  /// the stored record always keeps km.
+  int _mileageToKm(int displayValue) {
+    final unit = context.read<SettingsCubit>().state.unit;
+    return unit == 'mil' ? (displayValue / 0.621371).round() : displayValue;
+  }
+
+  /// A distance in km, converted to the active unit and paired with its
+  /// label - for the "X.X km/mi away" nearby-station text.
+  (String value, String unit) _distanceParts(double km) {
+    final settingsCubit = context.read<SettingsCubit>();
+    final converted = UnitStream(settingsCubit).convert(km);
+    final unit = settingsCubit.state.unit == 'mil' ? 'mi' : S.of(context).km;
+    return (converted.toStringAsFixed(1), unit);
+  }
+
+  String _stationDistanceLabel(Map<String, dynamic>? station) {
+    final s = S.of(context);
+    if (station == null) return s.service_retry;
+    final (value, unit) = _distanceParts(serviceDistanceKm(station, _currentPosition!));
+    return ((station['rating'] as num?) ?? 0) > 0
+        ? s.service_best_rating_distance(value, unit)
+        : s.distance_km_short(value, unit);
   }
 
   @override
@@ -203,6 +234,7 @@ class ServiceScreenState extends State<ServiceScreen> {
                 textTheme: Theme.of(context).textTheme,
                 controller: mileageController,
                 focusNode: _mileageFocusNode,
+                unitLabel: settings.state.unit == 'mil' ? 'mil' : S.of(context).km,
               ),
             ),
           ],
@@ -210,10 +242,7 @@ class ServiceScreenState extends State<ServiceScreen> {
         const SizedBox(height: 12),
         Text(
           S.of(context).service_completed_work,
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-            fontWeight: FontWeight.w600,
-            color: AppColors.grey700,
-          ),
+          style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.w700, color: AppColors.textSecondary),
         ),
         const SizedBox(height: 8),
         for (final work in _works) _buildWorkRow(work, settings),
@@ -253,6 +282,11 @@ class ServiceScreenState extends State<ServiceScreen> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 15),
+                    textStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.w800),
+                    elevation: 2,
+                  ),
                   onPressed: _saving ? null : save,
                   child: Text(S.of(context).save),
                 ),
@@ -266,7 +300,6 @@ class ServiceScreenState extends State<ServiceScreen> {
 
   Widget _buildStationCard() {
     final station = _stations.isEmpty ? null : _stations.first;
-    final textTheme = Theme.of(context).textTheme;
     final s = S.of(context);
     final title = _locationUnavailable
         ? s.service_location_unavailable
@@ -279,6 +312,8 @@ class ServiceScreenState extends State<ServiceScreen> {
               .join(' — ');
     return Material(
       color: AppColors.neutreBlanc,
+      elevation: 2,
+      shadowColor: AppColors.black,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
         side: BorderSide(color: context.brandTheme.surfaceBorder),
@@ -301,9 +336,9 @@ class ServiceScreenState extends State<ServiceScreen> {
                 )
               : Row(
                   children: [
-                    const Icon(
+                    Icon(
                       Icons.assignment_turned_in_outlined,
-                      color: AppColors.blueAccent,
+                      color: Theme.of(context).colorScheme.primary,
                       size: 24,
                     ),
                     const SizedBox(width: 12),
@@ -315,37 +350,16 @@ class ServiceScreenState extends State<ServiceScreen> {
                             title,
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
-                            style: textTheme.bodyMedium?.copyWith(
-                              fontWeight: FontWeight.w600,
-                            ),
+                            style: const TextStyle(fontSize: 13.5, fontWeight: FontWeight.w700, color: AppColors.ink),
                           ),
                           const SizedBox(height: 2),
-                          Text(
-                            station == null
-                                ? s.service_retry
-                                : ((station['rating'] as num?) ?? 0) > 0
-                                ? s.service_best_rating_distance(
-                                    serviceDistanceKm(
-                                      station,
-                                      _currentPosition!,
-                                    ).toStringAsFixed(1),
-                                  )
-                                : s.distance_km_short(
-                                    serviceDistanceKm(
-                                      station,
-                                      _currentPosition!,
-                                    ).toStringAsFixed(1),
-                                  ),
-                            style: textTheme.bodySmall?.copyWith(
-                              color: AppColors.grey700,
-                            ),
-                          ),
+                          Text(_stationDistanceLabel(station), style: const TextStyle(fontSize: 12, color: AppColors.textSecondary)),
                         ],
                       ),
                     ),
                     Icon(
                       station == null ? Icons.refresh : Icons.chevron_right,
-                      color: AppColors.grey700,
+                      color: AppColors.catOther,
                     ),
                   ],
                 ),
@@ -355,116 +369,113 @@ class ServiceScreenState extends State<ServiceScreen> {
   }
 
   Widget _buildWorkRow(_ServiceWork work, SettingsCubit settings) {
-    final textTheme = Theme.of(context).textTheme;
     return Container(
       key: ObjectKey(work),
       margin: const EdgeInsets.only(bottom: 8),
-      padding: const EdgeInsets.only(left: 12),
-      decoration: BoxDecoration(
+      child: Material(
         color: AppColors.neutreBlanc,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: context.brandTheme.surfaceBorder),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            flex: 3,
-            child: Autocomplete<String>(
-              textEditingController: work.name,
-              focusNode: work.focus,
-              optionsMaxHeight: 180,
-              optionsBuilder: (value) => _catalogNames.where(
-                (name) => name.toLowerCase().contains(value.text.toLowerCase()),
-              ),
-              onSelected: (name) {
-                final item = [
-                  ...ServiceList.serviceItems,
-                  ...ServiceList.tuningItems,
-                ].firstWhere((item) => item.name == name);
-                work.priceUah = settings.currencyService.convert(
-                  item.priceUSD,
-                  'UAH',
-                  fromCurrency: 'USD',
-                );
-                work.price.text = settings
-                    .convertFromUAH(work.priceUah)
-                    .round()
-                    .toString();
-                _updateTotal();
-              },
-              fieldViewBuilder: (context, controller, focusNode, onSubmitted) =>
-                  TextField(
-                    controller: controller,
-                    focusNode: focusNode,
-                    style: textTheme.bodyMedium?.copyWith(
-                      color: AppColors.black87,
-                    ),
-                    textCapitalization: TextCapitalization.sentences,
-                    decoration: InputDecoration(
-                      hintText: S.of(context).select_a_service,
-                      hintStyle: textTheme.bodyMedium?.copyWith(
-                        color: AppColors.neutreGrey,
-                      ),
-                      border: InputBorder.none,
-                      enabledBorder: InputBorder.none,
-                      focusedBorder: InputBorder.none,
-                      contentPadding: const EdgeInsets.symmetric(vertical: 14),
-                    ),
-                    onChanged: (_) => _updateTotal(),
-                    onSubmitted: (_) => onSubmitted(),
+        elevation: 2,
+        shadowColor: AppColors.black,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+          side: BorderSide(color: context.brandTheme.surfaceBorder),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.only(left: 12),
+          child: Row(
+            children: [
+              Expanded(
+                flex: 3,
+                child: Autocomplete<String>(
+                  textEditingController: work.name,
+                  focusNode: work.focus,
+                  optionsMaxHeight: 180,
+                  optionsBuilder: (value) => _catalogNames.where(
+                    (name) => name.toLowerCase().contains(value.text.toLowerCase()),
                   ),
-            ),
-          ),
-          const SizedBox(width: 8),
-          Expanded(
-            flex: 2,
-            child: TextField(
-              controller: work.price,
-              textAlign: TextAlign.end,
-              keyboardType: TextInputType.number,
-              inputFormatters: [
-                FilteringTextInputFormatter.digitsOnly,
-                LengthLimitingTextInputFormatter(7),
-              ],
-              style: textTheme.bodyMedium
-                  ?.merge(context.brandTheme.moneyTextStyle)
-                  .copyWith(fontWeight: FontWeight.w700),
-              decoration: InputDecoration(
-                hintText: '0',
-                semanticCounterText: S.of(context).price,
-                suffixText: ' ${settings.state.currency}',
-                suffixStyle: textTheme.bodySmall?.copyWith(
-                  fontWeight: FontWeight.w700,
+                  onSelected: (name) {
+                    final item = [
+                      ...ServiceList.serviceItems,
+                      ...ServiceList.tuningItems,
+                    ].firstWhere((item) => item.name == name);
+                    work.priceUah = settings.currencyService.convert(
+                      item.priceUSD,
+                      'UAH',
+                      fromCurrency: 'USD',
+                    );
+                    work.price.text = settings
+                        .convertFromUAH(work.priceUah)
+                        .round()
+                        .toString();
+                    _updateTotal();
+                  },
+                  fieldViewBuilder: (context, controller, focusNode, onSubmitted) =>
+                      TextField(
+                        controller: controller,
+                        focusNode: focusNode,
+                        style: const TextStyle(fontSize: 13.5, color: AppColors.ink),
+                        textCapitalization: TextCapitalization.sentences,
+                        decoration: InputDecoration(
+                          hintText: S.of(context).select_a_service,
+                          hintStyle: const TextStyle(fontSize: 13.5, color: AppColors.neutreGrey),
+                          border: InputBorder.none,
+                          enabledBorder: InputBorder.none,
+                          focusedBorder: InputBorder.none,
+                          contentPadding: const EdgeInsets.symmetric(vertical: 14),
+                        ),
+                        onChanged: (_) => _updateTotal(),
+                        onSubmitted: (_) => onSubmitted(),
+                      ),
                 ),
-                border: InputBorder.none,
-                enabledBorder: InputBorder.none,
-                focusedBorder: InputBorder.none,
-                contentPadding: const EdgeInsets.symmetric(vertical: 14),
               ),
-              onChanged: (value) {
-                final amount = double.tryParse(value.replaceAll(',', '.')) ?? 0;
-                work.priceUah = settings.convertToUAH(amount);
-                _updateTotal();
-              },
-            ),
+              const SizedBox(width: 8),
+              Expanded(
+                flex: 2,
+                child: TextField(
+                  controller: work.price,
+                  textAlign: TextAlign.end,
+                  keyboardType: TextInputType.number,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.digitsOnly,
+                    LengthLimitingTextInputFormatter(7),
+                  ],
+                  style: const TextStyle().merge(context.brandTheme.moneyTextStyle).copyWith(fontSize: 13.5, color: AppColors.ink),
+                  decoration: InputDecoration(
+                    hintText: '0',
+                    semanticCounterText: S.of(context).price,
+                    suffixText: ' ${settings.state.currency}',
+                    suffixStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: AppColors.textSecondary),
+                    border: InputBorder.none,
+                    enabledBorder: InputBorder.none,
+                    focusedBorder: InputBorder.none,
+                    contentPadding: const EdgeInsets.symmetric(vertical: 14),
+                  ),
+                  onChanged: (value) {
+                    final amount = double.tryParse(value.replaceAll(',', '.')) ?? 0;
+                    work.priceUah = settings.convertToUAH(amount);
+                    _updateTotal();
+                  },
+                ),
+              ),
+              IconButton(
+                tooltip: S.of(context).delete,
+                icon: const Icon(
+                  Icons.close,
+                  color: AppColors.catOther,
+                  size: 14,
+                ),
+                onPressed: () {
+                  work.focus.unfocus();
+                  setState(() => _works.remove(work));
+                  widget.onTotalChanged?.call(_totalUah);
+                  WidgetsBinding.instance.addPostFrameCallback(
+                    (_) => work.dispose(),
+                  );
+                },
+              ),
+            ],
           ),
-          IconButton(
-            tooltip: S.of(context).delete,
-            icon: const Icon(
-              Icons.close,
-              color: AppColors.neutreGrey,
-              size: 18,
-            ),
-            onPressed: () {
-              work.focus.unfocus();
-              setState(() => _works.remove(work));
-              widget.onTotalChanged?.call(_totalUah);
-              WidgetsBinding.instance.addPostFrameCallback(
-                (_) => work.dispose(),
-              );
-            },
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -522,7 +533,7 @@ class ServiceScreenState extends State<ServiceScreen> {
             cost: work.priceUah,
             date:
                 '${selectedDate.day}.${selectedDate.month}.${selectedDate.year}',
-            mileage: int.tryParse(mileageController.text) ?? 0,
+            mileage: _mileageToKm(int.tryParse(stripThousandsSeparator(mileageController.text)) ?? 0),
             currency: 'UAH',
           ),
         )
@@ -561,7 +572,7 @@ class ServiceTotal extends StatelessWidget {
     final total = settings.convertFromUAH(totalUah);
     return Column(
       children: [
-        Divider(color: context.brandTheme.surfaceBorder),
+        Divider(height: 1, color: context.brandTheme.divider),
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 10),
           child: Row(
@@ -570,7 +581,9 @@ class ServiceTotal extends StatelessWidget {
                 child: Text(
                   S.of(context).total,
                   style: textTheme.bodyMedium?.copyWith(
+                    fontSize: 14,
                     fontWeight: FontWeight.w700,
+                    color: AppColors.ink,
                   ),
                 ),
               ),
@@ -578,9 +591,9 @@ class ServiceTotal extends StatelessWidget {
                 child: Text(
                   '${total.round()} ${settings.state.currency}',
                   textAlign: TextAlign.end,
-                  style: textTheme.titleLarge?.merge(
-                    context.brandTheme.moneyTextStyle,
-                  ),
+                  style: textTheme.titleLarge
+                      ?.merge(context.brandTheme.moneyTextStyle)
+                      .copyWith(fontSize: 19, fontWeight: FontWeight.w800, color: AppColors.ink),
                 ),
               ),
             ],

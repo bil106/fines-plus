@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fines_plus/core/extensions/fuel_type.dart';
 import 'package:design_system/colors/app_colors.dart';
+import 'package:design_system/theme/app_brand_theme.dart';
 import 'package:core_localization/generated/l10n.dart';
 
 class FuelChoiceChips extends StatelessWidget {
@@ -31,6 +32,7 @@ class FuelChoiceChips extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final accent = Theme.of(context).colorScheme.primary;
     return Wrap(
       spacing: 8,
       children: fuels.map((fuel) {
@@ -39,15 +41,16 @@ class FuelChoiceChips extends StatelessWidget {
           label: Text(
             _label(context, fuel),
             style: TextStyle(
-              color: isSelected ? AppColors.blue700 : AppColors.black87,
+              color: isSelected ? accent : AppColors.ink,
               fontWeight: FontWeight.bold,
+              fontSize: 13,
             ),
           ),
           selected: isSelected,
           showCheckmark: false,
-          selectedColor: AppColors.neutreBlanc,
+          selectedColor: Color.lerp(accent, AppColors.neutreBlanc, 0.86),
           backgroundColor: AppColors.neutreBlanc,
-          side: BorderSide(color: isSelected ? AppColors.blue700 : AppColors.grey300),
+          side: BorderSide(color: isSelected ? accent : context.brandTheme.surfaceBorder, width: 1.5),
           onSelected: (_) => onSelected(fuel),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         );

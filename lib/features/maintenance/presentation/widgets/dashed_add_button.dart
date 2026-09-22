@@ -1,4 +1,4 @@
-import 'package:design_system/theme/app_brand_theme.dart';
+import 'package:design_system/colors/app_colors.dart';
 import 'package:flutter/material.dart';
 
 /// Dashed-border "add another row" button shared by every work-list form
@@ -15,17 +15,18 @@ class DashedAddButton extends StatelessWidget {
     return SizedBox(
       width: double.infinity,
       child: CustomPaint(
-        painter: _DashedBorderPainter(context.brandTheme.surfaceBorder),
+        painter: _DashedBorderPainter(AppColors.dashedBorder),
         child: TextButton.icon(
           style: TextButton.styleFrom(
             foregroundColor: Theme.of(context).colorScheme.primary,
-            minimumSize: const Size.fromHeight(48),
+            minimumSize: const Size.fromHeight(44),
+            padding: const EdgeInsets.symmetric(vertical: 10),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(10),
             ),
           ),
-          icon: const Icon(Icons.add, size: 20),
-          label: Text(label, style: const TextStyle(fontWeight: FontWeight.w700)),
+          icon: const Icon(Icons.add, size: 15),
+          label: Text(label, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700)),
           onPressed: onPressed,
         ),
       ),
@@ -43,13 +44,13 @@ class _DashedBorderPainter extends CustomPainter {
       ..addRRect(
         RRect.fromRectAndRadius(
           (Offset.zero & size).deflate(0.5),
-          const Radius.circular(12),
+          const Radius.circular(10),
         ),
       );
     final paint = Paint()
       ..color = color
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 1;
+      ..strokeWidth = 1.5;
     for (final metric in path.computeMetrics()) {
       for (double offset = 0; offset < metric.length; offset += 9) {
         canvas.drawPath(metric.extractPath(offset, offset + 5), paint);

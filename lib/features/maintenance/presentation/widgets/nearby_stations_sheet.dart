@@ -1,8 +1,12 @@
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_borders.dart';
+import 'package:design_system/theme/app_brand_theme.dart';
 import 'package:fines_plus/features/maintenance/data/models/gas_station.dart';
+import 'package:fines_plus/features/settings/presentation/cubit/settings_cubit.dart';
+import 'package:fines_plus/features/settings/presentation/cubit/unit_stream.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -21,6 +25,7 @@ void showNearbyStationsSheet(
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
+    backgroundColor: context.brandTheme.surfaceBg,
     shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
     builder: (ctx) => NearbyStationsSheet(
       currentPosition: currentPosition,
@@ -72,33 +77,61 @@ class NearbyStationsSheet extends StatelessWidget {
                 height: 4,
                 margin: const EdgeInsets.only(bottom: 12),
                 decoration: BoxDecoration(
-                  color: AppColors.neutreGreyLight,
+                  color: context.brandTheme.surfaceBorder,
                   borderRadius: AppBorders.radiusSmall,
                 ),
               ),
             ),
-            Text(title ?? S.of(context).gas_station_nearby, style: textTheme.titleMedium),
+            Text(
+              title ?? S.of(context).gas_station_nearby,
+              style: textTheme.titleLarge?.copyWith(fontSize: 19, fontWeight: FontWeight.w800, color: AppColors.ink),
+            ),
             const SizedBox(height: 8),
             Flexible(
               child: ListView.separated(
                 shrinkWrap: true,
                 itemCount: sorted.length,
-                separatorBuilder: (_, __) => const Divider(height: 1),
+                separatorBuilder: (_, __) => const SizedBox(height: 8),
                 itemBuilder: (context, index) {
                   final station = sorted[index];
-                  return ListTile(
-                    contentPadding: EdgeInsets.zero,
-                    leading: const Icon(Icons.location_on, color: AppColors.blueAccent),
-                    title: Text(
-                      station.vicinity.isEmpty ? station.name : '${station.name} — ${station.vicinity}',
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+                  return Material(
+                    color: AppColors.neutreBlanc,
+                    elevation: 2,
+                    shadowColor: AppColors.black,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      side: BorderSide(color: context.brandTheme.surfaceBorder),
                     ),
-                    trailing: Text(
-                      S.of(context).distance_km_short(_distanceKm(station).toStringAsFixed(1)),
-                      style: textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold, color: AppColors.grey700),
+                    child: ListTile(
+                      leading: Icon(Icons.location_on, color: Theme.of(context).colorScheme.primary),
+                      title: Text(
+                        station.name,
+                        style: const TextStyle(fontSize: 13.5, fontWeight: FontWeight.w700, color: AppColors.ink),
+                      ),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if (station.vicinity.isNotEmpty)
+                            Text(station.vicinity, style: const TextStyle(fontSize: 12, color: AppColors.textSecondary)),
+                          Builder(
+                            builder: (context) {
+                              final settingsCubit = context.watch<SettingsCubit>();
+                              final converted = UnitStream(settingsCubit).convert(_distanceKm(station));
+                              final unit = settingsCubit.state.unit == 'mil' ? 'mi' : S.of(context).km;
+                              return Text(
+                                [
+                                  station.rating > 0 ? '★ ${station.rating.toStringAsFixed(1)}' : S.of(context).service_no_rating,
+                                  S.of(context).distance_km_short(converted.toStringAsFixed(1), unit),
+                                ].join(' · '),
+                                style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                      trailing: const Icon(Icons.chevron_right, color: AppColors.catOther),
+                      onTap: () => onSelected(station),
                     ),
-                    onTap: () => onSelected(station),
                   );
                 },
               ),

@@ -44,10 +44,14 @@ class _FinesScreenState extends State<FinesScreen> {
     }
 
     final historyBefore = historyCubit.state;
-    final lastCheck = historyBefore is HistoryLoaded && historyBefore.history.isNotEmpty
+    final lastCheck =
+        historyBefore is HistoryLoaded && historyBefore.history.isNotEmpty
         ? historyBefore.history.first
         : null;
-    if (lastCheck != null && _isToday(lastCheck.checkedAt) && !await _confirmRecheck()) return;
+    if (lastCheck != null &&
+        _isToday(lastCheck.checkedAt) &&
+        !await _confirmRecheck())
+      return;
     if (!mounted) return;
 
     final fines = await Navigator.push<List<Map<String, dynamic>>>(
@@ -63,9 +67,16 @@ class _FinesScreenState extends State<FinesScreen> {
     await carCubit.saveCheckedFines(fines);
     await reminder.rescheduleFromNow(l10n);
 
-    final newCount = FinesDiff.newUnpaidCount(fines, FinesDiff.unpaidIds(lastCheck));
+    final newCount = FinesDiff.newUnpaidCount(
+      fines,
+      FinesDiff.unpaidIds(lastCheck),
+    );
     messenger.showSnackBar(
-      SnackBar(content: Text(newCount > 0 ? l10n.fines_new_found(newCount) : l10n.fines_no_new)),
+      SnackBar(
+        content: Text(
+          newCount > 0 ? l10n.fines_new_found(newCount) : l10n.fines_no_new,
+        ),
+      ),
     );
   }
 
@@ -95,7 +106,9 @@ class _FinesScreenState extends State<FinesScreen> {
 
   bool _isToday(DateTime date) {
     final now = DateTime.now();
-    return date.year == now.year && date.month == now.month && date.day == now.day;
+    return date.year == now.year &&
+        date.month == now.month &&
+        date.day == now.day;
   }
 
   @override
@@ -122,7 +135,7 @@ class _FinesScreenState extends State<FinesScreen> {
                               S.of(context).fines,
                               style: Theme.of(context).textTheme.headlineMedium
                                   ?.copyWith(
-                                    fontSize: 28,
+                                    fontSize: 22,
                                     fontWeight: FontWeight.w800,
                                     color: AppColors.ink,
                                   ),
@@ -136,7 +149,7 @@ class _FinesScreenState extends State<FinesScreen> {
                                   state.history.first.checkedAt,
                                 ),
                                 style: Theme.of(context).textTheme.bodyMedium
-                                    ?.copyWith(color: AppColors.textSecondary),
+                                    ?.copyWith(color: AppColors.textSecondary, fontSize: 12),
                               ),
                           ],
                         ),
@@ -148,17 +161,20 @@ class _FinesScreenState extends State<FinesScreen> {
                         ).refreshIndicatorSemanticLabel,
                         style: IconButton.styleFrom(
                           backgroundColor: AppColors.neutreBlanc,
-                          foregroundColor: Theme.of(context).colorScheme.primary,
+                          foregroundColor: Theme.of(
+                            context,
+                          ).colorScheme.primary,
                           side: BorderSide(
                             color: context.brandTheme.surfaceBorder,
                           ),
                           shape: const CircleBorder(),
-                          minimumSize: const Size(44, 44),
+                          minimumSize: const Size(34, 34),
                         ),
+                        iconSize: 16,
                         icon: state is HistoryLoading
                             ? const SizedBox(
-                                width: 20,
-                                height: 20,
+                                width: 16,
+                                height: 16,
                                 child: CircularProgressIndicator(
                                   strokeWidth: 2,
                                 ),
@@ -236,11 +252,11 @@ class _Body extends StatelessWidget {
       children: [
         Container(
           width: double.infinity,
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
             color: context.brandTheme.alertBg,
             border: Border.all(color: context.brandTheme.alertBorder),
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(12),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -250,13 +266,14 @@ class _Body extends StatelessWidget {
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: context.brandTheme.alertFg,
                   fontWeight: FontWeight.w700,
+                  fontSize: 12,
                 ),
               ),
               Text(
                 _money(context, dueTotal),
                 style: Theme.of(context).textTheme.headlineMedium
                     ?.merge(context.brandTheme.moneyTextStyle)
-                    .copyWith(color: context.brandTheme.alertFg, fontSize: 32),
+                    .copyWith(color: context.brandTheme.alertFg, fontSize: 24),
               ),
             ],
           ),
@@ -266,11 +283,12 @@ class _Body extends StatelessWidget {
           Text(
             S.of(context).unpaid_fines_section,
             style: Theme.of(context).textTheme.titleSmall?.copyWith(
-              fontSize: 16,
+              fontSize: 13,
               fontWeight: FontWeight.w700,
               color: AppColors.textSecondary,
             ),
           ),
+          const SizedBox(height: 6),
           for (final e in unpaid)
             _FineRow(
               fineId: e.key,
@@ -284,11 +302,12 @@ class _Body extends StatelessWidget {
           Text(
             S.of(context).paid_fines_section,
             style: Theme.of(context).textTheme.titleSmall?.copyWith(
-              fontSize: 16,
+              fontSize: 13,
               fontWeight: FontWeight.w700,
               color: AppColors.textSecondary,
             ),
           ),
+          const SizedBox(height: 6),
           for (final e in paid)
             _FineRow(
               fineId: e.key,
@@ -359,7 +378,7 @@ class _FineRow extends StatelessWidget {
           Text(
             description,
             style: theme.bodyLarge?.copyWith(
-              fontSize: 16,
+              fontSize: 13.5,
               height: 1.35,
               fontWeight: FontWeight.w700,
               color: isPaid ? muted : AppColors.ink,
@@ -369,7 +388,7 @@ class _FineRow extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             '${paidAt != null ? S.of(context).paid : S.of(context).fines_violation} $date',
-            style: theme.bodySmall?.copyWith(fontSize: 14, color: muted),
+            style: theme.bodySmall?.copyWith(fontSize: 11.5, color: muted),
           ),
         ],
       ],
@@ -382,7 +401,8 @@ class _FineRow extends StatelessWidget {
           style: theme.titleMedium
               ?.merge(context.brandTheme.moneyTextStyle)
               .copyWith(
-                fontSize: 18,
+                fontSize: isPaid ? 14 : 15,
+                fontWeight: isPaid ? FontWeight.w700 : FontWeight.w800,
                 color: isPaid ? muted : context.brandTheme.alertFg,
               ),
         ),
@@ -393,12 +413,12 @@ class _FineRow extends StatelessWidget {
               backgroundColor: Theme.of(context).colorScheme.primary,
               foregroundColor: AppColors.neutreBlanc,
               elevation: 0,
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(9),
+                borderRadius: BorderRadius.circular(7),
               ),
               textStyle: theme.labelLarge?.copyWith(
-                fontSize: 14,
+                fontSize: 11.5,
                 fontWeight: FontWeight.w700,
               ),
             ),
@@ -416,11 +436,11 @@ class _FineRow extends StatelessWidget {
     );
     return Container(
       margin: const EdgeInsets.only(top: 8),
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: context.brandTheme.surfaceBg,
         border: Border.all(color: context.brandTheme.surfaceBorder),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(12),
       ),
       child: LayoutBuilder(
         builder: (context, constraints) {
@@ -433,10 +453,10 @@ class _FineRow extends StatelessWidget {
               if (isPaid) ...[
                 Icon(
                   Icons.check_circle_outline,
-                  color: context.brandTheme.statusComplete,
-                  size: 20,
+                  color: context.brandTheme.statusSuccess,
+                  size: 18,
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: 10),
               ],
               Expanded(
                 child: stacked
@@ -453,7 +473,7 @@ class _FineRow extends StatelessWidget {
                       )
                     : details,
               ),
-              if (!stacked) ...[const SizedBox(width: 16), trailing],
+              if (!stacked) ...[const SizedBox(width: 10), trailing],
             ],
           );
         },
@@ -475,28 +495,47 @@ class _EmptyFines extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.check_circle_outline, size: 44, color: AppColors.textSecondary),
-            const SizedBox(height: 12),
+            const Icon(
+              Icons.check_circle_outline,
+              size: 40,
+              color: AppColors.catOther,
+            ),
+            const SizedBox(height: 10),
             Text(
               S.of(context).fines_not_found_title,
               textAlign: TextAlign.center,
-              style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800, color: AppColors.ink),
+              style: textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.w800,
+                fontSize: 15,
+                color: AppColors.ink,
+              ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 10),
             Text(
               S.of(context).fines_not_found_body,
               textAlign: TextAlign.center,
-              style: textTheme.bodyMedium?.copyWith(color: AppColors.textSecondary),
+              style: textTheme.bodyMedium?.copyWith(
+                color: AppColors.textSecondary,
+                fontSize: 13,
+              ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 6),
             OutlinedButton(
               style: OutlinedButton.styleFrom(
                 backgroundColor: AppColors.neutreBlanc,
                 foregroundColor: Theme.of(context).colorScheme.primary,
                 side: BorderSide(color: context.brandTheme.surfaceBorder),
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                textStyle: textTheme.labelLarge?.copyWith(fontWeight: FontWeight.w700),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 9,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                textStyle: textTheme.labelLarge?.copyWith(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 13,
+                ),
               ),
               onPressed: onRefresh,
               child: Text(S.of(context).fines_recheck_confirm),

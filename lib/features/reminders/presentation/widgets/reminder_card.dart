@@ -5,6 +5,16 @@ import 'package:fines_plus/features/reminders/data/models/reminder_item.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+/// Icon-square accent for a reminder that isn't done/overdue/soon, so the
+/// list reads as distinct items instead of one flat brand color.
+extension _ReminderKindAccent on ReminderKind {
+  Color get accent => switch (this) {
+    ReminderKind.oil => AppColors.reminderOilAccent,
+    ReminderKind.insurance => AppColors.reminderInsuranceAccent,
+    ReminderKind.manual => AppColors.reminderManualAccent,
+  };
+}
+
 /// A row of the Reminders list. Manual reminders can be toggled, edited and
 /// deleted; automatic ones (insurance, oil) are read-only.
 class ReminderCard extends StatelessWidget {
@@ -57,22 +67,22 @@ class ReminderCard extends StatelessWidget {
     final brand = context.brandTheme;
     final accent = done ? brand.statusComplete
         : overdue ? brand.statusDanger
-        : soon ? brand.statusInfo : Theme.of(context).colorScheme.primary;
+        : soon ? brand.statusInfo : item.kind.accent;
     final statusText = done ? S.of(context).done
         : overdue ? S.of(context).reminder_overdue
         : soon ? S.of(context).reminder_soon
         : days == null ? '' : '$days ${S.of(context).days}';
     final statusWidget = Text(statusText, style: theme.bodySmall?.copyWith(
-      fontSize: 13, fontWeight: FontWeight.w700,
+      fontSize: 12, fontWeight: FontWeight.w700,
       color: overdue ? brand.statusDanger : soon ? brand.statusWarning : AppColors.textSecondary));
 
     final manual = item.manual;
     final subtitle = _subtitle(context);
-    final subtitleStyle = theme.bodySmall?.copyWith(fontSize: 13, color: AppColors.textSecondary);
+    final subtitleStyle = theme.bodySmall?.copyWith(fontSize: 11.5, color: AppColors.textSecondary);
 
     return Material(
       color: AppColors.neutreBlanc,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12),
         side: BorderSide(color: context.brandTheme.surfaceBorder)),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
@@ -87,7 +97,7 @@ class ReminderCard extends StatelessWidget {
                   checked: done,
                   label: _title(context, days),
                   child: SizedBox.square(
-                    dimension: 40,
+                    dimension: 38,
                     child: IconButton(
                       onPressed: onToggle,
                       style: IconButton.styleFrom(
@@ -98,12 +108,12 @@ class ReminderCard extends StatelessWidget {
                     ),
                   ),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: 10),
                 Expanded(child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(_title(context, days), style: theme.bodyLarge?.copyWith(
-                      fontSize: 15, fontWeight: FontWeight.w700, color: AppColors.inkSoft,
+                      fontSize: 13.5, fontWeight: FontWeight.w700, color: AppColors.ink,
                       decoration: done ? TextDecoration.lineThrough : TextDecoration.none)),
                     if (manual != null && manual.description.isNotEmpty) ...[
                       const SizedBox(height: 2),

@@ -1,7 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
-import 'package:design_system/constants/app_borders.dart';
 import 'package:design_system/theme/app_brand_theme.dart';
 import 'package:design_system/widget/app_page_app_bar.dart';
 import 'package:fines_plus/app/router/app_router.dart';
@@ -145,10 +144,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: context.brandTheme.surfaceBg,
-      appBar: AppPageAppBar(title: S.of(context).settings, onBack: widget.onBack),
+      appBar: AppPageAppBar(
+        title: S.of(context).settings,
+        onBack: widget.onBack,
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
+          padding: const EdgeInsets.fromLTRB(16, 14, 16, 24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -191,7 +193,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 },
               ),
 
-              const SizedBox(height: 30),
+              const SizedBox(height: 18),
 
               _buildSectionLabel(S.of(context).general_section),
               BlocBuilder<SettingsCubit, SettingsState>(
@@ -218,6 +220,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         ),
                         Divider(
                           thickness: 1,
+                          height: 1,
                           color: context.brandTheme.divider,
                         ),
                         _buildDropdownRow<String>(
@@ -234,6 +237,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         ),
                         Divider(
                           thickness: 1,
+                          height: 1,
                           color: context.brandTheme.divider,
                         ),
                         _buildDropdownRow<String>(
@@ -249,6 +253,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         ),
                         Divider(
                           thickness: 1,
+                          height: 1,
                           color: context.brandTheme.divider,
                         ),
                         _buildDropdownRow<String>(
@@ -268,6 +273,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         ),
                         Divider(
                           thickness: 1,
+                          height: 1,
                           color: context.brandTheme.divider,
                         ),
                         _buildSettingRow(
@@ -281,29 +287,29 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 },
               ),
 
-              const SizedBox(height: 30),
+              const SizedBox(height: 18),
 
               _buildSectionLabel(S.of(context).about_app_section),
               _buildFlatCard(
                 child: Column(
                   children: [
                     Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      padding: const EdgeInsets.symmetric(vertical: 12),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
                             S.of(context).app_version,
-                            style: Theme.of(context).textTheme.titleMedium,
+                            style: Theme.of(context).textTheme.titleMedium?.copyWith(fontSize: 14, fontWeight: FontWeight.w400),
                           ),
                           Text(
                             _appVersion,
-                            style: Theme.of(context).textTheme.bodyMedium,
+                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontSize: 13, color: AppColors.textSecondary),
                           ),
                         ],
                       ),
                     ),
-                    Divider(thickness: 1, color: context.brandTheme.divider),
+                    Divider(thickness: 1, height: 1, color: context.brandTheme.divider),
                     _buildActionRow(
                       title: S.of(context).privacy_policy,
                       onTap: () => _openPrivacyPolicy(context),
@@ -312,7 +318,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
               ),
 
-              const SizedBox(height: 30),
+              const SizedBox(height: 14),
 
               Center(
                 child: TextButton(
@@ -320,8 +326,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   child: Text(
                     S.of(context).log_out,
                     style: TextStyle(
-                      color: AppColors.red700,
-                      fontWeight: FontWeight.w600,
+                      color: context.brandTheme.statusDanger,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 13,
                     ),
                   ),
                 ),
@@ -335,12 +342,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Widget _buildSectionLabel(String title) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 8, left: 4),
+      padding: const EdgeInsets.only(bottom: 6, left: 2),
       child: Text(
         title,
         style: Theme.of(context).textTheme.titleSmall?.copyWith(
           color: AppColors.grey700,
-          fontWeight: FontWeight.w600,
+          fontWeight: FontWeight.w700,
+          fontSize: 12,
         ),
       ),
     );
@@ -354,7 +362,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return Container(
       decoration: BoxDecoration(
         color: AppColors.neutreBlanc,
-        borderRadius: AppBorders.radius22,
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(color: context.brandTheme.surfaceBorder),
       ),
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
@@ -363,7 +371,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   /// A car row with its actual photo (or make-logo fallback) instead of a
-  /// generic icon, plus a delete button - both via garage_screen.dart's
+  /// generic icon, plus an edit/delete menu - both via garage_screen.dart's
   /// shared Thumbnail/confirmAndDeleteCar, same as "Мій гараж" used to have.
   Widget _buildCarRow(
     BuildContext context,
@@ -375,30 +383,57 @@ class _SettingsScreenState extends State<SettingsScreen> {
       onTap: () => _editCar(context, car),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 2),
-        child: Row(
+        child: Stack(
           children: [
-            Thumbnail(
-              photoUrl: car.photoUrl,
-              make: car.make,
-              isActive: isActive,
-              size: 72,
+            Row(
+              children: [
+                Thumbnail(
+                  photoUrl: car.photoUrl,
+                  make: car.make,
+                  isActive: isActive,
+                  size: 72,
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        car.carNumber,
+                        style: textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      CarMileageAndStatus(carId: car.carId),
+                    ],
+                  ),
+                ),
+                Icon(Icons.chevron_right, color: AppColors.grey700),
+              ],
             ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(car.carNumber, style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
-                  CarMileageAndStatus(carId: car.carId),
+            Positioned(
+              top: -18,
+              right: -12,
+              child: PopupMenuButton<String>(
+                tooltip: MaterialLocalizations.of(context).showMenuTooltip,
+                padding: EdgeInsets.zero,
+                icon: Icon(Icons.more_horiz, color: AppColors.grey700),
+                onSelected: (action) => action == 'edit'
+                    ? _editCar(context, car)
+                    : confirmAndDeleteCar(context, car),
+                itemBuilder: (_) => [
+                  PopupMenuItem(value: 'edit', child: Text(S.of(context).edit)),
+                  PopupMenuItem(
+                    value: 'delete',
+                    child: Text(
+                      S.of(context).delete,
+                      style: const TextStyle(color: AppColors.red),
+                    ),
+                  ),
                 ],
               ),
             ),
-            IconButton(
-              icon: const Icon(Icons.delete_outline, color: AppColors.red),
-              onPressed: () => confirmAndDeleteCar(context, car),
-            ),
-            Icon(Icons.chevron_right, color: AppColors.grey700),
           ],
         ),
       ),
@@ -411,24 +446,28 @@ class _SettingsScreenState extends State<SettingsScreen> {
     required VoidCallback onTap,
     Color? color,
   }) {
-    final textTheme = Theme.of(context).textTheme;
+    final accent = color ?? AppColors.energyBlue;
     return InkWell(
       onTap: onTap,
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 10),
+        padding: const EdgeInsets.symmetric(vertical: 12),
         child: Row(
           children: [
             if (icon != null) ...[
-              Icon(icon, color: color ?? AppColors.energyBlue),
-              const SizedBox(width: 12),
+              Icon(icon, color: accent, size: 16),
+              const SizedBox(width: 8),
             ],
             Expanded(
               child: Text(
                 title,
-                style: textTheme.titleMedium?.copyWith(color: color),
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  color: icon != null ? accent : null,
+                  fontWeight: icon != null ? FontWeight.w700 : null,
+                  fontSize: icon != null ? 13.5 : 14,
+                ),
               ),
             ),
-            Icon(Icons.chevron_right, color: AppColors.grey700),
+            if (icon == null) Icon(Icons.chevron_right, color: AppColors.grey700),
           ],
         ),
       ),
@@ -441,17 +480,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
     ValueChanged<bool> onChanged,
   ) {
     final textTheme = Theme.of(context).textTheme;
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Expanded(child: Text(title, style: textTheme.titleMedium)),
-        Switch(
-          value: value,
-          onChanged: onChanged,
-          activeColor: AppColors.neutreBlanc,
-          activeTrackColor: AppColors.energyBlue,
-        ),
-      ],
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 12),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Expanded(child: Text(title, style: textTheme.titleMedium?.copyWith(fontSize: 14, fontWeight: FontWeight.w400))),
+          Switch(
+            value: value,
+            onChanged: onChanged,
+            activeColor: AppColors.neutreBlanc,
+            activeTrackColor: Theme.of(context).colorScheme.primary,
+          ),
+        ],
+      ),
     );
   }
 
@@ -465,13 +507,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final textTheme = Theme.of(context).textTheme;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.symmetric(vertical: 12),
       child: Row(
         children: [
           Expanded(
             child: Text(
               title,
-              style: textTheme.titleMedium,
+              style: textTheme.titleMedium?.copyWith(fontSize: 14, fontWeight: FontWeight.w400),
               overflow: TextOverflow.ellipsis,
             ),
           ),
@@ -480,22 +522,29 @@ class _SettingsScreenState extends State<SettingsScreen> {
             flex: 1,
             child: DropdownButtonFormField<T>(
               value: value,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 isDense: true,
-                filled: true,
-                fillColor: context.brandTheme.surfaceBg,
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 8,
-                ),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(
-                    color: context.brandTheme.surfaceBorder,
-                  ),
-                ),
+                filled: false,
+                fillColor: AppColors.neutreBlanc,
+                contentPadding: EdgeInsets.only(left: 12, top: 8, bottom: 8),
+                border: InputBorder.none,
+                enabledBorder: InputBorder.none,
+                focusedBorder: InputBorder.none,
+                disabledBorder: InputBorder.none,
               ),
+              icon: const SizedBox.shrink(),
               isExpanded: true,
+              selectedItemBuilder: (context) => items
+                  .map(
+                    (item) => Align(
+                      alignment: Alignment.centerRight,
+                      child: DefaultTextStyle.merge(
+                        style: const TextStyle(fontSize: 13, color: AppColors.textSecondary),
+                        child: item.child,
+                      ),
+                    ),
+                  )
+                  .toList(),
               items: items,
               onChanged: onChanged,
             ),

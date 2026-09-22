@@ -1,7 +1,7 @@
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
-import 'package:design_system/constants/app_borders.dart';
 import 'package:design_system/constants/app_spacers.dart';
+import 'package:design_system/theme/app_brand_theme.dart';
 import 'package:design_system/widget/app_field_card.dart';
 import 'package:fines_plus/features/settings/presentation/cubit/settings_cubit.dart';
 import 'package:flutter/material.dart';
@@ -73,6 +73,8 @@ class FuelPriceVolumeSumRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+    final brand = context.brandTheme;
+    final accent = Theme.of(context).colorScheme.primary;
     final settingsCubit = context.watch<SettingsCubit>();
     final currencyLabel = settingsCubit.getCurrencyLabel(context, settingsCubit.state.currency);
 
@@ -99,7 +101,9 @@ class FuelPriceVolumeSumRow extends StatelessWidget {
                 isDense: true,
                 contentPadding: EdgeInsets.zero,
               ),
-              style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, color: AppColors.black87),
+              style: textTheme.titleMedium
+                  ?.merge(brand.moneyTextStyle)
+                  .copyWith(fontSize: 15, color: AppColors.ink),
               onChanged: onPriceChanged,
               onSubmitted: (_) => volumeFocusNode?.requestFocus(),
             ),
@@ -120,35 +124,43 @@ class FuelPriceVolumeSumRow extends StatelessWidget {
                 isDense: true,
                 contentPadding: EdgeInsets.zero,
               ),
-              style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, color: AppColors.black87),
+              style: textTheme.titleMedium
+                  ?.merge(brand.moneyTextStyle)
+                  .copyWith(fontSize: 15, color: AppColors.ink),
               onChanged: onVolumeChanged,
             ),
           ),
         ),
         AppSpacers.horizontalSmallMedium,
         Expanded(
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-            decoration: BoxDecoration(
-              color: AppColors.energyBlue50,
-              borderRadius: AppBorders.radiusMedium,
-              border: Border.all(color: AppColors.energyBlue),
+          child: Material(
+            color: Color.lerp(accent, AppColors.neutreBlanc, 0.88),
+            elevation: 2,
+            shadowColor: AppColors.black,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+              side: BorderSide(color: Color.lerp(accent, AppColors.neutreBlanc, 0.7)!),
             ),
-            child: _FieldColumn(
-              label: S.of(context).sum_short,
-              child: TextField(
-                controller: sumController,
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                decoration: InputDecoration(
-                  border: InputBorder.none,
-                  focusedBorder: InputBorder.none,
-                  hintText: "0",
-                  suffixText: currencyLabel,
-                  isDense: true,
-                  contentPadding: EdgeInsets.zero,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              child: _FieldColumn(
+                label: S.of(context).sum_short,
+                child: TextField(
+                  controller: sumController,
+                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    focusedBorder: InputBorder.none,
+                    hintText: "0",
+                    suffixText: currencyLabel,
+                    isDense: true,
+                    contentPadding: EdgeInsets.zero,
+                  ),
+                  style: textTheme.titleMedium
+                      ?.merge(brand.moneyTextStyle)
+                      .copyWith(fontSize: 15, fontWeight: FontWeight.w800, color: AppColors.ink),
+                  onChanged: onSumChanged,
                 ),
-                style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, color: AppColors.blue700),
-                onChanged: onSumChanged,
               ),
             ),
           ),
@@ -185,7 +197,7 @@ class _FieldColumn extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text(label, style: textTheme.bodySmall?.copyWith(color: AppColors.black87)),
+        Text(label, style: textTheme.bodySmall?.copyWith(color: AppColors.textSecondary, fontSize: 11.5)),
         const SizedBox(height: 4),
         child,
       ],

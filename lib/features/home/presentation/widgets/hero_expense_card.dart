@@ -61,16 +61,17 @@ class HeroExpenseCard extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
+      padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         borderRadius: AppBorders.radius16,
-        // 155deg-ish diagonal + a stronger accent mix, matching the
-        // Fines+OS hero-tile token (26% brand-primary into the card
-        // surface) more closely than the original 18% wash.
+        // 135deg diagonal, brand-primary mixed 26% into white and reaching
+        // solid white by the 65% mark - matches the Fines+OS hero-tile
+        // token exactly (color-mix(accent 26%, #FFFFFF), #FFFFFF 65%).
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [accent.withOpacity(0.26), AppColors.neutreBlanc],
+          stops: const [0.0, 0.65],
         ),
         // Border-only, no drop shadow - the mockup's .hero-tile/.car-card/
         // .tier cards are all flat (1px border), so this now matches them
@@ -83,7 +84,7 @@ class HeroExpenseCard extends StatelessWidget {
         children: [
           Text(
             presenter.currentMonthLabel,
-            style: textTheme.bodySmall?.copyWith(color: AppColors.grey700),
+            style: textTheme.bodySmall?.copyWith(color: AppColors.grey700, fontSize: 13),
           ),
           const SizedBox(height: 2),
           Row(
@@ -94,10 +95,10 @@ class HeroExpenseCard extends StatelessWidget {
                 hasCar ? presenter.currentFormatted : "0",
                 // Brand money font (tabular mono figures by default),
                 // per-flavor via AppConfig.monoFontFamily.
-                style: textTheme.headlineMedium?.merge(context.brandTheme.moneyTextStyle),
+                style: textTheme.headlineMedium?.merge(context.brandTheme.moneyTextStyle).copyWith(fontSize: 34),
               ),
               const SizedBox(width: 4),
-              Text(currency, style: textTheme.titleMedium?.copyWith(color: AppColors.grey700)),
+              Text(currency, style: textTheme.titleMedium?.copyWith(color: AppColors.grey700, fontSize: 18)),
             ],
           ),
           if (hasCar && deltaPercent != null) ...[
@@ -107,14 +108,15 @@ class HeroExpenseCard extends StatelessWidget {
                 Icon(
                   deltaPercent <= 0 ? Icons.arrow_downward : Icons.arrow_upward,
                   size: 14,
-                  color: deltaPercent <= 0 ? AppColors.green : AppColors.redAccent,
+                  color: deltaPercent <= 0 ? context.brandTheme.statusSuccess : context.brandTheme.statusDanger,
                 ),
                 const SizedBox(width: 2),
                 Text(
                   '${deltaPercent.abs().toStringAsFixed(0)}% ${presenter.previousMonthLabel}',
                   style: textTheme.bodySmall?.copyWith(
-                    color: deltaPercent <= 0 ? AppColors.green : AppColors.redAccent,
+                    color: deltaPercent <= 0 ? context.brandTheme.statusSuccess : context.brandTheme.statusDanger,
                     fontWeight: FontWeight.w600,
+                    fontSize: 13,
                   ),
                 ),
               ],
@@ -134,7 +136,7 @@ class HeroExpenseCard extends StatelessWidget {
           ],
 
           const SizedBox(height: 12),
-          const Divider(height: 1),
+          Divider(height: 1, color: context.brandTheme.surfaceBorder),
           const SizedBox(height: 10),
           Row(
             children: [
@@ -285,7 +287,7 @@ class _CategoryLegend extends StatelessWidget {
             const SizedBox(width: 4),
             Text(
               '${e.label} ${converted.toStringAsFixed(0)} $currency',
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(color: AppColors.grey700),
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(color: AppColors.grey700, fontSize: 11),
             ),
           ],
         );

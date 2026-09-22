@@ -1,10 +1,14 @@
 import 'package:core_localization/generated/l10n.dart';
+import 'package:core_utils/formatters/thousands_separator_formatter.dart';
 import 'package:design_system/colors/app_colors.dart';
+import 'package:design_system/theme/app_brand_theme.dart';
 import 'package:design_system/widget/app_field_card.dart';
 import 'package:fines_plus/core/extensions/date_picker_card.dart';
 import 'package:fines_plus/features/expenses/data/models/other_expense_record.dart';
 import 'package:fines_plus/features/maintenance/presentation/cubit/maintenance_cubit.dart';
+import 'package:fines_plus/features/maintenance/presentation/widgets/mileage_card.dart';
 import 'package:fines_plus/features/settings/presentation/cubit/settings_cubit.dart';
+import 'package:fines_plus/features/settings/presentation/cubit/unit_stream.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -31,10 +35,19 @@ class OtherExpenseSheetState extends State<OtherExpenseSheet> {
   @override
   void initState() {
     super.initState();
-    final lastMileage = context.read<MaintenanceCubit>().getLastKnownMileage();
-    if (lastMileage != null) {
-      mileageController.text = lastMileage.toString();
+    final lastMileageKm = context.read<MaintenanceCubit>().getLastKnownMileage();
+    if (lastMileageKm != null) {
+      final settingsCubit = context.read<SettingsCubit>();
+      final displayValue = UnitStream(settingsCubit).convert(lastMileageKm.toDouble()).round();
+      mileageController.text = formatThousands(displayValue);
     }
+  }
+
+  /// Inverse of [UnitStream.convert]: the field shows the active unit, but
+  /// the stored record always keeps km.
+  int _mileageToKm(int displayValue) {
+    final unit = context.read<SettingsCubit>().state.unit;
+    return unit == 'mil' ? (displayValue / 0.621371).round() : displayValue;
   }
 
   @override
@@ -56,7 +69,7 @@ class OtherExpenseSheetState extends State<OtherExpenseSheet> {
     final record = OtherExpenseRecord(
       date: selectedDate!,
       cost: double.tryParse(costController.text) ?? 0,
-      mileage: int.tryParse(mileageController.text) ?? 0,
+      mileage: _mileageToKm(int.tryParse(stripThousandsSeparator(mileageController.text)) ?? 0),
       currency: context.read<SettingsCubit>().state.currency,
       comment: commentController.text.trim().isEmpty ? null : commentController.text.trim(),
     );
@@ -73,26 +86,23 @@ class OtherExpenseSheetState extends State<OtherExpenseSheet> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        DatePickerCard(selectedDate: selectedDate, onDateSelected: (date) => setState(() => selectedDate = date)),
-        const SizedBox(height: 16),
-        AppFieldCard(
-          label: S.of(context).mileage,
-          child: TextField(
-            controller: mileageController,
-            keyboardType: TextInputType.number,
-            textInputAction: TextInputAction.next,
-            onSubmitted: (_) => costFocusNode.requestFocus(),
-            decoration: const InputDecoration(
-              border: InputBorder.none,
-              focusedBorder: InputBorder.none,
-              enabledBorder: InputBorder.none,
-              isDense: true,
-              contentPadding: EdgeInsets.zero,
+        Row(
+          children: [
+            Expanded(
+              child: DatePickerCard(selectedDate: selectedDate, onDateSelected: (date) => setState(() => selectedDate = date)),
             ),
-            style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, color: AppColors.black87),
-          ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: MileageCard(
+                textTheme: textTheme,
+                controller: mileageController,
+                onSubmitted: (_) => costFocusNode.requestFocus(),
+                unitLabel: settings.state.unit == 'mil' ? 'mil' : S.of(context).km,
+              ),
+            ),
+          ],
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 14),
         AppFieldCard(
           label: S.of(context).cost,
           child: TextField(
@@ -110,12 +120,14 @@ class OtherExpenseSheetState extends State<OtherExpenseSheet> {
               contentPadding: EdgeInsets.zero,
               hintText: '0',
               suffixText: ' ${settings.state.currency}',
-              suffixStyle: textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w700),
+              suffixStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: AppColors.textSecondary),
             ),
-            style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, color: AppColors.black87),
+            style: textTheme.titleMedium
+                ?.merge(context.brandTheme.moneyTextStyle)
+                .copyWith(fontWeight: FontWeight.w800, fontSize: 15, color: AppColors.ink),
           ),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 14),
         AppFieldCard(
           label: S.of(context).comment,
           child: TextField(
@@ -129,7 +141,7 @@ class OtherExpenseSheetState extends State<OtherExpenseSheet> {
               isDense: true,
               contentPadding: EdgeInsets.zero,
             ),
-            style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, color: AppColors.black87),
+            style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700, fontSize: 15, color: AppColors.ink),
           ),
         ),
       ],

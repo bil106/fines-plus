@@ -7,6 +7,8 @@ import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/theme/app_brand_theme.dart';
 import 'package:design_system/widget/app_back_button.dart';
+import 'package:fines_plus/core/config/app_config.dart';
+import 'package:fines_plus/core/theme/theme_config.dart';
 import 'package:fines_plus/features/registration/presentation/cubit/registration_cubit.dart';
 import 'package:fines_plus/features/registration/presentation/cubit/registration_state.dart';
 import 'package:fines_plus/features/registration/presentation/screens/garage_setup_screen.dart';
@@ -346,7 +348,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
     final background = context.brandTheme.surfaceBg;
     final border = context.brandTheme.surfaceBorder;
-    final blue = Theme.of(context).colorScheme.primary;
+    // The mockup's {{accent}} is the raw brand hex, not Material3's
+    // tonal-palette colorScheme.primary derived from it (which can land on
+    // a noticeably duller tone for some seed colors) - same source
+    // hero_expense_card.dart uses for its own accent.
+    final blue = ThemeConfig.hexToColor(context.watch<AppConfig>().primaryColorHex);
 
     return Scaffold(
       backgroundColor: background,
@@ -362,7 +368,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         child: Align(
           alignment: Alignment.topCenter,
           child: SingleChildScrollView(
-            padding: const EdgeInsets.fromLTRB(28, 20, 28, 32),
+            padding: const EdgeInsets.fromLTRB(28, 18, 28, 32),
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 540),
               child: Form(
@@ -379,48 +385,46 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   builder: (context, state) {
                     final busy = state.isLoading || _socialLoading;
                     final isLogin = state.isExistingUser;
+                    // Flat label-card look matching every other form in the
+                    // app (AppFieldCard/DatePickerCard) - label always
+                    // visible above the value, not Material's floating
+                    // OutlineInputBorder label.
                     InputDecoration decoration(
-                      String label,
                       String hint,
                       String? error,
                     ) => InputDecoration(
-                      labelText: label,
-                      floatingLabelBehavior: FloatingLabelBehavior.always,
                       hintText: hint,
-                      error: error == null ? null : Text(error, softWrap: true),
-                      filled: true,
-                      fillColor: AppColors.neutreBlanc,
-                      labelStyle: const TextStyle(
-                        color: AppColors.textMuted,
-                        fontSize: 16,
-                      ),
+                      errorText: error,
+                      isDense: true,
+                      contentPadding: EdgeInsets.zero,
+                      border: InputBorder.none,
+                      enabledBorder: InputBorder.none,
+                      focusedBorder: InputBorder.none,
+                      errorBorder: InputBorder.none,
+                      focusedErrorBorder: InputBorder.none,
                       hintStyle: const TextStyle(
-                        color: AppColors.textSubtle,
+                        color: AppColors.catOther,
+                        fontSize: 15,
                         fontWeight: FontWeight.w600,
                       ),
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 18,
-                        vertical: 20,
+                    );
+                    Widget field({
+                      required String label,
+                      required Widget child,
+                    }) => Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                      decoration: BoxDecoration(
+                        color: AppColors.neutreBlanc,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: border),
                       ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(16),
-                        borderSide: BorderSide(color: border),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(16),
-                        borderSide: BorderSide(color: border),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(16),
-                        borderSide: BorderSide(color: blue),
-                      ),
-                      errorBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(16),
-                        borderSide: BorderSide(color: border),
-                      ),
-                      focusedErrorBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(16),
-                        borderSide: BorderSide(color: border),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(label, style: const TextStyle(fontSize: 11.5, color: AppColors.textSecondary)),
+                          const SizedBox(height: 2),
+                          child,
+                        ],
                       ),
                     );
                     return AutofillGroup(
@@ -432,74 +436,75 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                 ? S.of(context).login
                                 : S.of(context).registration,
                             textAlign: TextAlign.center,
-                            style: const TextStyle(
-                              fontSize: 32,
-                              fontWeight: FontWeight.w700,
+                            style: context.brandTheme.displayTextStyle.copyWith(
+                              fontSize: 28,
+                              fontWeight: FontWeight.w800,
                               color: AppColors.ink,
                             ),
                           ),
-                          const SizedBox(height: 28),
-                          TextFormField(
-                            controller: emailController,
-                            enabled: !busy,
-                            decoration: decoration(
-                              S.of(context).email,
-                              'you@email.com',
-                              state.emailError,
+                          const SizedBox(height: 18),
+                          field(
+                            label: S.of(context).email,
+                            child: TextFormField(
+                              controller: emailController,
+                              enabled: !busy,
+                              style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: AppColors.ink),
+                              decoration: decoration('you@email.com', state.emailError),
+                              keyboardType: TextInputType.emailAddress,
+                              textInputAction: TextInputAction.next,
+                              autofillHints: const [AutofillHints.email],
+                              autocorrect: false,
+                              errorBuilder: (context, error) =>
+                                  Text(error, softWrap: true),
+                              validator: (value) {
+                                final email = value?.trim() ?? '';
+                                if (email.isEmpty) {
+                                  return S.of(context).enter_email;
+                                }
+                                if (!email.contains('@')) {
+                                  return S.of(context).incorrect_email;
+                                }
+                                return null;
+                              },
                             ),
-                            keyboardType: TextInputType.emailAddress,
-                            textInputAction: TextInputAction.next,
-                            autofillHints: const [AutofillHints.email],
-                            autocorrect: false,
-                            errorBuilder: (context, error) =>
-                                Text(error, softWrap: true),
-                            validator: (value) {
-                              final email = value?.trim() ?? '';
-                              if (email.isEmpty) {
-                                return S.of(context).enter_email;
-                              }
-                              if (!email.contains('@')) {
-                                return S.of(context).incorrect_email;
-                              }
-                              return null;
-                            },
+                          ),
+                          const SizedBox(height: 18),
+                          field(
+                            label: S.of(context).password,
+                            child: TextFormField(
+                              controller: passwordController,
+                              enabled: !busy,
+                              obscureText: true,
+                              autocorrect: false,
+                              enableSuggestions: false,
+                              style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: AppColors.ink, letterSpacing: 2),
+                              autofillHints: [
+                                isLogin
+                                    ? AutofillHints.password
+                                    : AutofillHints.newPassword,
+                              ],
+                              decoration: decoration('• • • • • • • •', state.error),
+                              onFieldSubmitted: (_) => _onSubmit(context),
+                              errorBuilder: (context, error) =>
+                                  Text(error, softWrap: true),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return S.of(context).enter_password;
+                                }
+                                if (value.length < 6) {
+                                  return S.of(context).min_char;
+                                }
+                                return null;
+                              },
+                            ),
                           ),
                           const SizedBox(height: 22),
-                          TextFormField(
-                            controller: passwordController,
-                            enabled: !busy,
-                            obscureText: true,
-                            autocorrect: false,
-                            enableSuggestions: false,
-                            autofillHints: [
-                              isLogin
-                                  ? AutofillHints.password
-                                  : AutofillHints.newPassword,
-                            ],
-                            decoration: decoration(
-                              S.of(context).password,
-                              '• • • • • • • •',
-                              state.error,
-                            ),
-                            onFieldSubmitted: (_) => _onSubmit(context),
-                            errorBuilder: (context, error) =>
-                                Text(error, softWrap: true),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return S.of(context).enter_password;
-                              }
-                              if (value.length < 6) {
-                                return S.of(context).min_char;
-                              }
-                              return null;
-                            },
-                          ),
-                          const SizedBox(height: 28),
                           SizedBox(
                             height: 58,
                             child: FilledButton(
                               style: FilledButton.styleFrom(
                                 backgroundColor: blue,
+                                foregroundColor: AppColors.neutreBlanc,
                                 disabledBackgroundColor: blue.withValues(
                                   alpha: 0.65,
                                 ),
@@ -519,13 +524,14 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                           ? S.of(context).large_login
                                           : S.of(context).large_sign_up,
                                       style: const TextStyle(
-                                        fontSize: 17,
-                                        fontWeight: FontWeight.w700,
+                                        fontSize: 14.5,
+                                        fontWeight: FontWeight.w800,
+                                        letterSpacing: 0.3,
                                       ),
                                     ),
                             ),
                           ),
-                          const SizedBox(height: 12),
+                          const SizedBox(height: 18),
                           TextButton(
                             onPressed: busy
                                 ? null
@@ -539,12 +545,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 color: blue,
-                                fontSize: 15,
-                                fontWeight: FontWeight.w600,
+                                fontSize: 13,
+                                fontWeight: FontWeight.w700,
                               ),
                             ),
                           ),
-                          const SizedBox(height: 18),
+                          const SizedBox(height: 22),
                           Row(
                             children: [
                               Expanded(child: Divider(color: border)),
@@ -552,14 +558,14 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                 flex: 3,
                                 child: Padding(
                                   padding: const EdgeInsets.symmetric(
-                                    horizontal: 12,
+                                    horizontal: 10,
                                   ),
                                   child: Text(
                                     S.of(context).or_sign_in_using,
                                     textAlign: TextAlign.center,
                                     style: const TextStyle(
-                                      color: AppColors.textMuted,
-                                      fontSize: 14,
+                                      color: AppColors.textSecondary,
+                                      fontSize: 12,
                                     ),
                                   ),
                                 ),
@@ -567,7 +573,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                               Expanded(child: Divider(color: border)),
                             ],
                           ),
-                          const SizedBox(height: 20),
+                          const SizedBox(height: 18),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -621,7 +627,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   Widget _socialButton(String label, Widget icon, VoidCallback? onPressed) {
     return SizedBox.square(
-      dimension: 56,
+      dimension: 48,
       child: IconButton(
         tooltip: label,
         onPressed: onPressed,

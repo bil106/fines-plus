@@ -22,11 +22,13 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m0(error) => "Помилка входу через Apple: ${error}";
 
-  static String m1(distance) => "Найвигідніша ціна поруч · ${distance} км";
+  static String m1(distance, unit) =>
+      "Найвигідніша ціна поруч · ${distance} ${unit}";
 
-  static String m2(distance) => "Найкращий рейтинг поруч · ${distance} км";
+  static String m2(distance, unit) =>
+      "Найкращий рейтинг поруч · ${distance} ${unit}";
 
-  static String m3(distance) => "${distance} км";
+  static String m3(distance, unit) => "${distance} ${unit}";
 
   static String m4(count) => "Знайдено нових штрафів: ${count}";
 
@@ -47,7 +49,8 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m12(km) => "Заміна оливи через ${km} км";
 
-  static String m13(distance) => "Найкращий рейтинг поруч · ${distance} км";
+  static String m13(distance, unit) =>
+      "Найкращий рейтинг поруч · ${distance} ${unit}";
 
   static String m14(price, period) =>
       "7 днів безкоштовно, потім ${price} за ${period}. Скасувати можна в будь-який момент, не менш ніж за 24 години до закінчення пробного періоду, в налаштуваннях Google Play. Підписка автоматично поновлюється, якщо її не скасовано.";
@@ -65,6 +68,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "add_mileage": MessageLookupByLibrary.simpleMessage("Додати пробіг"),
     "add_new_photo": MessageLookupByLibrary.simpleMessage("Додати нове фото"),
     "add_photo": MessageLookupByLibrary.simpleMessage("Додати фото"),
+    "add_reminder_button": MessageLookupByLibrary.simpleMessage(
+      "Додати нагадування",
+    ),
     "addition_cars": MessageLookupByLibrary.simpleMessage("Додавання авто"),
     "additional_options": MessageLookupByLibrary.simpleMessage(
       "Додаткові опції",
@@ -365,6 +371,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "fuel_up": MessageLookupByLibrary.simpleMessage("Заправка"),
     "full_charge": MessageLookupByLibrary.simpleMessage("Повна зарядка"),
     "full_tank": MessageLookupByLibrary.simpleMessage("Повний бак"),
+    "full_tank_hint": MessageLookupByLibrary.simpleMessage(
+      "Потрібно для точного розрахунку витрати",
+    ),
     "garage_action_error": MessageLookupByLibrary.simpleMessage(
       "Не вдалося виконати дію",
     ),
@@ -497,18 +506,18 @@ class MessageLookup extends MessageLookupByLibrary {
       "30-денна гарантія повернення грошей!",
     ),
     "month": MessageLookupByLibrary.simpleMessage("Місяць"),
-    "month_apr": MessageLookupByLibrary.simpleMessage("Квіт"),
-    "month_aug": MessageLookupByLibrary.simpleMessage("Серп"),
-    "month_dec": MessageLookupByLibrary.simpleMessage("Груд"),
-    "month_feb": MessageLookupByLibrary.simpleMessage("Лют"),
-    "month_jan": MessageLookupByLibrary.simpleMessage("Січ"),
-    "month_jul": MessageLookupByLibrary.simpleMessage("Лип"),
-    "month_jun": MessageLookupByLibrary.simpleMessage("Черв"),
-    "month_mar": MessageLookupByLibrary.simpleMessage("Бер"),
-    "month_may": MessageLookupByLibrary.simpleMessage("Трав"),
-    "month_nov": MessageLookupByLibrary.simpleMessage("Лист"),
-    "month_oct": MessageLookupByLibrary.simpleMessage("Жовт"),
-    "month_sep": MessageLookupByLibrary.simpleMessage("Верес"),
+    "month_apr": MessageLookupByLibrary.simpleMessage("Квітень"),
+    "month_aug": MessageLookupByLibrary.simpleMessage("Серпень"),
+    "month_dec": MessageLookupByLibrary.simpleMessage("Грудень"),
+    "month_feb": MessageLookupByLibrary.simpleMessage("Лютий"),
+    "month_jan": MessageLookupByLibrary.simpleMessage("Січень"),
+    "month_jul": MessageLookupByLibrary.simpleMessage("Липень"),
+    "month_jun": MessageLookupByLibrary.simpleMessage("Червень"),
+    "month_mar": MessageLookupByLibrary.simpleMessage("Березень"),
+    "month_may": MessageLookupByLibrary.simpleMessage("Травень"),
+    "month_nov": MessageLookupByLibrary.simpleMessage("Листопад"),
+    "month_oct": MessageLookupByLibrary.simpleMessage("Жовтень"),
+    "month_sep": MessageLookupByLibrary.simpleMessage("Вересень"),
     "months": MessageLookupByLibrary.simpleMessage("Місяці"),
     "more": MessageLookupByLibrary.simpleMessage("Ще"),
     "most_popular": MessageLookupByLibrary.simpleMessage("НАЙПОПУЛЯРНІШІ"),
@@ -542,7 +551,12 @@ class MessageLookup extends MessageLookupByLibrary {
       "Немає нещодавніх подій",
     ),
     "no_records": MessageLookupByLibrary.simpleMessage("Немає записів"),
-    "no_reminders": MessageLookupByLibrary.simpleMessage("Немає нагадувань"),
+    "no_reminders": MessageLookupByLibrary.simpleMessage(
+      "Немає активних нагадувань",
+    ),
+    "no_reminders_body": MessageLookupByLibrary.simpleMessage(
+      "Додайте нагадування про ТО, страхування чи техогляд, щоб нічого не пропустити",
+    ),
     "no_schedule": MessageLookupByLibrary.simpleMessage("Розкладу поки немає"),
     "no_story": MessageLookupByLibrary.simpleMessage("Поки немає історії"),
     "no_such_service": MessageLookupByLibrary.simpleMessage(

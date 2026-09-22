@@ -23,13 +23,15 @@ class AppPageAppBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       backgroundColor: context.brandTheme.surfaceBg,
       elevation: 0,
-      centerTitle: true,
+      centerTitle: false,
       leadingWidth: 70,
       leading: AppBackButton(onPressed: onBack),
       title: Text(
         title,
         style: const TextStyle(
-            color: AppColors.black87, fontWeight: FontWeight.w700, fontSize: 22),
+            color: AppColors.ink,
+            fontWeight: FontWeight.w800,
+            fontSize: 20),
       ),
       actions: actions,
     );

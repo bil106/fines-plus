@@ -74,7 +74,7 @@ class AppBottomSheet extends StatelessWidget {
                     width: 36,
                     height: 4,
                     decoration: BoxDecoration(
-                      color: AppColors.neutreGreyLight,
+                      color: context.brandTheme.surfaceBorder,
                       borderRadius: AppBorders.radiusSmall,
                     ),
                   ),
@@ -90,12 +90,19 @@ class AppBottomSheet extends StatelessWidget {
                                   .textTheme
                                   .titleLarge
                                   ?.copyWith(
-                                    fontWeight: FontWeight.w700,
-                                    color: AppColors.black87,
+                                    fontSize: 19,
+                                    fontWeight: FontWeight.w800,
+                                    color: AppColors.ink,
                                   )),
                         ),
                         IconButton(
-                          icon: const Icon(Icons.close),
+                          icon: const Icon(Icons.close, color: AppColors.textSecondary, size: 14),
+                          style: IconButton.styleFrom(
+                            backgroundColor: AppColors.neutreBlanc,
+                            side: BorderSide(color: context.brandTheme.surfaceBorder),
+                            shape: const CircleBorder(),
+                            minimumSize: const Size(30, 30),
+                          ),
                           onPressed: () => Navigator.pop(context),
                         ),
                       ],
@@ -117,6 +124,11 @@ class AppBottomSheet extends StatelessWidget {
                         SizedBox(
                           width: double.infinity,
                           child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(vertical: 15),
+                              textStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.w800),
+                              elevation: 2,
+                            ),
                             onPressed: onSave,
                             child: Text(saveLabel),
                           ),

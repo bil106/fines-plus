@@ -44,6 +44,11 @@ class _RemindersView extends StatelessWidget {
 
   const _RemindersView({this.onBack});
 
+  void _openNewReminderDialog(BuildContext context) {
+    final cubit = context.read<ReminderCubit>();
+    showReminderSheet(context, cubit: cubit, onSaved: () => cubit.load());
+  }
+
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
@@ -64,22 +69,15 @@ class _RemindersView extends StatelessWidget {
         actionsPadding: const EdgeInsets.only(right: 20),
         title: Text(S.of(context).reminder,
           maxLines: 2,
-          style: textTheme.headlineMedium?.copyWith(fontSize: 24, fontWeight: FontWeight.w800, color: AppColors.ink)),
+          style: textTheme.headlineMedium?.copyWith(fontSize: 22, fontWeight: FontWeight.w800, color: AppColors.ink)),
         actions: [
           IconButton(
             tooltip: S.of(context).new_reminder,
             style: IconButton.styleFrom(
               backgroundColor: Theme.of(context).colorScheme.primary, foregroundColor: AppColors.neutreBlanc,
-              minimumSize: const Size(36, 36), padding: EdgeInsets.zero, shape: const CircleBorder()),
-            icon: const Icon(Icons.add, size: 20),
-            onPressed: () {
-              final cubit = context.read<ReminderCubit>();
-              showDialog(
-                context: context,
-                barrierColor: AppColors.transparent,
-                builder: (_) => ReminderDialog(cubit: cubit, onSaved: () => cubit.load()),
-              );
-            },
+              minimumSize: const Size(34, 34), padding: EdgeInsets.zero, shape: const CircleBorder()),
+            icon: const Icon(Icons.add, size: 16),
+            onPressed: () => _openNewReminderDialog(context),
           ),
         ],
       ),
@@ -93,7 +91,7 @@ class _RemindersView extends StatelessWidget {
             }
 
             if (state.items.isEmpty) {
-              return _EmptyReminders();
+              return _EmptyReminders(onAdd: () => _openNewReminderDialog(context));
             }
 
             return ListView.separated(
@@ -112,14 +110,11 @@ class _RemindersView extends StatelessWidget {
                     reminder.copyWith(isCompleted: !reminder.isCompleted)),
                   onDelete: () => cubit.deleteReminder(reminder.id),
                   onTap: () {
-                    showDialog(
-                      context: context,
-                      barrierColor: AppColors.transparent,
-                      builder: (_) => ReminderDialog(
-                        cubit: cubit,
-                        reminder: reminder,
-                        onSaved: () => cubit.load(),
-                      ),
+                    showReminderSheet(
+                      context,
+                      cubit: cubit,
+                      reminder: reminder,
+                      onSaved: () => cubit.load(),
                     );
                   },
                 );
@@ -133,24 +128,47 @@ class _RemindersView extends StatelessWidget {
 }
 
 class _EmptyReminders extends StatelessWidget {
-  const _EmptyReminders();
+  final VoidCallback onAdd;
+
+  const _EmptyReminders({required this.onAdd});
 
   @override
-  Widget build(BuildContext context) => Center(
-    child: SingleChildScrollView(
-      padding: const EdgeInsets.all(24),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(Icons.notifications_none_rounded, size: 64, color: Theme.of(context).colorScheme.outline),
-          const SizedBox(height: 16),
-          Text(S.of(context).no_reminders,
-            style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: AppColors.textSecondary),
-            textAlign: TextAlign.center),
-        ],
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    return Center(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.access_time, size: 40, color: AppColors.catOther),
+            const SizedBox(height: 10),
+            Text(S.of(context).no_reminders,
+              style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800, fontSize: 15, color: AppColors.ink),
+              textAlign: TextAlign.center),
+            const SizedBox(height: 10),
+            Text(S.of(context).no_reminders_body,
+              style: textTheme.bodyMedium?.copyWith(color: AppColors.textSecondary, fontSize: 13),
+              textAlign: TextAlign.center),
+            const SizedBox(height: 6),
+            ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                foregroundColor: AppColors.neutreBlanc,
+                elevation: 0,
+                padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 9),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                textStyle: textTheme.labelLarge?.copyWith(fontSize: 13, fontWeight: FontWeight.w700),
+              ),
+              onPressed: onAdd,
+              icon: const Icon(Icons.add, size: 16),
+              label: Text(S.of(context).add_reminder_button),
+            ),
+          ],
+        ),
       ),
-    ),
-  );
+    );
+  }
 }
 
 /// Shared empty-state circle+check icon - also used by the Штрафи tab's

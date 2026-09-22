@@ -2,7 +2,10 @@ import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/theme/app_brand_theme.dart';
 import 'package:fines_plus/features/maintenance/domain/nearby_service_ranking.dart';
+import 'package:fines_plus/features/settings/presentation/cubit/settings_cubit.dart';
+import 'package:fines_plus/features/settings/presentation/cubit/unit_stream.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 Future<Map<String, dynamic>?> showNearbyServicesSheet(
@@ -39,14 +42,14 @@ Future<Map<String, dynamic>?> showNearbyServicesSheet(
                     height: 4,
                     margin: const EdgeInsets.only(bottom: 12),
                     decoration: BoxDecoration(
-                      color: AppColors.neutreGreyLight,
+                      color: context.brandTheme.surfaceBorder,
                       borderRadius: BorderRadius.circular(4),
                     ),
                   ),
                 ),
                 Text(
                   title ?? S.of(context).service_station_nearby,
-                  style: textTheme.titleMedium,
+                  style: textTheme.titleLarge?.copyWith(fontSize: 19, fontWeight: FontWeight.w800, color: AppColors.ink),
                 ),
                 const SizedBox(height: 8),
                 Flexible(
@@ -60,6 +63,8 @@ Future<Map<String, dynamic>?> showNearbyServicesSheet(
                       final address = station['vicinity'] as String? ?? '';
                       return Material(
                         color: AppColors.neutreBlanc,
+                        elevation: 2,
+                        shadowColor: AppColors.black,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                           side: BorderSide(
@@ -67,37 +72,39 @@ Future<Map<String, dynamic>?> showNearbyServicesSheet(
                           ),
                         ),
                         child: ListTile(
-                          leading: Icon(icon, color: AppColors.blueAccent),
+                          leading: Icon(icon, color: Theme.of(context).colorScheme.primary),
                           title: Text(
                             station['name'] as String,
-                            style: textTheme.bodyMedium?.copyWith(
-                              fontWeight: FontWeight.w600,
-                            ),
+                            style: const TextStyle(fontSize: 13.5, fontWeight: FontWeight.w700, color: AppColors.ink),
                           ),
                           subtitle: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              if (address.isNotEmpty) Text(address),
-                              Text(
-                                [
-                                  rating > 0
-                                      ? '★ ${rating.toStringAsFixed(1)}'
-                                      : S.of(context).service_no_rating,
-                                  S
-                                      .of(context)
-                                      .distance_km_short(
-                                        serviceDistanceKm(
-                                          station,
-                                          currentPosition,
-                                        ).toStringAsFixed(1),
-                                      ),
-                                ].join(' · '),
+                              if (address.isNotEmpty)
+                                Text(address, style: const TextStyle(fontSize: 12, color: AppColors.textSecondary)),
+                              Builder(
+                                builder: (context) {
+                                  final settingsCubit = context.watch<SettingsCubit>();
+                                  final converted = UnitStream(settingsCubit).convert(
+                                    serviceDistanceKm(station, currentPosition),
+                                  );
+                                  final unit = settingsCubit.state.unit == 'mil' ? 'mi' : S.of(context).km;
+                                  return Text(
+                                    [
+                                      rating > 0
+                                          ? '★ ${rating.toStringAsFixed(1)}'
+                                          : S.of(context).service_no_rating,
+                                      S.of(context).distance_km_short(converted.toStringAsFixed(1), unit),
+                                    ].join(' · '),
+                                    style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
+                                  );
+                                },
                               ),
                             ],
                           ),
                           trailing: const Icon(
                             Icons.chevron_right,
-                            color: AppColors.grey700,
+                            color: AppColors.catOther,
                           ),
                           onTap: () => Navigator.of(context).pop(station),
                         ),

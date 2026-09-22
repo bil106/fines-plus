@@ -104,10 +104,7 @@ class _PlannedServiceRow extends StatelessWidget {
             if (value == 'delete') {
               cubit.deleteReminder(reminder.id);
             } else {
-              showDialog<void>(
-                context: context,
-                builder: (_) => ReminderDialog(cubit: cubit, reminder: reminder),
-              );
+              showReminderSheet(context, cubit: cubit, reminder: reminder);
             }
           },
           itemBuilder: (_) => [

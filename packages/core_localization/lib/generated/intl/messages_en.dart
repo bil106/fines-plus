@@ -22,11 +22,11 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m0(error) => "Apple sign-in error: ${error}";
 
-  static String m1(distance) => "Best price nearby · ${distance} km";
+  static String m1(distance, unit) => "Best price nearby · ${distance} ${unit}";
 
-  static String m2(distance) => "Best rated nearby · ${distance} km";
+  static String m2(distance, unit) => "Best rated nearby · ${distance} ${unit}";
 
-  static String m3(distance) => "${distance} km";
+  static String m3(distance, unit) => "${distance} ${unit}";
 
   static String m4(count) => "New fines found: ${count}";
 
@@ -47,7 +47,8 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m12(km) => "Oil change in ${km} km";
 
-  static String m13(distance) => "Best rated nearby · ${distance} km";
+  static String m13(distance, unit) =>
+      "Best rated nearby · ${distance} ${unit}";
 
   static String m14(price, period) =>
       "7-day free trial, then ${price} per ${period}. Cancel anytime, at least 24 hours before the trial ends, in Google Play Settings. Subscription renews automatically unless cancelled.";
@@ -65,6 +66,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "add_mileage": MessageLookupByLibrary.simpleMessage("Add mileage"),
     "add_new_photo": MessageLookupByLibrary.simpleMessage("Add new photo"),
     "add_photo": MessageLookupByLibrary.simpleMessage("Add photo"),
+    "add_reminder_button": MessageLookupByLibrary.simpleMessage("Add reminder"),
     "addition_cars": MessageLookupByLibrary.simpleMessage("Adding a car"),
     "additional_options": MessageLookupByLibrary.simpleMessage(
       "Additional options",
@@ -367,6 +369,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "fuel_up": MessageLookupByLibrary.simpleMessage("Fuel up"),
     "full_charge": MessageLookupByLibrary.simpleMessage("Full charge"),
     "full_tank": MessageLookupByLibrary.simpleMessage("Full tank"),
+    "full_tank_hint": MessageLookupByLibrary.simpleMessage(
+      "Needed to calculate consumption accurately",
+    ),
     "garage_action_error": MessageLookupByLibrary.simpleMessage(
       "Failed to complete the action",
     ),
@@ -502,18 +507,18 @@ class MessageLookup extends MessageLookupByLibrary {
       "30-day money back guarantee!",
     ),
     "month": MessageLookupByLibrary.simpleMessage("Month"),
-    "month_apr": MessageLookupByLibrary.simpleMessage("Apr"),
-    "month_aug": MessageLookupByLibrary.simpleMessage("Aug"),
-    "month_dec": MessageLookupByLibrary.simpleMessage("Dec"),
-    "month_feb": MessageLookupByLibrary.simpleMessage("Feb"),
-    "month_jan": MessageLookupByLibrary.simpleMessage("Jan"),
-    "month_jul": MessageLookupByLibrary.simpleMessage("Jul"),
-    "month_jun": MessageLookupByLibrary.simpleMessage("Jun"),
-    "month_mar": MessageLookupByLibrary.simpleMessage("Mar"),
+    "month_apr": MessageLookupByLibrary.simpleMessage("April"),
+    "month_aug": MessageLookupByLibrary.simpleMessage("August"),
+    "month_dec": MessageLookupByLibrary.simpleMessage("December"),
+    "month_feb": MessageLookupByLibrary.simpleMessage("February"),
+    "month_jan": MessageLookupByLibrary.simpleMessage("January"),
+    "month_jul": MessageLookupByLibrary.simpleMessage("July"),
+    "month_jun": MessageLookupByLibrary.simpleMessage("June"),
+    "month_mar": MessageLookupByLibrary.simpleMessage("March"),
     "month_may": MessageLookupByLibrary.simpleMessage("May"),
-    "month_nov": MessageLookupByLibrary.simpleMessage("Nov"),
-    "month_oct": MessageLookupByLibrary.simpleMessage("Oct"),
-    "month_sep": MessageLookupByLibrary.simpleMessage("Sep"),
+    "month_nov": MessageLookupByLibrary.simpleMessage("November"),
+    "month_oct": MessageLookupByLibrary.simpleMessage("October"),
+    "month_sep": MessageLookupByLibrary.simpleMessage("September"),
     "months": MessageLookupByLibrary.simpleMessage("Months"),
     "more": MessageLookupByLibrary.simpleMessage("More"),
     "most_popular": MessageLookupByLibrary.simpleMessage("MOST POPULAR"),
@@ -547,7 +552,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "No recent events",
     ),
     "no_records": MessageLookupByLibrary.simpleMessage("No records"),
-    "no_reminders": MessageLookupByLibrary.simpleMessage("No reminders"),
+    "no_reminders": MessageLookupByLibrary.simpleMessage("No active reminders"),
+    "no_reminders_body": MessageLookupByLibrary.simpleMessage(
+      "Add a reminder for service, insurance or inspection so nothing slips by",
+    ),
     "no_schedule": MessageLookupByLibrary.simpleMessage("No schedule yet"),
     "no_story": MessageLookupByLibrary.simpleMessage("No story yet"),
     "no_such_service": MessageLookupByLibrary.simpleMessage("No_such_service"),

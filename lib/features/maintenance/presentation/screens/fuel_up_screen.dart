@@ -5,6 +5,7 @@ import 'package:design_system/widget/app_field_card.dart';
 import 'package:fines_plus/features/vehicle/presentation/cubit/car_cubit.dart';
 import 'package:design_system/widget/app_back_button.dart';
 import 'package:design_system/constants/app_spacers.dart';
+import 'package:design_system/theme/app_brand_theme.dart';
 import 'package:design_system/theme/app_theme.dart';
 import 'package:fines_plus/core/extensions/ad_banner_widget.dart';
 import 'package:fines_plus/core/extensions/date_picker_card.dart';
@@ -20,6 +21,8 @@ import '../../../../../env/env.dart';
 import 'package:fines_plus/features/expenses/data/models/fuel_record.dart';
 import 'package:fines_plus/features/maintenance/presentation/screens/fuel_map_screen.dart';
 import 'package:fines_plus/features/settings/presentation/cubit/settings_cubit.dart';
+import 'package:fines_plus/features/settings/presentation/cubit/unit_stream.dart';
+import 'package:core_utils/formatters/thousands_separator_formatter.dart';
 import 'package:fines_plus/app/router/app_router.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -78,11 +81,30 @@ class FuelUpScreenState extends State<FuelUpScreen> {
     _loadTankVolume();
   }
 
+  /// Mileage is always stored in km (see [MileageValue]); shown converted
+  /// to the active unit, same as everywhere else it's displayed.
   void _prefillLastMileage() {
-    final lastMileage = context.read<MaintenanceCubit>().getLastKnownMileage();
-    if (lastMileage != null) {
-      mileageController.text = lastMileage.toString();
-    }
+    final lastMileageKm = context.read<MaintenanceCubit>().getLastKnownMileage();
+    if (lastMileageKm == null) return;
+    final settingsCubit = context.read<SettingsCubit>();
+    final displayValue = UnitStream(settingsCubit).convert(lastMileageKm.toDouble()).round();
+    mileageController.text = formatThousands(displayValue);
+  }
+
+  /// Inverse of [UnitStream.convert]: the field shows the active unit, but
+  /// the stored record always keeps km.
+  int _mileageToKm(int displayValue) {
+    final unit = context.read<SettingsCubit>().state.unit;
+    return unit == 'mil' ? (displayValue / 0.621371).round() : displayValue;
+  }
+
+  /// A distance in km, converted to the active unit and paired with its
+  /// label - for the "X.X km/mi away" nearby-station text.
+  (String value, String unit) _distanceParts(double km) {
+    final settingsCubit = context.read<SettingsCubit>();
+    final converted = UnitStream(settingsCubit).convert(km);
+    final unit = settingsCubit.state.unit == 'mil' ? 'mi' : S.of(context).km;
+    return (converted.toStringAsFixed(1), unit);
   }
 
   @override
@@ -104,7 +126,7 @@ class FuelUpScreenState extends State<FuelUpScreen> {
   }
 
   void _onMileageChanged(String value) {
-    if (value.length >= 6) _advanceFromMileage();
+    if (stripThousandsSeparator(value).length >= 6) _advanceFromMileage();
   }
 
   void _advanceFromMileage() {
@@ -322,7 +344,8 @@ class FuelUpScreenState extends State<FuelUpScreen> {
     }
 
     final volume = double.tryParse(volumeController.text) ?? 0;
-    final mileage = int.tryParse(mileageController.text) ?? 0;
+    final mileageDisplay = int.tryParse(stripThousandsSeparator(mileageController.text)) ?? 0;
+    final mileage = _mileageToKm(mileageDisplay);
     final pricePerLiter = double.tryParse(priceController.text) ?? 0;
     final totalCost = double.tryParse(sumController.text) ?? volume * pricePerLiter;
 
@@ -423,6 +446,12 @@ class FuelUpScreenState extends State<FuelUpScreen> {
                   child: Card(
                     color: AppColors.neutreBlanc,
                     margin: EdgeInsets.zero,
+                    elevation: 2,
+                    shadowColor: AppColors.black,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      side: BorderSide(color: context.brandTheme.surfaceBorder),
+                    ),
                     child: Padding(
                       padding: const EdgeInsets.all(12),
                       child: _isLoadingBestStation
@@ -431,7 +460,7 @@ class FuelUpScreenState extends State<FuelUpScreen> {
                               children: [
                                 Icon(
                                   _isElectric ? Icons.ev_station : Icons.local_gas_station,
-                                  color: AppColors.blueAccent,
+                                  color: Theme.of(context).colorScheme.primary,
                                   size: 32,
                                 ),
                                 const SizedBox(width: 8),
@@ -452,8 +481,13 @@ class FuelUpScreenState extends State<FuelUpScreen> {
                                         style: _bestStation == null
                                             ? textTheme.black14bold.copyWith(
                                                 fontWeight: FontWeight.normal,
+                                                fontSize: 13.5,
+                                                color: AppColors.ink,
                                               )
-                                            : textTheme.black14bold,
+                                            : textTheme.black14bold.copyWith(
+                                                fontSize: 13.5,
+                                                color: AppColors.ink,
+                                              ),
                                         maxLines: _bestStation == null ? 2 : 1,
                                         overflow: TextOverflow.ellipsis,
                                       ),
@@ -461,14 +495,13 @@ class FuelUpScreenState extends State<FuelUpScreen> {
                                           _bestStationDistanceKm != null) ...[
                                         const SizedBox(height: 2),
                                         Text(
-                                          S
-                                              .of(context)
-                                              .best_price_nearby_distance(
-                                                _bestStationDistanceKm!
-                                                    .toStringAsFixed(1),
-                                              ),
+                                          () {
+                                            final (value, unit) = _distanceParts(_bestStationDistanceKm!);
+                                            return S.of(context).best_price_nearby_distance(value, unit);
+                                          }(),
                                           style: textTheme.bodySmall?.copyWith(
-                                            color: AppColors.grey700,
+                                            color: AppColors.textSecondary,
+                                            fontSize: 12,
                                           ),
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
@@ -480,7 +513,7 @@ class FuelUpScreenState extends State<FuelUpScreen> {
                                 if (_bestStation != null)
                                   const Icon(
                                     Icons.chevron_right,
-                                    color: AppColors.grey700,
+                                    color: AppColors.catOther,
                                   ),
                               ],
                             ),
@@ -509,13 +542,17 @@ class FuelUpScreenState extends State<FuelUpScreen> {
                   focusNode: _mileageFocusNode,
                   onChanged: _onMileageChanged,
                   onSubmitted: (_) => _advanceFromMileage(),
+                  unitLabel: settingsCubit.state.unit == 'mil' ? 'mil' : S.of(context).km,
                 ),
               ),
             ],
           ),
 
           AppSpacers.verticalXSmall,
-          Text(S.of(context).fuel_type, style: textTheme.subtitleText),
+          Text(
+            S.of(context).fuel_type,
+            style: textTheme.subtitleText.copyWith(fontSize: 12.5, fontWeight: FontWeight.w700, color: AppColors.textSecondary),
+          ),
           AppSpacers.verticalXSmall,
 
           FuelChoiceChips(
@@ -543,19 +580,48 @@ class FuelUpScreenState extends State<FuelUpScreen> {
             electric: _isElectric,
           ),
 
+          AppSpacers.verticalXSmall,
           GestureDetector(
             behavior: HitTestBehavior.opaque,
             onTap: () => _onFullTankChanged(!_fullTank),
-            child: Row(
-              children: [
-                Checkbox(value: _fullTank, onChanged: (value) => _onFullTankChanged(value ?? false)),
-                Expanded(
-                  child: Text(
-                    _isElectric ? S.of(context).full_charge : S.of(context).full_tank,
-                    style: textTheme.subtitleText,
-                  ),
+            child: Material(
+              color: AppColors.neutreBlanc,
+              elevation: 2,
+              shadowColor: AppColors.black,
+              shape: RoundedRectangleBorder(
+                side: BorderSide(color: context.brandTheme.surfaceBorder),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(12),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            _isElectric ? S.of(context).full_charge : S.of(context).full_tank,
+                            style: textTheme.subtitleText.copyWith(fontSize: 13.5, fontWeight: FontWeight.w700, color: AppColors.ink),
+                          ),
+                          const SizedBox(height: 1),
+                          Text(
+                            S.of(context).full_tank_hint,
+                            style: textTheme.bodySmall?.copyWith(fontSize: 11, color: AppColors.textSecondary),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Switch(
+                      value: _fullTank,
+                      onChanged: (value) => _onFullTankChanged(value),
+                      activeColor: AppColors.neutreBlanc,
+                      activeTrackColor: Theme.of(context).colorScheme.primary,
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
           if (_fullTank)
@@ -571,7 +637,9 @@ class FuelUpScreenState extends State<FuelUpScreen> {
                   isDense: true,
                   contentPadding: EdgeInsets.zero,
                 ),
-                style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, color: AppColors.black87),
+                style: textTheme.titleMedium
+                    ?.merge(context.brandTheme.moneyTextStyle)
+                    .copyWith(fontSize: 15, color: AppColors.ink),
                 onChanged: _onTankVolumeChanged,
               ),
             ),

@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:core_localization/generated/l10n.dart';
+import 'package:core_utils/formatters/thousands_separator_formatter.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/theme/app_brand_theme.dart';
 import 'package:design_system/widget/app_back_button.dart';
@@ -15,6 +16,8 @@ import 'package:fines_plus/features/maintenance/presentation/widgets/nearby_serv
 import '../../../../../env/env.dart';
 import 'package:fines_plus/features/expenses/data/models/car_wash_record.dart';
 import 'package:fines_plus/features/maintenance/presentation/screens/car_wash_map_screen.dart';
+import 'package:fines_plus/features/settings/presentation/cubit/settings_cubit.dart';
+import 'package:fines_plus/features/settings/presentation/cubit/unit_stream.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -59,10 +62,37 @@ class CarWashScreenState extends State<CarWashScreen> {
   }
 
   void _prefillLastMileage() {
-    final lastMileage = context.read<MaintenanceCubit>().getLastKnownMileage();
-    if (lastMileage != null) {
-      mileageController.text = lastMileage.toString();
+    final lastMileageKm = context.read<MaintenanceCubit>().getLastKnownMileage();
+    if (lastMileageKm != null) {
+      final settingsCubit = context.read<SettingsCubit>();
+      final displayValue = UnitStream(settingsCubit).convert(lastMileageKm.toDouble()).round();
+      mileageController.text = formatThousands(displayValue);
     }
+  }
+
+  /// Inverse of [UnitStream.convert]: the field shows the active unit, but
+  /// the stored record always keeps km.
+  int _mileageToKm(int displayValue) {
+    final unit = context.read<SettingsCubit>().state.unit;
+    return unit == 'mil' ? (displayValue / 0.621371).round() : displayValue;
+  }
+
+  /// A distance in km, converted to the active unit and paired with its
+  /// label - for the "X.X km/mi away" nearby-wash text.
+  (String value, String unit) _distanceParts(double km) {
+    final settingsCubit = context.read<SettingsCubit>();
+    final converted = UnitStream(settingsCubit).convert(km);
+    final unit = settingsCubit.state.unit == 'mil' ? 'mi' : S.of(context).km;
+    return (converted.toStringAsFixed(1), unit);
+  }
+
+  String _washDistanceLabel(Map<String, dynamic>? wash) {
+    final s = S.of(context);
+    if (wash == null) return s.service_retry;
+    final (value, unit) = _distanceParts(serviceDistanceKm(wash, _currentPosition!));
+    return ((wash['rating'] as num?) ?? 0) > 0
+        ? s.car_wash_best_rating_distance(value, unit)
+        : s.distance_km_short(value, unit);
   }
 
   @override
@@ -156,7 +186,6 @@ class CarWashScreenState extends State<CarWashScreen> {
   }
 
   Widget _buildStationCard() {
-    final textTheme = Theme.of(context).textTheme;
     final s = S.of(context);
     final title = _locationUnavailable
         ? s.car_wash_location_unavailable
@@ -169,6 +198,8 @@ class CarWashScreenState extends State<CarWashScreen> {
               .join(' — ');
     return Material(
       color: AppColors.neutreBlanc,
+      elevation: 2,
+      shadowColor: AppColors.black,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
         side: BorderSide(color: context.brandTheme.surfaceBorder),
@@ -191,9 +222,9 @@ class CarWashScreenState extends State<CarWashScreen> {
                 )
               : Row(
                   children: [
-                    const Icon(
+                    Icon(
                       Icons.local_car_wash,
-                      color: AppColors.blueAccent,
+                      color: Theme.of(context).colorScheme.primary,
                       size: 24,
                     ),
                     const SizedBox(width: 12),
@@ -205,37 +236,19 @@ class CarWashScreenState extends State<CarWashScreen> {
                             title,
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
-                            style: textTheme.bodyMedium?.copyWith(
-                              fontWeight: FontWeight.w600,
-                            ),
+                            style: const TextStyle(fontSize: 13.5, fontWeight: FontWeight.w700, color: AppColors.ink),
                           ),
                           const SizedBox(height: 2),
                           Text(
-                            _bestCarWash == null
-                                ? s.service_retry
-                                : ((_bestCarWash!['rating'] as num?) ?? 0) > 0
-                                ? s.car_wash_best_rating_distance(
-                                    serviceDistanceKm(
-                                      _bestCarWash!,
-                                      _currentPosition!,
-                                    ).toStringAsFixed(1),
-                                  )
-                                : s.distance_km_short(
-                                    serviceDistanceKm(
-                                      _bestCarWash!,
-                                      _currentPosition!,
-                                    ).toStringAsFixed(1),
-                                  ),
-                            style: textTheme.bodySmall?.copyWith(
-                              color: AppColors.grey700,
-                            ),
+                            _washDistanceLabel(_bestCarWash),
+                            style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
                           ),
                         ],
                       ),
                     ),
                     Icon(
                       _bestCarWash == null ? Icons.refresh : Icons.chevron_right,
-                      color: AppColors.grey700,
+                      color: AppColors.catOther,
                     ),
                   ],
                 ),
@@ -262,7 +275,7 @@ class CarWashScreenState extends State<CarWashScreen> {
           leading: AppBackButton(onPressed: widget.onBack),
           actions: [
             IconButton(
-              icon: const Icon(Icons.check, color: AppColors.blue700, size: 50),
+              icon: Icon(Icons.check, color: Theme.of(context).colorScheme.primary, size: 50),
               onPressed: save,
             ),
           ],
@@ -296,13 +309,17 @@ class CarWashScreenState extends State<CarWashScreen> {
                   textTheme: textTheme,
                   controller: mileageController,
                   focusNode: _mileageFocusNode,
+                  unitLabel: context.watch<SettingsCubit>().state.unit == 'mil' ? 'mil' : S.of(context).km,
                 ),
               ),
             ],
           ),
 
           AppSpacers.verticalMedium,
-          Text(S.of(context).price, style: textTheme.subtitleText),
+          Text(
+            S.of(context).price,
+            style: textTheme.subtitleText.copyWith(fontSize: 12.5, fontWeight: FontWeight.w700, color: AppColors.textSecondary),
+          ),
           AppSpacers.verticalMedium,
           CostInputCard(controller: costController),
 
@@ -325,7 +342,7 @@ class CarWashScreenState extends State<CarWashScreen> {
       return;
     }
 
-    final mileage = int.tryParse(mileageController.text) ?? 0;
+    final mileage = _mileageToKm(int.tryParse(stripThousandsSeparator(mileageController.text)) ?? 0);
     final cost = double.tryParse(costController.text) ?? 0;
 
     final record = CarWashRecord(

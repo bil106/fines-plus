@@ -1,7 +1,6 @@
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/theme/app_brand_theme.dart';
-import 'package:design_system/constants/app_borders.dart';
 import 'package:fines_plus/app/router/home_screen_wrapper.dart';
 import 'package:fines_plus/core/config/app_config.dart';
 import 'package:fines_plus/core/extensions/currency_service.dart';
@@ -62,16 +61,16 @@ class FinesAlertCard extends StatelessWidget {
             : locale == 'uk'
             ? _unpaidFinesLabelUk(unpaidCount)
             : _unpaidFinesLabelEn(unpaidCount);
-        final bgColor = hasFines ? context.brandTheme.alertBg : AppColors.green.withOpacity(0.12);
-        final borderColor = hasFines ? context.brandTheme.alertBorder : AppColors.green.withOpacity(0.4);
-        final fgColor = hasFines ? context.brandTheme.alertFg : AppColors.green;
+        final bgColor = hasFines ? context.brandTheme.alertBg : context.brandTheme.statusSuccessBg;
+        final borderColor = hasFines ? context.brandTheme.alertBorder : AppColors.successCardBorder;
+        final fgColor = hasFines ? context.brandTheme.alertFg : context.brandTheme.statusSuccess;
 
         return Padding(
           padding: const EdgeInsets.only(top: 10),
           child: Material(
             color: AppColors.transparent,
             child: InkWell(
-              borderRadius: AppBorders.radiusMedium,
+              borderRadius: BorderRadius.circular(10),
               onTap: () => context.findAncestorStateOfType<HomeScreenWrapperState>()?.openPage(HomePage.fines),
               child: Container(
                 width: double.infinity,
@@ -79,23 +78,33 @@ class FinesAlertCard extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: bgColor,
                   border: Border.all(color: borderColor),
-                  borderRadius: AppBorders.radiusMedium,
+                  borderRadius: BorderRadius.circular(10),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      title,
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.w800,
-                        color: fgColor,
-                      ),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (!hasFines) ...[
+                          Icon(Icons.check, size: 16, color: fgColor),
+                          const SizedBox(width: 6),
+                        ],
+                        Text(
+                          title,
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.w800,
+                            fontSize: 13,
+                            color: fgColor,
+                          ),
+                        ),
+                      ],
                     ),
                     if (hasFines) ...[
                       const SizedBox(height: 2),
                       Text(
                         '${converted.toStringAsFixed(0)} $currency',
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(color: AppColors.black),
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(color: AppColors.ink),
                       ),
                     ],
                   ],

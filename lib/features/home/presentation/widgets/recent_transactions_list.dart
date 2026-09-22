@@ -179,7 +179,10 @@ class RecentTransactionsList extends StatelessWidget {
           child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(S.of(context).recent_transactions, style: textTheme.titleSmall),
+            Text(
+              S.of(context).recent_transactions,
+              style: textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600, fontSize: 13),
+            ),
             const SizedBox(height: 4),
             for (final item in items)
               Container(
@@ -203,17 +206,17 @@ class RecentTransactionsList extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(item.label, style: textTheme.bodyMedium),
+                          Text(item.label, style: textTheme.bodyMedium?.copyWith(fontSize: 13)),
                           Text(
                             '${_categoryLabel(item.category, context)} · ${item.date.day} ${_kUkMonthsShort[item.date.month - 1]}',
-                            style: textTheme.bodySmall?.copyWith(color: AppColors.grey700),
+                            style: textTheme.bodySmall?.copyWith(color: AppColors.grey700, fontSize: 11),
                           ),
                         ],
                       ),
                     ),
                     Text(
                       '${currencyService.convert(item.amount, currency, fromCurrency: item.currency).toStringAsFixed(0)} $currency',
-                      style: textTheme.bodyMedium?.merge(context.brandTheme.moneyTextStyle),
+                      style: textTheme.bodyMedium?.merge(context.brandTheme.moneyTextStyle).copyWith(fontSize: 13),
                     ),
                   ],
                 ),

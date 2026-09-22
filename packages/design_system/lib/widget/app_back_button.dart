@@ -13,7 +13,7 @@ class AppBackButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: SizedBox.square(
-        dimension: 48,
+        dimension: 32,
         child: IconButton(
           tooltip: MaterialLocalizations.of(context).backButtonTooltip,
           onPressed: onPressed ?? () => Navigator.maybePop(context),
@@ -25,7 +25,7 @@ class AppBackButton extends StatelessWidget {
               side: BorderSide(color: context.brandTheme.surfaceBorder),
             ),
           ),
-          icon: const Icon(Icons.chevron_left, size: 24),
+          icon: const Icon(Icons.chevron_left, size: 16),
         ),
       ),
     );

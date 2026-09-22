@@ -16,7 +16,9 @@
    "auto": "Авто",
    "fines": "Штрафи",
    "reminder": "Нагадування",
-   "no_reminders": "Немає нагадувань",
+   "no_reminders": "Немає активних нагадувань",
+   "no_reminders_body": "Додайте нагадування про ТО, страхування чи техогляд, щоб нічого не пропустити",
+   "add_reminder_button": "Додати нагадування",
    "support": "Підтримка",
    "contact_us": "Зв'яжіться з нами:",
    "phone": "Телефон",
@@ -368,10 +370,13 @@
    "car_wash_no_nearby": "Поруч не знайдено автомийок",
    "car_wash_location_unavailable": "Дозвольте геолокацію, щоб знайти автомийки поруч",
    "car_wash_load_failed": "Не вдалося завантажити автомийки",
-   "car_wash_best_rating_distance": "Найкращий рейтинг поруч · {distance} км",
+   "car_wash_best_rating_distance": "Найкращий рейтинг поруч · {distance} {unit}",
    "@car_wash_best_rating_distance": {
       "placeholders": {
          "distance": {
+            "type": "String"
+         },
+         "unit": {
             "type": "String"
          }
       }
@@ -382,8 +387,8 @@
    "no_tokens_yet": "Токенів поки немає",
    "tokens_already_present": "Токени вже є",
    "no_nearby_station": "Немає даних про найближчу заправку",
-   "best_price_nearby_distance": "Найвигідніша ціна поруч · {distance} км",
-   "distance_km_short": "{distance} км",
+   "best_price_nearby_distance": "Найвигідніша ціна поруч · {distance} {unit}",
+   "distance_km_short": "{distance} {unit}",
    "build_route": "Прокласти маршрут",
    "loaded": "Завантажено",
    "open_site": "Увійти у e-Drive",
@@ -438,6 +443,7 @@
    "selected": "Вибрано",
    "select_plan": "Виберіть план",
    "full_tank": "Повний бак",
+   "full_tank_hint": "Потрібно для точного розрахунку витрати",
    "total_costs": "Витрати",
    "oil_icon": "Олива",
    "coolant_icon": "Охолодження",
@@ -482,18 +488,18 @@
    "miss": "Пропустити",
    "done": "Готово",
    "no_plan_selected": "План не обрано",
-   "month_jan": "Січ",
-   "month_feb": "Лют",
-   "month_mar": "Бер",
-   "month_apr": "Квіт",
-   "month_may": "Трав",
-   "month_jun": "Черв",
-   "month_jul": "Лип",
-   "month_aug": "Серп",
-   "month_sep": "Верес",
-   "month_oct": "Жовт",
-   "month_nov": "Лист",
-   "month_dec": "Груд",
+   "month_jan": "Січень",
+   "month_feb": "Лютий",
+   "month_mar": "Березень",
+   "month_apr": "Квітень",
+   "month_may": "Травень",
+   "month_jun": "Червень",
+   "month_jul": "Липень",
+   "month_aug": "Серпень",
+   "month_sep": "Вересень",
+   "month_oct": "Жовтень",
+   "month_nov": "Листопад",
+   "month_dec": "Грудень",
    "home": "Дім",
    "units": "Одиниці",
    "currency": "Валюта",
@@ -605,18 +611,20 @@
    },
    "@best_price_nearby_distance": {
      "placeholders": {
-       "distance": { "type": "String" }
+       "distance": { "type": "String" },
+       "unit": { "type": "String" }
      }
    },
    "@distance_km_short": {
      "placeholders": {
-       "distance": { "type": "String" }
+       "distance": { "type": "String" },
+       "unit": { "type": "String" }
      }
    },
    "service_completed_work": "Виконані роботи",
    "service_add_work": "Додати роботу",
    "service_no_rating": "Без рейтингу",
-   "service_best_rating_distance": "Найкращий рейтинг поруч · {distance} км",
+   "service_best_rating_distance": "Найкращий рейтинг поруч · {distance} {unit}",
    "service_no_nearby": "Поруч не знайдено СТО",
    "service_location_unavailable": "Дозвольте геолокацію, щоб знайти СТО поруч",
    "service_load_failed": "Не вдалося завантажити СТО",
@@ -625,6 +633,9 @@
    "@service_best_rating_distance": {
       "placeholders": {
          "distance": {
+            "type": "String"
+         },
+         "unit": {
             "type": "String"
          }
       }

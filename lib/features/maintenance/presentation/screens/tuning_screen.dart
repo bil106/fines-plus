@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 
 import 'package:core_localization/generated/l10n.dart';
+import 'package:core_utils/formatters/thousands_separator_formatter.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/theme/app_brand_theme.dart';
 import 'package:design_system/widget/app_back_button.dart';
@@ -21,6 +22,7 @@ import '../../../../../env/env.dart';
 import 'package:fines_plus/features/expenses/data/models/tuning_record.dart';
 import 'package:fines_plus/features/maintenance/presentation/screens/service_map_screen.dart';
 import 'package:fines_plus/features/settings/presentation/cubit/settings_cubit.dart';
+import 'package:fines_plus/features/settings/presentation/cubit/unit_stream.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -90,10 +92,37 @@ class TuningScreenState extends State<TuningScreen> {
   }
 
   void _prefillLastMileage() {
-    final lastMileage = context.read<MaintenanceCubit>().getLastKnownMileage();
-    if (lastMileage != null) {
-      mileageController.text = lastMileage.toString();
+    final lastMileageKm = context.read<MaintenanceCubit>().getLastKnownMileage();
+    if (lastMileageKm != null) {
+      final settingsCubit = context.read<SettingsCubit>();
+      final displayValue = UnitStream(settingsCubit).convert(lastMileageKm.toDouble()).round();
+      mileageController.text = formatThousands(displayValue);
     }
+  }
+
+  /// Inverse of [UnitStream.convert]: the field shows the active unit, but
+  /// the stored record always keeps km.
+  int _mileageToKm(int displayValue) {
+    final unit = context.read<SettingsCubit>().state.unit;
+    return unit == 'mil' ? (displayValue / 0.621371).round() : displayValue;
+  }
+
+  /// A distance in km, converted to the active unit and paired with its
+  /// label - for the "X.X km/mi away" nearby-station text.
+  (String value, String unit) _distanceParts(double km) {
+    final settingsCubit = context.read<SettingsCubit>();
+    final converted = UnitStream(settingsCubit).convert(km);
+    final unit = settingsCubit.state.unit == 'mil' ? 'mi' : S.of(context).km;
+    return (converted.toStringAsFixed(1), unit);
+  }
+
+  String _stationDistanceLabel(Map<String, dynamic>? station) {
+    final s = S.of(context);
+    if (station == null) return s.service_retry;
+    final (value, unit) = _distanceParts(serviceDistanceKm(station, _currentPosition!));
+    return ((station['rating'] as num?) ?? 0) > 0
+        ? s.service_best_rating_distance(value, unit)
+        : s.distance_km_short(value, unit);
   }
 
   @override
@@ -208,7 +237,7 @@ class TuningScreenState extends State<TuningScreen> {
           leading: AppBackButton(onPressed: widget.onBack),
           actions: [
             IconButton(
-              icon: const Icon(Icons.check, color: AppColors.blue700, size: 50),
+              icon: Icon(Icons.check, color: Theme.of(context).colorScheme.primary, size: 50),
               onPressed: save,
             ),
           ],
@@ -233,10 +262,7 @@ class TuningScreenState extends State<TuningScreen> {
           AppSpacers.verticalMedium,
           Text(
             S.of(context).service_completed_work,
-            style: textTheme.bodyMedium?.copyWith(
-              fontWeight: FontWeight.w600,
-              color: AppColors.grey700,
-            ),
+            style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.w700, color: AppColors.textSecondary),
           ),
           AppSpacers.verticalMedium,
           for (final work in _works) _buildWorkRow(work, settingsCubit),
@@ -260,7 +286,6 @@ class TuningScreenState extends State<TuningScreen> {
   }
 
   Widget _buildStationCard() {
-    final textTheme = Theme.of(context).textTheme;
     final s = S.of(context);
     final title = _locationUnavailable
         ? s.service_location_unavailable
@@ -273,6 +298,8 @@ class TuningScreenState extends State<TuningScreen> {
               .join(' — ');
     return Material(
       color: AppColors.neutreBlanc,
+      elevation: 2,
+      shadowColor: AppColors.black,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
         side: BorderSide(color: context.brandTheme.surfaceBorder),
@@ -295,9 +322,9 @@ class TuningScreenState extends State<TuningScreen> {
                 )
               : Row(
                   children: [
-                    const Icon(
+                    Icon(
                       Icons.settings,
-                      color: AppColors.blueAccent,
+                      color: Theme.of(context).colorScheme.primary,
                       size: 24,
                     ),
                     const SizedBox(width: 12),
@@ -309,37 +336,16 @@ class TuningScreenState extends State<TuningScreen> {
                             title,
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
-                            style: textTheme.bodyMedium?.copyWith(
-                              fontWeight: FontWeight.w600,
-                            ),
+                            style: const TextStyle(fontSize: 13.5, fontWeight: FontWeight.w700, color: AppColors.ink),
                           ),
                           const SizedBox(height: 2),
-                          Text(
-                            _bestStation == null
-                                ? s.service_retry
-                                : ((_bestStation!['rating'] as num?) ?? 0) > 0
-                                ? s.service_best_rating_distance(
-                                    serviceDistanceKm(
-                                      _bestStation!,
-                                      _currentPosition!,
-                                    ).toStringAsFixed(1),
-                                  )
-                                : s.distance_km_short(
-                                    serviceDistanceKm(
-                                      _bestStation!,
-                                      _currentPosition!,
-                                    ).toStringAsFixed(1),
-                                  ),
-                            style: textTheme.bodySmall?.copyWith(
-                              color: AppColors.grey700,
-                            ),
-                          ),
+                          Text(_stationDistanceLabel(_bestStation), style: const TextStyle(fontSize: 12, color: AppColors.textSecondary)),
                         ],
                       ),
                     ),
                     Icon(
                       _bestStation == null ? Icons.refresh : Icons.chevron_right,
-                      color: AppColors.grey700,
+                      color: AppColors.catOther,
                     ),
                   ],
                 ),
@@ -356,127 +362,129 @@ class TuningScreenState extends State<TuningScreen> {
         ),
         AppSpacers.horizontalMediumLarge,
         Expanded(
-          child: MileageCard(textTheme: textTheme, controller: mileageController, focusNode: _mileageFocusNode),
+          child: MileageCard(
+            textTheme: textTheme,
+            controller: mileageController,
+            focusNode: _mileageFocusNode,
+            unitLabel: context.watch<SettingsCubit>().state.unit == 'mil' ? 'mil' : S.of(context).km,
+          ),
         ),
       ],
     );
   }
 
   Widget _buildWorkRow(_TuningWork work, SettingsCubit settings) {
-    final textTheme = Theme.of(context).textTheme;
     return Container(
       key: ObjectKey(work),
       margin: const EdgeInsets.only(bottom: 8),
-      padding: const EdgeInsets.only(left: 12),
-      decoration: BoxDecoration(
+      child: Material(
         color: AppColors.neutreBlanc,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: context.brandTheme.surfaceBorder),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            flex: 3,
-            child: Autocomplete<String>(
-              textEditingController: work.name,
-              focusNode: work.focus,
-              optionsMaxHeight: 180,
-              optionsBuilder: (value) => ServiceList.tuningItems
-                  .map((e) => e.name)
-                  .where((name) => name.toLowerCase().contains(value.text.toLowerCase())),
-              onSelected: (name) {
-                final item = ServiceList.tuningItems.firstWhere(
-                  (item) => item.name == name,
-                  orElse: () => ServiceItem(name: name, priceUSD: 0),
-                );
-                work.priceUah = settings.currencyService.convert(
-                  item.priceUSD,
-                  'UAH',
-                  fromCurrency: 'USD',
-                );
-                work.price.text = settings
-                    .convertFromUAH(work.priceUah)
-                    .round()
-                    .toString();
-                _updateTotal();
-              },
-              fieldViewBuilder: (context, controller, focusNode, onSubmitted) =>
-                  TextField(
-                    controller: controller,
-                    focusNode: focusNode,
-                    style: textTheme.bodyMedium?.copyWith(
-                      color: AppColors.black87,
-                    ),
-                    textCapitalization: TextCapitalization.sentences,
-                    decoration: InputDecoration(
-                      hintText: S.of(context).select_a_service,
-                      hintStyle: textTheme.bodyMedium?.copyWith(
-                        color: AppColors.neutreGrey,
+        elevation: 2,
+        shadowColor: AppColors.black,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+          side: BorderSide(color: context.brandTheme.surfaceBorder),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.only(left: 12),
+          child: Row(
+            children: [
+              Expanded(
+                flex: 3,
+                child: Autocomplete<String>(
+                  textEditingController: work.name,
+                  focusNode: work.focus,
+                  optionsMaxHeight: 180,
+                  optionsBuilder: (value) => ServiceList.tuningItems
+                      .map((e) => e.name)
+                      .where((name) => name.toLowerCase().contains(value.text.toLowerCase())),
+                  onSelected: (name) {
+                    final item = ServiceList.tuningItems.firstWhere(
+                      (item) => item.name == name,
+                      orElse: () => ServiceItem(name: name, priceUSD: 0),
+                    );
+                    work.priceUah = settings.currencyService.convert(
+                      item.priceUSD,
+                      'UAH',
+                      fromCurrency: 'USD',
+                    );
+                    work.price.text = settings
+                        .convertFromUAH(work.priceUah)
+                        .round()
+                        .toString();
+                    _updateTotal();
+                  },
+                  fieldViewBuilder: (context, controller, focusNode, onSubmitted) =>
+                      TextField(
+                        controller: controller,
+                        focusNode: focusNode,
+                        style: const TextStyle(fontSize: 13.5, color: AppColors.ink),
+                        textCapitalization: TextCapitalization.sentences,
+                        decoration: InputDecoration(
+                          hintText: S.of(context).select_a_service,
+                          hintStyle: const TextStyle(fontSize: 13.5, color: AppColors.neutreGrey),
+                          border: InputBorder.none,
+                          enabledBorder: InputBorder.none,
+                          focusedBorder: InputBorder.none,
+                          contentPadding: const EdgeInsets.symmetric(vertical: 14),
+                        ),
+                        onChanged: (_) => _updateTotal(),
+                        onSubmitted: (_) => onSubmitted(),
                       ),
-                      border: InputBorder.none,
-                      enabledBorder: InputBorder.none,
-                      focusedBorder: InputBorder.none,
-                      contentPadding: const EdgeInsets.symmetric(vertical: 14),
-                    ),
-                    onChanged: (_) => _updateTotal(),
-                    onSubmitted: (_) => onSubmitted(),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                flex: 2,
+                child: TextField(
+                  controller: work.price,
+                  textAlign: TextAlign.end,
+                  keyboardType: const TextInputType.numberWithOptions(
+                    decimal: true,
                   ),
-            ),
-          ),
-          const SizedBox(width: 8),
-          Expanded(
-            flex: 2,
-            child: TextField(
-              controller: work.price,
-              textAlign: TextAlign.end,
-              keyboardType: const TextInputType.numberWithOptions(
-                decimal: true,
-              ),
-              inputFormatters: [
-                TextInputFormatter.withFunction(
-                  (oldValue, newValue) =>
-                      RegExp(r'^\d{0,7}([.,]\d{0,2})?$').hasMatch(newValue.text)
-                      ? newValue
-                      : oldValue,
+                  inputFormatters: [
+                    TextInputFormatter.withFunction(
+                      (oldValue, newValue) =>
+                          RegExp(r'^\d{0,7}([.,]\d{0,2})?$').hasMatch(newValue.text)
+                          ? newValue
+                          : oldValue,
+                    ),
+                  ],
+                  style: const TextStyle().merge(context.brandTheme.moneyTextStyle).copyWith(fontSize: 13.5, color: AppColors.ink),
+                  decoration: InputDecoration(
+                    hintText: '0',
+                    suffixText: ' ${settings.state.currency}',
+                    suffixStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: AppColors.textSecondary),
+                    border: InputBorder.none,
+                    enabledBorder: InputBorder.none,
+                    focusedBorder: InputBorder.none,
+                    contentPadding: const EdgeInsets.symmetric(vertical: 14),
+                  ),
+                  onChanged: (value) {
+                    final amount = double.tryParse(value.replaceAll(',', '.')) ?? 0;
+                    work.priceUah = settings.convertToUAH(amount);
+                    _updateTotal();
+                  },
                 ),
-              ],
-              style: textTheme.bodyMedium
-                  ?.merge(context.brandTheme.moneyTextStyle)
-                  .copyWith(fontWeight: FontWeight.w700),
-              decoration: InputDecoration(
-                hintText: '0',
-                suffixText: ' ${settings.state.currency}',
-                suffixStyle: textTheme.bodySmall?.copyWith(
-                  fontWeight: FontWeight.w700,
-                ),
-                border: InputBorder.none,
-                enabledBorder: InputBorder.none,
-                focusedBorder: InputBorder.none,
-                contentPadding: const EdgeInsets.symmetric(vertical: 14),
               ),
-              onChanged: (value) {
-                final amount = double.tryParse(value.replaceAll(',', '.')) ?? 0;
-                work.priceUah = settings.convertToUAH(amount);
-                _updateTotal();
-              },
-            ),
+              IconButton(
+                tooltip: S.of(context).delete,
+                icon: const Icon(
+                  Icons.close,
+                  color: AppColors.catOther,
+                  size: 14,
+                ),
+                onPressed: () {
+                  work.focus.unfocus();
+                  setState(() => _works.remove(work));
+                  WidgetsBinding.instance.addPostFrameCallback(
+                    (_) => work.dispose(),
+                  );
+                },
+              ),
+            ],
           ),
-          IconButton(
-            tooltip: S.of(context).delete,
-            icon: const Icon(
-              Icons.close,
-              color: AppColors.neutreGrey,
-              size: 18,
-            ),
-            onPressed: () {
-              work.focus.unfocus();
-              setState(() => _works.remove(work));
-              WidgetsBinding.instance.addPostFrameCallback(
-                (_) => work.dispose(),
-              );
-            },
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -512,7 +520,7 @@ class TuningScreenState extends State<TuningScreen> {
       return;
     }
 
-    final mileage = int.tryParse(mileageController.text) ?? 0;
+    final mileage = _mileageToKm(int.tryParse(stripThousandsSeparator(mileageController.text)) ?? 0);
 
     final records = works
         .map(

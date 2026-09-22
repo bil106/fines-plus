@@ -134,8 +134,9 @@ class QuickAddRow extends StatelessWidget {
         Expanded(
           child: _QuickAddButton(
             icon: Icons.more_horiz,
-            iconColor: AppColors.grey700,
+            iconColor: AppColors.catOther,
             label: S.of(context).more,
+            labelColor: AppColors.textSecondary,
             onTap: () => _openMoreSheet(context, carId: carId),
           ),
         ),
@@ -166,22 +167,25 @@ class QuickAddRow extends StatelessWidget {
                     height: 4,
                     margin: const EdgeInsets.only(bottom: 12),
                     decoration: BoxDecoration(
-                      color: AppColors.neutreGreyLight,
+                      color: context.brandTheme.surfaceBorder,
                       borderRadius: AppBorders.radiusSmall,
                     ),
                   ),
                 ),
                 Text(
                   S.of(ctx).add_expense,
-                  style: Theme.of(ctx).textTheme.titleMedium,
+                  style: Theme.of(ctx).textTheme.titleMedium?.copyWith(
+                    fontSize: 19,
+                    fontWeight: FontWeight.w800,
+                  ),
                 ),
                 const SizedBox(height: 12),
                 GridView.count(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
                   crossAxisCount: 3,
-                  mainAxisSpacing: 8,
-                  crossAxisSpacing: 8,
+                  mainAxisSpacing: 10,
+                  crossAxisSpacing: 10,
                   childAspectRatio: 1.05,
                   children: [
                     _QuickAddButton(
@@ -265,7 +269,7 @@ class QuickAddRow extends StatelessWidget {
                     ),
                     _QuickAddButton(
                       icon: Icons.more_horiz,
-                      iconColor: AppColors.catOther,
+                      iconColor: AppColors.textSecondary,
                       label: S.of(ctx).other,
                       onTap: () {
                         Navigator.of(ctx).pop();
@@ -370,12 +374,17 @@ class _QuickAddButton extends StatelessWidget {
   /// [MaintenanceRing]); draws a progress ring around the icon when set.
   final double? ring;
 
+  /// Label color - defaults to [AppColors.ink]; the "More" tile uses a
+  /// muted secondary color instead, per the mockup.
+  final Color labelColor;
+
   const _QuickAddButton({
     required this.icon,
     required this.iconColor,
     required this.label,
     required this.onTap,
     this.ring,
+    this.labelColor = AppColors.ink,
   });
 
   @override
@@ -388,30 +397,31 @@ class _QuickAddButton extends StatelessWidget {
       child: Material(
         color: AppColors.neutreBlanc,
         shape: RoundedRectangleBorder(
-          borderRadius: AppBorders.radiusMedium,
+          borderRadius: BorderRadius.circular(10),
           side: BorderSide(color: context.brandTheme.surfaceBorder),
         ),
         child: InkWell(
-          borderRadius: AppBorders.radiusMedium,
+          borderRadius: BorderRadius.circular(10),
           onTap: onTap,
           child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+            padding: const EdgeInsets.fromLTRB(4, 10, 4, 8),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
               children: [
                 ring == null
-                    ? Icon(icon, color: iconColor, size: 24)
+                    ? Icon(icon, color: iconColor, size: 20)
                     : _RingIcon(icon: icon, iconColor: iconColor, remaining: ring!),
-                const SizedBox(height: 6),
+                const SizedBox(height: 4),
                 Flexible(
                   child: FittedBox(
                     fit: BoxFit.scaleDown,
                     child: Text(
                       label,
                       style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                        fontWeight: FontWeight.w800,
-                        color: AppColors.black87,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 11.5,
+                        color: labelColor,
                       ),
                     ),
                   ),
@@ -428,7 +438,7 @@ class _QuickAddButton extends StatelessWidget {
 /// The tile icon inside a progress ring: the arc is the share still left,
 /// coloured by [MaintenanceRing.color].
 class _RingIcon extends StatelessWidget {
-  static const _size = 32.0;
+  static const _size = 28.0;
 
   final IconData icon;
   final Color iconColor;
@@ -447,12 +457,17 @@ class _RingIcon extends StatelessWidget {
           SizedBox.expand(
             child: CircularProgressIndicator(
               value: remaining.clamp(0.0, 1.0),
-              strokeWidth: 3,
-              backgroundColor: AppColors.neutreGreyLight,
-              color: MaintenanceRing.color(remaining),
+              strokeWidth: 2.5,
+              backgroundColor: context.brandTheme.surfaceBorder,
+              color: MaintenanceRing.color(
+                remaining,
+                danger: context.brandTheme.statusDanger,
+                warning: context.brandTheme.statusWarning,
+                success: context.brandTheme.statusSuccess,
+              ),
             ),
           ),
-          Icon(icon, color: iconColor, size: 18),
+          Icon(icon, color: iconColor, size: 15),
         ],
       ),
     );

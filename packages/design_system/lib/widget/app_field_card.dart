@@ -1,5 +1,5 @@
 import 'package:design_system/colors/app_colors.dart';
-import 'package:design_system/constants/app_borders.dart';
+import 'package:design_system/theme/app_brand_theme.dart';
 import 'package:flutter/material.dart';
 
 /// A form field's shared "flat card" look across the quick-add sheets
@@ -21,24 +21,33 @@ class AppFieldCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-      decoration: BoxDecoration(
+      child: Material(
         color: accent == null
             ? AppColors.neutreBlanc
             : Color.alphaBlend(accent!.withValues(alpha: _accentWashAlpha), AppColors.neutreBlanc),
-        borderRadius: AppBorders.radiusMedium,
-        border: Border.all(color: accent ?? AppColors.grey300, width: accent == null ? 1 : _accentBorderWidth),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(label, style: Theme.of(context).textTheme.bodySmall?.copyWith(color: AppColors.black87)),
-          const SizedBox(height: 4),
-          child,
-        ],
+        elevation: 2,
+        shadowColor: AppColors.black,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+          side: BorderSide(
+            color: accent ?? context.brandTheme.surfaceBorder,
+            width: accent == null ? 1 : _accentBorderWidth,
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(label, style: Theme.of(context).textTheme.bodySmall?.copyWith(color: AppColors.textSecondary, fontSize: 11.5)),
+              const SizedBox(height: 4),
+              child,
+            ],
+          ),
+        ),
       ),
     );
   }

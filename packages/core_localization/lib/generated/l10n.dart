@@ -154,11 +154,31 @@ class S {
     return Intl.message('Reminder', name: 'reminder', desc: '', args: []);
   }
 
-  /// `No reminders`
+  /// `No active reminders`
   String get no_reminders {
     return Intl.message(
-      'No reminders',
+      'No active reminders',
       name: 'no_reminders',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add a reminder for service, insurance or inspection so nothing slips by`
+  String get no_reminders_body {
+    return Intl.message(
+      'Add a reminder for service, insurance or inspection so nothing slips by',
+      name: 'no_reminders_body',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add reminder`
+  String get add_reminder_button {
+    return Intl.message(
+      'Add reminder',
+      name: 'add_reminder_button',
       desc: '',
       args: [],
     );
@@ -3169,13 +3189,13 @@ class S {
     );
   }
 
-  /// `Best rated nearby · {distance} km`
-  String car_wash_best_rating_distance(String distance) {
+  /// `Best rated nearby · {distance} {unit}`
+  String car_wash_best_rating_distance(String distance, String unit) {
     return Intl.message(
-      'Best rated nearby · $distance km',
+      'Best rated nearby · $distance $unit',
       name: 'car_wash_best_rating_distance',
       desc: '',
-      args: [distance],
+      args: [distance, unit],
     );
   }
 
@@ -3239,23 +3259,23 @@ class S {
     );
   }
 
-  /// `Best price nearby · {distance} km`
-  String best_price_nearby_distance(String distance) {
+  /// `Best price nearby · {distance} {unit}`
+  String best_price_nearby_distance(String distance, String unit) {
     return Intl.message(
-      'Best price nearby · $distance km',
+      'Best price nearby · $distance $unit',
       name: 'best_price_nearby_distance',
       desc: '',
-      args: [distance],
+      args: [distance, unit],
     );
   }
 
-  /// `{distance} km`
-  String distance_km_short(String distance) {
+  /// `{distance} {unit}`
+  String distance_km_short(String distance, String unit) {
     return Intl.message(
-      '$distance km',
+      '$distance $unit',
       name: 'distance_km_short',
       desc: '',
-      args: [distance],
+      args: [distance, unit],
     );
   }
 
@@ -3734,6 +3754,16 @@ class S {
     return Intl.message('Full tank', name: 'full_tank', desc: '', args: []);
   }
 
+  /// `Needed to calculate consumption accurately`
+  String get full_tank_hint {
+    return Intl.message(
+      'Needed to calculate consumption accurately',
+      name: 'full_tank_hint',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Costs`
   String get total_costs {
     return Intl.message('Costs', name: 'total_costs', desc: '', args: []);
@@ -4074,24 +4104,24 @@ class S {
     );
   }
 
-  /// `Jan`
+  /// `January`
   String get month_jan {
-    return Intl.message('Jan', name: 'month_jan', desc: '', args: []);
+    return Intl.message('January', name: 'month_jan', desc: '', args: []);
   }
 
-  /// `Feb`
+  /// `February`
   String get month_feb {
-    return Intl.message('Feb', name: 'month_feb', desc: '', args: []);
+    return Intl.message('February', name: 'month_feb', desc: '', args: []);
   }
 
-  /// `Mar`
+  /// `March`
   String get month_mar {
-    return Intl.message('Mar', name: 'month_mar', desc: '', args: []);
+    return Intl.message('March', name: 'month_mar', desc: '', args: []);
   }
 
-  /// `Apr`
+  /// `April`
   String get month_apr {
-    return Intl.message('Apr', name: 'month_apr', desc: '', args: []);
+    return Intl.message('April', name: 'month_apr', desc: '', args: []);
   }
 
   /// `May`
@@ -4099,39 +4129,39 @@ class S {
     return Intl.message('May', name: 'month_may', desc: '', args: []);
   }
 
-  /// `Jun`
+  /// `June`
   String get month_jun {
-    return Intl.message('Jun', name: 'month_jun', desc: '', args: []);
+    return Intl.message('June', name: 'month_jun', desc: '', args: []);
   }
 
-  /// `Jul`
+  /// `July`
   String get month_jul {
-    return Intl.message('Jul', name: 'month_jul', desc: '', args: []);
+    return Intl.message('July', name: 'month_jul', desc: '', args: []);
   }
 
-  /// `Aug`
+  /// `August`
   String get month_aug {
-    return Intl.message('Aug', name: 'month_aug', desc: '', args: []);
+    return Intl.message('August', name: 'month_aug', desc: '', args: []);
   }
 
-  /// `Sep`
+  /// `September`
   String get month_sep {
-    return Intl.message('Sep', name: 'month_sep', desc: '', args: []);
+    return Intl.message('September', name: 'month_sep', desc: '', args: []);
   }
 
-  /// `Oct`
+  /// `October`
   String get month_oct {
-    return Intl.message('Oct', name: 'month_oct', desc: '', args: []);
+    return Intl.message('October', name: 'month_oct', desc: '', args: []);
   }
 
-  /// `Nov`
+  /// `November`
   String get month_nov {
-    return Intl.message('Nov', name: 'month_nov', desc: '', args: []);
+    return Intl.message('November', name: 'month_nov', desc: '', args: []);
   }
 
-  /// `Dec`
+  /// `December`
   String get month_dec {
-    return Intl.message('Dec', name: 'month_dec', desc: '', args: []);
+    return Intl.message('December', name: 'month_dec', desc: '', args: []);
   }
 
   /// `Home`
@@ -4899,13 +4929,13 @@ class S {
     );
   }
 
-  /// `Best rated nearby · {distance} km`
-  String service_best_rating_distance(String distance) {
+  /// `Best rated nearby · {distance} {unit}`
+  String service_best_rating_distance(String distance, String unit) {
     return Intl.message(
-      'Best rated nearby · $distance km',
+      'Best rated nearby · $distance $unit',
       name: 'service_best_rating_distance',
       desc: '',
-      args: [distance],
+      args: [distance, unit],
     );
   }
 
