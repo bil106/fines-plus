@@ -242,6 +242,8 @@ class _Body extends StatelessWidget {
       }
     }
 
+    if (unpaid.isEmpty) return _EmptyFines(onRefresh: onRefresh);
+
     final dueTotal = unpaid.fold<double>(
       0,
       (sum, e) => sum + _fineAmount(e.value),

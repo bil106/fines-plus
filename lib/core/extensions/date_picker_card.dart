@@ -31,11 +31,10 @@ class DatePickerCard extends StatelessWidget {
         if (picked != null) onDateSelected(picked);
       },
       child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 8),
+        margin: const EdgeInsets.symmetric(vertical: 6),
         child: Material(
           color: AppColors.neutreBlanc,
-          elevation: 2,
-          shadowColor: AppColors.black,
+          elevation: 0,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
             side: BorderSide(color: context.brandTheme.surfaceBorder),

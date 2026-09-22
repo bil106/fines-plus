@@ -44,12 +44,27 @@ class _MileageCardState extends State<MileageCard> {
     _focusNode.addListener(() {
       setState(() {});
     });
+    widget.controller.addListener(_onTextChanged);
   }
 
   @override
   void dispose() {
+    widget.controller.removeListener(_onTextChanged);
     _ownedFocusNode?.dispose();
     super.dispose();
+  }
+
+  void _onTextChanged() => setState(() {});
+
+  // TextField/InputDecorator don't report a usable intrinsic width (wrapping
+  // in IntrinsicWidth still stretches to the row's full available space), so
+  // the field's width is measured from its own text to hug the unit label.
+  double _textWidth(String text, TextStyle style) {
+    final painter = TextPainter(
+      text: TextSpan(text: text, style: style),
+      textDirection: TextDirection.ltr,
+    )..layout();
+    return painter.width;
   }
 
   @override
@@ -58,8 +73,7 @@ class _MileageCardState extends State<MileageCard> {
       margin: const EdgeInsets.symmetric(vertical: 6),
       child: Material(
         color: AppColors.neutreBlanc,
-        elevation: 2,
-        shadowColor: AppColors.black,
+        elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
           side: BorderSide(color: context.brandTheme.surfaceBorder),
@@ -86,36 +100,63 @@ class _MileageCardState extends State<MileageCard> {
                 ),
                 AppSpacers.verticalXSmall,
 
-                TextField(
-                  controller: widget.controller,
-                  focusNode: _focusNode,
-                  keyboardType: TextInputType.number,
-                  textInputAction: TextInputAction.done,
-                  inputFormatters: [
-                    FilteringTextInputFormatter.digitsOnly,
-                    MileageInputFormatter(max: 1000000),
-                    LengthLimitingTextInputFormatter(6),
-                    ThousandsSeparatorInputFormatter(),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.baseline,
+                  textBaseline: TextBaseline.alphabetic,
+                  children: [
+                    Builder(
+                      builder: (context) {
+                        final valueStyle = widget.textTheme.historyText
+                            .merge(context.brandTheme.moneyTextStyle)
+                            .copyWith(fontSize: 15, color: AppColors.ink);
+                        final hintStyle = widget.textTheme.hintText.copyWith(
+                          fontSize: 15,
+                        );
+                        final width = widget.controller.text.isEmpty
+                            ? _textWidth(S.of(context).enter_mileage, hintStyle)
+                            : _textWidth(widget.controller.text, valueStyle) +
+                                  2;
+                        return Flexible(
+                          child: SizedBox(
+                            width: width,
+                            child: TextField(
+                              controller: widget.controller,
+                              focusNode: _focusNode,
+                              keyboardType: TextInputType.number,
+                              textInputAction: TextInputAction.done,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.digitsOnly,
+                                MileageInputFormatter(max: 1000000),
+                                LengthLimitingTextInputFormatter(6),
+                                ThousandsSeparatorInputFormatter(),
+                              ],
+                              onChanged: widget.onChanged,
+                              onSubmitted: widget.onSubmitted,
+                              decoration: InputDecoration(
+                                hintText: S.of(context).enter_mileage,
+                                hintStyle: hintStyle,
+                                border: InputBorder.none,
+                                isDense: true,
+                                contentPadding: EdgeInsets.zero,
+                                focusedBorder: InputBorder.none,
+                              ),
+                              style: valueStyle,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                    if (widget.unitLabel != null)
+                      Padding(
+                        padding: const EdgeInsets.only(left: 2),
+                        child: Text(
+                          widget.unitLabel!,
+                          style: widget.textTheme.historyText
+                              .merge(context.brandTheme.moneyTextStyle)
+                              .copyWith(fontSize: 15, color: AppColors.ink),
+                        ),
+                      ),
                   ],
-                  onChanged: widget.onChanged,
-                  onSubmitted: widget.onSubmitted,
-                  decoration: InputDecoration(
-                    hintText: S.of(context).enter_mileage,
-                    hintStyle: widget.textTheme.hintText.copyWith(fontSize: 15),
-                    border: InputBorder.none,
-                    isDense: true,
-                    contentPadding: EdgeInsets.zero,
-                    focusedBorder: InputBorder.none,
-                    suffixText: widget.unitLabel == null
-                        ? null
-                        : ' ${widget.unitLabel}',
-                    suffixStyle: widget.textTheme.historyText
-                        .merge(context.brandTheme.moneyTextStyle)
-                        .copyWith(fontSize: 15, color: AppColors.textSecondary),
-                  ),
-                  style: widget.textTheme.historyText
-                      .merge(context.brandTheme.moneyTextStyle)
-                      .copyWith(fontSize: 15, color: AppColors.ink),
                 ),
               ],
             ),

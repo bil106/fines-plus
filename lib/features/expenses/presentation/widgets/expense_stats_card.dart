@@ -2,7 +2,7 @@ import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_borders.dart';
 import 'package:design_system/constants/app_spacers.dart';
-import 'package:design_system/theme/app_theme.dart';
+import 'package:design_system/theme/app_brand_theme.dart';
 import 'package:fines_plus/core/extensions/monthly_expense_stats.dart';
 import 'package:fines_plus/features/expenses/data/models/expense_category.dart';
 import 'package:fines_plus/features/settings/presentation/cubit/settings_cubit.dart';
@@ -19,30 +19,56 @@ class ExpenseStatsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: AppBorders.radiusLarge),
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: AppColors.neutreBlanc,
+        borderRadius: AppBorders.radius16,
+        border: Border.all(color: context.brandTheme.surfaceBorder),
+      ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(S.current.cost_statistics, style: textTheme.black16bold),
-            const Divider(color: AppColors.neutreGrey),
+            Text(
+              S.current.cost_statistics,
+              style: textTheme.titleSmall?.copyWith(
+                fontSize: 15,
+                fontWeight: FontWeight.w800,
+                color: AppColors.ink,
+              ),
+            ),
+            AppSpacers.verticalSmall,
+            Divider(height: 1, color: context.brandTheme.divider),
+            AppSpacers.verticalMedium,
 
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Row(
                   children: [
-                    const Icon(Icons.attach_money, size: 28, color: AppColors.energyBlue),
+                    Icon(
+                      Icons.attach_money,
+                      size: 28,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
                     AppSpacers.horizontalSmallMedium,
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(stats.monthLabel, style: textTheme.black14bold),
+                        Text(
+                          stats.monthLabel,
+                          style: textTheme.bodySmall?.copyWith(
+                            fontSize: 12,
+                            color: AppColors.textSecondary,
+                          ),
+                        ),
                         Text(
                           "${context.read<SettingsCubit>().convertFromUAH(stats.total).toStringAsFixed(0)} ${context.read<SettingsCubit>().getCurrencyLabel(context, context.read<SettingsCubit>().state.currency)}",
-                          style: textTheme.black20bold,
+                          style: textTheme.headlineSmall
+                              ?.merge(context.brandTheme.moneyTextStyle)
+                              .copyWith(fontSize: 20, color: AppColors.ink),
                         ),
                       ],
                     ),
@@ -59,7 +85,9 @@ class ExpenseStatsCard extends StatelessWidget {
                   sectionsSpace: 0.5,
                   centerSpaceRadius: 40,
                   sections: _slices().map((e) {
-                    final convertedValue = context.read<SettingsCubit>().convertFromUAH(e.value);
+                    final convertedValue = context
+                        .read<SettingsCubit>()
+                        .convertFromUAH(e.value);
                     return PieChartSectionData(
                       value: convertedValue,
                       radius: 50,
@@ -70,7 +98,10 @@ class ExpenseStatsCard extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                         color: AppColors.neutreBlanc,
                       ),
-                      borderSide: const BorderSide(color: AppColors.neutreBlanc, width: 1),
+                      borderSide: const BorderSide(
+                        color: AppColors.neutreBlanc,
+                        width: 1,
+                      ),
                     );
                   }).toList(),
                 ),
@@ -85,14 +116,19 @@ class ExpenseStatsCard extends StatelessWidget {
               childAspectRatio: 4,
               mainAxisSpacing: 6,
               crossAxisSpacing: 8,
-              children: _legend().map((e) => _LegendItem(color: e.color, text: e.text)).toList(),
+              children: _legend()
+                  .map((e) => _LegendItem(color: e.color, text: e.text))
+                  .toList(),
             ),
 
             if (onMaintenance != null)
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  TextButton(onPressed: onMaintenance, child: Text(S.current.open_statistics)),
+                  TextButton(
+                    onPressed: onMaintenance,
+                    child: Text(S.current.open_statistics),
+                  ),
                 ],
               ),
           ],
@@ -108,8 +144,15 @@ class ExpenseStatsCard extends StatelessWidget {
     final slices = <({Color color, double value})>[];
     for (final e in stats.categoryTotals.entries) {
       if (e.key == ExpenseCategory.fuel) {
-        slices.add((color: _colorForCategory(e.key), value: (e.value - electric).clamp(0.0, e.value)));
-        if (electric > 0) slices.add((color: AppColors.catElectric, value: electric.clamp(0.0, e.value)));
+        slices.add((
+          color: _colorForCategory(e.key),
+          value: (e.value - electric).clamp(0.0, e.value),
+        ));
+        if (electric > 0)
+          slices.add((
+            color: AppColors.catElectric,
+            value: electric.clamp(0.0, e.value),
+          ));
       } else {
         slices.add((color: _colorForCategory(e.key), value: e.value));
       }
@@ -121,7 +164,11 @@ class ExpenseStatsCard extends StatelessWidget {
     final items = <({Color color, String text})>[];
     for (final cat in ExpenseCategory.values) {
       items.add((color: _colorForCategory(cat), text: _categoryName(cat)));
-      if (cat == ExpenseCategory.fuel) items.add((color: AppColors.catElectric, text: S.current.fuel_electric));
+      if (cat == ExpenseCategory.fuel)
+        items.add((
+          color: AppColors.catElectric,
+          text: S.current.fuel_electric,
+        ));
     }
     return items;
   }
@@ -177,9 +224,16 @@ class _LegendItem extends StatelessWidget {
           height: 16,
           decoration: BoxDecoration(shape: BoxShape.circle, color: color),
         ),
-        const SizedBox(width: 4), 
+        const SizedBox(width: 4),
         Expanded(
-          child: FittedBox(fit: BoxFit.scaleDown, alignment: Alignment.centerLeft, child: Text(text)),
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerLeft,
+            child: Text(
+              text,
+              style: const TextStyle(fontSize: 12, color: AppColors.ink),
+            ),
+          ),
         ),
       ],
     );

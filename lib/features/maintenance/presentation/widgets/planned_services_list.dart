@@ -1,5 +1,6 @@
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
+import 'package:design_system/constants/app_spacers.dart';
 import 'package:fines_plus/features/reminders/data/models/reminder_model.dart';
 import 'package:fines_plus/features/reminders/domain/planned_service.dart';
 import 'package:fines_plus/features/reminders/presentation/cubit/reminder_cubit.dart';
@@ -29,10 +30,16 @@ class PlannedServicesList extends StatelessWidget {
       bloc: cubit,
       buildWhen: (previous, current) => previous.reminders != current.reminders,
       builder: (context, state) {
-        final planned = state.reminders
-            .where((r) => r.isPlannedService && !r.isCompleted && r.plannedCategory == category)
-            .toList()
-          ..sort((a, b) => a.dateTime.compareTo(b.dateTime));
+        final planned =
+            state.reminders
+                .where(
+                  (r) =>
+                      r.isPlannedService &&
+                      !r.isCompleted &&
+                      r.plannedCategory == category,
+                )
+                .toList()
+              ..sort((a, b) => a.dateTime.compareTo(b.dateTime));
         if (planned.isEmpty) return const SizedBox.shrink();
 
         return Padding(
@@ -47,14 +54,17 @@ class PlannedServicesList extends StatelessWidget {
                   color: AppColors.grey700,
                 ),
               ),
-              const SizedBox(height: 8),
+              AppSpacers.verticalSmall,
               ConstrainedBox(
                 constraints: const BoxConstraints(maxHeight: _maxListHeight),
                 child: ListView.separated(
                   shrinkWrap: true,
                   itemCount: planned.length,
                   separatorBuilder: (_, _) => const SizedBox(height: 8),
-                  itemBuilder: (context, index) => _PlannedServiceRow(reminder: planned[index], cubit: cubit),
+                  itemBuilder: (context, index) => _PlannedServiceRow(
+                    reminder: planned[index],
+                    cubit: cubit,
+                  ),
                 ),
               ),
             ],
@@ -77,7 +87,10 @@ class _PlannedServiceRow extends StatelessWidget {
     final tint = PlannedService.status([reminder], DateTime.now()).tint;
     final dateColor = tint == null
         ? AppColors.neutreBlanc
-        : Color.alphaBlend(tint.withValues(alpha: _dateTintAlpha), AppColors.neutreBlanc);
+        : Color.alphaBlend(
+            tint.withValues(alpha: _dateTintAlpha),
+            AppColors.neutreBlanc,
+          );
 
     return Row(
       children: [
@@ -92,10 +105,16 @@ class _PlannedServiceRow extends StatelessWidget {
         const SizedBox(width: 8),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-          decoration: BoxDecoration(color: dateColor, borderRadius: BorderRadius.circular(8)),
+          decoration: BoxDecoration(
+            color: dateColor,
+            borderRadius: BorderRadius.circular(8),
+          ),
           child: Text(
             DateFormat('dd.MM.yyyy').format(reminder.dateTime.toLocal()),
-            style: textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w700, color: AppColors.black87),
+            style: textTheme.bodySmall?.copyWith(
+              fontWeight: FontWeight.w700,
+              color: AppColors.black87,
+            ),
           ),
         ),
         PopupMenuButton<String>(
@@ -111,7 +130,10 @@ class _PlannedServiceRow extends StatelessWidget {
             PopupMenuItem(value: 'edit', child: Text(S.of(context).edit)),
             PopupMenuItem(
               value: 'delete',
-              child: Text(S.of(context).delete, style: const TextStyle(color: AppColors.red)),
+              child: Text(
+                S.of(context).delete,
+                style: const TextStyle(color: AppColors.red),
+              ),
             ),
           ],
         ),

@@ -1,6 +1,7 @@
 import 'package:core_localization/generated/l10n.dart';
 import 'package:core_utils/formatters/thousands_separator_formatter.dart';
 import 'package:design_system/colors/app_colors.dart';
+import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_brand_theme.dart';
 import 'package:design_system/widget/app_field_card.dart';
 import 'package:fines_plus/core/extensions/date_picker_card.dart';
@@ -102,7 +103,7 @@ class OtherExpenseSheetState extends State<OtherExpenseSheet> {
             ),
           ],
         ),
-        const SizedBox(height: 14),
+        AppSpacers.verticalSmall,
         AppFieldCard(
           label: S.of(context).cost,
           child: TextField(
@@ -127,7 +128,7 @@ class OtherExpenseSheetState extends State<OtherExpenseSheet> {
                 .copyWith(fontWeight: FontWeight.w800, fontSize: 15, color: AppColors.ink),
           ),
         ),
-        const SizedBox(height: 14),
+        AppSpacers.verticalMedium,
         AppFieldCard(
           label: S.of(context).comment,
           child: TextField(

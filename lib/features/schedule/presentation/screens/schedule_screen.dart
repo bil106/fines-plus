@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:auto_route/auto_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:core_localization/generated/l10n.dart';
-import 'package:design_system/theme/app_theme.dart';
+import 'package:design_system/colors/app_colors.dart';
 import 'package:fines_plus/core/helpers/push_helper.dart';
 import 'package:fines_plus/features/expenses/data/models/service_record.dart';
 import 'package:fines_plus/features/home/data/repositories/tasks_repository.dart';
@@ -273,7 +273,12 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     final hasCar = context.watch<CarCubit>().state.carId.isNotEmpty;
 
     if (!hasCar) {
-      return Center(child: Text(S.of(context).no_schedule, style: Theme.of(context).textTheme.black16bold));
+      return Center(
+        child: Text(
+          S.of(context).no_schedule,
+          style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700, color: AppColors.ink),
+        ),
+      );
     }
 
     if (scheduleCubit == null || reminderCubit == null) {

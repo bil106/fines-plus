@@ -79,7 +79,7 @@ class AppBottomSheet extends StatelessWidget {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 12, 4, 0),
+                    padding: const EdgeInsets.fromLTRB(16, 4, 4, 0),
                     child: Row(
                       children: [
                         Expanded(
@@ -96,10 +96,12 @@ class AppBottomSheet extends StatelessWidget {
                                   )),
                         ),
                         IconButton(
-                          icon: const Icon(Icons.close, color: AppColors.textSecondary, size: 14),
+                          icon: const Icon(Icons.close,
+                              color: AppColors.textSecondary, size: 14),
                           style: IconButton.styleFrom(
                             backgroundColor: AppColors.neutreBlanc,
-                            side: BorderSide(color: context.brandTheme.surfaceBorder),
+                            side: BorderSide(
+                                color: context.brandTheme.surfaceBorder),
                             shape: const CircleBorder(),
                             minimumSize: const Size(30, 30),
                           ),
@@ -126,7 +128,8 @@ class AppBottomSheet extends StatelessWidget {
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
                               padding: const EdgeInsets.symmetric(vertical: 15),
-                              textStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.w800),
+                              textStyle: const TextStyle(
+                                  fontSize: 15, fontWeight: FontWeight.w800),
                               elevation: 2,
                             ),
                             onPressed: onSave,

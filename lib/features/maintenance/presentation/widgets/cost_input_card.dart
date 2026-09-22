@@ -24,8 +24,7 @@ class CostInputCard extends StatelessWidget {
 
     return Card(
       color: AppColors.neutreBlanc,
-      elevation: 2,
-      shadowColor: AppColors.black,
+      elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: AppBorders.radiusLarge,
         side: BorderSide(color: context.brandTheme.surfaceBorder),

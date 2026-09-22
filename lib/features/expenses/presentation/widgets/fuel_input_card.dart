@@ -135,8 +135,7 @@ class FuelPriceVolumeSumRow extends StatelessWidget {
         Expanded(
           child: Material(
             color: Color.lerp(accent, AppColors.neutreBlanc, 0.88),
-            elevation: 2,
-            shadowColor: AppColors.black,
+            elevation: 0,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
               side: BorderSide(color: Color.lerp(accent, AppColors.neutreBlanc, 0.7)!),

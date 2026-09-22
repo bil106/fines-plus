@@ -1,7 +1,6 @@
 // ignore_for_file: implementation_imports
 
 import 'package:core_localization/generated/l10n.dart';
-import 'package:core_localization/src/stats_localization.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_borders.dart';
 import 'package:fines_plus/core/config/app_config.dart';
@@ -31,7 +30,12 @@ class HeroExpenseCard extends StatelessWidget {
   final StatisticsState state;
   final MainStats stats;
 
-  const HeroExpenseCard({super.key, required this.hasCar, required this.state, required this.stats});
+  const HeroExpenseCard({
+    super.key,
+    required this.hasCar,
+    required this.state,
+    required this.stats,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +44,9 @@ class HeroExpenseCard extends StatelessWidget {
     final settingsCubit = context.watch<SettingsCubit>();
     final currency = settingsCubit.state.currency;
     final unitStream = UnitStream(settingsCubit);
-    final accent = ThemeConfig.hexToColor(context.watch<AppConfig>().primaryColorHex);
+    final accent = ThemeConfig.hexToColor(
+      context.watch<AppConfig>().primaryColorHex,
+    );
 
     final presenter = StatisticsCostsPresenter(
       state: state,
@@ -52,12 +58,22 @@ class HeroExpenseCard extends StatelessWidget {
     final current = state.expenseStats.total;
     final segments = _segments(context, state.expenseStats);
     final previous = state.previousExpenseStats.total;
-    final deltaPercent = previous > 0 ? ((current - previous) / previous * 100) : null;
+    final deltaPercent = previous > 0
+        ? ((current - previous) / previous * 100)
+        : null;
 
-    final costPerKmConverted = currencyService.convert(stats.costPerKm, currency, fromCurrency: S.of(context).grn);
-    final mileageUnit = settingsCubit.state.unit == 'mil' ? 'mil' : S.of(context).km;
+    final costPerKmConverted = currencyService.convert(
+      stats.costPerKm,
+      currency,
+      fromCurrency: S.of(context).grn,
+    );
+    final mileageUnit = settingsCubit.state.unit == 'mil'
+        ? 'mil'
+        : S.of(context).km;
     final fuelValue = unitStream.convertFuel(stats.averageFuelConsumption);
-    final fuelUnit = settingsCubit.state.fuelConsumptionUnit == 'l/100km' ? "l/100${S.of(context).km}" : "mpg";
+    final fuelUnit = settingsCubit.state.fuelConsumptionUnit == 'l/100km'
+        ? "l/100${S.of(context).km}"
+        : "mpg";
 
     return Container(
       width: double.infinity,
@@ -84,9 +100,12 @@ class HeroExpenseCard extends StatelessWidget {
         children: [
           Text(
             presenter.currentMonthLabel,
-            style: textTheme.bodySmall?.copyWith(color: AppColors.grey700, fontSize: 13),
+            style: textTheme.bodySmall?.copyWith(
+              color: AppColors.grey700,
+              fontSize: 13,
+            ),
           ),
-          const SizedBox(height: 2),
+          const SizedBox(height: 6),
           Row(
             crossAxisAlignment: CrossAxisAlignment.baseline,
             textBaseline: TextBaseline.alphabetic,
@@ -95,10 +114,18 @@ class HeroExpenseCard extends StatelessWidget {
                 hasCar ? presenter.currentFormatted : "0",
                 // Brand money font (tabular mono figures by default),
                 // per-flavor via AppConfig.monoFontFamily.
-                style: textTheme.headlineMedium?.merge(context.brandTheme.moneyTextStyle).copyWith(fontSize: 34),
+                style: textTheme.headlineMedium
+                    ?.merge(context.brandTheme.moneyTextStyle)
+                    .copyWith(fontSize: 34),
               ),
               const SizedBox(width: 4),
-              Text(currency, style: textTheme.titleMedium?.copyWith(color: AppColors.grey700, fontSize: 18)),
+              Text(
+                currency,
+                style: textTheme.titleMedium?.copyWith(
+                  color: AppColors.grey700,
+                  fontSize: 18,
+                ),
+              ),
             ],
           ),
           if (hasCar && deltaPercent != null) ...[
@@ -108,13 +135,17 @@ class HeroExpenseCard extends StatelessWidget {
                 Icon(
                   deltaPercent <= 0 ? Icons.arrow_downward : Icons.arrow_upward,
                   size: 14,
-                  color: deltaPercent <= 0 ? context.brandTheme.statusSuccess : context.brandTheme.statusDanger,
+                  color: deltaPercent <= 0
+                      ? context.brandTheme.statusSuccess
+                      : context.brandTheme.statusDanger,
                 ),
                 const SizedBox(width: 2),
                 Text(
                   '${deltaPercent.abs().toStringAsFixed(0)}% ${presenter.previousMonthLabel}',
                   style: textTheme.bodySmall?.copyWith(
-                    color: deltaPercent <= 0 ? context.brandTheme.statusSuccess : context.brandTheme.statusDanger,
+                    color: deltaPercent <= 0
+                        ? context.brandTheme.statusSuccess
+                        : context.brandTheme.statusDanger,
                     fontWeight: FontWeight.w600,
                     fontSize: 13,
                   ),
@@ -124,7 +155,7 @@ class HeroExpenseCard extends StatelessWidget {
           ],
 
           if (hasCar && current > 0) ...[
-            const SizedBox(height: 12),
+            const SizedBox(height: 6),
             _CategoryBar(segments: segments, total: current),
             const SizedBox(height: 8),
             _CategoryLegend(
@@ -135,7 +166,7 @@ class HeroExpenseCard extends StatelessWidget {
             ),
           ],
 
-          const SizedBox(height: 12),
+          const SizedBox(height: 6),
           Divider(height: 1, color: context.brandTheme.surfaceBorder),
           const SizedBox(height: 10),
           Row(
@@ -204,7 +235,11 @@ class _Segment {
   final String label;
   final double amount;
 
-  const _Segment({required this.color, required this.label, required this.amount});
+  const _Segment({
+    required this.color,
+    required this.label,
+    required this.amount,
+  });
 }
 
 List<_Segment> _segments(BuildContext context, MonthlyExpenseStats stats) {
@@ -215,13 +250,31 @@ List<_Segment> _segments(BuildContext context, MonthlyExpenseStats stats) {
       final electric = stats.electricTotal.clamp(0.0, amount);
       amount -= electric;
       if (amount > 0) {
-        result.add(_Segment(color: _categoryColor(category), label: _categoryLabel(category, context), amount: amount));
+        result.add(
+          _Segment(
+            color: _categoryColor(category),
+            label: _categoryLabel(category, context),
+            amount: amount,
+          ),
+        );
       }
       if (electric > 0) {
-        result.add(_Segment(color: AppColors.catElectric, label: S.of(context).fuel_electric, amount: electric));
+        result.add(
+          _Segment(
+            color: AppColors.catElectric,
+            label: S.of(context).fuel_electric,
+            amount: electric,
+          ),
+        );
       }
     } else if (amount > 0) {
-      result.add(_Segment(color: _categoryColor(category), label: _categoryLabel(category, context), amount: amount));
+      result.add(
+        _Segment(
+          color: _categoryColor(category),
+          label: _categoryLabel(category, context),
+          amount: amount,
+        ),
+      );
     }
   }
   return result;
@@ -245,7 +298,10 @@ class _CategoryBar extends StatelessWidget {
           children: segments
               .map(
                 (e) => Expanded(
-                  flex: (e.amount / total * 1000).round().clamp(1, 1000).toInt(),
+                  flex: (e.amount / total * 1000)
+                      .round()
+                      .clamp(1, 1000)
+                      .toInt(),
                   child: Container(color: e.color),
                 ),
               )
@@ -275,7 +331,11 @@ class _CategoryLegend extends StatelessWidget {
       spacing: 10,
       runSpacing: 4,
       children: segments.map((e) {
-        final converted = currencyService.convert(e.amount, currency, fromCurrency: baseCurrency);
+        final converted = currencyService.convert(
+          e.amount,
+          currency,
+          fromCurrency: baseCurrency,
+        );
         return Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -287,7 +347,10 @@ class _CategoryLegend extends StatelessWidget {
             const SizedBox(width: 4),
             Text(
               '${e.label} ${converted.toStringAsFixed(0)} $currency',
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(color: AppColors.grey700, fontSize: 11),
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: AppColors.grey700,
+                fontSize: 11,
+              ),
             ),
           ],
         );
@@ -301,7 +364,11 @@ class _MiniStat extends StatelessWidget {
   final String value;
   final String unit;
 
-  const _MiniStat({required this.icon, required this.value, required this.unit});
+  const _MiniStat({
+    required this.icon,
+    required this.value,
+    required this.unit,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -309,9 +376,19 @@ class _MiniStat extends StatelessWidget {
       children: [
         Icon(icon, size: 18, color: AppColors.grey700),
         const SizedBox(width: 6),
-        Text(value, style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w700)),
+        Text(
+          value,
+          style: Theme.of(
+            context,
+          ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w700),
+        ),
         const SizedBox(width: 4),
-        Text(unit, style: Theme.of(context).textTheme.bodySmall?.copyWith(color: AppColors.grey700)),
+        Text(
+          unit,
+          style: Theme.of(
+            context,
+          ).textTheme.bodySmall?.copyWith(color: AppColors.grey700),
+        ),
       ],
     );
   }

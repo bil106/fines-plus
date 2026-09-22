@@ -72,30 +72,20 @@ class QuickAddRow extends StatelessWidget {
               ),
               onTap: () async {
                 final serviceKey = GlobalKey<ServiceScreenState>();
-                final totalUah = ValueNotifier<double>(0);
                 // ServiceScreen self-saves via MaintenanceCubit when embedded
                 // (see its `embedded` doc comment) - no need to await/save a
                 // popped list here, unlike the full-screen route.
-                try {
-                  await AppBottomSheet.show<List<ServiceRecord>>(
-                    context,
-                    title: S.of(context).maintenance,
-                    contentBuilder: (_) => ServiceScreen(
-                      key: serviceKey,
-                      embedded: true,
-                      reminderCubit: context.read<ReminderCubit>(),
-                      onTotalChanged: (value) => totalUah.value = value,
-                    ),
-                    footerBuilder: (_) => ValueListenableBuilder<double>(
-                      valueListenable: totalUah,
-                      builder: (_, total, _) => ServiceTotal(totalUah: total),
-                    ),
-                    saveLabel: S.of(context).save,
-                    onSave: () => serviceKey.currentState?.save(),
-                  );
-                } finally {
-                  totalUah.dispose();
-                }
+                await AppBottomSheet.show<List<ServiceRecord>>(
+                  context,
+                  title: S.of(context).maintenance,
+                  contentBuilder: (_) => ServiceScreen(
+                    key: serviceKey,
+                    embedded: true,
+                    reminderCubit: context.read<ReminderCubit>(),
+                  ),
+                  saveLabel: S.of(context).save,
+                  onSave: () => serviceKey.currentState?.save(),
+                );
               },
             ),
           ),
@@ -217,12 +207,11 @@ class QuickAddRow extends StatelessWidget {
                         await AppBottomSheet.show<List<TuningRecord>>(
                           context,
                           title: S.of(context).tuning,
-                          contentBuilder: (_) =>
-                              TuningScreen(
-                                key: tuningKey,
-                                embedded: true,
-                                reminderCubit: reminderCubit,
-                              ),
+                          contentBuilder: (_) => TuningScreen(
+                            key: tuningKey,
+                            embedded: true,
+                            reminderCubit: reminderCubit,
+                          ),
                           saveLabel: S.of(context).save,
                           onSave: () => tuningKey.currentState?.save(),
                         );
@@ -305,28 +294,18 @@ class QuickAddRow extends StatelessWidget {
   }) async {
     Navigator.of(ctx).pop();
     final serviceKey = GlobalKey<ServiceScreenState>();
-    final totalUah = ValueNotifier<double>(0);
-    try {
-      await AppBottomSheet.show<List<ServiceRecord>>(
-        context,
-        title: title,
-        contentBuilder: (_) => ServiceScreen(
-          key: serviceKey,
-          embedded: true,
-          category: category,
-          reminderCubit: context.read<ReminderCubit>(),
-          onTotalChanged: (value) => totalUah.value = value,
-        ),
-        footerBuilder: (_) => ValueListenableBuilder<double>(
-          valueListenable: totalUah,
-          builder: (_, total, _) => ServiceTotal(totalUah: total),
-        ),
-        saveLabel: S.of(context).save,
-        onSave: () => serviceKey.currentState?.save(),
-      );
-    } finally {
-      totalUah.dispose();
-    }
+    await AppBottomSheet.show<List<ServiceRecord>>(
+      context,
+      title: title,
+      contentBuilder: (_) => ServiceScreen(
+        key: serviceKey,
+        embedded: true,
+        category: category,
+        reminderCubit: context.read<ReminderCubit>(),
+      ),
+      saveLabel: S.of(context).save,
+      onSave: () => serviceKey.currentState?.save(),
+    );
   }
 }
 
@@ -357,7 +336,11 @@ class _PlannedTile extends StatelessWidget {
         icon: icon,
         iconColor: iconColor,
         label: label,
-        ring: MaintenanceRing.plannedRemaining(state.reminders, DateTime.now(), category: category),
+        ring: MaintenanceRing.plannedRemaining(
+          state.reminders,
+          DateTime.now(),
+          category: category,
+        ),
         onTap: onTap,
       ),
     );
@@ -404,14 +387,18 @@ class _QuickAddButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(10),
           onTap: onTap,
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(4, 10, 4, 8),
+            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 10),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
               children: [
                 ring == null
                     ? Icon(icon, color: iconColor, size: 20)
-                    : _RingIcon(icon: icon, iconColor: iconColor, remaining: ring!),
+                    : _RingIcon(
+                        icon: icon,
+                        iconColor: iconColor,
+                        remaining: ring!,
+                      ),
                 const SizedBox(height: 4),
                 Flexible(
                   child: FittedBox(
@@ -444,7 +431,11 @@ class _RingIcon extends StatelessWidget {
   final Color iconColor;
   final double remaining;
 
-  const _RingIcon({required this.icon, required this.iconColor, required this.remaining});
+  const _RingIcon({
+    required this.icon,
+    required this.iconColor,
+    required this.remaining,
+  });
 
   @override
   Widget build(BuildContext context) {

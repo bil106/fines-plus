@@ -2,7 +2,7 @@ import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_borders.dart';
 import 'package:design_system/constants/app_spacers.dart';
-import 'package:design_system/theme/app_theme.dart';
+import 'package:design_system/theme/app_brand_theme.dart';
 import 'package:fines_plus/features/expenses/presentation/widgets/expense_stats_card.dart';
 import 'package:fines_plus/features/maintenance/presentation/cubit/maintenance_cubit.dart';
 import 'package:fines_plus/features/maintenance/presentation/cubit/maintenance_state.dart';
@@ -43,56 +43,116 @@ class _StatisticsScreenView extends StatelessWidget {
         final expenseStats = state.expenseStats;
 
         if (expenseStats.total == 0) {
-          return Center(child: Text(S.of(context).no_expenses, style: Theme.of(context).textTheme.black16bold));
+          return Center(
+            child: Text(
+              S.of(context).no_expenses,
+              style: textTheme.titleSmall?.copyWith(
+                fontWeight: FontWeight.w700,
+                color: AppColors.ink,
+              ),
+            ),
+          );
         }
         final monthLabel = state.expenseStats.monthLabel;
+        final cardTitleStyle = textTheme.titleSmall?.copyWith(
+          fontSize: 15,
+          fontWeight: FontWeight.w800,
+          color: AppColors.ink,
+        );
+        final cardLabelStyle = textTheme.bodySmall?.copyWith(
+          fontSize: 12,
+          color: AppColors.textSecondary,
+        );
         return SingleChildScrollView(
           padding: const EdgeInsets.all(12),
           child: Column(
             children: [
-              Builder(
-                builder: (_) {
-                  return const SizedBox.shrink();
-                },
-              ),
-
-              Card(
-                shape: RoundedRectangleBorder(borderRadius: AppBorders.radiusLarge),
+              Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: AppColors.neutreBlanc,
+                  borderRadius: AppBorders.radius16,
+                  border: Border.all(color: context.brandTheme.surfaceBorder),
+                ),
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(S.of(context).mileage_statistics, style: textTheme.black16bold),
-                      const Divider(color: AppColors.neutreGrey),
+                      Text(
+                        S.of(context).mileage_statistics,
+                        style: cardTitleStyle,
+                      ),
                       AppSpacers.verticalSmall,
+                      Divider(height: 1, color: context.brandTheme.divider),
+                      AppSpacers.verticalMedium,
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Row(
                             children: [
-                              const Icon(Icons.directions_car, size: 28, color: AppColors.energyBlue),
+                              Icon(
+                                Icons.directions_car,
+                                size: 28,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
                               AppSpacers.horizontalSmallMedium,
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(monthLabel, style: textTheme.black16bold),
-                                  BlocSelector<MaintenanceCubit, MaintenanceState, int>(
-                                    selector: (state) => context.read<MaintenanceCubit>().getAverageMileage(),
+                                  Text(
+                                    monthLabel,
+                                    style: textTheme.bodySmall?.copyWith(
+                                      fontSize: 12,
+                                      color: AppColors.textSecondary,
+                                    ),
+                                  ),
+                                  BlocSelector<
+                                    MaintenanceCubit,
+                                    MaintenanceState,
+                                    int
+                                  >(
+                                    selector: (state) => context
+                                        .read<MaintenanceCubit>()
+                                        .getAverageMileage(),
                                     builder: (context, averageMileage) {
-                                      final settingsCubit = context.watch<SettingsCubit>();
-                                      final unitStream = UnitStream(settingsCubit);
+                                      final settingsCubit = context
+                                          .watch<SettingsCubit>();
+                                      final unitStream = UnitStream(
+                                        settingsCubit,
+                                      );
 
                                       return StreamBuilder<double>(
-                                        stream: unitStream.unitValueStream(averageMileage.toDouble()),
-                                        initialData: unitStream.convert(averageMileage.toDouble()),
+                                        stream: unitStream.unitValueStream(
+                                          averageMileage.toDouble(),
+                                        ),
+                                        initialData: unitStream.convert(
+                                          averageMileage.toDouble(),
+                                        ),
                                         builder: (context, snapshot) {
-                                          final value = snapshot.data ?? averageMileage.toDouble();
-                                          final unit = settingsCubit.state.unit == 'mil' ? 'mil' : 'km';
+                                          final value =
+                                              snapshot.data ??
+                                              averageMileage.toDouble();
+                                          final unit =
+                                              settingsCubit.state.unit == 'mil'
+                                              ? 'mil'
+                                              : 'km';
 
                                           return Text(
                                             "${value.toStringAsFixed(0)} $unit",
-                                            style: textTheme.black16bold,
+                                            style: textTheme.titleMedium
+                                                ?.merge(
+                                                  context
+                                                      .brandTheme
+                                                      .moneyTextStyle,
+                                                )
+                                                .copyWith(
+                                                  fontSize: 16,
+                                                  color: AppColors.ink,
+                                                ),
                                           );
                                         },
                                       );
@@ -103,27 +163,45 @@ class _StatisticsScreenView extends StatelessWidget {
                             ],
                           ),
 
-                          Column(
-                            children: [
-                              BlocSelector<MaintenanceCubit, MaintenanceState, int>(
-                                selector: (state) => context.read<MaintenanceCubit>().getAverageMileage(),
-                                builder: (context, averageMileage) {
-                                  final settingsCubit = context.watch<SettingsCubit>();
-                                  final unitStream = UnitStream(settingsCubit);
+                          BlocSelector<MaintenanceCubit, MaintenanceState, int>(
+                            selector: (state) => context
+                                .read<MaintenanceCubit>()
+                                .getAverageMileage(),
+                            builder: (context, averageMileage) {
+                              final settingsCubit = context
+                                  .watch<SettingsCubit>();
+                              final unitStream = UnitStream(settingsCubit);
 
-                                  return StreamBuilder<double>(
-                                    stream: unitStream.unitValueStream(averageMileage.toDouble()),
-                                    initialData: unitStream.convert(averageMileage.toDouble()),
-                                    builder: (context, snapshot) {
-                                      final value = snapshot.data ?? averageMileage.toDouble();
-                                      final unit = settingsCubit.state.unit == 'mil' ? 'mil' : 'km';
+                              return StreamBuilder<double>(
+                                stream: unitStream.unitValueStream(
+                                  averageMileage.toDouble(),
+                                ),
+                                initialData: unitStream.convert(
+                                  averageMileage.toDouble(),
+                                ),
+                                builder: (context, snapshot) {
+                                  final value =
+                                      snapshot.data ??
+                                      averageMileage.toDouble();
+                                  final unit = settingsCubit.state.unit == 'mil'
+                                      ? 'mil'
+                                      : 'km';
 
-                                      return Text("${value.toStringAsFixed(0)} $unit", style: textTheme.green20W400);
-                                    },
+                                  return Text(
+                                    "${value.toStringAsFixed(0)} $unit",
+                                    style: textTheme.titleMedium
+                                        ?.merge(
+                                          context.brandTheme.moneyTextStyle,
+                                        )
+                                        .copyWith(
+                                          fontSize: 16,
+                                          color:
+                                              context.brandTheme.statusSuccess,
+                                        ),
                                   );
                                 },
-                              ),
-                            ],
+                              );
+                            },
                           ),
                         ],
                       ),
@@ -131,11 +209,15 @@ class _StatisticsScreenView extends StatelessWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text(S.of(context).month, style: textTheme.grey12W400),
+                          Text(S.of(context).month, style: cardLabelStyle),
                           AppSpacers.horizontalMassive,
-                          Container(height: 20, width: 2, color: AppColors.neutreGrey),
+                          Container(
+                            height: 20,
+                            width: 1,
+                            color: context.brandTheme.surfaceBorder,
+                          ),
                           AppSpacers.horizontalMassive,
-                          Text(S.of(context).average, style: textTheme.grey12W400),
+                          Text(S.of(context).average, style: cardLabelStyle),
                         ],
                       ),
                     ],

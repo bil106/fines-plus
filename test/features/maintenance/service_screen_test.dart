@@ -94,11 +94,9 @@ void main() {
     addTearDown(tester.view.resetDevicePixelRatio);
     final maintenance = _Maintenance();
     final settings = _Settings(currency);
-    final total = ValueNotifier<double>(0);
     final key = GlobalKey<ServiceScreenState>();
     addTearDown(maintenance.close);
     addTearDown(settings.close);
-    addTearDown(total.dispose);
     await tester.pumpWidget(
       MultiBlocProvider(
         providers: [
@@ -142,11 +140,6 @@ void main() {
                   contentBuilder: (_) => ServiceScreen(
                     key: key,
                     embedded: true,
-                    onTotalChanged: (value) => total.value = value,
-                  ),
-                  footerBuilder: (_) => ValueListenableBuilder<double>(
-                    valueListenable: total,
-                    builder: (_, value, _) => ServiceTotal(totalUah: value),
                   ),
                 ),
                 child: const Text('Open'),

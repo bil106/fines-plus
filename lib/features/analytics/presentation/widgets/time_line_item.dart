@@ -1,7 +1,7 @@
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_borders.dart';
 import 'package:design_system/constants/app_spacers.dart';
-import 'package:design_system/theme/app_theme.dart';
+import 'package:design_system/theme/app_brand_theme.dart';
 import 'package:flutter/material.dart';
 
 class TimelineItem extends StatelessWidget {
@@ -13,7 +13,7 @@ class TimelineItem extends StatelessWidget {
   final String subtitle;
   final double amount;
   final String mileage;
-  final String currencyLabel; 
+  final String currencyLabel;
 
   const TimelineItem({
     super.key,
@@ -30,24 +30,36 @@ class TimelineItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Column(
           children: [
             Container(
-              decoration: BoxDecoration(color: iconColor.withOpacity(0.1), shape: BoxShape.circle),
+              decoration: BoxDecoration(
+                color: iconColor.withValues(alpha: 0.1),
+                shape: BoxShape.circle,
+              ),
               padding: const EdgeInsets.all(8),
               child: customIcon ?? Icon(icon, color: iconColor, size: 24),
             ),
-            Container(width: 2, height: 80, color: AppColors.grey700),
+            Container(
+              width: 2,
+              height: 60,
+              color: context.brandTheme.surfaceBorder,
+            ),
           ],
         ),
         AppSpacers.horizontalMedium,
         Expanded(
-          child: Card(
-            shape: RoundedRectangleBorder(borderRadius: AppBorders.radiusLarge),
-            margin: const EdgeInsets.only(bottom: 16),
+          child: Container(
+            margin: const EdgeInsets.only(bottom: 6),
+            decoration: BoxDecoration(
+              color: AppColors.neutreBlanc,
+              borderRadius: AppBorders.radius16,
+              border: Border.all(color: context.brandTheme.surfaceBorder),
+            ),
             child: Padding(
               padding: const EdgeInsets.all(12),
               child: Column(
@@ -57,22 +69,55 @@ class TimelineItem extends StatelessWidget {
                     alignment: Alignment.topRight,
                     child: Text(
                       date,
-                      style: Theme.of(context).textTheme.black16bold.copyWith(color: AppColors.neutreGrey),
+                      style: textTheme.bodySmall?.copyWith(
+                        fontSize: 12,
+                        color: AppColors.textSecondary,
+                      ),
                     ),
                   ),
-                  if (subtitle.isNotEmpty) Text(subtitle, style: Theme.of(context).textTheme.bodySmall),
+                  if (subtitle.isNotEmpty)
+                    Text(
+                      subtitle,
+                      style: textTheme.bodySmall?.copyWith(
+                        color: AppColors.textSecondary,
+                      ),
+                    ),
                   AppSpacers.verticalXSmall,
-                  Text(title, style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+                  Text(
+                    title,
+                    style: textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.w800,
+                      color: AppColors.ink,
+                    ),
+                  ),
                   AppSpacers.verticalSmallMedium,
                   Row(
                     children: [
-                      const Icon(Icons.attach_money, size: 16, color: AppColors.energyBlue),
+                      Icon(
+                        Icons.attach_money,
+                        size: 16,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
                       AppSpacers.horizontalXSmall,
-                      Text("${amount.toStringAsFixed(0)} $currencyLabel"), 
+                      Text(
+                        "${amount.toStringAsFixed(0)} $currencyLabel",
+                        style: textTheme.bodySmall
+                            ?.merge(context.brandTheme.moneyTextStyle)
+                            .copyWith(fontSize: 13, color: AppColors.ink),
+                      ),
                       AppSpacers.horizontalMediumLarge,
-                      const Icon(Icons.directions_car, size: 16, color: AppColors.energyBlue),
+                      Icon(
+                        Icons.directions_car,
+                        size: 16,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
                       AppSpacers.horizontalXSmall,
-                      Text(mileage),
+                      Text(
+                        mileage,
+                        style: textTheme.bodySmall
+                            ?.merge(context.brandTheme.moneyTextStyle)
+                            .copyWith(fontSize: 13, color: AppColors.ink),
+                      ),
                     ],
                   ),
                 ],

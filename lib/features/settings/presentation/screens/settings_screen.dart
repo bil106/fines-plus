@@ -3,6 +3,7 @@ import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/theme/app_brand_theme.dart';
 import 'package:design_system/widget/app_page_app_bar.dart';
+import 'package:design_system/widget/app_toggle_switch.dart';
 import 'package:fines_plus/app/router/app_router.dart';
 import 'package:fines_plus/core/config/app_config.dart';
 import 'package:fines_plus/env/env.dart';
@@ -294,22 +295,34 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 child: Column(
                   children: [
                     Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      padding: const EdgeInsets.symmetric(vertical: 6),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
                             S.of(context).app_version,
-                            style: Theme.of(context).textTheme.titleMedium?.copyWith(fontSize: 14, fontWeight: FontWeight.w400),
+                            style: Theme.of(context).textTheme.titleMedium
+                                ?.copyWith(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400,
+                                ),
                           ),
                           Text(
                             _appVersion,
-                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontSize: 13, color: AppColors.textSecondary),
+                            style: Theme.of(context).textTheme.bodyMedium
+                                ?.copyWith(
+                                  fontSize: 13,
+                                  color: AppColors.textSecondary,
+                                ),
                           ),
                         ],
                       ),
                     ),
-                    Divider(thickness: 1, height: 1, color: context.brandTheme.divider),
+                    Divider(
+                      thickness: 1,
+                      height: 1,
+                      color: context.brandTheme.divider,
+                    ),
                     _buildActionRow(
                       title: S.of(context).privacy_policy,
                       onTap: () => _openPrivacyPolicy(context),
@@ -450,7 +463,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return InkWell(
       onTap: onTap,
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 12),
+        padding: const EdgeInsets.symmetric(vertical: 6),
         child: Row(
           children: [
             if (icon != null) ...[
@@ -467,7 +480,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
               ),
             ),
-            if (icon == null) Icon(Icons.chevron_right, color: AppColors.grey700),
+            if (icon == null)
+              Icon(Icons.chevron_right, color: AppColors.grey700),
           ],
         ),
       ),
@@ -481,16 +495,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
   ) {
     final textTheme = Theme.of(context).textTheme;
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 12),
+      padding: const EdgeInsets.symmetric(vertical: 10),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Expanded(child: Text(title, style: textTheme.titleMedium?.copyWith(fontSize: 14, fontWeight: FontWeight.w400))),
-          Switch(
-            value: value,
-            onChanged: onChanged,
-            activeColor: AppColors.neutreBlanc,
-            activeTrackColor: Theme.of(context).colorScheme.primary,
+          Expanded(
+            child: Text(
+              title,
+              style: textTheme.titleMedium?.copyWith(
+                fontSize: 14,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(right: 20.0),
+            child: AppToggleSwitch(value: value, onChanged: onChanged),
           ),
         ],
       ),
@@ -507,13 +527,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final textTheme = Theme.of(context).textTheme;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 12),
+      padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
         children: [
           Expanded(
             child: Text(
               title,
-              style: textTheme.titleMedium?.copyWith(fontSize: 14, fontWeight: FontWeight.w400),
+              style: textTheme.titleMedium?.copyWith(
+                fontSize: 14,
+                fontWeight: FontWeight.w400,
+              ),
               overflow: TextOverflow.ellipsis,
             ),
           ),
@@ -539,7 +562,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     (item) => Align(
                       alignment: Alignment.centerRight,
                       child: DefaultTextStyle.merge(
-                        style: const TextStyle(fontSize: 13, color: AppColors.textSecondary),
+                        style: const TextStyle(
+                          fontSize: 13,
+                          color: AppColors.textSecondary,
+                        ),
                         child: item.child,
                       ),
                     ),

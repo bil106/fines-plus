@@ -149,8 +149,7 @@ class _ReminderFormState extends State<_ReminderForm> {
           onTap: _pickDateTime,
           child: Material(
             color: AppColors.neutreBlanc,
-            elevation: 2,
-            shadowColor: AppColors.black,
+            elevation: 0,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
               side: BorderSide(color: context.brandTheme.surfaceBorder),

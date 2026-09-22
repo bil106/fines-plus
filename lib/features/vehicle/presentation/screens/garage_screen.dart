@@ -7,8 +7,8 @@ import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_borders.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_brand_theme.dart';
-import 'package:design_system/theme/app_theme.dart';
 import 'package:design_system/widget/app_back_button.dart';
+import 'package:design_system/widget/app_field_card.dart';
 import 'package:intl/intl.dart';
 import 'package:fines_plus/features/expenses/data/models/expense.dart';
 import 'package:fines_plus/features/expenses/data/models/expense_category.dart';
@@ -422,7 +422,9 @@ class CarMileageAndStatusState extends State<CarMileageAndStatus> {
 
     final settingsCubit = context.read<SettingsCubit>();
     final unit = settingsCubit.state.unit == 'mil' ? 'mil' : S.of(context).km;
-    final displayMileage = UnitStream(settingsCubit).convert(mileage.toDouble()).round();
+    final displayMileage = UnitStream(
+      settingsCubit,
+    ).convert(mileage.toDouble()).round();
 
     if (!widget.cardStyle) {
       return Padding(
@@ -430,7 +432,8 @@ class CarMileageAndStatusState extends State<CarMileageAndStatus> {
         child: Wrap(
           spacing: 8,
           children: [
-            if (mileage > 0) Text('$displayMileage $unit', style: textTheme.bodySmall),
+            if (mileage > 0)
+              Text('$displayMileage $unit', style: textTheme.bodySmall),
             Text(
               statusText,
               style: textTheme.bodySmall?.copyWith(
@@ -619,185 +622,280 @@ Future<Map<String, String>?> showCarFormSheet(
     isScrollControlled: true,
     backgroundColor: context.brandTheme.surfaceBg,
     shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(22)),
+      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
     ),
     builder: (sheetContext) {
       return Padding(
         padding: EdgeInsets.only(
-          left: 20,
-          right: 20,
-          top: 20,
-          bottom: MediaQuery.of(sheetContext).viewInsets.bottom + 20,
+          bottom: MediaQuery.of(sheetContext).viewInsets.bottom,
         ),
         child: StatefulBuilder(
           builder: (context, setState) {
-            final textTheme = Theme.of(context).textTheme;
             final isValid =
                 carNumberController.text.isEmpty ||
                 VehicleNumberFormatter.isValid(carNumberController.text);
 
-            return SingleChildScrollView(
+            return SafeArea(
+              top: false,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  ...[
-                    Center(
-                      child: GestureDetector(
-                        onTap: isUploadingPhoto
-                            ? null
-                            : () async {
-                                setState(() => isUploadingPhoto = true);
-                                try {
-                                  if (existing == null) {
-                                    final picked = await CarPhotoUploader()
-                                        .pick();
-                                    if (picked != null) {
-                                      setState(() => photoPath = picked.path);
-                                    }
-                                  } else {
-                                    final url = await CarPhotoUploader()
-                                        .pickAndUpload(
-                                          uid: existing.ownerId,
-                                          carId: existing.carId,
-                                        );
-                                    if (url != null) {
-                                      setState(() => photoUrl = url);
-                                    }
-                                  }
-                                } catch (e) {
-                                  if (!context.mounted) return;
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                        '${S.of(context).garage_action_error}: $e',
-                                      ),
-                                    ),
-                                  );
-                                } finally {
-                                  setState(() => isUploadingPhoto = false);
-                                }
-                              },
-                        child: CircleAvatar(
-                          radius: 40,
-                          backgroundColor: AppColors.grey50,
-                          backgroundImage: photoPath.isNotEmpty
-                              ? FileImage(File(photoPath))
-                              : photoUrl.isNotEmpty
-                              ? NetworkImage(photoUrl)
-                              : null,
-                          child: isUploadingPhoto
-                              ? const CircularProgressIndicator(strokeWidth: 2)
-                              : (photoUrl.isEmpty && photoPath.isEmpty
-                                    ? const Icon(
-                                        Icons.add_a_photo_outlined,
-                                        color: AppColors.neutreGrey,
-                                      )
-                                    : null),
-                        ),
-                      ),
+                  const SizedBox(height: 12),
+                  Container(
+                    width: 36,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: context.brandTheme.surfaceBorder,
+                      borderRadius: AppBorders.radiusSmall,
                     ),
-                    AppSpacers.verticalMedium,
-                  ],
-                  Text(
-                    S.of(context).garage_make_label,
-                    style: textTheme.black28W600,
                   ),
-                  AppSpacers.verticalSmall,
-                  DropdownButtonFormField<String>(
-                    initialValue: selectedMake,
-                    isExpanded: true,
-                    hint: Text(S.of(context).garage_make_hint),
-                    items: carMakes
-                        .map(
-                          (m) => DropdownMenuItem(
-                            value: m,
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                CarMakeLogo(make: m, size: 20),
-                                AppSpacers.horizontalSmall,
-                                Text(m),
-                              ],
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 0, 4, 0),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            existing == null
+                                ? S.of(context).add_cars
+                                : S.of(context).edit,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: Theme.of(context).textTheme.titleLarge
+                                ?.copyWith(
+                                  fontSize: 19,
+                                  fontWeight: FontWeight.w800,
+                                  color: AppColors.ink,
+                                ),
+                          ),
+                        ),
+                        IconButton(
+                          icon: const Icon(
+                            Icons.close,
+                            color: AppColors.textSecondary,
+                            size: 14,
+                          ),
+                          style: IconButton.styleFrom(
+                            backgroundColor: AppColors.neutreBlanc,
+                            side: BorderSide(
+                              color: context.brandTheme.surfaceBorder,
+                            ),
+                            shape: const CircleBorder(),
+                            minimumSize: const Size(30, 30),
+                          ),
+                          onPressed: () => Navigator.pop(sheetContext),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Flexible(
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Center(
+                            child: GestureDetector(
+                              onTap: isUploadingPhoto
+                                  ? null
+                                  : () async {
+                                      setState(() => isUploadingPhoto = true);
+                                      try {
+                                        if (existing == null) {
+                                          final picked =
+                                              await CarPhotoUploader().pick();
+                                          if (picked != null) {
+                                            setState(
+                                              () => photoPath = picked.path,
+                                            );
+                                          }
+                                        } else {
+                                          final url = await CarPhotoUploader()
+                                              .pickAndUpload(
+                                                uid: existing.ownerId,
+                                                carId: existing.carId,
+                                              );
+                                          if (url != null) {
+                                            setState(() => photoUrl = url);
+                                          }
+                                        }
+                                      } catch (e) {
+                                        if (!context.mounted) return;
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
+                                          SnackBar(
+                                            content: Text(
+                                              '${S.of(context).garage_action_error}: $e',
+                                            ),
+                                          ),
+                                        );
+                                      } finally {
+                                        setState(
+                                          () => isUploadingPhoto = false,
+                                        );
+                                      }
+                                    },
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: context.brandTheme.surfaceBorder,
+                                  ),
+                                ),
+                                child: CircleAvatar(
+                                  radius: 40,
+                                  backgroundColor: AppColors.neutreBlanc,
+                                  backgroundImage: photoPath.isNotEmpty
+                                      ? FileImage(File(photoPath))
+                                      : photoUrl.isNotEmpty
+                                      ? NetworkImage(photoUrl)
+                                      : null,
+                                  child: isUploadingPhoto
+                                      ? const CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                        )
+                                      : (photoUrl.isEmpty && photoPath.isEmpty
+                                            ? const Icon(
+                                                Icons.add_a_photo_outlined,
+                                                color: AppColors.textSecondary,
+                                              )
+                                            : null),
+                                ),
+                              ),
                             ),
                           ),
-                        )
-                        .toList(),
-                    onChanged: (v) => setState(() => selectedMake = v),
-                    decoration: InputDecoration(
-                      filled: true,
-                      fillColor: AppColors.grey50,
-                      border: OutlineInputBorder(
-                        borderRadius: AppBorders.radius18,
-                        borderSide: BorderSide.none,
+                          AppSpacers.verticalMedium,
+                          AppFieldCard(
+                            label: S.of(context).garage_make_label,
+                            child: DropdownButtonFormField<String>(
+                              initialValue: selectedMake,
+                              isExpanded: true,
+                              hint: Text(
+                                S.of(context).garage_make_hint,
+                                style: const TextStyle(
+                                  fontSize: 15,
+                                  color: AppColors.textSecondary,
+                                ),
+                              ),
+                              items: carMakes
+                                  .map(
+                                    (m) => DropdownMenuItem(
+                                      value: m,
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          CarMakeLogo(make: m, size: 20),
+                                          AppSpacers.horizontalSmall,
+                                          Text(m),
+                                        ],
+                                      ),
+                                    ),
+                                  )
+                                  .toList(),
+                              onChanged: (v) =>
+                                  setState(() => selectedMake = v),
+                              style: const TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w700,
+                                color: AppColors.ink,
+                              ),
+                              decoration: const InputDecoration(
+                                border: InputBorder.none,
+                                focusedBorder: InputBorder.none,
+                                isDense: true,
+                                contentPadding: EdgeInsets.zero,
+                              ),
+                            ),
+                          ),
+                          AppSpacers.verticalMedium,
+                          AppFieldCard(
+                            label: S.of(context).car_number,
+                            child: TextField(
+                              controller: carNumberController,
+                              onChanged: (_) => setState(() {}),
+                              inputFormatters: [VehicleNumberFormatter()],
+                              textCapitalization: TextCapitalization.characters,
+                              maxLength: 8,
+                              decoration: InputDecoration(
+                                hintText: S.of(context).hint_auto_num,
+                                hintStyle: const TextStyle(
+                                  fontSize: 15,
+                                  color: AppColors.textSecondary,
+                                ),
+                                counterText: '',
+                                border: InputBorder.none,
+                                focusedBorder: InputBorder.none,
+                                isDense: true,
+                                contentPadding: EdgeInsets.zero,
+                              ),
+                              style: const TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w700,
+                                color: AppColors.ink,
+                              ),
+                            ),
+                          ),
+                          AppSpacers.verticalMedium,
+                          AppFieldCard(
+                            label: S.of(context).reg_number,
+                            child: TextField(
+                              controller: techPassportController,
+                              inputFormatters: [TechPassportFormatter()],
+                              maxLength: 9,
+                              decoration: InputDecoration(
+                                hintText: S.of(context).hint_tech_data_num,
+                                hintStyle: const TextStyle(
+                                  fontSize: 15,
+                                  color: AppColors.textSecondary,
+                                ),
+                                counterText: '',
+                                border: InputBorder.none,
+                                focusedBorder: InputBorder.none,
+                                isDense: true,
+                                contentPadding: EdgeInsets.zero,
+                              ),
+                              style: const TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w700,
+                                color: AppColors.ink,
+                              ),
+                            ),
+                          ),
+                          AppSpacers.verticalMedium,
+                          SizedBox(
+                            width: double.infinity,
+                            child: ElevatedButton(
+                              onPressed: (isValid && !isUploadingPhoto)
+                                  ? () => Navigator.pop(sheetContext, {
+                                      'carNumber': carNumberController.text,
+                                      'techPassport':
+                                          techPassportController.text,
+                                      'make': selectedMake ?? '',
+                                      'photoUrl': photoUrl,
+                                      'photoPath': photoPath,
+                                    })
+                                  : null,
+                              style: ElevatedButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 15,
+                                ),
+                                textStyle: const TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w800,
+                                ),
+                                elevation: 2,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: AppBorders.radius16,
+                                ),
+                              ),
+                              child: Text(S.of(context).save),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
-                  AppSpacers.verticalMedium,
-                  Text(S.of(context).car_number, style: textTheme.black28W600),
-                  AppSpacers.verticalSmall,
-                  TextField(
-                    controller: carNumberController,
-                    onChanged: (_) => setState(() {}),
-                    inputFormatters: [VehicleNumberFormatter()],
-                    textCapitalization: TextCapitalization.characters,
-                    maxLength: 8,
-                    decoration: InputDecoration(
-                      hintText: S.of(context).hint_auto_num,
-                      counterText: '',
-                      filled: true,
-                      fillColor: AppColors.grey50,
-                      border: OutlineInputBorder(
-                        borderRadius: AppBorders.radius18,
-                        borderSide: BorderSide.none,
-                      ),
-                    ),
-                  ),
-                  AppSpacers.verticalMedium,
-                  Text(S.of(context).reg_number, style: textTheme.black28W600),
-                  AppSpacers.verticalSmall,
-                  TextField(
-                    controller: techPassportController,
-                    inputFormatters: [TechPassportFormatter()],
-                    maxLength: 9,
-                    decoration: InputDecoration(
-                      hintText: S.of(context).hint_tech_data_num,
-                      counterText: '',
-                      filled: true,
-                      fillColor: AppColors.grey50,
-                      border: OutlineInputBorder(
-                        borderRadius: AppBorders.radius18,
-                        borderSide: BorderSide.none,
-                      ),
-                    ),
-                  ),
-                  AppSpacers.verticalMedium,
-                  SizedBox(
-                    width: double.infinity,
-                    height: 52,
-                    child: ElevatedButton(
-                      onPressed: (isValid && !isUploadingPhoto)
-                          ? () => Navigator.pop(sheetContext, {
-                              'carNumber': carNumberController.text,
-                              'techPassport': techPassportController.text,
-                              'make': selectedMake ?? '',
-                              'photoUrl': photoUrl,
-                              'photoPath': photoPath,
-                            })
-                          : null,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.blue700,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: AppBorders.radius16,
-                        ),
-                      ),
-                      child: Text(
-                        S.of(context).save,
-                        style: textTheme.buttonText,
-                      ),
-                    ),
-                  ),
-                  AppSpacers.verticalMedium,
                 ],
               ),
             );

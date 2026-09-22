@@ -257,15 +257,15 @@ class TuningScreenState extends State<TuningScreen> {
             Text(S.of(context).tuning, style: textTheme.title),
           if (!widget.embedded) AppSpacers.verticalMedium,
           _buildStationCard(),
-          AppSpacers.verticalMedium,
+          AppSpacers.verticalSmall,
           _buildDateAndMileageRow(textTheme),
-          AppSpacers.verticalMedium,
           Text(
             S.of(context).service_completed_work,
             style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.w700, color: AppColors.textSecondary),
           ),
-          AppSpacers.verticalMedium,
+          AppSpacers.verticalSmall,
           for (final work in _works) _buildWorkRow(work, settingsCubit),
+          AppSpacers.verticalSmall,
           DashedAddButton(
             label: S.of(context).service_add_work,
             onPressed: () {
@@ -298,8 +298,7 @@ class TuningScreenState extends State<TuningScreen> {
               .join(' — ');
     return Material(
       color: AppColors.neutreBlanc,
-      elevation: 2,
-      shadowColor: AppColors.black,
+      elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
         side: BorderSide(color: context.brandTheme.surfaceBorder),
@@ -379,8 +378,7 @@ class TuningScreenState extends State<TuningScreen> {
       margin: const EdgeInsets.only(bottom: 8),
       child: Material(
         color: AppColors.neutreBlanc,
-        elevation: 2,
-        shadowColor: AppColors.black,
+        elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
           side: BorderSide(color: context.brandTheme.surfaceBorder),

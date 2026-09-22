@@ -40,7 +40,7 @@ class _HomeScreenState extends State<HomeScreen> {
           backgroundColor: context.brandTheme.surfaceBg,
           centerTitle: true,
           title: Padding(
-            padding: const EdgeInsets.only(top: 10.0),
+            padding: const EdgeInsets.only(top: 2.0),
             child: BlocBuilder<CarCubit, CarState>(
               builder: (context, state) {
                 final carNumber = state.carNumber.isNotEmpty
@@ -122,7 +122,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           // per the redesign, "тапом на номер авто або іконку
                           // машинки" now both open the garage.
                           final wrapperState = context
-                              .findAncestorStateOfType<HomeScreenWrapperState>();
+                              .findAncestorStateOfType<
+                                HomeScreenWrapperState
+                              >();
                           wrapperState?.openPage(HomePage.garage);
                         },
                       ),
@@ -184,7 +186,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     },
                   ),
 
-                  AppSpacers.verticalSmallMedium,
+                  AppSpacers.verticalMedium,
                   BlocBuilder<CarCubit, CarState>(
                     builder: (context, state) {
                       if (state.carId.isEmpty) return const SizedBox.shrink();

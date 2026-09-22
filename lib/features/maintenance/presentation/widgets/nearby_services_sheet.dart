@@ -63,8 +63,7 @@ Future<Map<String, dynamic>?> showNearbyServicesSheet(
                       final address = station['vicinity'] as String? ?? '';
                       return Material(
                         color: AppColors.neutreBlanc,
-                        elevation: 2,
-                        shadowColor: AppColors.black,
+                        elevation: 0,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                           side: BorderSide(

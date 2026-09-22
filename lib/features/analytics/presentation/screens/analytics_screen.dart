@@ -103,7 +103,7 @@ class AnalyticsScreenViewState extends State<_AnalyticsScreenView> with SingleTi
             amount: record.cost.toDouble(),
             mileage: formatMileage(record.mileage),
             iconCodePoint: Icons.build.codePoint,
-            iconColorValue: AppColors.red.value,
+            iconColorValue: AppColors.catService.value,
             category: ExpenseCategory.service,
           );
         }),
@@ -123,7 +123,7 @@ class AnalyticsScreenViewState extends State<_AnalyticsScreenView> with SingleTi
             amount: record.cost.toDouble(),
             mileage: formatMileage(record.mileage),
             iconCodePoint: Icons.local_gas_station.codePoint,
-            iconColorValue: AppColors.green.value,
+            iconColorValue: AppColors.catFuel.value,
             category: ExpenseCategory.fuel,
           );
         }),
@@ -143,7 +143,7 @@ class AnalyticsScreenViewState extends State<_AnalyticsScreenView> with SingleTi
             amount: record.cost.toDouble(),
             mileage: formatMileage(record.mileage),
             iconCodePoint: Icons.build_circle.codePoint,
-            iconColorValue: AppColors.blue700.value,
+            iconColorValue: AppColors.catTuning.value,
             category: ExpenseCategory.tuning,
             customIcon: Image.asset('assets/icons/tuning.jpg', height: 24, width: 24),
           );
@@ -164,7 +164,7 @@ class AnalyticsScreenViewState extends State<_AnalyticsScreenView> with SingleTi
             amount: record.amount.toDouble(),
             mileage: formatMileage(record.mileage),
             iconCodePoint: Icons.local_car_wash.codePoint,
-            iconColorValue: AppColors.energyBlue.value,
+            iconColorValue: AppColors.catCarWash.value,
             category: ExpenseCategory.other,
           );
         }),

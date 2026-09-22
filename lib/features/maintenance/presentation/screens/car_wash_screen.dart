@@ -62,10 +62,14 @@ class CarWashScreenState extends State<CarWashScreen> {
   }
 
   void _prefillLastMileage() {
-    final lastMileageKm = context.read<MaintenanceCubit>().getLastKnownMileage();
+    final lastMileageKm = context
+        .read<MaintenanceCubit>()
+        .getLastKnownMileage();
     if (lastMileageKm != null) {
       final settingsCubit = context.read<SettingsCubit>();
-      final displayValue = UnitStream(settingsCubit).convert(lastMileageKm.toDouble()).round();
+      final displayValue = UnitStream(
+        settingsCubit,
+      ).convert(lastMileageKm.toDouble()).round();
       mileageController.text = formatThousands(displayValue);
     }
   }
@@ -89,7 +93,9 @@ class CarWashScreenState extends State<CarWashScreen> {
   String _washDistanceLabel(Map<String, dynamic>? wash) {
     final s = S.of(context);
     if (wash == null) return s.service_retry;
-    final (value, unit) = _distanceParts(serviceDistanceKm(wash, _currentPosition!));
+    final (value, unit) = _distanceParts(
+      serviceDistanceKm(wash, _currentPosition!),
+    );
     return ((wash['rating'] as num?) ?? 0) > 0
         ? s.car_wash_best_rating_distance(value, unit)
         : s.distance_km_short(value, unit);
@@ -124,15 +130,21 @@ class CarWashScreenState extends State<CarWashScreen> {
       if (!serviceEnabled ||
           permission == LocationPermission.denied ||
           permission == LocationPermission.deniedForever) {
-        if (kDebugMode) print('CarWashScreen: geolocation unavailable, using fallback position');
+        if (kDebugMode)
+          print(
+            'CarWashScreen: geolocation unavailable, using fallback position',
+          );
         if (mounted) setState(() => _locationUnavailable = true);
         await _loadNearbyWashesFrom(_fallbackPosition);
         return;
       }
 
-      final position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high)
-          .timeout(const Duration(seconds: 5));
-      await _loadNearbyWashesFrom(LatLng(position.latitude, position.longitude));
+      final position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      ).timeout(const Duration(seconds: 5));
+      await _loadNearbyWashesFrom(
+        LatLng(position.latitude, position.longitude),
+      );
     } catch (e) {
       if (kDebugMode) {
         print("Error getting car wash: $e");
@@ -198,8 +210,7 @@ class CarWashScreenState extends State<CarWashScreen> {
               .join(' — ');
     return Material(
       color: AppColors.neutreBlanc,
-      elevation: 2,
-      shadowColor: AppColors.black,
+      elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
         side: BorderSide(color: context.brandTheme.surfaceBorder),
@@ -236,18 +247,27 @@ class CarWashScreenState extends State<CarWashScreen> {
                             title,
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(fontSize: 13.5, fontWeight: FontWeight.w700, color: AppColors.ink),
+                            style: const TextStyle(
+                              fontSize: 13.5,
+                              fontWeight: FontWeight.w700,
+                              color: AppColors.ink,
+                            ),
                           ),
                           const SizedBox(height: 2),
                           Text(
                             _washDistanceLabel(_bestCarWash),
-                            style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
+                            style: const TextStyle(
+                              fontSize: 12,
+                              color: AppColors.textSecondary,
+                            ),
                           ),
                         ],
                       ),
                     ),
                     Icon(
-                      _bestCarWash == null ? Icons.refresh : Icons.chevron_right,
+                      _bestCarWash == null
+                          ? Icons.refresh
+                          : Icons.chevron_right,
                       color: AppColors.catOther,
                     ),
                   ],
@@ -266,7 +286,10 @@ class CarWashScreenState extends State<CarWashScreen> {
     }
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: const SystemUiOverlayStyle(statusBarColor: AppColors.grey50, statusBarIconBrightness: Brightness.dark),
+      value: const SystemUiOverlayStyle(
+        statusBarColor: AppColors.grey50,
+        statusBarIconBrightness: Brightness.dark,
+      ),
       child: Scaffold(
         backgroundColor: context.brandTheme.surfaceBg,
         appBar: AppBar(
@@ -275,7 +298,11 @@ class CarWashScreenState extends State<CarWashScreen> {
           leading: AppBackButton(onPressed: widget.onBack),
           actions: [
             IconButton(
-              icon: Icon(Icons.check, color: Theme.of(context).colorScheme.primary, size: 50),
+              icon: Icon(
+                Icons.check,
+                color: Theme.of(context).colorScheme.primary,
+                size: 50,
+              ),
               onPressed: save,
             ),
           ],
@@ -296,12 +323,15 @@ class CarWashScreenState extends State<CarWashScreen> {
           if (!widget.embedded) const SizedBox(height: 16),
 
           _buildStationCard(),
-          AppSpacers.verticalMedium,
+          AppSpacers.verticalSmall,
 
           Row(
             children: [
               Expanded(
-                child: DatePickerCard(selectedDate: selectedDate, onDateSelected: _onDateSelected),
+                child: DatePickerCard(
+                  selectedDate: selectedDate,
+                  onDateSelected: _onDateSelected,
+                ),
               ),
               const SizedBox(width: 16),
               Expanded(
@@ -309,21 +339,26 @@ class CarWashScreenState extends State<CarWashScreen> {
                   textTheme: textTheme,
                   controller: mileageController,
                   focusNode: _mileageFocusNode,
-                  unitLabel: context.watch<SettingsCubit>().state.unit == 'mil' ? 'mil' : S.of(context).km,
+                  unitLabel: context.watch<SettingsCubit>().state.unit == 'mil'
+                      ? 'mil'
+                      : S.of(context).km,
                 ),
               ),
             ],
           ),
 
-          AppSpacers.verticalMedium,
           Text(
             S.of(context).price,
-            style: textTheme.subtitleText.copyWith(fontSize: 12.5, fontWeight: FontWeight.w700, color: AppColors.textSecondary),
+            style: textTheme.subtitleText.copyWith(
+              fontSize: 12.5,
+              fontWeight: FontWeight.w700,
+              color: AppColors.textSecondary,
+            ),
           ),
-          AppSpacers.verticalMedium,
+          AppSpacers.verticalSmall,
           CostInputCard(controller: costController),
 
-          AppSpacers.verticalXLarge,
+          AppSpacers.verticalSmall,
           const AdBannerWidget(),
         ],
       ),
@@ -335,14 +370,21 @@ class CarWashScreenState extends State<CarWashScreen> {
   /// check action (full-screen mode) and the pinned Save button in
   /// [AppBottomSheet] (embedded mode).
   void save() {
-    if (selectedDate == null || mileageController.text.isEmpty || costController.text.isEmpty) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(backgroundColor: AppColors.blue700, content: Text(S.of(context).fill_date)));
+    if (selectedDate == null ||
+        mileageController.text.isEmpty ||
+        costController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: AppColors.blue700,
+          content: Text(S.of(context).fill_date),
+        ),
+      );
       return;
     }
 
-    final mileage = _mileageToKm(int.tryParse(stripThousandsSeparator(mileageController.text)) ?? 0);
+    final mileage = _mileageToKm(
+      int.tryParse(stripThousandsSeparator(mileageController.text)) ?? 0,
+    );
     final cost = double.tryParse(costController.text) ?? 0;
 
     final record = CarWashRecord(

@@ -96,8 +96,7 @@ class NearbyStationsSheet extends StatelessWidget {
                   final station = sorted[index];
                   return Material(
                     color: AppColors.neutreBlanc,
-                    elevation: 2,
-                    shadowColor: AppColors.black,
+                    elevation: 0,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                       side: BorderSide(color: context.brandTheme.surfaceBorder),

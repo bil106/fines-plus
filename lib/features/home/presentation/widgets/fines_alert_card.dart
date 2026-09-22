@@ -41,18 +41,29 @@ class FinesAlertCard extends StatelessWidget {
           final fineId = entry.value['id']?.toString() ?? '${entry.key}';
           if (latest.isFinePaid(fineId, entry.value)) continue;
           unpaidCount++;
-          final raw = entry.value['amount'] ?? entry.value['suma'] ?? entry.value['penalty'];
+          final raw =
+              entry.value['amount'] ??
+              entry.value['suma'] ??
+              entry.value['penalty'];
           if (raw is num) {
             unpaidTotal += raw;
           } else if (raw != null) {
-            unpaidTotal += num.tryParse(raw.toString().replaceAll(RegExp(r'[^0-9.]'), '')) ?? 0;
+            unpaidTotal +=
+                num.tryParse(
+                  raw.toString().replaceAll(RegExp(r'[^0-9.]'), ''),
+                ) ??
+                0;
           }
         }
 
         final settingsCubit = context.watch<SettingsCubit>();
         final currency = settingsCubit.state.currency;
         final currencyService = context.read<CurrencyService>();
-        final converted = currencyService.convert(unpaidTotal.toDouble(), currency, fromCurrency: S.of(context).grn);
+        final converted = currencyService.convert(
+          unpaidTotal.toDouble(),
+          currency,
+          fromCurrency: S.of(context).grn,
+        );
 
         final hasFines = unpaidCount > 0;
         final locale = Localizations.localeOf(context).languageCode;
@@ -61,20 +72,31 @@ class FinesAlertCard extends StatelessWidget {
             : locale == 'uk'
             ? _unpaidFinesLabelUk(unpaidCount)
             : _unpaidFinesLabelEn(unpaidCount);
-        final bgColor = hasFines ? context.brandTheme.alertBg : context.brandTheme.statusSuccessBg;
-        final borderColor = hasFines ? context.brandTheme.alertBorder : AppColors.successCardBorder;
-        final fgColor = hasFines ? context.brandTheme.alertFg : context.brandTheme.statusSuccess;
+        final bgColor = hasFines
+            ? context.brandTheme.alertBg
+            : context.brandTheme.statusSuccessBg;
+        final borderColor = hasFines
+            ? context.brandTheme.alertBorder
+            : AppColors.successCardBorder;
+        final fgColor = hasFines
+            ? context.brandTheme.alertFg
+            : context.brandTheme.statusSuccess;
 
         return Padding(
-          padding: const EdgeInsets.only(top: 10),
+          padding: const EdgeInsets.only(top: 12),
           child: Material(
             color: AppColors.transparent,
             child: InkWell(
               borderRadius: BorderRadius.circular(10),
-              onTap: () => context.findAncestorStateOfType<HomeScreenWrapperState>()?.openPage(HomePage.fines),
+              onTap: () => context
+                  .findAncestorStateOfType<HomeScreenWrapperState>()
+                  ?.openPage(HomePage.fines),
               child: Container(
                 width: double.infinity,
-                padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+                padding: const EdgeInsets.symmetric(
+                  vertical: 10,
+                  horizontal: 12,
+                ),
                 decoration: BoxDecoration(
                   color: bgColor,
                   border: Border.all(color: borderColor),
@@ -92,11 +114,12 @@ class FinesAlertCard extends StatelessWidget {
                         ],
                         Text(
                           title,
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            fontWeight: FontWeight.w800,
-                            fontSize: 13,
-                            color: fgColor,
-                          ),
+                          style: Theme.of(context).textTheme.bodyMedium
+                              ?.copyWith(
+                                fontWeight: FontWeight.w800,
+                                fontSize: 13,
+                                color: fgColor,
+                              ),
                         ),
                       ],
                     ),
@@ -104,7 +127,9 @@ class FinesAlertCard extends StatelessWidget {
                       const SizedBox(height: 2),
                       Text(
                         '${converted.toStringAsFixed(0)} $currency',
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(color: AppColors.ink),
+                        style: Theme.of(
+                          context,
+                        ).textTheme.bodySmall?.copyWith(color: AppColors.ink),
                       ),
                     ],
                   ],
@@ -129,4 +154,5 @@ String _unpaidFinesLabelUk(int n) {
   return '$n неоплачених штрафів';
 }
 
-String _unpaidFinesLabelEn(int n) => n == 1 ? '1 unpaid fine' : '$n unpaid fines';
+String _unpaidFinesLabelEn(int n) =>
+    n == 1 ? '1 unpaid fine' : '$n unpaid fines';

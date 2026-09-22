@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:core_utils/formatters/thousands_separator_formatter.dart';
 import 'package:design_system/colors/app_colors.dart';
+import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_brand_theme.dart';
 import 'package:design_system/widget/app_back_button.dart';
 import 'package:fines_plus/core/extensions/date_picker_card.dart';
@@ -99,7 +100,9 @@ class ServiceScreenState extends State<ServiceScreen> {
     final mileageKm = context.read<MaintenanceCubit>().getLastKnownMileage();
     if (mileageKm != null) {
       final settingsCubit = context.read<SettingsCubit>();
-      final displayValue = UnitStream(settingsCubit).convert(mileageKm.toDouble()).round();
+      final displayValue = UnitStream(
+        settingsCubit,
+      ).convert(mileageKm.toDouble()).round();
       mileageController.text = formatThousands(displayValue);
     }
     _initLocationAndService();
@@ -124,7 +127,9 @@ class ServiceScreenState extends State<ServiceScreen> {
   String _stationDistanceLabel(Map<String, dynamic>? station) {
     final s = S.of(context);
     if (station == null) return s.service_retry;
-    final (value, unit) = _distanceParts(serviceDistanceKm(station, _currentPosition!));
+    final (value, unit) = _distanceParts(
+      serviceDistanceKm(station, _currentPosition!),
+    );
     return ((station['rating'] as num?) ?? 0) > 0
         ? s.service_best_rating_distance(value, unit)
         : s.distance_km_short(value, unit);
@@ -216,7 +221,7 @@ class ServiceScreenState extends State<ServiceScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildStationCard(),
-        const SizedBox(height: 8),
+        AppSpacers.verticalSmall,
         Row(
           children: [
             Expanded(
@@ -234,18 +239,25 @@ class ServiceScreenState extends State<ServiceScreen> {
                 textTheme: Theme.of(context).textTheme,
                 controller: mileageController,
                 focusNode: _mileageFocusNode,
-                unitLabel: settings.state.unit == 'mil' ? 'mil' : S.of(context).km,
+                unitLabel: settings.state.unit == 'mil'
+                    ? 'mil'
+                    : S.of(context).km,
               ),
             ),
           ],
         ),
-        const SizedBox(height: 12),
+
         Text(
           S.of(context).service_completed_work,
-          style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.w700, color: AppColors.textSecondary),
+          style: const TextStyle(
+            fontSize: 12.5,
+            fontWeight: FontWeight.w700,
+            color: AppColors.textSecondary,
+          ),
         ),
-        const SizedBox(height: 8),
+        AppSpacers.verticalSmall,
         for (final work in _works) _buildWorkRow(work, settings),
+        AppSpacers.verticalSmall,
         DashedAddButton(
           label: S.of(context).service_add_work,
           onPressed: () {
@@ -257,7 +269,14 @@ class ServiceScreenState extends State<ServiceScreen> {
           },
         ),
         if (widget.reminderCubit != null)
-          PlannedServicesList(cubit: widget.reminderCubit!, category: widget.category),
+          PlannedServicesList(
+            cubit: widget.reminderCubit!,
+            category: widget.category,
+          ),
+        if (widget.embedded) ...[
+          AppSpacers.verticalMediumLarge,
+          ServiceTotal(totalUah: _totalUah),
+        ],
       ],
     );
     if (widget.embedded) return form;
@@ -284,7 +303,10 @@ class ServiceScreenState extends State<ServiceScreen> {
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 15),
-                    textStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.w800),
+                    textStyle: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w800,
+                    ),
                     elevation: 2,
                   ),
                   onPressed: _saving ? null : save,
@@ -312,8 +334,7 @@ class ServiceScreenState extends State<ServiceScreen> {
               .join(' — ');
     return Material(
       color: AppColors.neutreBlanc,
-      elevation: 2,
-      shadowColor: AppColors.black,
+      elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
         side: BorderSide(color: context.brandTheme.surfaceBorder),
@@ -326,7 +347,7 @@ class ServiceScreenState extends State<ServiceScreen> {
             ? _initLocationAndService
             : _openStations,
         child: Padding(
-          padding: const EdgeInsets.all(12),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           child: _loadingStations
               ? const Center(
                   child: SizedBox.square(
@@ -350,10 +371,20 @@ class ServiceScreenState extends State<ServiceScreen> {
                             title,
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(fontSize: 13.5, fontWeight: FontWeight.w700, color: AppColors.ink),
+                            style: const TextStyle(
+                              fontSize: 13.5,
+                              fontWeight: FontWeight.w700,
+                              color: AppColors.ink,
+                            ),
                           ),
                           const SizedBox(height: 2),
-                          Text(_stationDistanceLabel(station), style: const TextStyle(fontSize: 12, color: AppColors.textSecondary)),
+                          Text(
+                            _stationDistanceLabel(station),
+                            style: const TextStyle(
+                              fontSize: 12,
+                              color: AppColors.textSecondary,
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -374,8 +405,7 @@ class ServiceScreenState extends State<ServiceScreen> {
       margin: const EdgeInsets.only(bottom: 8),
       child: Material(
         color: AppColors.neutreBlanc,
-        elevation: 2,
-        shadowColor: AppColors.black,
+        elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
           side: BorderSide(color: context.brandTheme.surfaceBorder),
@@ -391,7 +421,8 @@ class ServiceScreenState extends State<ServiceScreen> {
                   focusNode: work.focus,
                   optionsMaxHeight: 180,
                   optionsBuilder: (value) => _catalogNames.where(
-                    (name) => name.toLowerCase().contains(value.text.toLowerCase()),
+                    (name) =>
+                        name.toLowerCase().contains(value.text.toLowerCase()),
                   ),
                   onSelected: (name) {
                     final item = [
@@ -409,23 +440,32 @@ class ServiceScreenState extends State<ServiceScreen> {
                         .toString();
                     _updateTotal();
                   },
-                  fieldViewBuilder: (context, controller, focusNode, onSubmitted) =>
-                      TextField(
-                        controller: controller,
-                        focusNode: focusNode,
-                        style: const TextStyle(fontSize: 13.5, color: AppColors.ink),
-                        textCapitalization: TextCapitalization.sentences,
-                        decoration: InputDecoration(
-                          hintText: S.of(context).select_a_service,
-                          hintStyle: const TextStyle(fontSize: 13.5, color: AppColors.neutreGrey),
-                          border: InputBorder.none,
-                          enabledBorder: InputBorder.none,
-                          focusedBorder: InputBorder.none,
-                          contentPadding: const EdgeInsets.symmetric(vertical: 14),
-                        ),
-                        onChanged: (_) => _updateTotal(),
-                        onSubmitted: (_) => onSubmitted(),
-                      ),
+                  fieldViewBuilder:
+                      (context, controller, focusNode, onSubmitted) =>
+                          TextField(
+                            controller: controller,
+                            focusNode: focusNode,
+                            style: const TextStyle(
+                              fontSize: 13.5,
+                              color: AppColors.ink,
+                            ),
+                            textCapitalization: TextCapitalization.sentences,
+                            decoration: InputDecoration(
+                              hintText: S.of(context).select_a_service,
+                              hintStyle: const TextStyle(
+                                fontSize: 13.5,
+                                color: AppColors.neutreGrey,
+                              ),
+                              border: InputBorder.none,
+                              enabledBorder: InputBorder.none,
+                              focusedBorder: InputBorder.none,
+                              contentPadding: const EdgeInsets.symmetric(
+                                vertical: 14,
+                              ),
+                            ),
+                            onChanged: (_) => _updateTotal(),
+                            onSubmitted: (_) => onSubmitted(),
+                          ),
                 ),
               ),
               const SizedBox(width: 8),
@@ -439,19 +479,26 @@ class ServiceScreenState extends State<ServiceScreen> {
                     FilteringTextInputFormatter.digitsOnly,
                     LengthLimitingTextInputFormatter(7),
                   ],
-                  style: const TextStyle().merge(context.brandTheme.moneyTextStyle).copyWith(fontSize: 13.5, color: AppColors.ink),
+                  style: const TextStyle()
+                      .merge(context.brandTheme.moneyTextStyle)
+                      .copyWith(fontSize: 13.5, color: AppColors.ink),
                   decoration: InputDecoration(
                     hintText: '0',
                     semanticCounterText: S.of(context).price,
                     suffixText: ' ${settings.state.currency}',
-                    suffixStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: AppColors.textSecondary),
+                    suffixStyle: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.textSecondary,
+                    ),
                     border: InputBorder.none,
                     enabledBorder: InputBorder.none,
                     focusedBorder: InputBorder.none,
                     contentPadding: const EdgeInsets.symmetric(vertical: 14),
                   ),
                   onChanged: (value) {
-                    final amount = double.tryParse(value.replaceAll(',', '.')) ?? 0;
+                    final amount =
+                        double.tryParse(value.replaceAll(',', '.')) ?? 0;
                     work.priceUah = settings.convertToUAH(amount);
                     _updateTotal();
                   },
@@ -480,7 +527,10 @@ class ServiceScreenState extends State<ServiceScreen> {
     );
   }
 
-  Future<void> _savePlanned(List<_ServiceWork> works, ReminderCubit reminderCubit) async {
+  Future<void> _savePlanned(
+    List<_ServiceWork> works,
+    ReminderCubit reminderCubit,
+  ) async {
     setState(() => _saving = true);
     try {
       await reminderCubit.addPlannedServices(
@@ -491,7 +541,9 @@ class ServiceScreenState extends State<ServiceScreen> {
     } catch (_) {
       if (!mounted) return;
       setState(() => _saving = false);
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(S.of(context).request_error)));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(S.of(context).request_error)));
       return;
     }
     if (!mounted) return;
@@ -514,7 +566,8 @@ class ServiceScreenState extends State<ServiceScreen> {
       return;
     }
     final reminderCubit = widget.reminderCubit;
-    if (reminderCubit != null && PlannedService.isPlannedDate(selectedDate, DateTime.now())) {
+    if (reminderCubit != null &&
+        PlannedService.isPlannedDate(selectedDate, DateTime.now())) {
       await _savePlanned(works, reminderCubit);
       return;
     }
@@ -533,7 +586,10 @@ class ServiceScreenState extends State<ServiceScreen> {
             cost: work.priceUah,
             date:
                 '${selectedDate.day}.${selectedDate.month}.${selectedDate.year}',
-            mileage: _mileageToKm(int.tryParse(stripThousandsSeparator(mileageController.text)) ?? 0),
+            mileage: _mileageToKm(
+              int.tryParse(stripThousandsSeparator(mileageController.text)) ??
+                  0,
+            ),
             currency: 'UAH',
           ),
         )
@@ -593,7 +649,11 @@ class ServiceTotal extends StatelessWidget {
                   textAlign: TextAlign.end,
                   style: textTheme.titleLarge
                       ?.merge(context.brandTheme.moneyTextStyle)
-                      .copyWith(fontSize: 19, fontWeight: FontWeight.w800, color: AppColors.ink),
+                      .copyWith(
+                        fontSize: 19,
+                        fontWeight: FontWeight.w800,
+                        color: AppColors.ink,
+                      ),
                 ),
               ),
             ],

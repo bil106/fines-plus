@@ -27,8 +27,7 @@ class AppFieldCard extends StatelessWidget {
         color: accent == null
             ? AppColors.neutreBlanc
             : Color.alphaBlend(accent!.withValues(alpha: _accentWashAlpha), AppColors.neutreBlanc),
-        elevation: 2,
-        shadowColor: AppColors.black,
+        elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
           side: BorderSide(
