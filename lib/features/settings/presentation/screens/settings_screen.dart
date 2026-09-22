@@ -7,9 +7,11 @@ import 'package:design_system/widget/app_page_app_bar.dart';
 import 'package:fines_plus/app/router/app_router.dart';
 import 'package:fines_plus/core/config/app_config.dart';
 import 'package:fines_plus/env/env.dart';
+import 'package:fines_plus/features/maintenance/presentation/cubit/maintenance_cubit.dart';
 import 'package:fines_plus/features/settings/presentation/cubit/settings_cubit.dart';
 import 'package:fines_plus/features/settings/presentation/cubit/settings_state.dart';
 import 'package:fines_plus/features/vehicle/data/models/car_info_model.dart';
+import 'package:fines_plus/features/vehicle/presentation/cubit/car_cubit.dart';
 import 'package:fines_plus/features/vehicle/presentation/cubit/garage_cubit.dart';
 import 'package:fines_plus/features/vehicle/presentation/cubit/garage_state.dart';
 import 'package:fines_plus/features/vehicle/presentation/screens/garage_screen.dart';
@@ -121,6 +123,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
       ),
     );
     if (confirmed != true) return;
+
+    // This device's cached car id and expense records belong to whoever was
+    // signed in — leaving them behind would let a different account signed
+    // into this device next inherit them before its own Firestore data
+    // loads (see CarInfoLocalDataSource.ensureCarId's local-first check).
+    final maintenanceCubit = context.read<MaintenanceCubit>();
+    await context.read<CarCubit>().local.clearCarInfo();
+    await maintenanceCubit.clearCachedRecords();
 
     try {
       await GoogleSignIn.instance.signOut();

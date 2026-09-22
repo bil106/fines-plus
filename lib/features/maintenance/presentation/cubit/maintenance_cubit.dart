@@ -763,6 +763,26 @@ class MaintenanceCubit extends Cubit<MaintenanceState> {
     emit(const MaintenanceState(serviceRecords: [], tuningRecords: [], fuelRecords: [], carWashRecords: []));
   }
 
+  /// Wipes the on-device expense cache (the [SharedPreferences] keys
+  /// [_loadAllFromPrefs] reads, not just the in-memory state [clearAllRecords]
+  /// resets) - called on sign-out so the next account signed into on this
+  /// device starts from Firestore instead of instantly showing whichever
+  /// car's records this device last cached.
+  Future<void> clearCachedRecords() async {
+    final prefs = await SharedPreferences.getInstance();
+    for (final key in const [
+      'service_records',
+      'fuel_records',
+      'tuning_records',
+      'car_wash_records',
+      'insurance_records',
+      'other_records',
+    ]) {
+      await prefs.remove(key);
+    }
+    clearAllRecords();
+  }
+
   @override
   Future<void> close() {
     try {
