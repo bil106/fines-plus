@@ -394,7 +394,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       String? error,
                     ) => InputDecoration(
                       hintText: hint,
-                      errorText: error,
+                      error: error == null ? null : Text(error, softWrap: true),
                       isDense: true,
                       contentPadding: EdgeInsets.zero,
                       border: InputBorder.none,

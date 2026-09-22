@@ -76,6 +76,36 @@ class GarageScreen extends StatelessWidget {
           ),
         ),
       ),
+      bottomNavigationBar: onContinue == null
+          ? null
+          : SafeArea(
+              minimum: const EdgeInsets.fromLTRB(20, 12, 20, 16),
+              child: SizedBox(
+                height: 52,
+                child: ElevatedButton(
+                  onPressed: isContinuing ? null : onContinue,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.blue700,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                  ),
+                  child: isContinuing
+                      ? const SizedBox(
+                          width: 22,
+                          height: 22,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : Text(
+                          S.of(context).garage_continue,
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                ),
+              ),
+            ),
 
       floatingActionButton: FloatingActionButton(
         backgroundColor: AppColors.blue700,

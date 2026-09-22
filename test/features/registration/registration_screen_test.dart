@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:fines_plus/app/router/app_router.dart';
+import 'package:fines_plus/core/config/app_config.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/theme/app_brand_theme.dart';
@@ -11,6 +12,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:provider/provider.dart';
+
+/// Minimal stand-in for the real per-flavor config a `Provider<AppConfig>`
+/// supplies in the app (see lib/app/app.dart) - RegistrationScreen reads
+/// primaryColorHex for its button/link accent (see registration_screen.dart).
+const _testConfig = AppConfig(
+  brandName: 'Test',
+  primaryColorHex: '#1976D2',
+  logoAssetPath: '',
+  supportEmail: '',
+  phoneNumber: '',
+  viberNumber: '',
+);
 
 class RegistrationStub extends Cubit<RegistrationState>
     implements RegistrationCubit {
@@ -56,35 +70,38 @@ void main() {
     final cubit = RegistrationStub();
     addTearDown(cubit.close);
     await tester.pumpWidget(
-      BlocProvider<RegistrationCubit>.value(
-        value: cubit,
-        child: MaterialApp(
-          theme: ThemeData(
-            // The default InkSparkle splash loads a shader asset that can't be
-            // decoded in the test environment.
-            splashFactory: NoSplash.splashFactory,
-            extensions: const [
-              AppBrandTheme(
-                surfaceBg: Color(0xFFF6F4ED),
-                surfaceBorder: Color(0xFFE5DFD0),
-                divider: Color(0xFFE5DFD0),
-                alertBg: Colors.white,
-                alertBorder: Colors.grey,
-                alertFg: Colors.black,
-                displayTextStyle: TextStyle(),
-                moneyTextStyle: TextStyle(),
-              ),
+      Provider<AppConfig>.value(
+        value: _testConfig,
+        child: BlocProvider<RegistrationCubit>.value(
+          value: cubit,
+          child: MaterialApp(
+            theme: ThemeData(
+              // The default InkSparkle splash loads a shader asset that can't be
+              // decoded in the test environment.
+              splashFactory: NoSplash.splashFactory,
+              extensions: const [
+                AppBrandTheme(
+                  surfaceBg: Color(0xFFF6F4ED),
+                  surfaceBorder: Color(0xFFE5DFD0),
+                  divider: Color(0xFFE5DFD0),
+                  alertBg: Colors.white,
+                  alertBorder: Colors.grey,
+                  alertFg: Colors.black,
+                  displayTextStyle: TextStyle(),
+                  moneyTextStyle: TextStyle(),
+                ),
+              ],
+            ),
+            locale: const Locale('uk'),
+            localizationsDelegates: const [
+              S.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
             ],
+            supportedLocales: S.delegate.supportedLocales,
+            home: const RegistrationScreen(),
           ),
-          locale: const Locale('uk'),
-          localizationsDelegates: const [
-            S.delegate,
-            GlobalMaterialLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate,
-          ],
-          supportedLocales: S.delegate.supportedLocales,
-          home: const RegistrationScreen(),
         ),
       ),
     );
@@ -214,35 +231,38 @@ void main() {
       addTearDown(router.dispose);
       addTearDown(cubit.close);
       await tester.pumpWidget(
-        BlocProvider<RegistrationCubit>.value(
-          value: cubit,
-          child: MaterialApp.router(
-            routerConfig: router.config(),
-            theme: ThemeData(
-              // The default InkSparkle splash loads a shader asset that can't be
-              // decoded in the test environment.
-              splashFactory: NoSplash.splashFactory,
-              extensions: const [
-                AppBrandTheme(
-                  surfaceBg: Color(0xFFF6F4ED),
-                  surfaceBorder: Color(0xFFE5DFD0),
-                  divider: Color(0xFFE5DFD0),
-                  alertBg: Colors.white,
-                  alertBorder: Colors.grey,
-                  alertFg: Colors.black,
-                  displayTextStyle: TextStyle(),
-                  moneyTextStyle: TextStyle(),
-                ),
+        Provider<AppConfig>.value(
+          value: _testConfig,
+          child: BlocProvider<RegistrationCubit>.value(
+            value: cubit,
+            child: MaterialApp.router(
+              routerConfig: router.config(),
+              theme: ThemeData(
+                // The default InkSparkle splash loads a shader asset that can't be
+                // decoded in the test environment.
+                splashFactory: NoSplash.splashFactory,
+                extensions: const [
+                  AppBrandTheme(
+                    surfaceBg: Color(0xFFF6F4ED),
+                    surfaceBorder: Color(0xFFE5DFD0),
+                    divider: Color(0xFFE5DFD0),
+                    alertBg: Colors.white,
+                    alertBorder: Colors.grey,
+                    alertFg: Colors.black,
+                    displayTextStyle: TextStyle(),
+                    moneyTextStyle: TextStyle(),
+                  ),
+                ],
+              ),
+              locale: const Locale('uk'),
+              supportedLocales: S.delegate.supportedLocales,
+              localizationsDelegates: const [
+                S.delegate,
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
               ],
             ),
-            locale: const Locale('uk'),
-            supportedLocales: S.delegate.supportedLocales,
-            localizationsDelegates: const [
-              S.delegate,
-              GlobalMaterialLocalizations.delegate,
-              GlobalWidgetsLocalizations.delegate,
-              GlobalCupertinoLocalizations.delegate,
-            ],
           ),
         ),
       );

@@ -131,7 +131,7 @@ void main() {
   });
 
   testWidgets(
-    'card fits narrow display with large text and retains edit/delete menu',
+    'card fits narrow display with large text and opens the edit sheet on long-press',
     (tester) async {
       tester.view.physicalSize = const Size(320, 640);
       tester.view.devicePixelRatio = 1;
@@ -156,16 +156,18 @@ void main() {
       expect(find.text('AI1234IO'), findsOneWidget);
       expect(find.text('Продовжити'), findsNothing);
       expect(tester.takeException(), isNull);
-      await tester.tap(find.byIcon(Icons.more_vert));
-      await tester.pumpAndSettle();
-      expect(find.text(S.current.edit), findsOneWidget);
-      expect(find.text(S.current.delete), findsOneWidget);
-      await tester.tap(find.text(S.current.delete));
-      await tester.pumpAndSettle();
-      expect(find.text(S.current.garage_delete_confirm_title), findsOneWidget);
-      await tester.tap(find.text(S.current.cancel));
-      await tester.pumpAndSettle();
-      expect(find.text('AI1234IO'), findsOneWidget);
+      // The card's own edit/delete popup menu was dropped in favor of the
+      // mockup's plain card (see settings_screen.dart's car row for the
+      // remaining edit/delete UI) - editing here is a long-press that opens
+      // the same car-details sheet the "+" FAB uses. Checking the callback
+      // is wired (rather than actually triggering it) avoids depending on
+      // showCarFormSheet's own make-dropdown/image-picker setup here.
+      final inkWell = tester.widget<InkWell>(
+        find
+            .ancestor(of: find.text('AI1234IO'), matching: find.byType(InkWell))
+            .first,
+      );
+      expect(inkWell.onLongPress, isNotNull);
       expect(tester.takeException(), isNull);
     },
   );

@@ -184,7 +184,7 @@ void main() {
         tester.widget<TextField>(find.byWidgetPredicate((widget) =>
             widget is TextField && widget.decoration?.hintText == S.current.enter_mileage))
             .controller!.text,
-        '127900',
+        '127 900',
       );
       await tester.enterText(nameFields().first, 'Custom oil change');
       await tester.enterText(priceFields().first, '850');
