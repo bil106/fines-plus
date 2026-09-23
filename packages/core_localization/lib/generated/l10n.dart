@@ -1109,10 +1109,10 @@ class S {
     return Intl.message('UAH', name: 'grn', desc: '', args: []);
   }
 
-  /// `New reminder`
+  /// `New notification`
   String get new_reminder {
     return Intl.message(
-      'New reminder',
+      'New notification',
       name: 'new_reminder',
       desc: '',
       args: [],

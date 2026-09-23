@@ -539,7 +539,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "my_garage": MessageLookupByLibrary.simpleMessage("Garage"),
     "my_position": MessageLookupByLibrary.simpleMessage("You are here"),
     "name": MessageLookupByLibrary.simpleMessage("Name"),
-    "new_reminder": MessageLookupByLibrary.simpleMessage("New reminder"),
+    "new_reminder": MessageLookupByLibrary.simpleMessage("New notification"),
     "new_task": MessageLookupByLibrary.simpleMessage("New task"),
     "new_version": MessageLookupByLibrary.simpleMessage(
       "A new version of the application is available",

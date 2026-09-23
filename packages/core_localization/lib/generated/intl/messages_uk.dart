@@ -540,7 +540,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "my_garage": MessageLookupByLibrary.simpleMessage("Гараж"),
     "my_position": MessageLookupByLibrary.simpleMessage("Ви тут"),
     "name": MessageLookupByLibrary.simpleMessage("Назва"),
-    "new_reminder": MessageLookupByLibrary.simpleMessage("Нове нагадування"),
+    "new_reminder": MessageLookupByLibrary.simpleMessage("Нове сповіщення"),
     "new_task": MessageLookupByLibrary.simpleMessage("Нове завдання"),
     "new_version": MessageLookupByLibrary.simpleMessage(
       "Доступна нова версія програми",

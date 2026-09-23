@@ -67,7 +67,7 @@ class _RemindersView extends StatelessWidget {
         toolbarHeight: 72,
         titleSpacing: onBack == null ? 20 : 12,
         actionsPadding: const EdgeInsets.only(right: 20),
-        title: Text(S.of(context).reminder,
+        title: Text(S.of(context).notifications,
           maxLines: 2,
           style: textTheme.headlineMedium?.copyWith(fontSize: 22, fontWeight: FontWeight.w800, color: AppColors.ink)),
         actions: [
