@@ -19,7 +19,7 @@ class FinesCheckReminder {
   Future<void> rescheduleFromNow(S l10n) async {
     final now = DateTime.now();
     final prefs = await SharedPreferences.getInstance();
-    // Also holds off the app-start reminder, which shares this key.
+    // Also holds off the Home-screen reminder ([showIfDue]), which shares this key.
     await prefs.setInt(lastShownKey, now.millisecondsSinceEpoch);
     await _pushHelper.cancelNotification(notificationId);
     await _pushHelper.scheduleNotification(
@@ -28,5 +28,22 @@ class FinesCheckReminder {
       body: l10n.fines_reminder_body,
       dateTime: now.add(interval),
     );
+  }
+
+  /// Shows the reminder right away unless it was shown (or a check was
+  /// done) within the last [interval]. Called once the user has reached
+  /// Home fully set up - not at app start, where it fired over onboarding.
+  Future<void> showIfDue(S l10n) async {
+    final now = DateTime.now().millisecondsSinceEpoch;
+    final prefs = await SharedPreferences.getInstance();
+    final lastMs = prefs.getInt(lastShownKey) ?? 0;
+    if (now - lastMs < interval.inMilliseconds) return;
+
+    await _pushHelper.showNow(
+      id: notificationId,
+      title: l10n.check_fines_reminder_title,
+      body: l10n.check_fines_reminder_body,
+    );
+    await prefs.setInt(lastShownKey, now);
   }
 }

@@ -41,6 +41,12 @@ class PushHelper {
     presentAlert: true,
     presentBadge: true,
     presentSound: true,
+    // NOT .timeSensitive: that interruption level needs Apple's
+    // com.apple.developer.usernotifications.time-sensitive entitlement
+    // (a separate approved request, not present in Runner.entitlements) -
+    // without it iOS can silently drop the notification instead of
+    // delivering it at the default level, which is the opposite of what
+    // was intended here.
   );
 
   Future<void> showNow({

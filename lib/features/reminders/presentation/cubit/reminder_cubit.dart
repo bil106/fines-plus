@@ -62,6 +62,32 @@ class ReminderCubit extends Cubit<ReminderState> {
       final items = _buildItems(reminders);
       emit(state.copyWith(isLoading: false, reminders: reminders, items: items, tasks: _tasks));
       unawaited(_syncInsuranceNotification(items));
+      unawaited(_resyncLocalNotifications(reminders));
+    }
+  }
+
+  /// Local notifications are OS-level and per-device - a reminder created
+  /// on one device is otherwise never (re)scheduled on another device that
+  /// only ever sees it through Firestore sync (see [ReminderRepository]).
+  /// Re-establishing the schedule for every not-yet-completed reminder each
+  /// time the list loads means whichever device has the app open before a
+  /// reminder is due still fires it, regardless of where it was created.
+  /// Idempotent: [PushHelper.scheduleNotification] just replaces the
+  /// existing OS-level schedule for the same id.
+  Future<void> _resyncLocalNotifications(List<ReminderModel> reminders) async {
+    for (final reminder in reminders) {
+      if (reminder.isCompleted) continue;
+      try {
+        await pushHelper.scheduleNotification(
+          id: reminder.id.hashCode,
+          title: reminder.title,
+          body: reminder.description,
+          dateTime: reminder.dateTime.toLocal(),
+        );
+        await _syncPlannedDaily(reminder);
+      } catch (e, st) {
+        debugPrint('Failed to resync notification for ${reminder.id}: $e\n$st');
+      }
     }
   }
 

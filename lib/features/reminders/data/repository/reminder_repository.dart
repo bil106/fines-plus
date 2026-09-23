@@ -16,6 +16,14 @@ class ReminderRepository {
       return;
     }
 
+    // On a cold start (notably on iOS, where restoring the session from the
+    // Keychain is slower than Android's SharedPreferences-backed restore)
+    // FirebaseAuth.currentUser can still be null for a moment after the app
+    // is usable - writing then hits `firestore.rules`' isSignedIn() check
+    // and fails with permission-denied, silently, right as the very first
+    // reminder a fresh install creates is saved.
+    await _ensureSignedIn();
+
     final collectionRef = FirebaseFirestore.instance.collection('reminders').doc(carNumber).collection('items');
 
     final docId = reminder.id.isNotEmpty ? reminder.id : collectionRef.doc().id;
@@ -24,9 +32,26 @@ class ReminderRepository {
 
     final fixed = newReminder.copyWith(ownerId: newReminder.ownerId.isNotEmpty ? newReminder.ownerId : carNumber);
 
-    await collectionRef.doc(docId).set(fixed.toJson());
+    try {
+      await collectionRef.doc(docId).set(fixed.toJson());
+      debugPrint("Reminder SAVED → $docId");
+    } catch (e, st) {
+      debugPrint("ReminderRepository.add failed for $docId: $e\n$st");
+      rethrow;
+    }
+  }
 
-    debugPrint("Reminder SAVED → $docId");
+  /// Waits (briefly) for [FirebaseAuth.currentUser] to be non-null if it
+  /// isn't already - see [add]'s doc comment for why this matters on iOS.
+  Future<void> _ensureSignedIn() async {
+    if (FirebaseAuth.instance.currentUser != null) return;
+    try {
+      await FirebaseAuth.instance.authStateChanges().firstWhere((u) => u != null).timeout(const Duration(seconds: 5));
+    } catch (_) {
+      // Falls through to the write attempt below either way - if auth
+      // genuinely never resolves, the existing permission-denied handling
+      // (now propagated instead of swallowed) still applies.
+    }
   }
 
   Future<void> update(String carNumber, ReminderModel reminder) async {
@@ -38,6 +63,8 @@ class ReminderRepository {
       return;
     }
 
+    await _ensureSignedIn();
+
     final docRef = FirebaseFirestore.instance
         .collection('reminders')
         .doc(carNumber)
@@ -46,7 +73,12 @@ class ReminderRepository {
 
     final fixed = reminder.copyWith(ownerId: reminder.ownerId.isNotEmpty ? reminder.ownerId : carNumber);
 
-    await docRef.set(fixed.toJson(), SetOptions(merge: true));
+    try {
+      await docRef.set(fixed.toJson(), SetOptions(merge: true));
+    } catch (e, st) {
+      debugPrint("ReminderRepository.update failed for ${reminder.id}: $e\n$st");
+      rethrow;
+    }
   }
 
   Future<List<ReminderModel>> getAll(String carNumber) async {

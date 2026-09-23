@@ -6,11 +6,9 @@ import 'package:app_links/app_links.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:core_cubit/cubit/referral/referral_cubit.dart';
 import 'package:core_data/core_data.dart';
-import 'package:core_localization/generated/l10n.dart';
 import 'package:fines_plus/core/extensions/currency_service.dart';
 import 'package:fines_plus/core/extensions/safe_prefs.dart';
 import 'package:fines_plus/core/helpers/push_helper.dart';
-import 'package:fines_plus/features/fines/domain/fines_check_reminder.dart';
 import 'package:fines_plus/core/services/notification_tap_bus.dart';
 import 'package:fines_plus/features/analytics/data/repository/analytics_repository.dart';
 import 'package:fines_plus/features/analytics/presentation/cubit/analytics_cubit.dart';
@@ -127,6 +125,24 @@ class AppInitializer {
 
     // Firebase уже инициализирован в main.dart
 
+    // Must run before flutterLocalNotificationsPlugin.initialize() below: on
+    // iOS, FirebaseMessaging.requestPermission() (inside
+    // _initFirebaseMessagingToken) re-assigns itself as the
+    // UNUserNotificationCenter delegate, and whichever plugin claims that
+    // delegate LAST wins it. With this the other way around, every locally
+    // scheduled reminder still "fires" at the OS level but silently shows
+    // nothing while the app is in the foreground (FirebaseMessaging's
+    // delegate doesn't know how to present a flutter_local_notifications
+    // request) - notifications only ever appeared while the app was
+    // backgrounded, which doesn't go through the delegate at all.
+    final prefs = await SharedPreferences.getInstance();
+    final fcmToken = prefs.getString('fcm_token');
+    if (fcmToken == null) {
+      await _initFirebaseMessagingToken(prefs);
+    } else {
+      debugPrint("Using cached FCM Token: $fcmToken");
+    }
+
     const androidSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
     const iosSettings = DarwinInitializationSettings(
       requestAlertPermission: true,
@@ -192,13 +208,16 @@ class AppInitializer {
       }
     }
 
-    final prefs = await SharedPreferences.getInstance();
-    String? fcmToken = prefs.getString('fcm_token');
-
-    if (fcmToken == null) {
-      await _initFirebaseMessagingToken(prefs);
-    } else {
-      debugPrint("Using cached FCM Token: $fcmToken");
+    if (Platform.isIOS) {
+      // DarwinInitializationSettings above already triggers the system
+      // permission prompt, but never reports whether it was granted — unlike
+      // the Android block, a silent denial here means every zonedSchedule
+      // call below still "succeeds" (no exception) while never actually
+      // showing anything, which is indistinguishable from a scheduling bug.
+      final iosImpl = flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<IOSFlutterLocalNotificationsPlugin>();
+      final iosGranted = await iosImpl?.requestPermissions(alert: true, badge: true, sound: true);
+      debugPrint('iOS notifications permission granted: $iosGranted');
     }
 
     // No --dart-define=FLAVOR is passed anywhere in this repo's run/build
@@ -283,8 +302,6 @@ class AppInitializer {
     final pushHelper = PushHelper(flutterLocalNotificationsPlugin);
     reminderCubit = ReminderCubit(repository: reminderRepository, pushHelper: pushHelper, carNumber: '', ownerId: '');
 
-    await _maybeShowFinesCheckReminder(prefs, PushHelper(flutterLocalNotificationsPlugin));
-
     // Phase 1 of the "prompt to log a fuel purchase" scenario — foreground/
     // background (not fully-killed-app) geofencing only; see
     // FuelGeofenceMonitor's doc comment for why.
@@ -322,30 +339,6 @@ class AppInitializer {
       tasksRepository: tasksRepository,
       currencyService: currencyService,
     );
-  }
-
-  Future<void> _maybeShowFinesCheckReminder(SharedPreferences prefs, PushHelper pushHelper) async {
-    const key = FinesCheckReminder.lastShownKey;
-    final lastMs = prefs.getInt(key) ?? 0;
-    final now = DateTime.now().millisecondsSinceEpoch;
-    const weekMs = 7 * 24 * 60 * 60 * 1000;
-
-    if (now - lastMs >= weekMs) {
-      try {
-        final l10n = await S.load(PlatformDispatcher.instance.locale);
-        await pushHelper.showNow(
-          id: FinesCheckReminder.notificationId,
-          title: l10n.check_fines_reminder_title,
-          body: l10n.check_fines_reminder_body,
-        );
-        await prefs.setInt(key, now);
-        debugPrint('Weekly fines reminder shown');
-      } catch (e, s) {
-        // A failure to show this non-critical reminder must not abort app startup.
-        debugPrint('Failed to show weekly fines reminder: $e');
-        FirebaseCrashlytics.instance.recordError(e, s);
-      }
-    }
   }
 
   Future<void> _initFirebaseMessagingToken(SharedPreferences prefs) async {

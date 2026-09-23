@@ -13,6 +13,7 @@ import 'package:fines_plus/features/analytics/presentation/cubit/analytics_cubit
 import 'package:fines_plus/features/analytics/presentation/screens/analytics_screen.dart';
 import 'package:fines_plus/features/export/presentation/screens/export_screen.dart';
 
+import 'package:fines_plus/features/fines/domain/fines_check_reminder.dart';
 import 'package:fines_plus/features/fines/presentation/screens/fines_screeen.dart';
 import 'package:fines_plus/features/history/domain/history_repository.dart';
 import 'package:fines_plus/features/history/presentation/cubit/history_cubit.dart';
@@ -31,6 +32,7 @@ import 'package:fines_plus/features/subscription/presentation/cubit/subscription
 import 'package:fines_plus/features/vehicle/data/repository/car_info_repository.dart';
 import 'package:fines_plus/features/vehicle/presentation/cubit/car_cubit.dart';
 import 'package:fines_plus/features/vehicle/presentation/cubit/car_info_cubit.dart';
+import 'package:fines_plus/features/vehicle/presentation/cubit/car_state.dart';
 import 'package:fines_plus/features/vehicle/presentation/cubit/garage_cubit.dart';
 import 'package:fines_plus/features/vehicle/presentation/screens/garage_screen.dart';
 import 'package:fines_plus/features/maintenance/presentation/screens/car_wash_map_screen.dart';
@@ -39,12 +41,14 @@ import 'package:fines_plus/features/registration/presentation/screens/registrati
 import 'package:fines_plus/features/schedule/presentation/screens/schedule_screen.dart';
 import 'package:fines_plus/features/settings/presentation/screens/settings_screen.dart';
 import 'package:fines_plus/features/subscription/presentation/screens/subscription_screen.dart';
+import 'dart:async';
 import 'dart:io';
 
 import 'package:fines_plus/app/router/app_router.dart';
 import 'package:fines_plus/core/config/app_config.dart';
 import 'package:fines_plus/env/env.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -91,6 +95,7 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
   late final GarageCubit garageCubit;
   ReminderCubit? _reminderCubit;
   String? _reminderCarId;
+  StreamSubscription<CarState>? _carSubscription;
 
   late final Map<HomePage, int> _pageIndexMap;
   DateTime? _lastPressedTime;
@@ -191,6 +196,38 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
         _pageController.jumpToPage(index);
       }
       setState(() => _currentIndex = index);
+      return;
+    }
+
+    _remindToCheckFinesOnceCarIsSet();
+  }
+
+  /// The "check your fines" push waits until the user is fully set up -
+  /// signed in, subscribed and with a plate entered - instead of firing at
+  /// app start over the onboarding screens. Fresh accounts reach Home
+  /// without a plate, so adding one later triggers it then.
+  void _remindToCheckFinesOnceCarIsSet() {
+    if (!context.read<AppConfig>().finesCheckEnabled) return;
+
+    final carCubit = context.read<CarCubit>();
+    if (carCubit.state.carNumber.isNotEmpty) {
+      _showFinesCheckReminder();
+      return;
+    }
+    _carSubscription = carCubit.stream.listen((state) {
+      if (state.carNumber.isEmpty || !mounted) return;
+      _carSubscription?.cancel();
+      _carSubscription = null;
+      _showFinesCheckReminder();
+    });
+  }
+
+  Future<void> _showFinesCheckReminder() async {
+    try {
+      await FinesCheckReminder(context.read<PushHelper>()).showIfDue(S.of(context));
+    } catch (e, s) {
+      debugPrint('Failed to show fines check reminder: $e');
+      FirebaseCrashlytics.instance.recordError(e, s);
     }
   }
 
@@ -229,6 +266,15 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
     _pageController.jumpToPage(index);
 
     setState(() => _currentIndex = index);
+
+    // The reminders cubit is created once per car and kept alive for the
+    // lifetime of this wrapper (see _reminderCubitFor) - without this,
+    // reopening the Нагадування tab just showed whatever list was loaded
+    // the first time the cubit was created, never picking up a reminder
+    // added from another device in the meantime.
+    if (page == HomePage.reminders) {
+      _reminderCubit?.load();
+    }
   }
 
   void openAnalyticsTab(int tabIndex) {
@@ -246,6 +292,7 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
     analyticsCubit.close();
     garageCubit.close();
     _reminderCubit?.close();
+    _carSubscription?.cancel();
     super.dispose();
   }
 

@@ -106,6 +106,10 @@ class _ReminderFormState extends State<_ReminderForm> {
     } catch (e, stackTrace) {
       debugPrint('Error saving reminder: $e');
       debugPrint('$stackTrace');
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('${S.of(context).garage_action_error}: $e')),
+      );
     }
   }
 

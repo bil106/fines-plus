@@ -48,6 +48,25 @@ class _MyAppState extends State<MyApp> {
     _initDynamicLinks();
     _initAppLinks();
     _initNotificationTapHandling();
+    _reclaimLocalNotificationsDelegate();
+  }
+
+  /// [AppInitializer.init] already puts flutter_local_notifications'
+  /// UNUserNotificationCenter setup before FirebaseMessaging's, but
+  /// [_setupPushNotifications] above (subscribing to FirebaseMessaging.
+  /// onMessage) runs even later than that, in this widget's own initState -
+  /// and on iOS, touching FirebaseMessaging re-asserts it as the
+  /// UNUserNotificationCenter delegate. Without this, every reminder
+  /// scheduled via flutter_local_notifications still "fires" at the OS
+  /// level but is never presented while the app is in the foreground -
+  /// only while backgrounded, where iOS shows it directly without going
+  /// through any delegate. This call is a no-op prompt-wise (permission is
+  /// already granted by this point) purely to make flutter_local_notifications
+  /// reclaim the delegate last.
+  void _reclaimLocalNotificationsDelegate() {
+    widget.flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<IOSFlutterLocalNotificationsPlugin>()
+        ?.requestPermissions(alert: true, badge: true, sound: true);
   }
 
   void _initNotificationTapHandling() {
