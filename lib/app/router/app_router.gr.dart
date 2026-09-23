@@ -645,6 +645,116 @@ class HomeRouteWrapperArgs {
 }
 
 /// generated route for
+/// [LibraryLicensesScreen]
+class LibraryLicensesRoute extends PageRouteInfo<LibraryLicensesRouteArgs> {
+  LibraryLicensesRoute({
+    Key? key,
+    String applicationVersion = '',
+    List<PageRouteInfo>? children,
+  }) : super(
+         LibraryLicensesRoute.name,
+         args: LibraryLicensesRouteArgs(
+           key: key,
+           applicationVersion: applicationVersion,
+         ),
+         initialChildren: children,
+       );
+
+  static const String name = 'LibraryLicensesRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      final args = data.argsAs<LibraryLicensesRouteArgs>(
+        orElse: () => const LibraryLicensesRouteArgs(),
+      );
+      return LibraryLicensesScreen(
+        key: args.key,
+        applicationVersion: args.applicationVersion,
+      );
+    },
+  );
+}
+
+class LibraryLicensesRouteArgs {
+  const LibraryLicensesRouteArgs({this.key, this.applicationVersion = ''});
+
+  final Key? key;
+
+  final String applicationVersion;
+
+  @override
+  String toString() {
+    return 'LibraryLicensesRouteArgs{key: $key, applicationVersion: $applicationVersion}';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! LibraryLicensesRouteArgs) return false;
+    return key == other.key && applicationVersion == other.applicationVersion;
+  }
+
+  @override
+  int get hashCode => key.hashCode ^ applicationVersion.hashCode;
+}
+
+/// generated route for
+/// [LicensesScreen]
+class LicensesRoute extends PageRouteInfo<LicensesRouteArgs> {
+  LicensesRoute({
+    Key? key,
+    String applicationVersion = '',
+    List<PageRouteInfo>? children,
+  }) : super(
+         LicensesRoute.name,
+         args: LicensesRouteArgs(
+           key: key,
+           applicationVersion: applicationVersion,
+         ),
+         initialChildren: children,
+       );
+
+  static const String name = 'LicensesRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      final args = data.argsAs<LicensesRouteArgs>(
+        orElse: () => const LicensesRouteArgs(),
+      );
+      return LicensesScreen(
+        key: args.key,
+        applicationVersion: args.applicationVersion,
+      );
+    },
+  );
+}
+
+class LicensesRouteArgs {
+  const LicensesRouteArgs({this.key, this.applicationVersion = ''});
+
+  final Key? key;
+
+  final String applicationVersion;
+
+  @override
+  String toString() {
+    return 'LicensesRouteArgs{key: $key, applicationVersion: $applicationVersion}';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! LicensesRouteArgs) return false;
+    return key == other.key && applicationVersion == other.applicationVersion;
+  }
+
+  @override
+  int get hashCode => key.hashCode ^ applicationVersion.hashCode;
+}
+
+/// generated route for
 /// [MaintenanceScreen]
 class MaintenanceRoute extends PageRouteInfo<MaintenanceRouteArgs> {
   MaintenanceRoute({
@@ -974,6 +1084,7 @@ class ServiceRoute extends PageRouteInfo<ServiceRouteArgs> {
     bool embedded = false,
     ValueChanged<double>? onTotalChanged,
     String? category,
+    ReminderCubit? reminderCubit,
     List<PageRouteInfo>? children,
   }) : super(
          ServiceRoute.name,
@@ -983,6 +1094,7 @@ class ServiceRoute extends PageRouteInfo<ServiceRouteArgs> {
            embedded: embedded,
            onTotalChanged: onTotalChanged,
            category: category,
+           reminderCubit: reminderCubit,
          ),
          initialChildren: children,
        );
@@ -1001,6 +1113,7 @@ class ServiceRoute extends PageRouteInfo<ServiceRouteArgs> {
         embedded: args.embedded,
         onTotalChanged: args.onTotalChanged,
         category: args.category,
+        reminderCubit: args.reminderCubit,
       );
     },
   );
@@ -1013,6 +1126,7 @@ class ServiceRouteArgs {
     this.embedded = false,
     this.onTotalChanged,
     this.category,
+    this.reminderCubit,
   });
 
   final Key? key;
@@ -1025,9 +1139,11 @@ class ServiceRouteArgs {
 
   final String? category;
 
+  final ReminderCubit? reminderCubit;
+
   @override
   String toString() {
-    return 'ServiceRouteArgs{key: $key, onBack: $onBack, embedded: $embedded, onTotalChanged: $onTotalChanged, category: $category}';
+    return 'ServiceRouteArgs{key: $key, onBack: $onBack, embedded: $embedded, onTotalChanged: $onTotalChanged, category: $category, reminderCubit: $reminderCubit}';
   }
 
   @override
@@ -1038,7 +1154,8 @@ class ServiceRouteArgs {
         onBack == other.onBack &&
         embedded == other.embedded &&
         onTotalChanged == other.onTotalChanged &&
-        category == other.category;
+        category == other.category &&
+        reminderCubit == other.reminderCubit;
   }
 
   @override
@@ -1047,7 +1164,8 @@ class ServiceRouteArgs {
       onBack.hashCode ^
       embedded.hashCode ^
       onTotalChanged.hashCode ^
-      category.hashCode;
+      category.hashCode ^
+      reminderCubit.hashCode;
 }
 
 /// generated route for
@@ -1196,10 +1314,16 @@ class TuningRoute extends PageRouteInfo<TuningRouteArgs> {
     Key? key,
     VoidCallback? onBack,
     bool embedded = false,
+    ReminderCubit? reminderCubit,
     List<PageRouteInfo>? children,
   }) : super(
          TuningRoute.name,
-         args: TuningRouteArgs(key: key, onBack: onBack, embedded: embedded),
+         args: TuningRouteArgs(
+           key: key,
+           onBack: onBack,
+           embedded: embedded,
+           reminderCubit: reminderCubit,
+         ),
          initialChildren: children,
        );
 
@@ -1215,13 +1339,19 @@ class TuningRoute extends PageRouteInfo<TuningRouteArgs> {
         key: args.key,
         onBack: args.onBack,
         embedded: args.embedded,
+        reminderCubit: args.reminderCubit,
       );
     },
   );
 }
 
 class TuningRouteArgs {
-  const TuningRouteArgs({this.key, this.onBack, this.embedded = false});
+  const TuningRouteArgs({
+    this.key,
+    this.onBack,
+    this.embedded = false,
+    this.reminderCubit,
+  });
 
   final Key? key;
 
@@ -1229,9 +1359,11 @@ class TuningRouteArgs {
 
   final bool embedded;
 
+  final ReminderCubit? reminderCubit;
+
   @override
   String toString() {
-    return 'TuningRouteArgs{key: $key, onBack: $onBack, embedded: $embedded}';
+    return 'TuningRouteArgs{key: $key, onBack: $onBack, embedded: $embedded, reminderCubit: $reminderCubit}';
   }
 
   @override
@@ -1240,11 +1372,16 @@ class TuningRouteArgs {
     if (other is! TuningRouteArgs) return false;
     return key == other.key &&
         onBack == other.onBack &&
-        embedded == other.embedded;
+        embedded == other.embedded &&
+        reminderCubit == other.reminderCubit;
   }
 
   @override
-  int get hashCode => key.hashCode ^ onBack.hashCode ^ embedded.hashCode;
+  int get hashCode =>
+      key.hashCode ^
+      onBack.hashCode ^
+      embedded.hashCode ^
+      reminderCubit.hashCode;
 }
 
 /// generated route for
@@ -1259,6 +1396,22 @@ class UpdateRequiredRoute extends PageRouteInfo<void> {
     name,
     builder: (data) {
       return const UpdateRequiredScreen();
+    },
+  );
+}
+
+/// generated route for
+/// [VehicleDataLicenseScreen]
+class VehicleDataLicenseRoute extends PageRouteInfo<void> {
+  const VehicleDataLicenseRoute({List<PageRouteInfo>? children})
+    : super(VehicleDataLicenseRoute.name, initialChildren: children);
+
+  static const String name = 'VehicleDataLicenseRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const VehicleDataLicenseScreen();
     },
   );
 }

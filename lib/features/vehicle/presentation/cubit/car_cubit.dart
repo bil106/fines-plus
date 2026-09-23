@@ -93,10 +93,12 @@ class CarCubit extends Cubit<CarState> {
     emit(state.copyWith(techPassport: t));
   }
 
-  /// Make/photo aren't part of [CarState] (nothing else in the app reads
+  /// Make/model/photo aren't part of [CarState] (nothing else in the app reads
   /// them off the active car) — they're written straight to the active
   /// car's Firestore doc, same place the garage list reads them back from.
   Future<void> setMake(String make) => local.saveMake(make);
+
+  Future<void> setModel(String model) => local.saveModel(model);
 
   Future<void> setPhotoUrl(String url) => local.savePhotoUrl(url);
 

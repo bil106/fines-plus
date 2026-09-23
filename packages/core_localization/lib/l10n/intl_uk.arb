@@ -50,6 +50,8 @@
    "garage_action_error": "Не вдалося виконати дію",
    "garage_make_label": "Марка авто",
    "garage_make_hint": "Оберіть марку",
+   "garage_model_label": "Модель авто (необов'язково)",
+   "garage_model_hint": "Оберіть модель",
    "search": "Пошук",
    "check_fine_title": "Перевірка штрафу",
    "check_fines": "Перевірити штрафи",
@@ -500,7 +502,8 @@
    "month_oct": "Жовтень",
    "month_nov": "Листопад",
    "month_dec": "Грудень",
-   "home": "Дім",
+   "home": "Головна",
+   "notifications": "Сповіщення",
    "units": "Одиниці",
    "currency": "Валюта",
    "language": "Мова",
@@ -693,5 +696,13 @@
 "@map_rating": {"placeholders": {"rating": {"type": "String"}}},
 "insurance_osago": "ОСЦПВ",
 "insurance_kasko": "КАСКО",
-"insurance_green_card": "Зелена картка"
+"insurance_green_card": "Зелена картка",
+  "licenses_and_sources": "Ліцензії та джерела",
+  "vehicle_data": "Дані про автомобілі",
+  "vehicle_data_credit": "Vehicle data by VehiclesDB · CC BY 4.0",
+  "vehicle_data_terms": "Джерела та умови використання",
+  "app_libraries": "Бібліотеки застосунку",
+  "app_libraries_description": "У застосунку використано компоненти з відкритим кодом.",
+  "view_licenses": "Переглянути ліцензії",
+  "licenses_load_error": "Не вдалося завантажити текст ліцензії."
 }

@@ -42,6 +42,7 @@ class GarageCubit extends Cubit<GarageState> {
     String carNumber = '',
     String techPassport = '',
     String make = '',
+    String model = '',
     String photoUrl = '',
     String photoPath = '',
   }) async {
@@ -57,6 +58,7 @@ class GarageCubit extends Cubit<GarageState> {
       carNumber: carNumber,
       techPassport: techPassport,
       make: make,
+      model: model,
       photoUrl: photoUrl,
     );
     await carCubit.switchActiveCar(car);
@@ -77,12 +79,14 @@ class GarageCubit extends Cubit<GarageState> {
     String? carNumber,
     String? techPassport,
     String? make,
+    String? model,
     String? photoUrl,
   }) async {
     if (car.carId == carCubit.state.carId) {
       if (carNumber != null) await carCubit.changeCar(carNumber);
       if (techPassport != null) await carCubit.setTechPassport(techPassport);
       if (make != null) await carCubit.setMake(make);
+      if (model != null) await carCubit.setModel(model);
       if (photoUrl != null) await carCubit.setPhotoUrl(photoUrl);
     } else {
       await repository.updateCarFields(
@@ -90,6 +94,7 @@ class GarageCubit extends Cubit<GarageState> {
         carNumber: carNumber,
         techPassport: techPassport,
         make: make,
+        model: model,
         photoUrl: photoUrl,
       );
     }

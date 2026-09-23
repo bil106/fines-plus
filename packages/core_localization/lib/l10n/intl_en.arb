@@ -50,6 +50,8 @@
   "garage_action_error": "Failed to complete the action",
   "garage_make_label": "Car make",
   "garage_make_hint": "Select a make",
+  "garage_model_label": "Car model (optional)",
+  "garage_model_hint": "Select a model",
   "search": "Search",
   "check_fine_title": "Checking the fine",
   "check_fines": "Check fines",
@@ -500,6 +502,7 @@
 "month_nov": "November",
 "month_dec": "December",
 "home": "Home",
+"notifications": "Notifications",
 "units": "Units",
 "currency": "Currency",
 "language": "Language",
@@ -692,5 +695,13 @@
 "@map_rating": {"placeholders": {"rating": {"type": "String"}}},
 "insurance_osago": "MTPL",
 "insurance_kasko": "Comprehensive insurance",
-"insurance_green_card": "Green Card"
+"insurance_green_card": "Green Card",
+  "licenses_and_sources": "Licenses and sources",
+  "vehicle_data": "Vehicle data",
+  "vehicle_data_credit": "Vehicle data by VehiclesDB · CC BY 4.0",
+  "vehicle_data_terms": "Sources and terms of use",
+  "app_libraries": "App libraries",
+  "app_libraries_description": "This app uses open-source components.",
+  "view_licenses": "View licenses",
+  "licenses_load_error": "Could not load the license text."
 }

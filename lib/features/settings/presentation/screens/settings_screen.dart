@@ -71,6 +71,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       carNumber: result['carNumber'] ?? '',
       techPassport: result['techPassport'] ?? '',
       make: result['make'] ?? '',
+      model: result['model'] ?? '',
       photoPath: result['photoPath'] ?? '',
     );
   }
@@ -83,6 +84,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       carNumber: result['carNumber'],
       techPassport: result['techPassport'],
       make: result['make'],
+      model: result['model'],
       photoUrl: result['photoUrl'],
     );
   }
@@ -327,6 +329,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       title: S.of(context).privacy_policy,
                       onTap: () => _openPrivacyPolicy(context),
                     ),
+                    Divider(
+                      thickness: 1,
+                      height: 1,
+                      color: context.brandTheme.divider,
+                    ),
+                    _buildActionRow(
+                      title: S.of(context).licenses_and_sources,
+                      onTap: () => context.router.push(
+                        LicensesRoute(applicationVersion: _appVersion),
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -412,6 +425,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
                     children: [
+                      if (car.displayName.isNotEmpty)
+                        Text(
+                          car.displayName,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: textTheme.bodyMedium?.copyWith(
+                            color: AppColors.textSecondary,
+                          ),
+                        ),
                       Text(
                         car.carNumber,
                         style: textTheme.titleMedium?.copyWith(

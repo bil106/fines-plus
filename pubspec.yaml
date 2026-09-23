@@ -122,6 +122,7 @@ flutter:
     # Includes flavor JSON files and an optional, ignored local .env.
     # Declaring the directory keeps builds valid when .env is absent.
     - assets/config/
+    - assets/licenses/
     - assets/icons/map.png
     - assets/icons/google_logo.png
     - assets/icons/logo_app.png

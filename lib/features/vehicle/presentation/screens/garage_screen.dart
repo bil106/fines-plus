@@ -19,6 +19,7 @@ import 'package:fines_plus/features/maintenance/presentation/cubit/maintenance_s
 import 'package:fines_plus/features/settings/presentation/cubit/settings_cubit.dart';
 import 'package:fines_plus/features/settings/presentation/cubit/unit_stream.dart';
 import 'package:fines_plus/features/vehicle/data/car_makes.dart';
+import 'package:fines_plus/features/vehicle/data/car_models.dart';
 import 'package:fines_plus/features/vehicle/data/datasources/car_photo_uploader.dart';
 import 'package:fines_plus/features/vehicle/data/models/car_info_model.dart';
 import 'package:fines_plus/features/vehicle/presentation/cubit/car_cubit.dart';
@@ -122,6 +123,7 @@ class GarageScreen extends StatelessWidget {
               carNumber: result['carNumber'] ?? '',
               techPassport: result['techPassport'] ?? '',
               make: result['make'] ?? '',
+              model: result['model'] ?? '',
               photoPath: result['photoPath'] ?? '',
             ),
           );
@@ -172,6 +174,7 @@ class GarageScreen extends StatelessWidget {
                         carNumber: result['carNumber'],
                         techPassport: result['techPassport'],
                         make: result['make'],
+                        model: result['model'],
                         photoUrl: result['photoUrl'],
                       ),
                     );
@@ -236,7 +239,9 @@ class _CarCard extends StatelessWidget {
                     const SizedBox(width: 12),
                     Expanded(
                       child: Text(
-                        car.make.isNotEmpty ? car.make : S.of(context).auto,
+                        car.displayName.isNotEmpty
+                            ? car.displayName
+                            : S.of(context).auto,
                         style: Theme.of(context).textTheme.titleMedium
                             ?.copyWith(
                               fontWeight: FontWeight.w800,
@@ -598,7 +603,7 @@ Future<void> runOrShowError(
 /// photo picker. When editing, the photo is uploaded straight away
 /// ('photoUrl'); for a new car there is no carId to upload against yet, so
 /// the picked file is returned as 'photoPath' for the caller to upload once
-/// the car has been created. Also returns 'make', 'carNumber',
+/// the car has been created. Also returns 'make', 'model', 'carNumber',
 /// 'techPassport' — or null if the user cancelled.
 Future<Map<String, String>?> showCarFormSheet(
   BuildContext context, {
@@ -612,6 +617,9 @@ Future<Map<String, String>?> showCarFormSheet(
   );
   String? selectedMake = existing?.make.isNotEmpty == true
       ? existing!.make
+      : null;
+  String? selectedModel = existing?.model.isNotEmpty == true
+      ? existing!.model
       : null;
   String photoUrl = existing?.photoUrl ?? '';
   bool isUploadingPhoto = false;
@@ -793,8 +801,67 @@ Future<Map<String, String>?> showCarFormSheet(
                                     ),
                                   )
                                   .toList(),
-                              onChanged: (v) =>
-                                  setState(() => selectedMake = v),
+                              onChanged: (v) => setState(() {
+                                selectedMake = v;
+                                // A model picked for the previous make
+                                // doesn't belong to the new one.
+                                if (!(carModels[v] ?? const []).contains(
+                                  selectedModel,
+                                )) {
+                                  selectedModel = null;
+                                }
+                              }),
+                              style: const TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w700,
+                                color: AppColors.ink,
+                              ),
+                              decoration: const InputDecoration(
+                                border: InputBorder.none,
+                                focusedBorder: InputBorder.none,
+                                isDense: true,
+                                contentPadding: EdgeInsets.zero,
+                              ),
+                            ),
+                          ),
+                          AppSpacers.verticalMedium,
+                          AppFieldCard(
+                            label: S.of(context).garage_model_label,
+                            child: DropdownButtonFormField<String>(
+                              // Re-created per make: the field keeps its own
+                              // value, which must be one of the new items.
+                              key: ValueKey(selectedMake),
+                              initialValue: selectedModel,
+                              isExpanded: true,
+                              hint: Text(
+                                S.of(context).garage_model_hint,
+                                style: const TextStyle(
+                                  fontSize: 15,
+                                  color: AppColors.textSecondary,
+                                ),
+                              ),
+                              items:
+                                  [
+                                        // A model saved before the list
+                                        // existed (typed by hand) stays
+                                        // selectable instead of being lost.
+                                        if (selectedModel != null &&
+                                            !(carModels[selectedMake] ??
+                                                    const [])
+                                                .contains(selectedModel))
+                                          selectedModel!,
+                                        ...?carModels[selectedMake],
+                                      ]
+                                      .map(
+                                        (m) => DropdownMenuItem(
+                                          value: m,
+                                          child: Text(m),
+                                        ),
+                                      )
+                                      .toList(),
+                              onChanged: selectedMake == null
+                                  ? null
+                                  : (v) => setState(() => selectedModel = v),
                               style: const TextStyle(
                                 fontSize: 15,
                                 fontWeight: FontWeight.w700,
@@ -872,6 +939,7 @@ Future<Map<String, String>?> showCarFormSheet(
                                       'techPassport':
                                           techPassportController.text,
                                       'make': selectedMake ?? '',
+                                      'model': selectedModel ?? '',
                                       'photoUrl': photoUrl,
                                       'photoPath': photoPath,
                                     })

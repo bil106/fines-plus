@@ -9,6 +9,7 @@ class CarInfoModel {
   final String ownerId;
   final String carId;
   final String make;
+  final String model;
   final String photoUrl;
 
   const CarInfoModel({
@@ -17,6 +18,7 @@ class CarInfoModel {
     required this.ownerId,
     this.carId = '',
     this.make = '',
+    this.model = '',
     this.photoUrl = '',
   });
 
@@ -26,6 +28,7 @@ class CarInfoModel {
     String? ownerId,
     String? carId,
     String? make,
+    String? model,
     String? photoUrl,
   }) {
     return CarInfoModel(
@@ -34,6 +37,7 @@ class CarInfoModel {
       ownerId: ownerId ?? this.ownerId,
       carId: carId ?? this.carId,
       make: make ?? this.make,
+      model: model ?? this.model,
       photoUrl: photoUrl ?? this.photoUrl,
     );
   }
@@ -44,7 +48,11 @@ class CarInfoModel {
 
   static const empty = CarInfoModel(carNumber: '', techPassport: '', ownerId: '');
 
+  /// "Make Model" for display, e.g. "Ford Focus" - either part may be
+  /// missing; empty when neither is set.
+  String get displayName => [make, model].where((part) => part.isNotEmpty).join(' ');
+
   /// The placeholder car the app creates on first launch so there is always
   /// an active car id: nothing filled in yet.
-  bool get isBlank => carNumber.isEmpty && techPassport.isEmpty && make.isEmpty && photoUrl.isEmpty;
+  bool get isBlank => carNumber.isEmpty && techPassport.isEmpty && make.isEmpty && model.isEmpty && photoUrl.isEmpty;
 }

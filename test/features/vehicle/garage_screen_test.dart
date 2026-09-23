@@ -130,6 +130,23 @@ void main() {
     expect(find.text(S.current.auto), findsNothing);
   });
 
+  testWidgets('card title shows make and model', (tester) async {
+    await open(
+      tester,
+      cars: const [
+        CarInfoModel(
+          carId: 'car',
+          carNumber: 'AI1234IO',
+          techPassport: '',
+          ownerId: 'owner',
+          make: 'Ford',
+          model: 'Focus',
+        ),
+      ],
+    );
+    expect(find.text('Ford Focus'), findsOneWidget);
+  });
+
   testWidgets(
     'card fits narrow display with large text and opens the edit sheet on long-press',
     (tester) async {
@@ -171,4 +188,78 @@ void main() {
       expect(tester.takeException(), isNull);
     },
   );
+
+  Future<void> openEditSheet(WidgetTester tester, {String model = ''}) async {
+    await open(
+      tester,
+      cars: [
+        CarInfoModel(
+          carId: 'car',
+          carNumber: 'AI1234IO',
+          techPassport: '',
+          ownerId: 'owner',
+          make: 'Ford',
+          model: model,
+        ),
+      ],
+    );
+    await tester.longPress(find.text('AI1234IO'));
+    await tester.pumpAndSettle();
+  }
+
+  // Make is the first dropdown in the sheet, model the second.
+  Finder makeDropdown() => find.byType(DropdownButtonFormField<String>).at(0);
+  Finder modelDropdown() => find.byType(DropdownButtonFormField<String>).at(1);
+
+  Future<void> pick(WidgetTester tester, Finder dropdown, String item) async {
+    await tester.tap(dropdown);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(item).last);
+    await tester.pumpAndSettle();
+  }
+
+  testWidgets('model is picked from the selected make\'s list', (
+    tester,
+  ) async {
+    await openEditSheet(tester);
+    // Near the top of Ford's list - the menu only builds visible items.
+    await pick(tester, modelDropdown(), 'Puma');
+    expect(
+      find.descendant(of: modelDropdown(), matching: find.text('Puma')),
+      findsOneWidget,
+    );
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('changing the make resets the model and swaps the list', (
+    tester,
+  ) async {
+    await openEditSheet(tester, model: 'Focus');
+    await pick(tester, makeDropdown(), 'Škoda');
+    expect(
+      find.descendant(of: modelDropdown(), matching: find.text('Focus')),
+      findsNothing,
+    );
+
+    await pick(tester, modelDropdown(), 'Octavia');
+    expect(
+      find.descendant(of: modelDropdown(), matching: find.text('Octavia')),
+      findsOneWidget,
+    );
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('a hand-typed model saved earlier stays selected', (
+    tester,
+  ) async {
+    await openEditSheet(tester, model: 'Focus RS Custom');
+    expect(
+      find.descendant(
+        of: modelDropdown(),
+        matching: find.text('Focus RS Custom'),
+      ),
+      findsOneWidget,
+    );
+    expect(tester.takeException(), isNull);
+  });
 }

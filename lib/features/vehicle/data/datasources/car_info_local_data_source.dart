@@ -205,6 +205,8 @@ class CarInfoLocalDataSource {
 
   Future<void> saveMake(String make) async => _mirrorToCarDoc({'make': make});
 
+  Future<void> saveModel(String model) async => _mirrorToCarDoc({'model': model.trim()});
+
   Future<void> savePhotoUrl(String url) async => _mirrorToCarDoc({'photoUrl': url});
 
   Future<void> saveFcmToken(String token) async => _mirrorToCarDoc({'fcmToken': token});
@@ -242,6 +244,7 @@ Future<void> clearCarInfo() async {
         ownerId: user.uid,
         carId: match.id,
         make: (data['make'] as String?) ?? '',
+        model: (data['model'] as String?) ?? '',
         photoUrl: (data['photoUrl'] as String?) ?? '',
       );
     }
@@ -319,6 +322,7 @@ Future<void> clearCarInfo() async {
           ownerId: user.uid,
           carId: d.id,
           make: (data['make'] as String?) ?? '',
+          model: (data['model'] as String?) ?? '',
           photoUrl: (data['photoUrl'] as String?) ?? '',
         );
       }).toList(),
@@ -331,6 +335,7 @@ Future<void> clearCarInfo() async {
     String carNumber = '',
     String techPassport = '',
     String make = '',
+    String model = '',
     String photoUrl = '',
   }) async {
     final user = auth.currentUser;
@@ -343,6 +348,7 @@ Future<void> clearCarInfo() async {
       ownerId: user.uid,
       carId: docRef.id,
       make: make,
+      model: model.trim(),
       photoUrl: photoUrl,
     );
 
@@ -351,6 +357,7 @@ Future<void> clearCarInfo() async {
       'carNumber': car.carNumber,
       'techPassport': car.techPassport,
       'make': car.make,
+      'model': car.model,
       'photoUrl': car.photoUrl,
       'isDefault': false,
       'createdAt': FieldValue.serverTimestamp(),
@@ -369,6 +376,7 @@ Future<void> clearCarInfo() async {
     String? carNumber,
     String? techPassport,
     String? make,
+    String? model,
     String? photoUrl,
   }) async {
     final user = auth.currentUser;
@@ -378,6 +386,7 @@ Future<void> clearCarInfo() async {
     if (carNumber != null) fields['carNumber'] = carNumber.trim();
     if (techPassport != null) fields['techPassport'] = techPassport.trim().toUpperCase();
     if (make != null) fields['make'] = make;
+    if (model != null) fields['model'] = model.trim();
     if (photoUrl != null) fields['photoUrl'] = photoUrl;
 
     await _carsCollection(user.uid).doc(carId).set(fields, SetOptions(merge: true));

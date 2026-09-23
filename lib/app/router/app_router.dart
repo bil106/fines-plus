@@ -9,6 +9,7 @@ import 'package:fines_plus/features/export/presentation/screens/export_screen.da
 import 'package:fines_plus/features/fines/presentation/screens/fines_screeen.dart';
 import 'package:fines_plus/features/home/presentation/screens/home_screen.dart';
 import 'package:fines_plus/features/reminders/data/repository/reminder_repository.dart';
+import 'package:fines_plus/features/reminders/presentation/cubit/reminder_cubit.dart';
 import 'package:fines_plus/features/reminders/presentation/screens/reminders_screen.dart';
 import 'package:fines_plus/features/schedule/data/repository/schedule_repository.dart';
 import 'package:fines_plus/features/vehicle/presentation/screens/car_info_screen.dart';
@@ -30,6 +31,8 @@ import 'package:fines_plus/app/router/home_screen_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+import 'package:fines_plus/features/settings/presentation/screens/licenses_screen.dart';
+
 part 'app_router.gr.dart';
 
 @AutoRouterConfig(replaceInRouteName: 'Screen,Route')
@@ -42,7 +45,6 @@ class AppRouter extends RootStackRouter {
   List<AutoRoute> get routes => [
     AutoRoute(page: SplashRoute.page, path: '/', initial: true),
 
-  
     AutoRoute(
       page: HomeRouteWrapper.page,
       path: '/home-wrapper',
@@ -61,10 +63,15 @@ class AppRouter extends RootStackRouter {
       ],
     ),
 
-    
     AutoRoute(page: OnboardingRoute.page, path: '/onboarding'),
     AutoRoute(page: CarInfoRoute.page, path: '/car-info'),
     AutoRoute(page: SettingsRoute.page, path: '/settings'),
+    AutoRoute(page: LicensesRoute.page, path: '/licenses'),
+    AutoRoute(
+      page: VehicleDataLicenseRoute.page,
+      path: '/licenses/vehicle-data',
+    ),
+    AutoRoute(page: LibraryLicensesRoute.page, path: '/licenses/libraries'),
     AutoRoute(page: ExportRoute.page, path: '/export'),
     AutoRoute(page: FuelMapRoute.page, path: '/fuel-map'),
     AutoRoute(page: FuelUpRoute.page, path: '/fuel'),
@@ -76,4 +83,3 @@ class AppRouter extends RootStackRouter {
     AutoRoute(page: RegistrationRoute.page, path: '/registration'),
   ];
 }
-

@@ -404,6 +404,26 @@ class S {
     );
   }
 
+  /// `Car model (optional)`
+  String get garage_model_label {
+    return Intl.message(
+      'Car model (optional)',
+      name: 'garage_model_label',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Select a model`
+  String get garage_model_hint {
+    return Intl.message(
+      'Select a model',
+      name: 'garage_model_hint',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Search`
   String get search {
     return Intl.message('Search', name: 'search', desc: '', args: []);
@@ -4169,6 +4189,16 @@ class S {
     return Intl.message('Home', name: 'home', desc: '', args: []);
   }
 
+  /// `Notifications`
+  String get notifications {
+    return Intl.message(
+      'Notifications',
+      name: 'notifications',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Units`
   String get units {
     return Intl.message('Units', name: 'units', desc: '', args: []);
@@ -5409,6 +5439,86 @@ class S {
     return Intl.message(
       'Green Card',
       name: 'insurance_green_card',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Licenses and sources`
+  String get licenses_and_sources {
+    return Intl.message(
+      'Licenses and sources',
+      name: 'licenses_and_sources',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Vehicle data`
+  String get vehicle_data {
+    return Intl.message(
+      'Vehicle data',
+      name: 'vehicle_data',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Vehicle data by VehiclesDB · CC BY 4.0`
+  String get vehicle_data_credit {
+    return Intl.message(
+      'Vehicle data by VehiclesDB · CC BY 4.0',
+      name: 'vehicle_data_credit',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Sources and terms of use`
+  String get vehicle_data_terms {
+    return Intl.message(
+      'Sources and terms of use',
+      name: 'vehicle_data_terms',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `App libraries`
+  String get app_libraries {
+    return Intl.message(
+      'App libraries',
+      name: 'app_libraries',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `This app uses open-source components.`
+  String get app_libraries_description {
+    return Intl.message(
+      'This app uses open-source components.',
+      name: 'app_libraries_description',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `View licenses`
+  String get view_licenses {
+    return Intl.message(
+      'View licenses',
+      name: 'view_licenses',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Could not load the license text.`
+  String get licenses_load_error {
+    return Intl.message(
+      'Could not load the license text.',
+      name: 'licenses_load_error',
       desc: '',
       args: [],
     );

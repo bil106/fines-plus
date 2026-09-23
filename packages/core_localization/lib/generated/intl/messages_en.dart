@@ -86,6 +86,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "amount_month": MessageLookupByLibrary.simpleMessage("Amount per month"),
     "analitics": MessageLookupByLibrary.simpleMessage("Analytics"),
     "analytics": MessageLookupByLibrary.simpleMessage("Analytics"),
+    "app_libraries": MessageLookupByLibrary.simpleMessage("App libraries"),
+    "app_libraries_description": MessageLookupByLibrary.simpleMessage(
+      "This app uses open-source components.",
+    ),
     "app_version": MessageLookupByLibrary.simpleMessage("Version"),
     "apple_login_error": m0,
     "apple_login_successful": MessageLookupByLibrary.simpleMessage(
@@ -392,6 +396,10 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "garage_make_hint": MessageLookupByLibrary.simpleMessage("Select a make"),
     "garage_make_label": MessageLookupByLibrary.simpleMessage("Car make"),
+    "garage_model_hint": MessageLookupByLibrary.simpleMessage("Select a model"),
+    "garage_model_label": MessageLookupByLibrary.simpleMessage(
+      "Car model (optional)",
+    ),
     "garage_no_number": MessageLookupByLibrary.simpleMessage(
       "Car without a plate",
     ),
@@ -476,6 +484,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "last_record": MessageLookupByLibrary.simpleMessage("Last record"),
     "last_service_date": MessageLookupByLibrary.simpleMessage(
       "Last service date",
+    ),
+    "licenses_and_sources": MessageLookupByLibrary.simpleMessage(
+      "Licenses and sources",
+    ),
+    "licenses_load_error": MessageLookupByLibrary.simpleMessage(
+      "Could not load the license text.",
     ),
     "loaded": MessageLookupByLibrary.simpleMessage("Loaded"),
     "log_out": MessageLookupByLibrary.simpleMessage("Log out"),
@@ -575,6 +589,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Don\'t forget to complete the task",
     ),
     "not_paid": MessageLookupByLibrary.simpleMessage("Not paid"),
+    "notifications": MessageLookupByLibrary.simpleMessage("Notifications"),
     "notifications_resource": MessageLookupByLibrary.simpleMessage(
       "Notifications about reaching 90% resource",
     ),
@@ -1340,6 +1355,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "valid_from": MessageLookupByLibrary.simpleMessage("Valid from"),
     "valid_to": MessageLookupByLibrary.simpleMessage("Valid to"),
     "vehicle_color": MessageLookupByLibrary.simpleMessage("Color"),
+    "vehicle_data": MessageLookupByLibrary.simpleMessage("Vehicle data"),
+    "vehicle_data_credit": MessageLookupByLibrary.simpleMessage(
+      "Vehicle data by VehiclesDB · CC BY 4.0",
+    ),
+    "vehicle_data_terms": MessageLookupByLibrary.simpleMessage(
+      "Sources and terms of use",
+    ),
     "vehicle_fuel": MessageLookupByLibrary.simpleMessage("Fuel"),
     "vehicle_owner": MessageLookupByLibrary.simpleMessage("Owner"),
     "vehicle_region": MessageLookupByLibrary.simpleMessage("Region"),
@@ -1353,6 +1375,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Verification history",
     ),
     "view_all_events": MessageLookupByLibrary.simpleMessage("View all events"),
+    "view_licenses": MessageLookupByLibrary.simpleMessage("View licenses"),
     "volume_kwh_short": MessageLookupByLibrary.simpleMessage("Amount, kWh"),
     "volume_liters_short": MessageLookupByLibrary.simpleMessage("Volume, L"),
     "write_viber": MessageLookupByLibrary.simpleMessage("Write to Viber"),

@@ -576,7 +576,7 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
       case HomePage.fines:
         return Icons.confirmation_number_outlined;
       case HomePage.reminders:
-        return Icons.access_time;
+        return Icons.notifications_none;
       case HomePage.home:
       default:
         return Icons.home;
@@ -588,7 +588,7 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
       case HomePage.fines:
         return S.of(context).fines;
       case HomePage.reminders:
-        return S.of(context).reminder;
+        return S.of(context).notifications;
       case HomePage.home:
       default:
         return S.of(context).home;

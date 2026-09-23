@@ -90,6 +90,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "amount_month": MessageLookupByLibrary.simpleMessage("Сума за місяць"),
     "analitics": MessageLookupByLibrary.simpleMessage("Аналітика"),
     "analytics": MessageLookupByLibrary.simpleMessage("Аналітика"),
+    "app_libraries": MessageLookupByLibrary.simpleMessage(
+      "Бібліотеки застосунку",
+    ),
+    "app_libraries_description": MessageLookupByLibrary.simpleMessage(
+      "У застосунку використано компоненти з відкритим кодом.",
+    ),
     "app_version": MessageLookupByLibrary.simpleMessage("Версія"),
     "apple_login_error": m0,
     "apple_login_successful": MessageLookupByLibrary.simpleMessage(
@@ -394,6 +400,10 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "garage_make_hint": MessageLookupByLibrary.simpleMessage("Оберіть марку"),
     "garage_make_label": MessageLookupByLibrary.simpleMessage("Марка авто"),
+    "garage_model_hint": MessageLookupByLibrary.simpleMessage("Оберіть модель"),
+    "garage_model_label": MessageLookupByLibrary.simpleMessage(
+      "Модель авто (необов\'язково)",
+    ),
     "garage_no_number": MessageLookupByLibrary.simpleMessage("Авто без номера"),
     "garage_setup_subtitle": MessageLookupByLibrary.simpleMessage(
       "Додайте авто зараз або зробіть це пізніше — користуватися застосунком можна вже зараз",
@@ -427,7 +437,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "history_unavailable": MessageLookupByLibrary.simpleMessage(
       "Історія тимчасово недоступна: індекс будується. Спробуйте за кілька хвилин.",
     ),
-    "home": MessageLookupByLibrary.simpleMessage("Дім"),
+    "home": MessageLookupByLibrary.simpleMessage("Головна"),
     "incorrect_email": MessageLookupByLibrary.simpleMessage(
       "Некоректний email",
     ),
@@ -477,6 +487,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "last_record": MessageLookupByLibrary.simpleMessage("Останній запис"),
     "last_service_date": MessageLookupByLibrary.simpleMessage(
       "Дата останнього обслуговування",
+    ),
+    "licenses_and_sources": MessageLookupByLibrary.simpleMessage(
+      "Ліцензії та джерела",
+    ),
+    "licenses_load_error": MessageLookupByLibrary.simpleMessage(
+      "Не вдалося завантажити текст ліцензії.",
     ),
     "loaded": MessageLookupByLibrary.simpleMessage("Завантажено"),
     "log_out": MessageLookupByLibrary.simpleMessage("Вийти з акаунту"),
@@ -580,6 +596,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Не забудь виконати завдання",
     ),
     "not_paid": MessageLookupByLibrary.simpleMessage("Не оплачено"),
+    "notifications": MessageLookupByLibrary.simpleMessage("Сповіщення"),
     "notifications_resource": MessageLookupByLibrary.simpleMessage(
       "Повідомлення про досягнення 90% ресурсу",
     ),
@@ -1327,6 +1344,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "valid_from": MessageLookupByLibrary.simpleMessage("Діє з"),
     "valid_to": MessageLookupByLibrary.simpleMessage("Діє до"),
     "vehicle_color": MessageLookupByLibrary.simpleMessage("Колір"),
+    "vehicle_data": MessageLookupByLibrary.simpleMessage("Дані про автомобілі"),
+    "vehicle_data_credit": MessageLookupByLibrary.simpleMessage(
+      "Vehicle data by VehiclesDB · CC BY 4.0",
+    ),
+    "vehicle_data_terms": MessageLookupByLibrary.simpleMessage(
+      "Джерела та умови використання",
+    ),
     "vehicle_fuel": MessageLookupByLibrary.simpleMessage("Паливо"),
     "vehicle_owner": MessageLookupByLibrary.simpleMessage("Власник"),
     "vehicle_region": MessageLookupByLibrary.simpleMessage("Регіон"),
@@ -1339,6 +1363,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "view_all_events": MessageLookupByLibrary.simpleMessage(
       "Переглянути всі події",
+    ),
+    "view_licenses": MessageLookupByLibrary.simpleMessage(
+      "Переглянути ліцензії",
     ),
     "volume_kwh_short": MessageLookupByLibrary.simpleMessage("Обсяг, кВт·год"),
     "volume_liters_short": MessageLookupByLibrary.simpleMessage("Обсяг, л"),
