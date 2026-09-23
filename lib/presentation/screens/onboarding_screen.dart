@@ -3,9 +3,13 @@ import 'package:design_system/widget/app_back_button.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
+import 'package:design_system/theme/app_brand_theme.dart';
 import 'package:design_system/theme/app_theme.dart';
 import 'package:fines_plus/app/router/app_router.dart';
+import 'package:fines_plus/core/config/app_config.dart';
+import 'package:fines_plus/core/theme/theme_config.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 @RoutePage()
@@ -44,6 +48,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
     final bool isShort = size.height < 600;
     final bool isLastInfoPage = pageIndex == 3;
+    final accent = _accent(context);
 
     return SafeArea(
       child: SingleChildScrollView(
@@ -66,13 +71,17 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               Text(
                 title,
                 textAlign: TextAlign.center,
-                style: textTheme.black28W400,
+                style: context.brandTheme.displayTextStyle.copyWith(
+                  fontSize: 28,
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.ink,
+                ),
               ),
 
               Text(
                 subtitle,
                 textAlign: TextAlign.center,
-                style: textTheme.black54fs18,
+                style: textTheme.black16.copyWith(color: AppColors.textSecondary),
               ),
 
               SizedBox(height: isShort ? 20 : 100),
@@ -81,11 +90,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 width: double.infinity,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.blue700,
+                    backgroundColor: accent,
+                    foregroundColor: AppColors.neutreBlanc,
                     padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(28),
-                    ),
+                    shape: const StadiumBorder(),
                   ),
                   onPressed: () {
                     if (isLastInfoPage) {
@@ -103,7 +111,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         : (pageIndex <= 2
                               ? S.of(context).good
                               : S.of(context).of_course),
-                    style: textTheme.white18W400,
+                    style: textTheme.black18bold.copyWith(
+                      fontSize: 15.5,
+                      fontWeight: FontWeight.w800,
+                      color: AppColors.neutreBlanc,
+                    ),
                   ),
                 ),
               ),
@@ -122,7 +134,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     super.dispose();
   }
 
+  /// The mockup's accent is the raw brand hex, not Material3's tonal
+  /// colorScheme.primary - same source the registration/subscription
+  /// screens use for their own CTA.
+  Color _accent(BuildContext context) =>
+      ThemeConfig.hexToColor(context.watch<AppConfig>().primaryColorHex);
+
   Widget _buildDots() {
+    final accent = _accent(context);
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: List.generate(_pageCount, (index) {
@@ -134,7 +153,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           height: 10,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: isActive ? AppColors.blue700 : AppColors.grey400,
+            color: isActive ? accent : AppColors.inactiveDot,
           ),
         );
       }),
@@ -145,14 +164,17 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   Widget build(BuildContext context) {
     final isLandscape =
         MediaQuery.of(context).orientation == Orientation.landscape;
+    final background = context.brandTheme.surfaceBg;
     return Scaffold(
+      backgroundColor: background,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(20),
         child: AppBar(
           leading: ModalRoute.of(context)?.canPop == true
               ? const AppBackButton()
               : null,
-          backgroundColor: AppColors.blue700,
+          backgroundColor: background,
+          surfaceTintColor: AppColors.transparent,
           elevation: 0,
         ),
       ),
