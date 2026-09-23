@@ -371,7 +371,7 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
                 ExportScreen(
                   key: const ValueKey('export'),
                   history: exportHistory,
-                  carNumber: _carNumber!,
+                  carNumber: carNumber,
                   onBack: () => openPage(HomePage.analytics),
                 ),
                 MultiBlocProvider(

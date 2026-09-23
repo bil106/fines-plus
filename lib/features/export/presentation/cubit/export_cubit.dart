@@ -40,6 +40,7 @@ Future<File> exportCsvFile(String carNumber, List<EventModel> history) async {
   Future<File> exportBuyerReportFile(
     String carNumber,
     List<EventModel> history, {
+    required String carMake,
     required String brandName,
     required String logoAssetPath,
   }) async {
@@ -54,6 +55,7 @@ Future<File> exportCsvFile(String carNumber, List<EventModel> history) async {
 
     final pdfBytes = await exportPdf.generateBuyerReportBytes(
       carNumber: carNumber,
+      carMake: carMake,
       history: carHistoryList,
       finesHistory: finesHistory,
       brandName: brandName,

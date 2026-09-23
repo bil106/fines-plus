@@ -434,10 +434,10 @@ class S {
     );
   }
 
-  /// `There are no fines for you`
+  /// `No fines found for this car`
   String get no_fines {
     return Intl.message(
-      'There are no fines for you',
+      'No fines found for this car',
       name: 'no_fines',
       desc: '',
       args: [],

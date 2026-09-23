@@ -30,12 +30,13 @@ class ExportHistoryPdf {
   }
 
   /// A branded report meant to be handed to a car buyer: the app logo, the
-  /// current mileage, the full maintenance history, and every fine that's
-  /// ever been checked for this car (with paid/unpaid status) — the single
+  /// current mileage, the full maintenance history, and the fines still
+  /// unpaid on this car (or a "no fines" line) — the single
   /// artifact this feature is actually for someone who doesn't use the app
   /// to see and recognize the app's name.
   Future<Uint8List> generateBuyerReportBytes({
     required String carNumber,
+    required String carMake,
     required List<CarHistory> history,
     required List<FineHistory> finesHistory,
     required String brandName,
@@ -47,7 +48,7 @@ class ExportHistoryPdf {
     final logo = pw.MemoryImage(logoBytes.buffer.asUint8List());
 
     final mileage = history.fold<int>(0, (max, h) => h.mileage > max ? h.mileage : max);
-    final fines = _dedupeFines(finesHistory);
+    final fines = _unpaidFines(finesHistory);
 
     pdf.addPage(
       pw.MultiPage(
@@ -67,20 +68,38 @@ class ExportHistoryPdf {
           ),
           pw.SizedBox(height: 20),
           pw.Text(
-            "${S.current.buyer_report} $carNumber",
+            S.current.buyer_report,
             style: pw.TextStyle(font: font, fontSize: 18, fontWeight: pw.FontWeight.bold),
           ),
-          pw.SizedBox(height: 4),
-          pw.Text(
-            "${S.current.current_mileage}: $mileage ${S.current.km}",
-            style: pw.TextStyle(font: font, fontSize: 13),
+          pw.SizedBox(height: 16),
+          pw.Row(
+            crossAxisAlignment: pw.CrossAxisAlignment.center,
+            children: [
+              pw.Text(
+                S.current.car_history,
+                style: pw.TextStyle(font: font, fontSize: 15, fontWeight: pw.FontWeight.bold),
+              ),
+              pw.SizedBox(width: 16),
+              pw.Spacer(),
+              pw.Column(
+                crossAxisAlignment: pw.CrossAxisAlignment.end,
+                children: [
+                  if (carNumber.isNotEmpty) ...[
+                    _buildPlate(font, carNumber),
+                    pw.SizedBox(height: 6),
+                  ],
+                  pw.Text(
+                    [
+                      if (carMake.isNotEmpty) carMake,
+                      "${S.current.current_mileage}: $mileage ${S.current.km}",
+                    ].join(' • '),
+                    style: pw.TextStyle(font: font, fontSize: 12),
+                  ),
+                ],
+              ),
+            ],
           ),
-          pw.SizedBox(height: 20),
-          pw.Text(
-            S.current.car_history,
-            style: pw.TextStyle(font: font, fontSize: 15, fontWeight: pw.FontWeight.bold),
-          ),
-          pw.SizedBox(height: 8),
+          pw.SizedBox(height: 12),
           ..._buildHistorySections(font, history),
           pw.SizedBox(height: 16),
           pw.Text(
@@ -92,15 +111,12 @@ class ExportHistoryPdf {
             pw.Text(S.current.no_fines, style: pw.TextStyle(font: font, fontSize: 12))
           else
             pw.Table.fromTextArray(
-              headers: [S.current.date, S.current.description, S.current.price, S.current.status],
-              data: fines
-                  .map((f) => [f.date, f.description, f.amount, f.isPaid ? S.current.paid : S.current.not_paid])
-                  .toList(),
+              headers: [S.current.date, S.current.description, S.current.price],
+              data: fines.map((f) => [f.date, f.description, f.amount]).toList(),
               columnWidths: {
                 0: const pw.FlexColumnWidth(2),
-                1: const pw.FlexColumnWidth(4),
+                1: const pw.FlexColumnWidth(5),
                 2: const pw.FlexColumnWidth(2),
-                3: const pw.FlexColumnWidth(2),
               },
               cellStyle: pw.TextStyle(font: font, fontSize: 10),
               headerStyle: pw.TextStyle(font: font, fontWeight: pw.FontWeight.bold, fontSize: 10),
@@ -110,6 +126,57 @@ class ExportHistoryPdf {
     );
 
     return pdf.save();
+  }
+
+  /// A Ukrainian-style licence plate: blue flag/"UA" strip on the left, the
+  /// plate number in large type (e.g. "KA 4362 PO") in a rounded black frame.
+  pw.Widget _buildPlate(pw.Font font, String carNumber) {
+    final plate = carNumber.replaceAll(' ', '').toUpperCase();
+    final formatted = plate.length == 8
+        ? '${plate.substring(0, 2)} ${plate.substring(2, 6)} ${plate.substring(6)}'
+        : plate;
+
+    return pw.Container(
+      decoration: pw.BoxDecoration(
+        color: PdfColors.white,
+        border: pw.Border.all(color: PdfColors.black, width: 2),
+        borderRadius: pw.BorderRadius.circular(6),
+      ),
+      child: pw.Row(
+        mainAxisSize: pw.MainAxisSize.min,
+        crossAxisAlignment: pw.CrossAxisAlignment.center,
+        children: [
+          pw.Container(
+            width: 26,
+            height: 40,
+            padding: const pw.EdgeInsets.symmetric(vertical: 5),
+            decoration: const pw.BoxDecoration(
+              color: PdfColors.blue800,
+              borderRadius: pw.BorderRadius.horizontal(left: pw.Radius.circular(4)),
+            ),
+            child: pw.Column(
+              mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+              children: [
+                pw.Column(
+                  children: [
+                    pw.Container(width: 16, height: 5, color: PdfColors.blue400),
+                    pw.Container(width: 16, height: 5, color: PdfColors.yellow),
+                  ],
+                ),
+                pw.Text('UA', style: pw.TextStyle(font: font, fontSize: 9, color: PdfColors.white)),
+              ],
+            ),
+          ),
+          pw.Padding(
+            padding: const pw.EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            child: pw.Text(
+              formatted,
+              style: pw.TextStyle(font: font, fontSize: 30, fontWeight: pw.FontWeight.bold),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Future<pw.Font> _loadFont() async {
@@ -186,25 +253,23 @@ class ExportHistoryPdf {
     ];
   }
 
-  /// The same fine can show up in multiple saved checks (e.g. checked again
-  /// a month later); collapse by fine id and treat it as paid if any of the
-  /// saved checks recorded it as paid.
-  List<_ReportFine> _dedupeFines(List<FineHistory> finesHistory) {
-    final byId = <String, _ReportFine>{};
-    for (final check in finesHistory) {
-      for (var i = 0; i < check.fines.length; i++) {
-        final fine = check.fines[i];
-        final id = fine['id']?.toString() ?? '${check.id}_$i';
-        final isPaid = check.paidFines.contains(id) || (byId[id]?.isPaid ?? false);
-        byId[id] = _ReportFine(
-          date: (fine['date'] ?? fine['violationDate'] ?? fine['datetime'] ?? '').toString(),
-          description: (fine['description'] ?? fine['article'] ?? fine['offense'] ?? '').toString(),
-          amount: (fine['amount'] ?? fine['suma'] ?? fine['penalty'] ?? '').toString(),
-          isPaid: isPaid,
-        );
-      }
-    }
-    return byId.values.toList();
+  /// Fines currently outstanding on the car - a buyer only cares about what
+  /// is still unpaid. Same rule as the fines screen: the latest check is the
+  /// current state (getHistory() orders checks newest first); anything that
+  /// dropped out of it is settled.
+  List<_ReportFine> _unpaidFines(List<FineHistory> finesHistory) {
+    if (finesHistory.isEmpty) return [];
+    final latest = finesHistory.first;
+    return [
+      for (final entry in latest.fines.asMap().entries)
+        if (!latest.isFinePaid(entry.value['id']?.toString() ?? '${entry.key}', entry.value))
+          _ReportFine(
+            date: (entry.value['date'] ?? entry.value['violationDate'] ?? entry.value['datetime'] ?? '').toString(),
+            description: (entry.value['description'] ?? entry.value['article'] ?? entry.value['offense'] ?? '')
+                .toString(),
+            amount: (entry.value['amount'] ?? entry.value['suma'] ?? entry.value['penalty'] ?? '').toString(),
+          ),
+    ];
   }
 }
 
@@ -212,6 +277,5 @@ class _ReportFine {
   final String date;
   final String description;
   final String amount;
-  final bool isPaid;
-  _ReportFine({required this.date, required this.description, required this.amount, required this.isPaid});
+  _ReportFine({required this.date, required this.description, required this.amount});
 }

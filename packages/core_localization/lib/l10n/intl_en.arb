@@ -54,7 +54,7 @@
   "check_fine_title": "Checking the fine",
   "check_fines": "Check fines",
   "checking_fines": "Checking fines",
-  "no_fines": "There are no fines for you",
+  "no_fines": "No fines found for this car",
   "no_fines_short": "No fines",
   "fines_mvs_title": "Fines check (MVS)",
   "fines_mvs_hint": "Solve the captcha and tap “Перевірити” — the fines will be added to the app automatically.",
