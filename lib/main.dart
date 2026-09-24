@@ -32,6 +32,7 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
@@ -84,6 +85,14 @@ void main() {
   runZonedGuarded<Future<void>>(
     () async {
       WidgetsFlutterBinding.ensureInitialized();
+      // Bundled third-party assets that aren't Dart packages, so the
+      // "View licenses" page lists them alongside the libraries.
+      LicenseRegistry.addLicense(() async* {
+        yield LicenseEntryWithLineBreaks(
+          ['Phosphor Icons'],
+          await rootBundle.loadString('assets/licenses/phosphor-icons.txt'),
+        );
+      });
       FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
       await dotenv.load(fileName: 'assets/config/.env', isOptional: true);

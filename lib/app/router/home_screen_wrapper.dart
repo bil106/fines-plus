@@ -50,9 +50,11 @@ import 'package:fines_plus/env/env.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
+import 'package:fines_plus/features/analytics/presentation/screens/expense_history_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -70,6 +72,7 @@ enum HomePage {
   fuelMap,
   carWashMap,
   garage,
+  history,
 }
 
 @RoutePage()
@@ -119,6 +122,7 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
       HomePage.fuelMap: 10,
       HomePage.carWashMap: 11,
       HomePage.garage: 12,
+      HomePage.history: 13,
     };
 
     _currentIndex = _pageIndexMap[HomePage.home]!;
@@ -224,7 +228,9 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
 
   Future<void> _showFinesCheckReminder() async {
     try {
-      await FinesCheckReminder(context.read<PushHelper>()).showIfDue(S.of(context));
+      await FinesCheckReminder(
+        context.read<PushHelper>(),
+      ).showIfDue(S.of(context));
     } catch (e, s) {
       debugPrint('Failed to show fines check reminder: $e');
       FirebaseCrashlytics.instance.recordError(e, s);
@@ -325,10 +331,17 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
     final finesCheckEnabled = context.watch<AppConfig>().finesCheckEnabled;
     // Ukraine-only feature (talks to a UA government portal) - hidden from
     // the bottom nav entirely for brands/markets that don't have it.
+    // Analytics is no longer reachable from navigation - its charts moved to
+    // the dashboard and its History tab became the Історія tab below. The
+    // screen itself is kept in the PageView for now.
     final navPages = <HomePage>[
       HomePage.home,
+      if (hasCar) HomePage.history,
       if (finesCheckEnabled) HomePage.fines,
       HomePage.reminders,
+      // Settings moved here from the home AppBar's gear. Only built into
+      // the PageView once a car exists (see the `if (hasCar)` block below).
+      if (hasCar) HomePage.settings,
     ];
     if (_carNumber == null) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
@@ -419,7 +432,7 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
                   key: const ValueKey('export'),
                   history: exportHistory,
                   carNumber: carNumber,
-                  onBack: () => openPage(HomePage.analytics),
+                  onBack: () => openPage(HomePage.history),
                 ),
                 MultiBlocProvider(
                   providers: [
@@ -511,6 +524,10 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
                   onBack: () => openPage(HomePage.home),
                   onContinue: () => openPage(HomePage.home),
                 ),
+                ExpenseHistoryScreen(
+                  key: const ValueKey('expense_history'),
+                  onBack: () => openPage(HomePage.home),
+                ),
               ],
             ],
           ),
@@ -542,7 +559,11 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
                     items: [
                       for (final page in navPages)
                         BottomNavigationBarItem(
-                          icon: Icon(_navIcon(page)),
+                          icon: _navIconWidget(page, AppColors.catOther),
+                          activeIcon: _navIconWidget(
+                            page,
+                            Theme.of(context).colorScheme.primary,
+                          ),
                           label: _navLabel(context, page),
                         ),
                     ],
@@ -561,7 +582,8 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
         index == _pageIndexMap[HomePage.addCar] ||
         index == _pageIndexMap[HomePage.analytics] ||
         index == _pageIndexMap[HomePage.schedule] ||
-        index == _pageIndexMap[HomePage.settings];
+        index == _pageIndexMap[HomePage.settings] ||
+        index == _pageIndexMap[HomePage.history];
   }
 
   int _bottomNavIndexFor(int pageIndex, List<HomePage> navPages) {
@@ -571,12 +593,28 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
     return 0;
   }
 
+  /// Material icons take the bar's selected/unselected color from the
+  /// IconTheme; the History glyph is an SVG, so it gets [color] explicitly.
+  Widget _navIconWidget(HomePage page, Color color) {
+    if (page == HomePage.history) {
+      return SvgPicture.asset(
+        'assets/icons/history.svg',
+        width: 22,
+        height: 22,
+        colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
+      );
+    }
+    return Icon(_navIcon(page));
+  }
+
   IconData _navIcon(HomePage page) {
     switch (page) {
       case HomePage.fines:
         return Icons.confirmation_number_outlined;
       case HomePage.reminders:
         return Icons.notifications_none;
+      case HomePage.settings:
+        return Icons.settings_outlined;
       case HomePage.home:
       default:
         return Icons.home;
@@ -589,6 +627,10 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
         return S.of(context).fines;
       case HomePage.reminders:
         return S.of(context).notifications;
+      case HomePage.settings:
+        return S.of(context).settings;
+      case HomePage.history:
+        return S.of(context).history;
       case HomePage.home:
       default:
         return S.of(context).home;

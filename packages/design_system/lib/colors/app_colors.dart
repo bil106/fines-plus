@@ -84,6 +84,13 @@ abstract final class AppColors {
   static const reminderInsuranceAccent = Color(0xFF5B6CFF);
   static const reminderManualAccent = Color(0xFF22A6D9);
 
+  // "Add expense" sheet tiles for the service sub-categories (Oil/Battery/
+  // Tires): they share the catService expense category, so they get their
+  // own accents to tell the tiles apart at a glance.
+  static const quickOilAccent = Color(0xFFE0A800);
+  static const quickBatteryAccent = Color(0xFF43A047);
+  static const quickTiresAccent = Color(0xFF795548);
+
   // Dashed "add another row" button border (work lists in ТО/Тюнінг),
   // deliberately a warmer tone than surfaceBorder so the dashed affordance
   // reads as distinct from a regular field's solid border.
@@ -91,6 +98,35 @@ abstract final class AppColors {
 
   // Unselected radio/dot (subscription plan picker, onboarding page dots).
   static const inactiveDot = Color(0xFFD8D3C4);
+
+  // Dark bases the dashboard hero card's brand accent is mixed into (see
+  // ThemeConfig.createTheme -> AppBrandTheme.heroBg*): darkest in the
+  // bottom-left corner, lightening towards the top-right.
+  static const heroBaseDeep = Color(0xFF0A1120);
+  static const heroBase = Color(0xFF0E1726);
+  static const heroBaseSoft = Color(0xFF1A2740);
+
+  // Warm base the brand's surfaceBorder is mixed into for the dashboard
+  // expense chart line (see ThemeConfig.createTheme -> AppBrandTheme.chartLine),
+  // so the chart stays in the app's beige tones for every flavor.
+  static const chartWarmBase = Color(0xFF8A6A3A);
+
+  // Month-over-month delta on the dark hero card - lighter than
+  // statusSuccess/statusDanger so they keep contrast on a dark surface.
+  static const successOnDark = Color(0xFF6EE7A0);
+  static const dangerOnDark = Color(0xFFFF8A80);
+
+  // Ukrainian licence plate, drawn on the hero card. Fixed by the real
+  // plate's look, independent of the white-label brand.
+  static const plateFrameLight = Color(0xFFF7F8FA);
+  static const plateFrameMid = Color(0xFFC3C9D2);
+  static const plateFrameDark = Color(0xFF9AA2AE);
+  static const plateInk = Color(0xFF111318);
+  static const plateSurfaceShade = Color(0xFFF1F3F6);
+  static const plateStripTop = Color(0xFF2F62E6);
+  static const plateStripBottom = Color(0xFF1741B5);
+  static const plateFlagBlue = Color(0xFF0057B7);
+  static const plateFlagYellow = Color(0xFFFFD700);
 
   // Note: the dashboard's warm-neutral background/border/divider and the
   // unpaid-fines alert colors used to live here as fixed consts. They are

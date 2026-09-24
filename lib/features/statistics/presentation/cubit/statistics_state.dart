@@ -3,6 +3,10 @@
 import 'package:fines_plus/core/extensions/monthly_expense_stats.dart';
 import 'package:fines_plus/features/expenses/data/models/fuel_record.dart';
 
+/// One month's expense total (in the base currency), [month] being the
+/// first day of that month.
+typedef MonthTotal = ({DateTime month, double total});
+
 class StatisticsState {
   final bool loading;
   final double currentMonthMileage;
@@ -14,6 +18,10 @@ class StatisticsState {
   final double previousMonthMileage;
   final int lastOdometer;
 
+  /// Expense totals for the last 12 months, oldest first, the current month
+  /// last - feeds the dashboard expense chart.
+  final List<MonthTotal> recentMonths;
+
   StatisticsState({
     required this.loading,
     required this.currentMonthMileage,
@@ -24,6 +32,7 @@ class StatisticsState {
     required this.averageFuelConsumption,
     required this.previousMonthMileage,
     required this.lastOdometer,
+    this.recentMonths = const [],
   });
 
   factory StatisticsState.initial() => StatisticsState(
@@ -48,6 +57,7 @@ class StatisticsState {
     double? averageFuelConsumption,
     double? previousMonthMileage,
     int? lastOdometer,
+    List<MonthTotal>? recentMonths,
   }) {
     return StatisticsState(
       loading: loading ?? this.loading,
@@ -59,6 +69,7 @@ class StatisticsState {
       averageFuelConsumption: averageFuelConsumption ?? this.averageFuelConsumption,
       previousMonthMileage: previousMonthMileage ?? this.previousMonthMileage,
       lastOdometer: lastOdometer ?? this.lastOdometer,
+      recentMonths: recentMonths ?? this.recentMonths,
     );
   }
 }

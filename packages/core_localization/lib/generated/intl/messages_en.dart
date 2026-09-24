@@ -28,31 +28,33 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m3(distance, unit) => "${distance} ${unit}";
 
-  static String m4(count) => "New fines found: ${count}";
+  static String m4(amount) => "Traffic fine: ${amount}";
 
-  static String m5(count) => "${count} cars";
+  static String m5(count) => "New fines found: ${count}";
 
-  static String m6(date) => "OK until ${date}";
+  static String m6(count) => "${count} cars";
 
-  static String m7(date) =>
+  static String m7(date) => "OK until ${date}";
+
+  static String m8(date) =>
       "Your insurance expires on ${date}. Time to renew it.";
 
-  static String m8(task) => "Time for: ${task}";
+  static String m9(task) => "Time for: ${task}";
 
-  static String m9(rating) => "rating: ${rating}";
+  static String m10(rating) => "rating: ${rating}";
 
-  static String m10(days) => "Planned service in ${days} days.";
+  static String m11(days) => "Planned service in ${days} days.";
 
-  static String m11(count) => "Approx. in ${count} days";
+  static String m12(count) => "Approx. in ${count} days";
 
-  static String m12(count) => "Approx. in ${count} weeks";
+  static String m13(count) => "Approx. in ${count} weeks";
 
-  static String m13(km) => "Oil change in ${km} km";
+  static String m14(km) => "Oil change in ${km} km";
 
-  static String m14(distance, unit) =>
+  static String m15(distance, unit) =>
       "Best rated nearby · ${distance} ${unit}";
 
-  static String m15(price, period) =>
+  static String m16(price, period) =>
       "7-day free trial, then ${price} per ${period}. Cancel anytime, at least 24 hours before the trial ends, in Google Play Settings. Subscription renews automatically unless cancelled.";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
@@ -159,6 +161,8 @@ class MessageLookup extends MessageLookupByLibrary {
       "Change vehicle info",
     ),
     "charging_nearby": MessageLookupByLibrary.simpleMessage("Chargers nearby"),
+    "chart_period_12m": MessageLookupByLibrary.simpleMessage("12 months"),
+    "chart_period_6m": MessageLookupByLibrary.simpleMessage("6 months"),
     "check_filter": MessageLookupByLibrary.simpleMessage(
       "The filter needs to be replaced",
     ),
@@ -310,6 +314,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "fine_checking_disabled": MessageLookupByLibrary.simpleMessage(
       "Fine checking is disabled in settings",
     ),
+    "fine_pdr_title": m4,
     "fines": MessageLookupByLibrary.simpleMessage("Fines"),
     "fines_checked": MessageLookupByLibrary.simpleMessage("Checked"),
     "fines_control": MessageLookupByLibrary.simpleMessage("Fine fines control"),
@@ -320,7 +325,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "fines_mvs_title": MessageLookupByLibrary.simpleMessage(
       "Fines check (MVS)",
     ),
-    "fines_new_found": m4,
+    "fines_new_found": m5,
     "fines_no_new": MessageLookupByLibrary.simpleMessage("No new fines"),
     "fines_not_found_body": MessageLookupByLibrary.simpleMessage(
       "There are no active fines for your plate right now",
@@ -382,7 +387,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Failed to complete the action",
     ),
     "garage_active_car": MessageLookupByLibrary.simpleMessage("Active"),
-    "garage_cars_count": m5,
+    "garage_cars_count": m6,
     "garage_continue": MessageLookupByLibrary.simpleMessage("Continue"),
     "garage_delete_confirm_body": MessageLookupByLibrary.simpleMessage(
       "All data for this car (expenses, reminders, maintenance) will be permanently deleted.",
@@ -413,7 +418,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Insurance expired",
     ),
     "garage_status_ok": MessageLookupByLibrary.simpleMessage("OK"),
-    "garage_status_ok_until": m6,
+    "garage_status_ok_until": m7,
     "gas_station_nearby": MessageLookupByLibrary.simpleMessage(
       "Gas stations nearby",
     ),
@@ -458,7 +463,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "insurance_control": MessageLookupByLibrary.simpleMessage(
       "Insurance control",
     ),
-    "insurance_expiry_reminder_body": m7,
+    "insurance_expiry_reminder_body": m8,
     "insurance_green_card": MessageLookupByLibrary.simpleMessage("Green Card"),
     "insurance_kasko": MessageLookupByLibrary.simpleMessage(
       "Comprehensive insurance",
@@ -504,11 +509,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "maintenance_control": MessageLookupByLibrary.simpleMessage(
       "Maintenance control",
     ),
-    "maintenance_due_body": m8,
+    "maintenance_due_body": m9,
     "maintenance_due_title": MessageLookupByLibrary.simpleMessage(
       "Maintenance due",
     ),
-    "map_rating": m9,
+    "map_rating": m10,
     "mileage": MessageLookupByLibrary.simpleMessage("Mileage"),
     "mileage_stat": MessageLookupByLibrary.simpleMessage("Mileage Statistics"),
     "mileage_statistics": MessageLookupByLibrary.simpleMessage(
@@ -535,8 +540,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "month_nov": MessageLookupByLibrary.simpleMessage("November"),
     "month_oct": MessageLookupByLibrary.simpleMessage("October"),
     "month_sep": MessageLookupByLibrary.simpleMessage("September"),
+    "monthly_expenses": MessageLookupByLibrary.simpleMessage(
+      "Monthly expenses",
+    ),
     "months": MessageLookupByLibrary.simpleMessage("Months"),
-    "more": MessageLookupByLibrary.simpleMessage("More"),
     "most_popular": MessageLookupByLibrary.simpleMessage("MOST POPULAR"),
     "my_garage": MessageLookupByLibrary.simpleMessage("Garage"),
     "my_position": MessageLookupByLibrary.simpleMessage("You are here"),
@@ -618,6 +625,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Or sign in using",
     ),
     "other": MessageLookupByLibrary.simpleMessage("Other"),
+    "other_services": MessageLookupByLibrary.simpleMessage("Other services"),
     "owner_address": MessageLookupByLibrary.simpleMessage("Owner address"),
     "paid": MessageLookupByLibrary.simpleMessage("Paid"),
     "paid_fines_section": MessageLookupByLibrary.simpleMessage("Paid"),
@@ -640,7 +648,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "plan_activated": MessageLookupByLibrary.simpleMessage(
       "Plan successfully activated",
     ),
-    "planned_service_lead_reminder_body": m10,
+    "planned_service_lead_reminder_body": m11,
     "planned_service_reminder_body": MessageLookupByLibrary.simpleMessage(
       "Planned service is due. Add the cost once it\'s done.",
     ),
@@ -693,8 +701,8 @@ class MessageLookup extends MessageLookupByLibrary {
       "Registration plate",
     ),
     "reminder": MessageLookupByLibrary.simpleMessage("Reminder"),
-    "reminder_approx_days": m11,
-    "reminder_approx_weeks": m12,
+    "reminder_approx_days": m12,
+    "reminder_approx_weeks": m13,
     "reminder_insurance_expires": MessageLookupByLibrary.simpleMessage(
       "Insurance expires",
     ),
@@ -704,7 +712,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "reminder_oil_due": MessageLookupByLibrary.simpleMessage(
       "Time to change the oil",
     ),
-    "reminder_oil_in_km": m13,
+    "reminder_oil_in_km": m14,
     "reminder_overdue": MessageLookupByLibrary.simpleMessage("Overdue"),
     "reminder_soon": MessageLookupByLibrary.simpleMessage("Soon"),
     "remove": MessageLookupByLibrary.simpleMessage("Remove"),
@@ -755,7 +763,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "service_balansuvannya_kolis": MessageLookupByLibrary.simpleMessage(
       "Wheel balancing",
     ),
-    "service_best_rating_distance": m14,
+    "service_best_rating_distance": m15,
     "service_capitalnyy_remont_dvyhuna": MessageLookupByLibrary.simpleMessage(
       "Overhaul of the engine",
     ),
@@ -1333,7 +1341,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "track_costs": MessageLookupByLibrary.simpleMessage(
       "Track costs, mileage and efficiency",
     ),
-    "trial_disclosure_detailed": m15,
+    "trial_disclosure_detailed": m16,
     "trial_expired": MessageLookupByLibrary.simpleMessage(
       "Trial period expired",
     ),
@@ -1381,6 +1389,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "view_licenses": MessageLookupByLibrary.simpleMessage("View licenses"),
     "volume_kwh_short": MessageLookupByLibrary.simpleMessage("Amount, kWh"),
     "volume_liters_short": MessageLookupByLibrary.simpleMessage("Volume, L"),
+    "vs_previous_month": MessageLookupByLibrary.simpleMessage("vs last month"),
     "write_viber": MessageLookupByLibrary.simpleMessage("Write to Viber"),
     "yearly_plan": MessageLookupByLibrary.simpleMessage("Yearly Plan"),
     "years": MessageLookupByLibrary.simpleMessage("Years"),

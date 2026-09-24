@@ -173,7 +173,7 @@ class ExpenseStatsCard extends StatelessWidget {
     return items;
   }
 
-  // Same tokens as the dashboard's HeroExpenseCard so both screens match.
+  // Fixed per-category tokens, the same on every screen that colors a category.
   Color _colorForCategory(ExpenseCategory cat) {
     switch (cat) {
       case ExpenseCategory.fuel:

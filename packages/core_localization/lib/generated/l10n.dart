@@ -894,9 +894,14 @@ class S {
     );
   }
 
-  /// `More`
-  String get more {
-    return Intl.message('More', name: 'more', desc: '', args: []);
+  /// `Other services`
+  String get other_services {
+    return Intl.message(
+      'Other services',
+      name: 'other_services',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Recent transactions`
@@ -5531,6 +5536,56 @@ class S {
       name: 'licenses_load_error',
       desc: '',
       args: [],
+    );
+  }
+
+  /// `Monthly expenses`
+  String get monthly_expenses {
+    return Intl.message(
+      'Monthly expenses',
+      name: 'monthly_expenses',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `vs last month`
+  String get vs_previous_month {
+    return Intl.message(
+      'vs last month',
+      name: 'vs_previous_month',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `6 months`
+  String get chart_period_6m {
+    return Intl.message(
+      '6 months',
+      name: 'chart_period_6m',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `12 months`
+  String get chart_period_12m {
+    return Intl.message(
+      '12 months',
+      name: 'chart_period_12m',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Traffic fine: {amount}`
+  String fine_pdr_title(String amount) {
+    return Intl.message(
+      'Traffic fine: $amount',
+      name: 'fine_pdr_title',
+      desc: '',
+      args: [amount],
     );
   }
 }

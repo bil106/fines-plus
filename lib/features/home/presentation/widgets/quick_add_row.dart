@@ -20,9 +20,10 @@ import 'package:fines_plus/features/reminders/presentation/cubit/reminder_cubit.
 import 'package:fines_plus/features/vehicle/presentation/cubit/car_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 /// The dashboard's "quick add" row: the three most common expense actions
-/// (Fuel/Service/Insurance) plus a "More" button for everything else -
+/// (Fuel/Service/Insurance) plus an "Other services" button for the rest -
 /// deliberately not all maintenance categories at once, and deliberately
 /// no "Add fine" here since fines arrive from the automated check, not a
 /// manual entry.
@@ -63,8 +64,8 @@ class QuickAddRow extends StatelessWidget {
             buildWhen: (previous, current) =>
                 previous.reminders != current.reminders,
             builder: (context, reminderState) => _QuickAddButton(
-              icon: Icons.assignment_turned_in,
-              iconColor: AppColors.catService,
+              icon: Icons.build,
+              iconColor: AppColors.catInsurance,
               label: S.of(context).maintenance,
               ring: MaintenanceRing.plannedRemaining(
                 reminderState.reminders,
@@ -98,7 +99,7 @@ class QuickAddRow extends StatelessWidget {
                 previous.tasks != current.tasks,
             builder: (context, reminderState) => _QuickAddButton(
               icon: Icons.gpp_good,
-              iconColor: AppColors.catInsurance,
+              iconColor: AppColors.green,
               label: S.of(context).insurance,
               ring: MaintenanceRing.insuranceRemaining(
                 context.read<MaintenanceCubit>().state.insuranceRecords,
@@ -125,8 +126,7 @@ class QuickAddRow extends StatelessWidget {
           child: _QuickAddButton(
             icon: Icons.more_horiz,
             iconColor: AppColors.catOther,
-            label: S.of(context).more,
-            labelColor: AppColors.textSecondary,
+            label: S.of(context).other_services,
             onTap: () => _openMoreSheet(context, carId: carId),
           ),
         ),
@@ -176,7 +176,7 @@ class QuickAddRow extends StatelessWidget {
                   crossAxisCount: 3,
                   mainAxisSpacing: 10,
                   crossAxisSpacing: 10,
-                  childAspectRatio: 1.05,
+                  childAspectRatio: 0.88,
                   children: [
                     _QuickAddButton(
                       icon: Icons.local_car_wash,
@@ -221,7 +221,7 @@ class QuickAddRow extends StatelessWidget {
                       cubit: reminderCubit,
                       category: 'Oil',
                       icon: Icons.oil_barrel,
-                      iconColor: AppColors.catService,
+                      iconColor: AppColors.quickOilAccent,
                       label: S.of(ctx).oil_icon,
                       onTap: () => _openServiceCategorySheet(
                         context,
@@ -233,8 +233,8 @@ class QuickAddRow extends StatelessWidget {
                     _PlannedTile(
                       cubit: reminderCubit,
                       category: 'Battery',
-                      icon: Icons.battery_full,
-                      iconColor: AppColors.catService,
+                      iconAsset: 'assets/icons/battery-cells.svg',
+                      iconColor: AppColors.quickBatteryAccent,
                       label: S.of(ctx).battery,
                       onTap: () => _openServiceCategorySheet(
                         context,
@@ -246,8 +246,8 @@ class QuickAddRow extends StatelessWidget {
                     _PlannedTile(
                       cubit: reminderCubit,
                       category: 'Tires',
-                      icon: Icons.tire_repair,
-                      iconColor: AppColors.catService,
+                      iconAsset: 'assets/icons/tire.svg',
+                      iconColor: AppColors.quickTiresAccent,
                       label: S.of(ctx).tires_icon,
                       onTap: () => _openServiceCategorySheet(
                         context,
@@ -313,7 +313,8 @@ class QuickAddRow extends StatelessWidget {
 class _PlannedTile extends StatelessWidget {
   final ReminderCubit cubit;
   final String category;
-  final IconData icon;
+  final IconData? icon;
+  final String? iconAsset;
   final Color iconColor;
   final String label;
   final VoidCallback onTap;
@@ -321,7 +322,8 @@ class _PlannedTile extends StatelessWidget {
   const _PlannedTile({
     required this.cubit,
     required this.category,
-    required this.icon,
+    this.icon,
+    this.iconAsset,
     required this.iconColor,
     required this.label,
     required this.onTap,
@@ -334,6 +336,7 @@ class _PlannedTile extends StatelessWidget {
       buildWhen: (previous, current) => previous.reminders != current.reminders,
       builder: (context, state) => _QuickAddButton(
         icon: icon,
+        iconAsset: iconAsset,
         iconColor: iconColor,
         label: label,
         ring: MaintenanceRing.plannedRemaining(
@@ -348,7 +351,10 @@ class _PlannedTile extends StatelessWidget {
 }
 
 class _QuickAddButton extends StatelessWidget {
-  final IconData icon;
+  final IconData? icon;
+
+  /// SVG asset drawn instead of [icon], for glyphs Material doesn't have.
+  final String? iconAsset;
   final Color iconColor;
   final String label;
   final VoidCallback onTap;
@@ -357,17 +363,13 @@ class _QuickAddButton extends StatelessWidget {
   /// [MaintenanceRing]); draws a progress ring around the icon when set.
   final double? ring;
 
-  /// Label color - defaults to [AppColors.ink]; the "More" tile uses a
-  /// muted secondary color instead, per the mockup.
-  final Color labelColor;
-
   const _QuickAddButton({
-    required this.icon,
+    this.icon,
+    this.iconAsset,
     required this.iconColor,
     required this.label,
     required this.onTap,
     this.ring,
-    this.labelColor = AppColors.ink,
   });
 
   @override
@@ -376,39 +378,38 @@ class _QuickAddButton extends StatelessWidget {
       // Shared by both the top-level row and the "More" sheet's grid, so
       // every quick-add tile stays uniform and scales with its container's
       // width instead of a fixed pixel height.
-      aspectRatio: 1.05,
+      aspectRatio: 0.97,
       child: Material(
         color: AppColors.neutreBlanc,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: AppBorders.radius16,
           side: BorderSide(color: context.brandTheme.surfaceBorder),
         ),
         child: InkWell(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: AppBorders.radius16,
           onTap: onTap,
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 10),
+            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
               children: [
-                ring == null
-                    ? Icon(icon, color: iconColor, size: 20)
-                    : _RingIcon(
-                        icon: icon,
-                        iconColor: iconColor,
-                        remaining: ring!,
-                      ),
-                const SizedBox(height: 4),
+                _CircleIcon(
+                  icon: icon,
+                  iconAsset: iconAsset,
+                  color: iconColor,
+                  ring: ring,
+                ),
+                const SizedBox(height: 6),
                 Flexible(
                   child: FittedBox(
                     fit: BoxFit.scaleDown,
                     child: Text(
                       label,
-                      style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 11.5,
-                        color: labelColor,
+                      style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 13.5,
+                        color: AppColors.ink,
                       ),
                     ),
                   ),
@@ -422,43 +423,67 @@ class _QuickAddButton extends StatelessWidget {
   }
 }
 
-/// The tile icon inside a progress ring: the arc is the share still left,
-/// coloured by [MaintenanceRing.color].
-class _RingIcon extends StatelessWidget {
-  static const _size = 28.0;
+/// The tile icon: white on a filled circle of the category's color. With
+/// [ring] set, a progress ring around the circle shows the share of the
+/// interval still left, coloured by [MaintenanceRing.color]; tiles without
+/// one keep the same outer size so every label lines up.
+class _CircleIcon extends StatelessWidget {
+  static const _outerSize = 58.0;
+  static const _circleSize = 46.0;
 
-  final IconData icon;
-  final Color iconColor;
-  final double remaining;
+  static const _glyphSize = 24.0;
 
-  const _RingIcon({
-    required this.icon,
-    required this.iconColor,
-    required this.remaining,
-  });
+  final IconData? icon;
+  final String? iconAsset;
+  final Color color;
+  final double? ring;
+
+  const _CircleIcon({this.icon, this.iconAsset, required this.color, this.ring})
+    : assert(icon != null || iconAsset != null);
 
   @override
   Widget build(BuildContext context) {
+    final remaining = ring;
     return SizedBox(
-      width: _size,
-      height: _size,
+      width: _outerSize,
+      height: _outerSize,
       child: Stack(
         alignment: Alignment.center,
         children: [
-          SizedBox.expand(
-            child: CircularProgressIndicator(
-              value: remaining.clamp(0.0, 1.0),
-              strokeWidth: 2.5,
-              backgroundColor: context.brandTheme.surfaceBorder,
-              color: MaintenanceRing.color(
-                remaining,
-                danger: context.brandTheme.statusDanger,
-                warning: context.brandTheme.statusWarning,
-                success: context.brandTheme.statusSuccess,
+          if (remaining != null)
+            SizedBox.expand(
+              child: CircularProgressIndicator(
+                value: remaining.clamp(0.0, 1.0),
+                strokeWidth: 3.5,
+                strokeCap: StrokeCap.round,
+                backgroundColor: context.brandTheme.surfaceBorder,
+                color: MaintenanceRing.color(
+                  remaining,
+                  danger: context.brandTheme.statusDanger,
+                  // A clear yellow, not statusWarning's dark amber (tuned
+                  // for warning text) - a thin arc needs the brighter tone.
+                  warning: AppColors.amber,
+                  success: context.brandTheme.statusSuccess,
+                ),
               ),
             ),
+          Container(
+            width: _circleSize,
+            height: _circleSize,
+            decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+            alignment: Alignment.center,
+            child: iconAsset != null
+                ? SvgPicture.asset(
+                    iconAsset!,
+                    width: _glyphSize,
+                    height: _glyphSize,
+                    colorFilter: const ColorFilter.mode(
+                      AppColors.neutreBlanc,
+                      BlendMode.srcIn,
+                    ),
+                  )
+                : Icon(icon, color: AppColors.neutreBlanc, size: _glyphSize),
           ),
-          Icon(icon, color: iconColor, size: 15),
         ],
       ),
     );

@@ -6,47 +6,84 @@ import 'package:design_system/constants/app_borders.dart';
 import 'package:fines_plus/core/config/app_config.dart';
 import 'package:fines_plus/core/extensions/currency_service.dart';
 import 'package:fines_plus/core/helpers/statistics_costs_presenter.dart';
-import 'package:fines_plus/core/theme/theme_config.dart';
-import 'package:fines_plus/core/extensions/monthly_expense_stats.dart';
-import 'package:fines_plus/features/expenses/data/models/expense_category.dart';
 import 'package:fines_plus/features/home/domain/entities/main_stats.dart';
 import 'package:fines_plus/features/home/presentation/localization/flutter_stats_localization.dart';
 import 'package:fines_plus/features/settings/presentation/cubit/settings_cubit.dart';
 import 'package:fines_plus/features/settings/presentation/cubit/unit_stream.dart';
 import 'package:fines_plus/features/statistics/presentation/cubit/statistics_state.dart';
+import 'package:fines_plus/features/vehicle/presentation/cubit/car_cubit.dart';
+import 'package:fines_plus/features/vehicle/presentation/cubit/garage_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:design_system/theme/app_brand_theme.dart';
 
-/// The dashboard's headline expense summary: amount for the current month,
-/// the delta vs. last month, and a per-category breakdown bar - replaces
-/// MainStatsCard's circular-gauge look with the Fines+OS design direction.
+import 'hero_car_photo.dart';
+import 'license_plate_badge.dart';
+
+/// The dashboard's headline card: the active car (make/model, plate,
+/// odometer, photo) on a dark brand-tinted surface, with this month's
+/// expenses, the delta vs. last month, fuel consumption and cost per km.
 ///
-/// The cost-per-km/fuel-consumption figures MainStatsCard used to show as
-/// rings are kept (same data, same unit/currency conversion), just as a
-/// compact line instead of a painted gauge - no functionality dropped.
+/// Tapping the plate or the photo calls [onGarageTap]; the rest of the card
+/// is left to the caller's own tap handler.
 class HeroExpenseCard extends StatelessWidget {
   final bool hasCar;
   final StatisticsState state;
   final MainStats stats;
+  final VoidCallback onGarageTap;
 
   const HeroExpenseCard({
     super.key,
     required this.hasCar,
     required this.state,
     required this.stats,
+    required this.onGarageTap,
   });
 
+  static const _photoWidth = 220.0;
+  static const _photoHeight = 135.0;
+
+  /// Card width on a Pixel 10 (~412dp screen, 400dp content cap minus the
+  /// dashboard's 4dp side padding) - the layout every screen is tuned to.
+  static const _referenceWidth = 392.0;
+
+  /// Narrower screens lay the card out at [_referenceWidth] and scale the
+  /// whole thing down to fit, so small phones get the same proportions
+  /// instead of the same pixel sizes squeezed into less room.
   @override
   Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final card = _buildCard(context);
+        if (constraints.maxWidth >= _referenceWidth) return card;
+        return FittedBox(
+          fit: BoxFit.fitWidth,
+          alignment: Alignment.topCenter,
+          child: SizedBox(width: _referenceWidth, child: card),
+        );
+      },
+    );
+  }
+
+  Widget _buildCard(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+    final brand = context.brandTheme;
     final currencyService = context.read<CurrencyService>();
     final settingsCubit = context.watch<SettingsCubit>();
     final currency = settingsCubit.state.currency;
     final unitStream = UnitStream(settingsCubit);
-    final accent = ThemeConfig.hexToColor(
-      context.watch<AppConfig>().primaryColorHex,
-    );
+    final muted = AppColors.neutreBlanc.withValues(alpha: 0.72);
+
+    final carNumber = context.watch<CarCubit>().state.carNumber;
+    final garageState = context.watch<GarageCubit>().state;
+    final activeCar = garageState.cars
+        .where((car) => car.carId == garageState.activeCarId)
+        .firstOrNull;
+    final makeModel = [
+      activeCar?.make ?? '',
+      activeCar?.model ?? '',
+    ].where((part) => part.trim().isNotEmpty).join(' ');
 
     final presenter = StatisticsCostsPresenter(
       state: state,
@@ -56,7 +93,6 @@ class HeroExpenseCard extends StatelessWidget {
     );
 
     final current = state.expenseStats.total;
-    final segments = _segments(context, state.expenseStats);
     final previous = state.previousExpenseStats.total;
     final deltaPercent = previous > 0
         ? ((current - previous) / previous * 100)
@@ -75,116 +111,269 @@ class HeroExpenseCard extends StatelessWidget {
         ? "l/100${S.of(context).km}"
         : "mpg";
 
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        borderRadius: AppBorders.radius16,
-        // 135deg diagonal, brand-primary mixed 26% into white and reaching
-        // solid white by the 65% mark - matches the Fines+OS hero-tile
-        // token exactly (color-mix(accent 26%, #FFFFFF), #FFFFFF 65%).
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [accent.withOpacity(0.26), AppColors.neutreBlanc],
-          stops: const [0.0, 0.65],
+    return ClipRRect(
+      borderRadius: AppBorders.radius22,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.bottomLeft,
+            end: Alignment.topRight,
+            colors: [brand.heroBgStart, brand.heroBgMid, brand.heroBgEnd],
+            stops: const [0.0, 0.55, 1.0],
+          ),
         ),
-        // Border-only, no drop shadow - the mockup's .hero-tile/.car-card/
-        // .tier cards are all flat (1px border), so this now matches them
-        // and the other dashboard cards instead of standing out as the one
-        // elevated one.
-        border: Border.all(color: context.brandTheme.surfaceBorder),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            presenter.currentMonthLabel,
-            style: textTheme.bodySmall?.copyWith(
-              color: AppColors.grey700,
-              fontSize: 13,
-            ),
-          ),
-          const SizedBox(height: 6),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.baseline,
-            textBaseline: TextBaseline.alphabetic,
-            children: [
-              Text(
-                hasCar ? presenter.currentFormatted : "0",
-                // Brand money font (tabular mono figures by default),
-                // per-flavor via AppConfig.monoFontFamily.
-                style: textTheme.headlineMedium
-                    ?.merge(context.brandTheme.moneyTextStyle)
-                    .copyWith(fontSize: 34),
-              ),
-              const SizedBox(width: 4),
-              Text(
-                currency,
-                style: textTheme.titleMedium?.copyWith(
-                  color: AppColors.grey700,
-                  fontSize: 18,
-                ),
-              ),
-            ],
-          ),
-          if (hasCar && deltaPercent != null) ...[
-            const SizedBox(height: 2),
-            Row(
-              children: [
-                Icon(
-                  deltaPercent <= 0 ? Icons.arrow_downward : Icons.arrow_upward,
-                  size: 14,
-                  color: deltaPercent <= 0
-                      ? context.brandTheme.statusSuccess
-                      : context.brandTheme.statusDanger,
-                ),
-                const SizedBox(width: 2),
-                Text(
-                  '${deltaPercent.abs().toStringAsFixed(0)}% ${presenter.previousMonthLabel}',
-                  style: textTheme.bodySmall?.copyWith(
-                    color: deltaPercent <= 0
-                        ? context.brandTheme.statusSuccess
-                        : context.brandTheme.statusDanger,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 13,
+        child: Stack(
+          children: [
+            Positioned.fill(
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: RadialGradient(
+                    center: const Alignment(0.9, -1),
+                    radius: 0.9,
+                    colors: [
+                      brand.heroGlow.withValues(alpha: 0.33),
+                      brand.heroGlow.withValues(alpha: 0),
+                    ],
                   ),
                 ),
-              ],
+              ),
+            ),
+            Positioned(
+              top: 2,
+              right: 10,
+              child: GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTap: onGarageTap,
+                child: HeroCarPhoto(
+                  photoUrl: activeCar?.photoUrl ?? '',
+                  width: _photoWidth,
+                  height: _photoHeight,
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (makeModel.isNotEmpty) ...[
+                    Padding(
+                      padding: const EdgeInsets.only(right: _photoWidth - 30),
+                      child: Text(
+                        makeModel,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        // Loaded as the brand body font's real ExtraBold
+                        // file - a copyWith(fontWeight:) on the theme style
+                        // would only synthesize bold from the regular one.
+                        style: GoogleFonts.getFont(
+                          context.read<AppConfig>().bodyFontFamily,
+                          textStyle: textTheme.titleLarge,
+                          color: AppColors.neutreBlanc,
+                          fontSize: 28,
+                          fontWeight: FontWeight.w800,
+                          height: 1.15,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                  ],
+                  GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: onGarageTap,
+                    child: carNumber.isNotEmpty
+                        ? LicensePlateBadge(number: carNumber)
+                        : Padding(
+                            padding: const EdgeInsets.only(
+                              right: _photoWidth - 30,
+                            ),
+                            child: Text(
+                              S.of(context).input_number,
+                              style: textTheme.bodyMedium?.copyWith(
+                                color: AppColors.neutreBlanc,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
+                  ),
+                  if (hasCar && stats.lastOdometer > 0) ...[
+                    const SizedBox(height: 8),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.speed, size: 16, color: muted),
+                        const SizedBox(width: 10),
+                        Text(
+                          '${unitStream.convert(stats.lastOdometer.toDouble()).toStringAsFixed(0)} $mileageUnit',
+                          style: textTheme.bodySmall?.copyWith(
+                            color: muted,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              S.of(context).monthly_expenses,
+                              style: textTheme.bodyMedium?.copyWith(
+                                color: muted,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.baseline,
+                              textBaseline: TextBaseline.alphabetic,
+                              children: [
+                                Flexible(
+                                  child: FittedBox(
+                                    fit: BoxFit.scaleDown,
+                                    child: Text(
+                                      hasCar ? presenter.currentFormatted : "0",
+                                      // Brand money font (tabular mono
+                                      // figures by default), per-flavor via
+                                      // AppConfig.monoFontFamily.
+                                      style: textTheme.headlineMedium
+                                          ?.merge(brand.moneyTextStyle)
+                                          .copyWith(
+                                            color: AppColors.neutreBlanc,
+                                            fontSize: 38,
+                                            height: 1.05,
+                                          ),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 6),
+                                Text(
+                                  currency,
+                                  style: textTheme.titleMedium?.copyWith(
+                                    color: muted,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            if (hasCar && deltaPercent != null) ...[
+                              const SizedBox(height: 4),
+                              _DeltaLine(deltaPercent: deltaPercent),
+                            ],
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      _FuelPanel(
+                        fuelValue: fuelValue.toStringAsFixed(1),
+                        fuelUnit: fuelUnit,
+                        costPerKm: costPerKmConverted.toStringAsFixed(1),
+                        costPerKmUnit: '$currency/$mileageUnit',
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
 
-          if (hasCar && current > 0) ...[
-            const SizedBox(height: 6),
-            _CategoryBar(segments: segments, total: current),
-            const SizedBox(height: 8),
-            _CategoryLegend(
-              segments: segments,
-              currency: currency,
-              currencyService: currencyService,
-              baseCurrency: S.of(context).grn,
+class _DeltaLine extends StatelessWidget {
+  final double deltaPercent;
+
+  const _DeltaLine({required this.deltaPercent});
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    final isDown = deltaPercent <= 0;
+    final color = isDown ? AppColors.successOnDark : AppColors.dangerOnDark;
+
+    return Wrap(
+      crossAxisAlignment: WrapCrossAlignment.center,
+      spacing: 6,
+      children: [
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              isDown ? Icons.arrow_downward : Icons.arrow_upward,
+              size: 14,
+              color: color,
+            ),
+            const SizedBox(width: 2),
+            Text(
+              '${deltaPercent.abs().toStringAsFixed(0)}%',
+              style: textTheme.bodySmall?.copyWith(
+                color: color,
+                fontWeight: FontWeight.w800,
+                fontSize: 13,
+              ),
             ),
           ],
+        ),
+        Text(
+          S.of(context).vs_previous_month,
+          style: textTheme.bodySmall?.copyWith(
+            color: AppColors.neutreBlanc.withValues(alpha: 0.72),
+            fontSize: 13,
+          ),
+        ),
+      ],
+    );
+  }
+}
 
-          const SizedBox(height: 6),
-          Divider(height: 1, color: context.brandTheme.surfaceBorder),
-          const SizedBox(height: 10),
-          Row(
+class _FuelPanel extends StatelessWidget {
+  final String fuelValue;
+  final String fuelUnit;
+  final String costPerKm;
+  final String costPerKmUnit;
+
+  const _FuelPanel({
+    required this.fuelValue,
+    required this.fuelUnit,
+    required this.costPerKm,
+    required this.costPerKmUnit,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        borderRadius: AppBorders.radiusLarge,
+        color: AppColors.neutreBlanc.withValues(alpha: 0.08),
+        border: Border.all(
+          color: AppColors.neutreBlanc.withValues(alpha: 0.12),
+          width: AppBorders.widthThin,
+        ),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Icon(
+            Icons.local_gas_station,
+            size: 26,
+            color: AppColors.neutreBlanc,
+          ),
+          const SizedBox(width: 8),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(
-                child: _MiniStat(
-                  icon: Icons.speed,
-                  value: costPerKmConverted.toStringAsFixed(1),
-                  unit: '$currency/$mileageUnit',
-                ),
-              ),
-              Expanded(
-                child: _MiniStat(
-                  icon: Icons.local_gas_station,
-                  value: fuelValue.toStringAsFixed(1),
-                  unit: fuelUnit,
-                ),
-              ),
+              _PanelValue(value: fuelValue, unit: fuelUnit),
+              const SizedBox(height: 6),
+              _PanelValue(value: costPerKm, unit: costPerKmUnit),
             ],
           ),
         ],
@@ -193,201 +382,32 @@ class HeroExpenseCard extends StatelessWidget {
   }
 }
 
-Color _categoryColor(ExpenseCategory c) {
-  switch (c) {
-    case ExpenseCategory.fuel:
-      return AppColors.catFuel;
-    case ExpenseCategory.service:
-      return AppColors.catService;
-    case ExpenseCategory.tuning:
-      return AppColors.catTuning;
-    case ExpenseCategory.carWash:
-      return AppColors.catCarWash;
-    case ExpenseCategory.insurance:
-      return AppColors.catInsurance;
-    case ExpenseCategory.other:
-      return AppColors.catOther;
-  }
-}
-
-String _categoryLabel(ExpenseCategory c, BuildContext context) {
-  switch (c) {
-    case ExpenseCategory.fuel:
-      return S.of(context).fuel;
-    case ExpenseCategory.service:
-      return S.of(context).service;
-    case ExpenseCategory.tuning:
-      return S.of(context).tuning;
-    case ExpenseCategory.carWash:
-      return S.of(context).car_wash;
-    case ExpenseCategory.insurance:
-      return S.of(context).insurance;
-    case ExpenseCategory.other:
-      return S.of(context).other;
-  }
-}
-
-/// One slice of the month's breakdown: a category, except that the electric
-/// part of the fuel total is split out so a hybrid's petrol and electricity
-/// show apart.
-class _Segment {
-  final Color color;
-  final String label;
-  final double amount;
-
-  const _Segment({
-    required this.color,
-    required this.label,
-    required this.amount,
-  });
-}
-
-List<_Segment> _segments(BuildContext context, MonthlyExpenseStats stats) {
-  final result = <_Segment>[];
-  for (final category in ExpenseCategory.values) {
-    var amount = stats.categoryTotals[category] ?? 0;
-    if (category == ExpenseCategory.fuel) {
-      final electric = stats.electricTotal.clamp(0.0, amount);
-      amount -= electric;
-      if (amount > 0) {
-        result.add(
-          _Segment(
-            color: _categoryColor(category),
-            label: _categoryLabel(category, context),
-            amount: amount,
-          ),
-        );
-      }
-      if (electric > 0) {
-        result.add(
-          _Segment(
-            color: AppColors.catElectric,
-            label: S.of(context).fuel_electric,
-            amount: electric,
-          ),
-        );
-      }
-    } else if (amount > 0) {
-      result.add(
-        _Segment(
-          color: _categoryColor(category),
-          label: _categoryLabel(category, context),
-          amount: amount,
-        ),
-      );
-    }
-  }
-  return result;
-}
-
-class _CategoryBar extends StatelessWidget {
-  final List<_Segment> segments;
-  final double total;
-
-  const _CategoryBar({required this.segments, required this.total});
-
-  @override
-  Widget build(BuildContext context) {
-    if (segments.isEmpty) return const SizedBox.shrink();
-
-    return ClipRRect(
-      borderRadius: AppBorders.radiusSmall,
-      child: SizedBox(
-        height: 8,
-        child: Row(
-          children: segments
-              .map(
-                (e) => Expanded(
-                  flex: (e.amount / total * 1000)
-                      .round()
-                      .clamp(1, 1000)
-                      .toInt(),
-                  child: Container(color: e.color),
-                ),
-              )
-              .toList(),
-        ),
-      ),
-    );
-  }
-}
-
-class _CategoryLegend extends StatelessWidget {
-  final List<_Segment> segments;
-  final String currency;
-  final CurrencyService currencyService;
-  final String baseCurrency;
-
-  const _CategoryLegend({
-    required this.segments,
-    required this.currency,
-    required this.currencyService,
-    required this.baseCurrency,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Wrap(
-      spacing: 10,
-      runSpacing: 4,
-      children: segments.map((e) {
-        final converted = currencyService.convert(
-          e.amount,
-          currency,
-          fromCurrency: baseCurrency,
-        );
-        return Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 6,
-              height: 6,
-              decoration: BoxDecoration(color: e.color, shape: BoxShape.circle),
-            ),
-            const SizedBox(width: 4),
-            Text(
-              '${e.label} ${converted.toStringAsFixed(0)} $currency',
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: AppColors.grey700,
-                fontSize: 11,
-              ),
-            ),
-          ],
-        );
-      }).toList(),
-    );
-  }
-}
-
-class _MiniStat extends StatelessWidget {
-  final IconData icon;
+class _PanelValue extends StatelessWidget {
   final String value;
   final String unit;
 
-  const _MiniStat({
-    required this.icon,
-    required this.value,
-    required this.unit,
-  });
+  const _PanelValue({required this.value, required this.unit});
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.baseline,
+      textBaseline: TextBaseline.alphabetic,
       children: [
-        Icon(icon, size: 18, color: AppColors.grey700),
-        const SizedBox(width: 6),
         Text(
           value,
-          style: Theme.of(
-            context,
-          ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w700),
+          style: textTheme.titleMedium?.copyWith(
+            color: AppColors.neutreBlanc,
+            fontWeight: FontWeight.w800,
+          ),
         ),
         const SizedBox(width: 4),
         Text(
           unit,
-          style: Theme.of(
-            context,
-          ).textTheme.bodySmall?.copyWith(color: AppColors.grey700),
+          style: textTheme.bodySmall?.copyWith(
+            color: AppColors.neutreBlanc.withValues(alpha: 0.72),
+          ),
         ),
       ],
     );

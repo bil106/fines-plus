@@ -38,6 +38,17 @@ class ThemeConfig {
           statusDangerBg: hexToColor(config.statusDangerBgHex),
           statusInfo: hexToColor(config.statusInfoHex),
           statusComplete: hexToColor(config.statusCompleteHex),
+          // Hero card: the brand accent mixed into dark bases, so every
+          // flavor gets its own tint without a per-flavor config value.
+          heroBgStart: Color.lerp(primary, AppColors.heroBaseDeep, 0.84)!,
+          heroBgMid: Color.lerp(primary, AppColors.heroBase, 0.68)!,
+          heroBgEnd: Color.lerp(primary, AppColors.heroBaseSoft, 0.48)!,
+          heroGlow: Color.lerp(primary, AppColors.neutreBlanc, 0.12)!,
+          chartLine: Color.lerp(
+            hexToColor(config.surfaceBorderHex),
+            AppColors.chartWarmBase,
+            0.7,
+          )!,
           displayTextStyle: GoogleFonts.getFont(config.displayFontFamily, fontWeight: FontWeight.w800),
           moneyTextStyle: GoogleFonts.getFont(
             config.monoFontFamily,

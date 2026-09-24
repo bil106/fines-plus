@@ -112,7 +112,7 @@
 "cost_of_work": "Cost of work:",
 "total_amount": "Total amount:",
 "mileage_statistics": "Mileage statistics",
-   "more": "More",
+   "other_services": "Other services",
    "recent_transactions": "Recent transactions",
 "period": "average/year",
 "month": "Month",
@@ -705,5 +705,15 @@
   "app_libraries": "App libraries",
   "app_libraries_description": "This app uses open-source components.",
   "view_licenses": "View licenses",
-  "licenses_load_error": "Could not load the license text."
+  "licenses_load_error": "Could not load the license text.",
+  "monthly_expenses": "Monthly expenses",
+  "vs_previous_month": "vs last month",
+  "chart_period_6m": "6 months",
+  "chart_period_12m": "12 months",
+  "fine_pdr_title": "Traffic fine: {amount}",
+  "@fine_pdr_title": {
+    "placeholders": {
+      "amount": { "type": "String" }
+    }
+  }
 }

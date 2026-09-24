@@ -88,11 +88,6 @@ android {
     abortOnError = false
 }
 
-println("Keystore properties:")
-keystoreProperties.forEach { key, value ->
-    println("$key -> $value")
-}
-
 signingConfigs {
     create("release") {
         keyAlias = keystoreProperties.getProperty("keyAlias")

@@ -25,6 +25,11 @@ class AppBrandTheme extends ThemeExtension<AppBrandTheme> {
     this.statusDangerBg = AppColors.lightRed,
     this.statusInfo = AppColors.cm,
     this.statusComplete = AppColors.lightGreen,
+    this.heroBgStart = AppColors.heroBaseDeep,
+    this.heroBgMid = AppColors.heroBase,
+    this.heroBgEnd = AppColors.heroBaseSoft,
+    this.heroGlow = AppColors.heroBaseSoft,
+    this.chartLine = AppColors.chartWarmBase,
     required this.displayTextStyle,
     required this.moneyTextStyle,
   });
@@ -53,6 +58,19 @@ class AppBrandTheme extends ThemeExtension<AppBrandTheme> {
   final Color statusInfo;
   final Color statusComplete;
 
+  /// Dashboard hero (car) card: a diagonal gradient from [heroBgStart]
+  /// (bottom-left, darkest) through [heroBgMid] to [heroBgEnd] (top-right),
+  /// with a soft [heroGlow] in the top-right corner. Derived from the brand
+  /// accent in ThemeConfig.createTheme.
+  final Color heroBgStart;
+  final Color heroBgMid;
+  final Color heroBgEnd;
+  final Color heroGlow;
+
+  /// Dashboard expense chart: line, dots, tooltip and (faded) area fill.
+  /// A warm beige derived from [surfaceBorder] in ThemeConfig.createTheme.
+  final Color chartLine;
+
   /// Base style for large display text (e.g. the plate number). Callers
   /// set fontSize/color via copyWith - this only fixes the font family and
   /// weight.
@@ -78,6 +96,11 @@ class AppBrandTheme extends ThemeExtension<AppBrandTheme> {
     Color? statusDangerBg,
     Color? statusInfo,
     Color? statusComplete,
+    Color? heroBgStart,
+    Color? heroBgMid,
+    Color? heroBgEnd,
+    Color? heroGlow,
+    Color? chartLine,
     TextStyle? displayTextStyle,
     TextStyle? moneyTextStyle,
   }) {
@@ -95,6 +118,11 @@ class AppBrandTheme extends ThemeExtension<AppBrandTheme> {
       statusDangerBg: statusDangerBg ?? this.statusDangerBg,
       statusInfo: statusInfo ?? this.statusInfo,
       statusComplete: statusComplete ?? this.statusComplete,
+      heroBgStart: heroBgStart ?? this.heroBgStart,
+      heroBgMid: heroBgMid ?? this.heroBgMid,
+      heroBgEnd: heroBgEnd ?? this.heroBgEnd,
+      heroGlow: heroGlow ?? this.heroGlow,
+      chartLine: chartLine ?? this.chartLine,
       displayTextStyle: displayTextStyle ?? this.displayTextStyle,
       moneyTextStyle: moneyTextStyle ?? this.moneyTextStyle,
     );

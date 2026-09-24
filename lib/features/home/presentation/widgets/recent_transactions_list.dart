@@ -11,6 +11,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:design_system/theme/app_brand_theme.dart';
 import 'package:intl/intl.dart';
 
+import 'dashboard_card.dart';
+
 const _kUkMonthsShort = [
   'січ',
   'лют',
@@ -187,68 +189,72 @@ class RecentTransactionsList extends StatelessWidget {
 
         return Padding(
           padding: const EdgeInsets.only(top: 10),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                S.of(context).recent_transactions,
-                style: textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 13,
+          child: DashboardCard(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Same title style as the "Витрати" card above it.
+                Text(
+                  S.of(context).recent_transactions,
+                  style: textTheme.titleMedium?.copyWith(
+                    color: AppColors.ink,
+                    fontWeight: FontWeight.w800,
+                  ),
                 ),
-              ),
+                const SizedBox(height: 4),
 
-              for (final item in items)
-                Container(
-                  padding: const EdgeInsets.symmetric(vertical: 7),
-                  decoration: BoxDecoration(
-                    border: Border(
-                      bottom: item == items.last
-                          ? BorderSide.none
-                          : BorderSide(color: context.brandTheme.divider),
+                for (final item in items)
+                  Container(
+                    padding: const EdgeInsets.symmetric(vertical: 7),
+                    decoration: BoxDecoration(
+                      border: Border(
+                        bottom: item == items.last
+                            ? BorderSide.none
+                            : BorderSide(color: context.brandTheme.divider),
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 6,
+                          height: 6,
+                          margin: const EdgeInsets.only(right: 8),
+                          decoration: BoxDecoration(
+                            color: _categoryColor(item.category),
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                item.label,
+                                style: textTheme.bodyMedium?.copyWith(
+                                  fontSize: 13,
+                                ),
+                              ),
+                              Text(
+                                '${_categoryLabel(item.category, context)} · ${item.date.day} ${_kUkMonthsShort[item.date.month - 1]}',
+                                style: textTheme.bodySmall?.copyWith(
+                                  color: AppColors.grey700,
+                                  fontSize: 11,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Text(
+                          '${currencyService.convert(item.amount, currency, fromCurrency: item.currency).toStringAsFixed(0)} $currency',
+                          style: textTheme.bodyMedium
+                              ?.merge(context.brandTheme.moneyTextStyle)
+                              .copyWith(fontSize: 13),
+                        ),
+                      ],
                     ),
                   ),
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 6,
-                        height: 6,
-                        margin: const EdgeInsets.only(right: 8),
-                        decoration: BoxDecoration(
-                          color: _categoryColor(item.category),
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              item.label,
-                              style: textTheme.bodyMedium?.copyWith(
-                                fontSize: 13,
-                              ),
-                            ),
-                            Text(
-                              '${_categoryLabel(item.category, context)} · ${item.date.day} ${_kUkMonthsShort[item.date.month - 1]}',
-                              style: textTheme.bodySmall?.copyWith(
-                                color: AppColors.grey700,
-                                fontSize: 11,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Text(
-                        '${currencyService.convert(item.amount, currency, fromCurrency: item.currency).toStringAsFixed(0)} $currency',
-                        style: textTheme.bodyMedium
-                            ?.merge(context.brandTheme.moneyTextStyle)
-                            .copyWith(fontSize: 13),
-                      ),
-                    ],
-                  ),
-                ),
-            ],
+              ],
+            ),
           ),
         );
       },

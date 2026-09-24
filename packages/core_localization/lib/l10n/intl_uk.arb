@@ -112,7 +112,7 @@
    "cost_of_work": "Вартість робіт:",
    "total_amount": "Загальна сума:",
    "mileage_statistics": "Статистика пробігу",
-   "more": "Ще",
+   "other_services": "Інші сервіси",
    "recent_transactions": "Останні операції",
    "period": "середнє/рік",
    "month": "Місяць",
@@ -706,5 +706,15 @@
   "app_libraries": "Бібліотеки застосунку",
   "app_libraries_description": "У застосунку використано компоненти з відкритим кодом.",
   "view_licenses": "Переглянути ліцензії",
-  "licenses_load_error": "Не вдалося завантажити текст ліцензії."
+  "licenses_load_error": "Не вдалося завантажити текст ліцензії.",
+  "monthly_expenses": "Місячні витрати",
+  "vs_previous_month": "від минулого місяця",
+  "chart_period_6m": "6 місяців",
+  "chart_period_12m": "12 місяців",
+  "fine_pdr_title": "Штраф ПДР: {amount}",
+  "@fine_pdr_title": {
+    "placeholders": {
+      "amount": { "type": "String" }
+    }
+  }
 }

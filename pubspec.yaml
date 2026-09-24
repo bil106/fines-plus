@@ -149,6 +149,10 @@ flutter:
     - assets/icons/finance.png
     - assets/icons/coin_stack.png
     - assets/icons/steeringWheel.png
+    - assets/icons/car-icon.png
+    - assets/icons/tire.svg
+    - assets/icons/battery-cells.svg
+    - assets/icons/history.svg
     - assets/icons/ic_launcher_foreground.png
     - assets/logo/fines_logo.png
     - assets/car_logos/

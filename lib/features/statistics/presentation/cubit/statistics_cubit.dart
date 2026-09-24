@@ -65,8 +65,21 @@ class StatisticsCubit extends Cubit<StatisticsState> {
         previousExpenseStats: prevExpenseStats,
         fuelRecords: maintenanceState.fuelRecords,
         averageFuelConsumption: avgFuelConsumption,
+        recentMonths: _recentMonthTotals(maintenanceState, now),
       ),
     );
+  }
+
+  /// Totals for the 12 months up to and including [now]'s month, oldest
+  /// first - computed from the records already in [state], no extra fetch.
+  List<MonthTotal> _recentMonthTotals(MaintenanceState state, DateTime now) {
+    return List.generate(12, (index) {
+      final month = DateTime(now.year, now.month - 11 + index);
+      return (
+        month: month,
+        total: _calculateMonthlyStats(state, month.year, month.month).total,
+      );
+    });
   }
 
   int _getLastOdometer(MaintenanceState state) {
