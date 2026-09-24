@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fines_plus/features/maintenance/data/models/maintenance_task.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 
 class ScheduleFirebaseRepository {
   final FirebaseFirestore firestore;
@@ -34,8 +35,14 @@ class ScheduleFirebaseRepository {
     final legacySnap = await _legacyTasksCollection(carNumber).get();
     if (legacySnap.docs.isEmpty) return;
 
+    // The legacy collection is shared with ReminderRepository's current
+    // reminders - only move docs that are actually maintenance tasks, or
+    // live reminders get pulled out of `reminders` into `scheduleTasks`.
+    final taskDocs = legacySnap.docs.where((doc) => _parseTask(doc) != null).toList();
+    if (taskDocs.isEmpty) return;
+
     final batch = firestore.batch();
-    for (final doc in legacySnap.docs) {
+    for (final doc in taskDocs) {
       batch.set(newCollection.doc(doc.id), doc.data());
       batch.delete(doc.reference);
     }
@@ -48,11 +55,21 @@ class ScheduleFirebaseRepository {
 
   Future<List<MaintenanceTask>> loadTasks(String carNumber) async {
     final snapshot = await _tasksCollection(carNumber).get();
-    return snapshot.docs.map((doc) {
+    return snapshot.docs.map(_parseTask).whereType<MaintenanceTask>().toList();
+  }
+
+  /// Returns null for a doc that isn't a valid [MaintenanceTask] (e.g. a
+  /// reminder moved here by an earlier, unfiltered legacy migration), so one
+  /// malformed doc doesn't fail loading the whole list.
+  MaintenanceTask? _parseTask(QueryDocumentSnapshot<Map<String, dynamic>> doc) {
+    try {
       final data = Map<String, dynamic>.from(doc.data());
       data['id'] = doc.id;
       return MaintenanceTask.fromJson(data);
-    }).toList();
+    } catch (e) {
+      debugPrint('Skipping malformed maintenance task ${doc.reference.path}: $e');
+      return null;
+    }
   }
 
   Future<MaintenanceTask> saveTask(String carNumber, MaintenanceTask task) async {
