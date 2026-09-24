@@ -1,6 +1,7 @@
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_spacers.dart';
+import 'package:design_system/theme/app_brand_theme.dart';
 import 'package:fines_plus/features/reminders/data/models/reminder_model.dart';
 import 'package:fines_plus/features/reminders/domain/planned_service.dart';
 import 'package:fines_plus/features/reminders/presentation/cubit/reminder_cubit.dart';
@@ -84,8 +85,17 @@ class _PlannedServiceRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    final tint = PlannedService.status([reminder], DateTime.now()).tint;
-    final dateColor = tint == null
+    final status = PlannedService.status(
+      [reminder],
+      DateTime.now(),
+      category: reminder.plannedCategory,
+    );
+    final isOverdue = status == PlannedStatus.overdue;
+    final tint = status.tint;
+    // An overdue date gets a solid danger fill so it stands out in the list.
+    final dateColor = isOverdue
+        ? context.brandTheme.statusDanger
+        : tint == null
         ? AppColors.neutreBlanc
         : Color.alphaBlend(
             tint.withValues(alpha: _dateTintAlpha),
@@ -113,7 +123,7 @@ class _PlannedServiceRow extends StatelessWidget {
             DateFormat('dd.MM.yyyy').format(reminder.dateTime.toLocal()),
             style: textTheme.bodySmall?.copyWith(
               fontWeight: FontWeight.w700,
-              color: AppColors.black87,
+              color: isOverdue ? AppColors.neutreBlanc : AppColors.black87,
             ),
           ),
         ),
