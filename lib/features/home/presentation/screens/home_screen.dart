@@ -37,9 +37,11 @@ class _HomeScreenState extends State<HomeScreen> {
         child: SingleChildScrollView(
           child: Center(
             child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 400),
+              // 8dp on each side on every screen (content capped at 400dp
+              // on wide ones), so narrow phones don't get edge-to-edge cards.
+              constraints: const BoxConstraints(maxWidth: 416),
               child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 6),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
                 child: Column(
                   children: [
                     BlocBuilder<StatisticsCubit, StatisticsState>(

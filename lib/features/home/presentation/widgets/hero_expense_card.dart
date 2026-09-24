@@ -44,9 +44,9 @@ class HeroExpenseCard extends StatelessWidget {
   static const _photoWidth = 220.0;
   static const _photoHeight = 135.0;
 
-  /// Card width on a Pixel 10 (~412dp screen, 400dp content cap minus the
-  /// dashboard's 4dp side padding) - the layout every screen is tuned to.
-  static const _referenceWidth = 392.0;
+  /// Card width on a Pixel 10 (412dp screen minus the dashboard's 8dp side
+  /// padding) - the layout every screen is tuned to.
+  static const _referenceWidth = 396.0;
 
   /// Narrower screens lay the card out at [_referenceWidth] and scale the
   /// whole thing down to fit, so small phones get the same proportions
