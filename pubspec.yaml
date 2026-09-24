@@ -2,7 +2,7 @@ name: fines_plus
 description: "A new Flutter project."
 
 publish_to: 'none' 
-version: 1.0.8+95
+version: 1.0.10+99
 
 environment:
   sdk: ^3.8.1
