@@ -60,3 +60,6 @@ migrate_working_dir/
 /ios/build/
 # Local Claude session exports, not part of the source tree
 Claude outputs/
+
+# Backend lives in its own repo (github.com/bil106/fines-backend), cloned here locally
+fines_backend/
