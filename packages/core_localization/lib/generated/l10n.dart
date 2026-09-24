@@ -5064,6 +5064,16 @@ class S {
     );
   }
 
+  /// `Planned service in {days} days.`
+  String planned_service_lead_reminder_body(int days) {
+    return Intl.message(
+      'Planned service in $days days.',
+      name: 'planned_service_lead_reminder_body',
+      desc: '',
+      args: [days],
+    );
+  }
+
   /// `Your insurance expires on {date}. Time to renew it.`
   String insurance_expiry_reminder_body(String date) {
     return Intl.message(

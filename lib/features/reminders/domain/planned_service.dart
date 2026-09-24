@@ -9,10 +9,19 @@ enum PlannedStatus { none, upcoming, overdue }
 class PlannedService {
   static const reminderHour = 9;
   static const _dailyIdBase = 300000;
+  static const _leadIdBase = 2000000;
 
-  /// Id of the daily "you still haven't done it" notification that follows a
-  /// planned service reminder once its date has passed.
+  /// How many days before its date a planned service starts reminding daily.
+  static const leadDays = 7;
+
+  /// Id of the daily notification that keeps reminding about a planned
+  /// service from [leadDays] before its date until it's completed.
   static int dailyNotificationId(String reminderId) => _dailyIdBase + reminderId.hashCode.abs() % 100000;
+
+  /// Id of the one-off notification [daysBefore] (1..[leadDays]) days before
+  /// a planned service's date, used while the daily one can't be armed yet.
+  static int leadNotificationId(String reminderId, int daysBefore) =>
+      _leadIdBase + (reminderId.hashCode.abs() % 100000) * leadDays + daysBefore - 1;
 
   /// Whether a date picked in the service form means "book for later"
   /// rather than "already done".

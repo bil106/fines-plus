@@ -649,6 +649,8 @@
    "status": "Статус",
    "tank_volume_liters": "Обсяг бака, л",
 "planned_service_reminder_body": "Настав час запланованого ТО. Внесіть вартість після виконання.",
+"planned_service_lead_reminder_body": "Заплановане ТО через {days} дн.",
+"@planned_service_lead_reminder_body": {"placeholders": {"days": {"type": "int"}}},
 "insurance_expiry_reminder_body": "Страховка закінчується {date}. Час її продовжити.",
 "@insurance_expiry_reminder_body": {"placeholders": {"date": {"type": "String"}}},
 "planned_services": "Заплановані роботи",

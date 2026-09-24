@@ -224,27 +224,55 @@ class ReminderCubit extends Cubit<ReminderState> {
     await repository.delete(carNumber, reminderId);
     _emitReminders(updated);
     await pushHelper.cancelNotification(reminderId.hashCode);
-    await pushHelper.cancelNotification(PlannedService.dailyNotificationId(reminderId));
+    await _cancelPlannedDaily(reminderId);
   }
 
-  /// A planned service keeps nagging every day at the same time once its
-  /// date has passed, until it's completed or deleted.
+  Future<void> _cancelPlannedDaily(String reminderId) async {
+    await pushHelper.cancelNotification(PlannedService.dailyNotificationId(reminderId));
+    for (var days = 1; days <= PlannedService.leadDays; days++) {
+      await pushHelper.cancelNotification(PlannedService.leadNotificationId(reminderId, days));
+    }
+  }
+
+  /// A planned service reminds every day at the same time starting
+  /// [PlannedService.leadDays] before its date, and keeps nagging after it
+  /// until it's completed or deleted.
+  ///
+  /// A daily repeat only matches the time of day - the OS ignores the date
+  /// of its first occurrence - so it's armed only once that first occurrence
+  /// is less than a day away. Until then the days before the date get
+  /// one-off notifications, and the next app load arms the daily repeat.
   Future<void> _syncPlannedDaily(ReminderModel reminder) async {
-    final dailyId = PlannedService.dailyNotificationId(reminder.id);
-    await pushHelper.cancelNotification(dailyId);
+    await _cancelPlannedDaily(reminder.id);
     if (!reminder.isPlannedService || reminder.isCompleted) return;
 
     final now = DateTime.now();
-    var first = reminder.dateTime.toLocal().add(const Duration(days: 1));
+    final due = reminder.dateTime.toLocal();
+    var first = due.subtract(const Duration(days: PlannedService.leadDays));
     while (first.isBefore(now)) {
       first = first.add(const Duration(days: 1));
     }
-    await pushHelper.scheduleDailyNotification(
-      id: dailyId,
-      title: reminder.title,
-      body: reminder.description,
-      firstDate: first,
-    );
+
+    if (first.difference(now) < const Duration(days: 1)) {
+      // The daily repeat also covers the due date itself.
+      await pushHelper.cancelNotification(reminder.id.hashCode);
+      await pushHelper.scheduleDailyNotification(
+        id: PlannedService.dailyNotificationId(reminder.id),
+        title: reminder.title,
+        body: reminder.description,
+        firstDate: first,
+      );
+      return;
+    }
+
+    for (var days = 1; days <= PlannedService.leadDays; days++) {
+      await pushHelper.scheduleNotification(
+        id: PlannedService.leadNotificationId(reminder.id, days),
+        title: reminder.title,
+        body: S.current.planned_service_lead_reminder_body(days),
+        dateTime: due.subtract(Duration(days: days)),
+      );
+    }
   }
 
   @override
