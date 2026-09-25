@@ -1,3 +1,4 @@
+import 'package:core_utils/formatters/plate_market.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'app_config.g.dart';
@@ -113,6 +114,9 @@ class AppConfig {
   });
 
   factory AppConfig.fromJson(Map<String, dynamic> json) => _$AppConfigFromJson(json);
+
+  /// Plate format/badge rules for [market].
+  PlateMarket get plateMarket => PlateMarket.fromCode(market);
 
   Map<String, dynamic> toJson() => _$AppConfigToJson(this);
 }

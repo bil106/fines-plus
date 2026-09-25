@@ -1,5 +1,6 @@
 // packages/core_utils/lib/formatters/vehicle_formatters.dart
 import 'package:core_localization/generated/l10n.dart';
+import 'package:core_utils/formatters/plate_market.dart';
 import 'package:flutter/services.dart';
 
 class VehicleFormatters {
@@ -26,40 +27,33 @@ class VehicleFormatters {
   }
 }
 
+/// Car plate input for the brand's [PlateMarket]: keeps only characters
+/// that fit the market's pattern, uppercased and without spaces/dashes.
 class VehicleNumberFormatter extends TextInputFormatter {
-  static final _letterRegExp = RegExp(r'[A-Za-z]');
-  static final _digitRegExp = RegExp(r'\d');
+  final PlateMarket market;
+
+  VehicleNumberFormatter({this.market = PlateMarket.ua});
 
   @override
   TextEditingValue formatEditUpdate(
     TextEditingValue oldValue,
     TextEditingValue newValue,
   ) {
-    final upper = newValue.text.toUpperCase();
+    final raw = newValue.text.toUpperCase().split('').where(market.isAlphanumeric).toList();
 
-   
-    final raw = <String>[];
-    for (final ch in upper.split('')) {
-      if (_letterRegExp.hasMatch(ch) || _digitRegExp.hasMatch(ch)) {
-        raw.add(ch);
-      }
-    }
-
-  
-    final pattern = ['L', 'L', 'D', 'D', 'D', 'D', 'L', 'L'];
+    final slots = market.slots;
     final result = <String>[];
-    int inputIndex = 0;
-
-    for (int i = 0; i < pattern.length; i++) {
-      while (inputIndex < raw.length) {
-        final c = raw[inputIndex++];
-        if (pattern[i] == 'L' && _letterRegExp.hasMatch(c)) {
-          result.add(c);
-          break;
-        }
-        if (pattern[i] == 'D' && _digitRegExp.hasMatch(c)) {
-          result.add(c);
-          break;
+    if (slots == null) {
+      result.addAll(raw.take(market.maxLength));
+    } else {
+      int inputIndex = 0;
+      for (int i = 0; i < slots.length; i++) {
+        while (inputIndex < raw.length) {
+          final c = raw[inputIndex++];
+          if (slots[i] == 'L' ? market.isLetter(c) : market.isDigit(c)) {
+            result.add(c);
+            break;
+          }
         }
       }
     }
@@ -70,11 +64,6 @@ class VehicleNumberFormatter extends TextInputFormatter {
       text: text,
       selection: TextSelection.collapsed(offset: text.length),
     );
-  }
-
-  static bool isValid(String value) {
-    final reg = RegExp(r'^[A-Z]{2}\d{4}[A-Z]{2}$');
-    return reg.hasMatch(value.toUpperCase());
   }
 }
 

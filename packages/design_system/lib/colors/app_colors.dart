@@ -136,8 +136,9 @@ abstract final class AppColors {
   static const successOnDark = Color(0xFF6EE7A0);
   static const dangerOnDark = Color(0xFFFF8A80);
 
-  // Ukrainian licence plate, drawn on the hero card. Fixed by the real
-  // plate's look, independent of the white-label brand.
+  // Licence plate drawn on the hero card (see LicensePlateBadge). Fixed by
+  // the real plates' look per market, independent of the white-label brand.
+  // Frame/ink/surface are shared; the strip/flag colors are per market.
   static const plateFrameLight = Color(0xFFF7F8FA);
   static const plateFrameMid = Color(0xFFC3C9D2);
   static const plateFrameDark = Color(0xFF9AA2AE);
@@ -147,6 +148,10 @@ abstract final class AppColors {
   static const plateStripBottom = Color(0xFF1741B5);
   static const plateFlagBlue = Color(0xFF0057B7);
   static const plateFlagYellow = Color(0xFFFFD700);
+  static const plateEuStripTop = Color(0xFF003399);
+  static const plateEuStripBottom = Color(0xFF002A80);
+  static const plateEuStar = Color(0xFFFFCC00);
+  static const plateUsInk = Color(0xFF1B2A4A);
 
   // Note: the dashboard's warm-neutral background/border/divider and the
   // unpaid-fines alert colors used to live here as fixed consts. They are

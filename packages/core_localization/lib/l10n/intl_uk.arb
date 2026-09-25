@@ -152,6 +152,8 @@
    "history_empty": "Історія порожня",
    "error": "Помилка:",
    "hint_auto_num": "AH0000HA",
+   "hint_auto_num_es": "1234BCD",
+   "hint_auto_num_us": "8ABC123",
    "hint_tech_data_num": "XEE128436",
    "fuel_ai98": "АІ-98",
    "fuel_ai95_plus": "АІ-95+",

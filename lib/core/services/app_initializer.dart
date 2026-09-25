@@ -253,7 +253,7 @@ class AppInitializer {
     carCubit = CarCubit(local: carInfoLocalDataSource, repo: carInfoRepository, config: config);
     historyCubit = HistoryCubit(repository: historyRepository, carCubit: carCubit);
     analyticsCubit = AnalyticsCubit(repository: analyticsRepository, carCubit: carCubit);
-    carInfoCubit = CarInfoCubit(carInfoRepository, historyCubit);
+    carInfoCubit = CarInfoCubit(carInfoRepository, historyCubit, config.plateMarket);
     carCubit.setHistoryCubit(historyCubit);
 
     maintenanceCubit = MaintenanceCubit(

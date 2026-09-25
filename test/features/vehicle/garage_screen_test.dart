@@ -1,5 +1,6 @@
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/theme/app_brand_theme.dart';
+import 'package:design_system/widget/app_field_card.dart';
 import 'package:fines_plus/core/config/app_config.dart';
 import 'package:fines_plus/features/vehicle/data/models/car_info_model.dart';
 import 'package:fines_plus/features/vehicle/presentation/cubit/garage_cubit.dart';
@@ -49,11 +50,33 @@ class SettingsStub extends Cubit<SettingsState> implements SettingsCubit {
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
+const _uaConfig = AppConfig(
+  brandName: 'Test brand',
+  primaryColorHex: '#007AFF',
+  logoAssetPath: '',
+  supportEmail: '',
+  phoneNumber: '',
+  viberNumber: '',
+);
+
+/// A CarPapers-like brand: US market, no UA fines check.
+const _usConfig = AppConfig(
+  brandName: 'Test brand',
+  primaryColorHex: '#007AFF',
+  logoAssetPath: '',
+  supportEmail: '',
+  phoneNumber: '',
+  viberNumber: '',
+  market: 'US',
+  finesCheckEnabled: false,
+);
+
 void main() {
   Future<void> open(
     WidgetTester tester, {
     List<CarInfoModel> cars = const [],
     VoidCallback? onContinue,
+    AppConfig config = _uaConfig,
   }) async {
     final garage = GarageStub(
       GarageState(cars: cars, activeCarId: 'car', isLoading: false),
@@ -72,16 +95,7 @@ void main() {
           BlocProvider<CarCubit>.value(value: car),
           BlocProvider<MaintenanceCubit>.value(value: maintenance),
           BlocProvider<SettingsCubit>.value(value: settings),
-          RepositoryProvider<AppConfig>.value(
-            value: const AppConfig(
-              brandName: 'Test brand',
-              primaryColorHex: '#007AFF',
-              logoAssetPath: '',
-              supportEmail: '',
-              phoneNumber: '',
-              viberNumber: '',
-            ),
-          ),
+          RepositoryProvider<AppConfig>.value(value: config),
         ],
         child: MaterialApp(
           theme: ThemeData(
@@ -200,13 +214,19 @@ void main() {
     },
   );
 
-  Future<void> openEditSheet(WidgetTester tester, {String model = ''}) async {
+  Future<void> openEditSheet(
+    WidgetTester tester, {
+    String model = '',
+    String carNumber = 'AI1234IO',
+    AppConfig config = _uaConfig,
+  }) async {
     await open(
       tester,
+      config: config,
       cars: [
         CarInfoModel(
           carId: 'car',
-          carNumber: 'AI1234IO',
+          carNumber: carNumber,
           techPassport: '',
           ownerId: 'owner',
           make: 'Ford',
@@ -214,9 +234,17 @@ void main() {
         ),
       ],
     );
-    await tester.longPress(find.text('AI1234IO'));
+    await tester.longPress(find.text(carNumber));
     await tester.pumpAndSettle();
   }
+
+  Finder plateField() => find.descendant(
+    of: find.widgetWithText(AppFieldCard, S.current.car_number),
+    matching: find.byType(TextField),
+  );
+
+  bool canSave(WidgetTester tester) =>
+      tester.widget<ElevatedButton>(find.widgetWithText(ElevatedButton, S.current.save)).onPressed != null;
 
   // Make is the first dropdown in the sheet, model the second.
   Finder makeDropdown() => find.byType(DropdownButtonFormField<String>).at(0);
@@ -271,6 +299,32 @@ void main() {
       ),
       findsOneWidget,
     );
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('UA brand: tech passport field shown, only UA plates saveable', (
+    tester,
+  ) async {
+    await openEditSheet(tester);
+    expect(find.text(S.current.reg_number), findsOneWidget);
+    expect(canSave(tester), isTrue);
+
+    await tester.enterText(plateField(), '8ABC123');
+    await tester.pump();
+    expect(canSave(tester), isFalse);
+  });
+
+  testWidgets('US brand without fines check: no tech passport, US plates saveable', (
+    tester,
+  ) async {
+    await openEditSheet(tester, carNumber: '8ABC123', config: _usConfig);
+    expect(find.text(S.current.reg_number), findsNothing);
+    expect(canSave(tester), isTrue);
+
+    await tester.enterText(plateField(), 'abc-1234');
+    await tester.pump();
+    expect(find.descendant(of: plateField(), matching: find.text('ABC1234')), findsOneWidget);
+    expect(canSave(tester), isTrue);
     expect(tester.takeException(), isNull);
   });
 }

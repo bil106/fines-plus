@@ -154,6 +154,7 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
     carInfoCubit = CarInfoCubit(
       context.read<CarInfoRepository>(),
       historyCubit,
+      context.read<AppConfig>().plateMarket,
     );
     analyticsCubit = AnalyticsCubit(
       repository: AnalyticsRepository(firestore: FirebaseFirestore.instance),
@@ -379,7 +380,11 @@ class HomeScreenWrapperState extends State<HomeScreenWrapper> {
           BlocProvider.value(value: _reminderCubitFor(carId)),
           BlocProvider(
             create: (_) =>
-                CarInfoCubit(context.read<CarInfoRepository>(), historyCubit),
+                CarInfoCubit(
+                  context.read<CarInfoRepository>(),
+                  historyCubit,
+                  context.read<AppConfig>().plateMarket,
+                ),
           ),
         ],
         child: Scaffold(

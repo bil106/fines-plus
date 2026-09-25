@@ -445,6 +445,8 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "grn": MessageLookupByLibrary.simpleMessage("UAH"),
     "hint_auto_num": MessageLookupByLibrary.simpleMessage("AH0000HA"),
+    "hint_auto_num_es": MessageLookupByLibrary.simpleMessage("1234BCD"),
+    "hint_auto_num_us": MessageLookupByLibrary.simpleMessage("8ABC123"),
     "hint_tech_data_num": MessageLookupByLibrary.simpleMessage("XEE128436"),
     "history": MessageLookupByLibrary.simpleMessage("History"),
     "history_empty": MessageLookupByLibrary.simpleMessage("History is empty"),

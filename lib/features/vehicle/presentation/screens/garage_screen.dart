@@ -640,9 +640,10 @@ Future<Map<String, String>?> showCarFormSheet(
         ),
         child: StatefulBuilder(
           builder: (context, setState) {
+            final plateMarket = context.watch<AppConfig>().plateMarket;
             final isValid =
                 carNumberController.text.isEmpty ||
-                VehicleNumberFormatter.isValid(carNumberController.text);
+                plateMarket.isValid(carNumberController.text);
 
             return SafeArea(
               top: false,
@@ -882,11 +883,11 @@ Future<Map<String, String>?> showCarFormSheet(
                             child: TextField(
                               controller: carNumberController,
                               onChanged: (_) => setState(() {}),
-                              inputFormatters: [VehicleNumberFormatter()],
+                              inputFormatters: [VehicleNumberFormatter(market: plateMarket)],
                               textCapitalization: TextCapitalization.characters,
-                              maxLength: 8,
+                              maxLength: plateMarket.maxLength,
                               decoration: InputDecoration(
-                                hintText: S.of(context).hint_auto_num,
+                                hintText: plateMarket.hint,
                                 hintStyle: const TextStyle(
                                   fontSize: 15,
                                   color: AppColors.textSecondary,

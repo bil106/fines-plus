@@ -1184,6 +1184,26 @@ class S {
     return Intl.message('AH0000HA', name: 'hint_auto_num', desc: '', args: []);
   }
 
+  /// `1234BCD`
+  String get hint_auto_num_es {
+    return Intl.message(
+      '1234BCD',
+      name: 'hint_auto_num_es',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `8ABC123`
+  String get hint_auto_num_us {
+    return Intl.message(
+      '8ABC123',
+      name: 'hint_auto_num_us',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `XEE128436`
   String get hint_tech_data_num {
     return Intl.message(

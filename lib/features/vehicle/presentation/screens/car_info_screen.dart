@@ -212,6 +212,7 @@ class _CarInfoViewState extends State<_CarInfoView> {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+    final plateMarket = context.watch<AppConfig>().plateMarket;
 
     return Scaffold(
       resizeToAvoidBottomInset: true,
@@ -293,11 +294,11 @@ class _CarInfoViewState extends State<_CarInfoView> {
                         TextField(
                           controller: _carNumberController,
                           style: textTheme.black28W400,
-                          inputFormatters: [VehicleNumberFormatter()],
+                          inputFormatters: [VehicleNumberFormatter(market: plateMarket)],
                           textCapitalization: TextCapitalization.characters,
-                          maxLength: 8,
+                          maxLength: plateMarket.maxLength,
                           decoration: InputDecoration(
-                            hintText: S.of(context).hint_auto_num,
+                            hintText: plateMarket.hint,
                             hintStyle: textTheme.hintText,
                             counterText: '',
                             filled: true,

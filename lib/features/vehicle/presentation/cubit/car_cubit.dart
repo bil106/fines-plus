@@ -64,8 +64,6 @@ class CarCubit extends Cubit<CarState> {
     emit(state.copyWith(carId: carId, carNumber: '', techPassport: ''));
   }
 
-  static final _carReg = RegExp(r'^[A-Z]{2}\d{4}[A-Z]{2}$');
-
   /// On a full, valid plate, checks whether this account already has a car
   /// with that exact number (e.g. re-typed on a new device after local
   /// prefs were lost) and reattaches to it instead of relabeling whatever
@@ -75,7 +73,7 @@ class CarCubit extends Cubit<CarState> {
     final trimmed = newCar.trim();
     if (trimmed == state.carNumber) return;
 
-    if (_carReg.hasMatch(trimmed)) {
+    if (config.plateMarket.isValid(trimmed)) {
       final existing = await local.findCarByNumber(trimmed, excludeCarId: state.carId);
       if (existing != null) {
         await switchActiveCar(existing);

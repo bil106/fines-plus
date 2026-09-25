@@ -1,3 +1,4 @@
+import 'package:core_utils/formatters/plate_market.dart';
 import 'package:fines_plus/core/services/carplates_service.dart';
 import 'package:fines_plus/features/export/data/repository/injector.dart';
 import 'package:fines_plus/features/history/presentation/cubit/history_cubit.dart';
@@ -16,9 +17,10 @@ import 'dart:io';
 class CarInfoCubit extends Cubit<CarInfoState> {
   final CarInfoRepository _repo;
   final HistoryCubit historyCubit;
+  final PlateMarket _plateMarket;
   StreamSubscription<String>? _tokenRefreshSub;
 
-  CarInfoCubit(this._repo, this.historyCubit) : super(const CarInfoState()) {
+  CarInfoCubit(this._repo, this.historyCubit, this._plateMarket) : super(const CarInfoState()) {
     loadSavedCarInfo();
 
     // getAPNSToken() in _getFcmTokenSafely can legitimately still be null
@@ -28,7 +30,7 @@ class CarInfoCubit extends Cubit<CarInfoState> {
     // refresh) actually becomes available, instead of never saving one and
     // silently losing push notifications for the rest of the session.
     _tokenRefreshSub = FirebaseMessaging.instance.onTokenRefresh.listen((token) async {
-      if (!carReg.hasMatch(state.carNumber)) return;
+      if (!_plateMarket.isValid(state.carNumber)) return;
       if (FirebaseAuth.instance.currentUser == null) return;
       try {
         await _repo.saveFcmToken(token);
@@ -45,7 +47,6 @@ class CarInfoCubit extends Cubit<CarInfoState> {
     return super.close();
   }
 
-  static final carReg = RegExp(r'^[A-Z]{2}\d{4}[A-Z]{2}$');
   static final techReg = RegExp(r'^[A-Z]{3}\d{6}$');
 
   Future<void> loadSavedCarInfo() async {
@@ -62,7 +63,7 @@ class CarInfoCubit extends Cubit<CarInfoState> {
   /// plate-keyed doc) so a Cloud Function can push fine-check notifications
   /// for it. Only meaningful once a real plate is set.
   Future<void> _saveFcmToken() async {
-    if (!carReg.hasMatch(state.carNumber)) return;
+    if (!_plateMarket.isValid(state.carNumber)) return;
 
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) return;
@@ -108,7 +109,7 @@ class CarInfoCubit extends Cubit<CarInfoState> {
     emit(state.copyWith(carNumber: carNumber));
 
     
-    if (!carReg.hasMatch(carNumber)) {
+    if (!_plateMarket.isValid(carNumber)) {
       return;
     }
 
@@ -151,10 +152,10 @@ class CarInfoCubit extends Cubit<CarInfoState> {
   }
 
   bool get isFormValid =>
-      carReg.hasMatch(state.carNumber) && (state.techPassport.isEmpty || techReg.hasMatch(state.techPassport));
+      _plateMarket.isValid(state.carNumber) && (state.techPassport.isEmpty || techReg.hasMatch(state.techPassport));
 
   String? validate() {
-    if (!carReg.hasMatch(state.carNumber)) return 'Enter the correct car number';
+    if (!_plateMarket.isValid(state.carNumber)) return 'Enter the correct car number';
     if (state.techPassport.isNotEmpty && !techReg.hasMatch(state.techPassport)) {
       return 'Enter the correct registration number';
     }
