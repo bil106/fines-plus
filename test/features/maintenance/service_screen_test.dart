@@ -87,6 +87,7 @@ void main() {
   Future<_Maintenance> openSheet(
     WidgetTester tester, {
     String currency = 'UAH',
+    String? category,
   }) async {
     tester.view.physicalSize = const Size(360, 800);
     tester.view.devicePixelRatio = 1;
@@ -140,6 +141,7 @@ void main() {
                   contentBuilder: (_) => ServiceScreen(
                     key: key,
                     embedded: true,
+                    category: category,
                   ),
                 ),
                 child: const Text('Open'),
@@ -236,5 +238,20 @@ void main() {
     await tester.pumpAndSettle();
     expect(maintenance.saved, isNull);
     expect(find.text(S.current.service_invalid_price), findsOneWidget);
+  });
+
+  testWidgets('picking a curated work without a catalog price leaves the price to the user', (
+    tester,
+  ) async {
+    await openSheet(tester, category: 'Tires');
+    await tester.enterText(nameFields().first, S.current.service_zamina_shyn);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(S.current.service_zamina_shyn).last);
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    expect(
+      tester.widget<TextField>(priceFields().first).controller!.text,
+      isEmpty,
+    );
   });
 }

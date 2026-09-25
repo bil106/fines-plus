@@ -438,7 +438,16 @@ class ServiceScreenState extends State<ServiceScreen>
                     final item = [
                       ...ServiceList.serviceItems,
                       ...ServiceList.tuningItems,
-                    ].firstWhere((item) => item.name == name);
+                    ].where((item) => item.name == name).firstOrNull;
+                    // Some curated per-category names (ServiceList
+                    // .namesByCategory) have no catalog price - keep the
+                    // name and let the user type the price.
+                    if (item == null) {
+                      work.priceUah = 0;
+                      work.price.clear();
+                      _updateTotal();
+                      return;
+                    }
                     work.priceUah = settings.currencyService.convert(
                       item.priceUSD,
                       'UAH',
