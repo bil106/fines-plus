@@ -233,7 +233,9 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
               ),
               const SizedBox(height: 4),
               Text(
-                S.of(context).subscription_subtitle,
+                context.watch<AppConfig>().finesCheckEnabled
+                    ? S.of(context).subscription_subtitle
+                    : S.of(context).subscription_subtitle_no_fines,
                 textAlign: TextAlign.center,
                 style: textTheme.black16.copyWith(fontSize: 13, color: AppColors.textSecondary),
               ),

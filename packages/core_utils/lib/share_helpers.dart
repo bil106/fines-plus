@@ -50,6 +50,7 @@ class ShareHelpers {
       carMake: activeCars.isNotEmpty ? activeCars.first.make : '',
       brandName: config.brandName,
       logoAssetPath: config.logoAssetPath,
+      includeFines: config.finesCheckEnabled,
     );
     await Share.shareXFiles(
       [XFile(file.path)],

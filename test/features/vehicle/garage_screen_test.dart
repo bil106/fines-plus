@@ -1,5 +1,6 @@
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/theme/app_brand_theme.dart';
+import 'package:fines_plus/core/config/app_config.dart';
 import 'package:fines_plus/features/vehicle/data/models/car_info_model.dart';
 import 'package:fines_plus/features/vehicle/presentation/cubit/garage_cubit.dart';
 import 'package:fines_plus/features/vehicle/presentation/cubit/garage_state.dart';
@@ -71,6 +72,16 @@ void main() {
           BlocProvider<CarCubit>.value(value: car),
           BlocProvider<MaintenanceCubit>.value(value: maintenance),
           BlocProvider<SettingsCubit>.value(value: settings),
+          RepositoryProvider<AppConfig>.value(
+            value: const AppConfig(
+              brandName: 'Test brand',
+              primaryColorHex: '#007AFF',
+              logoAssetPath: '',
+              supportEmail: '',
+              phoneNumber: '',
+              viberNumber: '',
+            ),
+          ),
         ],
         child: MaterialApp(
           theme: ThemeData(

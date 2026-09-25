@@ -60,6 +60,69 @@ class OnboardingTestRouter extends RootStackRouter {
   ];
 }
 
+/// Pumps the onboarding flow (onboarding -> registration) for [config].
+Future<OnboardingTestRouter> _openOnboarding(
+  WidgetTester tester,
+  AppConfig config,
+) async {
+  PackageInfo.setMockInitialValues(
+    appName: 'Fines',
+    packageName: 'com.finesplus',
+    version: '1',
+    buildNumber: '1',
+    buildSignature: '',
+  );
+  final router = OnboardingTestRouter();
+  final cubit = RegistrationStub();
+  addTearDown(router.dispose);
+  addTearDown(cubit.close);
+  await tester.pumpWidget(
+    Provider<AppConfig>.value(
+      value: config,
+      child: BlocProvider<RegistrationCubit>.value(
+        value: cubit,
+        child: MaterialApp.router(
+          routerConfig: router.config(),
+          // The onboarding hero illustrations loop forever while their
+          // slide is active, so pumpAndSettle would never settle -
+          // "reduce motion" turns those loops off, as it does on devices.
+          builder: (context, child) => MediaQuery(
+            data: MediaQuery.of(context).copyWith(disableAnimations: true),
+            child: child!,
+          ),
+          theme: ThemeData(
+            // The default InkSparkle splash loads a shader asset that can't be
+            // decoded in the test environment.
+            splashFactory: NoSplash.splashFactory,
+            extensions: const [
+              AppBrandTheme(
+                surfaceBg: Color(0xFFF6F4ED),
+                surfaceBorder: Color(0xFFE5DFD0),
+                divider: Color(0xFFE5DFD0),
+                alertBg: Colors.white,
+                alertBorder: Colors.grey,
+                alertFg: Colors.black,
+                displayTextStyle: TextStyle(),
+                moneyTextStyle: TextStyle(),
+              ),
+            ],
+          ),
+          locale: const Locale('uk'),
+          supportedLocales: S.delegate.supportedLocales,
+          localizationsDelegates: const [
+            S.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+        ),
+      ),
+    ),
+  );
+  await tester.pumpAndSettle();
+  return router;
+}
+
 void main() {
   tearDown(() => debugDefaultTargetPlatformOverride = null);
   Future<RegistrationStub> open(
@@ -219,61 +282,7 @@ void main() {
   testWidgets(
     'four onboarding pages lead to registration and back returns to page four',
     (tester) async {
-      PackageInfo.setMockInitialValues(
-        appName: 'Fines',
-        packageName: 'com.finesplus',
-        version: '1',
-        buildNumber: '1',
-        buildSignature: '',
-      );
-      final router = OnboardingTestRouter();
-      final cubit = RegistrationStub();
-      addTearDown(router.dispose);
-      addTearDown(cubit.close);
-      await tester.pumpWidget(
-        Provider<AppConfig>.value(
-          value: _testConfig,
-          child: BlocProvider<RegistrationCubit>.value(
-            value: cubit,
-            child: MaterialApp.router(
-              routerConfig: router.config(),
-              // The onboarding hero illustrations loop forever while their
-              // slide is active, so pumpAndSettle would never settle -
-              // "reduce motion" turns those loops off, as it does on devices.
-              builder: (context, child) => MediaQuery(
-                data: MediaQuery.of(context).copyWith(disableAnimations: true),
-                child: child!,
-              ),
-              theme: ThemeData(
-                // The default InkSparkle splash loads a shader asset that can't be
-                // decoded in the test environment.
-                splashFactory: NoSplash.splashFactory,
-                extensions: const [
-                  AppBrandTheme(
-                    surfaceBg: Color(0xFFF6F4ED),
-                    surfaceBorder: Color(0xFFE5DFD0),
-                    divider: Color(0xFFE5DFD0),
-                    alertBg: Colors.white,
-                    alertBorder: Colors.grey,
-                    alertFg: Colors.black,
-                    displayTextStyle: TextStyle(),
-                    moneyTextStyle: TextStyle(),
-                  ),
-                ],
-              ),
-              locale: const Locale('uk'),
-              supportedLocales: S.delegate.supportedLocales,
-              localizationsDelegates: const [
-                S.delegate,
-                GlobalMaterialLocalizations.delegate,
-                GlobalWidgetsLocalizations.delegate,
-                GlobalCupertinoLocalizations.delegate,
-              ],
-            ),
-          ),
-        ),
-      );
-      await tester.pumpAndSettle();
+      final router = await _openOnboarding(tester, _testConfig);
       for (var i = 0; i < 3; i++) {
         await tester.drag(find.byType(PageView), const Offset(-800, 0));
         await tester.pumpAndSettle();
@@ -291,6 +300,40 @@ void main() {
       await router.maybePop();
       await tester.pumpAndSettle();
       expect(find.text(S.current.analytics), findsOneWidget);
+    },
+  );
+
+  testWidgets(
+    'without the fines check onboarding has three pages and no fines slide',
+    (tester) async {
+      final router = await _openOnboarding(
+        tester,
+        const AppConfig(
+          brandName: 'Test',
+          primaryColorHex: '#1976D2',
+          logoAssetPath: '',
+          supportEmail: '',
+          phoneNumber: '',
+          viberNumber: '',
+          market: 'US',
+          finesCheckEnabled: false,
+        ),
+      );
+      for (var i = 0; i < 2; i++) {
+        expect(find.text(S.current.fines_control), findsNothing);
+        await tester.drag(find.byType(PageView), const Offset(-800, 0));
+        await tester.pumpAndSettle();
+      }
+      expect(find.text(S.current.fines_control), findsNothing);
+      expect(find.text(S.current.analytics), findsOneWidget);
+      final lastButton = find.widgetWithText(
+        ElevatedButton,
+        S.current.of_course,
+      );
+      await tester.ensureVisible(lastButton);
+      await tester.tap(lastButton);
+      await tester.pumpAndSettle();
+      expect(router.current.name, RegistrationRoute.name);
     },
   );
 }

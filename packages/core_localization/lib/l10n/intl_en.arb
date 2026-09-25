@@ -418,6 +418,7 @@
 "authorization_required": "Authorization required",
 "subscription": "Subscription",
 "subscription_subtitle": "Full access to fines, maintenance and insurance tracking",
+"subscription_subtitle_no_fines": "Full access to maintenance, insurance and expense tracking",
 "store_unavailable": "Store unavailable",
 "click_again": "Click again to exit",
 "sign_up": "Sign Up",

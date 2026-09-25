@@ -1318,6 +1318,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "subscription_subtitle": MessageLookupByLibrary.simpleMessage(
       "Full access to fines, maintenance and insurance tracking",
     ),
+    "subscription_subtitle_no_fines": MessageLookupByLibrary.simpleMessage(
+      "Full access to maintenance, insurance and expense tracking",
+    ),
     "successful_registration": MessageLookupByLibrary.simpleMessage(
       "Successful registration",
     ),

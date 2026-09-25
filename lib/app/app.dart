@@ -150,7 +150,9 @@ class _MyAppState extends State<MyApp> {
       await sp.setString('pending_ref', partnerId);
     }
     final car = link.queryParameters['car'];
-    if (car != null && mounted) {
+    // A `car` link opens the UA fines check - nothing to open for brands
+    // without it (AppConfig.finesCheckEnabled).
+    if (car != null && widget.config.finesCheckEnabled && mounted) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
         context.router.push(FinesRoute());
@@ -185,7 +187,7 @@ class _MyAppState extends State<MyApp> {
     if (mounted) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
-        if (car != null) {
+        if (car != null && widget.config.finesCheckEnabled) {
           context.router.push(FinesRoute());
         }
       });

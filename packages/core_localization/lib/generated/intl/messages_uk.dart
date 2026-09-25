@@ -1309,6 +1309,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "subscription_subtitle": MessageLookupByLibrary.simpleMessage(
       "Повний доступ до контролю штрафів, ТО та страхування",
     ),
+    "subscription_subtitle_no_fines": MessageLookupByLibrary.simpleMessage(
+      "Повний доступ до контролю ТО, страхування та витрат",
+    ),
     "successful_registration": MessageLookupByLibrary.simpleMessage(
       "Успішна реєстрація",
     ),

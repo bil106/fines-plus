@@ -10,6 +10,7 @@ import 'package:design_system/theme/app_brand_theme.dart';
 import 'package:design_system/widget/app_back_button.dart';
 import 'package:design_system/widget/app_field_card.dart';
 import 'package:intl/intl.dart';
+import 'package:fines_plus/core/config/app_config.dart';
 import 'package:fines_plus/features/expenses/data/models/expense.dart';
 import 'package:fines_plus/features/expenses/data/models/expense_category.dart';
 import 'package:fines_plus/features/expenses/data/models/insurance_record.dart';
@@ -903,32 +904,35 @@ Future<Map<String, String>?> showCarFormSheet(
                               ),
                             ),
                           ),
-                          AppSpacers.verticalMedium,
-                          AppFieldCard(
-                            label: S.of(context).reg_number,
-                            child: TextField(
-                              controller: techPassportController,
-                              inputFormatters: [TechPassportFormatter()],
-                              maxLength: 9,
-                              decoration: InputDecoration(
-                                hintText: S.of(context).hint_tech_data_num,
-                                hintStyle: const TextStyle(
-                                  fontSize: 15,
-                                  color: AppColors.textSecondary,
+                          // Tech passport is only used by the UA fines check.
+                          if (context.watch<AppConfig>().finesCheckEnabled) ...[
+                            AppSpacers.verticalMedium,
+                            AppFieldCard(
+                              label: S.of(context).reg_number,
+                              child: TextField(
+                                controller: techPassportController,
+                                inputFormatters: [TechPassportFormatter()],
+                                maxLength: 9,
+                                decoration: InputDecoration(
+                                  hintText: S.of(context).hint_tech_data_num,
+                                  hintStyle: const TextStyle(
+                                    fontSize: 15,
+                                    color: AppColors.textSecondary,
+                                  ),
+                                  counterText: '',
+                                  border: InputBorder.none,
+                                  focusedBorder: InputBorder.none,
+                                  isDense: true,
+                                  contentPadding: EdgeInsets.zero,
                                 ),
-                                counterText: '',
-                                border: InputBorder.none,
-                                focusedBorder: InputBorder.none,
-                                isDense: true,
-                                contentPadding: EdgeInsets.zero,
-                              ),
-                              style: const TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.w700,
-                                color: AppColors.ink,
+                                style: const TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w700,
+                                  color: AppColors.ink,
+                                ),
                               ),
                             ),
-                          ),
+                          ],
                           AppSpacers.verticalMedium,
                           SizedBox(
                             width: double.infinity,

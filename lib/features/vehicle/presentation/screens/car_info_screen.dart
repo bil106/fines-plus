@@ -5,6 +5,7 @@ import 'package:design_system/widget/app_back_button.dart';
 import 'package:design_system/constants/app_borders.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
+import 'package:fines_plus/core/config/app_config.dart';
 import 'package:fines_plus/core/extensions/ad_banner_widget.dart';
 import 'package:fines_plus/core/extensions/unauthorized_dialog.dart';
 import 'package:fines_plus/features/analytics/presentation/cubit/analytics_cubit.dart';
@@ -305,24 +306,27 @@ class _CarInfoViewState extends State<_CarInfoView> {
                           ),
                         ),
 
-                        AppSpacers.verticalLarge,
+                        // Tech passport is only used by the UA fines check.
+                        if (context.watch<AppConfig>().finesCheckEnabled) ...[
+                          AppSpacers.verticalLarge,
 
-                        Text(S.of(context).reg_number, style: textTheme.carNumber),
-                        AppSpacers.verticalSmall,
-                        TextField(
-                          controller: _techPassportController,
-                          style: textTheme.black28W400,
-                          inputFormatters: [TechPassportFormatter()],
-                          maxLength: 9,
-                          decoration: InputDecoration(
-                            hintText: S.of(context).hint_tech_data_num,
-                            hintStyle: textTheme.hintText,
-                            counterText: '',
-                            filled: true,
-                            fillColor: AppColors.grey50,
-                            border: OutlineInputBorder(borderRadius: AppBorders.radius18, borderSide: BorderSide.none),
+                          Text(S.of(context).reg_number, style: textTheme.carNumber),
+                          AppSpacers.verticalSmall,
+                          TextField(
+                            controller: _techPassportController,
+                            style: textTheme.black28W400,
+                            inputFormatters: [TechPassportFormatter()],
+                            maxLength: 9,
+                            decoration: InputDecoration(
+                              hintText: S.of(context).hint_tech_data_num,
+                              hintStyle: textTheme.hintText,
+                              counterText: '',
+                              filled: true,
+                              fillColor: AppColors.grey50,
+                              border: OutlineInputBorder(borderRadius: AppBorders.radius18, borderSide: BorderSide.none),
+                            ),
                           ),
-                        ),
+                        ],
                       ],
                     ),
                   ),

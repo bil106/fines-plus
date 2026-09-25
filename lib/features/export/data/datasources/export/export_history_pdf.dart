@@ -31,7 +31,8 @@ class ExportHistoryPdf {
 
   /// A branded report meant to be handed to a car buyer: the app logo, the
   /// current mileage, the full maintenance history, and the fines still
-  /// unpaid on this car (or a "no fines" line) — the single
+  /// unpaid on this car (or a "no fines" line; the whole fines section is
+  /// omitted when [includeFines] is false) — the single
   /// artifact this feature is actually for someone who doesn't use the app
   /// to see and recognize the app's name.
   Future<Uint8List> generateBuyerReportBytes({
@@ -41,6 +42,7 @@ class ExportHistoryPdf {
     required List<FineHistory> finesHistory,
     required String brandName,
     required String logoAssetPath,
+    required bool includeFines,
   }) async {
     final pdf = pw.Document();
     final font = await _loadFont();
@@ -101,26 +103,28 @@ class ExportHistoryPdf {
           ),
           pw.SizedBox(height: 12),
           ..._buildHistorySections(font, history),
-          pw.SizedBox(height: 16),
-          pw.Text(
-            S.current.fines,
-            style: pw.TextStyle(font: font, fontSize: 15, fontWeight: pw.FontWeight.bold),
-          ),
-          pw.SizedBox(height: 8),
-          if (fines.isEmpty)
-            pw.Text(S.current.no_fines, style: pw.TextStyle(font: font, fontSize: 12))
-          else
-            pw.Table.fromTextArray(
-              headers: [S.current.date, S.current.description, S.current.price],
-              data: fines.map((f) => [f.date, f.description, f.amount]).toList(),
-              columnWidths: {
-                0: const pw.FlexColumnWidth(2),
-                1: const pw.FlexColumnWidth(5),
-                2: const pw.FlexColumnWidth(2),
-              },
-              cellStyle: pw.TextStyle(font: font, fontSize: 10),
-              headerStyle: pw.TextStyle(font: font, fontWeight: pw.FontWeight.bold, fontSize: 10),
+          if (includeFines) ...[
+            pw.SizedBox(height: 16),
+            pw.Text(
+              S.current.fines,
+              style: pw.TextStyle(font: font, fontSize: 15, fontWeight: pw.FontWeight.bold),
             ),
+            pw.SizedBox(height: 8),
+            if (fines.isEmpty)
+              pw.Text(S.current.no_fines, style: pw.TextStyle(font: font, fontSize: 12))
+            else
+              pw.Table.fromTextArray(
+                headers: [S.current.date, S.current.description, S.current.price],
+                data: fines.map((f) => [f.date, f.description, f.amount]).toList(),
+                columnWidths: {
+                  0: const pw.FlexColumnWidth(2),
+                  1: const pw.FlexColumnWidth(5),
+                  2: const pw.FlexColumnWidth(2),
+                },
+                cellStyle: pw.TextStyle(font: font, fontSize: 10),
+                headerStyle: pw.TextStyle(font: font, fontWeight: pw.FontWeight.bold, fontSize: 10),
+              ),
+          ],
         ],
       ),
     );

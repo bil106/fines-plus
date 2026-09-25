@@ -3554,6 +3554,16 @@ class S {
     );
   }
 
+  /// `Full access to maintenance, insurance and expense tracking`
+  String get subscription_subtitle_no_fines {
+    return Intl.message(
+      'Full access to maintenance, insurance and expense tracking',
+      name: 'subscription_subtitle_no_fines',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Store unavailable`
   String get store_unavailable {
     return Intl.message(

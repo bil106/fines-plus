@@ -419,6 +419,7 @@
    "authorization_required": "Потрібна авторизація",
    "subscription": "Передплата",
    "subscription_subtitle": "Повний доступ до контролю штрафів, ТО та страхування",
+   "subscription_subtitle_no_fines": "Повний доступ до контролю ТО, страхування та витрат",
    "store_unavailable": "Магазин недоступний",
    "click_again": "Натисніть ще раз, щоб вийти",
    "sign_up": "Реєстрація",

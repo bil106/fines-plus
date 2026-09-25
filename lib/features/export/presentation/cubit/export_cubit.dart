@@ -43,15 +43,20 @@ Future<File> exportCsvFile(String carNumber, List<EventModel> history) async {
     required String carMake,
     required String brandName,
     required String logoAssetPath,
+    required bool includeFines,
   }) async {
     final carHistoryList = exportRepository.convertEventsToCarHistory(history);
 
     List<FineHistory> finesHistory = [];
-    try {
-      // Anonymous/trial users (or anyone Firestore rejects) simply get a
-      // report with an empty fines section instead of failing the export.
-      finesHistory = await HistoryRepository(FirebaseFirestore.instance).getHistory(carNumber).first;
-    } catch (_) {}
+    // Brands without the fines check (AppConfig.finesCheckEnabled) have no
+    // fines data at all, so skip the fetch and the whole section.
+    if (includeFines) {
+      try {
+        // Anonymous/trial users (or anyone Firestore rejects) simply get a
+        // report with an empty fines section instead of failing the export.
+        finesHistory = await HistoryRepository(FirebaseFirestore.instance).getHistory(carNumber).first;
+      } catch (_) {}
+    }
 
     final pdfBytes = await exportPdf.generateBuyerReportBytes(
       carNumber: carNumber,
@@ -60,6 +65,7 @@ Future<File> exportCsvFile(String carNumber, List<EventModel> history) async {
       finesHistory: finesHistory,
       brandName: brandName,
       logoAssetPath: logoAssetPath,
+      includeFines: includeFines,
     );
     final dir = await getTemporaryDirectory();
     final safeCarNumber = carNumber.isEmpty ? "car" : carNumber;
