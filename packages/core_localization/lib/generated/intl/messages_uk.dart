@@ -294,6 +294,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Подія буде невидимою",
     ),
     "every": MessageLookupByLibrary.simpleMessage("Кожні"),
+    "expense_save_failed": MessageLookupByLibrary.simpleMessage(
+      "Не вдалося зберегти запис. Спробуйте ще раз.",
+    ),
     "export": MessageLookupByLibrary.simpleMessage("Експорт"),
     "export_history": MessageLookupByLibrary.simpleMessage("Експорт історії"),
     "extract_tokens": MessageLookupByLibrary.simpleMessage("Видобути токени"),
@@ -620,6 +623,24 @@ class MessageLookup extends MessageLookupByLibrary {
     "oil": MessageLookupByLibrary.simpleMessage("олива"),
     "oil_icon": MessageLookupByLibrary.simpleMessage("Олива"),
     "ok": MessageLookupByLibrary.simpleMessage("ОК"),
+    "onboarding_demo_expenses_title": MessageLookupByLibrary.simpleMessage(
+      "Витрати · вересень",
+    ),
+    "onboarding_demo_fine_parking": MessageLookupByLibrary.simpleMessage(
+      "Паркування",
+    ),
+    "onboarding_demo_fine_speeding": MessageLookupByLibrary.simpleMessage(
+      "Перевищення швидкості",
+    ),
+    "onboarding_demo_inspection": MessageLookupByLibrary.simpleMessage(
+      "Техогляд · 18 жовтня",
+    ),
+    "onboarding_demo_policy_number": MessageLookupByLibrary.simpleMessage(
+      "№ ЕР-213456789",
+    ),
+    "onboarding_demo_policy_valid_until": MessageLookupByLibrary.simpleMessage(
+      "до 12.03.2027",
+    ),
     "open_driver_page": MessageLookupByLibrary.simpleMessage(
       "Перехід на сторінку DriverTop",
     ),

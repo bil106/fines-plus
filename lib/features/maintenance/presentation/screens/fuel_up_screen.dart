@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
+import 'package:design_system/feedback/app_haptics.dart';
 import 'package:design_system/widget/app_field_card.dart';
 import 'package:design_system/widget/app_toggle_switch.dart';
 import 'package:fines_plus/features/vehicle/presentation/cubit/car_cubit.dart';
@@ -65,6 +66,7 @@ class FuelUpScreenState extends State<FuelUpScreen> {
   final TextEditingController sumController = TextEditingController();
   // Which of volume/sum the user typed last - the other one is derived from it.
   bool _sumIsSource = false;
+  bool _saving = false;
   final FocusNode _mileageFocusNode = FocusNode();
   final FocusNode _priceFocusNode = FocusNode();
   final FocusNode _volumeFocusNode = FocusNode();
@@ -357,11 +359,17 @@ class FuelUpScreenState extends State<FuelUpScreen> {
   /// Validates and saves the current form, then closes/reports as
   /// appropriate for how this screen was presented. Shared by the AppBar
   /// check action (full-screen mode) and the pinned Save button in
-  /// [AppBottomSheet] (embedded mode).
-  void save() {
+  /// [AppBottomSheet] (embedded mode). Closes only once the record is
+  /// actually saved; on failure the form stays open with the input intact.
+  Future<void> save() async {
+    // Guards the AppBar action too, which (unlike AppBottomSheet's button)
+    // has no in-flight state of its own.
+    if (_saving) return;
+
     if (selectedDate == null ||
         volumeController.text.isEmpty ||
         mileageController.text.isEmpty) {
+      AppHaptics.error();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           backgroundColor: AppColors.blue700,
@@ -393,8 +401,23 @@ class FuelUpScreenState extends State<FuelUpScreen> {
     // static PageView page (main "Заправка" tile), and embedded in a
     // bottom sheet (dashboard quick-add) - none of those reliably have a
     // caller awaiting a popped value, so it must save the record itself.
-    context.read<MaintenanceCubit>().addFuelRecord(record);
+    _saving = true;
+    final saved = await context.read<MaintenanceCubit>().addFuelRecord(record);
+    _saving = false;
+    if (!mounted) return;
 
+    if (!saved) {
+      AppHaptics.error();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: AppColors.blue700,
+          content: Text(S.of(context).expense_save_failed),
+        ),
+      );
+      return;
+    }
+
+    AppHaptics.success();
     if (widget.embedded) {
       Navigator.of(context).pop(record);
     } else if (widget.onBack != null) {

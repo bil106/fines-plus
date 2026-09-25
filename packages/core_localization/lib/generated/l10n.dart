@@ -5588,6 +5588,76 @@ class S {
       args: [amount],
     );
   }
+
+  /// `Couldn't save the entry. Please try again.`
+  String get expense_save_failed {
+    return Intl.message(
+      'Couldn\'t save the entry. Please try again.',
+      name: 'expense_save_failed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Inspection · Oct 18`
+  String get onboarding_demo_inspection {
+    return Intl.message(
+      'Inspection · Oct 18',
+      name: 'onboarding_demo_inspection',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No. ER-213456789`
+  String get onboarding_demo_policy_number {
+    return Intl.message(
+      'No. ER-213456789',
+      name: 'onboarding_demo_policy_number',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `until 03/12/2027`
+  String get onboarding_demo_policy_valid_until {
+    return Intl.message(
+      'until 03/12/2027',
+      name: 'onboarding_demo_policy_valid_until',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Parking`
+  String get onboarding_demo_fine_parking {
+    return Intl.message(
+      'Parking',
+      name: 'onboarding_demo_fine_parking',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Speeding`
+  String get onboarding_demo_fine_speeding {
+    return Intl.message(
+      'Speeding',
+      name: 'onboarding_demo_fine_speeding',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Expenses · September`
+  String get onboarding_demo_expenses_title {
+    return Intl.message(
+      'Expenses · September',
+      name: 'onboarding_demo_expenses_title',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

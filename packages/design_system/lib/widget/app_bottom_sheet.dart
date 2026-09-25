@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_borders.dart';
+import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_brand_theme.dart';
 import 'package:flutter/material.dart';
 
@@ -7,11 +10,14 @@ import 'package:flutter/material.dart';
 /// (fuel/service/insurance/etc.): drag handle, title row with a close X,
 /// a scrollable body, and a Save button pinned outside the scrollable
 /// area so long forms don't push it off screen.
-class AppBottomSheet extends StatelessWidget {
+///
+/// While an async [onSave] is running, the Save button shows a spinner and
+/// ignores further taps, so a double tap can't save the same record twice.
+class AppBottomSheet extends StatefulWidget {
   final String title;
   final WidgetBuilder contentBuilder;
   final String saveLabel;
-  final VoidCallback onSave;
+  final FutureOr<void> Function() onSave;
   final WidgetBuilder? footerBuilder;
 
   const AppBottomSheet({
@@ -30,7 +36,7 @@ class AppBottomSheet extends StatelessWidget {
     required String title,
     required WidgetBuilder contentBuilder,
     required String saveLabel,
-    required VoidCallback onSave,
+    required FutureOr<void> Function() onSave,
     WidgetBuilder? footerBuilder,
   }) {
     return showModalBottomSheet<T>(
@@ -47,6 +53,22 @@ class AppBottomSheet extends StatelessWidget {
         footerBuilder: footerBuilder,
       ),
     );
+  }
+
+  @override
+  State<AppBottomSheet> createState() => _AppBottomSheetState();
+}
+
+class _AppBottomSheetState extends State<AppBottomSheet> {
+  bool _saving = false;
+
+  Future<void> _handleSave() async {
+    setState(() => _saving = true);
+    try {
+      await widget.onSave();
+    } finally {
+      if (mounted) setState(() => _saving = false);
+    }
   }
 
   @override
@@ -83,7 +105,7 @@ class AppBottomSheet extends StatelessWidget {
                     child: Row(
                       children: [
                         Expanded(
-                          child: Text(title,
+                          child: Text(widget.title,
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
                               style: Theme.of(context)
@@ -114,7 +136,7 @@ class AppBottomSheet extends StatelessWidget {
                     child: SingleChildScrollView(
                       controller: scrollController,
                       padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-                      child: contentBuilder(context),
+                      child: widget.contentBuilder(context),
                     ),
                   ),
                   Padding(
@@ -122,7 +144,8 @@ class AppBottomSheet extends StatelessWidget {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        if (footerBuilder != null) footerBuilder!(context),
+                        if (widget.footerBuilder != null)
+                          widget.footerBuilder!(context),
                         SizedBox(
                           width: double.infinity,
                           child: ElevatedButton(
@@ -132,8 +155,22 @@ class AppBottomSheet extends StatelessWidget {
                                   fontSize: 15, fontWeight: FontWeight.w800),
                               elevation: 2,
                             ),
-                            onPressed: onSave,
-                            child: Text(saveLabel),
+                            onPressed: _saving ? null : _handleSave,
+                            // Label stays laid out (just hidden) so the
+                            // spinner doesn't change the button's height.
+                            child: Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                Opacity(
+                                  opacity: _saving ? 0 : 1,
+                                  child: Text(widget.saveLabel),
+                                ),
+                                if (_saving)
+                                  const Positioned.fill(
+                                    child: FittedBox(child: AppLoaders.small),
+                                  ),
+                              ],
+                            ),
                           ),
                         ),
                       ],

@@ -2,6 +2,7 @@ import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/theme/app_brand_theme.dart';
 import 'package:design_system/constants/app_borders.dart';
+import 'package:design_system/feedback/app_haptics.dart';
 import 'package:design_system/widget/app_bottom_sheet.dart';
 import 'package:fines_plus/features/expenses/data/models/car_wash_record.dart';
 import 'package:fines_plus/features/expenses/data/models/fuel_record.dart';
@@ -387,7 +388,10 @@ class _QuickAddButton extends StatelessWidget {
         ),
         child: InkWell(
           borderRadius: AppBorders.radius16,
-          onTap: onTap,
+          onTap: () {
+            AppHaptics.tap();
+            onTap();
+          },
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
             child: Column(

@@ -716,5 +716,12 @@
     "placeholders": {
       "amount": { "type": "String" }
     }
-  }
+  },
+  "expense_save_failed": "Не вдалося зберегти запис. Спробуйте ще раз.",
+  "onboarding_demo_inspection": "Техогляд · 18 жовтня",
+  "onboarding_demo_policy_number": "№ ЕР-213456789",
+  "onboarding_demo_policy_valid_until": "до 12.03.2027",
+  "onboarding_demo_fine_parking": "Паркування",
+  "onboarding_demo_fine_speeding": "Перевищення швидкості",
+  "onboarding_demo_expenses_title": "Витрати · вересень"
 }

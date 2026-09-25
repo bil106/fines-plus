@@ -286,6 +286,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Event will be invisible",
     ),
     "every": MessageLookupByLibrary.simpleMessage("Every"),
+    "expense_save_failed": MessageLookupByLibrary.simpleMessage(
+      "Couldn\'t save the entry. Please try again.",
+    ),
     "export": MessageLookupByLibrary.simpleMessage("Export"),
     "export_history": MessageLookupByLibrary.simpleMessage("Export history"),
     "extract_tokens": MessageLookupByLibrary.simpleMessage("Extract tokens"),
@@ -611,6 +614,24 @@ class MessageLookup extends MessageLookupByLibrary {
     "oil": MessageLookupByLibrary.simpleMessage("oil"),
     "oil_icon": MessageLookupByLibrary.simpleMessage("Oil"),
     "ok": MessageLookupByLibrary.simpleMessage("OK"),
+    "onboarding_demo_expenses_title": MessageLookupByLibrary.simpleMessage(
+      "Expenses · September",
+    ),
+    "onboarding_demo_fine_parking": MessageLookupByLibrary.simpleMessage(
+      "Parking",
+    ),
+    "onboarding_demo_fine_speeding": MessageLookupByLibrary.simpleMessage(
+      "Speeding",
+    ),
+    "onboarding_demo_inspection": MessageLookupByLibrary.simpleMessage(
+      "Inspection · Oct 18",
+    ),
+    "onboarding_demo_policy_number": MessageLookupByLibrary.simpleMessage(
+      "No. ER-213456789",
+    ),
+    "onboarding_demo_policy_valid_until": MessageLookupByLibrary.simpleMessage(
+      "until 03/12/2027",
+    ),
     "open_driver_page": MessageLookupByLibrary.simpleMessage(
       "Go to DriverTop page",
     ),

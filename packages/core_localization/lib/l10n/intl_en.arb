@@ -715,5 +715,12 @@
     "placeholders": {
       "amount": { "type": "String" }
     }
-  }
+  },
+  "expense_save_failed": "Couldn't save the entry. Please try again.",
+  "onboarding_demo_inspection": "Inspection · Oct 18",
+  "onboarding_demo_policy_number": "No. ER-213456789",
+  "onboarding_demo_policy_valid_until": "until 03/12/2027",
+  "onboarding_demo_fine_parking": "Parking",
+  "onboarding_demo_fine_speeding": "Speeding",
+  "onboarding_demo_expenses_title": "Expenses · September"
 }

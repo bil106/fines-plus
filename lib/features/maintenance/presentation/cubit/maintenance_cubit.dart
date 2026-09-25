@@ -11,6 +11,7 @@ import 'package:fines_plus/features/expenses/data/repository/expense_repository.
 import 'package:fines_plus/features/vehicle/data/datasources/car_info_local_data_source.dart';
 import 'package:fines_plus/features/vehicle/presentation/cubit/car_cubit.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -389,21 +390,36 @@ class MaintenanceCubit extends Cubit<MaintenanceState> {
     }
   }
 
-  Future<void> addFuelRecord(FuelRecord record) async {
-    final updated = List<FuelRecord>.from(state.fuelRecords)..add(record);
-    emit(state.copyWith(fuelRecords: updated));
-    await saveFuelRecords();
-
-    final car = await localDataSource.getCarInfo();
-    final ownerId = FirebaseAuth.instance.currentUser!.uid;
-
-    final expense = record.toExpense(ownerId);
-
+  /// Returns whether the record was saved, so the form can stay open (with
+  /// the user's input intact) on failure instead of closing silently.
+  ///
+  /// "Saved" means written to the local Firestore cache: the server upload
+  /// is not awaited, because with offline persistence that Future only
+  /// completes once the server acknowledges - offline it would never
+  /// complete and the form would hang. Firestore retries the upload itself.
+  Future<bool> addFuelRecord(FuelRecord record) async {
     try {
-      await expenseRepository.addExpense(carNumber: car.carId, expense: expense);
-      debugPrint("Fuel record saved to Firestore");
-    } catch (e) {
-      debugPrint("Failed to save fuel record: $e");
+      final car = await localDataSource.getCarInfo();
+      final user = FirebaseAuth.instance.currentUser;
+      if (car.carId.isEmpty || user == null) return false;
+
+      final updated = List<FuelRecord>.from(state.fuelRecords)..add(record);
+      emit(state.copyWith(fuelRecords: updated));
+      await saveFuelRecords();
+
+      unawaited(
+        expenseRepository
+            .addExpense(carNumber: car.carId, expense: record.toExpense(user.uid))
+            .then<void>(
+              (_) {},
+              onError: (Object e, StackTrace s) =>
+                  FirebaseCrashlytics.instance.recordError(e, s),
+            ),
+      );
+      return true;
+    } catch (e, s) {
+      FirebaseCrashlytics.instance.recordError(e, s);
+      return false;
     }
   }
 
