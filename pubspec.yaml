@@ -141,8 +141,8 @@ flutter:
     - assets/icons/wheels.png
     - assets/fonts/Fines/Roboto-Regular.ttf
     - assets/images/cars/tesla_model_x_red.png
-    - assets/images/insurance_bg.png
-    - assets/images/fines_bg.png
+    - assets/images/onboarding_insurance.jpg
+    - assets/images/onboarding_fines.jpg
     - assets/images/analytics_bg.png
     - assets/images/maintenance_bg.png
     - assets/icons/insurance.png

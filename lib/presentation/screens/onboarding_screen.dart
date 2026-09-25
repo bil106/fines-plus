@@ -3,11 +3,16 @@ import 'package:design_system/widget/app_back_button.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
+import 'package:design_system/constants/app_borders.dart';
 import 'package:design_system/theme/app_brand_theme.dart';
-import 'package:design_system/theme/app_theme.dart';
 import 'package:fines_plus/app/router/app_router.dart';
 import 'package:fines_plus/core/config/app_config.dart';
 import 'package:fines_plus/core/theme/theme_config.dart';
+import 'package:fines_plus/presentation/widgets/onboarding/onboarding_analytics_hero.dart';
+import 'package:fines_plus/presentation/widgets/onboarding/onboarding_fines_hero.dart';
+import 'package:fines_plus/presentation/widgets/onboarding/onboarding_insurance_hero.dart';
+import 'package:fines_plus/presentation/widgets/onboarding/onboarding_maintenance_hero.dart';
+import 'package:fines_plus/presentation/widgets/onboarding/onboarding_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -18,12 +23,12 @@ import 'package:package_info_plus/package_info_plus.dart';
 class _OnboardingPageSpec {
   final String title;
   final String subtitle;
-  final String imagePath;
+  final Widget Function(Animation<double> entrance, bool isActive) hero;
 
   const _OnboardingPageSpec({
     required this.title,
     required this.subtitle,
-    required this.imagePath,
+    required this.hero,
   });
 }
 
@@ -50,6 +55,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     });
   }
 
+  /// Page offset of [index] from the current scroll position (0 when it is
+  /// fully shown, -1/1 when a whole page away).
+  double _swipeDelta(int index) {
+    final position = pageController.hasClients &&
+            pageController.position.haveDimensions
+        ? pageController.page ?? currentPage.toDouble()
+        : currentPage.toDouble();
+    return index - position;
+  }
+
   /// Fines slide is only shown for brands with the fines-check feature
   /// (AppConfig.finesCheckEnabled) - there's no equivalent outside Ukraine,
   /// and this brand's onboarding shouldn't promise a feature it doesn't have.
@@ -58,116 +73,83 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       _OnboardingPageSpec(
         title: S.current.maintenance_control,
         subtitle: S.current.car_inspection,
-        imagePath: "assets/images/maintenance_bg.png",
+        hero: (entrance, isActive) => OnboardingMaintenanceHero(
+          entrance: entrance,
+          isActive: isActive,
+        ),
       ),
       _OnboardingPageSpec(
         title: S.current.insurance_control,
         subtitle: S.current.keep_track,
-        imagePath: "assets/images/insurance_bg.png",
+        hero: (entrance, _) => OnboardingInsuranceHero(
+          entrance: entrance,
+          accent: _accent(context),
+        ),
       ),
       if (finesCheckEnabled)
         _OnboardingPageSpec(
           title: S.current.fines_control,
           subtitle: S.current.get_notified,
-          imagePath: "assets/images/fines_bg.png",
+          hero: (entrance, isActive) => OnboardingFinesHero(
+            entrance: entrance,
+            isActive: isActive,
+            accent: _accent(context),
+          ),
         ),
       _OnboardingPageSpec(
         title: S.current.analytics,
         subtitle: S.current.track_costs,
-        imagePath: "assets/images/analytics_bg.png",
+        hero: (entrance, _) => OnboardingAnalyticsHero(entrance: entrance),
       ),
     ];
+  }
+
+  /// CTA wording per page: "Далі" on the first, "Добре" on the middle ones,
+  /// "Зрозуміло" on the last.
+  String _label(BuildContext context, int pageIndex, int pageCount) {
+    if (pageIndex == 0) return S.of(context).next;
+    return pageIndex == pageCount - 1
+        ? S.of(context).of_course
+        : S.of(context).good;
+  }
+
+  void _onPressed(int pageIndex, int pageCount) {
+    if (pageIndex == pageCount - 1) {
+      context.router.push(RegistrationRoute());
+    } else {
+      pageController.nextPage(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    }
   }
 
   Widget _buildPage({
     required int pageIndex,
     required int pageCount,
-    required String title,
-    required String subtitle,
-    required String imagePath,
+    required _OnboardingPageSpec spec,
   }) {
-    final textTheme = Theme.of(context).textTheme;
-    final size = MediaQuery.of(context).size;
-
-    final bool isShort = size.height < 600;
-    final bool isLastInfoPage = pageIndex == pageCount - 1;
-    final accent = _accent(context);
-
-    return SafeArea(
-      child: SingleChildScrollView(
-        physics: const ClampingScrollPhysics(),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
-          child: Column(
-            children: [
-              SizedBox(height: isShort ? 1 : 60),
-
-              Image.asset(
-                imagePath,
-                width: isShort ? 150 : 260,
-                height: isShort ? 150 : 260,
-                fit: BoxFit.contain,
-              ),
-
-              SizedBox(height: isShort ? 1 : 60),
-
-              Text(
-                title,
-                textAlign: TextAlign.center,
-                style: context.brandTheme.displayTextStyle.copyWith(
-                  fontSize: 28,
-                  fontWeight: FontWeight.w800,
-                  color: AppColors.ink,
-                ),
-              ),
-
-              Text(
-                subtitle,
-                textAlign: TextAlign.center,
-                style: textTheme.black16.copyWith(color: AppColors.textSecondary),
-              ),
-
-              SizedBox(height: isShort ? 20 : 100),
-
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: accent,
-                    foregroundColor: AppColors.neutreBlanc,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: const StadiumBorder(),
-                  ),
-                  onPressed: () {
-                    if (isLastInfoPage) {
-                      context.router.push(RegistrationRoute());
-                    } else if (pageIndex < pageCount - 1) {
-                      pageController.nextPage(
-                        duration: const Duration(milliseconds: 300),
-                        curve: Curves.easeInOut,
-                      );
-                    }
-                  },
-                  child: Text(
-                    (pageIndex == 0)
-                        ? S.of(context).next
-                        : (isLastInfoPage
-                              ? S.of(context).of_course
-                              : S.of(context).good),
-                    style: textTheme.black18bold.copyWith(
-                      fontSize: 15.5,
-                      fontWeight: FontWeight.w800,
-                      color: AppColors.neutreBlanc,
-                    ),
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 60),
-            ],
-          ),
-        ),
-      ),
+    return AnimatedBuilder(
+      animation: pageController,
+      builder: (context, _) {
+        final delta = _swipeDelta(pageIndex);
+        // A page counts as active once it is mostly on screen, so its
+        // entrance plays while it slides in rather than after it lands.
+        final isActive = delta.abs() < 0.75;
+        return OnboardingPage(
+          isActive: isActive,
+          swipeDelta: delta,
+          title: spec.title,
+          subtitle: spec.subtitle,
+          label: _label(context, pageIndex, pageCount),
+          previousLabel: pageIndex == 0
+              ? null
+              : _label(context, pageIndex - 1, pageCount),
+          accent: _accent(context),
+          onPressed: () => _onPressed(pageIndex, pageCount),
+          heroBuilder: (context, entrance) => spec.hero(entrance, isActive),
+        );
+      },
     );
   }
 
@@ -192,10 +174,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         return AnimatedContainer(
           duration: const Duration(milliseconds: 250),
           margin: const EdgeInsets.symmetric(horizontal: 6),
-          width: 10,
+          width: isActive ? 24 : 10,
           height: 10,
           decoration: BoxDecoration(
-            shape: BoxShape.circle,
+            borderRadius: AppBorders.radius50,
             color: isActive ? accent : AppColors.inactiveDot,
           ),
         );
@@ -233,9 +215,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 _buildPage(
                   pageIndex: i,
                   pageCount: pages.length,
-                  title: pages[i].title,
-                  subtitle: pages[i].subtitle,
-                  imagePath: pages[i].imagePath,
+                  spec: pages[i],
                 ),
             ],
           ),

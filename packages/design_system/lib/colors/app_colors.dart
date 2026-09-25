@@ -99,6 +99,26 @@ abstract final class AppColors {
   // Unselected radio/dot (subscription plan picker, onboarding page dots).
   static const inactiveDot = Color(0xFFD8D3C4);
 
+  // Onboarding illustrations: fixed like the illustration assets they sit
+  // on, so they don't follow the brand accent. Traffic-light lamp glows and
+  // the tint dimming the lamps that are "off".
+  static const trafficLightRed = Color(0xFFFF4D4F);
+  static const trafficLightYellow = Color(0xFFFFC53D);
+  static const trafficLightGreen = Color(0xFF3DDC84);
+  static const trafficLightOff = Color(0xFF3A3E48);
+
+  // Onboarding analytics chart: isometric bar faces (top to bottom
+  // gradients) and the trend line (start to end).
+  static const isoBarTop = Color(0xFFA9C1FF);
+  static const isoBarFrontHigh = Color(0xFF4F6BF5);
+  static const isoBarFrontMid = Color(0xFF8E86F0);
+  static const isoBarFrontLow = Color(0xFFF7B9A4);
+  static const isoBarSideHigh = Color(0xFF3148C9);
+  static const isoBarSideMid = Color(0xFF6D63CF);
+  static const isoBarSideLow = Color(0xFFD99A8C);
+  static const trendLineStart = Color(0xFFF7A35C);
+  static const trendLineEnd = Color(0xFF6FE0F2);
+
   // Dark bases the dashboard hero card's brand accent is mixed into (see
   // ThemeConfig.createTheme -> AppBrandTheme.heroBg*): darkest in the
   // bottom-left corner, lightening towards the top-right.

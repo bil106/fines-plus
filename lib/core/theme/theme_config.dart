@@ -49,7 +49,13 @@ class ThemeConfig {
             AppColors.chartWarmBase,
             0.7,
           )!,
-          displayTextStyle: GoogleFonts.getFont(config.displayFontFamily, fontWeight: FontWeight.w800),
+          // A display family may lack Cyrillic (Big Shoulders Display has none),
+          // which left Ukrainian titles to mixed system fallbacks - e.g. "є"
+          // coming from a different font than the rest of the word. The brand
+          // body font at the same weight covers whatever the display font can't.
+          displayTextStyle: GoogleFonts.getFont(config.displayFontFamily, fontWeight: FontWeight.w800).copyWith(
+            fontFamilyFallback: [GoogleFonts.getFont(config.bodyFontFamily, fontWeight: FontWeight.w800).fontFamily!],
+          ),
           moneyTextStyle: GoogleFonts.getFont(
             config.monoFontFamily,
             fontWeight: FontWeight.w700,
