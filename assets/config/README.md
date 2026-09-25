@@ -35,6 +35,10 @@ not passed.
   (tab, dashboard card, onboarding slide, PDF section, paywall wording,
   `?car=` links, tech-passport field) - see
   `docs/white-label-playbook.md`. Defaults to `true` if omitted.
+- `facebookLoginEnabled` — shows the Facebook sign-in button. The Facebook
+  app ID is shared native config and belongs to Fines+, so a brand without
+  its own Facebook app sets `false` (CarPapers does; its flavor manifest
+  also turns off Facebook SDK auto-init/event logging). Defaults to `true`.
 - `termsUrl` / `privacyPolicyUrl` — per-brand legal links. Leave unset
   (`null`) to fall back to the global `Env.termsUrl` / `Env.privacyPolicyUrl`
   (`.env` file) — that's what `finesplus.json`/`autodosje.json` do. A brand
@@ -57,7 +61,5 @@ Firebase project, iOS scheme, store listing).
 - `carpapers.json` — first real second-market brand (US/ES). Ships with
   `finesCheckEnabled: false` and placeholder `phoneNumber`/`termsUrl`/
   `privacyPolicyUrl` — fill those in before building it for real. Its
-  `assets/logos/carpapers.png` is a generated placeholder (brand-color
-  circle + "C", same style as its placeholder launcher icon, via
-  `scripts/gen_flavor_icon.py`'s `make_mark`) — replace it with the real
-  logo at the same path, no other changes needed.
+  logo and launcher icon are the designer's interim version, pending
+  approval — see `branding/carpapers/README.md`.

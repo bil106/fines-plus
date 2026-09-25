@@ -1,6 +1,8 @@
 import 'dart:io';
 
 import 'package:auto_route/auto_route.dart';
+import 'package:design_system/constants/app_spacers.dart';
+import 'package:fines_plus/core/config/app_config.dart';
 import 'package:fines_plus/app/router/home_screen_wrapper.dart';
 import 'package:fines_plus/env/env.dart';
 import 'package:fines_plus/features/registration/presentation/cubit/registration_cubit.dart';
@@ -68,6 +70,28 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    // The brand's own logo (AppConfig.logoAssetPath) while the start route
+    // resolves, so every flavor opens on its branding, not a bare spinner.
+    final logoAssetPath = context.watch<AppConfig>().logoAssetPath;
+    return Scaffold(
+      body: SafeArea(
+        top: false,
+        child: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Image.asset(
+                logoAssetPath,
+                width: AppSize.splashLogo,
+                height: AppSize.splashLogo,
+                fit: BoxFit.contain,
+              ),
+              AppSpacers.verticalHuge,
+              AppLoaders.medium,
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

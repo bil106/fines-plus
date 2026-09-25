@@ -44,6 +44,9 @@ abstract final class AppSpacers {
 abstract final class AppSize {
   static  double heightXXGigantic =  260.0;
   static double widthXXGigantic = 260.0;
+
+  /// Brand logo on the startup splash screen.
+  static const double splashLogo = 160.0;
 }
 abstract final class AppLoaders {
   static const small = SizedBox(
