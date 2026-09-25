@@ -237,6 +237,13 @@ void main() {
             value: cubit,
             child: MaterialApp.router(
               routerConfig: router.config(),
+              // The onboarding hero illustrations loop forever while their
+              // slide is active, so pumpAndSettle would never settle -
+              // "reduce motion" turns those loops off, as it does on devices.
+              builder: (context, child) => MediaQuery(
+                data: MediaQuery.of(context).copyWith(disableAnimations: true),
+                child: child!,
+              ),
               theme: ThemeData(
                 // The default InkSparkle splash loads a shader asset that can't be
                 // decoded in the test environment.
