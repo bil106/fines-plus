@@ -10,10 +10,7 @@ import 'package:fines_plus/features/settings/presentation/cubit/settings_cubit.d
 import 'package:core_utils/formatters/decimal_input_formatter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-const _kUkMonthsShort = [
-  'січ', 'лют', 'бер', 'кві', 'тра', 'чер', 'лип', 'сер', 'вер', 'жов', 'лис', 'гру',
-];
+import 'package:fines_plus/core/helpers/date_utils.dart';
 
 /// The dashboard's Страхування sheet content - logs a purchased policy
 /// (InsuranceRecord) via MaintenanceCubit. Distinct from the older
@@ -122,7 +119,7 @@ class InsuranceSheetState extends State<InsuranceSheet> {
 
   String _formatDate(DateTime? date) {
     if (date == null) return '';
-    return '${date.day} ${_kUkMonthsShort[date.month - 1]} ${date.year}';
+    return formatShortDate(date, Localizations.localeOf(context).toString(), withYear: true);
   }
 
   @override

@@ -98,14 +98,14 @@ class HeroExpenseCard extends StatelessWidget {
         ? ((current - previous) / previous * 100)
         : null;
 
+    final isMiles = settingsCubit.state.unit == 'mil';
+    // stats.costPerKm is per km; a mile is longer, so it costs more per mile.
     final costPerKmConverted = currencyService.convert(
-      stats.costPerKm,
+      isMiles ? stats.costPerKm / 0.621371 : stats.costPerKm,
       currency,
       fromCurrency: S.of(context).grn,
     );
-    final mileageUnit = settingsCubit.state.unit == 'mil'
-        ? 'mil'
-        : S.of(context).km;
+    final mileageUnit = isMiles ? 'mil' : S.of(context).km;
     final fuelValue = unitStream.convertFuel(stats.averageFuelConsumption);
     final fuelUnit = settingsCubit.state.fuelConsumptionUnit == 'l/100km'
         ? "l/100${S.of(context).km}"

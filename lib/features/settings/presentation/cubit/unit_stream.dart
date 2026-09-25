@@ -24,7 +24,9 @@ class UnitStream {
   }
 
 double convertFuel(double lPer100km) {
-    return settingsCubit.state.fuelConsumptionUnit == 'l/100km' ? lPer100km : 235.214 / lPer100km;
+    if (settingsCubit.state.fuelConsumptionUnit == 'l/100km') return lPer100km;
+    // No consumption yet (0 l/100km) is 0 mpg, not 235.214 / 0 = Infinity.
+    return lPer100km > 0 ? 235.214 / lPer100km : 0;
   }
 
 

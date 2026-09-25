@@ -10,23 +10,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:design_system/theme/app_brand_theme.dart';
 import 'package:intl/intl.dart';
+import 'package:fines_plus/core/helpers/date_utils.dart';
 
 import 'dashboard_card.dart';
-
-const _kUkMonthsShort = [
-  'січ',
-  'лют',
-  'бер',
-  'кві',
-  'тра',
-  'чер',
-  'лип',
-  'сер',
-  'вер',
-  'жов',
-  'лис',
-  'гру',
-];
 
 class _TxItem {
   final ExpenseCategory category;
@@ -235,7 +221,7 @@ class RecentTransactionsList extends StatelessWidget {
                                 ),
                               ),
                               Text(
-                                '${_categoryLabel(item.category, context)} · ${item.date.day} ${_kUkMonthsShort[item.date.month - 1]}',
+                                '${_categoryLabel(item.category, context)} · ${formatShortDate(item.date, Localizations.localeOf(context).toString())}',
                                 style: textTheme.bodySmall?.copyWith(
                                   color: AppColors.grey700,
                                   fontSize: 11,
