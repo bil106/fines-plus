@@ -22,13 +22,19 @@ not passed.
   for a full, consistent palette.
 - `logoAssetPath`, `supportEmail`, `phoneNumber`, `viberNumber` — brand
   contact/asset info.
-- `market` — region code (`UA`, `US`, `ES`, ...). Informational for now;
-  intended as the place to hang locale/currency defaults later. Defaults to
-  `UA` if omitted (keeps existing configs working unchanged).
+- `market` — region code (`UA`, `US`, `ES`, ...). Drives the licence-plate
+  format and dashboard plate badge (`AppConfig.plateMarket` ->
+  `PlateMarket`), the default language (`uk` for `UA`, `en` otherwise) and
+  the default distance/currency/fuel units (`UA`: km/UAH/l/100km, `US`:
+  mil/USD/mpg, others: km/EUR/l/100km). Defaults to `UA` if omitted (keeps
+  existing configs working unchanged).
 - `finesCheckEnabled` — gates the automated Ukrainian traffic-fines check
   (`core/config/fines_api.dart` + the Cloud Run backend). That feature is
   UA-portal-specific and has no equivalent elsewhere, so it must be `false`
-  for any non-UA brand. Defaults to `true` if omitted.
+  for any non-UA brand. When `false`, every fines mention is hidden too
+  (tab, dashboard card, onboarding slide, PDF section, paywall wording,
+  `?car=` links, tech-passport field) - see
+  `docs/white-label-playbook.md`. Defaults to `true` if omitted.
 - `termsUrl` / `privacyPolicyUrl` — per-brand legal links. Leave unset
   (`null`) to fall back to the global `Env.termsUrl` / `Env.privacyPolicyUrl`
   (`.env` file) — that's what `finesplus.json`/`autodosje.json` do. A brand
@@ -50,4 +56,8 @@ Firebase project, iOS scheme, store listing).
 
 - `carpapers.json` — first real second-market brand (US/ES). Ships with
   `finesCheckEnabled: false` and placeholder `phoneNumber`/`termsUrl`/
-  `privacyPolicyUrl` — fill those in before building it for real.
+  `privacyPolicyUrl` — fill those in before building it for real. Its
+  `assets/logos/carpapers.png` is a generated placeholder (brand-color
+  circle + "C", same style as its placeholder launcher icon, via
+  `scripts/gen_flavor_icon.py`'s `make_mark`) — replace it with the real
+  logo at the same path, no other changes needed.

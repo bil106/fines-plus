@@ -40,6 +40,30 @@ whether `logoAssetPath` actually points at a real file.
   regardless of which UI reaches it), `CarInfoScreen` hides its own
   "Пошук" button + recaptcha step, and `HomeScreenWrapperState.openPage()`
   refuses to navigate to `HomePage.fines` as a backstop.
+- With `finesCheckEnabled: false` the app also never *mentions* fines: the
+  bottom-nav tab, the dashboard alert card and the onboarding fines slide
+  are hidden; the buyer-report PDF drops its fines section (and skips the
+  Firestore fetch for it); the paywall subtitle uses
+  `subscription_subtitle_no_fines`; `?car=` deep/app links no longer open
+  `FinesRoute`; and the tech-passport field (only used by the UA check) is
+  hidden in the garage sheet and on `CarInfoScreen`.
+- `market` drives the market-specific defaults (all overridable by the
+  user in Settings):
+  - **Licence plate** - `AppConfig.plateMarket` -> `PlateMarket`
+    (`packages/core_utils/lib/formatters/plate_market.dart`): input
+    pattern (`VehicleNumberFormatter`), validation (`CarCubit`,
+    `CarInfoCubit`, garage sheet), input hint, and the dashboard
+    `LicensePlateBadge` style. `UA` = `AA1234BB` + UA strip, `ES` =
+    `1234BCD` (consonants only) + EU strip, `US` (and any market without
+    its own rules) = free-form 1-8 letters/digits + "USA" header.
+  - **Language** - `uk` for `UA`, `en` otherwise (`SettingsCubit`).
+  - **Units/currency** - `UA`: km/UAH/l/100km, `US`: mil/USD/mpg, other
+    markets: km/EUR/l/100km (`SettingsCubit._marketDefaults`). Amounts are
+    still stored in UAH and converted for display, as before.
+- iOS: the hardcoded `FirebaseOptions` in `lib/main.dart` (Fines+'s own
+  project) apply only to the `finesplus` flavor (`currentFlavor` in
+  `lib/core/config/flavor_config.dart`); every other flavor initializes
+  Firebase from its own target's `GoogleService-Info.plist`.
 - `assets/config/finesplus.json`, `autodosje.json` and `carpapers.json` are
   real brand configs, all registered in `pubspec.yaml`'s `assets:` list and
   with a matching Android `productFlavors` entry
@@ -99,14 +123,11 @@ the Ukraine portal lookup that never went through the Fines screen or the
 bottom nav at all. That's fixed (see above), at the cubit level so it
 holds regardless of which UI ends up calling it.
 
-One thing deliberately left alone: `CarInfoScreen`'s car-number/tech-
-passport form validation (`_carReg`/`_techReg`) is hardcoded to Ukrainian
-plate and tech-passport formats. Hiding the fines-check button doesn't
-change that the rest of that screen still expects a UA-shaped plate
-number. Making that screen market-aware (accept a US/ES plate format,
-drop the tech-passport field where it doesn't apply) is a separate,
-bigger localization task - flagging it here so it doesn't get lost before
-CarPapers actually ships.
+The follow-up this section used to flag - car-number input/validation
+hardcoded to the Ukrainian plate format, and the tech-passport field shown
+to every brand - is done: plate rules now come from `market` via
+`PlateMarket`, and the tech-passport field is hidden when
+`finesCheckEnabled` is false (see "What already works" above).
 
 ## Per-brand app icons (Android)
 
@@ -150,9 +171,9 @@ are part of the manual Xcode work in `ios/Flutter/Flavors/README.md`
 Sometimes two brands share a language but need different wording for the
 same string - e.g. AutoDosje wants "Ваш автодосьє" where Fines+ says "Ваш
 гараж", even though both are Ukrainian. That's a different problem from
-market-based locale selection (which isn't wired up at all right now -
-`SettingsService`/`SettingsCubit` hardcode `Locale('uk')` regardless of
-`AppConfig.market`; nothing here fixes that, it's a separate task).
+market-based locale selection (`SettingsCubit` picks the default language
+from `AppConfig.market` - `uk` for `UA`, `en` otherwise - which swaps the
+whole ARB table, not single strings).
 
 The mechanism: `AppConfig.copyOverrides` is an optional
 `Map<String, String>`, keyed by the exact key used in
