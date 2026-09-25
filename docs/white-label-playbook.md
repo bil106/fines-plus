@@ -4,11 +4,16 @@
 
 - `finesplus` - Fines+, UA market, fines check on. Shipping (the real
   brand, now the default flavor).
-- `autodosje` - AutoDosje, UA market, fines check on. Config-level done;
-  needs a real Firebase project + applicationId/bundle id before it can
-  actually build (see below).
-- `carpapers` - CarPapers, US/ES market, fines check off. Same status as
-  autodosje.
+- `autodosje` - AutoDosje, UA market, fines check on. Config-level done,
+  but **kept as a technical prototype only** - it's the flavor the
+  white-label pipeline (template script, per-brand icon, `copyOverrides`)
+  was first exercised on, not a brand planned for real release. Don't spend
+  effort finishing it for shipping (Firebase project, real Play/App Store
+  listing, real artwork) unless that decision changes - see item 7 below.
+- `carpapers` - CarPapers, US/ES market, fines check off. Config-level
+  done; needs a real Firebase project + applicationId/bundle id before it
+  can actually build (see below) - unlike autodosje, this one is a real
+  target market, not a prototype.
 
 Run `python3 scripts/verify_wl_configs.py` any time to re-check all of the
 above without needing a Flutter/Dart toolchain - it validates each config's
@@ -178,7 +183,7 @@ would otherwise silently never override anything).
 
 ## What's still needed before AutoDosje/CarPapers can actually build and ship
 
-Applies to both unless noted:
+**AutoDosje is intentionally not being pursued for real release right now** (it's a technical prototype - see "Brands in this repo today" above), so in practice everything below is CarPapers' punch list. Left applying to both, unmarked, in case that decision changes:
 
 1. **Decide the real Android `applicationId`** (currently placeholders
    `com.autodosje.app` / `com.carpapers.app` in `build.gradle.kts`) and
