@@ -164,6 +164,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "change_car_info": MessageLookupByLibrary.simpleMessage(
       "Змінити дані авто",
     ),
+    "charger_location_unavailable": MessageLookupByLibrary.simpleMessage(
+      "Дозвольте геолокацію, щоб знайти зарядки поруч",
+    ),
     "charging_nearby": MessageLookupByLibrary.simpleMessage("Зарядки поруч"),
     "chart_period_12m": MessageLookupByLibrary.simpleMessage("12 місяців"),
     "chart_period_6m": MessageLookupByLibrary.simpleMessage("6 місяців"),
@@ -379,6 +382,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "fuel_consumption": MessageLookupByLibrary.simpleMessage("Витрата палива"),
     "fuel_electric": MessageLookupByLibrary.simpleMessage("Електро"),
     "fuel_gas_lpg": MessageLookupByLibrary.simpleMessage("Газ LPG"),
+    "fuel_location_unavailable": MessageLookupByLibrary.simpleMessage(
+      "Дозвольте геолокацію, щоб знайти заправки поруч",
+    ),
     "fuel_prompt_body": MessageLookupByLibrary.simpleMessage(
       "Додати дані про заправку?",
     ),

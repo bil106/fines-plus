@@ -723,5 +723,7 @@
   "onboarding_demo_policy_valid_until": "до 12.03.2027",
   "onboarding_demo_fine_parking": "Паркування",
   "onboarding_demo_fine_speeding": "Перевищення швидкості",
-  "onboarding_demo_expenses_title": "Витрати · вересень"
+  "onboarding_demo_expenses_title": "Витрати · вересень",
+  "fuel_location_unavailable": "Дозвольте геолокацію, щоб знайти заправки поруч",
+  "charger_location_unavailable": "Дозвольте геолокацію, щоб знайти зарядки поруч"
 }

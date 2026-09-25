@@ -23,6 +23,7 @@ import 'package:fines_plus/features/expenses/data/models/tuning_record.dart';
 import 'package:fines_plus/features/maintenance/presentation/screens/service_map_screen.dart';
 import 'package:fines_plus/features/settings/presentation/cubit/settings_cubit.dart';
 import 'package:fines_plus/features/settings/presentation/cubit/unit_stream.dart';
+import 'package:fines_plus/features/maintenance/presentation/mixins/location_prompt_mixin.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -65,8 +66,8 @@ class _TuningWork {
   }
 }
 
-class TuningScreenState extends State<TuningScreen> {
-  static const LatLng _fallbackPosition = LatLng(50.4501, 30.5234);
+class TuningScreenState extends State<TuningScreen>
+    with LocationPromptMixin<TuningScreen> {
   final _works = [_TuningWork()];
 
   final TextEditingController mileageController = TextEditingController();
@@ -158,20 +159,41 @@ class TuningScreenState extends State<TuningScreen> {
       if (!serviceEnabled ||
           permission == LocationPermission.denied ||
           permission == LocationPermission.deniedForever) {
-        if (kDebugMode) print('TuningScreen: geolocation unavailable, using fallback position');
-        if (mounted) setState(() => _locationUnavailable = true);
-        await _loadNearbyStationsFrom(_fallbackPosition);
+        if (mounted) {
+          setState(() {
+            _locationUnavailable = true;
+            _isLoadingBestStation = false;
+          });
+        }
         return;
       }
 
-      final position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high)
-          .timeout(const Duration(seconds: 5));
+      Position? position;
+      try {
+        position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high)
+            .timeout(const Duration(seconds: 5));
+      } catch (e) {
+        // No fresh fix in time (e.g. indoors): the last known one is still
+        // the user's real area, unlike any hardcoded default.
+        if (kDebugMode) print("Error getting position: $e");
+        position = await Geolocator.getLastKnownPosition();
+      }
+      if (position == null) {
+        if (mounted) setState(() => _isLoadingBestStation = false);
+        return;
+      }
       await _loadNearbyStationsFrom(LatLng(position.latitude, position.longitude));
     } catch (e) {
       if (kDebugMode) print("Error getting position: $e");
-      await _loadNearbyStationsFrom(_fallbackPosition);
+      if (mounted) setState(() => _isLoadingBestStation = false);
     }
   }
+
+  @override
+  bool get locationUnavailable => _locationUnavailable;
+
+  @override
+  void retryLocation() => _initLocationAndService();
 
   Future<void> _loadNearbyStationsFrom(LatLng current) async {
     _currentPosition = current;
@@ -307,6 +329,8 @@ class TuningScreenState extends State<TuningScreen> {
         borderRadius: BorderRadius.circular(12),
         onTap: _isLoadingBestStation
             ? null
+            : _locationUnavailable
+            ? enableLocation
             : _bestStation == null
             ? _initLocationAndService
             : _openStations,

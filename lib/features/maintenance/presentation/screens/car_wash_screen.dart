@@ -18,6 +18,7 @@ import 'package:fines_plus/features/expenses/data/models/car_wash_record.dart';
 import 'package:fines_plus/features/maintenance/presentation/screens/car_wash_map_screen.dart';
 import 'package:fines_plus/features/settings/presentation/cubit/settings_cubit.dart';
 import 'package:fines_plus/features/settings/presentation/cubit/unit_stream.dart';
+import 'package:fines_plus/features/maintenance/presentation/mixins/location_prompt_mixin.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -40,8 +41,8 @@ class CarWashScreen extends StatefulWidget {
   State<CarWashScreen> createState() => CarWashScreenState();
 }
 
-class CarWashScreenState extends State<CarWashScreen> {
-  static const LatLng _fallbackPosition = LatLng(50.4501, 30.5234);
+class CarWashScreenState extends State<CarWashScreen>
+    with LocationPromptMixin<CarWashScreen> {
   final TextEditingController mileageController = TextEditingController();
   final TextEditingController costController = TextEditingController();
   final FocusNode _mileageFocusNode = FocusNode();
@@ -130,18 +131,30 @@ class CarWashScreenState extends State<CarWashScreen> {
       if (!serviceEnabled ||
           permission == LocationPermission.denied ||
           permission == LocationPermission.deniedForever) {
-        if (kDebugMode)
-          print(
-            'CarWashScreen: geolocation unavailable, using fallback position',
-          );
-        if (mounted) setState(() => _locationUnavailable = true);
-        await _loadNearbyWashesFrom(_fallbackPosition);
+        if (mounted) {
+          setState(() {
+            _locationUnavailable = true;
+            _isLoadingBestCarWash = false;
+          });
+        }
         return;
       }
 
-      final position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
-      ).timeout(const Duration(seconds: 5));
+      Position? position;
+      try {
+        position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high,
+        ).timeout(const Duration(seconds: 5));
+      } catch (e) {
+        // No fresh fix in time (e.g. indoors): the last known one is still
+        // the user's real area, unlike any hardcoded default.
+        if (kDebugMode) print("Error getting position: $e");
+        position = await Geolocator.getLastKnownPosition();
+      }
+      if (position == null) {
+        if (mounted) setState(() => _isLoadingBestCarWash = false);
+        return;
+      }
       await _loadNearbyWashesFrom(
         LatLng(position.latitude, position.longitude),
       );
@@ -149,9 +162,15 @@ class CarWashScreenState extends State<CarWashScreen> {
       if (kDebugMode) {
         print("Error getting car wash: $e");
       }
-      await _loadNearbyWashesFrom(_fallbackPosition);
+      if (mounted) setState(() => _isLoadingBestCarWash = false);
     }
   }
+
+  @override
+  bool get locationUnavailable => _locationUnavailable;
+
+  @override
+  void retryLocation() => _initLocationAndCarWash();
 
   Future<void> _loadNearbyWashesFrom(LatLng current) async {
     _currentPosition = current;
@@ -219,6 +238,8 @@ class CarWashScreenState extends State<CarWashScreen> {
         borderRadius: BorderRadius.circular(12),
         onTap: _isLoadingBestCarWash
             ? null
+            : _locationUnavailable
+            ? enableLocation
             : _bestCarWash == null
             ? _initLocationAndCarWash
             : _openWashes,

@@ -160,6 +160,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "change_car_info": MessageLookupByLibrary.simpleMessage(
       "Change vehicle info",
     ),
+    "charger_location_unavailable": MessageLookupByLibrary.simpleMessage(
+      "Allow location access to find nearby chargers",
+    ),
     "charging_nearby": MessageLookupByLibrary.simpleMessage("Chargers nearby"),
     "chart_period_12m": MessageLookupByLibrary.simpleMessage("12 months"),
     "chart_period_6m": MessageLookupByLibrary.simpleMessage("6 months"),
@@ -375,6 +378,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "fuel_electric": MessageLookupByLibrary.simpleMessage("Electric"),
     "fuel_gas_lpg": MessageLookupByLibrary.simpleMessage("Gas LPG"),
+    "fuel_location_unavailable": MessageLookupByLibrary.simpleMessage(
+      "Allow location access to find nearby gas stations",
+    ),
     "fuel_prompt_body": MessageLookupByLibrary.simpleMessage(
       "Add fuel purchase details?",
     ),

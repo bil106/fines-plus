@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
@@ -17,6 +19,8 @@ import 'package:fines_plus/features/expenses/presentation/widgets/fuel_input_car
 import 'package:fines_plus/features/maintenance/data/models/gas_station.dart';
 import 'package:fines_plus/features/maintenance/domain/gas_station_service.dart';
 import 'package:fines_plus/features/maintenance/presentation/cubit/maintenance_cubit.dart';
+import 'package:fines_plus/features/maintenance/presentation/cubit/maintenance_state.dart';
+import 'package:fines_plus/features/maintenance/presentation/mixins/location_prompt_mixin.dart';
 import 'package:fines_plus/features/maintenance/presentation/widgets/mileage_card.dart';
 import 'package:fines_plus/features/maintenance/presentation/widgets/nearby_stations_sheet.dart';
 import '../../../../../env/env.dart';
@@ -58,8 +62,8 @@ class FuelUpScreen extends StatefulWidget {
   State<FuelUpScreen> createState() => FuelUpScreenState();
 }
 
-class FuelUpScreenState extends State<FuelUpScreen> {
-  static const LatLng _fallbackPosition = LatLng(50.4501, 30.5234);
+class FuelUpScreenState extends State<FuelUpScreen>
+    with LocationPromptMixin<FuelUpScreen> {
   final TextEditingController volumeController = TextEditingController();
   final TextEditingController mileageController = TextEditingController();
   final TextEditingController priceController = TextEditingController();
@@ -67,6 +71,9 @@ class FuelUpScreenState extends State<FuelUpScreen> {
   // Which of volume/sum the user typed last - the other one is derived from it.
   bool _sumIsSource = false;
   bool _saving = false;
+  // Autofill only ever fills what the user hasn't typed themselves.
+  bool _priceEditedByUser = false;
+  StreamSubscription<MaintenanceState>? _mileagePrefillSub;
   final FocusNode _mileageFocusNode = FocusNode();
   final FocusNode _priceFocusNode = FocusNode();
   final FocusNode _volumeFocusNode = FocusNode();
@@ -79,6 +86,9 @@ class FuelUpScreenState extends State<FuelUpScreen> {
   GasStation? _bestStation;
   double? _bestStationDistanceKm;
   bool _isLoadingBestStation = true;
+  // No permission / GPS off: no "nearest station" at all rather than one
+  // measured from a made-up position.
+  bool _locationUnavailable = false;
   LatLng? _currentPosition;
   List<GasStation> _nearbyStations = [];
 
@@ -99,18 +109,31 @@ class FuelUpScreenState extends State<FuelUpScreen> {
     _loadTankVolume();
   }
 
+  /// Records may still be arriving from Firestore (cold start, a car that
+  /// was just switched), so if there's nothing yet, fill in once they land -
+  /// unless the user has typed a mileage by then.
+  void _prefillLastMileage() {
+    final cubit = context.read<MaintenanceCubit>();
+    if (_fillLastMileage(cubit)) return;
+    _mileagePrefillSub = cubit.stream.listen((_) {
+      if (mileageController.text.isNotEmpty || _fillLastMileage(cubit)) {
+        _mileagePrefillSub?.cancel();
+        _mileagePrefillSub = null;
+      }
+    });
+  }
+
   /// Mileage is always stored in km (see [MileageValue]); shown converted
   /// to the active unit, same as everywhere else it's displayed.
-  void _prefillLastMileage() {
-    final lastMileageKm = context
-        .read<MaintenanceCubit>()
-        .getLastKnownMileage();
-    if (lastMileageKm == null) return;
+  bool _fillLastMileage(MaintenanceCubit cubit) {
+    final lastMileageKm = cubit.getLastKnownMileage();
+    if (lastMileageKm == null) return false;
     final settingsCubit = context.read<SettingsCubit>();
     final displayValue = UnitStream(
       settingsCubit,
     ).convert(lastMileageKm.toDouble()).round();
     mileageController.text = formatThousands(displayValue);
+    return true;
   }
 
   /// Inverse of [UnitStream.convert]: the field shows the active unit, but
@@ -131,6 +154,7 @@ class FuelUpScreenState extends State<FuelUpScreen> {
 
   @override
   void dispose() {
+    _mileagePrefillSub?.cancel();
     volumeController.dispose();
     mileageController.dispose();
     priceController.dispose();
@@ -159,8 +183,11 @@ class FuelUpScreenState extends State<FuelUpScreen> {
     }
   }
 
+  /// Fills the remembered price for [fuel], replacing only an earlier
+  /// suggestion - never a price the user typed.
   Future<void> _loadLastPrice(FuelType fuel) async {
     final cached = await FuelPriceCache.getPrice(fuel.name);
+    if (!mounted || fuel != selectedFuel || _priceEditedByUser) return;
     if (cached != null) {
       priceController.text = _formatNumber(cached);
     } else {
@@ -172,11 +199,17 @@ class FuelUpScreenState extends State<FuelUpScreen> {
   String get _carNumber => context.read<CarCubit>().state.carNumber;
 
   Future<void> _loadTankVolume() async {
+    final electric = _isElectric;
     final saved = await FuelTankCache.getVolume(
       _carNumber,
-      electric: _isElectric,
+      electric: electric,
     );
-    if (saved == null || !mounted) return;
+    if (saved == null ||
+        !mounted ||
+        electric != _isElectric ||
+        tankController.text.isNotEmpty) {
+      return;
+    }
     tankController.text = _formatLiters(saved);
     if (_fullTank) _onFullTankChanged(true);
   }
@@ -189,7 +222,7 @@ class FuelUpScreenState extends State<FuelUpScreen> {
     setState(() {
       selectedFuel = fuel;
       if (electricChanged) {
-        _isLoadingBestStation = true;
+        if (_currentPosition != null) _isLoadingBestStation = true;
         tankController.clear();
         volumeController.clear();
         sumController.clear();
@@ -198,7 +231,10 @@ class FuelUpScreenState extends State<FuelUpScreen> {
     _loadLastPrice(fuel);
     if (electricChanged) {
       _loadTankVolume();
-      _loadBestStationFrom(_currentPosition ?? _fallbackPosition);
+      // No position yet: either the initial lookup is still running (it
+      // reads the new kind when it lands) or location is unavailable.
+      final position = _currentPosition;
+      if (position != null) _loadBestStationFrom(position);
     }
   }
 
@@ -227,6 +263,7 @@ class FuelUpScreenState extends State<FuelUpScreen> {
   }
 
   void _onPriceChanged(String value) {
+    _priceEditedByUser = true;
     final parsed = double.tryParse(value);
     if (parsed != null) {
       FuelPriceCache.savePrice(selectedFuel.name, parsed);
@@ -274,23 +311,47 @@ class FuelUpScreenState extends State<FuelUpScreen> {
       if (!serviceEnabled ||
           permission == LocationPermission.denied ||
           permission == LocationPermission.deniedForever) {
-        if (kDebugMode) {
-          print(
-            'FuelUpScreen: geolocation unavailable, using fallback position',
-          );
+        if (mounted) {
+          setState(() {
+            _locationUnavailable = true;
+            _isLoadingBestStation = false;
+          });
         }
-        await _loadBestStationFrom(_fallbackPosition);
         return;
       }
 
-      final position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
-      ).timeout(const Duration(seconds: 5));
+      Position? position;
+      try {
+        position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high,
+        ).timeout(const Duration(seconds: 5));
+      } catch (e) {
+        // No fresh fix in time (e.g. indoors): the last known one is still
+        // the user's real area, unlike any hardcoded default.
+        if (kDebugMode) print("Error getting position: $e");
+        position = await Geolocator.getLastKnownPosition();
+      }
+      if (position == null) {
+        if (mounted) setState(() => _isLoadingBestStation = false);
+        return;
+      }
       await _loadBestStationFrom(LatLng(position.latitude, position.longitude));
     } catch (e) {
       if (kDebugMode) print("Error getting position: $e");
-      await _loadBestStationFrom(_fallbackPosition);
+      if (mounted) setState(() => _isLoadingBestStation = false);
     }
+  }
+
+  @override
+  bool get locationUnavailable => _locationUnavailable;
+
+  @override
+  void retryLocation() {
+    setState(() {
+      _locationUnavailable = false;
+      _isLoadingBestStation = true;
+    });
+    _initLocationAndStation();
   }
 
   Future<void> _loadBestStationFrom(LatLng current) async {
@@ -479,7 +540,9 @@ class FuelUpScreenState extends State<FuelUpScreen> {
             children: [
               Expanded(
                 child: GestureDetector(
-                  onTap: (_currentPosition == null || _nearbyStations.isEmpty)
+                  onTap: _locationUnavailable
+                      ? enableLocation
+                      : (_currentPosition == null || _nearbyStations.isEmpty)
                       ? null
                       : () {
                           showNearbyStationsSheet(
@@ -532,7 +595,15 @@ class FuelUpScreenState extends State<FuelUpScreen> {
                                     children: [
                                       Text(
                                         _bestStation == null
-                                            ? (_isElectric
+                                            ? (_locationUnavailable
+                                                  ? (_isElectric
+                                                        ? S
+                                                              .of(context)
+                                                              .charger_location_unavailable
+                                                        : S
+                                                              .of(context)
+                                                              .fuel_location_unavailable)
+                                                  : _isElectric
                                                   ? S
                                                         .of(context)
                                                         .no_nearby_charger
@@ -584,7 +655,8 @@ class FuelUpScreenState extends State<FuelUpScreen> {
                                     ],
                                   ),
                                 ),
-                                if (_bestStation != null)
+                                if (_bestStation != null ||
+                                    _locationUnavailable)
                                   const Icon(
                                     Icons.chevron_right,
                                     color: AppColors.catOther,

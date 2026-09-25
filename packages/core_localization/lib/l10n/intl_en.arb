@@ -722,5 +722,7 @@
   "onboarding_demo_policy_valid_until": "until 03/12/2027",
   "onboarding_demo_fine_parking": "Parking",
   "onboarding_demo_fine_speeding": "Speeding",
-  "onboarding_demo_expenses_title": "Expenses · September"
+  "onboarding_demo_expenses_title": "Expenses · September",
+  "fuel_location_unavailable": "Allow location access to find nearby gas stations",
+  "charger_location_unavailable": "Allow location access to find nearby chargers"
 }

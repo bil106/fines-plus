@@ -5658,6 +5658,26 @@ class S {
       args: [],
     );
   }
+
+  /// `Allow location access to find nearby gas stations`
+  String get fuel_location_unavailable {
+    return Intl.message(
+      'Allow location access to find nearby gas stations',
+      name: 'fuel_location_unavailable',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Allow location access to find nearby chargers`
+  String get charger_location_unavailable {
+    return Intl.message(
+      'Allow location access to find nearby chargers',
+      name: 'charger_location_unavailable',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

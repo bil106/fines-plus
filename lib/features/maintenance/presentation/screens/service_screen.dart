@@ -20,6 +20,7 @@ import 'package:fines_plus/features/reminders/domain/planned_service.dart';
 import 'package:fines_plus/features/reminders/presentation/cubit/reminder_cubit.dart';
 import 'package:fines_plus/features/settings/presentation/cubit/settings_cubit.dart';
 import 'package:fines_plus/features/settings/presentation/cubit/unit_stream.dart';
+import 'package:fines_plus/features/maintenance/presentation/mixins/location_prompt_mixin.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -72,7 +73,8 @@ class _ServiceWork {
   }
 }
 
-class ServiceScreenState extends State<ServiceScreen> {
+class ServiceScreenState extends State<ServiceScreen>
+    with LocationPromptMixin<ServiceScreen> {
   final _works = [_ServiceWork()];
   final mileageController = TextEditingController();
   final _mileageFocusNode = FocusNode();
@@ -192,6 +194,12 @@ class ServiceScreenState extends State<ServiceScreen> {
       if (mounted) setState(() => _loadingStations = false);
     }
   }
+
+  @override
+  bool get locationUnavailable => _locationUnavailable;
+
+  @override
+  void retryLocation() => _initLocationAndService();
 
   Future<void> _openStations() async {
     FocusScope.of(context).unfocus();
@@ -343,6 +351,8 @@ class ServiceScreenState extends State<ServiceScreen> {
         borderRadius: BorderRadius.circular(12),
         onTap: _loadingStations
             ? null
+            : _locationUnavailable
+            ? enableLocation
             : station == null
             ? _initLocationAndService
             : _openStations,
