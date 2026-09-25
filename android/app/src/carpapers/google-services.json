@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "145498918452",
+    "project_id": "carpapers-bde41",
+    "storage_bucket": "carpapers-bde41.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:145498918452:android:3c5e3ccaecd47e38728461",
+        "android_client_info": {
+          "package_name": "com.carpapers.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "145498918452-tgqvqejagl8fv8ct2khcasnsvbn0ucns.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.carpapers.app",
+            "certificate_hash": "3176a393f7ed822597f4a1b094671c37591e54bf"
+          }
+        },
+        {
+          "client_id": "145498918452-aid352ogcnq6l8ronio8bovo496r5i50.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyARn3tHa6XbRBlnezAltB5KPOOG7rwtuLo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "145498918452-aid352ogcnq6l8ronio8bovo496r5i50.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

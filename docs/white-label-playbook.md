@@ -213,7 +213,15 @@ would otherwise silently never override anything).
    permanent on first upload, so confirm before that.
 2. **Register a new Firebase project** for each, add an Android app under
    that applicationId, download `google-services.json` into
-   `android/app/src/{autodosje,carpapers}/` (see the READMEs there).
+   `android/app/src/{autodosje,carpapers}/` (see the READMEs there). In that
+   project: add the upload key's SHA-1/SHA-256 (`./gradlew signingReport`)
+   and later Play's app-signing SHAs; enable Auth providers Email/Password
+   and Google (re-download `google-services.json` after enabling Google, so
+   it carries the web client ID); create Firestore and Storage (Storage
+   needs the Blaze plan); then deploy the repo's rules with the project's
+   `.firebaserc` alias, e.g.
+   `firebase deploy --only firestore:rules,storage -P carpapers`.
+   CarPapers: project `carpapers-bde41` (alias `carpapers`).
 3. **iOS**: follow `ios/Flutter/Flavors/README.md` - new Xcode build
    config/scheme/target, `GoogleService-Info.plist`, app icon, wiring
    `CFBundleDisplayName` to the xcconfig value. Deliberately left as manual
@@ -228,11 +236,9 @@ would otherwise silently never override anything).
    logo files.
 5. **Localization**: `packages/core_localization/lib/l10n/intl_en.arb`
    already exists; add `intl_es.arb` for the ES market before shipping
-   CarPapers there. AutoDosje can reuse the existing `intl_uk.arb`. Separately,
-   nothing currently picks a default locale from `AppConfig.market` -
-   `SettingsCubit` always starts at `Locale('uk')` regardless of brand/market,
-   so a fresh CarPapers install still boots in Ukrainian until the user
-   changes it by hand. Wiring `market` to a default locale is still open.
+   CarPapers there. AutoDosje can reuse the existing `intl_uk.arb`. The
+   default locale already follows `AppConfig.market` (`uk` for `UA`, `en`
+   otherwise - see "What already works").
 6. **Real brand icons**: `autodosje`/`carpapers` currently ship the
    generated placeholder circle-and-letter icon (see "Per-brand app icons"
    above), not real artwork - swap
@@ -247,9 +253,6 @@ would otherwise silently never override anything).
    check); for AutoDosje because it's a distinct public brand even though
    the feature set matches Fines+. Each needs its own screenshots,
    description, privacy policy URL, etc.
-8. Make `CarInfoScreen`'s form market-aware for CarPapers (see the
-   correction note above) - plate/tech-passport validation is still UA-only,
-   which is fine for AutoDosje but not for a US/ES brand.
 
 ## Adding a brand beyond these three
 
@@ -265,7 +268,9 @@ would otherwise silently never override anything).
 3. Add a matching Android `productFlavors { create("<key>") { ... } }`
    block to `android/app/build.gradle.kts`.
 4. Add its Firebase project + `google-services.json` under
-   `android/app/src/<key>/`.
+   `android/app/src/<key>/`, add a `.firebaserc` alias for it and deploy
+   `firestore.rules` + `storage.rules` there (see item 2 of the list
+   above).
 5. Follow `ios/Flutter/Flavors/README.md` for the iOS side (icon included -
    iOS per-flavor icons aren't scripted).
 6. Run `python3 scripts/verify_wl_configs.py` to catch the obvious stuff

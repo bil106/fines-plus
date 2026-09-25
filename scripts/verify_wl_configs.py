@@ -39,6 +39,7 @@ def app_config_from_json(d):
         "viberNumber": d["viberNumber"],
         "market": d.get("market", "UA"),
         "finesCheckEnabled": d.get("finesCheckEnabled", True),
+        "facebookLoginEnabled": d.get("facebookLoginEnabled", True),
         "termsUrl": d.get("termsUrl"),
         "privacyPolicyUrl": d.get("privacyPolicyUrl"),
         "copyOverrides": d.get("copyOverrides"),

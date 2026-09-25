@@ -18,6 +18,12 @@ class HistoryCubit extends Cubit<HistoryState> {
   StreamSubscription? _carSubscription;
   StreamSubscription? _historySubscription;
   HistoryCubit({required this.repository, required this.carCubit}) : super(HistoryInitial()) {
+    // Fines-check history only exists for brands with the UA fines check -
+    // don't query fines_history at all for the rest.
+    if (!carCubit.config.finesCheckEnabled) {
+      emit(HistoryEmpty());
+      return;
+    }
     // carCubit.stream only emits *future* changes - a Cubit doesn't replay
     // its current state to a new .stream.listen() subscriber. Without this,
     // a HistoryCubit created after the car is already known (the normal

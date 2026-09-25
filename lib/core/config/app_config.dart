@@ -25,6 +25,14 @@ class AppConfig {
   @JsonKey(defaultValue: true)
   final bool finesCheckEnabled;
 
+  /// Whether the Facebook sign-in button is shown. The Facebook app ID is
+  /// shared, native config (android/app/src/main/res/values/strings.xml) and
+  /// belongs to Fines+, so a brand without its own Facebook app keeps this
+  /// false - otherwise Facebook's login dialog would show Fines+.
+  /// Defaults to true so existing configs keep today's behavior.
+  @JsonKey(defaultValue: true)
+  final bool facebookLoginEnabled;
+
   /// Per-brand legal links. Null falls back to the global Env.termsUrl /
   /// Env.privacyPolicyUrl (see env/env.dart) so existing configs still work.
   final String? termsUrl;
@@ -92,6 +100,7 @@ class AppConfig {
     required this.viberNumber,
     this.market = 'UA',
     this.finesCheckEnabled = true,
+    this.facebookLoginEnabled = true,
     this.termsUrl,
     this.privacyPolicyUrl,
     this.copyOverrides,

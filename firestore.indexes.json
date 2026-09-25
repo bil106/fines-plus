@@ -1,0 +1,47 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "fines_history",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "carNumber",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "checkedAt",
+          "order": "DESCENDING"
+        },
+        {
+          "fieldPath": "__name__",
+          "order": "DESCENDING"
+        }
+      ],
+      "density": "SPARSE_ALL"
+    },
+    {
+      "collectionGroup": "fines_history",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "carNumber",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "userId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "checkedAt",
+          "order": "DESCENDING"
+        },
+        {
+          "fieldPath": "__name__",
+          "order": "DESCENDING"
+        }
+      ],
+      "density": "SPARSE_ALL"
+    }
+  ],
+  "fieldOverrides": []
+}

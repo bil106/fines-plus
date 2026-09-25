@@ -1,0 +1,18 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Car photos: car_photos/{uid}/{carId}.jpg (see car_photo_uploader.dart).
+    // Only the signed-in owner can upload, replace, read or delete their own
+    // photos. The app shows them via download URLs, which carry their own
+    // access token, so this doesn't block displaying them.
+    match /car_photos/{uid}/{fileName} {
+      allow read, delete: if request.auth != null && request.auth.uid == uid;
+      allow create, update: if request.auth != null
+                            && request.auth.uid == uid
+                            && request.resource.size < 10 * 1024 * 1024;
+    }
+
+    // Everything else is closed.
+  }
+}

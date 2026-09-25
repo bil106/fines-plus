@@ -8,6 +8,7 @@
   "viberNumber": "REPLACE_ME",
   "market": "REPLACE_ME (UA / US / ES / ...)",
   "finesCheckEnabled": false,
+  "facebookLoginEnabled": false,
   "termsUrl": "REPLACE_ME",
   "privacyPolicyUrl": "REPLACE_ME",
   "_themeComment": "Optional. Every key below defaults to Fines+'s own look (see AppConfig) - only add one here if THIS brand wants a different surface/alert color or font. Colors are '#RRGGBB'; the three *FontFamily keys are Google Fonts family names (fonts.google.com), resolved at runtime.",

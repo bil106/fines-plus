@@ -1,5 +1,6 @@
 {
   "projects": {
-    "default": "finesplus"
+    "default": "finesplus",
+    "carpapers": "carpapers-bde41"
   }
 }

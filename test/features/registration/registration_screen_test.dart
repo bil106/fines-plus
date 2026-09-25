@@ -127,14 +127,15 @@ void main() {
   tearDown(() => debugDefaultTargetPlatformOverride = null);
   Future<RegistrationStub> open(
     WidgetTester tester,
-    TargetPlatform platform,
-  ) async {
+    TargetPlatform platform, {
+    AppConfig config = _testConfig,
+  }) async {
     debugDefaultTargetPlatformOverride = platform;
     final cubit = RegistrationStub();
     addTearDown(cubit.close);
     await tester.pumpWidget(
       Provider<AppConfig>.value(
-        value: _testConfig,
+        value: config,
         child: BlocProvider<RegistrationCubit>.value(
           value: cubit,
           child: MaterialApp(
@@ -171,6 +172,31 @@ void main() {
     await tester.pumpAndSettle();
     return cubit;
   }
+
+  testWidgets('Facebook sign-in is hidden for brands without their own Facebook app', (
+    tester,
+  ) async {
+    await open(tester, TargetPlatform.android);
+    expect(find.byTooltip('Google'), findsOneWidget);
+    expect(find.byTooltip('Facebook'), findsOneWidget);
+
+    await open(
+      tester,
+      TargetPlatform.android,
+      config: const AppConfig(
+        brandName: 'Test',
+        primaryColorHex: '#1976D2',
+        logoAssetPath: '',
+        supportEmail: '',
+        phoneNumber: '',
+        viberNumber: '',
+        facebookLoginEnabled: false,
+      ),
+    );
+    expect(find.byTooltip('Google'), findsOneWidget);
+    expect(find.byTooltip('Facebook'), findsNothing);
+    debugDefaultTargetPlatformOverride = null;
+  });
 
   testWidgets('registration is explicit and Apple appears only on iOS', (
     tester,

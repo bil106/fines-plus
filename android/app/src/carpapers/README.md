@@ -1,17 +1,18 @@
-# CarPapers flavor - missing pieces
+# CarPapers flavor (Android)
 
-This flavor is scaffolded (see `flavorDimensions`/`productFlavors` in
-`android/app/build.gradle.kts`) but will NOT build yet. Two things are
-needed here first, neither of which can be invented/generated locally:
+Builds and runs:
+`flutter run --flavor carpapers --dart-define=FLAVOR=carpapers`.
 
-1. **A `google-services.json` in this directory** (`android/app/src/carpapers/
-   google-services.json`), downloaded from a Firebase project registered
-   under this flavor's `applicationId` (currently the placeholder
-   `com.carpapers.app` in `build.gradle.kts` - Firebase Console -> Add app ->
-   Android -> that package name).
-2. **Confirm the `applicationId`** in `build.gradle.kts` before the first
-   real upload to Play Console - it becomes permanent for that app record
-   once used.
-
-Until both exist, build/run only the `finesplus` flavor:
-`flutter build appbundle --flavor finesplus --dart-define=FLAVOR=finesplus`.
+- `google-services.json` - Firebase project `carpapers-bde41` (`.firebaserc`
+  alias `carpapers`), Android app `com.carpapers.app`, with the upload key's
+  SHA-1/SHA-256 registered. Add Play's app-signing SHAs there too once the
+  app exists in Play Console, otherwise Google sign-in fails for
+  Play-installed builds. Re-download this file after any fingerprint or
+  sign-in provider change.
+- `AndroidManifest.xml` - merged over `src/main`'s: turns off Facebook SDK
+  auto-init/auto event logging, since the shared `facebook_app_id` is
+  Fines+'s and CarPapers has no Facebook app (`facebookLoginEnabled: false`
+  in `assets/config/carpapers.json`).
+- `res/` - placeholder launcher icon and `app_name`.
+- The `applicationId` in `build.gradle.kts` becomes permanent on the first
+  Play Console upload.

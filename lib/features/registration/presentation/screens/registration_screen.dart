@@ -8,6 +8,7 @@ import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/theme/app_brand_theme.dart';
 import 'package:design_system/widget/app_back_button.dart';
 import 'package:fines_plus/core/config/app_config.dart';
+import 'package:fines_plus/core/config/flavor_config.dart';
 import 'package:fines_plus/core/theme/theme_config.dart';
 import 'package:fines_plus/features/registration/presentation/cubit/registration_cubit.dart';
 import 'package:fines_plus/features/registration/presentation/cubit/registration_state.dart';
@@ -148,8 +149,15 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     setState(() => _socialLoading = true);
     try {
       await (_googleSignInInit ??= _googleSignIn.initialize(
+        // Android reads the web client ID from the flavor's own
+        // google-services.json (default_web_client_id) when this is null.
+        // iOS has no such fallback, so Fines+'s project ID is still passed
+        // there - only for the finesplus flavor, same as main.dart's
+        // FirebaseOptions, until other flavors get their own iOS target.
         serverClientId:
-            '201100655892-ocbfb9gl3j1ad5ma9t6n6pove9dom2n4.apps.googleusercontent.com',
+            defaultTargetPlatform == TargetPlatform.iOS && currentFlavor == 'finesplus'
+                ? '201100655892-ocbfb9gl3j1ad5ma9t6n6pove9dom2n4.apps.googleusercontent.com'
+                : null,
       ));
       final googleUser = await _googleSignIn.authenticate();
 
@@ -585,18 +593,22 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                 ),
                                 busy ? null : () => _signInWithGoogle(context),
                               ),
-                              const SizedBox(width: 18),
-                              _socialButton(
-                                'Facebook',
-                                const Icon(
-                                  Icons.facebook,
-                                  color: AppColors.facebookBlue,
-                                  size: 25,
+                              if (context
+                                  .watch<AppConfig>()
+                                  .facebookLoginEnabled) ...[
+                                const SizedBox(width: 18),
+                                _socialButton(
+                                  'Facebook',
+                                  const Icon(
+                                    Icons.facebook,
+                                    color: AppColors.facebookBlue,
+                                    size: 25,
+                                  ),
+                                  busy
+                                      ? null
+                                      : () => _signInWithFacebook(context),
                                 ),
-                                busy
-                                    ? null
-                                    : () => _signInWithFacebook(context),
-                              ),
+                              ],
                               if (defaultTargetPlatform ==
                                   TargetPlatform.iOS) ...[
                                 const SizedBox(width: 18),

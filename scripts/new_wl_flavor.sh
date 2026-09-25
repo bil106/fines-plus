@@ -42,6 +42,7 @@ cat > "$CONFIG_FILE" <<EOF
   "viberNumber": "",
   "market": "REPLACE_ME (UA / US / ES / ...)",
   "finesCheckEnabled": false,
+  "facebookLoginEnabled": false,
   "termsUrl": "REPLACE_ME",
   "privacyPolicyUrl": "REPLACE_ME"
 }

@@ -1,7 +1,7 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 //
-// NOTE: hand-updated alongside the market/finesCheckEnabled/termsUrl/
-// privacyPolicyUrl fields, and again for the surfaceBgHex/surfaceBorderHex/
+// NOTE: hand-updated alongside the market/finesCheckEnabled/
+// facebookLoginEnabled/termsUrl/privacyPolicyUrl fields, and again for the surfaceBgHex/surfaceBorderHex/
 // dividerHex/alertBgHex/alertBorderHex/alertFgHex/status*/displayFontFamily/
 // bodyFontFamily/monoFontFamily brand-theme fields, added to AppConfig.
 // Re-run `dart run build_runner build --delete-conflicting-outputs` to
@@ -22,6 +22,7 @@ AppConfig _$AppConfigFromJson(Map<String, dynamic> json) => AppConfig(
   viberNumber: json['viberNumber'] as String,
   market: json['market'] as String? ?? 'UA',
   finesCheckEnabled: json['finesCheckEnabled'] as bool? ?? true,
+  facebookLoginEnabled: json['facebookLoginEnabled'] as bool? ?? true,
   termsUrl: json['termsUrl'] as String?,
   privacyPolicyUrl: json['privacyPolicyUrl'] as String?,
   copyOverrides: (json['copyOverrides'] as Map<String, dynamic>?)?.map(
@@ -54,6 +55,7 @@ Map<String, dynamic> _$AppConfigToJson(AppConfig instance) => <String, dynamic>{
   'viberNumber': instance.viberNumber,
   'market': instance.market,
   'finesCheckEnabled': instance.finesCheckEnabled,
+  'facebookLoginEnabled': instance.facebookLoginEnabled,
   if (instance.termsUrl != null) 'termsUrl': instance.termsUrl,
   if (instance.privacyPolicyUrl != null) 'privacyPolicyUrl': instance.privacyPolicyUrl,
   if (instance.copyOverrides != null) 'copyOverrides': instance.copyOverrides,

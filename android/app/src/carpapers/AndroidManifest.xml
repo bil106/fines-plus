@@ -1,0 +1,18 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <application>
+        <!-- CarPapers has no Facebook app of its own (facebookLoginEnabled:
+             false in assets/config/carpapers.json) - the shared
+             facebook_app_id in src/main is Fines+'s. Keep the Facebook SDK
+             from auto-initializing and auto-logging install/launch events
+             into Fines+'s Facebook app. -->
+        <meta-data
+            android:name="com.facebook.sdk.AutoInitEnabled"
+            android:value="false" />
+        <meta-data
+            android:name="com.facebook.sdk.AutoLogAppEventsEnabled"
+            android:value="false" />
+        <meta-data
+            android:name="com.facebook.sdk.AdvertiserIDCollectionEnabled"
+            android:value="false" />
+    </application>
+</manifest>
