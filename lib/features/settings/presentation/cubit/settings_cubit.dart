@@ -13,10 +13,10 @@ class SettingsCubit extends Cubit<SettingsState> {
   SettingsCubit({required this.currencyService, required this.config})
     : super(
         SettingsState(
-          unit: 'km',
-          currency: 'UAH',
+          unit: _marketDefaults(config.market).unit,
+          currency: _marketDefaults(config.market).currency,
           locale: Locale(_defaultLanguageCode(config.market)),
-          fuelConsumptionUnit: 'l/100km',
+          fuelConsumptionUnit: _marketDefaults(config.market).fuelConsumptionUnit,
         ),
       ) {
     _loadSettings();
@@ -27,6 +27,15 @@ class SettingsCubit extends Cubit<SettingsState> {
   /// back to English, since 'uk'/'en' are the only supported locales.
   static String _defaultLanguageCode(String market) => market.toUpperCase() == 'UA' ? 'uk' : 'en';
 
+  /// Distance/currency/fuel units a market expects out of the box, until the
+  /// user picks their own in Settings.
+  static ({String unit, String currency, String fuelConsumptionUnit}) _marketDefaults(String market) =>
+      switch (market.toUpperCase()) {
+        'UA' => (unit: 'km', currency: 'UAH', fuelConsumptionUnit: 'l/100km'),
+        'US' => (unit: 'mil', currency: 'USD', fuelConsumptionUnit: 'mpg'),
+        _ => (unit: 'km', currency: 'EUR', fuelConsumptionUnit: 'l/100km'),
+      };
+
   Future<void> _loadSettings() async {
     _prefs = await SharedPreferences.getInstance();
 
@@ -35,7 +44,7 @@ class SettingsCubit extends Cubit<SettingsState> {
         unit: _prefs.getString('unit') ?? state.unit,
         currency: _prefs.getString('currency') ?? state.currency,
         locale: Locale(_prefs.getString('locale') ?? _defaultLanguageCode(config.market)),
-        fuelConsumptionUnit: _prefs.getString('fuelConsumptionUnit') ?? 'l/100km',
+        fuelConsumptionUnit: _prefs.getString('fuelConsumptionUnit') ?? state.fuelConsumptionUnit,
       ),
     );
   }

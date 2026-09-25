@@ -36,6 +36,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:fines_plus/core/config/flavor_config.dart';
 import 'package:fines_plus/core/services/app_initializer.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -43,8 +44,12 @@ import 'dart:io' show Platform;
 
 late final AppInitializer appInitializer;
 
+/// Explicit iOS options for the Fines+ Firebase project only. Every other
+/// flavor (and Android) returns null, so Firebase reads the native config
+/// bundled with that flavor's target - GoogleService-Info.plist on iOS,
+/// google-services.json on Android - and never lands in Fines+'s project.
 FirebaseOptions? _firebaseOptionsForCurrentPlatform() {
-  if (!Platform.isIOS) return null;
+  if (!Platform.isIOS || currentFlavor != 'finesplus') return null;
 
   return const FirebaseOptions(
     apiKey: 'AIzaSyCLEFL1aB9wi6a1dAhgeUIfVlxoCPPBxrw',
