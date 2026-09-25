@@ -528,10 +528,16 @@ class FuelUpRoute extends PageRouteInfo<FuelUpRouteArgs> {
     Key? key,
     VoidCallback? onBack,
     bool embedded = false,
+    double? initialSum,
     List<PageRouteInfo>? children,
   }) : super(
          FuelUpRoute.name,
-         args: FuelUpRouteArgs(key: key, onBack: onBack, embedded: embedded),
+         args: FuelUpRouteArgs(
+           key: key,
+           onBack: onBack,
+           embedded: embedded,
+           initialSum: initialSum,
+         ),
          initialChildren: children,
        );
 
@@ -547,13 +553,19 @@ class FuelUpRoute extends PageRouteInfo<FuelUpRouteArgs> {
         key: args.key,
         onBack: args.onBack,
         embedded: args.embedded,
+        initialSum: args.initialSum,
       );
     },
   );
 }
 
 class FuelUpRouteArgs {
-  const FuelUpRouteArgs({this.key, this.onBack, this.embedded = false});
+  const FuelUpRouteArgs({
+    this.key,
+    this.onBack,
+    this.embedded = false,
+    this.initialSum,
+  });
 
   final Key? key;
 
@@ -561,9 +573,11 @@ class FuelUpRouteArgs {
 
   final bool embedded;
 
+  final double? initialSum;
+
   @override
   String toString() {
-    return 'FuelUpRouteArgs{key: $key, onBack: $onBack, embedded: $embedded}';
+    return 'FuelUpRouteArgs{key: $key, onBack: $onBack, embedded: $embedded, initialSum: $initialSum}';
   }
 
   @override
@@ -572,11 +586,13 @@ class FuelUpRouteArgs {
     if (other is! FuelUpRouteArgs) return false;
     return key == other.key &&
         onBack == other.onBack &&
-        embedded == other.embedded;
+        embedded == other.embedded &&
+        initialSum == other.initialSum;
   }
 
   @override
-  int get hashCode => key.hashCode ^ onBack.hashCode ^ embedded.hashCode;
+  int get hashCode =>
+      key.hashCode ^ onBack.hashCode ^ embedded.hashCode ^ initialSum.hashCode;
 }
 
 /// generated route for

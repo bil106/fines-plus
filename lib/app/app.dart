@@ -6,6 +6,7 @@ import 'package:fines_plus/app/router/app_router.dart';
 import 'package:fines_plus/core/config/app_config.dart';
 import 'package:fines_plus/core/services/notification_tap_bus.dart';
 import 'package:fines_plus/core/theme/theme_config.dart';
+import 'package:fines_plus/features/maintenance/domain/fuel_payment_link.dart';
 import 'package:fines_plus/features/registration/presentation/cubit/registration_cubit.dart';
 import 'package:fines_plus/features/settings/presentation/cubit/settings_cubit.dart';
 import 'package:fines_plus/features/settings/presentation/cubit/settings_state.dart';
@@ -36,6 +37,10 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   final AppLinks _appLinks = AppLinks();
   StreamSubscription? _appLinksSub;
+  // On a cold start the same link arrives twice - via getInitialLink() and
+  // replayed on uriLinkStream - so a fuel link is only acted on once.
+  String? _lastFuelLink;
+  DateTime? _lastFuelLinkAt;
   StreamSubscription<String>? _notificationTapSub;
   late final AppRouter _router;
 
@@ -172,6 +177,10 @@ class _MyAppState extends State<MyApp> {
   }
 
   void _routeFromAppLink(Uri uri) {
+    if (FuelPaymentLink.matches(uri)) {
+      _openFuelUpFromPayment(uri);
+      return;
+    }
     final car = uri.queryParameters['car'];
     if (mounted) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -181,6 +190,23 @@ class _MyAppState extends State<MyApp> {
         }
       });
     }
+  }
+
+  void _openFuelUpFromPayment(Uri uri) {
+    final link = uri.toString();
+    final now = DateTime.now();
+    final lastAt = _lastFuelLinkAt;
+    if (link == _lastFuelLink && lastAt != null && now.difference(lastAt) < const Duration(seconds: 5)) {
+      return;
+    }
+    _lastFuelLink = link;
+    _lastFuelLinkAt = now;
+
+    final amount = FuelPaymentLink.amountFrom(uri);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      _router.push(FuelUpRoute(initialSum: amount));
+    });
   }
 
   @override

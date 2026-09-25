@@ -41,7 +41,17 @@ class FuelUpScreen extends StatefulWidget {
   /// (Maintenance tab, its FAB) leaves this false and is unaffected.
   final bool embedded;
 
-  const FuelUpScreen({super.key, this.onBack, this.embedded = false});
+  /// Paid total handed over by a phone-payment automation (fuel deep link /
+  /// iOS "Add fuel-up" shortcut action). Pre-fills the sum, so the liters are
+  /// derived from the last known price and the user only confirms.
+  final double? initialSum;
+
+  const FuelUpScreen({
+    super.key,
+    this.onBack,
+    this.embedded = false,
+    this.initialSum,
+  });
 
   @override
   State<FuelUpScreen> createState() => FuelUpScreenState();
@@ -76,6 +86,11 @@ class FuelUpScreenState extends State<FuelUpScreen> {
   void initState() {
     super.initState();
     _gasService = GasStationService(Env.mapApiKey);
+    final initialSum = widget.initialSum;
+    if (initialSum != null) {
+      sumController.text = _formatNumber(initialSum);
+      _sumIsSource = true;
+    }
     _initLocationAndStation();
     _loadLastPrice(selectedFuel);
     _prefillLastMileage();

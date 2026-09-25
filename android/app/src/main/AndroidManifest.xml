@@ -28,6 +28,10 @@
             android:launchMode="singleTop"
             android:exported="true"
             android:theme="@style/LaunchTheme">
+            <!-- Links are handled by app_links in Dart only; with Flutter's own deep
+                 linking on, the router also navigates to the link path ("/" =
+                 splash), which wipes whatever app_links just opened. -->
+            <meta-data android:name="flutter_deeplinking_enabled" android:value="false"/>
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
@@ -50,6 +54,15 @@
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
                 <data android:scheme="myapp" android:host="addexp"/>
+            </intent-filter>
+            <!-- Fuel paid by phone: <applicationId>://fuel?amount=... opened by
+                 a payment automation (Tasker / MacroDroid). Scheme follows the
+                 flavor's applicationId, so every white-label brand gets its own. -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:scheme="${applicationId}" android:host="fuel"/>
             </intent-filter>
         </activity>
         <activity

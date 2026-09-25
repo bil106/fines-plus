@@ -36,6 +36,14 @@
 					<string>com.googleusercontent.apps.201100655892-2ansipskidg5tdeti65m0oovp2c65l8q</string>
 				</array>
 			</dict>
+			<dict>
+				<key>CFBundleURLName</key>
+				<string>fuel-payment</string>
+				<key>CFBundleURLSchemes</key>
+				<array>
+					<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+				</array>
+			</dict>
 		</array>
 		<key>CFBundleVersion</key>
 		<string>$(FLUTTER_BUILD_NUMBER)</string>
@@ -70,6 +78,8 @@
 				<string>cstr6suwn9.skadnetwork</string>
 			</dict>
 		</array>
+		<key>FlutterDeepLinkingEnabled</key>
+		<false/>
 		<key>UIApplicationSupportsIndirectInputEvents</key>
 		<true/>
 		<key>UILaunchStoryboardName</key>
