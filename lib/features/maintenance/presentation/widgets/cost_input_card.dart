@@ -5,6 +5,7 @@ import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_brand_theme.dart';
 import 'package:design_system/theme/app_theme.dart';
 import 'package:fines_plus/features/settings/presentation/cubit/settings_cubit.dart';
+import 'package:core_utils/formatters/decimal_input_formatter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -39,6 +40,7 @@ class CostInputCard extends StatelessWidget {
               child: TextField(
                 controller: controller,
                 keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                inputFormatters: const [DecimalInputFormatter()],
                 decoration: InputDecoration(
                   border: InputBorder.none,
                   focusedBorder: InputBorder.none,

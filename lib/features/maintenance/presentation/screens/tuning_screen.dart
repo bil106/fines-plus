@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 
 import 'package:core_localization/generated/l10n.dart';
+import 'package:core_utils/formatters/decimal_input_formatter.dart';
 import 'package:core_utils/formatters/thousands_separator_formatter.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/theme/app_brand_theme.dart';
@@ -464,14 +465,7 @@ class TuningScreenState extends State<TuningScreen>
                   keyboardType: const TextInputType.numberWithOptions(
                     decimal: true,
                   ),
-                  inputFormatters: [
-                    TextInputFormatter.withFunction(
-                      (oldValue, newValue) =>
-                          RegExp(r'^\d{0,7}([.,]\d{0,2})?$').hasMatch(newValue.text)
-                          ? newValue
-                          : oldValue,
-                    ),
-                  ],
+                  inputFormatters: const [DecimalInputFormatter()],
                   style: const TextStyle().merge(context.brandTheme.moneyTextStyle).copyWith(fontSize: 13.5, color: AppColors.ink),
                   decoration: InputDecoration(
                     hintText: '0',

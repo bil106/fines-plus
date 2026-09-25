@@ -8,9 +8,24 @@ class CurrencyService {
   CurrencyService._internal();
 
   Map<String, double>? _rates;
+  Future<void>? _initFuture;
 
-  
-  Future<void> init() async {
+  /// Loads the rates once; later calls reuse the same load.
+  Future<void> init() => _initFuture ??= _init();
+
+  /// Completes once [init] has finished (with live or fallback rates), so a
+  /// total computed after it uses real rates. Completes at once if [init]
+  /// was never called.
+  Future<void> get ready => _initFuture ?? Future.value();
+
+  /// [amount] in the app's base currency (UAH). Every total is summed in
+  /// UAH and converted to the display currency afterwards, so a record's
+  /// cost - stored in whatever currency it was entered in - has to be
+  /// brought to UAH first. A record without a currency is already UAH.
+  double toUah(double amount, String? currency) =>
+      (currency == null || currency.isEmpty) ? amount : convert(amount, 'UAH', fromCurrency: currency);
+
+  Future<void> _init() async {
     try {
       await _fetchRates();
     } catch (e) {

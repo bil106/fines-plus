@@ -30,7 +30,7 @@ final String currency;
   Expense toExpense(String ownerId) {
     return Expense(
       date: date,
-      amount: amount,
+      amount: amount.toDouble(),
       mileage: mileage,
       comment: comment,
       category: ExpenseCategory.carWash, 

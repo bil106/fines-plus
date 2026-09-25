@@ -60,7 +60,7 @@ class InsuranceRecord {
     return Expense(
       id: id,
       date: validFrom,
-      amount: cost.round(),
+      amount: cost,
       category: ExpenseCategory.insurance,
       ownerId: ownerId,
       comment: company,

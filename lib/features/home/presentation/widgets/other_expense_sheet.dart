@@ -1,4 +1,5 @@
 import 'package:core_localization/generated/l10n.dart';
+import 'package:core_utils/formatters/decimal_input_formatter.dart';
 import 'package:core_utils/formatters/thousands_separator_formatter.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_spacers.dart';
@@ -11,7 +12,6 @@ import 'package:fines_plus/features/maintenance/presentation/widgets/mileage_car
 import 'package:fines_plus/features/settings/presentation/cubit/settings_cubit.dart';
 import 'package:fines_plus/features/settings/presentation/cubit/unit_stream.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 /// "Інше" tile content in the dashboard's "Ще" (Додати витрату) sheet - a
@@ -109,10 +109,10 @@ class OtherExpenseSheetState extends State<OtherExpenseSheet> {
           child: TextField(
             controller: costController,
             focusNode: costFocusNode,
-            keyboardType: TextInputType.number,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
             textInputAction: TextInputAction.next,
             onSubmitted: (_) => commentFocusNode.requestFocus(),
-            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+            inputFormatters: const [DecimalInputFormatter()],
             decoration: InputDecoration(
               border: InputBorder.none,
               focusedBorder: InputBorder.none,

@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:core_localization/generated/l10n.dart';
+import 'package:core_utils/formatters/decimal_input_formatter.dart';
 import 'package:core_utils/formatters/thousands_separator_formatter.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_spacers.dart';
@@ -22,7 +23,6 @@ import 'package:fines_plus/features/settings/presentation/cubit/settings_cubit.d
 import 'package:fines_plus/features/settings/presentation/cubit/unit_stream.dart';
 import 'package:fines_plus/features/maintenance/presentation/mixins/location_prompt_mixin.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -484,11 +484,8 @@ class ServiceScreenState extends State<ServiceScreen>
                 child: TextField(
                   controller: work.price,
                   textAlign: TextAlign.end,
-                  keyboardType: TextInputType.number,
-                  inputFormatters: [
-                    FilteringTextInputFormatter.digitsOnly,
-                    LengthLimitingTextInputFormatter(7),
-                  ],
+                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  inputFormatters: const [DecimalInputFormatter()],
                   style: const TextStyle()
                       .merge(context.brandTheme.moneyTextStyle)
                       .copyWith(fontSize: 13.5, color: AppColors.ink),

@@ -43,7 +43,7 @@ class OtherExpenseRecord {
     return Expense(
       id: id,
       date: date,
-      amount: cost.round(),
+      amount: cost,
       category: ExpenseCategory.other,
       mileage: mileage,
       ownerId: ownerId,

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:core_localization/generated/l10n.dart';
+import 'package:fines_plus/core/extensions/currency_service.dart';
 import 'package:fines_plus/core/extensions/fuel_calculator.dart';
 import 'package:fines_plus/core/extensions/fuel_type.dart';
 import 'package:fines_plus/features/expenses/data/models/car_wash_record.dart';
@@ -16,9 +17,12 @@ import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 class StatisticsCubit extends Cubit<StatisticsState> {
   final MaintenanceCubit maintenanceCubit;
+  final CurrencyService currencyService;
   late final StreamSubscription<MaintenanceState> _maintenanceSub;
 
-  StatisticsCubit(this.maintenanceCubit) : super(StatisticsState.initial()) {
+  StatisticsCubit(this.maintenanceCubit, {CurrencyService? currencyService})
+      : currencyService = currencyService ?? CurrencyService(),
+        super(StatisticsState.initial()) {
 
     _recalculate(maintenanceCubit.state);
 
@@ -27,6 +31,9 @@ class StatisticsCubit extends Cubit<StatisticsState> {
   }
 
   Future<void> _recalculate(MaintenanceState maintenanceState) async {
+    if (isClosed) return;
+    // Totals convert every record to UAH - wait for real rates first.
+    await currencyService.ready;
     if (isClosed) return;
 
     final now = DateTime.now();
@@ -119,7 +126,8 @@ class StatisticsCubit extends Cubit<StatisticsState> {
         final date = (record is ServiceRecord) ? _parseDate(record.date) : (record as dynamic).date;
         if (date.year != year || date.month != month) continue;
 
-        final cost = (record is CarWashRecord) ? record.amount : (record as dynamic).cost;
+        final rawCost = (record is CarWashRecord) ? record.amount : (record as dynamic).cost as double;
+        final cost = currencyService.toUah(rawCost, (record as dynamic).currency as String?);
         total += cost;
         categoryTotals[entry.key] = (categoryTotals[entry.key] ?? 0) + cost;
         if (record is FuelRecord && record.fuelType == FuelType.Electric.name) electricTotal += cost;

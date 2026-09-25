@@ -8,7 +8,9 @@ part 'expense.g.dart';
 class Expense {
   final String? id;
   final DateTime date;
-  final int amount;
+  // Money keeps its cents; older docs stored whole numbers, which still read
+  // back fine as num.
+  final double amount;
   final ExpenseCategory category;
   final int? mileage;
   final String? comment;
@@ -102,7 +104,7 @@ Map<String, dynamic> toFirestore({bool isNew = false}) {
     return Expense(
       id: id,
       date: date,
-      amount: (json['amount'] ?? 0) is int ? (json['amount'] ?? 0) as int : (json['amount'] ?? 0).round(),
+      amount: ((json['amount'] ?? 0) as num).toDouble(),
       category: category,
       mileage: json['mileage'] as int?,
       comment: json['comment'] as String?,

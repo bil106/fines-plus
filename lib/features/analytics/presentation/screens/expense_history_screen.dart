@@ -99,11 +99,8 @@ List<EventModel> _buildEvents(BuildContext context, MaintenanceState state) {
   final currencyService = context.read<CurrencyService>();
   final isMiles = context.read<SettingsCubit>().state.unit == 'mil';
 
-  double toBase(double amount, String? currency) => currencyService.convert(
-    amount,
-    s.grn,
-    fromCurrency: currency ?? s.grn,
-  );
+  double toBase(double amount, String? currency) =>
+      currencyService.toUah(amount, currency);
 
   String mileage(int? value) {
     if (value == null || value <= 0) return '';

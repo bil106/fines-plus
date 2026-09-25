@@ -84,7 +84,7 @@ class CarWashRecord extends BaseRecord {
     return Expense(
       id: id,
       date: date,
-      amount: amount.toInt(),
+      amount: amount,
       category: ExpenseCategory.carWash,
       mileage: mileage,
       comment: comment ?? "Car Wash",

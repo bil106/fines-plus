@@ -1,11 +1,11 @@
 import 'package:core_localization/generated/l10n.dart';
+import 'package:core_utils/formatters/decimal_input_formatter.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_brand_theme.dart';
 import 'package:design_system/widget/app_field_card.dart';
 import 'package:fines_plus/features/settings/presentation/cubit/settings_cubit.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -87,13 +87,10 @@ class FuelPriceVolumeSumRow extends StatelessWidget {
             child: TextField(
               controller: priceController,
               focusNode: priceFocusNode,
-              keyboardType: electric ? const TextInputType.numberWithOptions(decimal: true) : TextInputType.number,
+              keyboardType: const TextInputType.numberWithOptions(decimal: true),
               textInputAction: TextInputAction.next,
-              // A kWh costs a few UAH, so electricity takes cents; a liter of
-              // fuel stays a whole number.
-              inputFormatters: electric
-                  ? [_KwhPriceFormatter()]
-                  : [FilteringTextInputFormatter.digitsOnly, LengthLimitingTextInputFormatter(2)],
+              // Prices take cents: a kWh costs a few UAH, a US gallon ~$3.49.
+              inputFormatters: const [DecimalInputFormatter(maxIntegerDigits: 3)],
               decoration: const InputDecoration(
                 border: InputBorder.none,
                 focusedBorder: InputBorder.none,
@@ -147,6 +144,7 @@ class FuelPriceVolumeSumRow extends StatelessWidget {
                 child: TextField(
                   controller: sumController,
                   keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  inputFormatters: const [DecimalInputFormatter()],
                   decoration: InputDecoration(
                     border: InputBorder.none,
                     focusedBorder: InputBorder.none,
@@ -172,17 +170,6 @@ class FuelPriceVolumeSumRow extends StatelessWidget {
 /// Up to three digits and two decimals; accepts a comma as the decimal
 /// separator (many keyboards only offer one) and stores it as a dot so the
 /// value parses.
-class _KwhPriceFormatter extends TextInputFormatter {
-  @override
-  TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
-    final text = newValue.text.replaceAll(',', '.');
-    final parts = text.split('.');
-    final digitsOnly = parts.every((part) => part.codeUnits.every((unit) => unit >= 48 && unit <= 57));
-    final valid = parts.length <= 2 && digitsOnly && parts[0].length <= 3 && (parts.length == 1 || parts[1].length <= 2);
-    return valid ? newValue.copyWith(text: text) : oldValue;
-  }
-}
-
 class _FieldColumn extends StatelessWidget {
   final String label;
   final Widget child;

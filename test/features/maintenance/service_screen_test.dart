@@ -203,19 +203,22 @@ void main() {
     },
   );
 
-  testWidgets('whole-number prices in display currency save in UAH', (
+  testWidgets('prices take cents in display currency and save in UAH', (
     tester,
   ) async {
     final maintenance = await openSheet(tester, currency: 'USD');
     await tester.enterText(nameFields().first, 'Custom work');
-    // Price fields are digits-only now (no comma/decimal) - prices are
-    // always rounded to a whole number, no kopecks/cents.
+    // Price fields take up to two decimals; a typed comma becomes a dot.
     await tester.enterText(priceFields().first, '12,50');
     await tester.pumpAndSettle();
-    expect(find.text('1250 USD'), findsOneWidget);
+    expect(
+      find.descendant(of: priceFields().first, matching: find.text('12.50')),
+      findsOneWidget,
+    );
+    expect(find.text('13 USD'), findsOneWidget);
     await tester.tap(find.text(S.current.save));
     await tester.pumpAndSettle();
-    expect(maintenance.saved!.single.cost, 50000);
+    expect(maintenance.saved!.single.cost, 500);
     expect(maintenance.saved!.single.currency, 'UAH');
   });
 

@@ -9,7 +9,7 @@ part of 'expense.dart';
 Expense _$ExpenseFromJson(Map<String, dynamic> json) => Expense(
   id: json['id'] as String?,
   date: DateTime.parse(json['date'] as String),
-  amount: (json['amount'] as num).toInt(),
+  amount: (json['amount'] as num).toDouble(),
   category: $enumDecode(_$ExpenseCategoryEnumMap, json['category']),
   ownerId: json['ownerId'] as String,
   mileage: (json['mileage'] as num?)?.toInt(),

@@ -18,6 +18,7 @@ import 'package:fines_plus/features/expenses/data/models/tuning_record.dart';
 import 'package:fines_plus/features/reminders/data/repository/reminder_repository.dart';
 import 'package:fines_plus/features/schedule/data/repository/schedule_repository.dart';
 import 'package:fines_plus/features/schedule/presentation/screens/schedule_screen.dart';
+import 'package:fines_plus/core/extensions/currency_service.dart';
 import 'package:fines_plus/features/settings/presentation/cubit/settings_cubit.dart';
 import 'package:fines_plus/features/statistics/presentation/screens/statistics_screen.dart';
 import 'package:fines_plus/features/vehicle/presentation/cubit/car_cubit.dart';
@@ -82,6 +83,7 @@ class AnalyticsScreenViewState extends State<_AnalyticsScreenView> with SingleTi
     events.clear();
 
     final settingsCubit = context.read<SettingsCubit>();
+    final currencyService = context.read<CurrencyService>();
     final isMi = settingsCubit.state.unit == 'mil';
 
     String formatMileage(int mileage) {
@@ -100,7 +102,7 @@ class AnalyticsScreenViewState extends State<_AnalyticsScreenView> with SingleTi
           return EventModel(
             date: DateFormat('dd.MM.yyyy').parse(record.date),
             title: record.serviceName,
-            amount: record.cost.toDouble(),
+            amount: currencyService.toUah(record.cost.toDouble(), record.currency),
             mileage: formatMileage(record.mileage),
             iconCodePoint: Icons.build.codePoint,
             iconColorValue: AppColors.catService.value,
@@ -120,7 +122,7 @@ class AnalyticsScreenViewState extends State<_AnalyticsScreenView> with SingleTi
           return EventModel(
             date: record.date,
             title: "${fuelTypeLabel(context, record.fuelType)} / ${record.volume} ${fuelUnitLabel(context, record.fuelType)}",
-            amount: record.cost.toDouble(),
+            amount: currencyService.toUah(record.cost.toDouble(), record.currency),
             mileage: formatMileage(record.mileage),
             iconCodePoint: Icons.local_gas_station.codePoint,
             iconColorValue: AppColors.catFuel.value,
@@ -140,7 +142,7 @@ class AnalyticsScreenViewState extends State<_AnalyticsScreenView> with SingleTi
           return EventModel(
             date: record.date,
             title: record.tuningName,
-            amount: record.cost.toDouble(),
+            amount: currencyService.toUah(record.cost.toDouble(), record.currency),
             mileage: formatMileage(record.mileage),
             iconCodePoint: Icons.build_circle.codePoint,
             iconColorValue: AppColors.catTuning.value,
@@ -161,7 +163,7 @@ class AnalyticsScreenViewState extends State<_AnalyticsScreenView> with SingleTi
           return EventModel(
             date: record.date,
             title: S.of(context).car_wash,
-            amount: record.amount.toDouble(),
+            amount: currencyService.toUah(record.amount.toDouble(), record.currency),
             mileage: formatMileage(record.mileage),
             iconCodePoint: Icons.local_car_wash.codePoint,
             iconColorValue: AppColors.catCarWash.value,

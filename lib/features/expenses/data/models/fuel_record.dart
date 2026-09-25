@@ -37,7 +37,7 @@ class FuelRecord {
 
   Map<String, dynamic> toJson() => _$FuelRecordToJson(this);
 
-  factory FuelRecord.fromExpense(Expense expense, {required String currency}) {
+  factory FuelRecord.fromExpense(Expense expense) {
     return FuelRecord(
       id: expense.id,
       fuelType: expense.comment ?? 'fuel',
@@ -45,7 +45,7 @@ class FuelRecord {
       cost: expense.amount.toDouble(),
       date: expense.date,
       mileage: expense.mileage ?? 0,
-      currency: currency, 
+      currency: expense.currency,
       fullTank: expense.fullTank,
     );
   }
@@ -53,13 +53,14 @@ class FuelRecord {
   Expense toExpense(String ownerId) {
     return Expense(
       date: date,
-      amount: cost.round(),
+      amount: cost,
       category: ExpenseCategory.fuel,
       mileage: mileage,
       comment: fuelType,
       ownerId: ownerId,
       fuelVolume: volume,
       fullTank: fullTank,
+      currency: currency.isNotEmpty ? currency : 'UAH',
     );
   }
 

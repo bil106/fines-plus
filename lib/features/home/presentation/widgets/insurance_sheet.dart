@@ -7,8 +7,8 @@ import 'package:fines_plus/features/maintenance/presentation/cubit/maintenance_c
 import 'package:fines_plus/features/reminders/data/models/reminder_item.dart';
 import 'package:fines_plus/features/reminders/presentation/reminder_status_tint.dart';
 import 'package:fines_plus/features/settings/presentation/cubit/settings_cubit.dart';
+import 'package:core_utils/formatters/decimal_input_formatter.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 const _kUkMonthsShort = [
@@ -63,7 +63,10 @@ class InsuranceSheetState extends State<InsuranceSheet> {
       policyNumberController.text = latest.policyNumber;
       validFrom = latest.validFrom;
       validTo = latest.validTo;
-      costController.text = latest.cost.round().toString();
+      // Keep cents if the saved cost has them (3500.50), no ".00" otherwise.
+      costController.text = latest.cost == latest.cost.roundToDouble()
+          ? latest.cost.toStringAsFixed(0)
+          : latest.cost.toStringAsFixed(2);
     }
   }
 
@@ -219,9 +222,9 @@ class InsuranceSheetState extends State<InsuranceSheet> {
           child: TextField(
             controller: costController,
             focusNode: costFocusNode,
-            keyboardType: TextInputType.number,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
             textInputAction: TextInputAction.done,
-            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+            inputFormatters: const [DecimalInputFormatter()],
             decoration: InputDecoration(
               border: InputBorder.none,
               focusedBorder: InputBorder.none,

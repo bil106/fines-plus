@@ -59,7 +59,7 @@ class ServiceRecord {
     return Expense(
       id: id,
       date: parsedDate,
-      amount: cost.round(),
+      amount: cost,
       category: ExpenseCategory.service,
       mileage: mileage,
       ownerId: ownerId,
