@@ -62,16 +62,9 @@ class MessageLookup extends MessageLookupByLibrary {
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
     "about_app_section": MessageLookupByLibrary.simpleMessage("Про додаток"),
-    "access_basic": MessageLookupByLibrary.simpleMessage(
-      "Доступ до основних функцій",
-    ),
-    "action": MessageLookupByLibrary.simpleMessage("Дія"),
     "add_car": MessageLookupByLibrary.simpleMessage("Додати авто"),
     "add_cars": MessageLookupByLibrary.simpleMessage("Додати авто"),
     "add_expense": MessageLookupByLibrary.simpleMessage("Додати витрату"),
-    "add_mileage": MessageLookupByLibrary.simpleMessage("Додати пробіг"),
-    "add_new_photo": MessageLookupByLibrary.simpleMessage("Додати нове фото"),
-    "add_photo": MessageLookupByLibrary.simpleMessage("Додати фото"),
     "add_reminder_button": MessageLookupByLibrary.simpleMessage(
       "Додати нагадування",
     ),
@@ -85,7 +78,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "all_exp_hist_deleted": MessageLookupByLibrary.simpleMessage(
       "Вилучено всю історію витрат",
     ),
-    "already_added": MessageLookupByLibrary.simpleMessage("Вже додано"),
     "already_have_account": MessageLookupByLibrary.simpleMessage(
       "Вже маєте обліковий запис? Увійти",
     ),
@@ -106,9 +98,6 @@ class MessageLookup extends MessageLookupByLibrary {
       "Вхід через Apple успішний",
     ),
     "attention": MessageLookupByLibrary.simpleMessage("Увага"),
-    "authorization_required": MessageLookupByLibrary.simpleMessage(
-      "Потрібна авторизація",
-    ),
     "auto": MessageLookupByLibrary.simpleMessage("Авто"),
     "average": MessageLookupByLibrary.simpleMessage("Середній"),
     "battery": MessageLookupByLibrary.simpleMessage("Батарея"),
@@ -116,32 +105,19 @@ class MessageLookup extends MessageLookupByLibrary {
       "Ємність батареї, кВт·год",
     ),
     "best_price_nearby_distance": m1,
-    "body_category": MessageLookupByLibrary.simpleMessage("Категорія / кузов"),
     "build_route": MessageLookupByLibrary.simpleMessage("Прокласти маршрут"),
-    "buy_subscription": MessageLookupByLibrary.simpleMessage(
-      "Купити передплату",
-    ),
     "buyer_report": MessageLookupByLibrary.simpleMessage("Звіт для покупця"),
     "by_date": MessageLookupByLibrary.simpleMessage("За датою"),
     "by_mileage": MessageLookupByLibrary.simpleMessage("За пробігом"),
-    "calendar": MessageLookupByLibrary.simpleMessage("Календар"),
     "cancel": MessageLookupByLibrary.simpleMessage("Скасувати"),
-    "cancel_anytime": MessageLookupByLibrary.simpleMessage(
-      "Скасування у будь-який час у GooglePlay",
-    ),
     "cannot_be_undone": MessageLookupByLibrary.simpleMessage(
       "Цю дію не можна буде скасувати.",
     ),
     "car_history": MessageLookupByLibrary.simpleMessage("Історія автомобіля"),
-    "car_icon": MessageLookupByLibrary.simpleMessage("Авто"),
     "car_inspection": MessageLookupByLibrary.simpleMessage(
       "Нагадування про техогляд та сервіс авто",
     ),
-    "car_make_year": MessageLookupByLibrary.simpleMessage("Рік випуску"),
     "car_number": MessageLookupByLibrary.simpleMessage("Номер авто"),
-    "car_number_fines_hint": MessageLookupByLibrary.simpleMessage(
-      "Потрібні лише для перевірки штрафів — можна додати пізніше",
-    ),
     "car_wash": MessageLookupByLibrary.simpleMessage("Автомийка"),
     "car_wash_best_rating_distance": m2,
     "car_wash_load_failed": MessageLookupByLibrary.simpleMessage(
@@ -161,52 +137,29 @@ class MessageLookup extends MessageLookupByLibrary {
     "category_removed": MessageLookupByLibrary.simpleMessage(
       "Вилучено категорію",
     ),
-    "change_car_info": MessageLookupByLibrary.simpleMessage(
-      "Змінити дані авто",
-    ),
     "charger_location_unavailable": MessageLookupByLibrary.simpleMessage(
       "Дозвольте геолокацію, щоб знайти зарядки поруч",
     ),
     "charging_nearby": MessageLookupByLibrary.simpleMessage("Зарядки поруч"),
     "chart_period_12m": MessageLookupByLibrary.simpleMessage("12 місяців"),
     "chart_period_6m": MessageLookupByLibrary.simpleMessage("6 місяців"),
-    "check_filter": MessageLookupByLibrary.simpleMessage(
-      "Потрібно замінити фільтр",
-    ),
-    "check_fine_title": MessageLookupByLibrary.simpleMessage(
-      "Перевірка штрафу",
-    ),
-    "check_fines": MessageLookupByLibrary.simpleMessage("Перевірити штрафи"),
     "check_fines_reminder_body": MessageLookupByLibrary.simpleMessage(
       "Перевірте наявність нових штрафів ПДД",
     ),
     "check_fines_reminder_title": MessageLookupByLibrary.simpleMessage(
       "Нагадування про штрафи",
     ),
-    "check_tires": MessageLookupByLibrary.simpleMessage("Пора перевірити шини"),
-    "checking_fines": MessageLookupByLibrary.simpleMessage("Перевірка штрафів"),
-    "choose_from_gallery": MessageLookupByLibrary.simpleMessage(
-      "Вибрати у галереї",
-    ),
     "click_again": MessageLookupByLibrary.simpleMessage(
       "Натисніть ще раз, щоб вийти",
     ),
     "close": MessageLookupByLibrary.simpleMessage("Закрити"),
     "comment": MessageLookupByLibrary.simpleMessage("Коментар"),
-    "comment_published": MessageLookupByLibrary.simpleMessage(
-      "Коментар опубліковано!",
-    ),
-    "completed_at_department": MessageLookupByLibrary.simpleMessage(
-      "Зроблено в департаменті",
-    ),
     "configure_action": MessageLookupByLibrary.simpleMessage("Налаштувати дію"),
     "connection_error": MessageLookupByLibrary.simpleMessage(
       "Помилка з’єднання",
     ),
-    "contact_us": MessageLookupByLibrary.simpleMessage("Зв\'яжіться з нами:"),
     "coolant_icon": MessageLookupByLibrary.simpleMessage("Охолодження"),
     "cost": MessageLookupByLibrary.simpleMessage("Вартість"),
-    "cost_of_work": MessageLookupByLibrary.simpleMessage("Вартість робіт:"),
     "cost_statistics": MessageLookupByLibrary.simpleMessage(
       "Статистика витрат",
     ),
@@ -219,24 +172,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "currency": MessageLookupByLibrary.simpleMessage("Валюта"),
     "current_mileage": MessageLookupByLibrary.simpleMessage("Поточний пробіг"),
     "date": MessageLookupByLibrary.simpleMessage("Дата"),
-    "date_previous_maintenance": MessageLookupByLibrary.simpleMessage(
-      "Дата попереднього ТО",
-    ),
     "days": MessageLookupByLibrary.simpleMessage("днів"),
-    "days_free": MessageLookupByLibrary.simpleMessage("днів безкоштовно"),
     "days_interv": MessageLookupByLibrary.simpleMessage("Дні"),
-    "days_left": MessageLookupByLibrary.simpleMessage("днів залишилось"),
     "del_all_expenses": MessageLookupByLibrary.simpleMessage(
       "Видалити ВСІ витрати",
     ),
     "delete": MessageLookupByLibrary.simpleMessage("Видалити"),
-    "delete_account": MessageLookupByLibrary.simpleMessage("Видалити акаунт"),
-    "delete_account_confirmation": MessageLookupByLibrary.simpleMessage(
-      "Ви впевнені? Всі дані будуть видалені безповоротно.",
-    ),
-    "delete_account_success": MessageLookupByLibrary.simpleMessage(
-      "Акаунт видалено",
-    ),
     "delete_all_expenses": MessageLookupByLibrary.simpleMessage(
       "Видалити всі витрати?",
     ),
@@ -248,9 +189,6 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "delete_expense_history": MessageLookupByLibrary.simpleMessage(
       "Видалити історію витрат",
-    ),
-    "department_address": MessageLookupByLibrary.simpleMessage(
-      "Адреса департаменту",
     ),
     "description": MessageLookupByLibrary.simpleMessage("Опис"),
     "distance_km_short": m3,
@@ -267,43 +205,22 @@ class MessageLookup extends MessageLookupByLibrary {
     "email_already_exists": MessageLookupByLibrary.simpleMessage(
       "Користувач із таким email вже існує",
     ),
-    "email_verification_error": MessageLookupByLibrary.simpleMessage(
-      "Помилка перевірки email",
-    ),
-    "engine_capacity": MessageLookupByLibrary.simpleMessage("Об’єм двигуна"),
     "english": MessageLookupByLibrary.simpleMessage("English"),
     "enter_amount": MessageLookupByLibrary.simpleMessage("Введіть суму"),
-    "enter_comment": MessageLookupByLibrary.simpleMessage("Введіть коментар"),
     "enter_correct_number_auto": MessageLookupByLibrary.simpleMessage(
       "Введіть корректний номер авто",
     ),
-    "enter_correct_registration_number": MessageLookupByLibrary.simpleMessage(
-      "Введіть правильний номер техпаспорта",
-    ),
-    "enter_cyrillic_only": MessageLookupByLibrary.simpleMessage(
-      "Використовуйте кирилиці",
-    ),
     "enter_email": MessageLookupByLibrary.simpleMessage("Введіть email"),
-    "enter_liters": MessageLookupByLibrary.simpleMessage("Введіть літри"),
     "enter_mileage": MessageLookupByLibrary.simpleMessage("Введіть пробіг"),
     "enter_password": MessageLookupByLibrary.simpleMessage("Введіть пароль"),
-    "enter_vin": MessageLookupByLibrary.simpleMessage("Введіть VIN"),
     "error": MessageLookupByLibrary.simpleMessage("Помилка:"),
-    "error_photo": MessageLookupByLibrary.simpleMessage(
-      "Помилка при виборі фото:",
-    ),
     "eur": MessageLookupByLibrary.simpleMessage("EUR"),
-    "event_invisible": MessageLookupByLibrary.simpleMessage(
-      "Подія буде невидимою",
-    ),
     "every": MessageLookupByLibrary.simpleMessage("Кожні"),
     "expense_save_failed": MessageLookupByLibrary.simpleMessage(
       "Не вдалося зберегти запис. Спробуйте ще раз.",
     ),
     "export": MessageLookupByLibrary.simpleMessage("Експорт"),
     "export_history": MessageLookupByLibrary.simpleMessage("Експорт історії"),
-    "extract_tokens": MessageLookupByLibrary.simpleMessage("Видобути токени"),
-    "extracting": MessageLookupByLibrary.simpleMessage("Видобування..."),
     "facebook_error": MessageLookupByLibrary.simpleMessage(
       "Помилка Facebook: AccessToken порожній",
     ),
@@ -320,11 +237,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "failed_extract_tokens": MessageLookupByLibrary.simpleMessage(
       "Не вдалося отримати токени",
     ),
-    "field_required": MessageLookupByLibrary.simpleMessage("Поле обов\'язкове"),
     "fill_date": MessageLookupByLibrary.simpleMessage(
       "Заповніть дату, пробіг та кількість палива",
     ),
-    "filter": MessageLookupByLibrary.simpleMessage("фільтр"),
     "fine_checking_disabled": MessageLookupByLibrary.simpleMessage(
       "Перевірка штрафів вимкнена у налаштуваннях",
     ),
@@ -332,7 +247,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "fines": MessageLookupByLibrary.simpleMessage("Штрафи"),
     "fines_checked": MessageLookupByLibrary.simpleMessage("Перевірено"),
     "fines_control": MessageLookupByLibrary.simpleMessage("Контроль штрафів"),
-    "fines_length": MessageLookupByLibrary.simpleMessage("Штрафів:"),
     "fines_mvs_hint": MessageLookupByLibrary.simpleMessage(
       "Пройдіть капчу та натисніть «Перевірити» — штрафи додадуться в застосунок автоматично.",
     ),
@@ -363,10 +277,6 @@ class MessageLookup extends MessageLookupByLibrary {
       "Нагадування про штрафи",
     ),
     "fines_violation": MessageLookupByLibrary.simpleMessage("Порушення"),
-    "first_registration_date": MessageLookupByLibrary.simpleMessage(
-      "Дата першої реєстрації",
-    ),
-    "free_experience": MessageLookupByLibrary.simpleMessage("Без реклами"),
     "free_trial_7_days": MessageLookupByLibrary.simpleMessage(
       "7 днів безкоштовно",
     ),
@@ -399,7 +309,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "garage_action_error": MessageLookupByLibrary.simpleMessage(
       "Не вдалося виконати дію",
     ),
-    "garage_active_car": MessageLookupByLibrary.simpleMessage("Активна"),
     "garage_cars_count": m6,
     "garage_continue": MessageLookupByLibrary.simpleMessage("Продовжити"),
     "garage_delete_confirm_body": MessageLookupByLibrary.simpleMessage(
@@ -420,11 +329,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "garage_model_label": MessageLookupByLibrary.simpleMessage(
       "Модель авто (необов\'язково)",
     ),
-    "garage_no_number": MessageLookupByLibrary.simpleMessage("Авто без номера"),
     "garage_setup_subtitle": MessageLookupByLibrary.simpleMessage(
       "Додайте авто зараз або зробіть це пізніше — користуватися застосунком можна вже зараз",
     ),
-    "garage_setup_title": MessageLookupByLibrary.simpleMessage("Ваш гараж"),
     "garage_status_insurance_expired": MessageLookupByLibrary.simpleMessage(
       "Страхування просрочено",
     ),
@@ -439,9 +346,6 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "get_plan": MessageLookupByLibrary.simpleMessage("Отримати Мій План"),
     "good": MessageLookupByLibrary.simpleMessage("Добре"),
-    "google_login": MessageLookupByLibrary.simpleMessage(
-      "Вхід через Google успішний",
-    ),
     "google_login_error": MessageLookupByLibrary.simpleMessage(
       "Помилка входу через Google",
     ),
@@ -451,7 +355,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "hint_auto_num_us": MessageLookupByLibrary.simpleMessage("8ABC123"),
     "hint_tech_data_num": MessageLookupByLibrary.simpleMessage("XEE128436"),
     "history": MessageLookupByLibrary.simpleMessage("Історія"),
-    "history_empty": MessageLookupByLibrary.simpleMessage("Історія порожня"),
     "history_unavailable": MessageLookupByLibrary.simpleMessage(
       "Історія тимчасово недоступна: індекс будується. Спробуйте за кілька хвилин.",
     ),
@@ -465,9 +368,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "incorrect_password": MessageLookupByLibrary.simpleMessage(
       "Неправильний пароль",
     ),
-    "increased_download_limit": MessageLookupByLibrary.simpleMessage(
-      "Збільшений ліміт завантаження",
-    ),
     "input_number": MessageLookupByLibrary.simpleMessage(
       "Введіть номер вашого автомобіля ->",
     ),
@@ -479,17 +379,11 @@ class MessageLookup extends MessageLookupByLibrary {
       "Контроль страховки",
     ),
     "insurance_expiry_reminder_body": m8,
-    "insurance_green_card": MessageLookupByLibrary.simpleMessage(
-      "Зелена картка",
-    ),
-    "insurance_kasko": MessageLookupByLibrary.simpleMessage("КАСКО"),
     "insurance_osago": MessageLookupByLibrary.simpleMessage("ОСЦПВ"),
     "interval": MessageLookupByLibrary.simpleMessage("Інтервал (км)"),
     "interval_by_date": MessageLookupByLibrary.simpleMessage(
       "Інтервал за датою",
     ),
-    "invalid_email": MessageLookupByLibrary.simpleMessage("Невірний email"),
-    "item_removed": MessageLookupByLibrary.simpleMessage("Елемент видалено"),
     "keep_track": MessageLookupByLibrary.simpleMessage(
       "Слідкуйте за термінами страховки авто",
     ),
@@ -498,11 +392,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "language": MessageLookupByLibrary.simpleMessage("Мова"),
     "large_login": MessageLookupByLibrary.simpleMessage("УВІЙТИ"),
     "large_sign_up": MessageLookupByLibrary.simpleMessage("ЗАРЕЄСТРУВАТИСЯ"),
-    "last_event": MessageLookupByLibrary.simpleMessage("Остання подія"),
     "last_insurance_date": MessageLookupByLibrary.simpleMessage(
       "Дата останнього страхування",
     ),
-    "last_record": MessageLookupByLibrary.simpleMessage("Останній запис"),
     "last_service_date": MessageLookupByLibrary.simpleMessage(
       "Дата останнього обслуговування",
     ),
@@ -518,7 +410,6 @@ class MessageLookup extends MessageLookupByLibrary {
       "Ви впевнені, що хочете вийти з акаунту?",
     ),
     "login": MessageLookupByLibrary.simpleMessage("Увійти"),
-    "logo": MessageLookupByLibrary.simpleMessage("LOGO"),
     "maintenance": MessageLookupByLibrary.simpleMessage("ТО"),
     "maintenance_control": MessageLookupByLibrary.simpleMessage("Контроль ТО"),
     "maintenance_due_body": m9,
@@ -527,15 +418,10 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "map_rating": m10,
     "mileage": MessageLookupByLibrary.simpleMessage("Пробіг"),
-    "mileage_stat": MessageLookupByLibrary.simpleMessage("Статистика пробігу"),
     "mileage_statistics": MessageLookupByLibrary.simpleMessage(
       "Статистика пробігу",
     ),
-    "mileage_time_service": MessageLookupByLibrary.simpleMessage(
-      "Пробіг на момент обслуговування",
-    ),
     "min_char": MessageLookupByLibrary.simpleMessage("Мінімум 6 символів"),
-    "miss": MessageLookupByLibrary.simpleMessage("Пропустити"),
     "money_back": MessageLookupByLibrary.simpleMessage(
       "30-денна гарантія повернення грошей!",
     ),
@@ -559,12 +445,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "my_position": MessageLookupByLibrary.simpleMessage("Ви тут"),
     "name": MessageLookupByLibrary.simpleMessage("Назва"),
     "new_reminder": MessageLookupByLibrary.simpleMessage("Нове сповіщення"),
-    "new_task": MessageLookupByLibrary.simpleMessage("Нове завдання"),
     "new_version": MessageLookupByLibrary.simpleMessage(
       "Доступна нова версія програми",
     ),
     "next": MessageLookupByLibrary.simpleMessage("Далі"),
-    "no_ads": MessageLookupByLibrary.simpleMessage("Без реклами"),
     "no_car_selected": MessageLookupByLibrary.simpleMessage(
       "Автомобіль не вибрано",
     ),
@@ -581,10 +465,6 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "no_nearby_station": MessageLookupByLibrary.simpleMessage(
       "Немає даних про найближчу заправку",
-    ),
-    "no_plan_selected": MessageLookupByLibrary.simpleMessage("План не обрано"),
-    "no_recent_events": MessageLookupByLibrary.simpleMessage(
-      "Немає нещодавніх подій",
     ),
     "no_records": MessageLookupByLibrary.simpleMessage("Немає записів"),
     "no_reminders": MessageLookupByLibrary.simpleMessage(
@@ -607,27 +487,8 @@ class MessageLookup extends MessageLookupByLibrary {
       "Ще немає жодної витрати",
     ),
     "not_auth": MessageLookupByLibrary.simpleMessage("Не авторизовані"),
-    "not_forget": MessageLookupByLibrary.simpleMessage(
-      "Не забудь замінити оливу",
-    ),
-    "not_forget_task": MessageLookupByLibrary.simpleMessage(
-      "Не забудь виконати завдання",
-    ),
-    "not_paid": MessageLookupByLibrary.simpleMessage("Не оплачено"),
     "notifications": MessageLookupByLibrary.simpleMessage("Сповіщення"),
-    "notifications_resource": MessageLookupByLibrary.simpleMessage(
-      "Повідомлення про досягнення 90% ресурсу",
-    ),
-    "odometer_beginning": MessageLookupByLibrary.simpleMessage(
-      "Одометр на початок місяця",
-    ),
-    "odometer_today": MessageLookupByLibrary.simpleMessage(
-      "Одометр на сьогодні",
-    ),
     "of_course": MessageLookupByLibrary.simpleMessage("Зрозуміло"),
-    "of_road_accidents": MessageLookupByLibrary.simpleMessage(
-      "Аварії на дорогах",
-    ),
     "oil": MessageLookupByLibrary.simpleMessage("олива"),
     "oil_icon": MessageLookupByLibrary.simpleMessage("Олива"),
     "ok": MessageLookupByLibrary.simpleMessage("ОК"),
@@ -652,7 +513,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "open_driver_page": MessageLookupByLibrary.simpleMessage(
       "Перехід на сторінку DriverTop",
     ),
-    "open_events": MessageLookupByLibrary.simpleMessage("Відкриті події"),
     "open_google_play": MessageLookupByLibrary.simpleMessage(
       "Відкрити Google Play",
     ),
@@ -660,46 +520,30 @@ class MessageLookup extends MessageLookupByLibrary {
     "open_statistics": MessageLookupByLibrary.simpleMessage(
       "Відкрити статистику",
     ),
-    "operation_code": MessageLookupByLibrary.simpleMessage("Операційний код"),
     "or_sign_in_using": MessageLookupByLibrary.simpleMessage(
       "Або увійти за допомогою",
     ),
     "other": MessageLookupByLibrary.simpleMessage("Інше"),
     "other_services": MessageLookupByLibrary.simpleMessage("Інші сервіси"),
-    "owner_address": MessageLookupByLibrary.simpleMessage("Адреса власника"),
     "paid": MessageLookupByLibrary.simpleMessage("Оплачено"),
     "paid_fines_section": MessageLookupByLibrary.simpleMessage("Оплачені"),
     "password": MessageLookupByLibrary.simpleMessage("Пароль"),
-    "password_too_short": MessageLookupByLibrary.simpleMessage(
-      "Мінімум 6 символів",
-    ),
     "pay": MessageLookupByLibrary.simpleMessage("Сплатити"),
     "pay_safe": MessageLookupByLibrary.simpleMessage(
       "Безпечна та надійна оплата",
     ),
     "pdf": MessageLookupByLibrary.simpleMessage("PDF"),
     "per_day_suffix": MessageLookupByLibrary.simpleMessage("/ день"),
-    "per_month": MessageLookupByLibrary.simpleMessage("за місяць"),
     "per_month_suffix": MessageLookupByLibrary.simpleMessage("/ місяць"),
-    "period": MessageLookupByLibrary.simpleMessage("середнє/рік"),
     "period_3_months": MessageLookupByLibrary.simpleMessage("3 місяці"),
     "period_year": MessageLookupByLibrary.simpleMessage("рік"),
     "periodicity": MessageLookupByLibrary.simpleMessage("Періодичність:"),
-    "phone": MessageLookupByLibrary.simpleMessage("Телефон"),
-    "photo_selected": MessageLookupByLibrary.simpleMessage("Фото вибрано"),
-    "plan_activated": MessageLookupByLibrary.simpleMessage(
-      "План успішно активований",
-    ),
     "planned_service_lead_reminder_body": m11,
     "planned_service_reminder_body": MessageLookupByLibrary.simpleMessage(
       "Настав час запланованого ТО. Внесіть вартість після виконання.",
     ),
     "planned_services": MessageLookupByLibrary.simpleMessage(
       "Заплановані роботи",
-    ),
-    "plate_cost": MessageLookupByLibrary.simpleMessage("Вартість номера"),
-    "plate_cost_reason": MessageLookupByLibrary.simpleMessage(
-      "Причина вартості",
     ),
     "please_log_in": MessageLookupByLibrary.simpleMessage(
       "Будь ласка, увійдіть або зареєструйтесь, щоб продовжити.",
@@ -708,46 +552,26 @@ class MessageLookup extends MessageLookupByLibrary {
       "Будь ласка, оновіть програму, щоб продовжити використання.",
     ),
     "policy_number": MessageLookupByLibrary.simpleMessage("Номер полісу"),
-    "premium_support": MessageLookupByLibrary.simpleMessage(
-      "Преміум-підтримка",
-    ),
     "previous": MessageLookupByLibrary.simpleMessage("Попереднє"),
     "price": MessageLookupByLibrary.simpleMessage("Ціна"),
-    "price_liter": MessageLookupByLibrary.simpleMessage("Ціна за 1 літр:"),
     "price_per_kwh_short": MessageLookupByLibrary.simpleMessage("Ціна/кВт·год"),
     "price_per_liter_short": MessageLookupByLibrary.simpleMessage("Ціна/л"),
     "privacy_policy": MessageLookupByLibrary.simpleMessage(
       "Політика конфіденційності",
     ),
-    "publish": MessageLookupByLibrary.simpleMessage("Опублікувати"),
     "purchase_not_available": MessageLookupByLibrary.simpleMessage(
       "Купівля недоступна",
     ),
-    "push_notifications": MessageLookupByLibrary.simpleMessage(
-      "Push-сповіщення",
-    ),
     "quarterly_plan": MessageLookupByLibrary.simpleMessage("Квартальний план"),
-    "reached_usage": MessageLookupByLibrary.simpleMessage(
-      "досяг 90% використання",
-    ),
     "recent_transactions": MessageLookupByLibrary.simpleMessage(
       "Останні операції",
     ),
     "record": MessageLookupByLibrary.simpleMessage("Запис"),
-    "record_date": MessageLookupByLibrary.simpleMessage("Дата запису"),
     "reg_number": MessageLookupByLibrary.simpleMessage(
       "Номер техпаспорта (необов\'язково)",
     ),
     "register": MessageLookupByLibrary.simpleMessage("Зареєструватися"),
     "registration": MessageLookupByLibrary.simpleMessage("Реєстрація"),
-    "registration_address": MessageLookupByLibrary.simpleMessage(
-      "Рег. адреса (KOATUU)",
-    ),
-    "registration_department": MessageLookupByLibrary.simpleMessage(
-      "Департамент",
-    ),
-    "registration_operation": MessageLookupByLibrary.simpleMessage("Операція"),
-    "registration_plate": MessageLookupByLibrary.simpleMessage("Держ. номер"),
     "reminder": MessageLookupByLibrary.simpleMessage("Нагадування"),
     "reminder_approx_days": m12,
     "reminder_approx_weeks": m13,
@@ -767,23 +591,15 @@ class MessageLookup extends MessageLookupByLibrary {
     "repair": MessageLookupByLibrary.simpleMessage("Ремонт"),
     "repair_icon": MessageLookupByLibrary.simpleMessage("Ремонт"),
     "request_error": MessageLookupByLibrary.simpleMessage("Помилка запиту"),
-    "resource": MessageLookupByLibrary.simpleMessage("Ресурс:"),
-    "resource_out": MessageLookupByLibrary.simpleMessage("Ресурс закінчується"),
     "save": MessageLookupByLibrary.simpleMessage("Зберегти"),
     "schedule": MessageLookupByLibrary.simpleMessage("Розклад"),
     "search": MessageLookupByLibrary.simpleMessage("Пошук"),
-    "search_fines": MessageLookupByLibrary.simpleMessage("Пошук штрафів"),
-    "seats_count": MessageLookupByLibrary.simpleMessage("Кількість місць"),
     "select_a_service": MessageLookupByLibrary.simpleMessage(
       "Виберіть послугу",
     ),
     "select_date": MessageLookupByLibrary.simpleMessage("Виберіть дату"),
-    "select_plan": MessageLookupByLibrary.simpleMessage("Виберіть план"),
     "select_service": MessageLookupByLibrary.simpleMessage(
       "Виберіть дату і хоча б один сервіс",
-    ),
-    "select_type_insurance": MessageLookupByLibrary.simpleMessage(
-      "Виберіть вид страховки",
     ),
     "selected": MessageLookupByLibrary.simpleMessage("Вибрано"),
     "selected_car_wash": MessageLookupByLibrary.simpleMessage(
@@ -792,9 +608,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "selected_gas_station": MessageLookupByLibrary.simpleMessage("Вибрана АЗС"),
     "selected_service_station": MessageLookupByLibrary.simpleMessage(
       "Вибрані СТО",
-    ),
-    "selecting_service": MessageLookupByLibrary.simpleMessage(
-      "Варіанти обслуговування",
     ),
     "service": MessageLookupByLibrary.simpleMessage("Сервіс"),
     "service_add_work": MessageLookupByLibrary.simpleMessage("Додати роботу"),
@@ -859,7 +672,6 @@ class MessageLookup extends MessageLookupByLibrary {
         MessageLookupByLibrary.simpleMessage(
           "Головний циліндр зчеплення - заміна",
         ),
-    "service_icon": MessageLookupByLibrary.simpleMessage("Сервис"),
     "service_invalid_price": MessageLookupByLibrary.simpleMessage(
       "Вкажіть коректну вартість кожної роботи",
     ),
@@ -1277,101 +1089,38 @@ class MessageLookup extends MessageLookupByLibrary {
       "Зчеплення (комплект) - заміна",
     ),
     "settings": MessageLookupByLibrary.simpleMessage("Налаштування"),
-    "sign_in_google": MessageLookupByLibrary.simpleMessage(
-      "Увійти через Google",
-    ),
-    "sign_up": MessageLookupByLibrary.simpleMessage("Реєстрація"),
-    "sign_up_button": MessageLookupByLibrary.simpleMessage("Підписатися"),
-    "skip_for_now": MessageLookupByLibrary.simpleMessage("Пропустити"),
     "statistics": MessageLookupByLibrary.simpleMessage("Статистика"),
     "status": MessageLookupByLibrary.simpleMessage("Статус"),
     "store_unavailable": MessageLookupByLibrary.simpleMessage(
       "Магазин недоступний",
     ),
     "subscription": MessageLookupByLibrary.simpleMessage("Передплата"),
-    "subscription_12_month": MessageLookupByLibrary.simpleMessage(
-      "Передплата 12 місяців",
-    ),
-    "subscription_3_month": MessageLookupByLibrary.simpleMessage(
-      "Передплата 3 місяці",
-    ),
-    "subscription_6_month": MessageLookupByLibrary.simpleMessage(
-      "Передплата 6 місяці",
-    ),
-    "subscription_complected": MessageLookupByLibrary.simpleMessage(
-      "місяці завершена",
-    ),
     "subscription_error": MessageLookupByLibrary.simpleMessage(
       "Помилка підписки",
     ),
-    "subscription_failed": MessageLookupByLibrary.simpleMessage(
-      "Не вдалося активувати підписку",
-    ),
-    "subscription_for": MessageLookupByLibrary.simpleMessage("Підписка на"),
     "subscription_subtitle": MessageLookupByLibrary.simpleMessage(
       "Повний доступ до контролю штрафів, ТО та страхування",
     ),
     "subscription_subtitle_no_fines": MessageLookupByLibrary.simpleMessage(
       "Повний доступ до контролю ТО, страхування та витрат",
     ),
-    "successful_registration": MessageLookupByLibrary.simpleMessage(
-      "Успішна реєстрація",
-    ),
-    "successfully_completed": MessageLookupByLibrary.simpleMessage(
-      "місяців успішно оформлено!",
-    ),
-    "successfully_registration": MessageLookupByLibrary.simpleMessage(
-      "Реєстрація успішна",
-    ),
-    "successfully_subscription": MessageLookupByLibrary.simpleMessage(
-      "Підписка успішно оформлена",
-    ),
-    "sum": MessageLookupByLibrary.simpleMessage("Сума:"),
     "sum_short": MessageLookupByLibrary.simpleMessage("Сума"),
-    "support": MessageLookupByLibrary.simpleMessage("Підтримка"),
-    "take_a_picture": MessageLookupByLibrary.simpleMessage("Сфотографувати"),
     "tank_volume_liters": MessageLookupByLibrary.simpleMessage("Обсяг бака, л"),
     "tech_service": MessageLookupByLibrary.simpleMessage("Тех. Обслуговування"),
-    "technical_data": MessageLookupByLibrary.simpleMessage("Техпаспорт:"),
     "terms_of_use": MessageLookupByLibrary.simpleMessage("Умови використання"),
-    "test_subscription": MessageLookupByLibrary.simpleMessage(
-      "Тестова передплата на",
-    ),
-    "text_automatically_renew": MessageLookupByLibrary.simpleMessage(
-      "Ваша підписка автоматично поновиться за повною ціною після закінчення вибраного терміну. ​​Ви можете скасувати її будь-коли.",
-    ),
     "tires": MessageLookupByLibrary.simpleMessage("шина"),
     "tires_icon": MessageLookupByLibrary.simpleMessage("Шини"),
     "title": MessageLookupByLibrary.simpleMessage("Заголовок"),
-    "to_be_performed": MessageLookupByLibrary.simpleMessage("До виконання:"),
     "today_at": MessageLookupByLibrary.simpleMessage("сьогодні о"),
     "tokens_already_present": MessageLookupByLibrary.simpleMessage(
       "Токени вже є",
     ),
     "tokens_extracted": MessageLookupByLibrary.simpleMessage("Токени отримано"),
     "total": MessageLookupByLibrary.simpleMessage("Разом"),
-    "total_amount": MessageLookupByLibrary.simpleMessage("Загальна сума:"),
-    "total_costs": MessageLookupByLibrary.simpleMessage("Витрати"),
-    "total_fines": MessageLookupByLibrary.simpleMessage(
-      "Загальна кількість штрафів: ",
-    ),
     "track_costs": MessageLookupByLibrary.simpleMessage(
       "Стежте за витратами, пробігом та ефективністю",
     ),
     "trial_disclosure_detailed": m16,
-    "trial_expired": MessageLookupByLibrary.simpleMessage(
-      "Пробний період минув",
-    ),
-    "trial_period_activated": MessageLookupByLibrary.simpleMessage(
-      "Пробний період активовано",
-    ),
-    "trial_period_active": MessageLookupByLibrary.simpleMessage(
-      "Пробний період активний",
-    ),
-    "trial_period_ended": MessageLookupByLibrary.simpleMessage(
-      "Пробний період завершено",
-    ),
-    "try_premium": MessageLookupByLibrary.simpleMessage("Спробуй Premium"),
     "tuning": MessageLookupByLibrary.simpleMessage("Тюнінг"),
     "type": MessageLookupByLibrary.simpleMessage("Тип"),
     "ukr": MessageLookupByLibrary.simpleMessage("Українська"),
@@ -1384,7 +1133,6 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "valid_from": MessageLookupByLibrary.simpleMessage("Діє з"),
     "valid_to": MessageLookupByLibrary.simpleMessage("Діє до"),
-    "vehicle_color": MessageLookupByLibrary.simpleMessage("Колір"),
     "vehicle_data": MessageLookupByLibrary.simpleMessage("Дані про автомобілі"),
     "vehicle_data_credit": MessageLookupByLibrary.simpleMessage(
       "Vehicle data by VehiclesDB · CC BY 4.0",
@@ -1392,19 +1140,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "vehicle_data_terms": MessageLookupByLibrary.simpleMessage(
       "Джерела та умови використання",
     ),
-    "vehicle_fuel": MessageLookupByLibrary.simpleMessage("Паливо"),
-    "vehicle_owner": MessageLookupByLibrary.simpleMessage("Власник"),
-    "vehicle_region": MessageLookupByLibrary.simpleMessage("Регіон"),
-    "vehicle_type": MessageLookupByLibrary.simpleMessage("Тип"),
-    "vehicle_weight": MessageLookupByLibrary.simpleMessage("Маса / макс. маса"),
     "vehicles_section": MessageLookupByLibrary.simpleMessage("Автомобілі"),
-    "verif_date": MessageLookupByLibrary.simpleMessage("Дата перевірки:"),
-    "verification_history": MessageLookupByLibrary.simpleMessage(
-      "Історія перевірки",
-    ),
-    "view_all_events": MessageLookupByLibrary.simpleMessage(
-      "Переглянути всі події",
-    ),
     "view_licenses": MessageLookupByLibrary.simpleMessage(
       "Переглянути ліцензії",
     ),
@@ -1413,7 +1149,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "vs_previous_month": MessageLookupByLibrary.simpleMessage(
       "від минулого місяця",
     ),
-    "write_viber": MessageLookupByLibrary.simpleMessage("Написати у Viber"),
     "yearly_plan": MessageLookupByLibrary.simpleMessage("Річний план"),
     "years": MessageLookupByLibrary.simpleMessage("Роки"),
   };
