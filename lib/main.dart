@@ -35,6 +35,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:fines_plus/core/config/flavor_config.dart';
 import 'package:fines_plus/core/services/app_initializer.dart';
@@ -97,7 +98,21 @@ void main() {
           ['Phosphor Icons'],
           await rootBundle.loadString('assets/licenses/phosphor-icons.txt'),
         );
+        for (final (font, file) in const [
+          ('Manrope', 'ofl-manrope.txt'),
+          ('Big Shoulders Display', 'ofl-bigshouldersdisplay.txt'),
+          ('JetBrains Mono', 'ofl-jetbrainsmono.txt'),
+        ]) {
+          yield LicenseEntryWithLineBreaks(
+            [font],
+            await rootBundle.loadString('assets/licenses/$file'),
+          );
+        }
       });
+      // Brand fonts ship in assets/google_fonts/ - never download them at
+      // runtime, so text renders in the right font offline and a failed
+      // download can't surface as a fatal startup error.
+      GoogleFonts.config.allowRuntimeFetching = false;
       FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
       await dotenv.load(fileName: 'assets/config/.env', isOptional: true);

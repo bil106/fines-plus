@@ -43,7 +43,28 @@ def app_config_from_json(d):
         "termsUrl": d.get("termsUrl"),
         "privacyPolicyUrl": d.get("privacyPolicyUrl"),
         "copyOverrides": d.get("copyOverrides"),
+        "displayFontFamily": d.get("displayFontFamily", "Big Shoulders Display"),
+        "bodyFontFamily": d.get("bodyFontFamily", "Manrope"),
+        "monoFontFamily": d.get("monoFontFamily", "JetBrains Mono"),
     }
+
+
+# google_fonts runtime fetching is off (lib/main.dart), so every weight
+# ThemeConfig asks for must be bundled in assets/google_fonts/, named the way
+# google_fonts looks it up: "<Family without spaces>-<Weight>.ttf".
+FONTS_DIR = os.path.join(ROOT, "assets", "google_fonts")
+
+
+def missing_fonts(cfg):
+    needed = [
+        (cfg["displayFontFamily"], "ExtraBold"),
+        (cfg["bodyFontFamily"], "Regular"),
+        (cfg["bodyFontFamily"], "Medium"),
+        (cfg["bodyFontFamily"], "ExtraBold"),
+        (cfg["monoFontFamily"], "Bold"),
+    ]
+    files = [f"{family.replace(' ', '')}-{weight}.ttf" for family, weight in needed]
+    return [f for f in files if not os.path.exists(os.path.join(FONTS_DIR, f))]
 
 
 def all_arb_keys():
@@ -114,6 +135,8 @@ def main():
             problems.append(f"{fname}: NOT in pubspec.yaml assets: - loadAppConfig('{key}') will throw at startup")
         if not logo_exists:
             problems.append(f"{fname}: logoAssetPath does not exist on disk ({cfg['logoAssetPath']})")
+        for font_file in missing_fonts(cfg):
+            problems.append(f"{fname}: font not bundled - add assets/google_fonts/{font_file} (runtime font download is off)")
         if not own_icon:
             problems.append(
                 f"{fname}: no android/app/src/{key}/res/ launcher icon - shares src/main/res/'s icon "
