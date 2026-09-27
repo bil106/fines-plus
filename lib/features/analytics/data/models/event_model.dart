@@ -32,7 +32,22 @@ class EventModel {
   factory EventModel.fromJson(Map<String, dynamic> json) => _$EventModelFromJson(json);
   Map<String, dynamic> toJson() => _$EventModelToJson(this);
 
-  IconData get icon => IconData(iconCodePoint, fontFamily: 'MaterialIcons');
+  /// Every icon an event can carry, as constants: building IconData from a
+  /// runtime code point would stop release builds from tree-shaking the
+  /// MaterialIcons font ("Avoid non-constant invocations of IconData").
+  static const _icons = <IconData>[
+    Icons.local_gas_station,
+    Icons.build,
+    Icons.build_circle,
+    Icons.local_car_wash,
+    Icons.gpp_good,
+    Icons.more_horiz,
+  ];
+
+  IconData get icon => _icons.firstWhere(
+        (icon) => icon.codePoint == iconCodePoint,
+        orElse: () => Icons.more_horiz,
+      );
   Color get iconColor => Color(iconColorValue);
 
   
