@@ -25,7 +25,6 @@ import 'package:fines_plus/features/maintenance/presentation/widgets/mileage_car
 import 'package:fines_plus/features/maintenance/presentation/widgets/nearby_stations_sheet.dart';
 import '../../../../../env/env.dart';
 import 'package:fines_plus/features/expenses/data/models/fuel_record.dart';
-import 'package:fines_plus/features/maintenance/presentation/screens/fuel_map_screen.dart';
 import 'package:fines_plus/features/settings/presentation/cubit/settings_cubit.dart';
 import 'package:fines_plus/features/settings/presentation/cubit/unit_stream.dart';
 import 'package:core_utils/formatters/thousands_separator_formatter.dart';

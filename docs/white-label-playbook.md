@@ -86,8 +86,9 @@ whether `logoAssetPath` actually points at a real file.
 - A brand can **reword a specific string** without forking the whole
   localization table, via `AppConfig.copyOverrides` + `brandCopy()`
   (`lib/core/config/brand_copy.dart`) - see "Per-brand copy overrides"
-  below. Wired up as a real example on `autodosje.json`
-  (`garage_setup_title`/`garage_setup_subtitle`).
+  below. No screen calls `brandCopy()` at the moment (the garage-setup
+  screen that used it was redesigned), so an override only takes effect
+  once the screen showing that string is switched to `brandCopy()`.
 
 ## Two real bugs this surfaced (fixed)
 
@@ -192,11 +193,11 @@ To reword a string for one brand:
    brand's config JSON.
 
 Only the call sites that actually need to vary have to change - most of
-the app can keep calling `S.of(context).xxx` directly. Today that's just
-`garage_setup_title`/`garage_setup_subtitle`
-(`lib/features/registration/presentation/screens/garage_setup_screen.dart`),
-overridden for `autodosje` - a real, working example rather than unused
-scaffolding, but deliberately small: extend it call-site-by-call-site as
+the app can keep calling `S.of(context).xxx` directly. Today there are
+none: the garage-setup screen that used to call it for
+`garage_setup_title`/`garage_setup_subtitle` was redesigned, so
+`autodosje.json`'s `garage_setup_subtitle` override has no visible effect.
+Keep it deliberately small: add call sites one by one as
 brands actually need specific strings reworded, rather than wrapping
 everything up front. `scripts/verify_wl_configs.py` flags any
 `copyOverrides` key that doesn't match a real ARB key (catches typos that

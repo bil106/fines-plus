@@ -8,7 +8,6 @@
   "market": "UA",
   "finesCheckEnabled": true,
   "copyOverrides": {
-    "garage_setup_title": "Ваш автодосьє",
     "garage_setup_subtitle": "Додайте авто зараз або зробіть це пізніше — AutoDosje вже готове показувати штрафи й нагадування"
   }
 }
