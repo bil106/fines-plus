@@ -78,10 +78,25 @@ def all_arb_keys():
     return keys
 
 
+def shared_res_flavor(flavor_key):
+    """The flavor whose res/ this one reuses via build.gradle.kts
+    sourceSets (listOf("a", "b").forEach { ... res.srcDirs("src/x/res") }),
+    or None."""
+    gradle_text = open(GRADLE, encoding="utf-8").read()
+    for flavors, source in re.findall(
+        r'listOf\(([^)]*)\)\.forEach.*?res\.srcDirs\("src/(\w+)/res"\)', gradle_text, re.DOTALL
+    ):
+        if f'"{flavor_key}"' in flavors:
+            return source
+    return None
+
+
 def has_flavor_icon(flavor_key):
-    """True if this flavor has its own launcher icon override (rather than
-    silently sharing whatever's in src/main/res/)."""
-    return os.path.exists(os.path.join(ROOT, "android/app/src", flavor_key, "res/mipmap-mdpi/ic_launcher.png"))
+    """True if this flavor has its own launcher icon override (or reuses
+    another brand flavor's res/), rather than silently sharing whatever's in
+    src/main/res/."""
+    key = shared_res_flavor(flavor_key) or flavor_key
+    return os.path.exists(os.path.join(ROOT, "android/app/src", key, "res/mipmap-mdpi/ic_launcher.png"))
 
 
 def main():

@@ -12,14 +12,27 @@ enum PlateMarket {
 
   /// Free-form: every US state has its own format, vanity plates included,
   /// so only length and characters are checked.
-  us(slots: null, maxLength: 8);
+  us(slots: null, maxLength: 8),
 
-  const PlateMarket({required this.slots, required this.maxLength});
+  /// Free-form as well: Mexican plates differ per state (e.g. `ABC123A`,
+  /// `ABC1234`).
+  mx(slots: null, maxLength: 8),
+
+  /// Mercosur `AB123CD` (since 2016) or the older `ABC123`, still on the
+  /// road - typed free-form (the two differ from the 3rd character on) and
+  /// validated against both.
+  ar(slots: null, maxLength: 7, patterns: ['LLDDDLL', 'LLLDDD']);
+
+  const PlateMarket({required this.slots, required this.maxLength, this.patterns});
 
   /// One character per plate position: `L` letter, `D` digit. Null means
   /// free-form letters/digits up to [maxLength].
   final String? slots;
   final int maxLength;
+
+  /// Plate shapes (same `L`/`D` notation) a free-form market must still
+  /// match to be valid; null accepts any letters/digits.
+  final List<String>? patterns;
 
   static final _digit = RegExp(r'\d');
   static final _anyLetter = RegExp(r'[A-Z]');
@@ -32,6 +45,8 @@ enum PlateMarket {
   static PlateMarket fromCode(String market) => switch (market.toUpperCase()) {
         'UA' => PlateMarket.ua,
         'ES' => PlateMarket.es,
+        'MX' => PlateMarket.mx,
+        'AR' => PlateMarket.ar,
         _ => PlateMarket.us,
       };
 
@@ -45,27 +60,35 @@ enum PlateMarket {
   /// without spaces).
   bool isValid(String value) {
     final plate = value.toUpperCase();
-    final pattern = slots;
-    if (pattern == null) {
+    final shapes = slots != null ? [slots!] : patterns;
+    if (shapes == null) {
       return plate.isNotEmpty && plate.length <= maxLength && plate.split('').every(isAlphanumeric);
     }
-    if (plate.length != pattern.length) return false;
-    for (var i = 0; i < pattern.length; i++) {
-      final ok = pattern[i] == 'L' ? isLetter(plate[i]) : isDigit(plate[i]);
+    return shapes.any((shape) => _matches(plate, shape));
+  }
+
+  bool _matches(String plate, String shape) {
+    if (plate.length != shape.length) return false;
+    for (var i = 0; i < shape.length; i++) {
+      final ok = shape[i] == 'L' ? isLetter(plate[i]) : isDigit(plate[i]);
       if (!ok) return false;
     }
     return true;
   }
 
-  /// How the plate is printed on the badge: `AA 1234 BB` / `1234 BCD`;
-  /// free-form or non-standard plates are shown as typed.
+  /// How the plate is printed on the badge: `AA 1234 BB` / `1234 BCD` /
+  /// `AB 123 CD` / `ABC 123`; free-form or non-standard plates are shown as
+  /// typed.
   String display(String raw) {
     final plate = raw.replaceAll(' ', '').toUpperCase();
     if (!isValid(plate)) return raw.toUpperCase();
     return switch (this) {
       ua => '${plate.substring(0, 2)} ${plate.substring(2, 6)} ${plate.substring(6)}',
       es => '${plate.substring(0, 4)} ${plate.substring(4)}',
-      us => plate,
+      ar => plate.length == 7
+          ? '${plate.substring(0, 2)} ${plate.substring(2, 5)} ${plate.substring(5)}'
+          : '${plate.substring(0, 3)} ${plate.substring(3)}',
+      us || mx => plate,
     };
   }
 
@@ -74,5 +97,7 @@ enum PlateMarket {
         ua => S.current.hint_auto_num,
         es => S.current.hint_auto_num_es,
         us => S.current.hint_auto_num_us,
+        mx => S.current.hint_auto_num_mx,
+        ar => S.current.hint_auto_num_ar,
       };
 }

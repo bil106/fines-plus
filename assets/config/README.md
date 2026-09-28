@@ -24,9 +24,10 @@ not passed.
   contact/asset info.
 - `market` — region code (`UA`, `US`, `ES`, ...). Drives the licence-plate
   format and dashboard plate badge (`AppConfig.plateMarket` ->
-  `PlateMarket`), the default language (`uk` for `UA`, `en` otherwise) and
-  the default distance/currency/fuel units (`UA`: km/UAH/l/100km, `US`:
-  mil/USD/mpg, others: km/EUR/l/100km). Defaults to `UA` if omitted (keeps
+  `PlateMarket`), the default language (`uk` for `UA`, `es` for `MX`/`AR`,
+  otherwise the device's `es` or `en`) and the default distance/currency/
+  fuel units (`UA`: km/UAH/l/100km, `US`: mil/USD/mpg, `MX`: km/MXN/l/100km,
+  `AR`: km/ARS/l/100km, others: km/EUR/l/100km). Defaults to `UA` if omitted (keeps
   existing configs working unchanged).
 - `finesCheckEnabled` — gates the automated Ukrainian traffic-fines check
   (`core/config/fines_api.dart` + the Cloud Run backend). That feature is
@@ -63,3 +64,6 @@ Firebase project, iOS scheme, store listing).
   `privacyPolicyUrl` — fill those in before building it for real. Its
   logo and launcher icon are the designer's interim version, pending
   approval — see `branding/carpapers/README.md`.
+- `carpapersmx.json` / `carpapersar.json` — CarPapers for Mexico /
+  Argentina: copies of `carpapers.json` with `market` `MX` / `AR`. Keep the
+  shared fields in sync with `carpapers.json` when changing one.

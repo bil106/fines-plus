@@ -59,4 +59,30 @@ void main() {
       expect(_format(PlateMarket.us, 'abcdefghij'), 'ABCDEFGH');
     });
   });
+
+  group('Mexico and Argentina', () {
+    test('market codes map to their plate rules', () {
+      expect(PlateMarket.fromCode('MX'), PlateMarket.mx);
+      expect(PlateMarket.fromCode('ar'), PlateMarket.ar);
+    });
+
+    test('Mexico is free-form like the US', () {
+      expect(PlateMarket.mx.isValid('ABC123A'), isTrue);
+      expect(PlateMarket.mx.display('abc123a'), 'ABC123A');
+    });
+
+    test('Argentina takes Mercosur and the older format', () {
+      expect(PlateMarket.ar.isValid('AB123CD'), isTrue);
+      expect(PlateMarket.ar.isValid('ABC123'), isTrue);
+      expect(PlateMarket.ar.isValid('1234BCD'), isFalse);
+      expect(PlateMarket.ar.isValid('AB12CD'), isFalse);
+      expect(PlateMarket.ar.display('ab123cd'), 'AB 123 CD');
+      expect(PlateMarket.ar.display('abc123'), 'ABC 123');
+    });
+
+    test('Argentina input keeps up to 7 letters/digits', () {
+      expect(_format(PlateMarket.ar, 'ab 123 cd'), 'AB123CD');
+      expect(_format(PlateMarket.ar, 'ab123cdx'), 'AB123CD');
+    });
+  });
 }

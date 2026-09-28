@@ -919,6 +919,26 @@ class S {
     );
   }
 
+  /// `ABC123A`
+  String get hint_auto_num_mx {
+    return Intl.message(
+      'ABC123A',
+      name: 'hint_auto_num_mx',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `AB123CD`
+  String get hint_auto_num_ar {
+    return Intl.message(
+      'AB123CD',
+      name: 'hint_auto_num_ar',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `XEE128436`
   String get hint_tech_data_num {
     return Intl.message(

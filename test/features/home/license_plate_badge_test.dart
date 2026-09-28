@@ -60,4 +60,17 @@ void main() {
     expect(find.text('UA'), findsNothing);
     expect(tester.takeException(), isNull);
   });
+
+  testWidgets('MX plate: MÉXICO header, number as typed', (tester) async {
+    await _pumpBadge(tester, 'MX', 'abc123a');
+    expect(find.text('MÉXICO'), findsOneWidget);
+    expect(find.text('ABC123A'), findsOneWidget);
+  });
+
+  testWidgets('AR plate: Mercosur band and "AB 123 CD" spacing', (tester) async {
+    await _pumpBadge(tester, 'AR', 'AB123CD');
+    expect(find.text('REPÚBLICA ARGENTINA'), findsOneWidget);
+    expect(find.text('AB 123 CD'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
 }

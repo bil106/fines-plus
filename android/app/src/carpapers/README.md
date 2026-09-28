@@ -16,3 +16,9 @@ Builds and runs:
 - `res/` - placeholder launcher icon and `app_name`.
 - The `applicationId` in `build.gradle.kts` becomes permanent on the first
   Play Console upload.
+
+`carpapersmx` (`com.carpapers.mx`) and `carpapersar` (`com.carpapers.ar`)
+use this folder's `res/` and `AndroidManifest.xml` too, via the `sourceSets`
+block in `build.gradle.kts`. Their own `src/carpapersmx/` and
+`src/carpapersar/` hold only `google-services.json` (same Firebase project,
+one Android app each, same SHA rules as above).

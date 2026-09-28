@@ -71,4 +71,16 @@ void main() {
     expect(SettingsCubit.defaultLanguageCode('US', 'de'), 'en');
     expect(SettingsCubit.defaultLanguageCode('UA', 'es'), 'uk');
   });
+
+  test('Mexico and Argentina default to Spanish, km, liters and their peso', () async {
+    final mx = await _settingsFor('MX');
+    expect(mx.locale.languageCode, 'es');
+    expect(mx.unit, 'km');
+    expect(mx.currency, 'MXN');
+    expect(mx.fuelConsumptionUnit, 'l/100km');
+
+    final ar = await _settingsFor('AR');
+    expect(ar.locale.languageCode, 'es');
+    expect(ar.currency, 'ARS');
+  });
 }

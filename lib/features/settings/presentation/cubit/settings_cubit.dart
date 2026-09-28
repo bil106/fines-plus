@@ -24,13 +24,16 @@ class SettingsCubit extends Cubit<SettingsState> {
     _loadSettings();
   }
 
-  /// UA-market brands ship in Ukrainian by default. Every other market
-  /// (EN/ES - see AppConfig.market) follows the phone when it's set to
-  /// Spanish and falls back to English.
+  /// UA-market brands ship in Ukrainian, Spanish-speaking markets (MX, AR)
+  /// in Spanish. Every other market (US - see AppConfig.market) follows the
+  /// phone when it's set to Spanish and falls back to English.
   @visibleForTesting
   static String defaultLanguageCode(String market, String deviceLanguage) {
-    if (market.toUpperCase() == 'UA') return 'uk';
-    return deviceLanguage == 'es' ? 'es' : 'en';
+    return switch (market.toUpperCase()) {
+      'UA' => 'uk',
+      'MX' || 'AR' => 'es',
+      _ => deviceLanguage == 'es' ? 'es' : 'en',
+    };
   }
 
   static String _defaultLanguageCode(String market) =>
@@ -42,6 +45,8 @@ class SettingsCubit extends Cubit<SettingsState> {
       switch (market.toUpperCase()) {
         'UA' => (unit: 'km', currency: 'UAH', fuelConsumptionUnit: 'l/100km'),
         'US' => (unit: 'mil', currency: 'USD', fuelConsumptionUnit: 'mpg'),
+        'MX' => (unit: 'km', currency: 'MXN', fuelConsumptionUnit: 'l/100km'),
+        'AR' => (unit: 'km', currency: 'ARS', fuelConsumptionUnit: 'l/100km'),
         _ => (unit: 'km', currency: 'EUR', fuelConsumptionUnit: 'l/100km'),
       };
 

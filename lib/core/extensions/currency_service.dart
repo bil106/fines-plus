@@ -35,6 +35,9 @@ class CurrencyService {
         "UAH": 1.0,
         "USD": 0.024, 
         "EUR": 0.022, 
+        // Offline fallback only (rates as of 2026-09-28).
+        "MXN": 0.44,
+        "ARS": 34.0,
       };
     }
   }

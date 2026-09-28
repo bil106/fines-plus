@@ -11,7 +11,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 /// A licence plate in the brand market's style (AppConfig.market), drawn on
 /// the dashboard hero card. All markets share the silver frame and white
 /// field; UA gets the blue "UA" strip with the flag, ES the blue EU strip
-/// with the stars and "E", US a navy "USA" header above the number.
+/// with the stars and "E", US / MX a navy "USA" / "MÉXICO" header above the
+/// number, AR the blue Mercosur band on top.
 class LicensePlateBadge extends StatelessWidget {
   final String number;
 
@@ -20,7 +21,8 @@ class LicensePlateBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final market = context.watch<AppConfig>().plateMarket;
-    final ink = market == PlateMarket.us ? AppColors.plateUsInk : AppColors.plateInk;
+    final headerOnTop = market == PlateMarket.us || market == PlateMarket.mx;
+    final ink = headerOnTop ? AppColors.plateUsInk : AppColors.plateInk;
     final numberText = Text(
       market.display(number),
       maxLines: 1,
@@ -71,9 +73,11 @@ class LicensePlateBadge extends StatelessWidget {
         child: ClipRRect(
           borderRadius: AppBorders.radiusSmall,
           child: IntrinsicHeight(
-            child: market == PlateMarket.us
-                ? _UsField(numberText: numberText)
-                : Row(
+            child: switch (market) {
+              PlateMarket.us => _HeaderField(header: 'USA', numberText: numberText),
+              PlateMarket.mx => _HeaderField(header: 'MÉXICO', numberText: numberText),
+              PlateMarket.ar => _MercosurField(numberText: numberText),
+              _ => Row(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
@@ -84,6 +88,7 @@ class LicensePlateBadge extends StatelessWidget {
                       ),
                     ],
                   ),
+            },
           ),
         ),
       ),
@@ -215,12 +220,13 @@ class _EuStarsPainter extends CustomPainter {
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
-/// US plates have no side strip - a small "USA" header sits above the
-/// number instead.
-class _UsField extends StatelessWidget {
+/// US / Mexican plates have no side strip - a small country header sits
+/// above the number instead.
+class _HeaderField extends StatelessWidget {
+  final String header;
   final Widget numberText;
 
-  const _UsField({required this.numberText});
+  const _HeaderField({required this.header, required this.numberText});
 
   @override
   Widget build(BuildContext context) {
@@ -230,7 +236,7 @@ class _UsField extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.only(top: 4),
           child: Text(
-            'USA',
+            header,
             style: Theme.of(context).textTheme.labelSmall?.copyWith(
               color: AppColors.plateUsInk,
               fontSize: 9,
@@ -243,6 +249,43 @@ class _UsField extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.fromLTRB(14, 0, 14, 3),
           child: numberText,
+        ),
+      ],
+    );
+  }
+}
+
+/// Mercosur plate (Argentina): a blue band with the country name across
+/// the top, the number below.
+class _MercosurField extends StatelessWidget {
+  final Widget numberText;
+
+  const _MercosurField({required this.numberText});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Container(
+          color: AppColors.plateMercosurBlue,
+          padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 8),
+          child: Text(
+            'REPÚBLICA ARGENTINA',
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+              color: AppColors.neutreBlanc,
+              fontSize: 7,
+              fontWeight: FontWeight.w800,
+              letterSpacing: 0.8,
+              height: 1,
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(12, 1, 12, 3),
+          child: Center(widthFactor: 1, child: numberText),
         ),
       ],
     );

@@ -238,6 +238,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             DropdownMenuItem(value: 'UAH', child: Text('UAH')),
                             DropdownMenuItem(value: 'USD', child: Text('USD')),
                             DropdownMenuItem(value: 'EUR', child: Text('EUR')),
+                            DropdownMenuItem(value: 'MXN', child: Text('MXN')),
+                            DropdownMenuItem(value: 'ARS', child: Text('ARS')),
                           ],
                           onChanged: (v) =>
                               context.read<SettingsCubit>().setCurrency(v!),

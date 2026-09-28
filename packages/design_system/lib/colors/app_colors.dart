@@ -152,6 +152,7 @@ abstract final class AppColors {
   static const plateEuStripBottom = Color(0xFF002A80);
   static const plateEuStar = Color(0xFFFFCC00);
   static const plateUsInk = Color(0xFF1B2A4A);
+  static const plateMercosurBlue = Color(0xFF1C3F94);
 
   // Note: the dashboard's warm-neutral background/border/divider and the
   // unpaid-fines alert colors used to live here as fixed consts. They are

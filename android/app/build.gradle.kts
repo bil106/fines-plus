@@ -72,6 +72,31 @@ android {
             applicationId = "com.autodosje.app"
             resValue("string", "app_name", "AutoDosje")
         }
+        // CarPapers for Mexico / Argentina: same brand, own market config
+        // (assets/config/carpapers{mx,ar}.json) and Play listing. Becomes
+        // permanent on the first Play Console upload.
+        create("carpapersmx") {
+            dimension = "brand"
+            applicationId = "com.carpapers.mx"
+            resValue("string", "app_name", "CarPapers")
+        }
+        create("carpapersar") {
+            dimension = "brand"
+            applicationId = "com.carpapers.ar"
+            resValue("string", "app_name", "CarPapers")
+        }
+    }
+
+    // The Mexico / Argentina flavors reuse CarPapers' icons, splash,
+    // notification icons and manifest overlay instead of copying them; only
+    // google-services.json lives in their own src/<flavor>/ folder.
+    sourceSets {
+        listOf("carpapersmx", "carpapersar").forEach { flavor ->
+            getByName(flavor) {
+                res.srcDirs("src/carpapers/res")
+                manifest.srcFile("src/carpapers/AndroidManifest.xml")
+            }
+        }
     }
  
     compileOptions {

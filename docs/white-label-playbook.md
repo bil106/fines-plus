@@ -14,6 +14,12 @@
   done; needs a real Firebase project + applicationId/bundle id before it
   can actually build (see below) - unlike autodosje, this one is a real
   target market, not a prototype.
+- `carpapersmx` / `carpapersar` - CarPapers for Mexico / Argentina
+  (`com.carpapers.mx` / `com.carpapers.ar`), same brand and Firebase project
+  (`carpapers-bde41`) as `carpapers`, only `market` differs (`MX`/`AR`).
+  They reuse `android/app/src/carpapers/`'s res and manifest through the
+  `sourceSets` block in `build.gradle.kts`, so only `google-services.json`
+  lives in their own `src/<flavor>/`.
 
 Run `python3 scripts/verify_wl_configs.py` any time to re-check all of the
 above without needing a Flutter/Dart toolchain - it validates each config's
@@ -54,10 +60,14 @@ whether `logoAssetPath` actually points at a real file.
     pattern (`VehicleNumberFormatter`), validation (`CarCubit`,
     `CarInfoCubit`, garage sheet), input hint, and the dashboard
     `LicensePlateBadge` style. `UA` = `AA1234BB` + UA strip, `ES` =
-    `1234BCD` (consonants only) + EU strip, `US` (and any market without
-    its own rules) = free-form 1-8 letters/digits + "USA" header.
-  - **Language** - `uk` for `UA`, `en` otherwise (`SettingsCubit`).
-  - **Units/currency** - `UA`: km/UAH/l/100km, `US`: mil/USD/mpg, other
+    `1234BCD` (consonants only) + EU strip, `MX` = free-form 1-8 + "MÉXICO"
+    header, `AR` = Mercosur `AB123CD` or old `ABC123` + blue "REPÚBLICA
+    ARGENTINA" band, `US` (and any market without its own rules) =
+    free-form 1-8 letters/digits + "USA" header.
+  - **Language** - `uk` for `UA`, `es` for `MX`/`AR`, otherwise `es` if the
+    device is Spanish, else `en` (`SettingsCubit`).
+  - **Units/currency** - `UA`: km/UAH/l/100km, `US`: mil/USD/mpg (fuel in
+    US gallons), `MX`: km/MXN/l/100km, `AR`: km/ARS/l/100km, other
     markets: km/EUR/l/100km (`SettingsCubit._marketDefaults`). Amounts are
     still stored in UAH and converted for display, as before.
 - iOS: the hardcoded `FirebaseOptions` in `lib/main.dart` (Fines+'s own
