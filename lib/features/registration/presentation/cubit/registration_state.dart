@@ -6,7 +6,6 @@ class RegistrationState extends Equatable {
   final String? emailError;
   final String? error;
   final bool isRegistered;
-  final bool isDeleted;
 
   const RegistrationState({
     this.isLoading = false,
@@ -14,7 +13,6 @@ class RegistrationState extends Equatable {
     this.emailError,
     this.error,
     this.isRegistered = false,
-    this.isDeleted = false,
   });
 
   RegistrationState copyWith({
@@ -23,7 +21,6 @@ class RegistrationState extends Equatable {
     String? emailError,
     String? error,
     bool? isRegistered,
-    bool? isDeleted,
   }) {
     return RegistrationState(
       isLoading: isLoading ?? this.isLoading,
@@ -31,10 +28,9 @@ class RegistrationState extends Equatable {
       emailError: emailError,
       error: error,
       isRegistered: isRegistered ?? this.isRegistered,
-      isDeleted: isDeleted ?? this.isDeleted,
     );
   }
 
   @override
-  List<Object?> get props => [isLoading, isExistingUser, emailError, error, isRegistered, isDeleted];
+  List<Object?> get props => [isLoading, isExistingUser, emailError, error, isRegistered];
 }

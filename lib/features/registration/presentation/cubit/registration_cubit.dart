@@ -1,7 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:fines_plus/env/env.dart';
+import 'package:fines_plus/features/registration/presentation/cubit/account_deletion_result.dart';
 import 'package:fines_plus/features/registration/presentation/cubit/registration_state.dart';
+import 'package:fines_plus/features/vehicle/data/datasources/car_info_local_data_source.dart';
+import 'package:fines_plus/features/vehicle/data/datasources/car_photo_uploader.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -145,26 +148,33 @@ Future<Map<String, String>> loadCredentials() async {
     return DateTime.now();
   }
 
-  Future<void> deleteAccount() async {
+  /// Deletes the signed-in user's cloud data and then the account itself.
+  /// Each car goes through [CarInfoLocalDataSource.deleteCarDoc], which also
+  /// clears its top-level reminders/analytics. Local caches are the caller's
+  /// job, same as on log out.
+  Future<AccountDeletionResult> deleteAccount(CarInfoLocalDataSource cars) async {
     final user = auth.currentUser;
-    if (user == null) return;
+    if (user == null) return AccountDeletionResult.failed;
+
+    // Firebase refuses user.delete() unless the last sign-in was within about
+    // five minutes. Checking first keeps the data intact in that case instead
+    // of wiping it and then failing on the account.
+    final lastSignIn = user.metadata.lastSignInTime;
+    if (lastSignIn == null || DateTime.now().difference(lastSignIn) > const Duration(minutes: 5)) {
+      return AccountDeletionResult.requiresRecentLogin;
+    }
 
     emit(state.copyWith(isLoading: true, error: null));
 
     try {
       final uid = user.uid;
       final firestore = FirebaseFirestore.instance;
+      final photos = CarPhotoUploader();
 
       final carsSnap = await firestore.collection('users').doc(uid).collection('cars').get();
       for (final carDoc in carsSnap.docs) {
-        final subCollections = ['expenses', 'scheduleTasks', 'reminders'];
-        for (final col in subCollections) {
-          final items = await carDoc.reference.collection(col).get();
-          for (final item in items.docs) {
-            await item.reference.delete();
-          }
-        }
-        await carDoc.reference.delete();
+        await photos.delete(uid: uid, carId: carDoc.id);
+        await cars.deleteCarDoc(carDoc.id);
       }
 
       final historySnap = await firestore.collection('fines_history').where('userId', isEqualTo: uid).get();
@@ -178,11 +188,17 @@ Future<Map<String, String>> loadCredentials() async {
 
       await user.delete();
 
-      emit(state.copyWith(isLoading: false, isDeleted: true));
+      emit(state.copyWith(isLoading: false));
+      return AccountDeletionResult.deleted;
     } on FirebaseAuthException catch (e) {
-      emit(state.copyWith(isLoading: false, error: e.message ?? e.code));
+      emit(state.copyWith(isLoading: false));
+      return e.code == 'requires-recent-login'
+          ? AccountDeletionResult.requiresRecentLogin
+          : AccountDeletionResult.failed;
     } catch (e) {
-      emit(state.copyWith(isLoading: false, error: e.toString()));
+      debugPrint('deleteAccount failed: $e');
+      emit(state.copyWith(isLoading: false));
+      return AccountDeletionResult.failed;
     }
   }
 }

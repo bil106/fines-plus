@@ -189,6 +189,16 @@ class MessageLookup extends MessageLookupByLibrary {
       "Eliminar TODOS los gastos",
     ),
     "delete": MessageLookupByLibrary.simpleMessage("Eliminar"),
+    "delete_account": MessageLookupByLibrary.simpleMessage("Eliminar cuenta"),
+    "delete_account_confirmation": MessageLookupByLibrary.simpleMessage(
+      "Tu cuenta, vehículos, gastos, recordatorios y fotos se eliminarán de forma permanente. Esta acción no se puede deshacer.",
+    ),
+    "delete_account_failed": MessageLookupByLibrary.simpleMessage(
+      "No se pudo eliminar tu cuenta. Revisa tu conexión e inténtalo de nuevo.",
+    ),
+    "delete_account_relogin": MessageLookupByLibrary.simpleMessage(
+      "Por tu seguridad, vuelve a iniciar sesión y luego elimina tu cuenta.",
+    ),
     "delete_all_expenses": MessageLookupByLibrary.simpleMessage(
       "¿Eliminar todos los gastos?",
     ),

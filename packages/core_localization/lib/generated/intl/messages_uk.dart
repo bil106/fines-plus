@@ -178,6 +178,16 @@ class MessageLookup extends MessageLookupByLibrary {
       "Видалити ВСІ витрати",
     ),
     "delete": MessageLookupByLibrary.simpleMessage("Видалити"),
+    "delete_account": MessageLookupByLibrary.simpleMessage("Видалити акаунт"),
+    "delete_account_confirmation": MessageLookupByLibrary.simpleMessage(
+      "Ваш акаунт, автомобілі, витрати, нагадування та фото буде видалено назавжди. Цю дію не можна скасувати.",
+    ),
+    "delete_account_failed": MessageLookupByLibrary.simpleMessage(
+      "Не вдалося видалити акаунт. Перевірте з\'єднання та спробуйте ще раз.",
+    ),
+    "delete_account_relogin": MessageLookupByLibrary.simpleMessage(
+      "З міркувань безпеки увійдіть знову, а потім видаліть акаунт.",
+    ),
     "delete_all_expenses": MessageLookupByLibrary.simpleMessage(
       "Видалити всі витрати?",
     ),

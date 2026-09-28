@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
+import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_brand_theme.dart';
 import 'package:design_system/widget/app_page_app_bar.dart';
 import 'package:design_system/widget/app_toggle_switch.dart';
@@ -8,6 +9,8 @@ import 'package:fines_plus/app/router/app_router.dart';
 import 'package:fines_plus/core/config/app_config.dart';
 import 'package:fines_plus/env/env.dart';
 import 'package:fines_plus/features/maintenance/presentation/cubit/maintenance_cubit.dart';
+import 'package:fines_plus/features/registration/presentation/cubit/account_deletion_result.dart';
+import 'package:fines_plus/features/registration/presentation/cubit/registration_cubit.dart';
 import 'package:fines_plus/features/settings/presentation/cubit/settings_cubit.dart';
 import 'package:fines_plus/features/settings/presentation/cubit/settings_state.dart';
 import 'package:fines_plus/features/vehicle/data/models/car_info_model.dart';
@@ -124,8 +127,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ],
       ),
     );
-    if (confirmed != true) return;
+    if (confirmed != true || !context.mounted) return;
+    await _signOutAndLeave(context);
+  }
 
+  Future<void> _signOutAndLeave(BuildContext context) async {
     // This device's cached car id and expense records belong to whoever was
     // signed in — leaving them behind would let a different account signed
     // into this device next inherit them before its own Firestore data
@@ -141,6 +147,70 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
     if (!context.mounted) return;
     context.router.root.replaceAll([RegistrationRoute()]);
+  }
+
+  Future<void> _confirmDeleteAccount(BuildContext context) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(S.of(context).delete_account),
+        content: Text(S.of(context).delete_account_confirmation),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: Text(S.of(context).cancel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: Text(
+              S.of(context).delete_account,
+              style: TextStyle(color: context.brandTheme.statusDanger),
+            ),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !context.mounted) return;
+
+    final registrationCubit = context.read<RegistrationCubit>();
+    final cars = context.read<CarCubit>().local;
+    final navigator = Navigator.of(context, rootNavigator: true);
+    showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => const Center(child: AppLoaders.medium),
+    );
+    final result = await registrationCubit.deleteAccount(cars);
+    navigator.pop();
+    if (!context.mounted) return;
+
+    switch (result) {
+      case AccountDeletionResult.deleted:
+        await _signOutAndLeave(context);
+      case AccountDeletionResult.requiresRecentLogin:
+        final signOut = await showDialog<bool>(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: Text(S.of(context).delete_account),
+            content: Text(S.of(context).delete_account_relogin),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(ctx).pop(false),
+                child: Text(S.of(context).cancel),
+              ),
+              TextButton(
+                onPressed: () => Navigator.of(ctx).pop(true),
+                child: Text(S.of(context).log_out),
+              ),
+            ],
+          ),
+        );
+        if (signOut == true && context.mounted) await _signOutAndLeave(context);
+      case AccountDeletionResult.failed:
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(S.of(context).delete_account_failed)),
+        );
+    }
   }
 
   @override
@@ -360,6 +430,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     style: TextStyle(
                       color: context.brandTheme.statusDanger,
                       fontWeight: FontWeight.w700,
+                      fontSize: 13,
+                    ),
+                  ),
+                ),
+              ),
+              Center(
+                child: TextButton(
+                  onPressed: () => _confirmDeleteAccount(context),
+                  child: Text(
+                    S.of(context).delete_account,
+                    style: TextStyle(
+                      color: context.brandTheme.statusDanger,
                       fontSize: 13,
                     ),
                   ),

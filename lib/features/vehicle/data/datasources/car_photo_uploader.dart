@@ -26,4 +26,13 @@ class CarPhotoUploader {
     await ref.putFile(File(file.path)).timeout(const Duration(seconds: 30));
     return ref.getDownloadURL().timeout(const Duration(seconds: 15));
   }
+
+  /// Removes the car's photo; a car without one is not an error.
+  Future<void> delete({required String uid, required String carId}) async {
+    try {
+      await FirebaseStorage.instance.ref('car_photos/$uid/$carId.jpg').delete();
+    } on FirebaseException catch (e) {
+      if (e.code != 'object-not-found') rethrow;
+    }
+  }
 }

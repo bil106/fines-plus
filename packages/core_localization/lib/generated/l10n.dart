@@ -3854,6 +3854,46 @@ class S {
     );
   }
 
+  /// `Delete account`
+  String get delete_account {
+    return Intl.message(
+      'Delete account',
+      name: 'delete_account',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Your account, vehicles, expenses, reminders and photos will be deleted permanently. This can't be undone.`
+  String get delete_account_confirmation {
+    return Intl.message(
+      'Your account, vehicles, expenses, reminders and photos will be deleted permanently. This can\'t be undone.',
+      name: 'delete_account_confirmation',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `For your security, sign in again and then delete your account.`
+  String get delete_account_relogin {
+    return Intl.message(
+      'For your security, sign in again and then delete your account.',
+      name: 'delete_account_relogin',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Couldn't delete your account. Check your connection and try again.`
+  String get delete_account_failed {
+    return Intl.message(
+      'Couldn\'t delete your account. Check your connection and try again.',
+      name: 'delete_account_failed',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Paid`
   String get paid {
     return Intl.message('Paid', name: 'paid', desc: '', args: []);
