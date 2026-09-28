@@ -34,7 +34,8 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m5(count) => "Multas nuevas encontradas: ${count}";
 
-  static String m6(count) => "${count} autos";
+  static String m6(count) =>
+      "${Intl.plural(count, one: '1 auto', other: '${count} autos')}";
 
   static String m7(date) => "OK hasta ${date}";
 
@@ -328,12 +329,17 @@ class MessageLookup extends MessageLookupByLibrary {
     "fuel_location_unavailable": MessageLookupByLibrary.simpleMessage(
       "Permite el acceso a tu ubicación para encontrar gasolineras cercanas",
     ),
+    "fuel_magna": MessageLookupByLibrary.simpleMessage("Magna"),
+    "fuel_midgrade": MessageLookupByLibrary.simpleMessage("Intermedia"),
+    "fuel_premium": MessageLookupByLibrary.simpleMessage("Premium"),
     "fuel_prompt_body": MessageLookupByLibrary.simpleMessage(
       "¿Agregar los datos de la carga de combustible?",
     ),
     "fuel_prompt_title": MessageLookupByLibrary.simpleMessage(
       "Cargar combustible",
     ),
+    "fuel_regular": MessageLookupByLibrary.simpleMessage("Regular"),
+    "fuel_super": MessageLookupByLibrary.simpleMessage("Súper"),
     "fuel_type": MessageLookupByLibrary.simpleMessage("Tipo de combustible"),
     "fuel_up": MessageLookupByLibrary.simpleMessage("Cargar combustible"),
     "full_charge": MessageLookupByLibrary.simpleMessage("Carga completa"),
@@ -462,6 +468,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Mantenimiento pendiente",
     ),
     "map_rating": m10,
+    "mi": MessageLookupByLibrary.simpleMessage("mi"),
     "mileage": MessageLookupByLibrary.simpleMessage("Kilometraje"),
     "mileage_statistics": MessageLookupByLibrary.simpleMessage(
       "Estadísticas de kilometraje",

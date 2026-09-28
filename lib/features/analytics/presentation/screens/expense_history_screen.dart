@@ -105,7 +105,7 @@ List<EventModel> _buildEvents(BuildContext context, MaintenanceState state) {
   String mileage(int? value) {
     if (value == null || value <= 0) return '';
     return isMiles
-        ? '${(value * 0.621371).toStringAsFixed(0)} mil'
+        ? '${(value * 0.621371).toStringAsFixed(0)} ${s.mi}'
         : '$value ${s.km}';
   }
 

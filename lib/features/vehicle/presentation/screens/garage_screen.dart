@@ -427,7 +427,7 @@ class CarMileageAndStatusState extends State<CarMileageAndStatus> {
         : S.of(context).garage_status_ok;
 
     final settingsCubit = context.read<SettingsCubit>();
-    final unit = settingsCubit.state.unit == 'mil' ? 'mil' : S.of(context).km;
+    final unit = settingsCubit.state.unit == 'mil' ? S.of(context).mi : S.of(context).km;
     final displayMileage = UnitStream(
       settingsCubit,
     ).convert(mileage.toDouble()).round();

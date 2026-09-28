@@ -105,7 +105,7 @@ class HeroExpenseCard extends StatelessWidget {
       currency,
       fromCurrency: S.of(context).grn,
     );
-    final mileageUnit = isMiles ? 'mil' : S.of(context).km;
+    final mileageUnit = isMiles ? S.of(context).mi : S.of(context).km;
     final fuelValue = unitStream.convertFuel(stats.averageFuelConsumption);
     final fuelUnit = settingsCubit.state.fuelConsumptionUnit == 'l/100km'
         ? "l/100${S.of(context).km}"
@@ -273,7 +273,8 @@ class HeroExpenseCard extends StatelessWidget {
                       _FuelPanel(
                         fuelValue: fuelValue.toStringAsFixed(1),
                         fuelUnit: fuelUnit,
-                        costPerKm: costPerKmConverted.toStringAsFixed(1),
+                        // A dollar per mile is cents: one decimal would show $0.13 as 0.0.
+                        costPerKm: costPerKmConverted.toStringAsFixed(costPerKmConverted < 1 ? 2 : 1),
                         costPerKmUnit: '$currency/$mileageUnit',
                       ),
                     ],

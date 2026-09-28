@@ -44,7 +44,7 @@
   "garage_setup_subtitle": "Agrega tu auto ahora o hazlo más tarde: puedes empezar a usar la app de inmediato",
   "garage_continue": "Continuar",
   "my_garage": "Garaje",
-  "garage_cars_count": "{count} autos",
+  "garage_cars_count": "{count, plural, =1{1 auto} other{{count} autos}}",
   "@garage_cars_count": {
     "placeholders": {
       "count": {
@@ -153,6 +153,12 @@
   "fuel_ai95_plus": "AI-95+",
   "fuel_ai95": "AI-95",
   "fuel_ai92": "AI-92",
+  "fuel_regular": "Regular",
+  "mi": "mi",
+  "fuel_midgrade": "Intermedia",
+  "fuel_premium": "Premium",
+  "fuel_magna": "Magna",
+  "fuel_super": "Súper",
   "fuel_gas_lpg": "Gas LP",
   "fuel_chip_a95": "A95",
   "fuel_chip_a92": "A92",

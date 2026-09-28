@@ -305,10 +305,15 @@ class MessageLookup extends MessageLookupByLibrary {
     "fuel_location_unavailable": MessageLookupByLibrary.simpleMessage(
       "Дозвольте геолокацію, щоб знайти заправки поруч",
     ),
+    "fuel_magna": MessageLookupByLibrary.simpleMessage("Magna"),
+    "fuel_midgrade": MessageLookupByLibrary.simpleMessage("Midgrade"),
+    "fuel_premium": MessageLookupByLibrary.simpleMessage("Premium"),
     "fuel_prompt_body": MessageLookupByLibrary.simpleMessage(
       "Додати дані про заправку?",
     ),
     "fuel_prompt_title": MessageLookupByLibrary.simpleMessage("Заправка"),
+    "fuel_regular": MessageLookupByLibrary.simpleMessage("Regular"),
+    "fuel_super": MessageLookupByLibrary.simpleMessage("Super"),
     "fuel_type": MessageLookupByLibrary.simpleMessage("Тип пального"),
     "fuel_up": MessageLookupByLibrary.simpleMessage("Заправка"),
     "full_charge": MessageLookupByLibrary.simpleMessage("Повна зарядка"),
@@ -430,6 +435,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Потрібне обслуговування",
     ),
     "map_rating": m10,
+    "mi": MessageLookupByLibrary.simpleMessage("mi"),
     "mileage": MessageLookupByLibrary.simpleMessage("Пробіг"),
     "mileage_statistics": MessageLookupByLibrary.simpleMessage(
       "Статистика пробігу",

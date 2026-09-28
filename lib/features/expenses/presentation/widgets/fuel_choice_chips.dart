@@ -12,6 +12,8 @@ class FuelChoiceChips extends StatelessWidget {
   const FuelChoiceChips({super.key, required this.fuels, required this.selectedFuel, required this.onSelected});
 
   static String _label(BuildContext context, FuelType fuel) {
+    final regional = fuel.marketName(context);
+    if (regional != null) return regional;
     switch (fuel) {
       case FuelType.Ai98:
         return '98';

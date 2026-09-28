@@ -87,7 +87,7 @@ Future<Map<String, dynamic>?> showNearbyServicesSheet(
                                   final converted = UnitStream(settingsCubit).convert(
                                     serviceDistanceKm(station, currentPosition),
                                   );
-                                  final unit = settingsCubit.state.unit == 'mil' ? 'mi' : S.of(context).km;
+                                  final unit = settingsCubit.state.unit == 'mil' ? S.of(context).mi : S.of(context).km;
                                   return Text(
                                     [
                                       rating > 0

@@ -323,9 +323,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           context,
                           title: S.of(context).units,
                           value: state.unit,
-                          items: const [
+                          items: [
                             DropdownMenuItem(value: 'km', child: Text('km')),
-                            DropdownMenuItem(value: 'mil', child: Text('mil')),
+                            DropdownMenuItem(value: 'mil', child: Text(S.of(context).mi)),
                           ],
                           onChanged: (v) =>
                               context.read<SettingsCubit>().setUnit(v!),

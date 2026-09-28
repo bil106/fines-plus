@@ -239,10 +239,12 @@ class S {
     return Intl.message('Garage', name: 'my_garage', desc: '', args: []);
   }
 
-  /// `{count} cars`
+  /// `{count, plural, =1{1 car} other{{count} cars}}`
   String garage_cars_count(int count) {
-    return Intl.message(
-      '$count cars',
+    return Intl.plural(
+      count,
+      one: '1 car',
+      other: '$count cars',
       name: 'garage_cars_count',
       desc: '',
       args: [count],
@@ -967,6 +969,36 @@ class S {
   /// `AI-92`
   String get fuel_ai92 {
     return Intl.message('AI-92', name: 'fuel_ai92', desc: '', args: []);
+  }
+
+  /// `Regular`
+  String get fuel_regular {
+    return Intl.message('Regular', name: 'fuel_regular', desc: '', args: []);
+  }
+
+  /// `mi`
+  String get mi {
+    return Intl.message('mi', name: 'mi', desc: '', args: []);
+  }
+
+  /// `Midgrade`
+  String get fuel_midgrade {
+    return Intl.message('Midgrade', name: 'fuel_midgrade', desc: '', args: []);
+  }
+
+  /// `Premium`
+  String get fuel_premium {
+    return Intl.message('Premium', name: 'fuel_premium', desc: '', args: []);
+  }
+
+  /// `Magna`
+  String get fuel_magna {
+    return Intl.message('Magna', name: 'fuel_magna', desc: '', args: []);
+  }
+
+  /// `Super`
+  String get fuel_super {
+    return Intl.message('Super', name: 'fuel_super', desc: '', args: []);
   }
 
   /// `Gas LPG`
@@ -3664,10 +3696,10 @@ class S {
     );
   }
 
-  /// `Input you car number ->`
+  /// `Enter your car number ->`
   String get input_number {
     return Intl.message(
-      'Input you car number ->',
+      'Enter your car number ->',
       name: 'input_number',
       desc: '',
       args: [],

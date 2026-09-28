@@ -11,6 +11,7 @@ import 'package:design_system/widget/app_back_button.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_brand_theme.dart';
 import 'package:design_system/theme/app_theme.dart';
+import 'package:fines_plus/core/config/app_config.dart';
 import 'package:fines_plus/core/extensions/ad_banner_widget.dart';
 import 'package:fines_plus/core/extensions/date_picker_card.dart';
 import 'package:fines_plus/core/extensions/fuel_type.dart';
@@ -77,7 +78,8 @@ class FuelUpScreenState extends State<FuelUpScreen>
   final FocusNode _priceFocusNode = FocusNode();
   final FocusNode _volumeFocusNode = FocusNode();
 
-  FuelType selectedFuel = FuelType.Ai95;
+  late final List<FuelType> _fuels = fuelTypesFor(context.read<AppConfig>().plateMarket);
+  late FuelType selectedFuel = _fuels.first;
   bool get _isElectric => selectedFuel.isElectric;
 
   /// With US units liquid fuel is typed and shown in gallons (price per
@@ -153,7 +155,7 @@ class FuelUpScreenState extends State<FuelUpScreen>
   (String value, String unit) _distanceParts(double km) {
     final settingsCubit = context.read<SettingsCubit>();
     final converted = UnitStream(settingsCubit).convert(km);
-    final unit = settingsCubit.state.unit == 'mil' ? 'mi' : S.of(context).km;
+    final unit = settingsCubit.state.unit == 'mil' ? S.of(context).mi : S.of(context).km;
     return (converted.toStringAsFixed(1), unit);
   }
 
@@ -707,7 +709,7 @@ class FuelUpScreenState extends State<FuelUpScreen>
                   onChanged: _onMileageChanged,
                   onSubmitted: (_) => _advanceFromMileage(),
                   unitLabel: settingsCubit.state.unit == 'mil'
-                      ? 'mil'
+                      ? S.of(context).mi
                       : S.of(context).km,
                 ),
               ),
@@ -725,13 +727,7 @@ class FuelUpScreenState extends State<FuelUpScreen>
           AppSpacers.verticalXSmall,
 
           FuelChoiceChips(
-            fuels: const [
-              FuelType.Ai95,
-              FuelType.Ai92,
-              FuelType.DIESEl,
-              FuelType.LPG,
-              FuelType.Electric,
-            ],
+            fuels: _fuels,
             selectedFuel: selectedFuel,
             onSelected: _onFuelSelected,
           ),

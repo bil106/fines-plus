@@ -138,7 +138,7 @@ class _StatisticsScreenView extends StatelessWidget {
                                               averageMileage.toDouble();
                                           final unit =
                                               settingsCubit.state.unit == 'mil'
-                                              ? 'mil'
+                                              ? S.of(context).mi
                                               : 'km';
 
                                           return Text(
@@ -184,7 +184,7 @@ class _StatisticsScreenView extends StatelessWidget {
                                       snapshot.data ??
                                       averageMileage.toDouble();
                                   final unit = settingsCubit.state.unit == 'mil'
-                                      ? 'mil'
+                                      ? S.of(context).mi
                                       : 'km';
 
                                   return Text(

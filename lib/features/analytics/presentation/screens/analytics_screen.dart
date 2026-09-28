@@ -88,7 +88,7 @@ class AnalyticsScreenViewState extends State<_AnalyticsScreenView> with SingleTi
 
     String formatMileage(int mileage) {
       final value = isMi ? (mileage * 0.621371).toStringAsFixed(0) : mileage.toString();
-      final unit = isMi ? 'mil' : 'km';
+      final unit = isMi ? S.of(context).mi : S.of(context).km;
       return "$value $unit";
     }
 

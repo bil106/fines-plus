@@ -87,7 +87,7 @@ class CarWashScreenState extends State<CarWashScreen>
   (String value, String unit) _distanceParts(double km) {
     final settingsCubit = context.read<SettingsCubit>();
     final converted = UnitStream(settingsCubit).convert(km);
-    final unit = settingsCubit.state.unit == 'mil' ? 'mi' : S.of(context).km;
+    final unit = settingsCubit.state.unit == 'mil' ? S.of(context).mi : S.of(context).km;
     return (converted.toStringAsFixed(1), unit);
   }
 
@@ -361,7 +361,7 @@ class CarWashScreenState extends State<CarWashScreen>
                   controller: mileageController,
                   focusNode: _mileageFocusNode,
                   unitLabel: context.watch<SettingsCubit>().state.unit == 'mil'
-                      ? 'mil'
+                      ? S.of(context).mi
                       : S.of(context).km,
                 ),
               ),

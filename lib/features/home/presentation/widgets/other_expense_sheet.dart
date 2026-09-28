@@ -98,7 +98,7 @@ class OtherExpenseSheetState extends State<OtherExpenseSheet> {
                 textTheme: textTheme,
                 controller: mileageController,
                 onSubmitted: (_) => costFocusNode.requestFocus(),
-                unitLabel: settings.state.unit == 'mil' ? 'mil' : S.of(context).km,
+                unitLabel: settings.state.unit == 'mil' ? S.of(context).mi : S.of(context).km,
               ),
             ),
           ],

@@ -32,7 +32,8 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m5(count) => "New fines found: ${count}";
 
-  static String m6(count) => "${count} cars";
+  static String m6(count) =>
+      "${Intl.plural(count, one: '1 car', other: '${count} cars')}";
 
   static String m7(date) => "OK until ${date}";
 
@@ -297,10 +298,15 @@ class MessageLookup extends MessageLookupByLibrary {
     "fuel_location_unavailable": MessageLookupByLibrary.simpleMessage(
       "Allow location access to find nearby gas stations",
     ),
+    "fuel_magna": MessageLookupByLibrary.simpleMessage("Magna"),
+    "fuel_midgrade": MessageLookupByLibrary.simpleMessage("Midgrade"),
+    "fuel_premium": MessageLookupByLibrary.simpleMessage("Premium"),
     "fuel_prompt_body": MessageLookupByLibrary.simpleMessage(
       "Add fuel purchase details?",
     ),
     "fuel_prompt_title": MessageLookupByLibrary.simpleMessage("Fuel up"),
+    "fuel_regular": MessageLookupByLibrary.simpleMessage("Regular"),
+    "fuel_super": MessageLookupByLibrary.simpleMessage("Super"),
     "fuel_type": MessageLookupByLibrary.simpleMessage("Fuel type"),
     "fuel_up": MessageLookupByLibrary.simpleMessage("Fuel up"),
     "full_charge": MessageLookupByLibrary.simpleMessage("Full charge"),
@@ -372,7 +378,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Incorrect password",
     ),
     "input_number": MessageLookupByLibrary.simpleMessage(
-      "Input you car number ->",
+      "Enter your car number ->",
     ),
     "insurance": MessageLookupByLibrary.simpleMessage("Insurance"),
     "insurance_company": MessageLookupByLibrary.simpleMessage(
@@ -423,6 +429,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Maintenance due",
     ),
     "map_rating": m10,
+    "mi": MessageLookupByLibrary.simpleMessage("mi"),
     "mileage": MessageLookupByLibrary.simpleMessage("Mileage"),
     "mileage_statistics": MessageLookupByLibrary.simpleMessage(
       "Mileage statistics",

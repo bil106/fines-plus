@@ -116,7 +116,7 @@ class NearbyStationsSheet extends StatelessWidget {
                             builder: (context) {
                               final settingsCubit = context.watch<SettingsCubit>();
                               final converted = UnitStream(settingsCubit).convert(_distanceKm(station));
-                              final unit = settingsCubit.state.unit == 'mil' ? 'mi' : S.of(context).km;
+                              final unit = settingsCubit.state.unit == 'mil' ? S.of(context).mi : S.of(context).km;
                               return Text(
                                 [
                                   station.rating > 0 ? '★ ${station.rating.toStringAsFixed(1)}' : S.of(context).service_no_rating,

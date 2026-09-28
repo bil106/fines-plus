@@ -26,7 +26,7 @@
   "garage_setup_subtitle": "Add your car now, or do it later — you can start using the app right away",
   "garage_continue": "Continue",
   "my_garage": "Garage",
-  "garage_cars_count": "{count} cars",
+  "garage_cars_count": "{count, plural, =1{1 car} other{{count} cars}}",
   "@garage_cars_count": {
     "placeholders": {
       "count": { "type": "int" }
@@ -127,6 +127,12 @@
 "fuel_ai95_plus": "AI-95+",
 "fuel_ai95": "AI-95",
 "fuel_ai92": "AI-92",
+"fuel_regular": "Regular",
+"mi": "mi",
+"fuel_midgrade": "Midgrade",
+"fuel_premium": "Premium",
+"fuel_magna": "Magna",
+"fuel_super": "Super",
 "fuel_gas_lpg": "Gas LPG",
 "fuel_chip_a95": "A95",
 "fuel_chip_a92": "A92",
@@ -446,7 +452,7 @@
 "money_back": "30-day money back guarantee!",
 "pay_safe": "Safe and secure payment",
 "most_popular": "MOST POPULAR",
-"input_number": "Input you car number ->",
+"input_number": "Enter your car number ->",
 "no_schedule": "No schedule yet",
 "no_story": "No story yet",
 "delete_car_number": "Delete car number",
