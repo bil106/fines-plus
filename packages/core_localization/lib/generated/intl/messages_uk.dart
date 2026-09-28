@@ -306,6 +306,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "full_tank_hint": MessageLookupByLibrary.simpleMessage(
       "Потрібно для точного розрахунку витрати",
     ),
+    "gal": MessageLookupByLibrary.simpleMessage("гал."),
     "garage_action_error": MessageLookupByLibrary.simpleMessage(
       "Не вдалося виконати дію",
     ),
@@ -554,6 +555,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "policy_number": MessageLookupByLibrary.simpleMessage("Номер полісу"),
     "previous": MessageLookupByLibrary.simpleMessage("Попереднє"),
     "price": MessageLookupByLibrary.simpleMessage("Ціна"),
+    "price_per_gallon_short": MessageLookupByLibrary.simpleMessage("Ціна/гал"),
     "price_per_kwh_short": MessageLookupByLibrary.simpleMessage("Ціна/кВт·год"),
     "price_per_liter_short": MessageLookupByLibrary.simpleMessage("Ціна/л"),
     "privacy_policy": MessageLookupByLibrary.simpleMessage(
@@ -1089,6 +1091,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Зчеплення (комплект) - заміна",
     ),
     "settings": MessageLookupByLibrary.simpleMessage("Налаштування"),
+    "spanish": MessageLookupByLibrary.simpleMessage("Іспанська"),
     "statistics": MessageLookupByLibrary.simpleMessage("Статистика"),
     "status": MessageLookupByLibrary.simpleMessage("Статус"),
     "store_unavailable": MessageLookupByLibrary.simpleMessage(
@@ -1105,6 +1108,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Повний доступ до контролю ТО, страхування та витрат",
     ),
     "sum_short": MessageLookupByLibrary.simpleMessage("Сума"),
+    "tank_volume_gallons": MessageLookupByLibrary.simpleMessage(
+      "Обсяг бака, гал",
+    ),
     "tank_volume_liters": MessageLookupByLibrary.simpleMessage("Обсяг бака, л"),
     "tech_service": MessageLookupByLibrary.simpleMessage("Тех. Обслуговування"),
     "terms_of_use": MessageLookupByLibrary.simpleMessage("Умови використання"),
@@ -1144,6 +1150,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "view_licenses": MessageLookupByLibrary.simpleMessage(
       "Переглянути ліцензії",
     ),
+    "volume_gallons_short": MessageLookupByLibrary.simpleMessage("Обсяг, гал"),
     "volume_kwh_short": MessageLookupByLibrary.simpleMessage("Обсяг, кВт·год"),
     "volume_liters_short": MessageLookupByLibrary.simpleMessage("Обсяг, л"),
     "vs_previous_month": MessageLookupByLibrary.simpleMessage(

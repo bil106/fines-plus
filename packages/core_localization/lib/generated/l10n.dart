@@ -789,6 +789,31 @@ class S {
     );
   }
 
+  /// `Price/gal`
+  String get price_per_gallon_short {
+    return Intl.message(
+      'Price/gal',
+      name: 'price_per_gallon_short',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Volume, gal`
+  String get volume_gallons_short {
+    return Intl.message(
+      'Volume, gal',
+      name: 'volume_gallons_short',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `gal`
+  String get gal {
+    return Intl.message('gal', name: 'gal', desc: '', args: []);
+  }
+
   /// `Amount`
   String get sum_short {
     return Intl.message('Amount', name: 'sum_short', desc: '', args: []);
@@ -4069,6 +4094,16 @@ class S {
     );
   }
 
+  /// `Tank volume, gal`
+  String get tank_volume_gallons {
+    return Intl.message(
+      'Tank volume, gal',
+      name: 'tank_volume_gallons',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Planned service is due. Add the cost once it's done.`
   String get planned_service_reminder_body {
     return Intl.message(
@@ -4112,6 +4147,11 @@ class S {
   /// `English`
   String get english {
     return Intl.message('English', name: 'english', desc: '', args: []);
+  }
+
+  /// `Spanish`
+  String get spanish {
+    return Intl.message('Spanish', name: 'spanish', desc: '', args: []);
   }
 
   /// `Sign in with Apple successful`
@@ -4486,6 +4526,7 @@ class AppLocalizationDelegate extends LocalizationsDelegate<S> {
   List<Locale> get supportedLocales {
     return const <Locale>[
       Locale.fromSubtags(languageCode: 'en'),
+      Locale.fromSubtags(languageCode: 'es'),
       Locale.fromSubtags(languageCode: 'uk'),
     ];
   }

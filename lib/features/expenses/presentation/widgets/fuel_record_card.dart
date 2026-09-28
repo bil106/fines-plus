@@ -48,7 +48,7 @@ class FuelRecordCard extends StatelessWidget {
                         FittedBox(
                           fit: BoxFit.scaleDown,
                           alignment: Alignment.centerLeft,
-                          child: Text("${fuelTypeLabel(context, record.fuelType)} / ${record.volume.toInt()} ${fuelUnitLabel(context, record.fuelType)}", style: textTheme.historyText),
+                          child: Text("${fuelTypeLabel(context, record.fuelType)} / ${fuelAmountLabel(context, record.fuelType, record.volume, wholeLiters: true)}", style: textTheme.historyText),
                         ),
                         AppSpacers.verticalXSmall,
                         Row(

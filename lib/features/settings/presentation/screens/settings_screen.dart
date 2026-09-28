@@ -217,6 +217,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               value: const Locale('en'),
                               child: Text(S.of(context).english),
                             ),
+                            DropdownMenuItem(
+                              value: const Locale('es'),
+                              child: Text(S.of(context).spanish),
+                            ),
                           ],
                           onChanged: (v) =>
                               context.read<SettingsCubit>().setLocale(v!),

@@ -298,6 +298,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "full_tank_hint": MessageLookupByLibrary.simpleMessage(
       "Needed to calculate consumption accurately",
     ),
+    "gal": MessageLookupByLibrary.simpleMessage("gal"),
     "garage_action_error": MessageLookupByLibrary.simpleMessage(
       "Failed to complete the action",
     ),
@@ -535,6 +536,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "policy_number": MessageLookupByLibrary.simpleMessage("Policy number"),
     "previous": MessageLookupByLibrary.simpleMessage("Previous"),
     "price": MessageLookupByLibrary.simpleMessage("Price"),
+    "price_per_gallon_short": MessageLookupByLibrary.simpleMessage("Price/gal"),
     "price_per_kwh_short": MessageLookupByLibrary.simpleMessage("Price/kWh"),
     "price_per_liter_short": MessageLookupByLibrary.simpleMessage("Price/L"),
     "privacy_policy": MessageLookupByLibrary.simpleMessage("Privacy Policy"),
@@ -1094,6 +1096,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Clutch (set) - replacement",
     ),
     "settings": MessageLookupByLibrary.simpleMessage("Settings"),
+    "spanish": MessageLookupByLibrary.simpleMessage("Spanish"),
     "statistics": MessageLookupByLibrary.simpleMessage("Statistics"),
     "status": MessageLookupByLibrary.simpleMessage("Status"),
     "store_unavailable": MessageLookupByLibrary.simpleMessage(
@@ -1110,6 +1113,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Full access to maintenance, insurance and expense tracking",
     ),
     "sum_short": MessageLookupByLibrary.simpleMessage("Amount"),
+    "tank_volume_gallons": MessageLookupByLibrary.simpleMessage(
+      "Tank volume, gal",
+    ),
     "tank_volume_liters": MessageLookupByLibrary.simpleMessage(
       "Tank volume, L",
     ),
@@ -1151,6 +1157,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "vehicles_section": MessageLookupByLibrary.simpleMessage("Vehicles"),
     "view_licenses": MessageLookupByLibrary.simpleMessage("View licenses"),
+    "volume_gallons_short": MessageLookupByLibrary.simpleMessage("Volume, gal"),
     "volume_kwh_short": MessageLookupByLibrary.simpleMessage("Amount, kWh"),
     "volume_liters_short": MessageLookupByLibrary.simpleMessage("Volume, L"),
     "vs_previous_month": MessageLookupByLibrary.simpleMessage("vs last month"),

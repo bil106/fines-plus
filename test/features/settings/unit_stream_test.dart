@@ -32,4 +32,11 @@ void main() {
     expect(UnitStream(settings).convertFuel(0), 0);
     expect(UnitStream(settings).convertFuel(7.5), 7.5);
   });
+
+  test('miles use US gallons, km keep liters', () {
+    final miles = _Settings('mpg');
+    addTearDown(miles.close);
+    expect(UnitStream(miles).usesGallons, isTrue);
+    expect(UnitStream(miles).litersToDisplay(37.8541), closeTo(10, 0.0001));
+  });
 }

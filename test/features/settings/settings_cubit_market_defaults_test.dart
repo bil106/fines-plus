@@ -64,4 +64,11 @@ void main() {
     expect(state.currency, 'EUR');
     expect(state.fuelConsumptionUnit, 'l/100km');
   });
+
+  test('EN/ES markets follow a Spanish phone, UA stays Ukrainian', () {
+    expect(SettingsCubit.defaultLanguageCode('US', 'es'), 'es');
+    expect(SettingsCubit.defaultLanguageCode('US', 'en'), 'en');
+    expect(SettingsCubit.defaultLanguageCode('US', 'de'), 'en');
+    expect(SettingsCubit.defaultLanguageCode('UA', 'es'), 'uk');
+  });
 }

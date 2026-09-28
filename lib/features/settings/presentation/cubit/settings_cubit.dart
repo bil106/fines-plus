@@ -1,3 +1,5 @@
+import 'dart:ui' show PlatformDispatcher;
+
 import 'package:core_localization/generated/l10n.dart';
 import 'package:fines_plus/core/config/app_config.dart';
 import 'package:fines_plus/core/extensions/currency_service.dart';
@@ -22,10 +24,17 @@ class SettingsCubit extends Cubit<SettingsState> {
     _loadSettings();
   }
 
-  /// UA-market brands ship in Ukrainian by default; every other market
-  /// (no Ukrainian-fines equivalent - see AppConfig.finesCheckEnabled) falls
-  /// back to English, since 'uk'/'en' are the only supported locales.
-  static String _defaultLanguageCode(String market) => market.toUpperCase() == 'UA' ? 'uk' : 'en';
+  /// UA-market brands ship in Ukrainian by default. Every other market
+  /// (EN/ES - see AppConfig.market) follows the phone when it's set to
+  /// Spanish and falls back to English.
+  @visibleForTesting
+  static String defaultLanguageCode(String market, String deviceLanguage) {
+    if (market.toUpperCase() == 'UA') return 'uk';
+    return deviceLanguage == 'es' ? 'es' : 'en';
+  }
+
+  static String _defaultLanguageCode(String market) =>
+      defaultLanguageCode(market, PlatformDispatcher.instance.locale.languageCode);
 
   /// Distance/currency/fuel units a market expects out of the box, until the
   /// user picks their own in Settings.

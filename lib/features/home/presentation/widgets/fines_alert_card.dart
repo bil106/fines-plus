@@ -76,7 +76,11 @@ class FinesAlertCard extends StatelessWidget {
         final locale = Localizations.localeOf(context).languageCode;
         final title = unpaidCount == 1
             ? S.of(context).fine_pdr_title(amount)
-            : '${locale == 'uk' ? _unpaidFinesLabelUk(unpaidCount) : _unpaidFinesLabelEn(unpaidCount)}: $amount';
+            : '${switch (locale) {
+                'uk' => _unpaidFinesLabelUk(unpaidCount),
+                'es' => _unpaidFinesLabelEs(unpaidCount),
+                _ => _unpaidFinesLabelEn(unpaidCount),
+              }}: $amount';
         return _UnpaidFinesCard(title: title, onTap: onTap);
       },
     );
@@ -223,3 +227,6 @@ String _unpaidFinesLabelUk(int n) {
 
 String _unpaidFinesLabelEn(int n) =>
     n == 1 ? '1 unpaid fine' : '$n unpaid fines';
+
+String _unpaidFinesLabelEs(int n) =>
+    n == 1 ? '1 multa sin pagar' : '$n multas sin pagar';

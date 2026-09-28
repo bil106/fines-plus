@@ -114,7 +114,7 @@ List<EventModel> _buildEvents(BuildContext context, MaintenanceState state) {
       EventModel(
         date: r.date,
         title:
-            '${fuelTypeLabel(context, r.fuelType)} / ${r.volume} ${fuelUnitLabel(context, r.fuelType)}',
+            '${fuelTypeLabel(context, r.fuelType)} / ${fuelAmountLabel(context, r.fuelType, r.volume)}',
         amount: toBase(r.cost, r.currency),
         mileage: mileage(r.mileage),
         iconCodePoint: Icons.local_gas_station.codePoint,

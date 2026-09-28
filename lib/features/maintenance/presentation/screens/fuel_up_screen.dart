@@ -79,6 +79,12 @@ class FuelUpScreenState extends State<FuelUpScreen>
 
   FuelType selectedFuel = FuelType.Ai95;
   bool get _isElectric => selectedFuel.isElectric;
+
+  /// With US units liquid fuel is typed and shown in gallons (price per
+  /// gallon); records, the remembered price and tank size stay per liter.
+  /// Electricity is always kWh.
+  bool _usesGallons(FuelType fuel) =>
+      !fuel.isElectric && UnitStream(context.read<SettingsCubit>()).usesGallons;
   bool _fullTank = false;
   final TextEditingController tankController = TextEditingController();
   DateTime? selectedDate = DateTime.now();
@@ -188,7 +194,9 @@ class FuelUpScreenState extends State<FuelUpScreen>
     final cached = await FuelPriceCache.getPrice(fuel.name);
     if (!mounted || fuel != selectedFuel || _priceEditedByUser) return;
     if (cached != null) {
-      priceController.text = _formatNumber(cached);
+      priceController.text = _formatNumber(
+        _usesGallons(fuel) ? cached * UnitStream.litersPerGallon : cached,
+      );
     } else {
       priceController.clear();
     }
@@ -209,7 +217,9 @@ class FuelUpScreenState extends State<FuelUpScreen>
         tankController.text.isNotEmpty) {
       return;
     }
-    tankController.text = _formatLiters(saved);
+    tankController.text = _usesGallons(selectedFuel)
+        ? _formatNumber(saved / UnitStream.litersPerGallon)
+        : _formatLiters(saved);
     if (_fullTank) _onFullTankChanged(true);
   }
 
@@ -254,7 +264,11 @@ class FuelUpScreenState extends State<FuelUpScreen>
   void _onTankVolumeChanged(String value) {
     final parsed = double.tryParse(value);
     if (parsed == null) return;
-    FuelTankCache.saveVolume(_carNumber, parsed, electric: _isElectric);
+    FuelTankCache.saveVolume(
+      _carNumber,
+      _usesGallons(selectedFuel) ? parsed * UnitStream.litersPerGallon : parsed,
+      electric: _isElectric,
+    );
     if (_fullTank) {
       volumeController.text = value;
       _onVolumeChanged(value);
@@ -265,7 +279,10 @@ class FuelUpScreenState extends State<FuelUpScreen>
     _priceEditedByUser = true;
     final parsed = double.tryParse(value);
     if (parsed != null) {
-      FuelPriceCache.savePrice(selectedFuel.name, parsed);
+      FuelPriceCache.savePrice(
+        selectedFuel.name,
+        _usesGallons(selectedFuel) ? parsed / UnitStream.litersPerGallon : parsed,
+      );
     }
     _recalculate();
   }
@@ -449,7 +466,9 @@ class FuelUpScreenState extends State<FuelUpScreen>
 
     final record = FuelRecord(
       fuelType: selectedFuel.name,
-      volume: volume,
+      volume: _usesGallons(selectedFuel)
+          ? volume * UnitStream.litersPerGallon
+          : volume,
       cost: totalCost,
       date: selectedDate!,
       mileage: mileage,
@@ -784,6 +803,8 @@ class FuelUpScreenState extends State<FuelUpScreen>
             AppFieldCard(
               label: _isElectric
                   ? S.of(context).battery_capacity_kwh
+                  : _usesGallons(selectedFuel)
+                  ? S.of(context).tank_volume_gallons
                   : S.of(context).tank_volume_liters,
               child: TextField(
                 controller: tankController,

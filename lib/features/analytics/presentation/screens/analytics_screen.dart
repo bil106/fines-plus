@@ -121,7 +121,7 @@ class AnalyticsScreenViewState extends State<_AnalyticsScreenView> with SingleTi
           final record = FuelRecord.fromJson(e);
           return EventModel(
             date: record.date,
-            title: "${fuelTypeLabel(context, record.fuelType)} / ${record.volume} ${fuelUnitLabel(context, record.fuelType)}",
+            title: "${fuelTypeLabel(context, record.fuelType)} / ${fuelAmountLabel(context, record.fuelType, record.volume)}",
             amount: currencyService.toUah(record.cost.toDouble(), record.currency),
             mileage: formatMileage(record.mileage),
             iconCodePoint: Icons.local_gas_station.codePoint,

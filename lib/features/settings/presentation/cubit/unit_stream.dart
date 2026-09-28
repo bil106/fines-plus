@@ -19,6 +19,15 @@ class UnitStream {
     return kmValue;
   }
 
+  static const litersPerGallon = 3.78541;
+
+  /// US units (miles) measure fuel in US gallons. Stored amounts and the
+  /// remembered price per unit stay per liter; only what's shown and typed
+  /// changes.
+  bool get usesGallons => settingsCubit.state.unit == 'mil';
+
+  double litersToDisplay(double liters) => usesGallons ? liters / litersPerGallon : liters;
+
   Stream<double> fuelConsumptionStream(double lPer100km) {
     return settingsCubit.stream.map((state) => convertFuel(lPer100km)).distinct();
   }

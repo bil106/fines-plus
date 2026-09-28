@@ -5,6 +5,7 @@ import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_brand_theme.dart';
 import 'package:design_system/widget/app_field_card.dart';
 import 'package:fines_plus/features/settings/presentation/cubit/settings_cubit.dart';
+import 'package:fines_plus/features/settings/presentation/cubit/unit_stream.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -77,13 +78,18 @@ class FuelPriceVolumeSumRow extends StatelessWidget {
     final accent = Theme.of(context).colorScheme.primary;
     final settingsCubit = context.watch<SettingsCubit>();
     final currencyLabel = settingsCubit.getCurrencyLabel(context, settingsCubit.state.currency);
+    final gallons = UnitStream(settingsCubit).usesGallons;
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Expanded(
           child: AppFieldCard(
-            label: electric ? S.of(context).price_per_kwh_short : S.of(context).price_per_liter_short,
+            label: electric
+                ? S.of(context).price_per_kwh_short
+                : gallons
+                    ? S.of(context).price_per_gallon_short
+                    : S.of(context).price_per_liter_short,
             child: TextField(
               controller: priceController,
               focusNode: priceFocusNode,
@@ -109,7 +115,11 @@ class FuelPriceVolumeSumRow extends StatelessWidget {
         AppSpacers.horizontalSmallMedium,
         Expanded(
           child: AppFieldCard(
-            label: electric ? S.of(context).volume_kwh_short : S.of(context).volume_liters_short,
+            label: electric
+                ? S.of(context).volume_kwh_short
+                : gallons
+                    ? S.of(context).volume_gallons_short
+                    : S.of(context).volume_liters_short,
             child: TextField(
               controller: volumeController,
               focusNode: volumeFocusNode,
