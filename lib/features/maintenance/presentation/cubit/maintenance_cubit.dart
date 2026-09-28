@@ -1,4 +1,6 @@
 // ignore_for_file: invalid_use_of_visible_for_testing_member, invalid_use_of_protected_member
+import 'dart:math';
+
 import 'package:fines_plus/features/expenses/data/models/car_wash_record.dart';
 import 'package:fines_plus/features/expenses/data/models/expense.dart';
 import 'package:fines_plus/features/expenses/data/models/expense_category.dart';
@@ -812,14 +814,17 @@ class MaintenanceCubit extends Cubit<MaintenanceState> {
 }
 
 extension MileageCalculations on MaintenanceCubit {
+  /// Every record's odometer reading with its date.
+  List<Map<String, Object>> _odometerReadings() => [
+    ...state.serviceRecords.map((r) => {'date': DateFormat('dd.MM.yyyy').parse(r.date), 'mileage': r.mileage}),
+    ...state.fuelRecords.map((r) => {'date': r.date, 'mileage': r.mileage}),
+    ...state.carWashRecords.map((r) => {'date': r.date, 'mileage': r.mileage}),
+    ...state.tuningRecords.map((r) => {'date': r.date, 'mileage': r.mileage}),
+    ...state.otherRecords.map((r) => {'date': r.date, 'mileage': r.mileage}),
+  ];
+
   Map<String, int> getMonthlyMileage() {
-    final allRecords = [
-      ...state.serviceRecords.map((r) => {'date': DateFormat('dd.MM.yyyy').parse(r.date), 'mileage': r.mileage}),
-      ...state.fuelRecords.map((r) => {'date': r.date, 'mileage': r.mileage}),
-      ...state.carWashRecords.map((r) => {'date': r.date, 'mileage': r.mileage}),
-      ...state.tuningRecords.map((r) => {'date': r.date, 'mileage': r.mileage}),
-      ...state.otherRecords.map((r) => {'date': r.date, 'mileage': r.mileage}),
-    ];
+    final allRecords = _odometerReadings();
 
     if (allRecords.isEmpty) return {};
 
@@ -840,15 +845,32 @@ extension MileageCalculations on MaintenanceCubit {
     return result;
   }
 
-  int getCurrentMonthMileage(DateTime now) {
-    final monthly = getMonthlyMileage();
-    final key = "${now.year}-${now.month.toString().padLeft(2, '0')}";
+  /// Distance driven in [now]'s month - what the month's spending is
+  /// divided by for the cost per km/mile.
+  int getCurrentMonthMileage(DateTime now) => monthMileage(
+    _odometerReadings().map((r) => (date: r['date'] as DateTime, mileage: r['mileage'] as int)),
+    now,
+  );
 
-    final current = monthly[key] ?? 0;
-
-    final past = monthly.entries.where((e) => e.key.compareTo(key) < 0).fold(0, (sum, e) => sum + e.value);
-
-    return past + current;
+  /// Distance driven in [month]'s month: its highest odometer reading minus
+  /// the last reading before it (or the month's lowest, for a car with no
+  /// earlier records). Readings of 0 mean "not entered" and are skipped.
+  static int monthMileage(Iterable<({DateTime date, int mileage})> readings, DateTime month) {
+    final start = DateTime(month.year, month.month);
+    final end = DateTime(month.year, month.month + 1);
+    final entered = readings.where((r) => r.mileage > 0);
+    final inMonth = [
+      for (final r in entered)
+        if (!r.date.isBefore(start) && r.date.isBefore(end)) r.mileage,
+    ];
+    if (inMonth.isEmpty) return 0;
+    final before = [
+      for (final r in entered)
+        if (r.date.isBefore(start)) r.mileage,
+    ];
+    final last = inMonth.reduce(max);
+    final first = before.isEmpty ? inMonth.reduce(min) : before.reduce(max);
+    return max(0, last - first);
   }
 
   /// The odometer reading to prefill new entries with. Picks the highest
