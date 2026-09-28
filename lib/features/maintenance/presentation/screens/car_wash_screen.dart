@@ -412,6 +412,9 @@ class CarWashScreenState extends State<CarWashScreen>
       date: selectedDate!,
       mileage: mileage,
       amount: cost,
+      // Entered in the display currency; without it the record would be
+      // read as UAH and shown converted from UAH.
+      currency: context.read<SettingsCubit>().state.currency,
       ownerId: 'default_user',
     );
 
