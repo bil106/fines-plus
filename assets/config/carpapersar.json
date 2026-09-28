@@ -2,12 +2,12 @@
   "brandName": "CarPapers",
   "primaryColorHex": "#0F766E",
   "logoAssetPath": "assets/logos/carpapers.png",
-  "supportEmail": "support@carpapers.app",
+  "supportEmail": "carpapers.support@gmail.com",
   "phoneNumber": "REPLACE_ME",
   "viberNumber": "",
   "market": "AR",
   "finesCheckEnabled": false,
   "facebookLoginEnabled": false,
   "termsUrl": "REPLACE_ME_TERMS_URL",
-  "privacyPolicyUrl": "REPLACE_ME_PRIVACY_URL"
+  "privacyPolicyUrl": "https://carpapers-bde41.web.app/privacy"
 }
