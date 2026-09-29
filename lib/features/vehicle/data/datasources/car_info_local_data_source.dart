@@ -1,13 +1,11 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:core_data/core_data.dart';
 import 'package:fines_plus/features/vehicle/data/models/car_info_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-
 class CarInfoLocalDataSource {
-  CarInfoLocalDataSource(this.prefs,this.firestore, this.auth);
+  CarInfoLocalDataSource(this.prefs, this.firestore, this.auth);
   final FirebaseFirestore firestore;
   final FirebaseAuth auth;
   final SharedPrefsManager prefs;
@@ -48,10 +46,15 @@ class CarInfoLocalDataSource {
     if (user == null || carId.isEmpty) return;
 
     try {
-      await firestore.collection('users').doc(user.uid).collection('cars').doc(carId).set({
-        ...fields,
-        'updatedAt': FieldValue.serverTimestamp(),
-      }, SetOptions(merge: true));
+      await firestore
+          .collection('users')
+          .doc(user.uid)
+          .collection('cars')
+          .doc(carId)
+          .set({
+            ...fields,
+            'updatedAt': FieldValue.serverTimestamp(),
+          }, SetOptions(merge: true));
     } catch (e) {
       debugPrint('_mirrorToCarDoc failed: $e');
     }
@@ -64,7 +67,9 @@ class CarInfoLocalDataSource {
     final number = prefs.getString(_numberKey) ?? '';
     final carId = prefs.getString(_carIdKey) ?? '';
 
-    debugPrint("Loaded car info: number=$car, tech=$tech, series=$series, num=$number, carId=$carId");
+    debugPrint(
+      "Loaded car info: number=$car, tech=$tech, series=$series, num=$number, carId=$carId",
+    );
 
     return CarInfoModel(
       carNumber: car,
@@ -89,7 +94,22 @@ class CarInfoLocalDataSource {
   /// carId as-is.
   Future<String> ensureCarId() async {
     final existing = prefs.getString(_carIdKey) ?? '';
-    if (existing.isNotEmpty) return existing;
+    if (existing.isNotEmpty) {
+      final cachedCarNumber = prefs.getString(_carKey) ?? '';
+      final user = auth.currentUser;
+      if (user != null && cachedCarNumber == existing) {
+        try {
+          final doc = await _carsCollection(user.uid).doc(existing).get();
+          if (doc.data()?['isDefault'] == true) {
+            await prefs.setString(_carKey, '');
+            await doc.reference.set({'carNumber': ''}, SetOptions(merge: true));
+          }
+        } catch (e) {
+          debugPrint('ensureCarId: failed to clear default car number: $e');
+        }
+      }
+      return existing;
+    }
 
     final user = auth.currentUser;
     if (user == null) return '';
@@ -122,16 +142,27 @@ class CarInfoLocalDataSource {
         fallbackList = await carsCollection.limit(1).get();
       }
     } catch (e) {
-      debugPrint('ensureCarId: failed to check for a pre-existing car doc, will retry next call: $e');
+      debugPrint(
+        'ensureCarId: failed to check for a pre-existing car doc, will retry next call: $e',
+      );
       return '';
     }
 
-    final doc = preferred ?? (fallbackList != null && fallbackList.docs.isNotEmpty ? fallbackList.docs.first : null);
+    final doc =
+        preferred ??
+        (fallbackList != null && fallbackList.docs.isNotEmpty
+            ? fallbackList.docs.first
+            : null);
 
     if (doc != null) {
       final data = doc.data() ?? <String, dynamic>{};
       final carId = doc.id;
-      final carNumber = (data['carNumber'] as String?) ?? doc.id;
+      final storedCarNumber = data['carNumber'] as String?;
+      final isDefaultCar = data['isDefault'] == true;
+      final carNumber =
+          isDefaultCar && (storedCarNumber == null || storedCarNumber == carId)
+          ? ''
+          : (storedCarNumber ?? carId);
       final techPassport = (data['techPassport'] as String?) ?? '';
 
       await prefs.setString(_carIdKey, carId);
@@ -146,14 +177,17 @@ class CarInfoLocalDataSource {
         await doc.reference.set({
           'carId': carId,
           'carNumber': carNumber,
-          if (!data.containsKey('createdAt')) 'createdAt': FieldValue.serverTimestamp(),
+          if (!data.containsKey('createdAt'))
+            'createdAt': FieldValue.serverTimestamp(),
           'updatedAt': FieldValue.serverTimestamp(),
         }, SetOptions(merge: true));
         await userDocRef.set({'activeCarId': carId}, SetOptions(merge: true));
       } catch (e) {
         // The adoption itself (prefs + confirmed doc id) already succeeded
         // and is what matters; this backfill write is best-effort.
-        debugPrint('ensureCarId: adopted $carId but failed to backfill its doc: $e');
+        debugPrint(
+          'ensureCarId: adopted $carId but failed to backfill its doc: $e',
+        );
       }
 
       debugPrint('ensureCarId: adopted pre-existing car doc $carId');
@@ -171,9 +205,7 @@ class CarInfoLocalDataSource {
         'isDefault': true,
         'createdAt': FieldValue.serverTimestamp(),
       }, SetOptions(merge: true));
-      await userDocRef.set({
-        'activeCarId': carId,
-      }, SetOptions(merge: true));
+      await userDocRef.set({'activeCarId': carId}, SetOptions(merge: true));
     } catch (e) {
       debugPrint('ensureCarId: failed to write car doc to Firestore: $e');
     }
@@ -197,7 +229,9 @@ class CarInfoLocalDataSource {
       await prefs.setString(_seriesKey, series);
       await prefs.setString(_numberKey, number);
 
-      debugPrint("Saved tech passport split (via saveTechPassport): series=$series, number=$number");
+      debugPrint(
+        "Saved tech passport split (via saveTechPassport): series=$series, number=$number",
+      );
     }
 
     await _mirrorToCarDoc({'techPassport': value});
@@ -205,20 +239,21 @@ class CarInfoLocalDataSource {
 
   Future<void> saveMake(String make) async => _mirrorToCarDoc({'make': make});
 
-  Future<void> saveModel(String model) async => _mirrorToCarDoc({'model': model.trim()});
+  Future<void> saveModel(String model) async =>
+      _mirrorToCarDoc({'model': model.trim()});
 
-  Future<void> savePhotoUrl(String url) async => _mirrorToCarDoc({'photoUrl': url});
+  Future<void> savePhotoUrl(String url) async =>
+      _mirrorToCarDoc({'photoUrl': url});
 
-  Future<void> saveFcmToken(String token) async => _mirrorToCarDoc({'fcmToken': token});
+  Future<void> saveFcmToken(String token) async =>
+      _mirrorToCarDoc({'fcmToken': token});
 
-Future<void> clearCarInfo() async {
+  Future<void> clearCarInfo() async {
     await prefs.remove(_carKey);
     await prefs.remove(_techKey);
     await prefs.remove(_seriesKey);
     await prefs.remove(_numberKey);
     await prefs.remove(_carIdKey);
-
-
   }
 
   CollectionReference<Map<String, dynamic>> _carsCollection(String uid) =>
@@ -228,16 +263,23 @@ Future<void> clearCarInfo() async {
   /// a plate on a new device (which starts with a brand-new, empty `carId`)
   /// can reattach to that car's real `carId` instead of silently relabeling
   /// the new empty one and orphaning the old car's expenses/etc.
-  Future<CarInfoModel?> findCarByNumber(String carNumber, {String? excludeCarId}) async {
+  Future<CarInfoModel?> findCarByNumber(
+    String carNumber, {
+    String? excludeCarId,
+  }) async {
     final user = auth.currentUser;
     if (user == null || carNumber.isEmpty) return null;
 
-    final snap = await _carsCollection(user.uid).where('carNumber', isEqualTo: carNumber).limit(2).get();
+    final snap = await _carsCollection(
+      user.uid,
+    ).where('carNumber', isEqualTo: carNumber).limit(2).get();
     final candidates = snap.docs.where((d) => d.id != excludeCarId);
     if (candidates.isNotEmpty) {
       final match = candidates.first;
       final data = match.data();
-      debugPrint('findCarByNumber: matched real car doc ${match.id} for $carNumber');
+      debugPrint(
+        'findCarByNumber: matched real car doc ${match.id} for $carNumber',
+      );
       return CarInfoModel(
         carNumber: (data['carNumber'] as String?) ?? '',
         techPassport: (data['techPassport'] as String?) ?? '',
@@ -255,8 +297,13 @@ Future<void> clearCarInfo() async {
     // never shows up in the collection query above. Probe for that directly.
     if (carNumber != excludeCarId) {
       final legacyRef = _carsCollection(user.uid).doc(carNumber);
-      final legacyExpenses = await legacyRef.collection('expenses').limit(1).get();
-      debugPrint('findCarByNumber: legacy phantom-doc probe for $carNumber found ${legacyExpenses.docs.length} expense(s)');
+      final legacyExpenses = await legacyRef
+          .collection('expenses')
+          .limit(1)
+          .get();
+      debugPrint(
+        'findCarByNumber: legacy phantom-doc probe for $carNumber found ${legacyExpenses.docs.length} expense(s)',
+      );
       if (legacyExpenses.docs.isNotEmpty) {
         try {
           await legacyRef.set({
@@ -265,9 +312,16 @@ Future<void> clearCarInfo() async {
             'updatedAt': FieldValue.serverTimestamp(),
           }, SetOptions(merge: true));
         } catch (e) {
-          debugPrint('findCarByNumber: failed to backfill legacy car doc $carNumber: $e');
+          debugPrint(
+            'findCarByNumber: failed to backfill legacy car doc $carNumber: $e',
+          );
         }
-        return CarInfoModel(carNumber: carNumber, techPassport: '', ownerId: user.uid, carId: carNumber);
+        return CarInfoModel(
+          carNumber: carNumber,
+          techPassport: '',
+          ownerId: user.uid,
+          carId: carNumber,
+        );
       }
     }
 
@@ -279,7 +333,10 @@ Future<void> clearCarInfo() async {
     final cyrillicVariant = _toCyrillicHomoglyph(carNumber);
     if (cyrillicVariant != carNumber && cyrillicVariant != excludeCarId) {
       final cyrillicRef = _carsCollection(user.uid).doc(cyrillicVariant);
-      final cyrillicExpenses = await cyrillicRef.collection('expenses').limit(1).get();
+      final cyrillicExpenses = await cyrillicRef
+          .collection('expenses')
+          .limit(1)
+          .get();
       debugPrint(
         'findCarByNumber: Cyrillic-lookalike probe for $carNumber ($cyrillicVariant) found ${cyrillicExpenses.docs.length} expense(s)',
       );
@@ -291,9 +348,16 @@ Future<void> clearCarInfo() async {
             'updatedAt': FieldValue.serverTimestamp(),
           }, SetOptions(merge: true));
         } catch (e) {
-          debugPrint('findCarByNumber: failed to backfill Cyrillic-lookalike car doc $cyrillicVariant: $e');
+          debugPrint(
+            'findCarByNumber: failed to backfill Cyrillic-lookalike car doc $cyrillicVariant: $e',
+          );
         }
-        return CarInfoModel(carNumber: carNumber, techPassport: '', ownerId: user.uid, carId: cyrillicVariant);
+        return CarInfoModel(
+          carNumber: carNumber,
+          techPassport: '',
+          ownerId: user.uid,
+          carId: cyrillicVariant,
+        );
       }
     }
 
@@ -301,8 +365,18 @@ Future<void> clearCarInfo() async {
   }
 
   static const _latinToCyrillicHomoglyphs = {
-    'A': 'А', 'B': 'В', 'C': 'С', 'E': 'Е', 'H': 'Н',
-    'I': 'І', 'K': 'К', 'M': 'М', 'O': 'О', 'P': 'Р', 'T': 'Т', 'X': 'Х',
+    'A': 'А',
+    'B': 'В',
+    'C': 'С',
+    'E': 'Е',
+    'H': 'Н',
+    'I': 'І',
+    'K': 'К',
+    'M': 'М',
+    'O': 'О',
+    'P': 'Р',
+    'T': 'Т',
+    'X': 'Х',
   };
 
   String _toCyrillicHomoglyph(String latin) =>
@@ -313,20 +387,23 @@ Future<void> clearCarInfo() async {
     final user = auth.currentUser;
     if (user == null) return const Stream.empty();
 
-    return _carsCollection(user.uid).orderBy('createdAt').snapshots().map(
-      (snap) => snap.docs.map((d) {
-        final data = d.data();
-        return CarInfoModel(
-          carNumber: (data['carNumber'] as String?) ?? '',
-          techPassport: (data['techPassport'] as String?) ?? '',
-          ownerId: user.uid,
-          carId: d.id,
-          make: (data['make'] as String?) ?? '',
-          model: (data['model'] as String?) ?? '',
-          photoUrl: (data['photoUrl'] as String?) ?? '',
+    return _carsCollection(user.uid)
+        .orderBy('createdAt')
+        .snapshots()
+        .map(
+          (snap) => snap.docs.map((d) {
+            final data = d.data();
+            return CarInfoModel(
+              carNumber: (data['carNumber'] as String?) ?? '',
+              techPassport: (data['techPassport'] as String?) ?? '',
+              ownerId: user.uid,
+              carId: d.id,
+              make: (data['make'] as String?) ?? '',
+              model: (data['model'] as String?) ?? '',
+              photoUrl: (data['photoUrl'] as String?) ?? '',
+            );
+          }).toList(),
         );
-      }).toList(),
-    );
   }
 
   /// Adds a new car to the garage (its own Firestore auto-id) without
@@ -384,12 +461,15 @@ Future<void> clearCarInfo() async {
 
     final fields = <String, dynamic>{'updatedAt': FieldValue.serverTimestamp()};
     if (carNumber != null) fields['carNumber'] = carNumber.trim();
-    if (techPassport != null) fields['techPassport'] = techPassport.trim().toUpperCase();
+    if (techPassport != null)
+      fields['techPassport'] = techPassport.trim().toUpperCase();
     if (make != null) fields['make'] = make;
     if (model != null) fields['model'] = model.trim();
     if (photoUrl != null) fields['photoUrl'] = photoUrl;
 
-    await _carsCollection(user.uid).doc(carId).set(fields, SetOptions(merge: true));
+    await _carsCollection(
+      user.uid,
+    ).doc(carId).set(fields, SetOptions(merge: true));
   }
 
   /// Makes [car] the active one: local cache (prefs) + `activeCarId` on the
@@ -480,5 +560,4 @@ Future<void> clearCarInfo() async {
     await clearCarInfo();
     return ensureCarId();
   }
-
 }

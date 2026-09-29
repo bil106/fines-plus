@@ -177,7 +177,8 @@ class HeroExpenseCard extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 10),
-                  ],
+                  ] else
+                    const SizedBox(height: 42),
                   GestureDetector(
                     behavior: HitTestBehavior.opaque,
                     onTap: onGarageTap,
@@ -274,7 +275,9 @@ class HeroExpenseCard extends StatelessWidget {
                         fuelValue: fuelValue.toStringAsFixed(1),
                         fuelUnit: fuelUnit,
                         // A dollar per mile is cents: one decimal would show $0.13 as 0.0.
-                        costPerKm: costPerKmConverted.toStringAsFixed(costPerKmConverted < 1 ? 2 : 1),
+                        costPerKm: costPerKmConverted.toStringAsFixed(
+                          costPerKmConverted < 1 ? 2 : 1,
+                        ),
                         costPerKmUnit: '$currency/$mileageUnit',
                       ),
                     ],
