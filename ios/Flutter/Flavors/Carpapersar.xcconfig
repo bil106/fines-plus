@@ -1,0 +1,7 @@
+// CarPapers ar iOS brand values, included by Flutter/*-carpapersar.xcconfig.
+// BUNDLE_ID must match the iOS app registered in Firebase project carpapers-bde41.
+BUNDLE_ID = com.carpapers.ar
+APP_DISPLAY_NAME = CarPapers
+FIREBASE_PLIST_DIR = carpapersar
+GOOGLE_CLIENT_ID = 145498918452-svk09o3dlflr933ksce690gqtuibru2o.apps.googleusercontent.com
+GOOGLE_REVERSED_CLIENT_ID = com.googleusercontent.apps.145498918452-svk09o3dlflr933ksce690gqtuibru2o

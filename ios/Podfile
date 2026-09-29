@@ -11,6 +11,12 @@ project 'Runner', {
   'Debug-carpapers' => :debug,
   'Profile-carpapers' => :release,
   'Release-carpapers' => :release,
+  'Debug-carpapersar' => :debug,
+  'Profile-carpapersar' => :release,
+  'Release-carpapersar' => :release,
+  'Debug-carpapersmx' => :debug,
+  'Profile-carpapersmx' => :release,
+  'Release-carpapersmx' => :release,
 }
 
 def flutter_root
