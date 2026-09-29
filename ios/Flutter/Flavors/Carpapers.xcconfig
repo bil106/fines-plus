@@ -1,7 +1,8 @@
-// Scaffold only - not wired into any build configuration yet (no CarPapers
-// Xcode configuration/scheme/target exists). BUNDLE_ID is a placeholder -
-// confirm it before ever archiving/uploading with it, since the first real
-// upload to App Store Connect makes it permanent. See
-// ios/Flutter/Flavors/README.md for the manual Xcode steps still needed.
+// CarPapers iOS brand values, included by Flutter/*-carpapers.xcconfig.
+// BUNDLE_ID must match the iOS app registered in Firebase project carpapers-bde41.
+// It becomes permanent at the first App Store Connect upload.
 BUNDLE_ID = com.carpapers.app
 APP_DISPLAY_NAME = CarPapers
+FIREBASE_PLIST_DIR = carpapers
+GOOGLE_CLIENT_ID = 145498918452-m8ofp4lovoith2lf9bhm23onfroi0sbn.apps.googleusercontent.com
+GOOGLE_REVERSED_CLIENT_ID = com.googleusercontent.apps.145498918452-m8ofp4lovoith2lf9bhm23onfroi0sbn

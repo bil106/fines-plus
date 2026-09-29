@@ -7,7 +7,7 @@
 		<key>CFBundleDevelopmentRegion</key>
 		<string>$(DEVELOPMENT_LANGUAGE)</string>
 		<key>CFBundleDisplayName</key>
-		<string>Fines Plus</string>
+		<string>$(APP_DISPLAY_NAME)</string>
 		<key>CFBundleExecutable</key>
 		<string>$(EXECUTABLE_NAME)</string>
 		<key>CFBundleIdentifier</key>
@@ -33,7 +33,7 @@
 			<dict>
 				<key>CFBundleURLSchemes</key>
 				<array>
-					<string>com.googleusercontent.apps.201100655892-2ansipskidg5tdeti65m0oovp2c65l8q</string>
+					<string>$(GOOGLE_REVERSED_CLIENT_ID)</string>
 				</array>
 			</dict>
 			<dict>
@@ -58,7 +58,7 @@
 		<key>GADApplicationIdentifier</key>
 		<string>ca-app-pub-3940256099942544~1458002511</string>
 		<key>GIDClientID</key>
-		<string>201100655892-2ansipskidg5tdeti65m0oovp2c65l8q.apps.googleusercontent.com</string>
+		<string>$(GOOGLE_CLIENT_ID)</string>
 		<key>GMSApiKey</key>
 		<string>AIzaSyAaRnJCwVQOOVt56K5mBvfuxP2XAVdNAiM</string>
 		<key>LSRequiresIPhoneOS</key>

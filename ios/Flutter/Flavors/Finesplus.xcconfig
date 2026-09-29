@@ -1,5 +1,6 @@
-// Scaffold only - NOT yet included by Debug/Release.xcconfig, so it has no
-// effect on the current build. Mirrors today's actual values so wiring it in
-// later is a no-op for this brand. See ios/Flutter/Flavors/README.md.
+// Brand values for the default (finesplus) Debug/Release/Profile configurations,
+// included by Flutter/Debug.xcconfig and Flutter/Release.xcconfig.
 BUNDLE_ID = com.igorbeloded.finesplus
 APP_DISPLAY_NAME = Fines Plus
+GOOGLE_CLIENT_ID = 201100655892-2ansipskidg5tdeti65m0oovp2c65l8q.apps.googleusercontent.com
+GOOGLE_REVERSED_CLIENT_ID = com.googleusercontent.apps.201100655892-2ansipskidg5tdeti65m0oovp2c65l8q
