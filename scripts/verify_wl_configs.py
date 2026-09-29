@@ -40,6 +40,7 @@ def app_config_from_json(d):
         "market": d.get("market", "UA"),
         "finesCheckEnabled": d.get("finesCheckEnabled", True),
         "facebookLoginEnabled": d.get("facebookLoginEnabled", True),
+        "moneyBackGuaranteeEnabled": d.get("moneyBackGuaranteeEnabled", True),
         "termsUrl": d.get("termsUrl"),
         "privacyPolicyUrl": d.get("privacyPolicyUrl"),
         "copyOverrides": d.get("copyOverrides"),

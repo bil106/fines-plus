@@ -33,6 +33,13 @@ class AppConfig {
   @JsonKey(defaultValue: true)
   final bool facebookLoginEnabled;
 
+  /// Whether the paywall shows the "30-day money back guarantee" badge. Only
+  /// a brand that actually honors such refunds keeps it on - otherwise it's a
+  /// promise its Terms don't make (refunds follow Google Play's policy).
+  /// Defaults to true so existing configs keep today's behavior.
+  @JsonKey(defaultValue: true)
+  final bool moneyBackGuaranteeEnabled;
+
   /// Per-brand legal links. Null falls back to the global Env.termsUrl /
   /// Env.privacyPolicyUrl (see env/env.dart) so existing configs still work.
   final String? termsUrl;
@@ -101,6 +108,7 @@ class AppConfig {
     this.market = 'UA',
     this.finesCheckEnabled = true,
     this.facebookLoginEnabled = true,
+    this.moneyBackGuaranteeEnabled = true,
     this.termsUrl,
     this.privacyPolicyUrl,
     this.copyOverrides,

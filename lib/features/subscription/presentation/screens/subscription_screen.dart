@@ -416,6 +416,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        if (context.read<AppConfig>().moneyBackGuaranteeEnabled) ...[
                         Row(
                           mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -433,6 +434,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                           ],
                         ),
                         const SizedBox(width: 16),
+                        ],
                         Row(
                           mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.start,

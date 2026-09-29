@@ -1,7 +1,7 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 //
 // NOTE: hand-updated alongside the market/finesCheckEnabled/
-// facebookLoginEnabled/termsUrl/privacyPolicyUrl fields, and again for the surfaceBgHex/surfaceBorderHex/
+// facebookLoginEnabled/moneyBackGuaranteeEnabled/termsUrl/privacyPolicyUrl fields, and again for the surfaceBgHex/surfaceBorderHex/
 // dividerHex/alertBgHex/alertBorderHex/alertFgHex/status*/displayFontFamily/
 // bodyFontFamily/monoFontFamily brand-theme fields, added to AppConfig.
 // Re-run `dart run build_runner build --delete-conflicting-outputs` to
@@ -23,6 +23,7 @@ AppConfig _$AppConfigFromJson(Map<String, dynamic> json) => AppConfig(
   market: json['market'] as String? ?? 'UA',
   finesCheckEnabled: json['finesCheckEnabled'] as bool? ?? true,
   facebookLoginEnabled: json['facebookLoginEnabled'] as bool? ?? true,
+  moneyBackGuaranteeEnabled: json['moneyBackGuaranteeEnabled'] as bool? ?? true,
   termsUrl: json['termsUrl'] as String?,
   privacyPolicyUrl: json['privacyPolicyUrl'] as String?,
   copyOverrides: (json['copyOverrides'] as Map<String, dynamic>?)?.map(
@@ -56,6 +57,7 @@ Map<String, dynamic> _$AppConfigToJson(AppConfig instance) => <String, dynamic>{
   'market': instance.market,
   'finesCheckEnabled': instance.finesCheckEnabled,
   'facebookLoginEnabled': instance.facebookLoginEnabled,
+  'moneyBackGuaranteeEnabled': instance.moneyBackGuaranteeEnabled,
   if (instance.termsUrl != null) 'termsUrl': instance.termsUrl,
   if (instance.privacyPolicyUrl != null) 'privacyPolicyUrl': instance.privacyPolicyUrl,
   if (instance.copyOverrides != null) 'copyOverrides': instance.copyOverrides,

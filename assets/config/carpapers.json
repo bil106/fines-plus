@@ -8,6 +8,7 @@
   "market": "US",
   "finesCheckEnabled": false,
   "facebookLoginEnabled": false,
-  "termsUrl": "REPLACE_ME_TERMS_URL",
+  "moneyBackGuaranteeEnabled": false,
+  "termsUrl": "https://carpapers-bde41.web.app/terms",
   "privacyPolicyUrl": "https://carpapers-bde41.web.app/privacy"
 }
