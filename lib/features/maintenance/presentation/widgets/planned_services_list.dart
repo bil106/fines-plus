@@ -1,4 +1,5 @@
 import 'package:core_localization/generated/l10n.dart';
+import 'package:fines_plus/core/extensions/display_date.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_brand_theme.dart';
@@ -9,7 +10,6 @@ import 'package:fines_plus/features/reminders/presentation/reminder_status_tint.
 import 'package:fines_plus/features/reminders/presentation/widgets/reminder_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
 
 const _maxListHeight = 220.0;
 const _dateTintAlpha = 0.45;
@@ -120,7 +120,7 @@ class _PlannedServiceRow extends StatelessWidget {
             borderRadius: BorderRadius.circular(8),
           ),
           child: Text(
-            DateFormat('dd.MM.yyyy').format(reminder.dateTime.toLocal()),
+            displayDate(context, reminder.dateTime.toLocal()),
             style: textTheme.bodySmall?.copyWith(
               fontWeight: FontWeight.w700,
               color: isOverdue ? AppColors.neutreBlanc : AppColors.black87,

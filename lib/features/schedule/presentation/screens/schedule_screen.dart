@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:fines_plus/core/extensions/display_date.dart';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -339,7 +340,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                               ? InsuranceCard(
                                   progress: task.getProgress(),
                                   priorExecution: task.lastServiceDate != null
-                                      ? DateFormat('dd.MM.yyyy').format(task.lastServiceDate!)
+                                      ? displayDate(context, task.lastServiceDate!)
                                       : null,
                                   intervalTime: task.intervalTime,
                                   onPressed: () async {
@@ -384,7 +385,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                                   category: task.category,
                                   progress: task.getProgress(),
                                   priorExecution: task.lastServiceDate != null
-                                      ? DateFormat('dd.MM.yyyy').format(task.lastServiceDate!)
+                                      ? displayDate(context, task.lastServiceDate!)
                                       : null,
                                   lastMileage: task.lastMileage,
                                   actualMileage: getMaxMileage(newMileage: task.lastMileage),
@@ -401,7 +402,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                                         description: task.description,
                                         category: task.category,
                                         lastServiceDate: task.lastServiceDate != null
-                                            ? DateFormat('dd.MM.yyyy').format(task.lastServiceDate!)
+                                            ? displayDate(context, task.lastServiceDate!)
                                             : null,
                                         lastMileage: task.lastMileage,
                                         actualMileage: getMaxMileage(newMileage: task.lastMileage),

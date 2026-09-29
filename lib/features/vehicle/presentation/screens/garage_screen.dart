@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:fines_plus/core/extensions/display_date.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:core_localization/generated/l10n.dart';
@@ -423,7 +424,7 @@ class CarMileageAndStatusState extends State<CarMileageAndStatus> {
         : latestInsuranceValidTo != null
         ? S
               .of(context)
-              .garage_status_ok_until(_formatDate(latestInsuranceValidTo))
+              .garage_status_ok_until(displayDate(context, latestInsuranceValidTo))
         : S.of(context).garage_status_ok;
 
     final settingsCubit = context.read<SettingsCubit>();
@@ -495,10 +496,6 @@ class CarMileageAndStatusState extends State<CarMileageAndStatus> {
         ],
       ),
     );
-  }
-
-  String _formatDate(DateTime date) {
-    return '${date.day.toString().padLeft(2, '0')}.${date.month.toString().padLeft(2, '0')}.${date.year}';
   }
 }
 

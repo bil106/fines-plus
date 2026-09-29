@@ -1,4 +1,4 @@
-import 'package:core_utils/formatters/date_formatter.dart';
+import 'package:fines_plus/core/extensions/display_date.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_borders.dart';
 import 'package:design_system/constants/app_spacers.dart';
@@ -74,7 +74,7 @@ class FuelRecordCard extends StatelessWidget {
                     Icon(Icons.calendar_month, color: AppColors.energyBlue, size: 20),
                     const SizedBox(width: 2),
 
-                    Text(DateFormatter.formatDate(record.date), style: textTheme.subtitleText),
+                    Text(displayDate(context, record.date), style: textTheme.subtitleText),
 
                     const SizedBox(width: 10),
                     Icon(Icons.speed, color: AppColors.energyBlue, size: 20),

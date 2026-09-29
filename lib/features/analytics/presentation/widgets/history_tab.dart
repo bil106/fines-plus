@@ -1,4 +1,5 @@
 import 'package:core_localization/generated/l10n.dart';
+import 'package:fines_plus/core/extensions/display_date.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_brand_theme.dart';
@@ -74,7 +75,7 @@ class HistoryTab extends StatelessWidget {
                   icon: event.icon,
                   iconColor: event.iconColor,
                   customIcon: event.customIcon,
-                  date: DateFormat('dd.MM.yyyy').format(event.date),
+                  date: displayDate(context, event.date),
                   title: event.title,
                   subtitle: '',
                   amount: convertedAmount,

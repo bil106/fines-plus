@@ -1,4 +1,5 @@
 import 'package:core_localization/generated/l10n.dart';
+import 'package:fines_plus/core/extensions/display_date.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_brand_theme.dart';
@@ -62,7 +63,7 @@ class DatePickerCard extends StatelessWidget {
                   alignment: Alignment.centerLeft,
                   child: Text(
                     selectedDate != null
-                        ? "${selectedDate!.day.toString().padLeft(2, '0')}.${selectedDate!.month.toString().padLeft(2, '0')}.${selectedDate!.year}"
+                        ? displayDate(context, selectedDate!)
                         : S.of(context).select_date,
                     style: selectedDate != null
                         ? textTheme.historyText.copyWith(

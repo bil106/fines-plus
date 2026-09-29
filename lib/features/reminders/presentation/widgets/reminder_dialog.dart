@@ -1,4 +1,5 @@
 import 'package:core_localization/generated/l10n.dart';
+import 'package:fines_plus/core/extensions/display_date.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/theme/app_brand_theme.dart';
 import 'package:design_system/widget/app_bottom_sheet.dart';
@@ -6,7 +7,6 @@ import 'package:design_system/widget/app_field_card.dart';
 import 'package:fines_plus/features/reminders/data/models/reminder_model.dart';
 import 'package:fines_plus/features/reminders/presentation/cubit/reminder_cubit.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 /// Opens the "Нове нагадування"/"Редагувати нагадування" form in the same
 /// [AppBottomSheet] shell as the Паливо/ТО/Мийка/Тюнінг quick-add sheets,
@@ -170,7 +170,7 @@ class _ReminderFormState extends State<_ReminderForm> {
                         Text(S.of(context).select_date, style: const TextStyle(fontSize: 11.5, color: AppColors.textSecondary)),
                         const SizedBox(height: 2),
                         Text(
-                          DateFormat('dd.MM.yyyy HH:mm').format(selectedDateTime),
+                          displayDate(context, selectedDateTime, withTime: true),
                           style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: AppColors.ink),
                         ),
                       ],
