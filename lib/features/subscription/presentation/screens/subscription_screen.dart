@@ -69,14 +69,26 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   }
 
   Future<void> _loadProductPrices() async {
+    setState(() {
+      _productsLoading = true;
+      _productsUnavailable = false;
+    });
     try {
       final ids = plans.map((p) => p["productId"] as String).toSet();
-      final response = await InAppPurchase.instance.queryProductDetails(ids);
+      final response = await InAppPurchase.instance
+          .queryProductDetails(ids)
+          .timeout(const Duration(seconds: 15));
+      if (response.error != null) {
+        FirebaseCrashlytics.instance.log(
+          'Product query failed: ${response.error}',
+        );
+      }
       if (response.notFoundIDs.isNotEmpty) {
         FirebaseCrashlytics.instance.log('Products not found: ${response.notFoundIDs}');
       }
       if (!mounted) return;
       setState(() {
+        _productDetails.clear();
         for (final p in response.productDetails) {
           _productDetails[p.id] = p;
         }
@@ -120,7 +132,10 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   String _trialDisclosureText(BuildContext context) {
     final plan = plans[_selectedIndex];
     final store = _productDetails[plan["productId"] as String];
-    final price = store?.price ?? S.of(context).store_unavailable;
+    if (store == null) {
+      return _productsLoading ? '' : S.of(context).store_unavailable;
+    }
+    final price = store.price;
     final period = _localizedPeriod(context, plan["periodKey"] as String);
     return S.of(context).trial_disclosure_detailed(price, period);
   }
@@ -370,7 +385,11 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                       child: BlocBuilder<PurchaseCubit, PurchaseState>(
                         builder: (context, state) {
                           final loading = state is PurchaseInProgress;
-                          final disabled = loading || _productsLoading || _productsUnavailable;
+                          final selectedProduct =
+                              _productDetails[plans[_selectedIndex]["productId"]];
+                          final unavailable =
+                              _productsUnavailable || selectedProduct == null;
+                          final disabled = loading || _productsLoading || unavailable;
 
                           return ElevatedButton(
                             style: ElevatedButton.styleFrom(
@@ -388,7 +407,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                     child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.neutreBlanc),
                                   )
                                 : Text(
-                                    _productsUnavailable ? S.of(context).store_unavailable : S.of(context).get_plan,
+                                    unavailable ? S.of(context).store_unavailable : S.of(context).get_plan,
                                     style: textTheme.black18bold.copyWith(
                                       fontSize: 15.5,
                                       fontWeight: FontWeight.w800,
@@ -400,14 +419,14 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                       ),
                     ),
 
-                    if (_productsUnavailable && !_productsLoading)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8),
-                        child: Text(
-                          S.of(context).store_unavailable,
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(fontSize: 13, color: AppColors.red),
-                        ),
+                    if (!_productsLoading &&
+                        _productDetails.length < plans.length)
+                      TextButton(
+                        onPressed: context.watch<PurchaseCubit>().state
+                                is PurchaseInProgress
+                            ? null
+                            : _loadProductPrices,
+                        child: Text(S.of(context).service_retry),
                       ),
 
                     AppSpacers.verticalMedium,

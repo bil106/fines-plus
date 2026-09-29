@@ -14,10 +14,100 @@
       },
       "oauth_client": [
         {
+          "client_id": "145498918452-22m1up64fkt9kkmrt8m450b2ruq0pvqc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.carpapers.app",
+            "certificate_hash": "c13ed43e8e7e535c78fc07e5cf6ebd4ccbfee37d"
+          }
+        },
+        {
+          "client_id": "145498918452-6kgjshmktbupid89slv44gobksap116l.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.carpapers.app",
+            "certificate_hash": "2fdc719ba99447f575cf8324dd8924ec28de1e48"
+          }
+        },
+        {
           "client_id": "145498918452-tgqvqejagl8fv8ct2khcasnsvbn0ucns.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.carpapers.app",
+            "certificate_hash": "3176a393f7ed822597f4a1b094671c37591e54bf"
+          }
+        },
+        {
+          "client_id": "145498918452-aid352ogcnq6l8ronio8bovo496r5i50.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyARn3tHa6XbRBlnezAltB5KPOOG7rwtuLo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "145498918452-aid352ogcnq6l8ronio8bovo496r5i50.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:145498918452:android:ef8b445f8403b5b1728461",
+        "android_client_info": {
+          "package_name": "com.carpapers.ar"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "145498918452-icbbi284cqeu38qgphuudbm4ef4a02v4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.carpapers.ar",
+            "certificate_hash": "3176a393f7ed822597f4a1b094671c37591e54bf"
+          }
+        },
+        {
+          "client_id": "145498918452-aid352ogcnq6l8ronio8bovo496r5i50.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyARn3tHa6XbRBlnezAltB5KPOOG7rwtuLo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "145498918452-aid352ogcnq6l8ronio8bovo496r5i50.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:145498918452:android:2cab9b63e759833c728461",
+        "android_client_info": {
+          "package_name": "com.carpapers.mx"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "145498918452-845mp0adm756b7qvmuq82fncdnc10ijd.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.carpapers.mx",
             "certificate_hash": "3176a393f7ed822597f4a1b094671c37591e54bf"
           }
         },
