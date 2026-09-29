@@ -12,6 +12,7 @@
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
 		4DB451B1A980DF0B3F054F87 /* Pods_RunnerTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5777CDC3FFE5A031782AFA62 /* Pods_RunnerTests.framework */; };
 		59F4B1CAFF6E3A21A12176A0 /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 307E6B47B978EDBE9F2EE45D /* Pods_Runner.framework */; };
+		70D02AF5D25220CEC6FB40BC /* LaunchScreen-carpapers.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0734609768E372616AD61C35 /* LaunchScreen-carpapers.storyboard */; };
 		74858FAF1ED2DC5600515810 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74858FAE1ED2DC5600515810 /* AppDelegate.swift */; };
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
 		97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
@@ -44,6 +45,7 @@
 
 /* Begin PBXFileReference section */
 		01BA815017D386E94EC025D8 /* Profile-carpapersmx.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Profile-carpapersmx.xcconfig"; path = "Flutter/Profile-carpapersmx.xcconfig"; sourceTree = "<group>"; };
+		0734609768E372616AD61C35 /* LaunchScreen-carpapers.storyboard */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = file.storyboard; path = "LaunchScreen-carpapers.storyboard"; sourceTree = "<group>"; };
 		13C46730B356D9D337867AFF /* Profile-carpapersar.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Profile-carpapersar.xcconfig"; path = "Flutter/Profile-carpapersar.xcconfig"; sourceTree = "<group>"; };
 		1498D2321E8E86230040F4C2 /* GeneratedPluginRegistrant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GeneratedPluginRegistrant.h; sourceTree = "<group>"; };
 		1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeneratedPluginRegistrant.m; sourceTree = "<group>"; };
@@ -186,6 +188,7 @@
 				74858FAE1ED2DC5600515810 /* AppDelegate.swift */,
 				A1F0E1C02E90000100000002 /* AddFuelUpIntent.swift */,
 				74858FAD1ED2DC5600515810 /* Runner-Bridging-Header.h */,
+				0734609768E372616AD61C35 /* LaunchScreen-carpapers.storyboard */,
 			);
 			path = Runner;
 			sourceTree = "<group>";
@@ -322,6 +325,7 @@
 				3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */,
 				97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */,
 				97C146FC1CF9000F007C117D /* Main.storyboard in Resources */,
+				70D02AF5D25220CEC6FB40BC /* LaunchScreen-carpapers.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

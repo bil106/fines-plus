@@ -4,3 +4,4 @@ BUNDLE_ID = com.igorbeloded.finesplus
 APP_DISPLAY_NAME = Fines Plus
 GOOGLE_CLIENT_ID = 201100655892-2ansipskidg5tdeti65m0oovp2c65l8q.apps.googleusercontent.com
 GOOGLE_REVERSED_CLIENT_ID = com.googleusercontent.apps.201100655892-2ansipskidg5tdeti65m0oovp2c65l8q
+LAUNCH_STORYBOARD_NAME = LaunchScreen

@@ -6,3 +6,4 @@ APP_DISPLAY_NAME = CarPapers
 FIREBASE_PLIST_DIR = carpapers
 GOOGLE_CLIENT_ID = 145498918452-m8ofp4lovoith2lf9bhm23onfroi0sbn.apps.googleusercontent.com
 GOOGLE_REVERSED_CLIENT_ID = com.googleusercontent.apps.145498918452-m8ofp4lovoith2lf9bhm23onfroi0sbn
+LAUNCH_STORYBOARD_NAME = LaunchScreen-carpapers
