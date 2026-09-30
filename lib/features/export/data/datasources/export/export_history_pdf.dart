@@ -2,6 +2,7 @@
 
 import 'package:core_data/core_data.dart';
 import 'package:core_localization/generated/l10n.dart';
+import 'package:core_utils/formatters/plate_market.dart';
 import 'package:fines_plus/features/analytics/data/models/car_history_model.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
@@ -43,6 +44,7 @@ class ExportHistoryPdf {
     required String brandName,
     required String logoAssetPath,
     required bool includeFines,
+    required PlateMarket plateMarket,
   }) async {
     final pdf = pw.Document();
     final font = await _loadFont();
@@ -87,7 +89,7 @@ class ExportHistoryPdf {
                 crossAxisAlignment: pw.CrossAxisAlignment.end,
                 children: [
                   if (carNumber.isNotEmpty) ...[
-                    _buildPlate(font, carNumber),
+                    _buildPlate(font, carNumber, plateMarket),
                     pw.SizedBox(height: 6),
                   ],
                   pw.Text(
@@ -132,13 +134,88 @@ class ExportHistoryPdf {
     return pdf.save();
   }
 
-  /// A Ukrainian-style licence plate: blue flag/"UA" strip on the left, the
-  /// plate number in large type (e.g. "KA 4362 PO") in a rounded black frame.
-  pw.Widget _buildPlate(pw.Font font, String carNumber) {
-    final plate = carNumber.replaceAll(' ', '').toUpperCase();
-    final formatted = plate.length == 8
-        ? '${plate.substring(0, 2)} ${plate.substring(2, 6)} ${plate.substring(6)}'
-        : plate;
+  /// The plate in the brand market's style (see LicensePlateBadge): a blue
+  /// "UA" / EU strip on the left for UA / ES, a "USA" / "MÉXICO" header above
+  /// the number for US / MX, the blue Mercosur band on top for AR.
+  pw.Widget _buildPlate(pw.Font font, String carNumber, PlateMarket market) {
+    final number = pw.Padding(
+      padding: const pw.EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+      child: pw.Text(
+        market.display(carNumber),
+        style: pw.TextStyle(font: font, fontSize: 30, fontWeight: pw.FontWeight.bold),
+      ),
+    );
+
+    final field = switch (market) {
+      PlateMarket.ua => pw.Row(
+        mainAxisSize: pw.MainAxisSize.min,
+        children: [
+          _plateStrip(
+            font,
+            'UA',
+            PdfColors.blue800,
+            pw.Column(
+              children: [
+                pw.Container(width: 16, height: 5, color: PdfColors.blue400),
+                pw.Container(width: 16, height: 5, color: PdfColors.yellow),
+              ],
+            ),
+          ),
+          number,
+        ],
+      ),
+      PlateMarket.es => pw.Row(
+        mainAxisSize: pw.MainAxisSize.min,
+        children: [
+          _plateStrip(
+            font,
+            'E',
+            PdfColors.indigo900,
+            pw.Container(
+              width: 14,
+              height: 14,
+              decoration: pw.BoxDecoration(
+                shape: pw.BoxShape.circle,
+                border: pw.Border.all(color: PdfColors.yellow, width: 1.5),
+              ),
+            ),
+          ),
+          number,
+        ],
+      ),
+      PlateMarket.us || PlateMarket.mx => pw.Column(
+        mainAxisSize: pw.MainAxisSize.min,
+        children: [
+          pw.Padding(
+            padding: const pw.EdgeInsets.only(top: 4),
+            child: pw.Text(
+              market == PlateMarket.us ? 'USA' : 'MÉXICO',
+              style: pw.TextStyle(font: font, fontSize: 9, letterSpacing: 2.4, color: PdfColors.blueGrey900),
+            ),
+          ),
+          number,
+        ],
+      ),
+      PlateMarket.ar => pw.Column(
+        mainAxisSize: pw.MainAxisSize.min,
+        crossAxisAlignment: pw.CrossAxisAlignment.stretch,
+        children: [
+          pw.Container(
+            alignment: pw.Alignment.center,
+            padding: const pw.EdgeInsets.symmetric(vertical: 2),
+            decoration: const pw.BoxDecoration(
+              color: PdfColors.blue800,
+              borderRadius: pw.BorderRadius.vertical(top: pw.Radius.circular(4)),
+            ),
+            child: pw.Text(
+              'REPÚBLICA ARGENTINA',
+              style: pw.TextStyle(font: font, fontSize: 7, letterSpacing: 0.8, color: PdfColors.white),
+            ),
+          ),
+          number,
+        ],
+      ),
+    };
 
     return pw.Container(
       decoration: pw.BoxDecoration(
@@ -146,38 +223,26 @@ class ExportHistoryPdf {
         border: pw.Border.all(color: PdfColors.black, width: 2),
         borderRadius: pw.BorderRadius.circular(6),
       ),
-      child: pw.Row(
-        mainAxisSize: pw.MainAxisSize.min,
-        crossAxisAlignment: pw.CrossAxisAlignment.center,
+      child: field,
+    );
+  }
+
+  /// The blue strip on the left of UA / EU plates: an emblem on top, the
+  /// country code at the bottom.
+  pw.Widget _plateStrip(pw.Font font, String code, PdfColor color, pw.Widget emblem) {
+    return pw.Container(
+      width: 26,
+      height: 40,
+      padding: const pw.EdgeInsets.symmetric(vertical: 5),
+      decoration: pw.BoxDecoration(
+        color: color,
+        borderRadius: const pw.BorderRadius.horizontal(left: pw.Radius.circular(4)),
+      ),
+      child: pw.Column(
+        mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
         children: [
-          pw.Container(
-            width: 26,
-            height: 40,
-            padding: const pw.EdgeInsets.symmetric(vertical: 5),
-            decoration: const pw.BoxDecoration(
-              color: PdfColors.blue800,
-              borderRadius: pw.BorderRadius.horizontal(left: pw.Radius.circular(4)),
-            ),
-            child: pw.Column(
-              mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-              children: [
-                pw.Column(
-                  children: [
-                    pw.Container(width: 16, height: 5, color: PdfColors.blue400),
-                    pw.Container(width: 16, height: 5, color: PdfColors.yellow),
-                  ],
-                ),
-                pw.Text('UA', style: pw.TextStyle(font: font, fontSize: 9, color: PdfColors.white)),
-              ],
-            ),
-          ),
-          pw.Padding(
-            padding: const pw.EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-            child: pw.Text(
-              formatted,
-              style: pw.TextStyle(font: font, fontSize: 30, fontWeight: pw.FontWeight.bold),
-            ),
-          ),
+          emblem,
+          pw.Text(code, style: pw.TextStyle(font: font, fontSize: 9, color: PdfColors.white)),
         ],
       ),
     );

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:core_data/core_data.dart';
+import 'package:core_utils/formatters/plate_market.dart';
 import 'package:fines_plus/features/analytics/data/models/event_model.dart';
 import 'package:fines_plus/features/export/data/datasources/export/export_history_csv.dart';
 import 'package:fines_plus/features/export/data/datasources/export/export_history_pdf.dart';
@@ -44,6 +45,7 @@ Future<File> exportCsvFile(String carNumber, List<EventModel> history) async {
     required String brandName,
     required String logoAssetPath,
     required bool includeFines,
+    required PlateMarket plateMarket,
   }) async {
     final carHistoryList = exportRepository.convertEventsToCarHistory(history);
 
@@ -66,6 +68,7 @@ Future<File> exportCsvFile(String carNumber, List<EventModel> history) async {
       brandName: brandName,
       logoAssetPath: logoAssetPath,
       includeFines: includeFines,
+      plateMarket: plateMarket,
     );
     final dir = await getTemporaryDirectory();
     final safeCarNumber = carNumber.isEmpty ? "car" : carNumber;

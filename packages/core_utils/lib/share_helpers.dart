@@ -8,6 +8,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:share_plus/share_plus.dart';
 
 class ShareHelpers {
+  /// iOS requires a non-zero anchor rect for the share sheet (mandatory on
+  /// iPad, and on iPhone under newer iOS versions), otherwise share throws.
+  static Rect? _shareOrigin(BuildContext context) {
+    final box = context.findRenderObject() as RenderBox?;
+    if (box == null || !box.hasSize) return null;
+    return box.localToGlobal(Offset.zero) & box.size;
+  }
+
   static Future<void> sharePdf(
     BuildContext context,
     String carNumber,
@@ -18,6 +26,7 @@ class ShareHelpers {
     await Share.shareXFiles(
       [XFile(file.path)],
       text: '${S.of(context).car_history} $carNumber',
+      sharePositionOrigin: _shareOrigin(context),
     );
   }
 
@@ -32,6 +41,7 @@ class ShareHelpers {
     await Share.shareXFiles(
       [XFile(file.path)],
       text: '${S.of(context).car_history} $carNumber',
+      sharePositionOrigin: _shareOrigin(context),
     );
   }
 
@@ -51,10 +61,12 @@ class ShareHelpers {
       brandName: config.brandName,
       logoAssetPath: config.logoAssetPath,
       includeFines: config.finesCheckEnabled,
+      plateMarket: config.plateMarket,
     );
     await Share.shareXFiles(
       [XFile(file.path)],
       text: '${S.of(context).buyer_report} $carNumber',
+      sharePositionOrigin: _shareOrigin(context),
     );
   }
 }
