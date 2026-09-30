@@ -5,15 +5,14 @@ import 'package:design_system/constants/app_borders.dart';
 import 'package:design_system/feedback/app_haptics.dart';
 import 'package:design_system/widget/app_bottom_sheet.dart';
 import 'package:fines_plus/features/expenses/data/models/car_wash_record.dart';
-import 'package:fines_plus/features/expenses/data/models/fuel_record.dart';
 import 'package:fines_plus/features/expenses/data/models/other_expense_record.dart';
 import 'package:fines_plus/features/expenses/data/models/service_record.dart';
 import 'package:fines_plus/features/expenses/data/models/tuning_record.dart';
+import 'package:fines_plus/features/home/presentation/widgets/fuel_sheet.dart';
 import 'package:fines_plus/features/home/presentation/widgets/insurance_sheet.dart';
 import 'package:fines_plus/features/home/presentation/widgets/other_expense_sheet.dart';
 import 'package:fines_plus/features/maintenance/presentation/cubit/maintenance_cubit.dart';
 import 'package:fines_plus/features/maintenance/presentation/screens/car_wash_screen.dart';
-import 'package:fines_plus/features/maintenance/presentation/screens/fuel_up_screen.dart';
 import 'package:fines_plus/features/maintenance/presentation/screens/service_screen.dart';
 import 'package:fines_plus/features/maintenance/presentation/screens/tuning_screen.dart';
 import 'package:fines_plus/features/reminders/domain/maintenance_ring.dart';
@@ -46,17 +45,7 @@ class QuickAddRow extends StatelessWidget {
             icon: Icons.local_gas_station,
             iconColor: AppColors.catFuel,
             label: S.of(context).fuel,
-            onTap: () async {
-              final fuelKey = GlobalKey<FuelUpScreenState>();
-              await AppBottomSheet.show<FuelRecord>(
-                context,
-                title: S.of(context).fuel,
-                contentBuilder: (_) =>
-                    FuelUpScreen(key: fuelKey, embedded: true),
-                saveLabel: S.of(context).save,
-                onSave: () => fuelKey.currentState?.save(),
-              );
-            },
+            onTap: () => showFuelSheet(context),
           ),
         ),
         const SizedBox(width: 6),

@@ -6,6 +6,7 @@ import 'package:fines_plus/app/router/app_router.dart';
 import 'package:fines_plus/core/config/app_config.dart';
 import 'package:fines_plus/core/services/notification_tap_bus.dart';
 import 'package:fines_plus/core/theme/theme_config.dart';
+import 'package:fines_plus/features/home/presentation/widgets/fuel_sheet.dart';
 import 'package:fines_plus/features/maintenance/domain/fuel_payment_link.dart';
 import 'package:fines_plus/features/registration/presentation/cubit/registration_cubit.dart';
 import 'package:fines_plus/features/settings/presentation/cubit/settings_cubit.dart';
@@ -88,7 +89,7 @@ class _MyAppState extends State<MyApp> {
     if (payload == 'fuel_prompt') {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
-        _router.push(FuelUpRoute());
+        _openFuelSheetAfterSplash(null);
       });
     }
   }
@@ -207,23 +208,32 @@ class _MyAppState extends State<MyApp> {
     final amount = FuelPaymentLink.amountFrom(uri);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-      _pushFuelUpAfterSplash(amount);
+      _openFuelSheetAfterSplash(amount);
     });
   }
 
   /// On a cold start the link lands while the splash is still resolving the
-  /// start route, and its `replaceAll` would wipe a pushed fuel screen - so
-  /// wait until the splash has been replaced.
-  void _pushFuelUpAfterSplash(double? amount) {
+  /// start route, and its `replaceAll` would wipe anything opened meanwhile -
+  /// so wait until the splash has been replaced. The sheet only makes sense
+  /// over the dashboard, so it is skipped when the user lands on onboarding
+  /// or sign-in instead.
+  void _openFuelSheetAfterSplash(double? amount) {
     bool onSplash() => _router.stack.any((route) => route.name == SplashRoute.name);
+    void openSheet() {
+      final onHome = _router.stack.any((route) => route.name == HomeRouteWrapper.name);
+      final sheetContext = _router.navigatorKey.currentState?.overlay?.context;
+      if (!mounted || !onHome || sheetContext == null) return;
+      showFuelSheet(sheetContext, initialSum: amount);
+    }
+
     if (!onSplash()) {
-      _router.push(FuelUpRoute(initialSum: amount));
+      openSheet();
       return;
     }
     void listener() {
       if (onSplash()) return;
       _router.removeListener(listener);
-      if (mounted) _router.push(FuelUpRoute(initialSum: amount));
+      WidgetsBinding.instance.addPostFrameCallback((_) => openSheet());
     }
 
     _router.addListener(listener);
