@@ -1,9 +1,15 @@
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_spacers.dart';
+import 'package:design_system/feedback/app_haptics.dart';
 import 'package:design_system/theme/app_brand_theme.dart';
 import 'package:design_system/theme/app_theme.dart';
+import 'package:fines_plus/features/maintenance/data/odometer_scanner.dart';
+import 'package:fines_plus/features/maintenance/presentation/cubit/maintenance_cubit.dart';
+import 'package:fines_plus/features/settings/presentation/cubit/settings_cubit.dart';
+import 'package:fines_plus/features/settings/presentation/cubit/unit_stream.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/services.dart';
 import 'package:core_utils/formatters/mileageInput_formatter.dart';
 import 'package:core_utils/formatters/thousands_separator_formatter.dart';
@@ -35,6 +41,7 @@ class MileageCard extends StatefulWidget {
 
 class _MileageCardState extends State<MileageCard> {
   FocusNode? _ownedFocusNode;
+  bool _scanFailed = false;
   FocusNode get _focusNode =>
       widget.focusNode ?? (_ownedFocusNode ??= FocusNode());
 
@@ -54,7 +61,28 @@ class _MileageCardState extends State<MileageCard> {
     super.dispose();
   }
 
-  void _onTextChanged() => setState(() {});
+  void _onTextChanged() => setState(() => _scanFailed = false);
+
+  /// Photographs the dashboard and fills the field with what was read - the
+  /// user still sees it and can correct it.
+  Future<void> _scan() async {
+    final unitStream = UnitStream(context.read<SettingsCubit>());
+    final lastKm = context.read<MaintenanceCubit>().getLastKnownMileage();
+    final lastDisplay = lastKm == null ? null : unitStream.convert(lastKm.toDouble()).round();
+    final scan = await OdometerScanner().readMileage(lastKnown: lastDisplay);
+    if (!mounted || scan.cancelled) return;
+    final reading = scan.reading;
+    if (reading == null) {
+      AppHaptics.error();
+      setState(() => _scanFailed = true);
+      return;
+    }
+    setState(() => _scanFailed = false);
+    final text = formatThousands(reading);
+    widget.controller.text = text;
+    widget.onChanged?.call(text);
+    widget.onSubmitted?.call(text);
+  }
 
   // TextField/InputDecorator don't report a usable intrinsic width (wrapping
   // in IntrinsicWidth still stretches to the row's full available space), so
@@ -87,16 +115,41 @@ class _MileageCardState extends State<MileageCard> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                FittedBox(
-                  fit: BoxFit.scaleDown,
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    S.of(context).mileage,
-                    style: widget.textTheme.subtitleText.copyWith(
-                      fontSize: 11.5,
-                      color: AppColors.textSecondary,
+                Row(
+                  children: [
+                    Expanded(
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          S.of(context).mileage,
+                          style: widget.textTheme.subtitleText.copyWith(
+                            fontSize: 11.5,
+                            color: AppColors.textSecondary,
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
+                      // Fixed label-row height with the icon overflowing it, so the
+                      // card stays the same height as its neighbours.
+                      GestureDetector(
+                        behavior: HitTestBehavior.opaque,
+                        onTap: _scan,
+                        child: SizedBox(
+                          width: 18,
+                          height: 14,
+                          child: OverflowBox(
+                            maxWidth: 18,
+                            maxHeight: 22,
+                            child: Icon(
+                              Icons.photo_camera_outlined,
+                              size: 18,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                          ),
+                        ),
+                      ),
+                  ],
                 ),
                 AppSpacers.verticalXSmall,
 
@@ -158,6 +211,17 @@ class _MileageCardState extends State<MileageCard> {
                       ),
                   ],
                 ),
+                if (_scanFailed)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 4),
+                    child: Text(
+                      S.of(context).odometer_scan_failed,
+                      style: widget.textTheme.subtitleText.copyWith(
+                        fontSize: 11.5,
+                        color: Theme.of(context).colorScheme.error,
+                      ),
+                    ),
+                  ),
               ],
             ),
           ),

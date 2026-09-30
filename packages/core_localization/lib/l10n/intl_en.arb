@@ -605,5 +605,6 @@
   "location_settings_title": "Turn on location",
   "location_settings_steps": "In Settings, tap “Location” and choose “While Using the App”.",
   "location_open_settings": "Open Settings",
-  "location_not_determined": "Couldn't determine your location. Please try again later."
+  "location_not_determined": "Couldn't determine your location. Please try again later.",
+  "odometer_scan_failed": "Couldn't read the mileage. Please enter it manually."
 }

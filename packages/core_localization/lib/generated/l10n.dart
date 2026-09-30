@@ -4650,6 +4650,16 @@ class S {
       args: [],
     );
   }
+
+  /// `Couldn't read the mileage. Please enter it manually.`
+  String get odometer_scan_failed {
+    return Intl.message(
+      'Couldn\'t read the mileage. Please enter it manually.',
+      name: 'odometer_scan_failed',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

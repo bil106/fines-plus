@@ -507,6 +507,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "not_auth": MessageLookupByLibrary.simpleMessage("Not authorized"),
     "notifications": MessageLookupByLibrary.simpleMessage("Notifications"),
+    "odometer_scan_failed": MessageLookupByLibrary.simpleMessage(
+      "Couldn\'t read the mileage. Please enter it manually.",
+    ),
     "of_course": MessageLookupByLibrary.simpleMessage("Of course"),
     "oil": MessageLookupByLibrary.simpleMessage("oil"),
     "oil_icon": MessageLookupByLibrary.simpleMessage("Oil"),

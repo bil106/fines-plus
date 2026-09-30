@@ -4,7 +4,9 @@ import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_theme.dart';
 import 'package:fines_plus/core/extensions/service_list.dart';
+import 'package:fines_plus/features/maintenance/data/odometer_scanner.dart';
 import 'package:fines_plus/features/maintenance/presentation/cubit/additional_options_cubit.dart';
+import 'package:fines_plus/features/maintenance/presentation/cubit/maintenance_cubit.dart';
 import 'package:fines_plus/features/maintenance/presentation/widgets/additional_options_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -45,6 +47,7 @@ class _ActionDetailSheetState extends State<ActionDetailSheet> {
   late TextEditingController categoryController;
   late TextEditingController dateController;
   late TextEditingController mileageController;
+  bool _mileageScanFailed = false;
   late TextEditingController intervalKmController;
   late TextEditingController intervalDaysController;
   late TextEditingController commentController;
@@ -103,6 +106,17 @@ class _ActionDetailSheetState extends State<ActionDetailSheet> {
         return Duration(days: value * 365);
     }
     return null;
+  }
+
+  /// Reads the mileage off a photo of the dashboard. Stored and shown in km
+  /// here, so the last known mileage needs no unit conversion.
+  Future<void> _scanMileage() async {
+    final lastKm = context.read<MaintenanceCubit>().getLastKnownMileage();
+    final scan = await OdometerScanner().readMileage(lastKnown: lastKm);
+    if (!mounted || scan.cancelled) return;
+    final reading = scan.reading;
+    setState(() => _mileageScanFailed = reading == null);
+    if (reading != null) mileageController.text = reading.toString();
   }
 
   @override
@@ -175,7 +189,15 @@ class _ActionDetailSheetState extends State<ActionDetailSheet> {
               controller: mileageController,
               keyboardType: TextInputType.number,
               inputFormatters: [FilteringTextInputFormatter.digitsOnly, MileageInputFormatter(max: 10000000)],
-              decoration: InputDecoration(labelText: S.of(context).mileage, border: OutlineInputBorder()),
+              onChanged: (_) {
+                if (_mileageScanFailed) setState(() => _mileageScanFailed = false);
+              },
+              decoration: InputDecoration(
+                labelText: S.of(context).mileage,
+                border: OutlineInputBorder(),
+                errorText: _mileageScanFailed ? S.of(context).odometer_scan_failed : null,
+                suffixIcon: IconButton(icon: Icon(Icons.photo_camera_outlined), onPressed: _scanMileage),
+              ),
             ),
 
             AppSpacers.verticalSmall,

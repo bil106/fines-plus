@@ -519,6 +519,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "not_auth": MessageLookupByLibrary.simpleMessage("Не авторизовані"),
     "notifications": MessageLookupByLibrary.simpleMessage("Сповіщення"),
+    "odometer_scan_failed": MessageLookupByLibrary.simpleMessage(
+      "Не вдалося розпізнати пробіг. Введіть його вручну.",
+    ),
     "of_course": MessageLookupByLibrary.simpleMessage("Зрозуміло"),
     "oil": MessageLookupByLibrary.simpleMessage("олива"),
     "oil_icon": MessageLookupByLibrary.simpleMessage("Олива"),

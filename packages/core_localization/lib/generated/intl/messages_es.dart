@@ -552,6 +552,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "not_auth": MessageLookupByLibrary.simpleMessage("No has iniciado sesión"),
     "notifications": MessageLookupByLibrary.simpleMessage("Notificaciones"),
+    "odometer_scan_failed": MessageLookupByLibrary.simpleMessage(
+      "No se pudo leer el kilometraje. Ingrésalo manualmente.",
+    ),
     "of_course": MessageLookupByLibrary.simpleMessage("Entendido"),
     "oil": MessageLookupByLibrary.simpleMessage("aceite"),
     "oil_icon": MessageLookupByLibrary.simpleMessage("Aceite"),
