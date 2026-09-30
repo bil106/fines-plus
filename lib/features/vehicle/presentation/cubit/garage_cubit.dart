@@ -21,9 +21,15 @@ class GarageCubit extends Cubit<GarageState> {
 
   GarageCubit({required this.repository, required this.carCubit})
     : super(GarageState(activeCarId: carCubit.state.carId)) {
-    _carsSub = repository.streamCars().listen((cars) {
-      emit(state.copyWith(cars: cars, isLoading: false));
-    });
+    _carsSub = repository.streamCars().listen(
+      (cars) {
+        emit(state.copyWith(cars: cars, isLoading: false));
+      },
+      onError: (Object e, StackTrace st) {
+        debugPrint('GarageCubit cars stream error: $e\n$st');
+        emit(state.copyWith(isLoading: false));
+      },
+    );
     _activeSub = carCubit.stream.listen((carState) {
       emit(state.copyWith(activeCarId: carState.carId));
     });

@@ -62,6 +62,11 @@ android {
             // (and register a Firebase project under it, see
             // android/app/src/carpapers/README.md) before that first upload.
             applicationId = "com.carpapers.app"
+            // Own version line: Play keeps a separate versionCode counter per
+            // applicationId, and pubspec's version follows Fines+. Last upload
+            // in Play Console: 101 (1.0.2). Bump both before every new upload.
+            versionCode = 102
+            versionName = "1.0.3"
             resValue("string", "app_name", "CarPapers")
         }
         create("autodosje") {

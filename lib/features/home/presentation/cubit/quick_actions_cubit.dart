@@ -136,10 +136,15 @@ class QuickActionsCubit extends Cubit<QuickActionsState> {
       return;
     }
 
-    _activeCategoriesSub = tasksRepository.watchActiveCategories(carNumber: carNumber).listen((categories) {
-      emit(state.copyWith(activeCategories: categories));
-      prefs.setStringList('activeCategories', categories);
-    });
+    _activeCategoriesSub = tasksRepository.watchActiveCategories(carNumber: carNumber).listen(
+      (categories) {
+        emit(state.copyWith(activeCategories: categories));
+        prefs.setStringList('activeCategories', categories);
+      },
+      onError: (Object e, StackTrace st) {
+        debugPrint('QuickActionsCubit active categories stream error: $e\n$st');
+      },
+    );
   }
 
   void removeCategoryLocally(String labelKey) {
