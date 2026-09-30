@@ -423,6 +423,15 @@ class MessageLookup extends MessageLookupByLibrary {
       "Не вдалося завантажити текст ліцензії.",
     ),
     "loaded": MessageLookupByLibrary.simpleMessage("Завантажено"),
+    "location_open_settings": MessageLookupByLibrary.simpleMessage(
+      "Відкрити налаштування",
+    ),
+    "location_settings_steps": MessageLookupByLibrary.simpleMessage(
+      "У налаштуваннях натисніть «Геопозиція» та оберіть «Під час використання програми».",
+    ),
+    "location_settings_title": MessageLookupByLibrary.simpleMessage(
+      "Увімкніть геолокацію",
+    ),
     "log_out": MessageLookupByLibrary.simpleMessage("Вийти з акаунту"),
     "log_out_confirmation": MessageLookupByLibrary.simpleMessage(
       "Ви впевнені, що хочете вийти з акаунту?",

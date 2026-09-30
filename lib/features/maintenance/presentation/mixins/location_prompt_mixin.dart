@@ -1,4 +1,6 @@
-import 'package:flutter/widgets.dart';
+import 'package:core_localization/generated/l10n.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 
 /// Shared "allow location" flow for the forms that suggest a nearby place
@@ -32,7 +34,7 @@ mixin LocationPromptMixin<T extends StatefulWidget> on State<T> {
   }
 
   /// Tap on the prompt: asks in-app when the OS still allows it, otherwise
-  /// opens the exact settings screen where location can be turned on.
+  /// opens the app's settings screen where location can be turned on.
   Future<void> enableLocation() async {
     if (!await Geolocator.isLocationServiceEnabled()) {
       await Geolocator.openLocationSettings();
@@ -40,11 +42,41 @@ mixin LocationPromptMixin<T extends StatefulWidget> on State<T> {
     }
     final permission = await Geolocator.requestPermission();
     if (permission == LocationPermission.deniedForever) {
-      await Geolocator.openAppSettings();
+      await _openAppSettings();
       return;
     }
     if (permission == LocationPermission.denied) return;
-    if (mounted && locationUnavailable) retryLocation();
+    // Already allowed, yet the screen still has no position (e.g. iOS with
+    // no fix): re-asking is pointless, so send the user to the app's
+    // settings; the resume check retries when they come back.
+    await _openAppSettings();
+  }
+
+  /// iOS can only open the app's settings page, not the location switch
+  /// itself, so a short hint says where to tap before leaving the app.
+  Future<void> _openAppSettings() async {
+    if (defaultTargetPlatform == TargetPlatform.iOS) {
+      if (!mounted) return;
+      final proceed = await showDialog<bool>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: Text(S.of(ctx).location_settings_title),
+          content: Text(S.of(ctx).location_settings_steps),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(false),
+              child: Text(S.of(ctx).cancel),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(true),
+              child: Text(S.of(ctx).location_open_settings),
+            ),
+          ],
+        ),
+      );
+      if (proceed != true) return;
+    }
+    await Geolocator.openAppSettings();
   }
 
   /// Checks silently - never pops a permission dialog just because the

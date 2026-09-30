@@ -65,8 +65,8 @@ android {
             // Own version line: Play keeps a separate versionCode counter per
             // applicationId, and pubspec's version follows Fines+. Last upload
             // in Play Console: 101 (1.0.2). Bump both before every new upload.
-            versionCode = 102
-            versionName = "1.0.3"
+            versionCode = 103
+            versionName = "1.0.4"
             resValue("string", "app_name", "CarPapers")
         }
         create("autodosje") {

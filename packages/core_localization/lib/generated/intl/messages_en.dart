@@ -415,6 +415,15 @@ class MessageLookup extends MessageLookupByLibrary {
       "Could not load the license text.",
     ),
     "loaded": MessageLookupByLibrary.simpleMessage("Loaded"),
+    "location_open_settings": MessageLookupByLibrary.simpleMessage(
+      "Open Settings",
+    ),
+    "location_settings_steps": MessageLookupByLibrary.simpleMessage(
+      "In Settings, tap “Location” and choose “While Using the App”.",
+    ),
+    "location_settings_title": MessageLookupByLibrary.simpleMessage(
+      "Turn on location",
+    ),
     "log_out": MessageLookupByLibrary.simpleMessage("Log out"),
     "log_out_confirmation": MessageLookupByLibrary.simpleMessage(
       "Are you sure you want to log out?",

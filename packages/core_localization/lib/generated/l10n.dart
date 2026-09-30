@@ -4610,6 +4610,36 @@ class S {
       args: [],
     );
   }
+
+  /// `Turn on location`
+  String get location_settings_title {
+    return Intl.message(
+      'Turn on location',
+      name: 'location_settings_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `In Settings, tap “Location” and choose “While Using the App”.`
+  String get location_settings_steps {
+    return Intl.message(
+      'In Settings, tap “Location” and choose “While Using the App”.',
+      name: 'location_settings_steps',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Open Settings`
+  String get location_open_settings {
+    return Intl.message(
+      'Open Settings',
+      name: 'location_open_settings',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

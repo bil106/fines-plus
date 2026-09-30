@@ -602,5 +602,8 @@
   "onboarding_demo_fine_speeding": "Перевищення швидкості",
   "onboarding_demo_expenses_title": "Витрати · вересень",
   "fuel_location_unavailable": "Дозвольте геолокацію, щоб знайти заправки поруч",
-  "charger_location_unavailable": "Дозвольте геолокацію, щоб знайти зарядки поруч"
+  "charger_location_unavailable": "Дозвольте геолокацію, щоб знайти зарядки поруч",
+  "location_settings_title": "Увімкніть геолокацію",
+  "location_settings_steps": "У налаштуваннях натисніть «Геопозиція» та оберіть «Під час використання програми».",
+  "location_open_settings": "Відкрити налаштування"
 }

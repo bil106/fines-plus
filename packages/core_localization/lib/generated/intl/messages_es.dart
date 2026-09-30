@@ -454,6 +454,15 @@ class MessageLookup extends MessageLookupByLibrary {
       "No se pudo cargar el texto de la licencia.",
     ),
     "loaded": MessageLookupByLibrary.simpleMessage("Cargado"),
+    "location_open_settings": MessageLookupByLibrary.simpleMessage(
+      "Abrir Ajustes",
+    ),
+    "location_settings_steps": MessageLookupByLibrary.simpleMessage(
+      "En Ajustes, toca «Ubicación» y elige «Al usar la app».",
+    ),
+    "location_settings_title": MessageLookupByLibrary.simpleMessage(
+      "Activa la ubicación",
+    ),
     "log_out": MessageLookupByLibrary.simpleMessage("Cerrar sesión"),
     "log_out_confirmation": MessageLookupByLibrary.simpleMessage(
       "¿Seguro que quieres cerrar sesión?",

@@ -601,5 +601,8 @@
   "onboarding_demo_fine_speeding": "Speeding",
   "onboarding_demo_expenses_title": "Expenses · September",
   "fuel_location_unavailable": "Allow location access to find nearby gas stations",
-  "charger_location_unavailable": "Allow location access to find nearby chargers"
+  "charger_location_unavailable": "Allow location access to find nearby chargers",
+  "location_settings_title": "Turn on location",
+  "location_settings_steps": "In Settings, tap “Location” and choose “While Using the App”.",
+  "location_open_settings": "Open Settings"
 }
