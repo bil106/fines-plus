@@ -207,8 +207,26 @@ class _MyAppState extends State<MyApp> {
     final amount = FuelPaymentLink.amountFrom(uri);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-      _router.push(FuelUpRoute(initialSum: amount));
+      _pushFuelUpAfterSplash(amount);
     });
+  }
+
+  /// On a cold start the link lands while the splash is still resolving the
+  /// start route, and its `replaceAll` would wipe a pushed fuel screen - so
+  /// wait until the splash has been replaced.
+  void _pushFuelUpAfterSplash(double? amount) {
+    bool onSplash() => _router.stack.any((route) => route.name == SplashRoute.name);
+    if (!onSplash()) {
+      _router.push(FuelUpRoute(initialSum: amount));
+      return;
+    }
+    void listener() {
+      if (onSplash()) return;
+      _router.removeListener(listener);
+      if (mounted) _router.push(FuelUpRoute(initialSum: amount));
+    }
+
+    _router.addListener(listener);
   }
 
   @override
