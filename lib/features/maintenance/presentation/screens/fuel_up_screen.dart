@@ -350,7 +350,12 @@ class FuelUpScreenState extends State<FuelUpScreen>
         position = await Geolocator.getLastKnownPosition();
       }
       if (position == null) {
-        if (mounted) setState(() => _isLoadingBestStation = false);
+        if (mounted) {
+          setState(() {
+            _locationUnavailable = true;
+            _isLoadingBestStation = false;
+          });
+        }
         return;
       }
       await _loadBestStationFrom(LatLng(position.latitude, position.longitude));
