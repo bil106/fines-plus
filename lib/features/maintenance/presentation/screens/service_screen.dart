@@ -199,7 +199,7 @@ class ServiceScreenState extends State<ServiceScreen>
   bool get locationUnavailable => _locationUnavailable;
 
   @override
-  void retryLocation() => _initLocationAndService();
+  Future<void> retryLocation() => _initLocationAndService();
 
   Future<void> _openStations() async {
     FocusScope.of(context).unfocus();

@@ -672,5 +672,6 @@
   "charger_location_unavailable": "Permite el acceso a tu ubicación para encontrar cargadores cercanos",
   "location_settings_title": "Activa la ubicación",
   "location_settings_steps": "En Ajustes, toca «Ubicación» y elige «Al usar la app».",
-  "location_open_settings": "Abrir Ajustes"
+  "location_open_settings": "Abrir Ajustes",
+  "location_not_determined": "No se pudo determinar tu ubicación. Inténtalo de nuevo más tarde."
 }

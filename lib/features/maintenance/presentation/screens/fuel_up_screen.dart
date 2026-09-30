@@ -369,12 +369,12 @@ class FuelUpScreenState extends State<FuelUpScreen>
   bool get locationUnavailable => _locationUnavailable;
 
   @override
-  void retryLocation() {
+  Future<void> retryLocation() {
     setState(() {
       _locationUnavailable = false;
       _isLoadingBestStation = true;
     });
-    _initLocationAndStation();
+    return _initLocationAndStation();
   }
 
   Future<void> _loadBestStationFrom(LatLng current) async {

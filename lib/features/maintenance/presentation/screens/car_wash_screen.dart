@@ -170,7 +170,7 @@ class CarWashScreenState extends State<CarWashScreen>
   bool get locationUnavailable => _locationUnavailable;
 
   @override
-  void retryLocation() => _initLocationAndCarWash();
+  Future<void> retryLocation() => _initLocationAndCarWash();
 
   Future<void> _loadNearbyWashesFrom(LatLng current) async {
     _currentPosition = current;

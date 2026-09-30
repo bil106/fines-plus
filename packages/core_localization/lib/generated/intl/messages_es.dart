@@ -454,6 +454,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "No se pudo cargar el texto de la licencia.",
     ),
     "loaded": MessageLookupByLibrary.simpleMessage("Cargado"),
+    "location_not_determined": MessageLookupByLibrary.simpleMessage(
+      "No se pudo determinar tu ubicación. Inténtalo de nuevo más tarde.",
+    ),
     "location_open_settings": MessageLookupByLibrary.simpleMessage(
       "Abrir Ajustes",
     ),

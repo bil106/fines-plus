@@ -4640,6 +4640,16 @@ class S {
       args: [],
     );
   }
+
+  /// `Couldn't determine your location. Please try again later.`
+  String get location_not_determined {
+    return Intl.message(
+      'Couldn\'t determine your location. Please try again later.',
+      name: 'location_not_determined',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

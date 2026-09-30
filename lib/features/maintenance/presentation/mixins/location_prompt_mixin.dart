@@ -12,11 +12,11 @@ mixin LocationPromptMixin<T extends StatefulWidget> on State<T> {
   /// Whether the form is currently showing the "allow location" prompt.
   bool get locationUnavailable;
 
-  /// Re-runs the screen's own location + nearby lookup. Must clear
-  /// [locationUnavailable] synchronously - that's what keeps the resume
+  /// Re-runs the screen's own location + nearby lookup; completes when the
+  /// lookup is done. Must clear [locationUnavailable] synchronously - that's what keeps the resume
   /// check and the tap from both starting a lookup for one grant (the iOS
   /// permission dialog also triggers a resume).
-  void retryLocation();
+  Future<void> retryLocation();
 
   @override
   void initState() {
@@ -33,8 +33,10 @@ mixin LocationPromptMixin<T extends StatefulWidget> on State<T> {
     super.dispose();
   }
 
-  /// Tap on the prompt: asks in-app when the OS still allows it, otherwise
-  /// opens the app's settings screen where location can be turned on.
+  /// Tap on the prompt: checks the permission first and asks in-app when the
+  /// OS still allows it (the system shows its own dialog). Settings are only
+  /// offered when the permission is blocked; with the permission fine but no
+  /// position yet, a toast says so instead.
   Future<void> enableLocation() async {
     if (!await Geolocator.isLocationServiceEnabled()) {
       await Geolocator.openLocationSettings();
@@ -46,10 +48,12 @@ mixin LocationPromptMixin<T extends StatefulWidget> on State<T> {
       return;
     }
     if (permission == LocationPermission.denied) return;
-    // Already allowed, yet the screen still has no position (e.g. iOS with
-    // no fix): re-asking is pointless, so send the user to the app's
-    // settings; the resume check retries when they come back.
-    await _openAppSettings();
+    if (!mounted || !locationUnavailable) return;
+    await retryLocation();
+    if (!mounted || !locationUnavailable) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(S.of(context).location_not_determined)),
+    );
   }
 
   /// iOS can only open the app's settings page, not the location switch

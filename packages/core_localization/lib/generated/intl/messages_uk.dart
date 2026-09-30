@@ -423,6 +423,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Не вдалося завантажити текст ліцензії.",
     ),
     "loaded": MessageLookupByLibrary.simpleMessage("Завантажено"),
+    "location_not_determined": MessageLookupByLibrary.simpleMessage(
+      "Не вдалося визначити місцезнаходження. Спробуйте пізніше.",
+    ),
     "location_open_settings": MessageLookupByLibrary.simpleMessage(
       "Відкрити налаштування",
     ),

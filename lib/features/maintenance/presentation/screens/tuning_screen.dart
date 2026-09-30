@@ -194,7 +194,7 @@ class TuningScreenState extends State<TuningScreen>
   bool get locationUnavailable => _locationUnavailable;
 
   @override
-  void retryLocation() => _initLocationAndService();
+  Future<void> retryLocation() => _initLocationAndService();
 
   Future<void> _loadNearbyStationsFrom(LatLng current) async {
     _currentPosition = current;
