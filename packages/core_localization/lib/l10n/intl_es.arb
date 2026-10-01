@@ -674,5 +674,8 @@
   "location_settings_steps": "En Ajustes, toca «Ubicación» y elige «Al usar la app».",
   "location_open_settings": "Abrir Ajustes",
   "location_not_determined": "No se pudo determinar tu ubicación. Inténtalo de nuevo más tarde.",
-  "odometer_scan_failed": "No se pudo leer el kilometraje. Ingrésalo manualmente."
+  "odometer_scan_failed": "No se pudo leer el kilometraje. Ingrésalo manualmente.",
+  "fuel_pump_scan": "Escanear surtidor",
+  "fuel_pump_scan_failed": "No se pudo leer la pantalla del surtidor. Ingresa el repostaje manualmente.",
+  "fuel_pump_scan_reward": "¡Repostaje registrado!"
 }

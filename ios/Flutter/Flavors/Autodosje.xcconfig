@@ -5,3 +5,6 @@
 // ios/Flutter/Flavors/README.md for the manual Xcode steps still needed.
 BUNDLE_ID = com.autodosje.app
 APP_DISPLAY_NAME = AutoDosje
+LOCATION_USAGE_DESCRIPTION = Потрібен доступ до геолокації для пошуку найближчих сервісів
+CAMERA_USAGE_DESCRIPTION = Потрібен доступ до камери для фото
+PHOTO_LIBRARY_USAGE_DESCRIPTION = Потрібен доступ до галереї для вибору фото

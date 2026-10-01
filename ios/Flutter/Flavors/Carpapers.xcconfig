@@ -7,3 +7,6 @@ FIREBASE_PLIST_DIR = carpapers
 GOOGLE_CLIENT_ID = 145498918452-m8ofp4lovoith2lf9bhm23onfroi0sbn.apps.googleusercontent.com
 GOOGLE_REVERSED_CLIENT_ID = com.googleusercontent.apps.145498918452-m8ofp4lovoith2lf9bhm23onfroi0sbn
 LAUNCH_STORYBOARD_NAME = LaunchScreen-carpapers
+LOCATION_USAGE_DESCRIPTION = Location is used to find nearby gas stations, car washes and service centers.
+CAMERA_USAGE_DESCRIPTION = Camera access is needed to take photos.
+PHOTO_LIBRARY_USAGE_DESCRIPTION = Photo library access is needed to choose photos.

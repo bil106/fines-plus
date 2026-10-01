@@ -6,6 +6,7 @@ import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/feedback/app_haptics.dart';
 import 'package:design_system/widget/app_field_card.dart';
 import 'package:design_system/widget/app_toggle_switch.dart';
+import 'package:design_system/widget/scan_reward_overlay.dart';
 import 'package:fines_plus/features/vehicle/presentation/cubit/car_cubit.dart';
 import 'package:design_system/widget/app_back_button.dart';
 import 'package:design_system/constants/app_spacers.dart';
@@ -17,7 +18,9 @@ import 'package:fines_plus/core/extensions/date_picker_card.dart';
 import 'package:fines_plus/core/extensions/fuel_type.dart';
 import 'package:fines_plus/features/expenses/presentation/widgets/fuel_choice_chips.dart';
 import 'package:fines_plus/features/expenses/presentation/widgets/fuel_input_card.dart';
+import 'package:fines_plus/features/maintenance/data/fuel_pump_scanner.dart';
 import 'package:fines_plus/features/maintenance/data/models/gas_station.dart';
+import 'package:fines_plus/features/maintenance/domain/fuel_pump_reading_parser.dart';
 import 'package:fines_plus/features/maintenance/domain/gas_station_service.dart';
 import 'package:fines_plus/features/maintenance/presentation/cubit/maintenance_cubit.dart';
 import 'package:fines_plus/features/maintenance/presentation/cubit/maintenance_state.dart';
@@ -71,6 +74,7 @@ class FuelUpScreenState extends State<FuelUpScreen>
   // Which of volume/sum the user typed last - the other one is derived from it.
   bool _sumIsSource = false;
   bool _saving = false;
+  bool _pumpScanFailed = false;
   // Autofill only ever fills what the user hasn't typed themselves.
   bool _priceEditedByUser = false;
   StreamSubscription<MaintenanceState>? _mileagePrefillSub;
@@ -287,6 +291,36 @@ class FuelUpScreenState extends State<FuelUpScreen>
       );
     }
     _recalculate();
+  }
+
+  /// Photographs the pump display and fills price, volume and sum from it -
+  /// the user still sees them and can correct any.
+  Future<void> _scanPump() async {
+    final scan = await FuelPumpScanner().readPump();
+    if (!mounted || scan.cancelled) return;
+    // Before the numbers: choosing a fuel reloads its last price, which the
+    // scanned price then replaces.
+    final fuel = scan.fuel;
+    if (fuel != null && fuel != selectedFuel && _fuels.contains(fuel)) _onFuelSelected(fuel);
+    final reading = scan.reading;
+    if (reading == null) {
+      AppHaptics.error();
+      setState(() => _pumpScanFailed = true);
+      return;
+    }
+    _applyPumpReading(reading);
+    AppHaptics.success();
+    ScanRewardOverlay.show(context, message: S.of(context).fuel_pump_scan_reward);
+  }
+
+  void _applyPumpReading(FuelPumpReading reading) {
+    setState(() => _pumpScanFailed = false);
+    _priceEditedByUser = true;
+    _sumIsSource = false;
+    priceController.text = _formatNumber(reading.price);
+    volumeController.text = _formatNumber(reading.litres);
+    sumController.text = _formatNumber(reading.total);
+    FuelPriceCache.savePrice(selectedFuel.name, reading.price);
   }
 
   void _onVolumeChanged(String _) {
@@ -729,6 +763,17 @@ class FuelUpScreenState extends State<FuelUpScreen>
               color: AppColors.textSecondary,
             ),
           ),
+          if (!_isElectric && !_usesGallons(selectedFuel)) ...[
+            AppSpacers.verticalXSmall,
+            SizedBox(
+              width: double.infinity,
+              child: FilledButton.tonalIcon(
+                onPressed: _scanPump,
+                icon: const Icon(Icons.photo_camera_outlined),
+                label: Text(S.of(context).fuel_pump_scan),
+              ),
+            ),
+          ],
           AppSpacers.verticalXSmall,
 
           FuelChoiceChips(
@@ -737,6 +782,17 @@ class FuelUpScreenState extends State<FuelUpScreen>
             onSelected: _onFuelSelected,
           ),
 
+          if (_pumpScanFailed)
+            Padding(
+              padding: const EdgeInsets.only(top: 4),
+              child: Text(
+                S.of(context).fuel_pump_scan_failed,
+                style: textTheme.subtitleText.copyWith(
+                  fontSize: 11.5,
+                  color: Theme.of(context).colorScheme.error,
+                ),
+              ),
+            ),
           AppSpacers.verticalSmall,
           FuelPriceVolumeSumRow(
             volumeController: volumeController,

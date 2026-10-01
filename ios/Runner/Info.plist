@@ -64,13 +64,13 @@
 		<key>LSRequiresIPhoneOS</key>
 		<true/>
 		<key>NSCameraUsageDescription</key>
-		<string>Нужен доступ к камере для фото</string>
+		<string>$(CAMERA_USAGE_DESCRIPTION)</string>
 		<key>NSLocationWhenInUseUsageDescription</key>
-		<string>Нужен доступ к геолокации для поиска ближайших сервисов</string>
+		<string>$(LOCATION_USAGE_DESCRIPTION)</string>
 		<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-		<string>Нужен доступ к геолокации для поиска ближайших сервисов</string>
+		<string>$(LOCATION_USAGE_DESCRIPTION)</string>
 		<key>NSPhotoLibraryUsageDescription</key>
-		<string>Нужен доступ к галерее для выбора фото</string>
+		<string>$(PHOTO_LIBRARY_USAGE_DESCRIPTION)</string>
 		<key>SKAdNetworkItems</key>
 		<array>
 			<dict>

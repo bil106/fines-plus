@@ -312,6 +312,13 @@ class MessageLookup extends MessageLookupByLibrary {
       "Додати дані про заправку?",
     ),
     "fuel_prompt_title": MessageLookupByLibrary.simpleMessage("Заправка"),
+    "fuel_pump_scan": MessageLookupByLibrary.simpleMessage("Сканувати колонку"),
+    "fuel_pump_scan_failed": MessageLookupByLibrary.simpleMessage(
+      "Не вдалося розпізнати дисплей колонки. Введіть заправку вручну.",
+    ),
+    "fuel_pump_scan_reward": MessageLookupByLibrary.simpleMessage(
+      "Бак зафіксовано!",
+    ),
     "fuel_regular": MessageLookupByLibrary.simpleMessage("Regular"),
     "fuel_super": MessageLookupByLibrary.simpleMessage("Super"),
     "fuel_type": MessageLookupByLibrary.simpleMessage("Тип пального"),

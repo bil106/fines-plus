@@ -196,7 +196,7 @@ class _ActionDetailSheetState extends State<ActionDetailSheet> {
                 labelText: S.of(context).mileage,
                 border: OutlineInputBorder(),
                 errorText: _mileageScanFailed ? S.of(context).odometer_scan_failed : null,
-                suffixIcon: IconButton(icon: Icon(Icons.photo_camera_outlined), onPressed: _scanMileage),
+                suffixIcon: IconButton.filledTonal(icon: Icon(Icons.photo_camera_outlined), onPressed: _scanMileage),
               ),
             ),
 

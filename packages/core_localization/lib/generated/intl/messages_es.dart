@@ -338,6 +338,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "fuel_prompt_title": MessageLookupByLibrary.simpleMessage(
       "Cargar combustible",
     ),
+    "fuel_pump_scan": MessageLookupByLibrary.simpleMessage("Escanear surtidor"),
+    "fuel_pump_scan_failed": MessageLookupByLibrary.simpleMessage(
+      "No se pudo leer la pantalla del surtidor. Ingresa el repostaje manualmente.",
+    ),
+    "fuel_pump_scan_reward": MessageLookupByLibrary.simpleMessage(
+      "¡Repostaje registrado!",
+    ),
     "fuel_regular": MessageLookupByLibrary.simpleMessage("Regular"),
     "fuel_super": MessageLookupByLibrary.simpleMessage("Súper"),
     "fuel_type": MessageLookupByLibrary.simpleMessage("Tipo de combustible"),

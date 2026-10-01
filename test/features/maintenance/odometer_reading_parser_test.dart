@@ -15,9 +15,15 @@ void main() {
     expect(OdometerReadingParser.parse(['14:35', '21', 'TRIP 512.4', '132150']), 132150);
   });
 
-  test('drops values below the last known mileage', () {
+  test('prefers values at or above the last known mileage', () {
     expect(OdometerReadingParser.parse(['98765', '132150'], lastKnown: 132000), 132150);
-    expect(OdometerReadingParser.parse(['512'], lastKnown: 132000), isNull);
+    expect(OdometerReadingParser.parse(['TRIP 99999', '132150'], lastKnown: 132150), 132150);
+  });
+
+  test('still offers a reading below the last known mileage when nothing else fits', () {
+    expect(OdometerReadingParser.parse(['mi', '87256', '362.4'], lastKnown: 132150), 87256);
+    expect(OdometerReadingParser.parse(['Distance to Empty', '342mi', 'ODO', '52876mi'], lastKnown: 132150), 52876);
+    expect(OdometerReadingParser.parse(['12:34', 'km', '65432', 'trip', '124.6'], lastKnown: 132150), 65432);
   });
 
   test('returns null without digits or above the field limit', () {

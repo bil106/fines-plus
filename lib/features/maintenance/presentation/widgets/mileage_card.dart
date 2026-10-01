@@ -111,117 +111,116 @@ class _MileageCardState extends State<MileageCard> {
           onTap: () => _focusNode.requestFocus(),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
+            child: Row(
               children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: FittedBox(
-                        fit: BoxFit.scaleDown,
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          S.of(context).mileage,
-                          style: widget.textTheme.subtitleText.copyWith(
-                            fontSize: 11.5,
-                            color: AppColors.textSecondary,
-                          ),
-                        ),
-                      ),
-                    ),
-                      // Fixed label-row height with the icon overflowing it, so the
-                      // card stays the same height as its neighbours.
-                      GestureDetector(
-                        behavior: HitTestBehavior.opaque,
-                        onTap: _scan,
-                        child: SizedBox(
-                          width: 18,
-                          height: 14,
-                          child: OverflowBox(
-                            maxWidth: 18,
-                            maxHeight: 22,
-                            child: Icon(
-                              Icons.photo_camera_outlined,
-                              size: 18,
-                              color: Theme.of(context).colorScheme.primary,
-                            ),
-                          ),
-                        ),
-                      ),
-                  ],
-                ),
-                AppSpacers.verticalXSmall,
-
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.baseline,
-                  textBaseline: TextBaseline.alphabetic,
-                  children: [
-                    Builder(
-                      builder: (context) {
-                        final valueStyle = widget.textTheme.historyText
-                            .merge(context.brandTheme.moneyTextStyle)
-                            .copyWith(fontSize: 15, color: AppColors.ink);
-                        final hintStyle = widget.textTheme.hintText.copyWith(
-                          fontSize: 15,
-                        );
-                        final width = widget.controller.text.isEmpty
-                            ? _textWidth(S.of(context).enter_mileage, hintStyle)
-                            : _textWidth(widget.controller.text, valueStyle) +
-                                  2;
-                        return Flexible(
-                          child: SizedBox(
-                            width: width,
-                            child: TextField(
-                              controller: widget.controller,
-                              focusNode: _focusNode,
-                              keyboardType: TextInputType.number,
-                              textInputAction: TextInputAction.done,
-                              inputFormatters: [
-                                FilteringTextInputFormatter.digitsOnly,
-                                MileageInputFormatter(max: 1000000),
-                                LengthLimitingTextInputFormatter(6),
-                                ThousandsSeparatorInputFormatter(),
-                              ],
-                              onChanged: widget.onChanged,
-                              onSubmitted: widget.onSubmitted,
-                              decoration: InputDecoration(
-                                hintText: S.of(context).enter_mileage,
-                                hintStyle: hintStyle,
-                                border: InputBorder.none,
-                                isDense: true,
-                                contentPadding: EdgeInsets.zero,
-                                focusedBorder: InputBorder.none,
+                Expanded(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                S.of(context).mileage,
+                                style: widget.textTheme.subtitleText.copyWith(
+                                  fontSize: 11.5,
+                                  color: AppColors.textSecondary,
+                                ),
                               ),
-                              style: valueStyle,
                             ),
                           ),
-                        );
-                      },
-                    ),
-                    if (widget.unitLabel != null)
-                      Padding(
-                        padding: const EdgeInsets.only(left: 2),
-                        child: Text(
-                          widget.unitLabel!,
-                          style: widget.textTheme.historyText
-                              .merge(context.brandTheme.moneyTextStyle)
-                              .copyWith(fontSize: 15, color: AppColors.ink),
+                        ],
+                      ),
+                      AppSpacers.verticalXSmall,
+
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.baseline,
+                        textBaseline: TextBaseline.alphabetic,
+                        children: [
+                          Builder(
+                            builder: (context) {
+                              final valueStyle = widget.textTheme.historyText
+                                  .merge(context.brandTheme.moneyTextStyle)
+                                  .copyWith(fontSize: 15, color: AppColors.ink);
+                              final hintStyle = widget.textTheme.hintText
+                                  .copyWith(fontSize: 15);
+                              final width = widget.controller.text.isEmpty
+                                  ? _textWidth(
+                                      S.of(context).enter_mileage,
+                                      hintStyle,
+                                    )
+                                  : _textWidth(
+                                          widget.controller.text,
+                                          valueStyle,
+                                        ) +
+                                        2;
+                              return Flexible(
+                                child: SizedBox(
+                                  width: width,
+                                  child: TextField(
+                                    controller: widget.controller,
+                                    focusNode: _focusNode,
+                                    keyboardType: TextInputType.number,
+                                    textInputAction: TextInputAction.done,
+                                    inputFormatters: [
+                                      FilteringTextInputFormatter.digitsOnly,
+                                      MileageInputFormatter(max: 1000000),
+                                      LengthLimitingTextInputFormatter(6),
+                                      ThousandsSeparatorInputFormatter(),
+                                    ],
+                                    onChanged: widget.onChanged,
+                                    onSubmitted: widget.onSubmitted,
+                                    decoration: InputDecoration(
+                                      hintText: S.of(context).enter_mileage,
+                                      hintStyle: hintStyle,
+                                      border: InputBorder.none,
+                                      isDense: true,
+                                      contentPadding: EdgeInsets.zero,
+                                      focusedBorder: InputBorder.none,
+                                    ),
+                                    style: valueStyle,
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                          if (widget.unitLabel != null)
+                            Padding(
+                              padding: const EdgeInsets.only(left: 2),
+                              child: Text(
+                                widget.unitLabel!,
+                                style: widget.textTheme.historyText
+                                    .merge(context.brandTheme.moneyTextStyle)
+                                    .copyWith(
+                                      fontSize: 15,
+                                      color: AppColors.ink,
+                                    ),
+                              ),
+                            ),
+                        ],
+                      ),
+                      if (_scanFailed)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 4),
+                          child: Text(
+                            S.of(context).odometer_scan_failed,
+                            style: widget.textTheme.subtitleText.copyWith(
+                              fontSize: 11.5,
+                              color: Theme.of(context).colorScheme.error,
+                            ),
+                          ),
                         ),
-                      ),
-                  ],
-                ),
-                if (_scanFailed)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 4),
-                    child: Text(
-                      S.of(context).odometer_scan_failed,
-                      style: widget.textTheme.subtitleText.copyWith(
-                        fontSize: 11.5,
-                        color: Theme.of(context).colorScheme.error,
-                      ),
-                    ),
+                    ],
                   ),
+                ),
+                IconButton.filledTonal(
+                  onPressed: _scan,
+                  icon: const Icon(Icons.photo_camera_outlined),
+                ),
               ],
             ),
           ),

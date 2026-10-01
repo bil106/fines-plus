@@ -5,3 +5,6 @@ APP_DISPLAY_NAME = Fines Plus
 GOOGLE_CLIENT_ID = 201100655892-2ansipskidg5tdeti65m0oovp2c65l8q.apps.googleusercontent.com
 GOOGLE_REVERSED_CLIENT_ID = com.googleusercontent.apps.201100655892-2ansipskidg5tdeti65m0oovp2c65l8q
 LAUNCH_STORYBOARD_NAME = LaunchScreen
+LOCATION_USAGE_DESCRIPTION = Потрібен доступ до геолокації для пошуку найближчих сервісів
+CAMERA_USAGE_DESCRIPTION = Потрібен доступ до камери для фото
+PHOTO_LIBRARY_USAGE_DESCRIPTION = Потрібен доступ до галереї для вибору фото

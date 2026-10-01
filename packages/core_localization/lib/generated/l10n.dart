@@ -4660,6 +4660,36 @@ class S {
       args: [],
     );
   }
+
+  /// `Scan pump`
+  String get fuel_pump_scan {
+    return Intl.message(
+      'Scan pump',
+      name: 'fuel_pump_scan',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Couldn't read the pump display. Please enter the fill-up manually.`
+  String get fuel_pump_scan_failed {
+    return Intl.message(
+      'Couldn\'t read the pump display. Please enter the fill-up manually.',
+      name: 'fuel_pump_scan_failed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tank logged!`
+  String get fuel_pump_scan_reward {
+    return Intl.message(
+      'Tank logged!',
+      name: 'fuel_pump_scan_reward',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

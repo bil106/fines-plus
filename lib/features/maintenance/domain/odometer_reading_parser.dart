@@ -6,9 +6,11 @@ class OdometerReadingParser {
   static const int _maxReading = 999999;
 
   /// The most likely odometer reading, or null when nothing plausible is
-  /// there. An odometer never runs backwards, so values below [lastKnown]
-  /// are dropped; of what is left the longest number wins (the trip meter
-  /// and clock are shorter), then the larger one.
+  /// there. An odometer never runs backwards, so values at or above
+  /// [lastKnown] are preferred - but when there are none (another car, a
+  /// corrected record) the reading is still offered rather than refused,
+  /// since the user sees and can edit it. Of the candidates the longest
+  /// number wins (the trip meter and clock are shorter), then the larger one.
   static int? parse(Iterable<String> lines, {int? lastKnown}) {
     final candidates = <int>[];
     for (final line in lines) {
@@ -20,15 +22,16 @@ class OdometerReadingParser {
       for (final match in RegExp(r'\d+').allMatches(joined)) {
         final value = int.tryParse(match.group(0)!);
         if (value == null || value > _maxReading) continue;
-        if (lastKnown != null && value < lastKnown) continue;
         candidates.add(value);
       }
     }
     if (candidates.isEmpty) return null;
-    candidates.sort((a, b) {
+    final plausible = lastKnown == null ? candidates : candidates.where((value) => value >= lastKnown).toList();
+    final pool = plausible.isEmpty ? candidates : plausible;
+    pool.sort((a, b) {
       final byLength = b.toString().length.compareTo(a.toString().length);
       return byLength != 0 ? byLength : b.compareTo(a);
     });
-    return candidates.first;
+    return pool.first;
   }
 }

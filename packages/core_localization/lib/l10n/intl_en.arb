@@ -606,5 +606,8 @@
   "location_settings_steps": "In Settings, tap “Location” and choose “While Using the App”.",
   "location_open_settings": "Open Settings",
   "location_not_determined": "Couldn't determine your location. Please try again later.",
-  "odometer_scan_failed": "Couldn't read the mileage. Please enter it manually."
+  "odometer_scan_failed": "Couldn't read the mileage. Please enter it manually.",
+  "fuel_pump_scan": "Scan pump",
+  "fuel_pump_scan_failed": "Couldn't read the pump display. Please enter the fill-up manually.",
+  "fuel_pump_scan_reward": "Tank logged!"
 }

@@ -6,3 +6,6 @@ FIREBASE_PLIST_DIR = carpapersmx
 GOOGLE_CLIENT_ID = 145498918452-f60vhli7piregkh2eo8upjvss96q5k3b.apps.googleusercontent.com
 GOOGLE_REVERSED_CLIENT_ID = com.googleusercontent.apps.145498918452-f60vhli7piregkh2eo8upjvss96q5k3b
 LAUNCH_STORYBOARD_NAME = LaunchScreen-carpapers
+LOCATION_USAGE_DESCRIPTION = Se usa tu ubicación para encontrar gasolineras, autolavados y talleres cercanos.
+CAMERA_USAGE_DESCRIPTION = Se necesita acceso a la cámara para tomar fotos.
+PHOTO_LIBRARY_USAGE_DESCRIPTION = Se necesita acceso a la galería para elegir fotos.
