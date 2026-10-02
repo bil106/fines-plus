@@ -609,5 +609,10 @@
   "odometer_scan_failed": "Couldn't read the mileage. Please enter it manually.",
   "fuel_pump_scan": "Scan pump",
   "fuel_pump_scan_failed": "Couldn't read the pump display. Please enter the fill-up manually.",
-  "fuel_pump_scan_reward": "Tank logged!"
+  "fuel_pump_scanning_title": "Scanning the pump…",
+  "fuel_pump_scanning_subtitle": "Reading the data",
+  "fuel_pump_scan_success_title": "Data read successfully!",
+  "fuel_pump_scan_success_subtitle": "Price, volume and total filled in",
+  "fuel_save_badge_title": "Great job!",
+  "fuel_save_badge_subtitle": "Fill-up saved"
 }

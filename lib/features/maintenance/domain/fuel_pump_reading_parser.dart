@@ -1,5 +1,5 @@
-/// Litres, price per litre and total read off a fuel pump's display.
-typedef FuelPumpReading = ({double litres, double price, double total});
+/// Volume (litres, or gallons on a US pump), price per unit and total read off a fuel pump's display.
+typedef FuelPumpReading = ({double volume, double price, double total});
 
 /// Picks litres / price / total out of the text lines recognised on a photo
 /// of a pump display. The pump shows them top to bottom in that order, and
@@ -22,7 +22,7 @@ class FuelPumpReadingParser {
         for (var j = i + 1; j < numbers.length; j++) {
           for (var k = j + 1; k < numbers.length; k++) {
             if (matches(numbers[i], numbers[j], numbers[k])) {
-              return (litres: numbers[i], price: numbers[j], total: _product(numbers[i], numbers[j]));
+              return (volume: numbers[i], price: numbers[j], total: _product(numbers[i], numbers[j]));
             }
           }
         }
@@ -50,7 +50,7 @@ class FuelPumpReadingParser {
             if (total == pool[i] || total == pool[j] || !matches(pool[i], pool[j], total)) continue;
             final litres = pool[i] < pool[j] ? pool[i] : pool[j];
             final price = pool[i] < pool[j] ? pool[j] : pool[i];
-            return (litres: litres, price: price, total: _product(litres, price));
+            return (volume: litres, price: price, total: _product(litres, price));
           }
         }
       }
@@ -80,7 +80,7 @@ class FuelPumpReadingParser {
         if (!knownIsPrice && !knownIsLitres) continue;
         final litres = known < derived ? known : derived;
         final price = known < derived ? derived : known;
-        return (litres: litres, price: price, total: total);
+        return (volume: litres, price: price, total: total);
       }
     }
     return null;

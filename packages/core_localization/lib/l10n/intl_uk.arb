@@ -610,5 +610,10 @@
   "odometer_scan_failed": "Не вдалося розпізнати пробіг. Введіть його вручну.",
   "fuel_pump_scan": "Сканувати колонку",
   "fuel_pump_scan_failed": "Не вдалося розпізнати дисплей колонки. Введіть заправку вручну.",
-  "fuel_pump_scan_reward": "Бак зафіксовано!"
+  "fuel_pump_scanning_title": "Скануємо колонку…",
+  "fuel_pump_scanning_subtitle": "Зчитуємо дані",
+  "fuel_pump_scan_success_title": "Дані успішно зчитано!",
+  "fuel_pump_scan_success_subtitle": "Ціна, обсяг та сума заповнені",
+  "fuel_save_badge_title": "Чудова робота!",
+  "fuel_save_badge_subtitle": "Дані про заправку збережено"
 }

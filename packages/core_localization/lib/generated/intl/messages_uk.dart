@@ -316,10 +316,25 @@ class MessageLookup extends MessageLookupByLibrary {
     "fuel_pump_scan_failed": MessageLookupByLibrary.simpleMessage(
       "Не вдалося розпізнати дисплей колонки. Введіть заправку вручну.",
     ),
-    "fuel_pump_scan_reward": MessageLookupByLibrary.simpleMessage(
-      "Бак зафіксовано!",
+    "fuel_pump_scan_success_subtitle": MessageLookupByLibrary.simpleMessage(
+      "Ціна, обсяг та сума заповнені",
+    ),
+    "fuel_pump_scan_success_title": MessageLookupByLibrary.simpleMessage(
+      "Дані успішно зчитано!",
+    ),
+    "fuel_pump_scanning_subtitle": MessageLookupByLibrary.simpleMessage(
+      "Зчитуємо дані",
+    ),
+    "fuel_pump_scanning_title": MessageLookupByLibrary.simpleMessage(
+      "Скануємо колонку…",
     ),
     "fuel_regular": MessageLookupByLibrary.simpleMessage("Regular"),
+    "fuel_save_badge_subtitle": MessageLookupByLibrary.simpleMessage(
+      "Дані про заправку збережено",
+    ),
+    "fuel_save_badge_title": MessageLookupByLibrary.simpleMessage(
+      "Чудова робота!",
+    ),
     "fuel_super": MessageLookupByLibrary.simpleMessage("Super"),
     "fuel_type": MessageLookupByLibrary.simpleMessage("Тип пального"),
     "fuel_up": MessageLookupByLibrary.simpleMessage("Заправка"),

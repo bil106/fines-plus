@@ -677,5 +677,10 @@
   "odometer_scan_failed": "No se pudo leer el kilometraje. Ingrésalo manualmente.",
   "fuel_pump_scan": "Escanear surtidor",
   "fuel_pump_scan_failed": "No se pudo leer la pantalla del surtidor. Ingresa el repostaje manualmente.",
-  "fuel_pump_scan_reward": "¡Repostaje registrado!"
+  "fuel_pump_scanning_title": "Escaneando el surtidor…",
+  "fuel_pump_scanning_subtitle": "Leyendo los datos",
+  "fuel_pump_scan_success_title": "¡Datos leídos correctamente!",
+  "fuel_pump_scan_success_subtitle": "Precio, volumen y total rellenados",
+  "fuel_save_badge_title": "¡Buen trabajo!",
+  "fuel_save_badge_subtitle": "Repostaje guardado"
 }

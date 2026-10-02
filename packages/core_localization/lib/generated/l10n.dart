@@ -4681,11 +4681,61 @@ class S {
     );
   }
 
-  /// `Tank logged!`
-  String get fuel_pump_scan_reward {
+  /// `Scanning the pump…`
+  String get fuel_pump_scanning_title {
     return Intl.message(
-      'Tank logged!',
-      name: 'fuel_pump_scan_reward',
+      'Scanning the pump…',
+      name: 'fuel_pump_scanning_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Reading the data`
+  String get fuel_pump_scanning_subtitle {
+    return Intl.message(
+      'Reading the data',
+      name: 'fuel_pump_scanning_subtitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Data read successfully!`
+  String get fuel_pump_scan_success_title {
+    return Intl.message(
+      'Data read successfully!',
+      name: 'fuel_pump_scan_success_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Price, volume and total filled in`
+  String get fuel_pump_scan_success_subtitle {
+    return Intl.message(
+      'Price, volume and total filled in',
+      name: 'fuel_pump_scan_success_subtitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Great job!`
+  String get fuel_save_badge_title {
+    return Intl.message(
+      'Great job!',
+      name: 'fuel_save_badge_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Fill-up saved`
+  String get fuel_save_badge_subtitle {
+    return Intl.message(
+      'Fill-up saved',
+      name: 'fuel_save_badge_subtitle',
       desc: '',
       args: [],
     );

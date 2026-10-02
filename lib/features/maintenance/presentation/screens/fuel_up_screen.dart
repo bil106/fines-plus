@@ -5,13 +5,16 @@ import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/feedback/app_haptics.dart';
 import 'package:design_system/widget/app_field_card.dart';
+import 'package:design_system/widget/achievement_badge_overlay.dart';
 import 'package:design_system/widget/app_toggle_switch.dart';
-import 'package:design_system/widget/scan_reward_overlay.dart';
+import 'package:design_system/widget/scan_progress_overlay.dart';
+import 'package:design_system/widget/scan_success_overlay.dart';
 import 'package:fines_plus/features/vehicle/presentation/cubit/car_cubit.dart';
 import 'package:design_system/widget/app_back_button.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_brand_theme.dart';
 import 'package:design_system/theme/app_theme.dart';
+import 'package:core_utils/formatters/plate_market.dart';
 import 'package:fines_plus/core/config/app_config.dart';
 import 'package:fines_plus/core/extensions/ad_banner_widget.dart';
 import 'package:fines_plus/core/extensions/date_picker_card.dart';
@@ -75,6 +78,7 @@ class FuelUpScreenState extends State<FuelUpScreen>
   bool _sumIsSource = false;
   bool _saving = false;
   bool _pumpScanFailed = false;
+  bool _filledByScan = false;
   // Autofill only ever fills what the user hasn't typed themselves.
   bool _priceEditedByUser = false;
   StreamSubscription<MaintenanceState>? _mileagePrefillSub;
@@ -296,7 +300,16 @@ class FuelUpScreenState extends State<FuelUpScreen>
   /// Photographs the pump display and fills price, volume and sum from it -
   /// the user still sees them and can correct any.
   Future<void> _scanPump() async {
-    final scan = await FuelPumpScanner().readPump();
+    ScanProgressOverlay? progress;
+    final scan = await FuelPumpScanner().readPump(
+      gallons: _pumpShowsGallons,
+      onPhotoTaken: () => progress = ScanProgressOverlay.show(
+        context,
+        title: S.of(context).fuel_pump_scanning_title,
+        subtitle: S.of(context).fuel_pump_scanning_subtitle,
+      ),
+    );
+    progress?.dismiss();
     if (!mounted || scan.cancelled) return;
     // Before the numbers: choosing a fuel reloads its last price, which the
     // scanned price then replaces.
@@ -309,18 +322,35 @@ class FuelUpScreenState extends State<FuelUpScreen>
       return;
     }
     _applyPumpReading(reading);
+    _filledByScan = true;
     AppHaptics.success();
-    ScanRewardOverlay.show(context, message: S.of(context).fuel_pump_scan_reward);
+    ScanSuccessOverlay.show(
+      context,
+      title: S.of(context).fuel_pump_scan_success_title,
+      subtitle: S.of(context).fuel_pump_scan_success_subtitle,
+    );
   }
 
+  /// US pumps are read in gallons whatever unit the app shows.
+  bool get _pumpShowsGallons => context.read<AppConfig>().plateMarket == PlateMarket.us;
+
+  /// The reading is in the pump's unit; the fields show the app's unit and
+  /// the remembered price stays per liter.
   void _applyPumpReading(FuelPumpReading reading) {
+    final pumpGallons = _pumpShowsGallons;
+    final shown = _usesGallons(selectedFuel) == pumpGallons
+        ? 1.0
+        : (pumpGallons ? UnitStream.litersPerGallon : 1 / UnitStream.litersPerGallon);
     setState(() => _pumpScanFailed = false);
     _priceEditedByUser = true;
     _sumIsSource = false;
-    priceController.text = _formatNumber(reading.price);
-    volumeController.text = _formatNumber(reading.litres);
+    priceController.text = _formatNumber(reading.price / shown);
+    volumeController.text = _formatNumber(reading.volume * shown);
     sumController.text = _formatNumber(reading.total);
-    FuelPriceCache.savePrice(selectedFuel.name, reading.price);
+    FuelPriceCache.savePrice(
+      selectedFuel.name,
+      pumpGallons ? reading.price / UnitStream.litersPerGallon : reading.price,
+    );
   }
 
   void _onVolumeChanged(String _) {
@@ -538,6 +568,13 @@ class FuelUpScreenState extends State<FuelUpScreen>
     }
 
     AppHaptics.success();
+    if (_filledByScan) {
+      AchievementBadgeOverlay.show(
+        context,
+        title: S.of(context).fuel_save_badge_title,
+        subtitle: S.of(context).fuel_save_badge_subtitle,
+      );
+    }
     if (widget.embedded) {
       Navigator.of(context).pop(record);
     } else if (widget.onBack != null) {
@@ -763,7 +800,7 @@ class FuelUpScreenState extends State<FuelUpScreen>
               color: AppColors.textSecondary,
             ),
           ),
-          if (!_isElectric && !_usesGallons(selectedFuel)) ...[
+          if (!_isElectric) ...[
             AppSpacers.verticalXSmall,
             SizedBox(
               width: double.infinity,

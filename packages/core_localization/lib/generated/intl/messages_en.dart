@@ -309,10 +309,23 @@ class MessageLookup extends MessageLookupByLibrary {
     "fuel_pump_scan_failed": MessageLookupByLibrary.simpleMessage(
       "Couldn\'t read the pump display. Please enter the fill-up manually.",
     ),
-    "fuel_pump_scan_reward": MessageLookupByLibrary.simpleMessage(
-      "Tank logged!",
+    "fuel_pump_scan_success_subtitle": MessageLookupByLibrary.simpleMessage(
+      "Price, volume and total filled in",
+    ),
+    "fuel_pump_scan_success_title": MessageLookupByLibrary.simpleMessage(
+      "Data read successfully!",
+    ),
+    "fuel_pump_scanning_subtitle": MessageLookupByLibrary.simpleMessage(
+      "Reading the data",
+    ),
+    "fuel_pump_scanning_title": MessageLookupByLibrary.simpleMessage(
+      "Scanning the pump…",
     ),
     "fuel_regular": MessageLookupByLibrary.simpleMessage("Regular"),
+    "fuel_save_badge_subtitle": MessageLookupByLibrary.simpleMessage(
+      "Fill-up saved",
+    ),
+    "fuel_save_badge_title": MessageLookupByLibrary.simpleMessage("Great job!"),
     "fuel_super": MessageLookupByLibrary.simpleMessage("Super"),
     "fuel_type": MessageLookupByLibrary.simpleMessage("Fuel type"),
     "fuel_up": MessageLookupByLibrary.simpleMessage("Fuel up"),
