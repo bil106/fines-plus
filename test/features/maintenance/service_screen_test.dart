@@ -1,6 +1,7 @@
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/theme/app_brand_theme.dart';
 import 'package:design_system/widget/app_bottom_sheet.dart';
+import 'package:fines_plus/core/config/app_config.dart';
 import 'package:fines_plus/core/extensions/currency_service.dart';
 import 'package:fines_plus/features/expenses/data/models/service_record.dart';
 import 'package:fines_plus/features/maintenance/presentation/cubit/maintenance_cubit.dart';
@@ -13,6 +14,15 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
+
+const _config = AppConfig(
+  brandName: 'Test brand',
+  primaryColorHex: '#007AFF',
+  logoAssetPath: '',
+  supportEmail: '',
+  phoneNumber: '',
+  viberNumber: '',
+);
 
 class _Maintenance extends Cubit<MaintenanceState> implements MaintenanceCubit {
   // getLastKnownMileage() is an extension over the records in the state, so
@@ -101,6 +111,7 @@ void main() {
     await tester.pumpWidget(
       MultiBlocProvider(
         providers: [
+          RepositoryProvider<AppConfig>.value(value: _config),
           BlocProvider<MaintenanceCubit>.value(value: maintenance),
           BlocProvider<SettingsCubit>.value(value: settings),
         ],

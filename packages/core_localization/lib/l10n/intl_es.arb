@@ -680,7 +680,7 @@
   "fuel_pump_scanning_title": "Escaneando el surtidor…",
   "fuel_pump_scanning_subtitle": "Leyendo los datos",
   "fuel_pump_scan_success_title": "¡Datos leídos correctamente!",
-  "fuel_pump_scan_success_subtitle": "Precio, volumen y total rellenados",
+  "fuel_pump_scan_success_subtitle": "Precio, volumen y total completados",
   "fuel_save_badge_title": "¡Buen trabajo!",
   "fuel_save_badge_subtitle": "Repostaje guardado"
 }

@@ -343,7 +343,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "No se pudo leer la pantalla del surtidor. Ingresa el repostaje manualmente.",
     ),
     "fuel_pump_scan_success_subtitle": MessageLookupByLibrary.simpleMessage(
-      "Precio, volumen y total rellenados",
+      "Precio, volumen y total completados",
     ),
     "fuel_pump_scan_success_title": MessageLookupByLibrary.simpleMessage(
       "¡Datos leídos correctamente!",
