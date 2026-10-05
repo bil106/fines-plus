@@ -99,7 +99,7 @@ class _AddCarScreenState extends State<AddCarScreen> {
 
                     AppSpacers.verticalMaxMassive,
 
-                    if (!isSubscribed) const AdBannerWidget(),
+                    const AdBannerWidget(),
 
                     AppSpacers.verticalMaxMassive,
 

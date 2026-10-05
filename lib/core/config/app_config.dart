@@ -40,6 +40,11 @@ class AppConfig {
   @JsonKey(defaultValue: true)
   final bool moneyBackGuaranteeEnabled;
 
+  /// Header photo of the paywall. The photos are teal; the screen rotates
+  /// their hue to the brand's primary color, so one asset serves every flavor.
+  @JsonKey(defaultValue: 'assets/images/paywall/hero_car_city.png')
+  final String paywallHeroAsset;
+
   /// Per-brand legal links. Null falls back to the global Env.termsUrl /
   /// Env.privacyPolicyUrl (see env/env.dart) so existing configs still work.
   final String? termsUrl;
@@ -109,6 +114,7 @@ class AppConfig {
     this.finesCheckEnabled = true,
     this.facebookLoginEnabled = true,
     this.moneyBackGuaranteeEnabled = true,
+    this.paywallHeroAsset = 'assets/images/paywall/hero_car_city.png',
     this.termsUrl,
     this.privacyPolicyUrl,
     this.copyOverrides,

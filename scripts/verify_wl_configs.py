@@ -41,6 +41,7 @@ def app_config_from_json(d):
         "finesCheckEnabled": d.get("finesCheckEnabled", True),
         "facebookLoginEnabled": d.get("facebookLoginEnabled", True),
         "moneyBackGuaranteeEnabled": d.get("moneyBackGuaranteeEnabled", True),
+        "paywallHeroAsset": d.get("paywallHeroAsset", "assets/images/paywall/hero_car_city.png"),
         "termsUrl": d.get("termsUrl"),
         "privacyPolicyUrl": d.get("privacyPolicyUrl"),
         "copyOverrides": d.get("copyOverrides"),

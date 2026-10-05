@@ -14,11 +14,16 @@ import 'package:fines_plus/features/subscription/domain/entities/subscription.da
 import 'package:fines_plus/app/router/app_router.dart';
 import 'package:fines_plus/features/subscription/presentation/cubit/purchase/purchase_cubit.dart';
 import 'package:fines_plus/features/subscription/presentation/cubit/purchase/purchase_state.dart';
+import 'package:fines_plus/features/subscription/presentation/widgets/paywall_feature_list.dart';
+import 'package:fines_plus/features/subscription/presentation/widgets/paywall_hero.dart';
+import 'package:fines_plus/features/subscription/presentation/widgets/paywall_plan_card.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -48,6 +53,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
       "periodKey": "period_3_months",
       "months": 3,
       "popular": false,
+      "adFree": false,
       "hasTrial": true,
     },
     {
@@ -57,6 +63,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
       "periodKey": "period_year",
       "months": 12,
       "popular": true,
+      "adFree": true,
       "hasTrial": true,
     },
   ];
@@ -144,13 +151,20 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     setState(() => _selectedIndex = index);
   }
 
-  String _perMonthText(BuildContext context, Map<String, dynamic> plan) {
-    final period = _localizedPeriod(context, plan["periodKey"] as String);
+  String _trialLine(BuildContext context, Map<String, dynamic> plan) {
     final store = _productDetails[plan["productId"] as String];
-    if (store == null) return period;
-    final perMonthAmount = store.rawPrice / (plan["months"] as int);
-    final perMonth = "${store.currencySymbol}${perMonthAmount.toStringAsFixed(2)}";
-    return "$period · $perMonth ${S.of(context).per_month_suffix}";
+    if (store == null) return '';
+    final period = _localizedPeriod(context, plan["periodKey"] as String);
+    return S.of(context).paywall_plan_trial_then(store.price, period);
+  }
+
+  /// Headline price of a card: the plan's price per week, in the store's
+  /// currency, so the full amount doesn't scare off the user up front.
+  String _weekPrice(Map<String, dynamic> plan) {
+    final store = _productDetails[plan["productId"] as String];
+    if (store == null) return _productsLoading ? "…" : "—";
+    final weeks = (plan["months"] as int) * 52 / 12;
+    return NumberFormat.simpleCurrency(name: store.currencyCode).format(store.rawPrice / weeks);
   }
 
   Future<void> _buySelectedPlan() async {
@@ -206,12 +220,42 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     _handlePurchaseSuccess();
   }
 
+  static const double _sheetOverlap = 24;
+
+  /// Hue (degrees) of the teal paywall artwork; other brands rotate from it.
+  static const double _artworkHue = 175;
+
+  /// "Save X%" for the popular plan, from the real store prices: its
+  /// per-month rate against the priciest per-month rate among the others.
+  String? _saveLabel(BuildContext context, Map<String, dynamic> plan) {
+    if (plan["popular"] != true) return null;
+    final store = _productDetails[plan["productId"] as String];
+    if (store == null) return null;
+    final perMonth = store.rawPrice / (plan["months"] as int);
+    double? baseline;
+    for (final other in plans) {
+      final otherStore = _productDetails[other["productId"] as String];
+      if (identical(other, plan) || otherStore == null) continue;
+      final otherPerMonth = otherStore.rawPrice / (other["months"] as int);
+      if (baseline == null || otherPerMonth > baseline) baseline = otherPerMonth;
+    }
+    if (baseline == null || baseline <= 0) return null;
+    final percent = ((1 - perMonth / baseline) * 100).round();
+    return percent > 0 ? S.of(context).paywall_save_percent(percent.toString()) : null;
+  }
+
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+    final config = context.watch<AppConfig>();
     // The mockup's {{accent}} is the raw brand hex, not Material3's
     // tonal-palette colorScheme.primary (see registration_screen.dart).
-    final accent = ThemeConfig.hexToColor(context.watch<AppConfig>().primaryColorHex);
+    final accent = ThemeConfig.hexToColor(config.primaryColorHex);
+    final accentHsl = HSLColor.fromColor(accent);
+    final dark = accentHsl.withLightness(0.2).toColor();
+    final hueShift = accentHsl.hue - _artworkHue;
+    final sheetRadius = BorderRadius.vertical(top: AppBorders.radius22.topLeft);
+
     return BlocListener<PurchaseCubit, PurchaseState>(
       listener: (context, state) {
         if (state is PurchaseSuccess && !_navigated) {
@@ -228,339 +272,239 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(display)));
         }
       },
-      child: Scaffold(
-        backgroundColor: context.brandTheme.surfaceBg,
-        appBar: AppBar(
-          leading: widget.onBack != null
-              ? AppBackButton(onPressed: widget.onBack)
-              : (ModalRoute.of(context)?.canPop == true ? const AppBackButton() : null),
+      child: AnnotatedRegion<SystemUiOverlayStyle>(
+        value: SystemUiOverlayStyle.light,
+        child: Scaffold(
           backgroundColor: context.brandTheme.surfaceBg,
-          elevation: 0,
-        ),
-        body: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Column(
-            children: [
-              Text(
-                S.of(context).subscription,
-                textAlign: TextAlign.center,
-                style: context.brandTheme.displayTextStyle.copyWith(fontSize: 24, fontWeight: FontWeight.w800, color: AppColors.ink),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                context.watch<AppConfig>().finesCheckEnabled
-                    ? S.of(context).subscription_subtitle
-                    : S.of(context).subscription_subtitle_no_fines,
-                textAlign: TextAlign.center,
-                style: textTheme.black16.copyWith(fontSize: 13, color: AppColors.textSecondary),
-              ),
-              AppSpacers.verticalMedium,
-
-              Expanded(
-                child: ListView(
-                  children: [
-                    ...List.generate(plans.length, (index) {
-                      final plan = plans[index];
-                      final isSelected = index == _selectedIndex;
-
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 6),
-                        child: Stack(
-                          clipBehavior: Clip.none,
-                          children: [
-                            GestureDetector(
-                              onTap: () => _onPlanSelected(index),
-                              child: AnimatedContainer(
-                                duration: const Duration(milliseconds: 250),
-                                padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
-                                decoration: BoxDecoration(
-                                  color: isSelected ? Color.lerp(accent, AppColors.neutreBlanc, 0.92) : AppColors.neutreBlanc,
-                                  borderRadius: AppBorders.radius16,
-                                  border: Border.all(
-                                    color: isSelected ? accent : context.brandTheme.surfaceBorder,
-                                    width: AppBorders.widthMedium,
+          body: SafeArea(
+            top: false,
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  PaywallHero(
+                    dark: dark,
+                    accent: accent,
+                    hueShift: hueShift,
+                    heroAsset: config.paywallHeroAsset,
+                    brandName: config.brandName,
+                    headline: S.of(context).paywall_headline(config.brandName),
+                    subtitle: config.finesCheckEnabled
+                        ? S.of(context).subscription_subtitle
+                        : S.of(context).subscription_subtitle_no_fines,
+                    sheetOverlap: _sheetOverlap,
+                    leading: widget.onBack != null
+                        ? AppBackButton(onPressed: widget.onBack)
+                        : (ModalRoute.of(context)?.canPop == true ? const AppBackButton() : null),
+                  ),
+                  Transform.translate(
+                    offset: const Offset(0, -_sheetOverlap),
+                    child: Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+                      decoration: BoxDecoration(color: context.brandTheme.surfaceBg, borderRadius: sheetRadius),
+                      child: Column(
+                        children: [
+                          PaywallFeatureList(accent: accent, hueShift: hueShift, showFines: config.finesCheckEnabled),
+                          AppSpacers.verticalLarge,
+                          IntrinsicHeight(
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                for (var index = plans.length - 1; index >= 0; index--) ...[
+                                  if (index != plans.length - 1) AppSpacers.horizontalSmallMedium,
+                                  Expanded(
+                                    child: PaywallPlanCard(
+                                      title: _localizedTitle(context, plans[index]["titleKey"] as String),
+                                      weekPrice: _weekPrice(plans[index]),
+                                      trialLine: _trialLine(context, plans[index]),
+                                      isSelected: index == _selectedIndex,
+                                      isPopular: plans[index]["popular"] == true,
+                                      adFree: plans[index]["adFree"] == true,
+                                      saveLabel: _saveLabel(context, plans[index]),
+                                      accent: accent,
+                                      onTap: () => _onPlanSelected(index),
+                                    ),
                                   ),
+                                ],
+                              ],
+                            ),
+                          ),
+
+                          if (kDebugMode) ...[
+                            AppSpacers.verticalLarge,
+                            SizedBox(
+                              width: double.infinity,
+                              child: OutlinedButton(
+                                onPressed: _continueWithoutSubscription,
+                                style: OutlinedButton.styleFrom(
+                                  side: BorderSide(color: accent),
+                                  padding: const EdgeInsets.symmetric(vertical: 16),
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                                 ),
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            _localizedTitle(context, plan["titleKey"] as String),
-                                            maxLines: 2,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: textTheme.black18bold.copyWith(fontSize: 15.5, fontWeight: FontWeight.w800, color: AppColors.ink),
-                                          ),
-                                          if (plan["hasTrial"]) ...[
-                                            const SizedBox(height: 6),
-                                            Container(
-                                              padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 8),
-                                              decoration: BoxDecoration(
-                                                color: Color.lerp(accent, AppColors.neutreBlanc, 0.86),
-                                                borderRadius: BorderRadius.circular(999),
-                                              ),
-                                              child: Text(
-                                                S.of(context).free_trial_7_days,
-                                                style: textTheme.black14bold.copyWith(fontSize: 10.5, fontWeight: FontWeight.w700, color: accent),
+                                child: Text(
+                                  'Continue without subscription',
+                                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: accent),
+                                ),
+                              ),
+                            ),
+                          ],
+
+                          AppSpacers.verticalMedium,
+
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 4),
+                            child: Text(
+                              _trialDisclosureText(context),
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(fontSize: 10.5, height: 1.4, color: AppColors.catOther),
+                            ),
+                          ),
+
+                          AppSpacers.verticalMedium,
+
+                          SizedBox(
+                            width: double.infinity,
+                            child: BlocBuilder<PurchaseCubit, PurchaseState>(
+                              builder: (context, state) {
+                                final loading = state is PurchaseInProgress;
+                                final selectedProduct = _productDetails[plans[_selectedIndex]["productId"]];
+                                final unavailable = _productsUnavailable || selectedProduct == null;
+                                final disabled = loading || _productsLoading || unavailable;
+
+                                return ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    padding: const EdgeInsets.symmetric(vertical: 16),
+                                    backgroundColor: accent,
+                                    foregroundColor: AppColors.neutreBlanc,
+                                    disabledBackgroundColor: accent.withOpacity(0.5),
+                                    shape: const StadiumBorder(),
+                                  ),
+                                  onPressed: disabled ? null : _buySelectedPlan,
+                                  child: loading || _productsLoading
+                                      ? const SizedBox(
+                                          height: 22,
+                                          width: 22,
+                                          child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.neutreBlanc),
+                                        )
+                                      : Row(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              unavailable ? S.of(context).store_unavailable : S.of(context).get_plan,
+                                              style: textTheme.black18bold.copyWith(
+                                                fontSize: 15.5,
+                                                fontWeight: FontWeight.w800,
+                                                color: AppColors.neutreBlanc,
                                               ),
                                             ),
+                                            if (!unavailable) ...[
+                                              AppSpacers.horizontalSmall,
+                                              const Icon(Icons.chevron_right, size: 20),
+                                            ],
                                           ],
-                                          const SizedBox(height: 8),
-                                          Text(
-                                            _perMonthText(context, plan),
-                                            style: textTheme.black13W400.copyWith(fontSize: 11, color: AppColors.catOther),
-                                          ),
-                                        ],
+                                        ),
+                                );
+                              },
+                            ),
+                          ),
+
+                          AppSpacers.verticalSmallMedium,
+                          Text(
+                            S.of(context).paywall_no_commitment,
+                            textAlign: TextAlign.center,
+                            style: textTheme.black13W400.copyWith(fontSize: 11.5, color: AppColors.textSecondary),
+                          ),
+
+                          if (!_productsLoading && _productDetails.length < plans.length)
+                            TextButton(
+                              onPressed: context.watch<PurchaseCubit>().state is PurchaseInProgress
+                                  ? null
+                                  : _loadProductPrices,
+                              child: Text(S.of(context).service_retry),
+                            ),
+
+                          AppSpacers.verticalMedium,
+
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              if (config.moneyBackGuaranteeEnabled) ...[
+                                Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Icon(Icons.check, color: AppColors.textSecondary, size: 13),
+                                    const SizedBox(width: 5),
+                                    Flexible(
+                                      child: Text(
+                                        S.of(context).money_back,
+                                        maxLines: 2,
+                                        softWrap: true,
+                                        style: textTheme.black14bold.copyWith(fontSize: 10.5, fontWeight: FontWeight.w400, color: AppColors.textSecondary),
                                       ),
                                     ),
-                                    AppSpacers.horizontalMedium,
-                                    _buildPriceColumn(context, plan, isSelected, accent),
                                   ],
                                 ),
-                              ),
-                            ),
-                            if (plan["popular"])
-                              Positioned(
-                                top: -10,
-                                right: 14,
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 10),
-                                  decoration: BoxDecoration(
-                                    color: accent,
-                                    borderRadius: BorderRadius.circular(999),
-                                  ),
-                                  child: Text(
-                                    S.of(context).most_popular,
-                                    style: textTheme.black14bold.copyWith(
-                                      color: AppColors.neutreBlanc,
-                                      fontSize: 9.5,
-                                      fontWeight: FontWeight.w800,
-                                      letterSpacing: 0.4,
+                                const SizedBox(width: 16),
+                              ],
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Icon(Icons.lock, color: AppColors.textSecondary, size: 13),
+                                  const SizedBox(width: 5),
+                                  Flexible(
+                                    child: Text(
+                                      S.of(context).pay_safe,
+                                      maxLines: 2,
+                                      softWrap: true,
+                                      style: textTheme.black14bold.copyWith(fontSize: 10.5, fontWeight: FontWeight.w400, color: AppColors.textSecondary),
                                     ),
                                   ),
+                                ],
+                              ),
+                            ],
+                          ),
+                          AppSpacers.verticalMedium,
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              GestureDetector(
+                                onTap: () async {
+                                  try {
+                                    await launchUrl(
+                                      Uri.parse(config.termsUrl ?? Env.termsUrl),
+                                      mode: LaunchMode.externalApplication,
+                                    );
+                                  } catch (_) {}
+                                },
+                                child: Text(
+                                  S.of(context).terms_of_use,
+                                  style: textTheme.black16bold.copyWith(fontSize: 10.5, fontWeight: FontWeight.w600, color: AppColors.catOther),
                                 ),
                               ),
-                          ],
-                        ),
-                      );
-                    }),
-
-                    if (kDebugMode) ...[
-                      AppSpacers.verticalLarge,
-                      SizedBox(
-                        width: double.infinity,
-                        child: OutlinedButton(
-                          onPressed: _continueWithoutSubscription,
-                          style: OutlinedButton.styleFrom(
-                            side: BorderSide(color: accent),
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                          ),
-                          child: Text(
-                            'Continue without subscription',
-                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: accent),
-                          ),
-                        ),
-                      ),
-                    ],
-
-                    AppSpacers.verticalMedium,
-
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 4),
-                      child: Text(
-                        _trialDisclosureText(context),
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(fontSize: 10.5, height: 1.4, color: AppColors.catOther),
-                      ),
-                    ),
-
-                    AppSpacers.verticalMedium,
-
-                    SizedBox(
-                      width: double.infinity,
-                      child: BlocBuilder<PurchaseCubit, PurchaseState>(
-                        builder: (context, state) {
-                          final loading = state is PurchaseInProgress;
-                          final selectedProduct =
-                              _productDetails[plans[_selectedIndex]["productId"]];
-                          final unavailable =
-                              _productsUnavailable || selectedProduct == null;
-                          final disabled = loading || _productsLoading || unavailable;
-
-                          return ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(vertical: 16),
-                              backgroundColor: accent,
-                              foregroundColor: AppColors.neutreBlanc,
-                              disabledBackgroundColor: accent.withOpacity(0.5),
-                              shape: const StadiumBorder(),
-                            ),
-                            onPressed: disabled ? null : _buySelectedPlan,
-                            child: loading || _productsLoading
-                                ? const SizedBox(
-                                    height: 22,
-                                    width: 22,
-                                    child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.neutreBlanc),
-                                  )
-                                : Text(
-                                    unavailable ? S.of(context).store_unavailable : S.of(context).get_plan,
-                                    style: textTheme.black18bold.copyWith(
-                                      fontSize: 15.5,
-                                      fontWeight: FontWeight.w800,
-                                      color: AppColors.neutreBlanc,
-                                    ),
-                                  ),
-                          );
-                        },
-                      ),
-                    ),
-
-                    if (!_productsLoading &&
-                        _productDetails.length < plans.length)
-                      TextButton(
-                        onPressed: context.watch<PurchaseCubit>().state
-                                is PurchaseInProgress
-                            ? null
-                            : _loadProductPrices,
-                        child: Text(S.of(context).service_retry),
-                      ),
-
-                    AppSpacers.verticalMedium,
-
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        if (context.read<AppConfig>().moneyBackGuaranteeEnabled) ...[
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Icon(Icons.check, color: AppColors.textSecondary, size: 13),
-                            const SizedBox(width: 5),
-                            Flexible(
-                              child: Text(
-                                S.of(context).money_back,
-                                maxLines: 2,
-                                softWrap: true,
-                                style: textTheme.black14bold.copyWith(fontSize: 10.5, fontWeight: FontWeight.w400, color: AppColors.textSecondary),
+                              const SizedBox(width: 14),
+                              GestureDetector(
+                                onTap: _openPrivacy,
+                                child: Text(
+                                  S.of(context).privacy_policy,
+                                  style: textTheme.black16bold.copyWith(fontSize: 10.5, fontWeight: FontWeight.w600, color: AppColors.catOther),
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(width: 16),
+                            ],
+                          ),
+                          AppSpacers.verticalMedium,
                         ],
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Icon(Icons.lock, color: AppColors.textSecondary, size: 13),
-                            const SizedBox(width: 5),
-                            Flexible(
-                              child: Text(
-                                S.of(context).pay_safe,
-                                maxLines: 2,
-                                softWrap: true,
-                                style: textTheme.black14bold.copyWith(fontSize: 10.5, fontWeight: FontWeight.w400, color: AppColors.textSecondary),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
+                      ),
                     ),
-                    AppSpacers.verticalMedium,
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        GestureDetector(
-                          onTap: () async {
-                            try {
-                              final config = context.read<AppConfig>();
-                              await launchUrl(
-                                Uri.parse(config.termsUrl ?? Env.termsUrl),
-                                mode: LaunchMode.externalApplication,
-                              );
-                            } catch (_) {}
-                          },
-                          child: Text(
-                            S.of(context).terms_of_use,
-                            style: textTheme.black16bold.copyWith(fontSize: 10.5, fontWeight: FontWeight.w600, color: AppColors.catOther),
-                          ),
-                        ),
-                        const SizedBox(width: 14),
-                        GestureDetector(
-                          onTap: _openPrivacy,
-                          child: Text(
-                            S.of(context).privacy_policy,
-                            style: textTheme.black16bold.copyWith(fontSize: 10.5, fontWeight: FontWeight.w600, color: AppColors.catOther),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildPriceColumn(BuildContext context, Map<String, dynamic> plan, bool isSelected, Color accent) {
-    final textTheme = Theme.of(context).textTheme;
-    final productId = plan["productId"] as String;
-    final store = _productDetails[productId];
-
-    final String totalPrice;
-    final String perDay;
-
-    if (store != null) {
-      totalPrice = store.price;
-      final days = (plan["months"] as int) * 30;
-      final perDayAmount = store.rawPrice / days;
-      perDay = "${store.currencySymbol}${perDayAmount.toStringAsFixed(2)} ${S.of(context).per_day_suffix}";
-    } else if (_productsLoading) {
-      totalPrice = "…";
-      perDay = "";
-    } else {
-      totalPrice = "—";
-      perDay = "";
-    }
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              totalPrice,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: textTheme.black20bold
-                  .merge(context.brandTheme.moneyTextStyle)
-                  .copyWith(fontSize: 18, fontWeight: FontWeight.w700, color: AppColors.ink),
-            ),
-            AppSpacers.horizontalSmallMedium,
-            Icon(
-              isSelected ? Icons.check_circle : Icons.circle_outlined,
-              color: isSelected ? accent : AppColors.inactiveDot,
-              size: 22,
-            ),
-          ],
-        ),
-        const SizedBox(height: 2),
-        Text(
-          perDay,
-          maxLines: 1,
-          style: textTheme.grey12W400.copyWith(fontSize: 10.5, color: AppColors.textSecondary),
-        ),
-      ],
     );
   }
 

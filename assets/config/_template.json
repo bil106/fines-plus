@@ -10,6 +10,7 @@
   "finesCheckEnabled": false,
   "facebookLoginEnabled": false,
   "moneyBackGuaranteeEnabled": false,
+  "paywallHeroAsset": "assets/images/paywall/hero_car_city.png",
   "termsUrl": "REPLACE_ME",
   "privacyPolicyUrl": "REPLACE_ME",
   "_themeComment": "Optional. Every key below defaults to Fines+'s own look (see AppConfig) - only add one here if THIS brand wants a different surface/alert color or font. Colors are '#RRGGBB'; the three *FontFamily keys are Google Fonts family names (fonts.google.com), resolved at runtime.",

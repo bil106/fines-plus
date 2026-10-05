@@ -45,18 +45,25 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m10(rating) => "рейтинг: ${rating}";
 
-  static String m11(days) => "Заплановане ТО через ${days} дн.";
+  static String m11(brand) => "Відкрийте всі можливості ${brand}";
 
-  static String m12(count) => "Орієнтовно через ${count} дн.";
+  static String m12(price, period) =>
+      "7 днів безкоштовно, далі ${price} / ${period}";
 
-  static String m13(count) => "Орієнтовно через ${count} тиж.";
+  static String m13(percent) => "Економія ${percent}%";
 
-  static String m14(km) => "Заміна оливи через ${km} км";
+  static String m14(days) => "Заплановане ТО через ${days} дн.";
 
-  static String m15(distance, unit) =>
+  static String m15(count) => "Орієнтовно через ${count} дн.";
+
+  static String m16(count) => "Орієнтовно через ${count} тиж.";
+
+  static String m17(km) => "Заміна оливи через ${km} км";
+
+  static String m18(distance, unit) =>
       "Найкращий рейтинг поруч · ${distance} ${unit}";
 
-  static String m16(price, period) =>
+  static String m19(price, period) =>
       "7 днів безкоштовно, потім ${price} за ${period}. Скасувати можна в будь-який момент, не менш ніж за 24 години до закінчення пробного періоду, в налаштуваннях Google Play. Підписка автоматично поновлюється, якщо її не скасовано.";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
@@ -588,13 +595,47 @@ class MessageLookup extends MessageLookupByLibrary {
     "pay_safe": MessageLookupByLibrary.simpleMessage(
       "Безпечна та надійна оплата",
     ),
+    "paywall_contains_ads": MessageLookupByLibrary.simpleMessage("З рекламою"),
+    "paywall_feature_documents": MessageLookupByLibrary.simpleMessage(
+      "Документи та нагадування про страхування",
+    ),
+    "paywall_feature_fines": MessageLookupByLibrary.simpleMessage(
+      "Перевірка штрафів",
+    ),
+    "paywall_feature_fuel": MessageLookupByLibrary.simpleMessage(
+      "Облік пального та витрат",
+    ),
+    "paywall_feature_no_ads": MessageLookupByLibrary.simpleMessage(
+      "Без реклами",
+    ),
+    "paywall_feature_scan": MessageLookupByLibrary.simpleMessage(
+      "Скан дисплея колонки на АЗС",
+    ),
+    "paywall_feature_service": MessageLookupByLibrary.simpleMessage(
+      "Журнал ТО та обслуговування",
+    ),
+    "paywall_feature_service_reminders": MessageLookupByLibrary.simpleMessage(
+      "ТО, страхування та нагадування",
+    ),
+    "paywall_feature_stats": MessageLookupByLibrary.simpleMessage(
+      "Статистика та звіти",
+    ),
+    "paywall_headline": m11,
+    "paywall_no_commitment": MessageLookupByLibrary.simpleMessage(
+      "Без зобов’язань. Скасувати можна будь-коли.",
+    ),
+    "paywall_per_week_suffix": MessageLookupByLibrary.simpleMessage(
+      "/ тиждень",
+    ),
+    "paywall_plan_trial_then": m12,
+    "paywall_save_percent": m13,
     "pdf": MessageLookupByLibrary.simpleMessage("PDF"),
     "per_day_suffix": MessageLookupByLibrary.simpleMessage("/ день"),
     "per_month_suffix": MessageLookupByLibrary.simpleMessage("/ місяць"),
     "period_3_months": MessageLookupByLibrary.simpleMessage("3 місяці"),
     "period_year": MessageLookupByLibrary.simpleMessage("рік"),
     "periodicity": MessageLookupByLibrary.simpleMessage("Періодичність:"),
-    "planned_service_lead_reminder_body": m11,
+    "planned_service_lead_reminder_body": m14,
     "planned_service_reminder_body": MessageLookupByLibrary.simpleMessage(
       "Настав час запланованого ТО. Внесіть вартість після виконання.",
     ),
@@ -630,8 +671,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "register": MessageLookupByLibrary.simpleMessage("Зареєструватися"),
     "registration": MessageLookupByLibrary.simpleMessage("Реєстрація"),
     "reminder": MessageLookupByLibrary.simpleMessage("Нагадування"),
-    "reminder_approx_days": m12,
-    "reminder_approx_weeks": m13,
+    "reminder_approx_days": m15,
+    "reminder_approx_weeks": m16,
     "reminder_insurance_expires": MessageLookupByLibrary.simpleMessage(
       "Страхування закінчується",
     ),
@@ -641,7 +682,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "reminder_oil_due": MessageLookupByLibrary.simpleMessage(
       "Час замінити оливу",
     ),
-    "reminder_oil_in_km": m14,
+    "reminder_oil_in_km": m17,
     "reminder_overdue": MessageLookupByLibrary.simpleMessage("Прострочено"),
     "reminder_soon": MessageLookupByLibrary.simpleMessage("Скоро"),
     "remove": MessageLookupByLibrary.simpleMessage("Видалити"),
@@ -679,7 +720,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "service_balansuvannya_kolis": MessageLookupByLibrary.simpleMessage(
       "Балансування коліс",
     ),
-    "service_best_rating_distance": m15,
+    "service_best_rating_distance": m18,
     "service_capitalnyy_remont_dvyhuna": MessageLookupByLibrary.simpleMessage(
       "Капітальний ремонт двигуна",
     ),
@@ -1181,7 +1222,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "track_costs": MessageLookupByLibrary.simpleMessage(
       "Стежте за витратами, пробігом та ефективністю",
     ),
-    "trial_disclosure_detailed": m16,
+    "trial_disclosure_detailed": m19,
     "tuning": MessageLookupByLibrary.simpleMessage("Тюнінг"),
     "type": MessageLookupByLibrary.simpleMessage("Тип"),
     "ukr": MessageLookupByLibrary.simpleMessage("Українська"),

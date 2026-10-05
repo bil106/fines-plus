@@ -45,18 +45,25 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m10(rating) => "calificación: ${rating}";
 
-  static String m11(days) => "Servicio planeado en ${days} días.";
+  static String m11(brand) => "Desbloquea todo el potencial de ${brand}";
 
-  static String m12(count) => "Aprox. en ${count} días";
+  static String m12(price, period) =>
+      "7 días gratis, luego ${price} / ${period}";
 
-  static String m13(count) => "Aprox. en ${count} semanas";
+  static String m13(percent) => "Ahorra ${percent}%";
 
-  static String m14(km) => "Cambio de aceite en ${km} km";
+  static String m14(days) => "Servicio planeado en ${days} días.";
 
-  static String m15(distance, unit) =>
+  static String m15(count) => "Aprox. en ${count} días";
+
+  static String m16(count) => "Aprox. en ${count} semanas";
+
+  static String m17(km) => "Cambio de aceite en ${km} km";
+
+  static String m18(distance, unit) =>
       "Mejor calificado cerca · ${distance} ${unit}";
 
-  static String m16(price, period) =>
+  static String m19(price, period) =>
       "Prueba gratis de 7 días, después ${price} por ${period}. Cancela cuando quieras, al menos 24 horas antes de que termine la prueba, en los ajustes de Google Play. La suscripción se renueva automáticamente si no la cancelas.";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
@@ -617,13 +624,47 @@ class MessageLookup extends MessageLookupByLibrary {
     "password": MessageLookupByLibrary.simpleMessage("Contraseña"),
     "pay": MessageLookupByLibrary.simpleMessage("Pagar"),
     "pay_safe": MessageLookupByLibrary.simpleMessage("Pago seguro y protegido"),
+    "paywall_contains_ads": MessageLookupByLibrary.simpleMessage(
+      "Con anuncios",
+    ),
+    "paywall_feature_documents": MessageLookupByLibrary.simpleMessage(
+      "Documentos y recordatorios del seguro",
+    ),
+    "paywall_feature_fines": MessageLookupByLibrary.simpleMessage(
+      "Consulta de multas",
+    ),
+    "paywall_feature_fuel": MessageLookupByLibrary.simpleMessage(
+      "Control de combustible y gastos",
+    ),
+    "paywall_feature_no_ads": MessageLookupByLibrary.simpleMessage(
+      "Sin anuncios",
+    ),
+    "paywall_feature_scan": MessageLookupByLibrary.simpleMessage(
+      "Escanea el display del surtidor",
+    ),
+    "paywall_feature_service": MessageLookupByLibrary.simpleMessage(
+      "Registro de mantenimiento y servicio",
+    ),
+    "paywall_feature_service_reminders": MessageLookupByLibrary.simpleMessage(
+      "Servicio, seguro y recordatorios",
+    ),
+    "paywall_feature_stats": MessageLookupByLibrary.simpleMessage(
+      "Estadísticas e informes",
+    ),
+    "paywall_headline": m11,
+    "paywall_no_commitment": MessageLookupByLibrary.simpleMessage(
+      "Sin compromiso. Cancela cuando quieras.",
+    ),
+    "paywall_per_week_suffix": MessageLookupByLibrary.simpleMessage("/ semana"),
+    "paywall_plan_trial_then": m12,
+    "paywall_save_percent": m13,
     "pdf": MessageLookupByLibrary.simpleMessage("PDF"),
     "per_day_suffix": MessageLookupByLibrary.simpleMessage("/ día"),
     "per_month_suffix": MessageLookupByLibrary.simpleMessage("/ mes"),
     "period_3_months": MessageLookupByLibrary.simpleMessage("3 meses"),
     "period_year": MessageLookupByLibrary.simpleMessage("año"),
     "periodicity": MessageLookupByLibrary.simpleMessage("Periodicidad:"),
-    "planned_service_lead_reminder_body": m11,
+    "planned_service_lead_reminder_body": m14,
     "planned_service_reminder_body": MessageLookupByLibrary.simpleMessage(
       "Tienes un servicio planeado. Agrega el costo cuando esté hecho.",
     ),
@@ -661,8 +702,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "register": MessageLookupByLibrary.simpleMessage("Registrarse"),
     "registration": MessageLookupByLibrary.simpleMessage("Registro"),
     "reminder": MessageLookupByLibrary.simpleMessage("Recordatorio"),
-    "reminder_approx_days": m12,
-    "reminder_approx_weeks": m13,
+    "reminder_approx_days": m15,
+    "reminder_approx_weeks": m16,
     "reminder_insurance_expires": MessageLookupByLibrary.simpleMessage(
       "El seguro vence",
     ),
@@ -672,7 +713,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "reminder_oil_due": MessageLookupByLibrary.simpleMessage(
       "Es hora de cambiar el aceite",
     ),
-    "reminder_oil_in_km": m14,
+    "reminder_oil_in_km": m17,
     "reminder_overdue": MessageLookupByLibrary.simpleMessage("Vencido"),
     "reminder_soon": MessageLookupByLibrary.simpleMessage("Pronto"),
     "remove": MessageLookupByLibrary.simpleMessage("Eliminar"),
@@ -714,7 +755,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "service_balansuvannya_kolis": MessageLookupByLibrary.simpleMessage(
       "Balanceo de ruedas",
     ),
-    "service_best_rating_distance": m15,
+    "service_best_rating_distance": m18,
     "service_capitalnyy_remont_dvyhuna": MessageLookupByLibrary.simpleMessage(
       "Reparación mayor del motor",
     ),
@@ -1258,7 +1299,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "track_costs": MessageLookupByLibrary.simpleMessage(
       "Controla gastos, kilometraje y rendimiento",
     ),
-    "trial_disclosure_detailed": m16,
+    "trial_disclosure_detailed": m19,
     "tuning": MessageLookupByLibrary.simpleMessage("Personalización"),
     "type": MessageLookupByLibrary.simpleMessage("Tipo"),
     "ukr": MessageLookupByLibrary.simpleMessage("Ucraniano"),

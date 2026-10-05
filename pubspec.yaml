@@ -2,7 +2,7 @@ name: fines_plus
 description: "A new Flutter project."
 
 publish_to: 'none' 
-version: 1.0.13+102
+version: 1.0.15+104
 
 environment:
   sdk: ^3.8.1
@@ -125,6 +125,7 @@ flutter:
     - assets/icons/wheels.png
     - assets/fonts/Fines/Roboto-Regular.ttf
     - assets/images/cars/tesla_model_x_red.png
+    - assets/images/paywall/
     - assets/images/onboarding_insurance.jpg
     - assets/images/onboarding_fines.jpg
     - assets/images/analytics_bg.png

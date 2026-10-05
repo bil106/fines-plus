@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:core_localization/generated/l10n.dart';
+import 'package:fines_plus/core/extensions/subscription_helper.dart';
 import 'package:fines_plus/env/env.dart';
 import 'package:fines_plus/features/subscription/data/models/user_subscription.dart';
 import 'package:fines_plus/features/subscription/data/repository/subscription_repository.dart';
@@ -196,9 +197,18 @@ bool _purchaseInProgress = false;
     final months = p.productID == 'sub_quarter' ? 3 : 12;
     final endDate = DateTime.now().add(Duration(days: months * 30));
 
-    await _firestore.collection('users').doc(uid).set({
+    final userRef = _firestore.collection('users').doc(uid);
+    final data = (await userRef.get()).data();
+    // Only the yearly plan removes ads. An account that already subscribed
+    // before this flag existed keeps its ad-free experience on renewal.
+    final adFree =
+        p.productID == SubscriptionHelper.yearlyProductId ||
+        ((data?['adFree'] as bool?) ?? data?['subscriptionEndDate'] != null);
+
+    await userRef.set({
       'isSubscribed': true,
       'subscriptionEndDate': endDate,
+      'adFree': adFree,
     }, SetOptions(merge: true));
   }
 

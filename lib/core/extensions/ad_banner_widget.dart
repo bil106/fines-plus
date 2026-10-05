@@ -16,7 +16,7 @@ class AdBannerWidget extends StatefulWidget {
 class _AdBannerWidgetState extends State<AdBannerWidget> {
   BannerAd? _bannerAd;
   bool _isLoading = false;
-  bool _isSubscribed = true;
+  bool _isAdFree = true;
   bool _checkingSubscription = true;
 
   @override
@@ -32,16 +32,16 @@ class _AdBannerWidgetState extends State<AdBannerWidget> {
       return;
     }
 
-    final subscribed = await SubscriptionHelper.isUserSubscribed(user.uid);
+    final adFree = await SubscriptionHelper.isUserAdFree(user.uid);
 
     if (!mounted) return;
 
     setState(() {
-      _isSubscribed = subscribed;
+      _isAdFree = adFree;
       _checkingSubscription = false;
     });
 
-    if (!subscribed) {
+    if (!adFree) {
       _loadBanner();
     }
   }
@@ -79,7 +79,7 @@ class _AdBannerWidgetState extends State<AdBannerWidget> {
 
   @override
   Widget build(BuildContext context) {
-    if (_checkingSubscription || _isSubscribed) {
+    if (_checkingSubscription || _isAdFree) {
       return const SizedBox.shrink();
     }
 

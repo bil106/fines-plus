@@ -4740,6 +4740,146 @@ class S {
       args: [],
     );
   }
+
+  /// `Unlock the full potential of {brand}`
+  String paywall_headline(String brand) {
+    return Intl.message(
+      'Unlock the full potential of $brand',
+      name: 'paywall_headline',
+      desc: '',
+      args: [brand],
+    );
+  }
+
+  /// `Fines check`
+  String get paywall_feature_fines {
+    return Intl.message(
+      'Fines check',
+      name: 'paywall_feature_fines',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Scan the fuel pump display`
+  String get paywall_feature_scan {
+    return Intl.message(
+      'Scan the fuel pump display',
+      name: 'paywall_feature_scan',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Documents and insurance reminders`
+  String get paywall_feature_documents {
+    return Intl.message(
+      'Documents and insurance reminders',
+      name: 'paywall_feature_documents',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Service and maintenance log`
+  String get paywall_feature_service {
+    return Intl.message(
+      'Service and maintenance log',
+      name: 'paywall_feature_service',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No ads`
+  String get paywall_feature_no_ads {
+    return Intl.message(
+      'No ads',
+      name: 'paywall_feature_no_ads',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Save {percent}%`
+  String paywall_save_percent(String percent) {
+    return Intl.message(
+      'Save $percent%',
+      name: 'paywall_save_percent',
+      desc: '',
+      args: [percent],
+    );
+  }
+
+  /// `No commitment. Cancel anytime.`
+  String get paywall_no_commitment {
+    return Intl.message(
+      'No commitment. Cancel anytime.',
+      name: 'paywall_no_commitment',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Service, insurance and reminders`
+  String get paywall_feature_service_reminders {
+    return Intl.message(
+      'Service, insurance and reminders',
+      name: 'paywall_feature_service_reminders',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Fuel and expense tracking`
+  String get paywall_feature_fuel {
+    return Intl.message(
+      'Fuel and expense tracking',
+      name: 'paywall_feature_fuel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Statistics and reports`
+  String get paywall_feature_stats {
+    return Intl.message(
+      'Statistics and reports',
+      name: 'paywall_feature_stats',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `/ week`
+  String get paywall_per_week_suffix {
+    return Intl.message(
+      '/ week',
+      name: 'paywall_per_week_suffix',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `7 days free, then {price} / {period}`
+  String paywall_plan_trial_then(String price, String period) {
+    return Intl.message(
+      '7 days free, then $price / $period',
+      name: 'paywall_plan_trial_then',
+      desc: '',
+      args: [price, period],
+    );
+  }
+
+  /// `Contains ads`
+  String get paywall_contains_ads {
+    return Intl.message(
+      'Contains ads',
+      name: 'paywall_contains_ads',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

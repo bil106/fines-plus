@@ -614,5 +614,35 @@
   "fuel_pump_scan_success_title": "Data read successfully!",
   "fuel_pump_scan_success_subtitle": "Price, volume and total filled in",
   "fuel_save_badge_title": "Great job!",
-  "fuel_save_badge_subtitle": "Fill-up saved"
+  "fuel_save_badge_subtitle": "Fill-up saved",
+  "paywall_headline": "Unlock the full potential of {brand}",
+  "paywall_feature_fines": "Fines check",
+  "paywall_feature_scan": "Scan the fuel pump display",
+  "paywall_feature_documents": "Documents and insurance reminders",
+  "paywall_feature_service": "Service and maintenance log",
+  "paywall_feature_no_ads": "No ads",
+  "paywall_save_percent": "Save {percent}%",
+  "@paywall_save_percent": {
+    "placeholders": {
+      "percent": { "type": "String" }
+    }
+  },
+  "paywall_no_commitment": "No commitment. Cancel anytime.",
+  "@paywall_headline": {
+    "placeholders": {
+      "brand": { "type": "String" }
+    }
+  },
+  "paywall_feature_service_reminders": "Service, insurance and reminders",
+  "paywall_feature_fuel": "Fuel and expense tracking",
+  "paywall_feature_stats": "Statistics and reports",
+  "paywall_per_week_suffix": "/ week",
+  "paywall_plan_trial_then": "7 days free, then {price} / {period}",
+  "@paywall_plan_trial_then": {
+    "placeholders": {
+      "price": { "type": "String" },
+      "period": { "type": "String" }
+    }
+  },
+  "paywall_contains_ads": "Contains ads"
 }

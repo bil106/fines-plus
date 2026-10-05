@@ -682,5 +682,35 @@
   "fuel_pump_scan_success_title": "¡Datos leídos correctamente!",
   "fuel_pump_scan_success_subtitle": "Precio, volumen y total completados",
   "fuel_save_badge_title": "¡Buen trabajo!",
-  "fuel_save_badge_subtitle": "Repostaje guardado"
+  "fuel_save_badge_subtitle": "Repostaje guardado",
+  "paywall_headline": "Desbloquea todo el potencial de {brand}",
+  "paywall_feature_fines": "Consulta de multas",
+  "paywall_feature_scan": "Escanea el display del surtidor",
+  "paywall_feature_documents": "Documentos y recordatorios del seguro",
+  "paywall_feature_service": "Registro de mantenimiento y servicio",
+  "paywall_feature_no_ads": "Sin anuncios",
+  "paywall_save_percent": "Ahorra {percent}%",
+  "@paywall_save_percent": {
+    "placeholders": {
+      "percent": { "type": "String" }
+    }
+  },
+  "paywall_no_commitment": "Sin compromiso. Cancela cuando quieras.",
+  "@paywall_headline": {
+    "placeholders": {
+      "brand": { "type": "String" }
+    }
+  },
+  "paywall_feature_service_reminders": "Servicio, seguro y recordatorios",
+  "paywall_feature_fuel": "Control de combustible y gastos",
+  "paywall_feature_stats": "Estadísticas e informes",
+  "paywall_per_week_suffix": "/ semana",
+  "paywall_plan_trial_then": "7 días gratis, luego {price} / {period}",
+  "@paywall_plan_trial_then": {
+    "placeholders": {
+      "price": { "type": "String" },
+      "period": { "type": "String" }
+    }
+  },
+  "paywall_contains_ads": "Con anuncios"
 }

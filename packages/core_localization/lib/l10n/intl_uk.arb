@@ -615,5 +615,35 @@
   "fuel_pump_scan_success_title": "Дані успішно зчитано!",
   "fuel_pump_scan_success_subtitle": "Ціна, обсяг та сума заповнені",
   "fuel_save_badge_title": "Чудова робота!",
-  "fuel_save_badge_subtitle": "Дані про заправку збережено"
+  "fuel_save_badge_subtitle": "Дані про заправку збережено",
+  "paywall_headline": "Відкрийте всі можливості {brand}",
+  "paywall_feature_fines": "Перевірка штрафів",
+  "paywall_feature_scan": "Скан дисплея колонки на АЗС",
+  "paywall_feature_documents": "Документи та нагадування про страхування",
+  "paywall_feature_service": "Журнал ТО та обслуговування",
+  "paywall_feature_no_ads": "Без реклами",
+  "paywall_save_percent": "Економія {percent}%",
+  "@paywall_save_percent": {
+    "placeholders": {
+      "percent": { "type": "String" }
+    }
+  },
+  "paywall_no_commitment": "Без зобов’язань. Скасувати можна будь-коли.",
+  "@paywall_headline": {
+    "placeholders": {
+      "brand": { "type": "String" }
+    }
+  },
+  "paywall_feature_service_reminders": "ТО, страхування та нагадування",
+  "paywall_feature_fuel": "Облік пального та витрат",
+  "paywall_feature_stats": "Статистика та звіти",
+  "paywall_per_week_suffix": "/ тиждень",
+  "paywall_plan_trial_then": "7 днів безкоштовно, далі {price} / {period}",
+  "@paywall_plan_trial_then": {
+    "placeholders": {
+      "price": { "type": "String" },
+      "period": { "type": "String" }
+    }
+  },
+  "paywall_contains_ads": "З рекламою"
 }
