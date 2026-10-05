@@ -44,16 +44,6 @@
             <data android:scheme="myapp" android:host="addexp"/>
          </intent-filter>
       </activity>
-      <activity
-            android:name="com.linusu.flutter_web_auth_2.CallbackActivity"
-            android:exported="true">
-         <intent-filter>
-            <action android:name="android.intent.action.VIEW"/>
-            <category android:name="android.intent.category.DEFAULT"/>
-            <category android:name="android.intent.category.BROWSABLE"/>
-            <data android:scheme="myapp"/>
-         </intent-filter>
-      </activity>
       <!-- Meta-data -->
       <meta-data android:name="flutterEmbedding" android:value="2"/>
       <meta-data android:name="com.google.android.gms.ads.APPLICATION_ID"
