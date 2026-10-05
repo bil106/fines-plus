@@ -58,6 +58,7 @@ migrate_working_dir/
 # Build artifacts
 /debug-info/
 /ios/build/
+/android/build/
 # Local Claude session exports, not part of the source tree
 Claude outputs/
 
