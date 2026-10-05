@@ -48,7 +48,7 @@ class PaywallHero extends StatelessWidget {
     final topInset = MediaQuery.paddingOf(context).top;
     final textWidth = MediaQuery.sizeOf(context).width - _sidePadding - _chipSize - _chipInset - 12;
     final headlineStyle = context.brandTheme.displayTextStyle.copyWith(
-      fontSize: 34,
+      fontSize: 28,
       height: 1,
       fontWeight: FontWeight.w800,
       color: AppColors.neutreBlanc,

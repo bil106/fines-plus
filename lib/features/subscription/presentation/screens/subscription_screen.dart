@@ -222,6 +222,11 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
 
   static const double _sheetOverlap = 24;
 
+  /// Where the paywall is mandatory (store-billed Android release) back must
+  /// not exist: it opens the app without a subscription. Debug and the iOS
+  /// bypass keep it, matching how those builds skip the paywall elsewhere.
+  bool get _canDismiss => kDebugMode || defaultTargetPlatform == TargetPlatform.iOS || Env.iosBypassSubscription;
+
   /// Hue (degrees) of the teal paywall artwork; other brands rotate from it.
   static const double _artworkHue = 175;
 
@@ -292,7 +297,9 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                         ? S.of(context).subscription_subtitle
                         : S.of(context).subscription_subtitle_no_fines,
                     sheetOverlap: _sheetOverlap,
-                    leading: widget.onBack != null
+                    leading: !_canDismiss
+                        ? null
+                        : widget.onBack != null
                         ? AppBackButton(onPressed: widget.onBack)
                         : (ModalRoute.of(context)?.canPop == true ? const AppBackButton() : null),
                   ),
