@@ -245,6 +245,8 @@ class CarInfoLocalDataSource {
   Future<void> savePhotoUrl(String url) async =>
       _mirrorToCarDoc({'photoUrl': url});
 
+  Future<void> saveMileage(int km) async => _mirrorToCarDoc({'mileage': km});
+
   Future<void> saveFcmToken(String token) async =>
       _mirrorToCarDoc({'fcmToken': token});
 
@@ -288,6 +290,7 @@ class CarInfoLocalDataSource {
         make: (data['make'] as String?) ?? '',
         model: (data['model'] as String?) ?? '',
         photoUrl: (data['photoUrl'] as String?) ?? '',
+        mileage: (data['mileage'] as num?)?.toInt() ?? 0,
       );
     }
 
@@ -401,6 +404,7 @@ class CarInfoLocalDataSource {
               make: (data['make'] as String?) ?? '',
               model: (data['model'] as String?) ?? '',
               photoUrl: (data['photoUrl'] as String?) ?? '',
+              mileage: (data['mileage'] as num?)?.toInt() ?? 0,
             );
           }).toList(),
         );
@@ -414,6 +418,7 @@ class CarInfoLocalDataSource {
     String make = '',
     String model = '',
     String photoUrl = '',
+    int mileage = 0,
   }) async {
     final user = auth.currentUser;
     if (user == null) throw StateError('Not signed in');
@@ -427,6 +432,7 @@ class CarInfoLocalDataSource {
       make: make,
       model: model.trim(),
       photoUrl: photoUrl,
+      mileage: mileage,
     );
 
     await docRef.set({
@@ -436,6 +442,7 @@ class CarInfoLocalDataSource {
       'make': car.make,
       'model': car.model,
       'photoUrl': car.photoUrl,
+      'mileage': car.mileage,
       'isDefault': false,
       'createdAt': FieldValue.serverTimestamp(),
       'updatedAt': FieldValue.serverTimestamp(),
@@ -455,6 +462,7 @@ class CarInfoLocalDataSource {
     String? make,
     String? model,
     String? photoUrl,
+    int? mileage,
   }) async {
     final user = auth.currentUser;
     if (user == null) return;
@@ -466,6 +474,7 @@ class CarInfoLocalDataSource {
     if (make != null) fields['make'] = make;
     if (model != null) fields['model'] = model.trim();
     if (photoUrl != null) fields['photoUrl'] = photoUrl;
+    if (mileage != null) fields['mileage'] = mileage;
 
     await _carsCollection(
       user.uid,

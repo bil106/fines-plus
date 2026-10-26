@@ -12,6 +12,10 @@ class CarInfoModel {
   final String model;
   final String photoUrl;
 
+  /// Odometer reading in km the user entered for the car; expense records
+  /// can only raise it. 0 when never set.
+  final int mileage;
+
   const CarInfoModel({
     required this.carNumber,
     required this.techPassport,
@@ -20,6 +24,7 @@ class CarInfoModel {
     this.make = '',
     this.model = '',
     this.photoUrl = '',
+    this.mileage = 0,
   });
 
   CarInfoModel copyWith({
@@ -30,6 +35,7 @@ class CarInfoModel {
     String? make,
     String? model,
     String? photoUrl,
+    int? mileage,
   }) {
     return CarInfoModel(
       carNumber: carNumber ?? this.carNumber,
@@ -39,6 +45,7 @@ class CarInfoModel {
       make: make ?? this.make,
       model: model ?? this.model,
       photoUrl: photoUrl ?? this.photoUrl,
+      mileage: mileage ?? this.mileage,
     );
   }
 
@@ -54,5 +61,5 @@ class CarInfoModel {
 
   /// The placeholder car the app creates on first launch so there is always
   /// an active car id: nothing filled in yet.
-  bool get isBlank => carNumber.isEmpty && techPassport.isEmpty && make.isEmpty && model.isEmpty && photoUrl.isEmpty;
+  bool get isBlank => carNumber.isEmpty && techPassport.isEmpty && make.isEmpty && model.isEmpty && photoUrl.isEmpty && mileage == 0;
 }

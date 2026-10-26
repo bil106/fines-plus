@@ -173,7 +173,7 @@ void main() {
   });
 
   testWidgets(
-    'card fits narrow display with large text and opens the edit sheet on long-press',
+    'card fits narrow display with large text and opens the edit sheet on tap',
     (tester) async {
       tester.view.physicalSize = const Size(320, 640);
       tester.view.devicePixelRatio = 1;
@@ -200,7 +200,7 @@ void main() {
       expect(tester.takeException(), isNull);
       // The card's own edit/delete popup menu was dropped in favor of the
       // mockup's plain card (see settings_screen.dart's car row for the
-      // remaining edit/delete UI) - editing here is a long-press that opens
+      // remaining edit/delete UI) - editing here is a tap that opens
       // the same car-details sheet the "+" FAB uses. Checking the callback
       // is wired (rather than actually triggering it) avoids depending on
       // showCarFormSheet's own make-dropdown/image-picker setup here.
@@ -209,7 +209,7 @@ void main() {
             .ancestor(of: find.text('AI1234IO'), matching: find.byType(InkWell))
             .first,
       );
-      expect(inkWell.onLongPress, isNotNull);
+      expect(inkWell.onTap, isNotNull);
       expect(tester.takeException(), isNull);
     },
   );
@@ -220,6 +220,11 @@ void main() {
     String carNumber = 'AI1234IO',
     AppConfig config = _uaConfig,
   }) async {
+    // The sheet (with the mileage card) is tall enough that the dropdown
+    // menus don't fit the default 600px test surface.
+    tester.view.physicalSize = const Size(800, 1400);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
     await open(
       tester,
       config: config,
@@ -234,7 +239,7 @@ void main() {
         ),
       ],
     );
-    await tester.longPress(find.text(carNumber));
+    await tester.tap(find.text(carNumber));
     await tester.pumpAndSettle();
   }
 

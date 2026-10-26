@@ -19,12 +19,12 @@ class CarInfoRepository {
 
   // Garage (multi-car)
   Stream<List<CarInfoModel>> streamCars() => local.streamCars();
-  Future<CarInfoModel> addCar({String carNumber = '', String techPassport = '', String make = '', String model = '', String photoUrl = ''}) =>
-      local.addCar(carNumber: carNumber, techPassport: techPassport, make: make, model: model, photoUrl: photoUrl);
+  Future<CarInfoModel> addCar({String carNumber = '', String techPassport = '', String make = '', String model = '', String photoUrl = '', int mileage = 0}) =>
+      local.addCar(carNumber: carNumber, techPassport: techPassport, make: make, model: model, photoUrl: photoUrl, mileage: mileage);
   Future<CarInfoModel?> findCarByNumber(String carNumber, {String? excludeCarId}) =>
       local.findCarByNumber(carNumber, excludeCarId: excludeCarId);
-  Future<void> updateCarFields(String carId, {String? carNumber, String? techPassport, String? make, String? model, String? photoUrl}) =>
-      local.updateCarFields(carId, carNumber: carNumber, techPassport: techPassport, make: make, model: model, photoUrl: photoUrl);
+  Future<void> updateCarFields(String carId, {String? carNumber, String? techPassport, String? make, String? model, String? photoUrl, int? mileage}) =>
+      local.updateCarFields(carId, carNumber: carNumber, techPassport: techPassport, make: make, model: model, photoUrl: photoUrl, mileage: mileage);
   Future<void> switchActiveCar(CarInfoModel car) => local.switchActiveCar(car);
   Future<void> deleteGarageCar(String carId) => local.deleteCarDoc(carId);
   Future<String> resetToNewDefaultCar() => local.resetToNewDefaultCar();

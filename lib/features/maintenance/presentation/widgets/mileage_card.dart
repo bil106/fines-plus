@@ -25,6 +25,10 @@ class MileageCard extends StatefulWidget {
   /// mockup's "128 450 км".
   final String? unitLabel;
 
+  /// Rejects scans below the active car's last known mileage. Off where the
+  /// value being entered isn't tied to the active car's records.
+  final bool filterByLastKnown;
+
   const MileageCard({
     super.key,
     required this.textTheme,
@@ -33,6 +37,7 @@ class MileageCard extends StatefulWidget {
     this.onChanged,
     this.onSubmitted,
     this.unitLabel,
+    this.filterByLastKnown = true,
   });
 
   @override
@@ -67,7 +72,7 @@ class _MileageCardState extends State<MileageCard> {
   /// user still sees it and can correct it.
   Future<void> _scan() async {
     final unitStream = UnitStream(context.read<SettingsCubit>());
-    final lastKm = context.read<MaintenanceCubit>().getLastKnownMileage();
+    final lastKm = widget.filterByLastKnown ? context.read<MaintenanceCubit>().getLastKnownMileage() : null;
     final lastDisplay = lastKm == null ? null : unitStream.convert(lastKm.toDouble()).round();
     final scan = await OdometerScanner().readMileage(lastKnown: lastDisplay);
     if (!mounted || scan.cancelled) return;

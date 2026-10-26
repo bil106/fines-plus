@@ -54,7 +54,7 @@ class CarCubit extends Cubit<CarState> {
   /// so every screen keyed off [CarState.carId]/[CarState.carNumber] follows.
   Future<void> switchActiveCar(CarInfoModel car) async {
     await local.switchActiveCar(car);
-    emit(state.copyWith(carId: car.carId, carNumber: car.carNumber, techPassport: car.techPassport));
+    emit(state.copyWith(carId: car.carId, carNumber: car.carNumber, techPassport: car.techPassport, mileage: car.mileage));
   }
 
   /// Used after deleting the last remaining car in the garage — clears the
@@ -99,6 +99,17 @@ class CarCubit extends Cubit<CarState> {
   Future<void> setModel(String model) => local.saveModel(model);
 
   Future<void> setPhotoUrl(String url) => local.savePhotoUrl(url);
+
+  Future<void> setMileage(int km) async {
+    await local.saveMileage(km);
+    emit(state.copyWith(mileage: km));
+  }
+
+  /// Mirrors the active car doc's mileage (read off the garage stream) into
+  /// state without writing it back.
+  void syncMileage(int km) {
+    if (km != state.mileage) emit(state.copyWith(mileage: km));
+  }
 
   Map<String, String> getTechPassportParts() {
     final value = state.techPassport;

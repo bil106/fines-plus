@@ -893,6 +893,7 @@ extension MileageCalculations on MaintenanceCubit {
   /// while the other record types store a full [DateTime].
   int? getLastKnownMileage() {
     final allMileages = [
+      if (carCubit.state.mileage > 0) carCubit.state.mileage,
       ...state.serviceRecords.map((r) => r.mileage),
       ...state.fuelRecords.map((r) => r.mileage),
       ...state.carWashRecords.map((r) => r.mileage),

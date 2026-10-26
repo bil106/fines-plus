@@ -14,6 +14,7 @@ CarInfoModel _$CarInfoModelFromJson(Map<String, dynamic> json) => CarInfoModel(
   make: json['make'] as String? ?? '',
   model: json['model'] as String? ?? '',
   photoUrl: json['photoUrl'] as String? ?? '',
+  mileage: (json['mileage'] as num?)?.toInt() ?? 0,
 );
 
 Map<String, dynamic> _$CarInfoModelToJson(CarInfoModel instance) =>
@@ -25,4 +26,5 @@ Map<String, dynamic> _$CarInfoModelToJson(CarInfoModel instance) =>
       'make': instance.make,
       'model': instance.model,
       'photoUrl': instance.photoUrl,
+      'mileage': instance.mileage,
     };

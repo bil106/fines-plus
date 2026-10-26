@@ -3,6 +3,7 @@ import 'package:fines_plus/core/extensions/display_date.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:core_localization/generated/l10n.dart';
+import 'package:core_utils/formatters/thousands_separator_formatter.dart';
 import 'package:core_utils/formatters/vehicle_formatters.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_borders.dart';
@@ -18,6 +19,7 @@ import 'package:fines_plus/features/expenses/data/models/insurance_record.dart';
 import 'package:fines_plus/features/expenses/data/repository/expense_repository.dart';
 import 'package:fines_plus/features/maintenance/presentation/cubit/maintenance_cubit.dart';
 import 'package:fines_plus/features/maintenance/presentation/cubit/maintenance_state.dart';
+import 'package:fines_plus/features/maintenance/presentation/widgets/mileage_card.dart';
 import 'package:fines_plus/features/settings/presentation/cubit/settings_cubit.dart';
 import 'package:fines_plus/features/settings/presentation/cubit/unit_stream.dart';
 import 'package:fines_plus/features/vehicle/data/car_makes.dart';
@@ -127,6 +129,7 @@ class GarageScreen extends StatelessWidget {
               make: result['make'] ?? '',
               model: result['model'] ?? '',
               photoPath: result['photoPath'] ?? '',
+              mileage: int.tryParse(result['mileage'] ?? '') ?? 0,
             ),
           );
         },
@@ -156,7 +159,7 @@ class GarageScreen extends StatelessWidget {
                   key: ValueKey(car.carId),
                   car: car,
                   isActive: isActive,
-                  onTap: isActive
+                  onSwitch: isActive
                       ? null
                       : () => runOrShowError(
                           context,
@@ -178,6 +181,7 @@ class GarageScreen extends StatelessWidget {
                         make: result['make'],
                         model: result['model'],
                         photoUrl: result['photoUrl'],
+                        mileage: int.tryParse(result['mileage'] ?? ''),
                       ),
                     );
                   },
@@ -197,7 +201,7 @@ const _plateMaxWidth = 110.0;
 class _CarCard extends StatelessWidget {
   final CarInfoModel car;
   final bool isActive;
-  final VoidCallback? onTap;
+  final VoidCallback? onSwitch;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
 
@@ -205,7 +209,7 @@ class _CarCard extends StatelessWidget {
     super.key,
     required this.car,
     required this.isActive,
-    required this.onTap,
+    required this.onSwitch,
     required this.onEdit,
     required this.onDelete,
   });
@@ -223,8 +227,8 @@ class _CarCard extends StatelessWidget {
         ),
         clipBehavior: Clip.antiAlias,
         child: InkWell(
-          onTap: onTap,
-          onLongPress: onEdit,
+          onTap: onEdit,
+          onLongPress: onSwitch,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
             child: Column(
@@ -283,7 +287,11 @@ class _CarCard extends StatelessWidget {
                       ),
                   ],
                 ),
-                CarMileageAndStatus(carId: car.carId, cardStyle: true),
+                CarMileageAndStatus(
+                  carId: car.carId,
+                  carMileage: car.mileage,
+                  cardStyle: true,
+                ),
               ],
             ),
           ),
@@ -301,10 +309,14 @@ class _CarCard extends StatelessWidget {
 /// shown.
 class CarMileageAndStatus extends StatefulWidget {
   final String carId;
+
+  /// The car's own stored odometer reading (km); records can only raise it.
+  final int carMileage;
   final bool cardStyle;
   const CarMileageAndStatus({
     super.key,
     required this.carId,
+    this.carMileage = 0,
     this.cardStyle = false,
   });
 
@@ -346,7 +358,7 @@ class CarMileageAndStatusState extends State<CarMileageAndStatus> {
             ...state.carWashRecords.map((r) => r.mileage),
             ...state.tuningRecords.map((r) => r.mileage),
             ...state.otherRecords.map((r) => r.mileage),
-          ].fold(0, (max, m) => m > max ? m : max);
+          ].fold(widget.carMileage, (max, m) => m > max ? m : max);
 
           // "Current" policy = the one saved most recently (updatedAt), not
           // whichever happens to run furthest into the future, and not
@@ -381,7 +393,7 @@ class CarMileageAndStatusState extends State<CarMileageAndStatus> {
         final expenses = snapshot.data!;
 
         final mileage = expenses.fold<int>(
-          0,
+          widget.carMileage,
           (max, e) => (e.mileage ?? 0) > max ? e.mileage! : max,
         );
 
@@ -622,6 +634,13 @@ Future<Map<String, String>?> showCarFormSheet(
   String photoUrl = existing?.photoUrl ?? '';
   bool isUploadingPhoto = false;
   String photoPath = '';
+  final mileageController = TextEditingController();
+  final isMiles = context.read<SettingsCubit>().state.unit == 'mil';
+  if ((existing?.mileage ?? 0) > 0) {
+    mileageController.text = formatThousands(
+      UnitStream(context.read<SettingsCubit>()).convert(existing!.mileage.toDouble()).round(),
+    );
+  }
 
   return showModalBottomSheet<Map<String, String>>(
     context: context,
@@ -932,6 +951,13 @@ Future<Map<String, String>?> showCarFormSheet(
                             ),
                           ],
                           AppSpacers.verticalMedium,
+                          MileageCard(
+                            textTheme: Theme.of(context).textTheme,
+                            controller: mileageController,
+                            unitLabel: isMiles ? S.of(context).mi : S.of(context).km,
+                            filterByLastKnown: false,
+                          ),
+                          AppSpacers.verticalMedium,
                           SizedBox(
                             width: double.infinity,
                             child: ElevatedButton(
@@ -944,6 +970,10 @@ Future<Map<String, String>?> showCarFormSheet(
                                       'model': selectedModel ?? '',
                                       'photoUrl': photoUrl,
                                       'photoPath': photoPath,
+                                      'mileage': _mileageToKm(
+                                        mileageController.text,
+                                        isMiles,
+                                      ).toString(),
                                     })
                                   : null,
                               style: ElevatedButton.styleFrom(
@@ -974,4 +1004,11 @@ Future<Map<String, String>?> showCarFormSheet(
       );
     },
   );
+}
+
+/// Inverse of [UnitStream.convert]: the field shows the active unit, the
+/// stored mileage is always km. Empty or invalid text is 0 (not set).
+int _mileageToKm(String text, bool isMiles) {
+  final value = int.tryParse(stripThousandsSeparator(text)) ?? 0;
+  return isMiles ? (value / 0.621371).round() : value;
 }

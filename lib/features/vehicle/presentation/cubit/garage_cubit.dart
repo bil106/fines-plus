@@ -24,6 +24,7 @@ class GarageCubit extends Cubit<GarageState> {
     _carsSub = repository.streamCars().listen(
       (cars) {
         emit(state.copyWith(cars: cars, isLoading: false));
+        _syncActiveMileage();
       },
       onError: (Object e, StackTrace st) {
         debugPrint('GarageCubit cars stream error: $e\n$st');
@@ -31,8 +32,21 @@ class GarageCubit extends Cubit<GarageState> {
       },
     );
     _activeSub = carCubit.stream.listen((carState) {
+      final switched = carState.carId != state.activeCarId;
       emit(state.copyWith(activeCarId: carState.carId));
+      if (switched) _syncActiveMileage();
     });
+  }
+
+  /// [CarCubit] is what MaintenanceCubit reads the active car's mileage
+  /// from, so it follows the garage list (first load, edits, other devices).
+  void _syncActiveMileage() {
+    for (final car in state.cars) {
+      if (car.carId == carCubit.state.carId) {
+        carCubit.syncMileage(car.mileage);
+        return;
+      }
+    }
   }
 
   /// If [carNumber] is a plate this account already has a car under (e.g.
@@ -51,6 +65,7 @@ class GarageCubit extends Cubit<GarageState> {
     String model = '',
     String photoUrl = '',
     String photoPath = '',
+    int mileage = 0,
   }) async {
     if (carNumber.isNotEmpty) {
       final existing = await repository.findCarByNumber(carNumber);
@@ -66,6 +81,7 @@ class GarageCubit extends Cubit<GarageState> {
       make: make,
       model: model,
       photoUrl: photoUrl,
+      mileage: mileage,
     );
     await carCubit.switchActiveCar(car);
 
@@ -87,6 +103,7 @@ class GarageCubit extends Cubit<GarageState> {
     String? make,
     String? model,
     String? photoUrl,
+    int? mileage,
   }) async {
     if (car.carId == carCubit.state.carId) {
       if (carNumber != null) await carCubit.changeCar(carNumber);
@@ -94,6 +111,7 @@ class GarageCubit extends Cubit<GarageState> {
       if (make != null) await carCubit.setMake(make);
       if (model != null) await carCubit.setModel(model);
       if (photoUrl != null) await carCubit.setPhotoUrl(photoUrl);
+      if (mileage != null) await carCubit.setMileage(mileage);
     } else {
       await repository.updateCarFields(
         car.carId,
@@ -102,6 +120,7 @@ class GarageCubit extends Cubit<GarageState> {
         make: make,
         model: model,
         photoUrl: photoUrl,
+        mileage: mileage,
       );
     }
   }

@@ -9,6 +9,8 @@ import 'package:fines_plus/features/maintenance/presentation/cubit/maintenance_s
 import 'package:fines_plus/features/maintenance/presentation/screens/service_screen.dart';
 import 'package:fines_plus/features/settings/presentation/cubit/settings_cubit.dart';
 import 'package:fines_plus/features/settings/presentation/cubit/settings_state.dart';
+import 'package:fines_plus/features/vehicle/presentation/cubit/car_cubit.dart';
+import 'package:fines_plus/features/vehicle/presentation/cubit/car_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -24,7 +26,16 @@ const _config = AppConfig(
   viberNumber: '',
 );
 
+class _Car extends Cubit<CarState> implements CarCubit {
+  _Car() : super(const CarState());
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
 class _Maintenance extends Cubit<MaintenanceState> implements MaintenanceCubit {
+  @override
+  final CarCubit carCubit = _Car();
+
   // getLastKnownMileage() is an extension over the records in the state, so
   // the previous mileage is seeded as a record rather than overridden.
   _Maintenance()
