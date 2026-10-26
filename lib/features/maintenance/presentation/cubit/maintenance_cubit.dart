@@ -29,6 +29,7 @@ class MaintenanceCubit extends Cubit<MaintenanceState> {
   final CarCubit carCubit;
   late final StreamSubscription _carSub;
   StreamSubscription<List<Expense>>? _expensesSub;
+  bool _expensesStreamAlive = false;
   late String _activeCarId;
 
   MaintenanceCubit({required this.expenseRepository, required this.localDataSource, required this.carCubit})
@@ -53,7 +54,13 @@ class MaintenanceCubit extends Cubit<MaintenanceState> {
   /// previous car were never cleared on a real switch. Track the previously
   /// active id ourselves instead.
   Future<void> _onCarChanged(String newCarId) async {
-    if (newCarId == _activeCarId) return;
+    if (newCarId == _activeCarId) {
+      // Signing out terminates the Firestore listener with a permission error;
+      // signing back in as the same user keeps the same carId, so nothing
+      // else would ever re-attach it.
+      if (!_expensesStreamAlive) _listenToExpenses(newCarId);
+      return;
+    }
     _activeCarId = newCarId;
 
     try {
@@ -75,6 +82,7 @@ class MaintenanceCubit extends Cubit<MaintenanceState> {
     _expensesSub?.cancel();
     if (carId.isEmpty) return;
 
+    _expensesStreamAlive = true;
     _expensesSub = expenseRepository.watchExpenses(carNumber: carId).listen(
       (expenses) {
         final serviceRecords = <ServiceRecord>[];
@@ -126,7 +134,11 @@ class MaintenanceCubit extends Cubit<MaintenanceState> {
         _saveRecordsToPrefs('insurance_records', insuranceRecords);
         _saveRecordsToPrefs('other_records', otherRecords);
       },
-      onError: (e) => debugPrint('MaintenanceCubit expenses stream error: $e'),
+      onError: (e) {
+        _expensesStreamAlive = false;
+        debugPrint('MaintenanceCubit expenses stream error: $e');
+      },
+      onDone: () => _expensesStreamAlive = false,
     );
   }
 
