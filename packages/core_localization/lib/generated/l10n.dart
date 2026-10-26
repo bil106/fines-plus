@@ -386,6 +386,36 @@ class S {
     );
   }
 
+  /// `MVS service unavailable`
+  String get fines_mvs_unavailable_title {
+    return Intl.message(
+      'MVS service unavailable',
+      name: 'fines_mvs_unavailable_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The MVS website isn't responding right now. The problem is on their side, not in the app. Please try again later.`
+  String get fines_mvs_unavailable_message {
+    return Intl.message(
+      'The MVS website isn\'t responding right now. The problem is on their side, not in the app. Please try again later.',
+      name: 'fines_mvs_unavailable_message',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Try again`
+  String get fines_mvs_retry {
+    return Intl.message(
+      'Try again',
+      name: 'fines_mvs_retry',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Fines reminder`
   String get fines_reminder_title {
     return Intl.message(

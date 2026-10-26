@@ -267,8 +267,17 @@ class MessageLookup extends MessageLookupByLibrary {
     "fines_mvs_hint": MessageLookupByLibrary.simpleMessage(
       "Пройдіть капчу та натисніть «Перевірити» — штрафи додадуться в застосунок автоматично.",
     ),
+    "fines_mvs_retry": MessageLookupByLibrary.simpleMessage(
+      "Спробувати ще раз",
+    ),
     "fines_mvs_title": MessageLookupByLibrary.simpleMessage(
       "Перевірка штрафів (МВС)",
+    ),
+    "fines_mvs_unavailable_message": MessageLookupByLibrary.simpleMessage(
+      "Сайт МВС зараз не відповідає. Це проблема на їхньому боці, а не в застосунку. Спробуйте пізніше.",
+    ),
+    "fines_mvs_unavailable_title": MessageLookupByLibrary.simpleMessage(
+      "Сервіс МВС недоступний",
     ),
     "fines_new_found": m5,
     "fines_no_new": MessageLookupByLibrary.simpleMessage("Нових штрафів немає"),

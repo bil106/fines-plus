@@ -257,8 +257,15 @@ class MessageLookup extends MessageLookupByLibrary {
     "fines_mvs_hint": MessageLookupByLibrary.simpleMessage(
       "Solve the captcha and tap “Перевірити” — the fines will be added to the app automatically.",
     ),
+    "fines_mvs_retry": MessageLookupByLibrary.simpleMessage("Try again"),
     "fines_mvs_title": MessageLookupByLibrary.simpleMessage(
       "Fines check (MVS)",
+    ),
+    "fines_mvs_unavailable_message": MessageLookupByLibrary.simpleMessage(
+      "The MVS website isn\'t responding right now. The problem is on their side, not in the app. Please try again later.",
+    ),
+    "fines_mvs_unavailable_title": MessageLookupByLibrary.simpleMessage(
+      "MVS service unavailable",
     ),
     "fines_new_found": m5,
     "fines_no_new": MessageLookupByLibrary.simpleMessage("No new fines"),
