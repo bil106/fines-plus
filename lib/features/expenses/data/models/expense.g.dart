@@ -29,6 +29,7 @@ Expense _$ExpenseFromJson(Map<String, dynamic> json) => Expense(
   insuranceValidTo: json['insuranceValidTo'] == null
       ? null
       : DateTime.parse(json['insuranceValidTo'] as String),
+  insurancePolicyUrl: json['insurancePolicyUrl'] as String?,
 );
 
 Map<String, dynamic> _$ExpenseToJson(Expense instance) => <String, dynamic>{
@@ -48,6 +49,7 @@ Map<String, dynamic> _$ExpenseToJson(Expense instance) => <String, dynamic>{
   'insuranceCompany': instance.insuranceCompany,
   'insurancePolicyNumber': instance.insurancePolicyNumber,
   'insuranceValidTo': instance.insuranceValidTo?.toIso8601String(),
+  'insurancePolicyUrl': instance.insurancePolicyUrl,
 };
 
 const _$ExpenseCategoryEnumMap = {

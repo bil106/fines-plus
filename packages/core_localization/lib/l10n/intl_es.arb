@@ -675,6 +675,18 @@
   "location_open_settings": "Abrir Ajustes",
   "location_not_determined": "No se pudo determinar tu ubicación. Inténtalo de nuevo más tarde.",
   "odometer_scan_failed": "No se pudo leer el kilometraje. Ingrésalo manualmente.",
+  "insurance_scan_qr": "Escanear QR de la póliza",
+  "insurance_scan_qr_hint": "Apunta la cámara al código QR de la póliza",
+  "insurance_scan_from_gallery": "De la galería",
+  "insurance_scan_camera_error": "No se pudo iniciar la cámara. Permite el acceso en ajustes o elige una foto de la galería.",
+  "insurance_scan_failed": "No se pudieron obtener los datos de la póliza con el QR. Ingrésalos manualmente.",
+  "insurance_scan_plate_mismatch": "El vehículo de la póliza ({plate}) no coincide con el auto activo. Revísalo.",
+  "@insurance_scan_plate_mismatch": {
+    "placeholders": {
+      "plate": { "type": "String" }
+    }
+  },
+  "insurance_open_policy": "Abrir póliza",
   "fuel_pump_scan": "Escanear surtidor",
   "fuel_pump_scan_failed": "No se pudo leer la pantalla del surtidor. Ingresa el repostaje manualmente.",
   "fuel_pump_scanning_title": "Escaneando el surtidor…",

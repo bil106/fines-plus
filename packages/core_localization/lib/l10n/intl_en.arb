@@ -607,6 +607,18 @@
   "location_open_settings": "Open Settings",
   "location_not_determined": "Couldn't determine your location. Please try again later.",
   "odometer_scan_failed": "Couldn't read the mileage. Please enter it manually.",
+  "insurance_scan_qr": "Scan policy QR",
+  "insurance_scan_qr_hint": "Point the camera at the QR code on the policy",
+  "insurance_scan_from_gallery": "From gallery",
+  "insurance_scan_camera_error": "Couldn't start the camera. Allow access in settings or pick a photo from the gallery.",
+  "insurance_scan_failed": "Couldn't get the policy details from the QR code. Please enter them manually.",
+  "insurance_scan_plate_mismatch": "The vehicle in the policy ({plate}) doesn't match the active car. Please check.",
+  "@insurance_scan_plate_mismatch": {
+    "placeholders": {
+      "plate": { "type": "String" }
+    }
+  },
+  "insurance_open_policy": "Open policy",
   "fuel_pump_scan": "Scan pump",
   "fuel_pump_scan_failed": "Couldn't read the pump display. Please enter the fill-up manually.",
   "fuel_pump_scanning_title": "Scanning the pump…",

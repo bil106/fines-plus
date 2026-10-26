@@ -17,6 +17,10 @@ class InsuranceRecord {
   final double cost;
   final String currency;
 
+  /// Registry page for the policy (its QR code's link); empty when the
+  /// policy wasn't scanned.
+  final String policyUrl;
+
   /// When this record was last written to Firestore (server timestamp) -
   /// the reliable signal for "which record is the current policy" when two
   /// records share the same validFrom (e.g. only validTo was edited on a
@@ -32,6 +36,7 @@ class InsuranceRecord {
     required this.validTo,
     required this.cost,
     required this.currency,
+    this.policyUrl = '',
     this.updatedAt,
   });
 
@@ -52,6 +57,7 @@ class InsuranceRecord {
       validTo: expense.insuranceValidTo ?? expense.date,
       cost: expense.amount.toDouble(),
       currency: expense.currency,
+      policyUrl: expense.insurancePolicyUrl ?? '',
       updatedAt: expense.updatedAt,
     );
   }
@@ -68,6 +74,7 @@ class InsuranceRecord {
       insuranceCompany: company,
       insurancePolicyNumber: policyNumber,
       insuranceValidTo: validTo,
+      insurancePolicyUrl: policyUrl.isEmpty ? null : policyUrl,
     );
   }
 }

@@ -41,29 +41,32 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m8(date) => "Tu seguro vence el ${date}. Es hora de renovarlo.";
 
-  static String m9(task) => "Es hora de: ${task}";
+  static String m9(plate) =>
+      "El vehículo de la póliza (${plate}) no coincide con el auto activo. Revísalo.";
 
-  static String m10(rating) => "calificación: ${rating}";
+  static String m10(task) => "Es hora de: ${task}";
 
-  static String m11(brand) => "Desbloquea todo el potencial de ${brand}";
+  static String m11(rating) => "calificación: ${rating}";
 
-  static String m12(price, period) =>
+  static String m12(brand) => "Desbloquea todo el potencial de ${brand}";
+
+  static String m13(price, period) =>
       "7 días gratis, luego ${price} / ${period}";
 
-  static String m13(percent) => "Ahorra ${percent}%";
+  static String m14(percent) => "Ahorra ${percent}%";
 
-  static String m14(days) => "Servicio planeado en ${days} días.";
+  static String m15(days) => "Servicio planeado en ${days} días.";
 
-  static String m15(count) => "Aprox. en ${count} días";
+  static String m16(count) => "Aprox. en ${count} días";
 
-  static String m16(count) => "Aprox. en ${count} semanas";
+  static String m17(count) => "Aprox. en ${count} semanas";
 
-  static String m17(km) => "Cambio de aceite en ${km} km";
+  static String m18(km) => "Cambio de aceite en ${km} km";
 
-  static String m18(distance, unit) =>
+  static String m19(distance, unit) =>
       "Mejor calificado cerca · ${distance} ${unit}";
 
-  static String m19(price, period) =>
+  static String m20(price, period) =>
       "Prueba gratis de 7 días, después ${price} por ${period}. Cancela cuando quieras, al menos 24 horas antes de que termine la prueba, en los ajustes de Google Play. La suscripción se renueva automáticamente si no la cancelas.";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
@@ -454,8 +457,27 @@ class MessageLookup extends MessageLookupByLibrary {
       "Control del seguro",
     ),
     "insurance_expiry_reminder_body": m8,
+    "insurance_open_policy": MessageLookupByLibrary.simpleMessage(
+      "Abrir póliza",
+    ),
     "insurance_osago": MessageLookupByLibrary.simpleMessage(
       "Seguro de responsabilidad civil",
+    ),
+    "insurance_scan_camera_error": MessageLookupByLibrary.simpleMessage(
+      "No se pudo iniciar la cámara. Permite el acceso en ajustes o elige una foto de la galería.",
+    ),
+    "insurance_scan_failed": MessageLookupByLibrary.simpleMessage(
+      "No se pudieron obtener los datos de la póliza con el QR. Ingrésalos manualmente.",
+    ),
+    "insurance_scan_from_gallery": MessageLookupByLibrary.simpleMessage(
+      "De la galería",
+    ),
+    "insurance_scan_plate_mismatch": m9,
+    "insurance_scan_qr": MessageLookupByLibrary.simpleMessage(
+      "Escanear QR de la póliza",
+    ),
+    "insurance_scan_qr_hint": MessageLookupByLibrary.simpleMessage(
+      "Apunta la cámara al código QR de la póliza",
     ),
     "interval": MessageLookupByLibrary.simpleMessage("Intervalo (km)"),
     "interval_by_date": MessageLookupByLibrary.simpleMessage(
@@ -504,11 +526,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "maintenance_control": MessageLookupByLibrary.simpleMessage(
       "Control del mantenimiento",
     ),
-    "maintenance_due_body": m9,
+    "maintenance_due_body": m10,
     "maintenance_due_title": MessageLookupByLibrary.simpleMessage(
       "Mantenimiento pendiente",
     ),
-    "map_rating": m10,
+    "map_rating": m11,
     "mi": MessageLookupByLibrary.simpleMessage("mi"),
     "mileage": MessageLookupByLibrary.simpleMessage("Kilometraje"),
     "mileage_statistics": MessageLookupByLibrary.simpleMessage(
@@ -651,20 +673,20 @@ class MessageLookup extends MessageLookupByLibrary {
     "paywall_feature_stats": MessageLookupByLibrary.simpleMessage(
       "Estadísticas e informes",
     ),
-    "paywall_headline": m11,
+    "paywall_headline": m12,
     "paywall_no_commitment": MessageLookupByLibrary.simpleMessage(
       "Sin compromiso. Cancela cuando quieras.",
     ),
     "paywall_per_week_suffix": MessageLookupByLibrary.simpleMessage("/ semana"),
-    "paywall_plan_trial_then": m12,
-    "paywall_save_percent": m13,
+    "paywall_plan_trial_then": m13,
+    "paywall_save_percent": m14,
     "pdf": MessageLookupByLibrary.simpleMessage("PDF"),
     "per_day_suffix": MessageLookupByLibrary.simpleMessage("/ día"),
     "per_month_suffix": MessageLookupByLibrary.simpleMessage("/ mes"),
     "period_3_months": MessageLookupByLibrary.simpleMessage("3 meses"),
     "period_year": MessageLookupByLibrary.simpleMessage("año"),
     "periodicity": MessageLookupByLibrary.simpleMessage("Periodicidad:"),
-    "planned_service_lead_reminder_body": m14,
+    "planned_service_lead_reminder_body": m15,
     "planned_service_reminder_body": MessageLookupByLibrary.simpleMessage(
       "Tienes un servicio planeado. Agrega el costo cuando esté hecho.",
     ),
@@ -702,8 +724,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "register": MessageLookupByLibrary.simpleMessage("Registrarse"),
     "registration": MessageLookupByLibrary.simpleMessage("Registro"),
     "reminder": MessageLookupByLibrary.simpleMessage("Recordatorio"),
-    "reminder_approx_days": m15,
-    "reminder_approx_weeks": m16,
+    "reminder_approx_days": m16,
+    "reminder_approx_weeks": m17,
     "reminder_insurance_expires": MessageLookupByLibrary.simpleMessage(
       "El seguro vence",
     ),
@@ -713,7 +735,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "reminder_oil_due": MessageLookupByLibrary.simpleMessage(
       "Es hora de cambiar el aceite",
     ),
-    "reminder_oil_in_km": m17,
+    "reminder_oil_in_km": m18,
     "reminder_overdue": MessageLookupByLibrary.simpleMessage("Vencido"),
     "reminder_soon": MessageLookupByLibrary.simpleMessage("Pronto"),
     "remove": MessageLookupByLibrary.simpleMessage("Eliminar"),
@@ -755,7 +777,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "service_balansuvannya_kolis": MessageLookupByLibrary.simpleMessage(
       "Balanceo de ruedas",
     ),
-    "service_best_rating_distance": m18,
+    "service_best_rating_distance": m19,
     "service_capitalnyy_remont_dvyhuna": MessageLookupByLibrary.simpleMessage(
       "Reparación mayor del motor",
     ),
@@ -1299,7 +1321,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "track_costs": MessageLookupByLibrary.simpleMessage(
       "Controla gastos, kilometraje y rendimiento",
     ),
-    "trial_disclosure_detailed": m19,
+    "trial_disclosure_detailed": m20,
     "tuning": MessageLookupByLibrary.simpleMessage("Personalización"),
     "type": MessageLookupByLibrary.simpleMessage("Tipo"),
     "ukr": MessageLookupByLibrary.simpleMessage("Ucraniano"),

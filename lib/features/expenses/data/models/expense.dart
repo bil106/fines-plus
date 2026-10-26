@@ -32,6 +32,9 @@ class Expense {
   final String? insurancePolicyNumber;
   final DateTime? insuranceValidTo;
 
+  /// Registry page for the policy, from its QR code.
+  final String? insurancePolicyUrl;
+
   Expense({
     this.id,
     required this.date,
@@ -49,6 +52,7 @@ class Expense {
     this.insuranceCompany,
     this.insurancePolicyNumber,
     this.insuranceValidTo,
+    this.insurancePolicyUrl,
   });
 
   /// Firestore-specific serialization
@@ -67,6 +71,7 @@ Map<String, dynamic> toFirestore({bool isNew = false}) {
       'insuranceCompany': insuranceCompany,
       'insurancePolicyNumber': insurancePolicyNumber,
       'insuranceValidTo': insuranceValidTo == null ? null : Timestamp.fromDate(insuranceValidTo!),
+      'insurancePolicyUrl': insurancePolicyUrl,
       if (isNew) 'createdAt': FieldValue.serverTimestamp(),
       'updatedAt': FieldValue.serverTimestamp(),
     };
@@ -120,6 +125,7 @@ Map<String, dynamic> toFirestore({bool isNew = false}) {
       insuranceCompany: json['insuranceCompany'] as String?,
       insurancePolicyNumber: json['insurancePolicyNumber'] as String?,
       insuranceValidTo: json['insuranceValidTo'] is Timestamp ? (json['insuranceValidTo'] as Timestamp).toDate() : null,
+      insurancePolicyUrl: json['insurancePolicyUrl'] as String?,
     );
   }
 

@@ -4661,6 +4661,76 @@ class S {
     );
   }
 
+  /// `Scan policy QR`
+  String get insurance_scan_qr {
+    return Intl.message(
+      'Scan policy QR',
+      name: 'insurance_scan_qr',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Point the camera at the QR code on the policy`
+  String get insurance_scan_qr_hint {
+    return Intl.message(
+      'Point the camera at the QR code on the policy',
+      name: 'insurance_scan_qr_hint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `From gallery`
+  String get insurance_scan_from_gallery {
+    return Intl.message(
+      'From gallery',
+      name: 'insurance_scan_from_gallery',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Couldn't start the camera. Allow access in settings or pick a photo from the gallery.`
+  String get insurance_scan_camera_error {
+    return Intl.message(
+      'Couldn\'t start the camera. Allow access in settings or pick a photo from the gallery.',
+      name: 'insurance_scan_camera_error',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Couldn't get the policy details from the QR code. Please enter them manually.`
+  String get insurance_scan_failed {
+    return Intl.message(
+      'Couldn\'t get the policy details from the QR code. Please enter them manually.',
+      name: 'insurance_scan_failed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The vehicle in the policy ({plate}) doesn't match the active car. Please check.`
+  String insurance_scan_plate_mismatch(String plate) {
+    return Intl.message(
+      'The vehicle in the policy ($plate) doesn\'t match the active car. Please check.',
+      name: 'insurance_scan_plate_mismatch',
+      desc: '',
+      args: [plate],
+    );
+  }
+
+  /// `Open policy`
+  String get insurance_open_policy {
+    return Intl.message(
+      'Open policy',
+      name: 'insurance_open_policy',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Scan pump`
   String get fuel_pump_scan {
     return Intl.message(

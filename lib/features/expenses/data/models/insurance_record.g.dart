@@ -15,6 +15,7 @@ InsuranceRecord _$InsuranceRecordFromJson(Map<String, dynamic> json) =>
       validTo: DateTime.parse(json['validTo'] as String),
       cost: (json['cost'] as num).toDouble(),
       currency: json['currency'] as String,
+      policyUrl: json['policyUrl'] as String? ?? '',
       updatedAt: json['updatedAt'] == null
           ? null
           : DateTime.parse(json['updatedAt'] as String),
@@ -29,5 +30,6 @@ Map<String, dynamic> _$InsuranceRecordToJson(InsuranceRecord instance) =>
       'validTo': instance.validTo.toIso8601String(),
       'cost': instance.cost,
       'currency': instance.currency,
+      'policyUrl': instance.policyUrl,
       'updatedAt': instance.updatedAt?.toIso8601String(),
     };
