@@ -6,5 +6,5 @@
 BUNDLE_ID = com.autodosje.app
 APP_DISPLAY_NAME = AutoDosje
 LOCATION_USAGE_DESCRIPTION = Потрібен доступ до геолокації для пошуку найближчих сервісів
-CAMERA_USAGE_DESCRIPTION = Потрібен доступ до камери для фото
+CAMERA_USAGE_DESCRIPTION = Потрібен доступ до камери для фото та сканування QR-коду поліса
 PHOTO_LIBRARY_USAGE_DESCRIPTION = Потрібен доступ до галереї для вибору фото
