@@ -30,7 +30,20 @@ class _RemindersScreenState extends State<RemindersScreen> {
         final carId = carState.carId;
 
         if (carId.isEmpty) {
-          return Center(child: Text(S.of(context).no_car_selected));
+          return Scaffold(
+            backgroundColor: context.brandTheme.surfaceBg,
+            appBar: AppBar(
+              backgroundColor: context.brandTheme.surfaceBg,
+              automaticallyImplyLeading: false,
+              leading: widget.onBack == null
+                  ? null
+                  : Padding(padding: const EdgeInsets.only(left: 20), child: AppBackButton(onPressed: widget.onBack)),
+              leadingWidth: widget.onBack == null ? null : 68,
+              surfaceTintColor: AppColors.transparent,
+              elevation: 0,
+            ),
+            body: SafeArea(child: Center(child: Text(S.of(context).no_car_selected))),
+          );
         }
 
         return _RemindersView(onBack: widget.onBack);

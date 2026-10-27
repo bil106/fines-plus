@@ -1,6 +1,7 @@
 import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/theme/app_brand_theme.dart';
+import 'package:design_system/widget/app_sheet_close_button.dart';
 import 'package:fines_plus/features/maintenance/domain/nearby_service_ranking.dart';
 import 'package:fines_plus/features/settings/presentation/cubit/settings_cubit.dart';
 import 'package:fines_plus/features/settings/presentation/cubit/unit_stream.dart';
@@ -47,9 +48,16 @@ Future<Map<String, dynamic>?> showNearbyServicesSheet(
                     ),
                   ),
                 ),
-                Text(
-                  title ?? S.of(context).service_station_nearby,
-                  style: textTheme.titleLarge?.copyWith(fontSize: 19, fontWeight: FontWeight.w800, color: AppColors.ink),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        title ?? S.of(context).service_station_nearby,
+                        style: textTheme.titleLarge?.copyWith(fontSize: 19, fontWeight: FontWeight.w800, color: AppColors.ink),
+                      ),
+                    ),
+                    const AppSheetCloseButton(),
+                  ],
                 ),
                 const SizedBox(height: 8),
                 Flexible(

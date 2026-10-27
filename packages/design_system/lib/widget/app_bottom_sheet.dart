@@ -4,6 +4,7 @@ import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/constants/app_borders.dart';
 import 'package:design_system/constants/app_spacers.dart';
 import 'package:design_system/theme/app_brand_theme.dart';
+import 'package:design_system/widget/app_sheet_close_button.dart';
 import 'package:flutter/material.dart';
 
 /// Shared scaffold for the app's draggable "quick add" bottom sheets
@@ -117,18 +118,7 @@ class _AppBottomSheetState extends State<AppBottomSheet> {
                                     color: AppColors.ink,
                                   )),
                         ),
-                        IconButton(
-                          icon: const Icon(Icons.close,
-                              color: AppColors.textSecondary, size: 14),
-                          style: IconButton.styleFrom(
-                            backgroundColor: AppColors.neutreBlanc,
-                            side: BorderSide(
-                                color: context.brandTheme.surfaceBorder),
-                            shape: const CircleBorder(),
-                            minimumSize: const Size(30, 30),
-                          ),
-                          onPressed: () => Navigator.pop(context),
-                        ),
+                        const AppSheetCloseButton(),
                       ],
                     ),
                   ),

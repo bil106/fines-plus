@@ -173,8 +173,8 @@ class _MileageCardState extends State<MileageCard> {
                                     textInputAction: TextInputAction.done,
                                     inputFormatters: [
                                       FilteringTextInputFormatter.digitsOnly,
-                                      MileageInputFormatter(max: 1000000),
                                       LengthLimitingTextInputFormatter(6),
+                                      MileageInputFormatter(max: 1000000),
                                       ThousandsSeparatorInputFormatter(),
                                     ],
                                     onChanged: widget.onChanged,
