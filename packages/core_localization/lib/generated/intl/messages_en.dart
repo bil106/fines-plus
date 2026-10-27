@@ -410,11 +410,20 @@ class MessageLookup extends MessageLookupByLibrary {
       "Enter your car number ->",
     ),
     "insurance": MessageLookupByLibrary.simpleMessage("Insurance"),
+    "insurance_add_policy": MessageLookupByLibrary.simpleMessage(
+      "Add insurance",
+    ),
     "insurance_company": MessageLookupByLibrary.simpleMessage(
       "Insurance company",
     ),
     "insurance_control": MessageLookupByLibrary.simpleMessage(
       "Insurance control",
+    ),
+    "insurance_delete_confirm": MessageLookupByLibrary.simpleMessage(
+      "Delete this policy?",
+    ),
+    "insurance_edit_policy": MessageLookupByLibrary.simpleMessage(
+      "Edit insurance",
     ),
     "insurance_expiry_reminder_body": m8,
     "insurance_open_policy": MessageLookupByLibrary.simpleMessage(

@@ -30,8 +30,8 @@ void main() {
         plannedCategory: category,
       );
 
-  InsuranceRecord policy(DateTime from, DateTime to) =>
-      InsuranceRecord(company: 'c', policyNumber: 'n', validFrom: from, validTo: to, cost: 0, currency: 'UAH');
+  InsuranceRecord policy(DateTime from, DateTime to, {String company = 'c'}) =>
+      InsuranceRecord(company: company, policyNumber: 'n', validFrom: from, validTo: to, cost: 0, currency: 'UAH');
 
   group('color', () {
     test('red up to 20%, yellow up to 50%, green above', () {
@@ -93,6 +93,22 @@ void main() {
     test('a year or more left is a full ring', () {
       final records = [policy(DateTime(2026, 7, 1), DateTime(2028, 7, 1))];
       expect(MaintenanceRing.insuranceRemaining(records, const [], today), 1);
+    });
+
+    test('follows the policy that ends soonest when there are several', () {
+      final records = [
+        policy(DateTime(2026, 1, 1), DateTime(2027, 7, 1)),
+        policy(DateTime(2026, 6, 1), DateTime(2026, 8, 1), company: 'other'), // 31 days left
+      ];
+      expect(MaintenanceRing.insuranceRemaining(records, const [], today), closeTo(31 / 365, 1e-3));
+    });
+
+    test('an ended policy does not hide a valid one', () {
+      final records = [
+        policy(DateTime(2025, 1, 1), DateTime(2026, 1, 1), company: 'old'),
+        policy(DateTime(2026, 6, 1), DateTime(2027, 6, 1), company: 'new'),
+      ];
+      expect(MaintenanceRing.insuranceRemaining(records, const [], today), closeTo(335 / 365, 1e-3));
     });
 
     test('0 once expired', () {

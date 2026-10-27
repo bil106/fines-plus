@@ -63,17 +63,17 @@ class MaintenanceRing {
     return worst;
   }
 
-  /// Days left on the current policy out of [insuranceFullDays] (full at a
-  /// year or more, empty once it ends); falls back to an insurance schedule
+  /// Days left on the policy ending soonest out of [insuranceFullDays] (full
+  /// at a year or more, empty once it ends); falls back to an insurance schedule
   /// task when no policy was saved. Null when neither.
   static double? insuranceRemaining(
     List<InsuranceRecord> records,
     Iterable<MaintenanceTask> tasks,
     DateTime now,
   ) {
-    final policy = AutoReminderBuilder.currentPolicy(records);
-    if (policy != null) {
-      return (policy.validTo.difference(now).inHours / 24 / insuranceFullDays).clamp(0.0, 1.0);
+    final policies = AutoReminderBuilder.trackedPolicies(records, now);
+    if (policies.isNotEmpty) {
+      return (policies.first.validTo.difference(now).inHours / 24 / insuranceFullDays).clamp(0.0, 1.0);
     }
     for (final task in tasks) {
       if (!task.isInsurance) continue;

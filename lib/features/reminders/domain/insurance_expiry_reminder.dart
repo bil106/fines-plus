@@ -4,10 +4,14 @@ import 'package:fines_plus/features/reminders/data/models/reminder_item.dart';
 import 'package:intl/intl.dart';
 
 /// OS-level "your insurance is about to expire" notification, a fortnight
-/// before the current policy's end date. Always follows the policy the app
-/// currently treats as current, so changing its end date moves the reminder.
+/// before a policy's end date - one per policy, so several policies each
+/// keep their own. Changing a policy's end date moves its reminder.
 class InsuranceExpiryReminder {
-  static const notificationId = 9100;
+  /// The single id used before reminders were per policy; still cancelled so
+  /// an old install doesn't fire a duplicate.
+  static const legacyNotificationId = 9100;
+  static const _idBase = 910000000;
+  static const _idSpan = 1000000;
   static const _leadDays = ReminderItem.soonDays;
   static const _hour = 9;
 
@@ -30,18 +34,32 @@ class InsuranceExpiryReminder {
     return next.isAfter(lastDay) ? null : next;
   }
 
-  /// Replaces any pending notification with one for [validTo] (or just
-  /// cancels it when there is no policy / it has expired).
-  Future<void> sync(DateTime? validTo, {DateTime? now}) async {
-    await _pushHelper.cancelNotification(notificationId);
-    if (validTo == null) return;
+  /// A stable id for [policyId] (FNV-1a, since String.hashCode isn't
+  /// guaranteed across Dart versions and a stale id could never be cancelled).
+  static int notificationIdFor(String policyId) {
+    var hash = 0x811c9dc5;
+    for (final unit in policyId.codeUnits) {
+      hash = ((hash ^ unit) * 0x01000193) & 0xFFFFFFFF;
+    }
+    return _idBase + hash % _idSpan;
+  }
+
+  Future<void> cancelLegacy() => _pushHelper.cancelNotification(legacyNotificationId);
+
+  Future<void> cancel(String policyId) => _pushHelper.cancelNotification(notificationIdFor(policyId));
+
+  /// Replaces any pending notification of [policyId] with one for [validTo]
+  /// (or just cancels it when it has expired).
+  Future<void> sync(String policyId, DateTime validTo, {String? company, DateTime? now}) async {
+    await cancel(policyId);
 
     final fireDate = fireAt(validTo, now ?? DateTime.now());
     if (fireDate == null) return;
 
+    final title = S.current.reminder_insurance_expires;
     await _pushHelper.scheduleNotification(
-      id: notificationId,
-      title: S.current.reminder_insurance_expires,
+      id: notificationIdFor(policyId),
+      title: company == null || company.isEmpty ? title : '$title · $company',
       body: S.current.insurance_expiry_reminder_body(DateFormat('dd.MM.yyyy').format(validTo)),
       dateTime: fireDate,
     );

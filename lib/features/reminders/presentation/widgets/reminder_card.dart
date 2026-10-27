@@ -51,7 +51,8 @@ class ReminderCard extends StatelessWidget {
         return estimate >= 14 ? l10n.reminder_approx_weeks((estimate / 7).round()) : l10n.reminder_approx_days(estimate);
       }
     }
-    return date;
+    final label = item.label;
+    return label == null || label.isEmpty || date == null ? date : '$label · $date';
   }
 
   @override

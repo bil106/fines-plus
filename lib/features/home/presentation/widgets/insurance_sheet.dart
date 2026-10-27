@@ -2,8 +2,10 @@ import 'package:core_localization/generated/l10n.dart';
 import 'package:design_system/colors/app_colors.dart';
 import 'package:design_system/feedback/app_haptics.dart';
 import 'package:design_system/theme/app_brand_theme.dart';
+import 'package:design_system/widget/app_bottom_sheet.dart';
 import 'package:design_system/widget/app_field_card.dart';
 import 'package:fines_plus/core/config/app_config.dart';
+import 'package:fines_plus/features/expenses/data/models/expense_category.dart';
 import 'package:fines_plus/features/expenses/data/models/insurance_record.dart';
 import 'package:fines_plus/features/home/presentation/widgets/insurance_qr_scanner_sheet.dart';
 import 'package:fines_plus/features/maintenance/data/insurance_policy_lookup.dart';
@@ -18,15 +20,37 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:fines_plus/core/helpers/date_utils.dart';
 
-/// The dashboard's Страхування sheet content - logs a purchased policy
-/// (InsuranceRecord) via MaintenanceCubit. Distinct from the older
+/// Opens the policy form in a bottom sheet: blank for a new policy, filled
+/// with [record] (plus a Delete button) to edit one.
+Future<void> showInsuranceForm(BuildContext context, {InsuranceRecord? record}) {
+  final formKey = GlobalKey<InsuranceSheetState>();
+  return AppBottomSheet.show(
+    context,
+    title: record == null ? S.of(context).insurance_add_policy : S.of(context).insurance_edit_policy,
+    contentBuilder: (_) => InsuranceSheet(key: formKey, record: record),
+    saveLabel: S.of(context).save,
+    onSave: () => formKey.currentState?.save(),
+    footerBuilder: record?.id == null
+        ? null
+        : (context) => TextButton(
+            onPressed: () => formKey.currentState?.confirmDelete(),
+            child: Text(S.of(context).delete, style: TextStyle(color: context.brandTheme.statusDanger)),
+          ),
+  );
+}
+
+/// The dashboard's Страхування form - logs a purchased policy
+/// (InsuranceRecord) via MaintenanceCubit, or edits [record]. Distinct from the older
 /// InsuranceDetailSheet, which only creates a renewal *reminder* and has no
 /// company/policy/cost fields - that sheet is unchanged and still used
 /// elsewhere (see its own doc comment). Styled to match the Паливо/ТО
 /// sheets - flat bordered field cards with an always-visible label, not
 /// Material's floating-label OutlineInputBorder.
 class InsuranceSheet extends StatefulWidget {
-  const InsuranceSheet({super.key});
+  /// The policy being edited; null to add a new one.
+  final InsuranceRecord? record;
+
+  const InsuranceSheet({super.key, this.record});
 
   @override
   State<InsuranceSheet> createState() => InsuranceSheetState();
@@ -47,33 +71,17 @@ class InsuranceSheetState extends State<InsuranceSheet> {
   @override
   void initState() {
     super.initState();
-    // Prefill from the active car's most recent policy, same idea as Fuel
-    // prefilling mileage from getLastKnownMileage() - lets the user see/
-    // renew what's already on file instead of always starting blank.
-    // Saving still appends a new InsuranceRecord (a renewal is its own
-    // history entry, same as every other record type here).
-    final records = context.read<MaintenanceCubit>().state.insuranceRecords;
-    if (records.isNotEmpty) {
-      // Pick by when it was actually saved (updatedAt), not validFrom - a
-      // renewal that only edits validTo keeps the same validFrom as the
-      // record it's replacing, so validFrom alone can't tell them apart.
-      final latest = records.reduce((a, b) {
-        final aTime = a.updatedAt;
-        final bTime = b.updatedAt;
-        if (aTime == null) return b;
-        if (bTime == null) return a;
-        return aTime.isAfter(bTime) ? a : b;
-      });
-      companyController.text = latest.company;
-      policyNumberController.text = latest.policyNumber;
-      validFrom = latest.validFrom;
-      validTo = latest.validTo;
-      policyUrl = latest.policyUrl;
-      // Keep cents if the saved cost has them (3500.50), no ".00" otherwise.
-      costController.text = latest.cost == latest.cost.roundToDouble()
-          ? latest.cost.toStringAsFixed(0)
-          : latest.cost.toStringAsFixed(2);
-    }
+    final record = widget.record;
+    if (record == null) return;
+    companyController.text = record.company;
+    policyNumberController.text = record.policyNumber;
+    validFrom = record.validFrom;
+    validTo = record.validTo;
+    policyUrl = record.policyUrl;
+    // Keep cents if the saved cost has them (3500.50), no ".00" otherwise.
+    costController.text = record.cost == record.cost.roundToDouble()
+        ? record.cost.toStringAsFixed(0)
+        : record.cost.toStringAsFixed(2);
   }
 
   @override
@@ -93,6 +101,7 @@ class InsuranceSheetState extends State<InsuranceSheet> {
     }
 
     final record = InsuranceRecord(
+      id: widget.record?.id,
       company: companyController.text.trim(),
       policyNumber: policyNumberController.text.trim(),
       validFrom: validFrom!,
@@ -100,12 +109,15 @@ class InsuranceSheetState extends State<InsuranceSheet> {
       cost: double.tryParse(costController.text) ?? 0,
       currency: context.read<SettingsCubit>().state.currency,
       policyUrl: policyUrl,
-      // Until Firestore hands back its own timestamp, so this record already
-      // counts as the most recently saved policy.
       updatedAt: DateTime.now(),
     );
 
-    context.read<MaintenanceCubit>().addInsuranceRecord(record);
+    final cubit = context.read<MaintenanceCubit>();
+    if (widget.record == null) {
+      cubit.addInsuranceRecord(record);
+    } else {
+      cubit.updateInsuranceRecord(record);
+    }
     Navigator.of(context).pop(record);
   }
 
@@ -137,6 +149,25 @@ class InsuranceSheetState extends State<InsuranceSheet> {
         SnackBar(content: Text(S.of(context).insurance_scan_plate_mismatch(policy.plate))),
       );
     }
+  }
+
+  Future<void> confirmDelete() async {
+    final id = widget.record?.id;
+    if (id == null) return;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        content: Text(S.of(context).insurance_delete_confirm),
+        actions: [
+          TextButton(onPressed: () => Navigator.of(ctx).pop(false), child: Text(S.of(context).cancel)),
+          TextButton(onPressed: () => Navigator.of(ctx).pop(true), child: Text(S.of(context).delete)),
+        ],
+      ),
+    );
+    if (confirmed != true || !mounted) return;
+    final cubit = context.read<MaintenanceCubit>();
+    Navigator.of(context).pop();
+    await cubit.deleteSingleExpense(ExpenseCategory.insurance, id);
   }
 
   Future<void> _pickDate({required bool isFrom}) async {

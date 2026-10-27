@@ -7,9 +7,11 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   final now = DateTime(2026, 9, 19);
 
-  InsuranceRecord policy(DateTime validTo, {DateTime? updatedAt}) => InsuranceRecord(
-    company: 'c',
-    policyNumber: 'n',
+  InsuranceRecord policy(DateTime validTo, {DateTime? updatedAt, String company = 'c', String number = 'n', String? id}) =>
+      InsuranceRecord(
+    id: id,
+    company: company,
+    policyNumber: number,
     validFrom: validTo.subtract(const Duration(days: 365)),
     validTo: validTo,
     cost: 0,
@@ -44,19 +46,36 @@ void main() {
   group('insurance', () {
     test('nothing without data', () => expect(build(), isEmpty));
 
-    test('uses the policy saved last, even if it ends sooner', () {
+    test('every active policy gets its own reminder, soonest first', () {
       final items = build(
         insurance: [
-          policy(DateTime(2027, 10, 12), updatedAt: DateTime(2026, 9, 1)),
-          policy(DateTime(2026, 10, 12), updatedAt: DateTime(2026, 9, 18)),
+          policy(DateTime(2027, 3, 1), company: 'Kasko', id: 'k'),
+          policy(DateTime(2026, 10, 12), company: 'Mtpl', id: 'm'),
         ],
       );
-      expect(items.single.dueDate, DateTime(2026, 10, 12));
+      expect(items.map((item) => item.dueDate), [DateTime(2026, 10, 12), DateTime(2027, 3, 1)]);
+      expect(items.map((item) => item.label), ['Mtpl', 'Kasko']);
+      expect(items.map((item) => item.id).toSet(), hasLength(2));
     });
 
-    test('without save times, the later policy wins', () {
-      final items = build(insurance: [policy(DateTime(2026, 10, 12)), policy(DateTime(2027, 10, 12))]);
-      expect(items.single.dueDate, DateTime(2027, 10, 12));
+    test('a renewal under the same company and number replaces the old end date', () {
+      final items = build(insurance: [policy(DateTime(2026, 9, 25)), policy(DateTime(2027, 9, 25))]);
+      expect(items.single.dueDate, DateTime(2027, 9, 25));
+    });
+
+    test('an ended policy is dropped while another is still active', () {
+      final items = build(
+        insurance: [policy(DateTime(2026, 9, 1), company: 'old'), policy(DateTime(2027, 1, 1), company: 'new')],
+      );
+      expect(items.single.label, 'new');
+    });
+
+    test('when every policy has ended, the one that ended last still reminds', () {
+      final items = build(
+        insurance: [policy(DateTime(2026, 8, 1), company: 'a'), policy(DateTime(2026, 9, 1), company: 'b')],
+      );
+      expect(items.single.label, 'b');
+      expect(items.single.status(now), ReminderStatus.overdue);
     });
 
     test('status thresholds', () {

@@ -47,4 +47,15 @@ void main() {
       );
     });
   });
+
+  group('InsuranceExpiryReminder.notificationIdFor', () {
+    test('is stable and differs between policies', () {
+      expect(InsuranceExpiryReminder.notificationIdFor('a'), InsuranceExpiryReminder.notificationIdFor('a'));
+      expect(InsuranceExpiryReminder.notificationIdFor('a'), isNot(InsuranceExpiryReminder.notificationIdFor('b')));
+    });
+
+    test('never collides with the legacy single-policy id', () {
+      expect(InsuranceExpiryReminder.notificationIdFor('a'), isNot(InsuranceExpiryReminder.legacyNotificationId));
+    });
+  });
 }

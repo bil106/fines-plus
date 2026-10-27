@@ -455,6 +455,30 @@ class MaintenanceCubit extends Cubit<MaintenanceState> {
     }
   }
 
+  /// Rewrites an existing policy (matched by [InsuranceRecord.id]) locally
+  /// and in Firestore; a record Firestore hasn't assigned an id yet can't be
+  /// told apart from the others, so it is left alone.
+  Future<void> updateInsuranceRecord(InsuranceRecord record) async {
+    final id = record.id;
+    if (id == null) return;
+
+    final updated = [for (final r in state.insuranceRecords) r.id == id ? record : r];
+    emit(state.copyWith(insuranceRecords: updated));
+    await saveInsuranceRecords();
+
+    final car = await localDataSource.getCarInfo();
+    final fields = record.toExpense(FirebaseAuth.instance.currentUser!.uid).toFirestore()
+      ..remove('ownerId')
+      ..remove('carNumber');
+
+    try {
+      await expenseRepository.updateExpense(carNumber: car.carId, expenseId: id, updatedFields: fields);
+      debugPrint("Insurance record updated in Firestore");
+    } catch (e) {
+      debugPrint("Failed to update insurance record: $e");
+    }
+  }
+
   Future<void> addOtherRecord(OtherExpenseRecord record) async {
     final updated = List<OtherExpenseRecord>.from(state.otherRecords)..add(record);
     emit(state.copyWith(otherRecords: updated));

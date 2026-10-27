@@ -452,9 +452,18 @@ class MessageLookup extends MessageLookupByLibrary {
       "Ingresa la placa de tu auto ->",
     ),
     "insurance": MessageLookupByLibrary.simpleMessage("Seguro"),
+    "insurance_add_policy": MessageLookupByLibrary.simpleMessage(
+      "Añadir seguro",
+    ),
     "insurance_company": MessageLookupByLibrary.simpleMessage("Aseguradora"),
     "insurance_control": MessageLookupByLibrary.simpleMessage(
       "Control del seguro",
+    ),
+    "insurance_delete_confirm": MessageLookupByLibrary.simpleMessage(
+      "¿Eliminar esta póliza?",
+    ),
+    "insurance_edit_policy": MessageLookupByLibrary.simpleMessage(
+      "Editar seguro",
     ),
     "insurance_expiry_reminder_body": m8,
     "insurance_open_policy": MessageLookupByLibrary.simpleMessage(

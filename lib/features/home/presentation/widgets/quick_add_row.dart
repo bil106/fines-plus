@@ -9,12 +9,13 @@ import 'package:fines_plus/features/expenses/data/models/other_expense_record.da
 import 'package:fines_plus/features/expenses/data/models/service_record.dart';
 import 'package:fines_plus/features/expenses/data/models/tuning_record.dart';
 import 'package:fines_plus/features/home/presentation/widgets/fuel_sheet.dart';
-import 'package:fines_plus/features/home/presentation/widgets/insurance_sheet.dart';
+import 'package:fines_plus/features/home/presentation/widgets/insurance_policies_sheet.dart';
 import 'package:fines_plus/features/home/presentation/widgets/other_expense_sheet.dart';
 import 'package:fines_plus/features/maintenance/presentation/cubit/maintenance_cubit.dart';
 import 'package:fines_plus/features/maintenance/presentation/screens/car_wash_screen.dart';
 import 'package:fines_plus/features/maintenance/presentation/screens/service_screen.dart';
 import 'package:fines_plus/features/maintenance/presentation/screens/tuning_screen.dart';
+import 'package:fines_plus/features/reminders/domain/auto_reminder_builder.dart';
 import 'package:fines_plus/features/reminders/domain/maintenance_ring.dart';
 import 'package:fines_plus/features/reminders/presentation/cubit/reminder_cubit.dart';
 import 'package:fines_plus/features/vehicle/presentation/cubit/car_cubit.dart';
@@ -96,17 +97,14 @@ class QuickAddRow extends StatelessWidget {
                 reminderState.tasks,
                 DateTime.now(),
               ),
+              badge: AutoReminderBuilder.trackedPolicies(
+                context.read<MaintenanceCubit>().state.insuranceRecords,
+                DateTime.now(),
+              ).length,
               onTap: () async {
                 if (carId.isEmpty) return;
 
-                final insuranceKey = GlobalKey<InsuranceSheetState>();
-                await AppBottomSheet.show(
-                  context,
-                  title: S.of(context).insurance,
-                  contentBuilder: (_) => InsuranceSheet(key: insuranceKey),
-                  saveLabel: S.of(context).save,
-                  onSave: () => insuranceKey.currentState?.save(),
-                );
+                await showInsurancePolicies(context);
               },
             ),
           ),
@@ -353,6 +351,10 @@ class _QuickAddButton extends StatelessWidget {
   /// [MaintenanceRing]); draws a progress ring around the icon when set.
   final double? ring;
 
+  /// How many items the tile stands for (e.g. insurance policies); shown as
+  /// a badge once there is more than one.
+  final int badge;
+
   const _QuickAddButton({
     this.icon,
     this.iconAsset,
@@ -360,6 +362,7 @@ class _QuickAddButton extends StatelessWidget {
     required this.label,
     required this.onTap,
     this.ring,
+    this.badge = 0,
   });
 
   @override
@@ -392,6 +395,7 @@ class _QuickAddButton extends StatelessWidget {
                   iconAsset: iconAsset,
                   color: iconColor,
                   ring: ring,
+                  badge: badge,
                 ),
                 const SizedBox(height: 6),
                 Flexible(
@@ -430,8 +434,9 @@ class _CircleIcon extends StatelessWidget {
   final String? iconAsset;
   final Color color;
   final double? ring;
+  final int badge;
 
-  const _CircleIcon({this.icon, this.iconAsset, required this.color, this.ring})
+  const _CircleIcon({this.icon, this.iconAsset, required this.color, this.ring, this.badge = 0})
     : assert(icon != null || iconAsset != null);
 
   @override
@@ -477,6 +482,26 @@ class _CircleIcon extends StatelessWidget {
                   )
                 : Icon(icon, color: AppColors.neutreBlanc, size: _glyphSize),
           ),
+          if (badge > 1)
+            Positioned(
+              top: 0,
+              right: 0,
+              child: Container(
+                constraints: const BoxConstraints(minWidth: 18, minHeight: 18),
+                padding: const EdgeInsets.symmetric(horizontal: 4),
+                decoration: BoxDecoration(
+                  color: AppColors.ink,
+                  shape: BoxShape.rectangle,
+                  borderRadius: AppBorders.radius16,
+                  border: Border.all(color: AppColors.neutreBlanc, width: 1.5),
+                ),
+                alignment: Alignment.center,
+                child: Text(
+                  '$badge',
+                  style: const TextStyle(color: AppColors.neutreBlanc, fontSize: 10, fontWeight: FontWeight.w800),
+                ),
+              ),
+            ),
         ],
       ),
     );

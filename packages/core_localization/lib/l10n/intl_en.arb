@@ -656,5 +656,8 @@
       "period": { "type": "String" }
     }
   },
-  "paywall_contains_ads": "Contains ads"
+  "paywall_contains_ads": "Contains ads",
+  "insurance_add_policy": "Add insurance",
+  "insurance_edit_policy": "Edit insurance",
+  "insurance_delete_confirm": "Delete this policy?"
 }

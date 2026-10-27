@@ -4950,6 +4950,36 @@ class S {
       args: [],
     );
   }
+
+  /// `Add insurance`
+  String get insurance_add_policy {
+    return Intl.message(
+      'Add insurance',
+      name: 'insurance_add_policy',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Edit insurance`
+  String get insurance_edit_policy {
+    return Intl.message(
+      'Edit insurance',
+      name: 'insurance_edit_policy',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Delete this policy?`
+  String get insurance_delete_confirm {
+    return Intl.message(
+      'Delete this policy?',
+      name: 'insurance_delete_confirm',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

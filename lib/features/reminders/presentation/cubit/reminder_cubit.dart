@@ -36,9 +36,11 @@ class ReminderCubit extends Cubit<ReminderState> {
   StreamSubscription<dynamic>? _maintenanceSub;
   List<MaintenanceTask> _tasks = const [];
 
-  /// End date the insurance notification is currently scheduled for, so it is
-  /// only re-scheduled when that date actually changes.
-  DateTime? _insuranceNotifiedFor;
+  /// What each policy's insurance notification is currently scheduled for
+  /// (by reminder id), so it is only re-scheduled when that actually
+  /// changes. Null until the first sync, which also drops the legacy
+  /// single-policy notification.
+  Map<String, ({DateTime? due, String? label})>? _insuranceNotified;
 
   ReminderCubit({
     required this.repository,
@@ -114,11 +116,23 @@ class ReminderCubit extends Cubit<ReminderState> {
 
   Future<void> _syncInsuranceNotification(List<ReminderItem> items) async {
     if (maintenanceCubit == null) return;
-    final dueDate = items.where((item) => item.kind == ReminderKind.insurance).firstOrNull?.dueDate;
-    if (dueDate == _insuranceNotifiedFor) return;
-    _insuranceNotifiedFor = dueDate;
+    final wanted = {
+      for (final item in items)
+        if (item.kind == ReminderKind.insurance) item.id: (due: item.dueDate, label: item.label),
+    };
+    final notified = _insuranceNotified;
+    _insuranceNotified = wanted;
+    final reminder = InsuranceExpiryReminder(pushHelper);
     try {
-      await InsuranceExpiryReminder(pushHelper).sync(dueDate);
+      if (notified == null) await reminder.cancelLegacy();
+      for (final id in (notified ?? const {}).keys.where((id) => !wanted.containsKey(id))) {
+        await reminder.cancel(id);
+      }
+      for (final MapEntry(:key, :value) in wanted.entries) {
+        final due = value.due;
+        if (due == null || notified?[key] == value) continue;
+        await reminder.sync(key, due, company: value.label);
+      }
     } catch (e, st) {
       debugPrint('Failed to schedule insurance expiry notification: $e\n$st');
     }

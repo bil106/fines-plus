@@ -20,37 +20,52 @@ class AutoReminderBuilder {
     required DateTime now,
   }) {
     return [
-      ?_insurance(insurance, tasks),
+      ..._insurance(insurance, tasks, now),
       ?_oil(tasks, liveMileage, _kmPerDay(mileagePoints, now), now),
     ];
   }
 
-  /// The current policy is the one saved last - same rule as the garage
-  /// card and the insurance sheet's prefill - not the one that ends last,
-  /// so a date the user just entered is never hidden by an older record.
-  static InsuranceRecord? currentPolicy(List<InsuranceRecord> records) {
-    if (records.isEmpty) return null;
-    return records.reduce((a, b) {
-      final bySaved = (a.updatedAt ?? a.validFrom).compareTo(b.updatedAt ?? b.validFrom);
-      if (bySaved != 0) return bySaved > 0 ? a : b;
-      return a.validTo.isAfter(b.validTo) ? a : b;
-    });
+  /// The policies worth a reminder, soonest end date first: every one that
+  /// hasn't ended yet (a car can hold several, e.g. MTPL and casco), or just
+  /// the one that ended last when all of them have, so a lapsed policy
+  /// still nags. A policy renewed under the same company and number is
+  /// represented only by its latest end date, not as two policies.
+  static List<InsuranceRecord> trackedPolicies(List<InsuranceRecord> records, DateTime now) {
+    final latest = <String, InsuranceRecord>{};
+    for (final record in records) {
+      final key = '${record.company.trim().toLowerCase()}|${record.policyNumber.trim().toLowerCase()}';
+      final seen = latest[key];
+      if (seen == null || record.validTo.isAfter(seen.validTo)) latest[key] = record;
+    }
+    final policies = latest.values.toList()..sort((a, b) => a.validTo.compareTo(b.validTo));
+
+    final today = DateTime(now.year, now.month, now.day);
+    final active = policies.where((p) => !p.validTo.isBefore(today)).toList();
+    return active.isNotEmpty || policies.isEmpty ? active : [policies.last];
   }
 
-  static ReminderItem? _insurance(List<InsuranceRecord> records, List<MaintenanceTask> tasks) {
-    final latest = currentPolicy(records);
-    if (latest != null) {
-      return ReminderItem(id: 'auto_insurance', kind: ReminderKind.insurance, dueDate: latest.validTo);
+  static List<ReminderItem> _insurance(List<InsuranceRecord> records, List<MaintenanceTask> tasks, DateTime now) {
+    final policies = trackedPolicies(records, now);
+    if (policies.isNotEmpty) {
+      return [
+        for (final policy in policies)
+          ReminderItem(
+            id: 'auto_insurance_${policy.id ?? policy.validTo.millisecondsSinceEpoch}',
+            kind: ReminderKind.insurance,
+            label: policy.company,
+            dueDate: policy.validTo,
+          ),
+      ];
     }
 
     for (final task in tasks) {
       final last = task.lastServiceDate;
       final interval = task.intervalTime;
       if (task.isInsurance && last != null && interval != null) {
-        return ReminderItem(id: 'auto_insurance', kind: ReminderKind.insurance, dueDate: last.add(interval));
+        return [ReminderItem(id: 'auto_insurance', kind: ReminderKind.insurance, dueDate: last.add(interval))];
       }
     }
-    return null;
+    return const [];
   }
 
   static ReminderItem? _oil(List<MaintenanceTask> tasks, int liveMileage, double? kmPerDay, DateTime now) {

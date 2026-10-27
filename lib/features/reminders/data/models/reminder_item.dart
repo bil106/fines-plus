@@ -14,6 +14,10 @@ class ReminderItem {
   final String id;
   final ReminderKind kind;
   final ReminderModel? manual;
+
+  /// What tells automatic reminders of one kind apart (an insurance
+  /// policy's company); null for manual ones.
+  final String? label;
   final DateTime? dueDate;
   final int? remainingKm;
   final int? estimatedDays;
@@ -22,6 +26,7 @@ class ReminderItem {
     required this.id,
     required this.kind,
     this.manual,
+    this.label,
     this.dueDate,
     this.remainingKm,
     this.estimatedDays,

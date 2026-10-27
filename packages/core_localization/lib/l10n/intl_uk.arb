@@ -657,5 +657,8 @@
       "period": { "type": "String" }
     }
   },
-  "paywall_contains_ads": "З рекламою"
+  "paywall_contains_ads": "З рекламою",
+  "insurance_add_policy": "Додати страхування",
+  "insurance_edit_policy": "Редагувати страхування",
+  "insurance_delete_confirm": "Видалити цю страховку?"
 }

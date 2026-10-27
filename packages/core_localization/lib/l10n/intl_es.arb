@@ -724,5 +724,8 @@
       "period": { "type": "String" }
     }
   },
-  "paywall_contains_ads": "Con anuncios"
+  "paywall_contains_ads": "Con anuncios",
+  "insurance_add_policy": "Añadir seguro",
+  "insurance_edit_policy": "Editar seguro",
+  "insurance_delete_confirm": "¿Eliminar esta póliza?"
 }

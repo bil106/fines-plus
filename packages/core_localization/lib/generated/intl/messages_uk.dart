@@ -422,11 +422,20 @@ class MessageLookup extends MessageLookupByLibrary {
       "Введіть номер вашого автомобіля ->",
     ),
     "insurance": MessageLookupByLibrary.simpleMessage("Страхування"),
+    "insurance_add_policy": MessageLookupByLibrary.simpleMessage(
+      "Додати страхування",
+    ),
     "insurance_company": MessageLookupByLibrary.simpleMessage(
       "Страхова компанія",
     ),
     "insurance_control": MessageLookupByLibrary.simpleMessage(
       "Контроль страховки",
+    ),
+    "insurance_delete_confirm": MessageLookupByLibrary.simpleMessage(
+      "Видалити цю страховку?",
+    ),
+    "insurance_edit_policy": MessageLookupByLibrary.simpleMessage(
+      "Редагувати страхування",
     ),
     "insurance_expiry_reminder_body": m8,
     "insurance_open_policy": MessageLookupByLibrary.simpleMessage(
