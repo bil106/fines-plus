@@ -1,0 +1,24 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <application>
+        <activity android:name=".MainActivity">
+            <!-- App Links for finesplus.web.app. Only this flavor: that
+                 domain's assetlinks.json (public/.well-known) lists
+                 com.finesplus only, so any other applicationId declaring
+                 this autoVerify filter fails Play Console's content-links
+                 check. -->
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data
+                    android:scheme="https"
+                    android:host="finesplus.web.app"
+                    android:pathPrefix="/addCar.html"/>
+                <data
+                    android:scheme="https"
+                    android:host="finesplus.web.app"
+                    android:pathPrefix="/register.html"/>
+            </intent-filter>
+        </activity>
+    </application>
+</manifest>
